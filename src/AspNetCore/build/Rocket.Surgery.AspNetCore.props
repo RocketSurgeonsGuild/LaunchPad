@@ -1,0 +1,8 @@
+﻿<Project>
+    <PropertyGroup>
+        <CoreCompileDependsOn>
+            $(CoreCompileDependsOn);
+            AddRocketSurgeryAspNetCoreMvcAttributes;
+        </CoreCompileDependsOn>
+    </PropertyGroup>
+</Project>
