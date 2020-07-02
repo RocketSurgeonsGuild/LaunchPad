@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rocket.Surgery.LaunchPad.Extensions;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
