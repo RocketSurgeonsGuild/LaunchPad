@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 
-namespace Rocket.Surgery.AspNetCore.FluentValidation
+namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
 {
     internal sealed class FluentValidationProblemDetailsFactory : ProblemDetailsFactory
     {

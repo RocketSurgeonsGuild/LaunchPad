@@ -3,10 +3,10 @@ using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Common;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Rocket.Surgery.AspNetCore.Conventions;
+using Rocket.Surgery.SpaceShuttle.AspNetCore;
 using Xunit;
 
-namespace Rocket.Surgery.AspNetCore.Tests.Mvc
+namespace AspNetCore.Tests.Mvc
 {
     public class FeaturesTests
     {
@@ -15,7 +15,7 @@ namespace Rocket.Surgery.AspNetCore.Tests.Mvc
         [Fact]
         public void ShouldAddFeatureAsAnEmptyStringForControllersFoundWithoutAClearReference()
         {
-            var fc = new FeatureConvention();
+            var fc = new FeatureFolderProvider();
             var model = new ControllerModel(typeof(Mvc.Controller1).GetTypeInfo(), new List<object>())
             {
                 ControllerName = "Controller1"
@@ -30,7 +30,7 @@ namespace Rocket.Surgery.AspNetCore.Tests.Mvc
         [Fact]
         public void ShouldAddExpectedFeatureName_TheNamespaceClosestToTheController()
         {
-            var fc = new FeatureConvention();
+            var fc = new FeatureFolderProvider();
             var model = new ControllerModel(typeof(Controller1).GetTypeInfo(), new List<object>())
             {
                 ControllerName = "Controller1"
@@ -45,7 +45,7 @@ namespace Rocket.Surgery.AspNetCore.Tests.Mvc
         [Fact]
         public void ShouldAddExpectedFeatureName_TheNamespaceClosestToTheController2()
         {
-            var fc = new FeatureConvention();
+            var fc = new FeatureFolderProvider();
             var model = new ControllerModel(typeof(Features.Controller1).GetTypeInfo(), new List<object>())
             {
                 ControllerName = "Controller1"

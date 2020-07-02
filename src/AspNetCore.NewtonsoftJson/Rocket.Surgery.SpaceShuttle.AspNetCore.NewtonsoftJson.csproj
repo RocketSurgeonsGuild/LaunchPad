@@ -6,7 +6,13 @@
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <None Include="build/*.*" Pack="true" PackagePath="build" />
-        <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.SpaceShuttle.AspNetCore.csproj" />
+        <ProjectReference Include="..\Extensions.NewtonsoftJson\Rocket.Surgery.SpaceShuttle.Extensions.NewtonsoftJson.csproj" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="__convert" />
     </ItemGroup>
 </Project>

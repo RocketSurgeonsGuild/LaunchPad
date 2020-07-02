@@ -3,5 +3,9 @@
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
+      <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.SpaceShuttle.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\src\AspNetCore.NewtonsoftJson\Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson.csproj" />
+      <ProjectReference Include="..\..\src\Restful\Rocket.Surgery.SpaceShuttle.Restful.csproj" />
+      <ProjectReference Include="..\..\src\Pages\Rocket.Surgery.SpaceShuttle.Pages.csproj" />
     </ItemGroup>
 </Project>

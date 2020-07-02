@@ -10,7 +10,7 @@ using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Rocket.Surgery.AspNetCore.Swashbuckle
+namespace Rocket.Surgery.SpaceShuttle.Restful.OpenApi
 {
     [ExcludeFromCodeCoverage]
     internal static class NodaTimeSwashbuckleExtensions

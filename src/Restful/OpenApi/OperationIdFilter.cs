@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Rocket.Surgery.AspNetCore.Swashbuckle {
+namespace Rocket.Surgery.SpaceShuttle.Restful.OpenApi {
     class OperationIdFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)

@@ -1,0 +1,25 @@
+﻿<Project>
+    <Target Name="AddSpaceShuttleAspNetCoreMvcAttributes" BeforeTargets="CoreCompile">
+        <ItemGroup>
+            <AssemblyMetadata Include="FeatureFolderNamespace" Value="$(RootNamespace)" />
+            <AssemblyAttribute Include="JetBrains.Annotations.AspMvcViewLocationFormatAttribute">
+                <_Parameter1>~/{{3}}/{{1}}/{{0}}.cshtml</_Parameter1>
+            </AssemblyAttribute>
+            <AssemblyAttribute Include="JetBrains.Annotations.AspMvcViewLocationFormatAttribute">
+                <_Parameter1>~/{{3}}/{{0}}.cshtml</_Parameter1>
+            </AssemblyAttribute>
+            <AssemblyAttribute Include="JetBrains.Annotations.AspMvcViewLocationFormatAttribute">
+                <_Parameter1>~/{{3}}/{{1}}.cshtml</_Parameter1>
+            </AssemblyAttribute>
+            <AssemblyAttribute Include="JetBrains.Annotations.AspMvcAreaViewLocationFormat">
+                <_Parameter1>~/Areas/{{2}}/{{3}}/{{1}}/{{0}}.cshtml</_Parameter1>
+            </AssemblyAttribute>
+            <AssemblyAttribute Include="JetBrains.Annotations.AspMvcAreaViewLocationFormat">
+                <_Parameter1>~/Areas/{{2}}/{{3}}/{{0}}.cshtml</_Parameter1>
+            </AssemblyAttribute>
+            <AssemblyAttribute Include="JetBrains.Annotations.AspMvcAreaViewLocationFormat">
+                <_Parameter1>~/Areas/{{2}}/{{3}}/{{1}}.cshtml</_Parameter1>
+            </AssemblyAttribute>
+        </ItemGroup>
+    </Target>
+</Project>

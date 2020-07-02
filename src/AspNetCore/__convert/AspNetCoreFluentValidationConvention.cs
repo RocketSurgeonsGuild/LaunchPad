@@ -1,19 +1,14 @@
 using System;
-using System.Reflection;
 using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.AspNetCore.FluentValidation;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.AspNetCore.FluentValidation;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Extensions.FluentValidation;
+using Rocket.Surgery.SpaceShuttle.AspNetCore.__convert;
+using Rocket.Surgery.SpaceShuttle.AspNetCore.Validation;
 
 [assembly: Convention(typeof(AspNetCoreFluentValidationConvention))]
 
-namespace Rocket.Surgery.Conventions.AspNetCore.FluentValidation
+namespace Rocket.Surgery.SpaceShuttle.AspNetCore.__convert
 {
     /// <summary>
     /// AspNetCoreFluentValidationConvention.

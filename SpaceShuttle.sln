@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Restful", "sample\Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Worker", "sample\Sample.Worker\Sample.Worker.csproj", "{D395061D-AAAB-4B6A-BEC4-5B46F5FE70CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.SpaceShuttle.Extensions", "src\Rocket.Surgery.SpaceShuttle.Extensions.csproj", "{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.SpaceShuttle.AspNetCore", "src\AspNetCore\Rocket.Surgery.SpaceShuttle.AspNetCore.csproj", "{822A83CB-0B19-4282-A724-F2F090850564}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson", "src\AspNetCore.NewtonsoftJson\Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson.csproj", "{64B30E17-4CF5-421F-814C-DF4730B508BA}"
@@ -48,6 +46,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Tests", "test\AspNetCore.Tests\AspNetCore.Tests.csproj", "{A8F0A232-3C70-4C9F-B35F-18B33D60D989}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions.Tests", "test\Extensions.Tests\Extensions.Tests.csproj", "{75C55F46-7422-4E00-B41B-0DB5593B4641}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D65A8130-6A58-4693-A96C-8C1DFA3CA355}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,18 +113,6 @@ Global
 		{D395061D-AAAB-4B6A-BEC4-5B46F5FE70CD}.Release|x64.Build.0 = Release|Any CPU
 		{D395061D-AAAB-4B6A-BEC4-5B46F5FE70CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{D395061D-AAAB-4B6A-BEC4-5B46F5FE70CD}.Release|x86.Build.0 = Release|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Debug|x64.Build.0 = Debug|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Debug|x86.Build.0 = Debug|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Release|Any CPU.Build.0 = Release|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Release|x64.ActiveCfg = Release|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Release|x64.Build.0 = Release|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Release|x86.ActiveCfg = Release|Any CPU
-		{541BCDDD-9E45-48EB-AE7D-68B268CA8A99}.Release|x86.Build.0 = Release|Any CPU
 		{822A83CB-0B19-4282-A724-F2F090850564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{822A83CB-0B19-4282-A724-F2F090850564}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{822A83CB-0B19-4282-A724-F2F090850564}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -267,5 +255,6 @@ Global
 		{2AC35C3E-33B8-4DC1-8E5E-DBB1EE64BECC} = {8FFDF555-DB50-45F9-9A2D-6410F39151C3}
 		{A8F0A232-3C70-4C9F-B35F-18B33D60D989} = {DF33E0FB-9790-4654-B60F-8AB22E0CC3D1}
 		{75C55F46-7422-4E00-B41B-0DB5593B4641} = {DF33E0FB-9790-4654-B60F-8AB22E0CC3D1}
+		{166F1873-4CAE-4F54-88B6-5FE79678846B} = {D65A8130-6A58-4693-A96C-8C1DFA3CA355}
 	EndGlobalSection
 EndGlobal

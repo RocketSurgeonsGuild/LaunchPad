@@ -4,10 +4,11 @@ using FakeItEasy;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Extensions.Testing;
+using Rocket.Surgery.SpaceShuttle.Extensions.Validation;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Rocket.Surgery.Extensions.FluentValidation.Tests
+namespace Extensions.Tests.Validation
 {
     public class ValidatorFactoryTests : AutoFakeTest
     {

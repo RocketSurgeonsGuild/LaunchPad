@@ -1,0 +1,8 @@
+﻿<Project>
+    <PropertyGroup>
+        <CoreCompileDependsOn>
+            $(CoreCompileDependsOn);
+            AddSpaceShuttleAspNetCoreMvcAttributes;
+        </CoreCompileDependsOn>
+    </PropertyGroup>
+</Project>

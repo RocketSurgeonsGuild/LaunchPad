@@ -8,4 +8,7 @@
         <None Include="build/*.*" Pack="true" PackagePath="build" />
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Extensions\Rocket.Surgery.SpaceShuttle.Extensions.csproj" />
+    </ItemGroup>
 </Project>

@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
-using FluentValidation;
 using FluentValidation.Results;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Rocket.Surgery.AspNetCore.FluentValidation
+namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
 {
     /// <summary>
     /// Problem Details for Fluent Validation

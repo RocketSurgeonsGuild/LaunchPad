@@ -1,9 +1,10 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Rocket.Surgery.AspNetCore.Swashbuckle;
+using Rocket.Surgery.Conventions;
+using Rocket.Surgery.SpaceShuttle.Extensions;
+using Rocket.Surgery.SpaceShuttle.Restful.Conventions;
 
-// ReSharper disable once CheckNamespace
-namespace Rocket.Surgery.Conventions
+namespace Rocket.Surgery.SpaceShuttle.Restful.OpenApi
 {
     /// <summary>
     /// FluentValidationHostBuilderExtensions.

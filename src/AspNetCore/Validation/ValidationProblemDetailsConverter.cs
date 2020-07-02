@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 
-namespace Rocket.Surgery.AspNetCore.FluentValidation
+namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
 {
     /// <summary>
     /// A RFC 7807 compliant <see cref="JsonConverter" /> for <see cref="FluentValidationProblemDetails" />.

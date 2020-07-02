@@ -1,14 +1,12 @@
-using System;
 using System.Reflection;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Extensions.FluentValidation;
+using Rocket.Surgery.SpaceShuttle.Extensions.Validation;
 
-namespace Rocket.Surgery.AspNetCore.FluentValidation
+namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
 {
     [PublicAPI]
     public static class AspNetCoreFluentValidationExtensions

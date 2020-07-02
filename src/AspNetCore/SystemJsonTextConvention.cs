@@ -1,21 +1,18 @@
 using System;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml.XPath;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
-using Rocket.Surgery.AspNetCore;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.SpaceShuttle.AspNetCore;
 
 [assembly: Convention(typeof(SystemJsonTextConvention))]
 
-namespace Rocket.Surgery.AspNetCore
+namespace Rocket.Surgery.SpaceShuttle.AspNetCore
 {
     /// <summary>
     /// ValidationConvention.

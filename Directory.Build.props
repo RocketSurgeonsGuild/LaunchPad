@@ -11,6 +11,7 @@
         <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
         <NoWarn>NU5105;CS0579;CS0436;$(NoWarn)</NoWarn>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
     <ItemGroup>
         <None Include="$(MSBuildThisFileDirectory)/.tmp/packageicon.png" Condition="Exists('$(MSBuildThisFileDirectory)/.tmp/packageicon.png')" Pack="true" PackagePath="/images/" Visible="false" />

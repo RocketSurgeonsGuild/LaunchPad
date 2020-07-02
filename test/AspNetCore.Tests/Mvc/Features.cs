@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace Rocket.Surgery.AspNetCore.Tests.Mvc
+namespace AspNetCore.Tests.Mvc
 {
 #pragma warning disable RCS1102 // Make class static.
 #pragma warning disable IDE0040 // Add accessibility modifiers

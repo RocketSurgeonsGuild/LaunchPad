@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,7 +9,7 @@ using FluentValidation.Results;
 using FluentValidation.Validators;
 using JetBrains.Annotations;
 
-namespace Rocket.Surgery.Extensions.FluentValidation
+namespace Rocket.Surgery.SpaceShuttle.Extensions.Validation
 {
     /// <summary>
     /// PolymorphicPropertyValidator.

@@ -8,15 +8,15 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.MediatR;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.Conventions.Scanners;
 using Rocket.Surgery.Extensions.Testing;
+using Rocket.Surgery.SpaceShuttle.Extensions;
+using Rocket.Surgery.SpaceShuttle.Extensions.Conventions;
 using Xunit;
 using Xunit.Abstractions;
-#pragma warning disable CA1034
 
-namespace Rocket.Surgery.Extensions.MediatR.Tests
+namespace Extensions.Tests
 {
     public class MediatRTests : AutoFakeTest
     {

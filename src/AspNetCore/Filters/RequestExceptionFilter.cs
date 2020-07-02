@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace Rocket.Surgery.AspNetCore.Filters
+namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Filters
 {
     /// <summary>
     /// Not found exception that catches not found messages that might have been thrown by calling code.

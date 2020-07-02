@@ -8,5 +8,15 @@
     <ItemGroup>
         <AdditionalFiles Condition="Exists('PublicAPI.Shipped.txt')" Include="PublicAPI.Shipped.txt" />
         <AdditionalFiles Condition="Exists('PublicAPI.Unshipped.txt')" Include="PublicAPI.Unshipped.txt" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.AspNetCore" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.Extensions" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.Extensions.NewtonsoftJson" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.Commands" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.Restful" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.Pages" />
+        <InternalsVisibleTo Include="Rocket.Surgery.SpaceShuttle.Workers" />
+        <InternalsVisibleTo Include="AspNetCore.Tests" />
+        <InternalsVisibleTo Include="Extensions.Tests" />
     </ItemGroup>
 </Project>

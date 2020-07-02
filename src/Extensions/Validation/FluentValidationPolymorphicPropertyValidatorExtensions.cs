@@ -1,10 +1,9 @@
 using System;
+using FluentValidation;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Extensions.FluentValidation;
 
-// ReSharper disable once CheckNamespace
-namespace FluentValidation
+namespace Rocket.Surgery.SpaceShuttle.Extensions.Validation
 {
     /// <summary>
     /// FluentValidationPolymorphicPropertyValidatorExtensions.
