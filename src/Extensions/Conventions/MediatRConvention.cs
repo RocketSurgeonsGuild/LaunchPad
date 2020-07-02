@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.SpaceShuttle.Extensions.Conventions;
+using Rocket.Surgery.LaunchPad.Extensions.Conventions;
 
 [assembly: Convention(typeof(MediatRConvention))]
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions.Conventions
+namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
 {
     /// <summary>
     /// MediatRConvention.

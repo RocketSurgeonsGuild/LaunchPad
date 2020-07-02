@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Razor;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore
+namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
     /// <summary>
     /// Class FeatureViewLocationExpander.

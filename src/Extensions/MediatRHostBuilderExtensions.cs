@@ -3,15 +3,15 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.SpaceShuttle.Extensions.Conventions;
+using Rocket.Surgery.LaunchPad.Extensions.Conventions;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions
+namespace Rocket.Surgery.LaunchPad.Extensions
 {
     /// <summary>
     /// MediatRHostBuilderExtensions.
     /// </summary>
     [PublicAPI]
-    public static class SpaceShuttleHostBuilderExtensions
+    public static class LaunchPadHostBuilderExtensions
     {
         /// <summary>
         /// Adds MediatR.

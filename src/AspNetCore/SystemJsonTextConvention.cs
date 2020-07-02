@@ -8,11 +8,11 @@ using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.SpaceShuttle.AspNetCore;
+using Rocket.Surgery.LaunchPad.AspNetCore;
 
 [assembly: Convention(typeof(SystemJsonTextConvention))]
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore
+namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
     /// <summary>
     /// ValidationConvention.

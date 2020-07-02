@@ -1,4 +1,4 @@
-# Rocket Surgeons - Space Shuttle
+# Rocket Surgeons - Launch Pad
 
 A common set of libraries used to build console and web applications.
 
@@ -39,9 +39,9 @@ TBD
 <!-- nuke-data
 github:
   owner: RocketSurgeonsGuild
-  repository: SpaceShuttle
+  repository: LaunchPad
 azurepipelines:
   account: rocketsurgeonsguild
   teamproject: Libraries
-  builddefinition: 48
+  builddefinition: 49
 -->

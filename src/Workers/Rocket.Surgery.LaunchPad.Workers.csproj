@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+        <PackageDescription></PackageDescription>
+        <PackageTags>$(PackageTags)</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="build/*.*" Pack="true" PackagePath="build" />
+        <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+    </ItemGroup>
+</Project>

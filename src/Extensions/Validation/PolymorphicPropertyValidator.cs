@@ -9,7 +9,7 @@ using FluentValidation.Results;
 using FluentValidation.Validators;
 using JetBrains.Annotations;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions.Validation
+namespace Rocket.Surgery.LaunchPad.Extensions.Validation
 {
     /// <summary>
     /// PolymorphicPropertyValidator.

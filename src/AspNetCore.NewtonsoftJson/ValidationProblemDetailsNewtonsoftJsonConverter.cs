@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.Validation;
+using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson
+namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
 {
     /// <summary>
     /// A RFC 7807 compliant <see cref="Newtonsoft.Json.JsonConverter" /> for <see cref="FluentValidationProblemDetails" />.

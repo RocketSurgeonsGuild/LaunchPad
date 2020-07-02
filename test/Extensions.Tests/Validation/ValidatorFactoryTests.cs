@@ -4,7 +4,7 @@ using FakeItEasy;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.SpaceShuttle.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Extensions.Validation;
 using Xunit;
 using Xunit.Abstractions;
 

@@ -4,7 +4,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using JetBrains.Annotations;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     /// <summary>
     /// A validation error problem

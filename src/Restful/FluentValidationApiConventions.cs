@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.Validation;
+using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 #pragma warning disable CA1801
 #pragma warning disable RCS1163 // Unused parameter.
 // ReSharper disable UnusedParameter.Global
 
-namespace Rocket.Surgery.SpaceShuttle.Restful
+namespace Rocket.Surgery.LaunchPad.Restful
 {
     public static class RestfulConventions
     {

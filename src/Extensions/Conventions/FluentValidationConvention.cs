@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.SpaceShuttle.Extensions.Conventions;
+using Rocket.Surgery.LaunchPad.Extensions.Conventions;
 
 [assembly: Convention(typeof(FluentValidationConvention))]
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions.Conventions
+namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
 {
     /// <summary>
     /// ValidationConvention.

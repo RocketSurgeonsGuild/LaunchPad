@@ -5,10 +5,9 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="build/*.*" Pack="true" PackagePath="build" />
-        <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Extensions\Rocket.Surgery.SpaceShuttle.Extensions.csproj" />
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     </ItemGroup>
 </Project>

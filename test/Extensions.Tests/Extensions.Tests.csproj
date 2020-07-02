@@ -3,9 +3,9 @@
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Extensions\Rocket.Surgery.SpaceShuttle.Extensions.csproj" />
-      <ProjectReference Include="..\..\src\Extensions.NewtonsoftJson\Rocket.Surgery.SpaceShuttle.Extensions.NewtonsoftJson.csproj" />
-      <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.SpaceShuttle.Commands.csproj" />
-      <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.SpaceShuttle.Workers.csproj" />
+      <ProjectReference Include="..\..\src\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+      <ProjectReference Include="..\..\src\Extensions.NewtonsoftJson\Rocket.Surgery.LaunchPad.Extensions.NewtonsoftJson.csproj" />
+      <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.LaunchPad.Commands.csproj" />
+      <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.LaunchPad.Workers.csproj" />
     </ItemGroup>
 </Project>

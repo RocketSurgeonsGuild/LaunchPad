@@ -1,7 +1,7 @@
 using System;
 using FluentValidation;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions.Validation
+namespace Rocket.Surgery.LaunchPad.Extensions.Validation
 {
     /// <summary>
     /// ValidatorFactory.

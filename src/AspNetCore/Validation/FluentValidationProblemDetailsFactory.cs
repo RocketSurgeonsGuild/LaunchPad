@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     internal sealed class FluentValidationProblemDetailsFactory : ProblemDetailsFactory
     {
@@ -65,7 +65,7 @@ namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
 
             if (httpContext.Items[typeof(ValidationResult)] is ValidationResult result)
             {
-                problemDetails = new FluentValidationProblemDetails(result!)    
+                problemDetails = new FluentValidationProblemDetails(result!)
                 {
                     Status = 422,
                     Type = type,

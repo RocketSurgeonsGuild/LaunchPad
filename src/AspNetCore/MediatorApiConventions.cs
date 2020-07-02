@@ -3,9 +3,9 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.Validation;
+using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore
+namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
     [PublicAPI]
     public static class MediatorApiConventions

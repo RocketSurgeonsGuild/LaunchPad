@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Rocket.Surgery.SpaceShuttle.Restful.OpenApi {
+namespace Rocket.Surgery.LaunchPad.Restful.OpenApi {
     class StatusCode201Filter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)

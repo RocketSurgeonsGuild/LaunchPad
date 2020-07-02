@@ -3,7 +3,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     internal class ValidatorInterceptor : IValidatorInterceptor
     {

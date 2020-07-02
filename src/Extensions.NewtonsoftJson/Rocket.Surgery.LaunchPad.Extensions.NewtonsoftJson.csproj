@@ -5,7 +5,7 @@
     <PackageTags>$(PackageTags)</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Rocket.Surgery.SpaceShuttle.Extensions.csproj" />
+    <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />

@@ -2,11 +2,11 @@ using System;
 using JetBrains.Annotations;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson.Conventions;
+using Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.Conventions;
 
 [assembly: Convention(typeof(ValidationProblemDetailsNewtonsoftJsonConvention))]
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson.Conventions
+namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.Conventions
 {
     /// <summary>
     /// ValidationProblemDetailsNewtonsoftJsonConvention.

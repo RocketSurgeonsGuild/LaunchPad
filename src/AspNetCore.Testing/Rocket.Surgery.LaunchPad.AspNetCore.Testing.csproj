@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="..\Testing\Rocket.Surgery.SpaceShuttle.Testing.csproj" />
+    <ProjectReference Include="..\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

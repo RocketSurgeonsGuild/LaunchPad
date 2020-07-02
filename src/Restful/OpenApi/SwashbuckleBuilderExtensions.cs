@@ -1,10 +1,10 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.SpaceShuttle.Extensions;
-using Rocket.Surgery.SpaceShuttle.Restful.Conventions;
+using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Restful.Conventions;
 
-namespace Rocket.Surgery.SpaceShuttle.Restful.OpenApi
+namespace Rocket.Surgery.LaunchPad.Restful.OpenApi
 {
     /// <summary>
     /// FluentValidationHostBuilderExtensions.

@@ -5,16 +5,10 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <None Include="build/*.*" Pack="true" PackagePath="build" />
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Extensions\Rocket.Surgery.SpaceShuttle.Extensions.csproj" />
-        <PackageReference Include="FluentValidation.AspNetCore" />
-        <PackageReference Include="Rocket.Surgery.Build.Information" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Contributions" />
+      <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
     </ItemGroup>
 </Project>

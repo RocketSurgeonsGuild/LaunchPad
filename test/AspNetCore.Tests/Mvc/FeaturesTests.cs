@@ -3,7 +3,7 @@ using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Common;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Rocket.Surgery.SpaceShuttle.AspNetCore;
+using Rocket.Surgery.LaunchPad.AspNetCore;
 using Xunit;
 
 namespace AspNetCore.Tests.Mvc

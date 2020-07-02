@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Rocket.Surgery.Build.Information;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore
+namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
     /// <summary>
     /// Class FeatureConvention.

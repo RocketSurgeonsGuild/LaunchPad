@@ -3,7 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     /// <summary>
     /// Captures the validation exception

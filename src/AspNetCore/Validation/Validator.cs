@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using JetBrains.Annotations;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     [UsedImplicitly]
     internal class FluentValidationProblemDetailsValidator : AbstractValidator<FluentValidationProblemDetails>

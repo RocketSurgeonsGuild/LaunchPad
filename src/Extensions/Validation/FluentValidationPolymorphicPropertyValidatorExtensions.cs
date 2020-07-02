@@ -3,7 +3,7 @@ using FluentValidation;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions.Validation
+namespace Rocket.Surgery.LaunchPad.Extensions.Validation
 {
     /// <summary>
     /// FluentValidationPolymorphicPropertyValidatorExtensions.

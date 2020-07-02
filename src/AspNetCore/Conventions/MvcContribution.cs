@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.Conventions;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.Filters;
+using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
 [assembly: Convention(typeof(AspNetCoreConvention))]
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Conventions
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 {
     /// <summary>
     /// Class MvcConvention.

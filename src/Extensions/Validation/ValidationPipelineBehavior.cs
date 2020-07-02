@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions
+namespace Rocket.Surgery.LaunchPad.Extensions
 {
     internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R>
     {

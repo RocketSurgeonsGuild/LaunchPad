@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     /// <summary>
     /// Problem Details for Fluent Validation

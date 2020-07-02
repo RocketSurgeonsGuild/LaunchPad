@@ -5,9 +5,9 @@ using FluentValidation;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Rocket.Surgery.SpaceShuttle.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Extensions.Validation;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions
+namespace Rocket.Surgery.LaunchPad.Extensions
 {
     /// <summary>
     /// Fluent validations

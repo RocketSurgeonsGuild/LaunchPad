@@ -7,7 +7,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions
+namespace Rocket.Surgery.LaunchPad.Extensions
 {
     /// <summary>
     /// MediatRServicesExtensions.

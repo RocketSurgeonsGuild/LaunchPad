@@ -3,12 +3,12 @@ using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.__convert;
-using Rocket.Surgery.SpaceShuttle.AspNetCore.Validation;
+using Rocket.Surgery.LaunchPad.AspNetCore.__convert;
+using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 [assembly: Convention(typeof(AspNetCoreFluentValidationConvention))]
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.__convert
+namespace Rocket.Surgery.LaunchPad.AspNetCore.__convert
 {
     /// <summary>
     /// AspNetCoreFluentValidationConvention.

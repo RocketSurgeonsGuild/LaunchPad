@@ -1,6 +1,6 @@
 using System;
 
-namespace Rocket.Surgery.SpaceShuttle.Extensions
+namespace Rocket.Surgery.LaunchPad.Extensions
 {
     /// <summary>
     /// RequestException.

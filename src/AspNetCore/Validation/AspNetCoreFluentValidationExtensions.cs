@@ -4,9 +4,9 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.SpaceShuttle.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Extensions.Validation;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     [PublicAPI]
     public static class AspNetCoreFluentValidationExtensions

@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Rocket.Surgery.SpaceShuttle.Restful.OpenApi {
+namespace Rocket.Surgery.LaunchPad.Restful.OpenApi {
     class ProblemDetailsSchemaFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)

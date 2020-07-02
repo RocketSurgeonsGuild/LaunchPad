@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Rocket.Surgery.SpaceShuttle.AspNetCore.NewtonsoftJson
+namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
 {
     [PublicAPI]
     public static class AspNetCoreFluentValidationNewtonsoftJsonExtensions

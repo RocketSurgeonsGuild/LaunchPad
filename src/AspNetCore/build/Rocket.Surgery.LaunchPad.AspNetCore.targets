@@ -1,5 +1,5 @@
 ﻿<Project>
-    <Target Name="AddSpaceShuttleAspNetCoreMvcAttributes" BeforeTargets="CoreCompile">
+    <Target Name="AddLaunchPadAspNetCoreMvcAttributes" BeforeTargets="CoreCompile">
         <ItemGroup>
             <AssemblyMetadata Include="FeatureFolderNamespace" Value="$(RootNamespace)" />
             <AssemblyAttribute Include="JetBrains.Annotations.AspMvcViewLocationFormatAttribute">

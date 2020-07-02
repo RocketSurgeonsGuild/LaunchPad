@@ -8,6 +8,11 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.SpaceShuttle.AspNetCore.csproj" />
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <ProjectReference Include="..\Extensions.NewtonsoftJson\Rocket.Surgery.LaunchPad.Extensions.NewtonsoftJson.csproj" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="__convert" />
     </ItemGroup>
 </Project>

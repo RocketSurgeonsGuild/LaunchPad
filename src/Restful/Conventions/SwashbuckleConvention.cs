@@ -12,15 +12,15 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.SpaceShuttle.Extensions.Validation;
-using Rocket.Surgery.SpaceShuttle.Restful.Conventions;
-using Rocket.Surgery.SpaceShuttle.Restful.OpenApi;
+using Rocket.Surgery.LaunchPad.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Restful.Conventions;
+using Rocket.Surgery.LaunchPad.Restful.OpenApi;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 [assembly: Convention(typeof(SwashbuckleConvention))]
 
-namespace Rocket.Surgery.SpaceShuttle.Restful.Conventions
+namespace Rocket.Surgery.LaunchPad.Restful.Conventions
 {
     /// <summary>
     /// ValidationConvention.
