@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Extensions.Conventions;
@@ -22,6 +23,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
         {
             var serviceConfig = context.GetOrAdd(() => new MediatRServiceConfiguration());
             context.UseMediatR(serviceConfig);
+            context.Services.AddExecuteScopedServices();
         }
     }
 }

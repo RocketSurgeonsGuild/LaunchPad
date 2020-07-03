@@ -5,25 +5,19 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Extensions;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore
+namespace Rocket.Surgery.LaunchPad.Restful
 {
     /// <summary>
     /// Default controller that integrates with <see cref="IMediator" />
     /// </summary>
     [PublicAPI]
     [ApiController]
-    [ApiConventionType(typeof(MediatorApiConventions))]
-    public abstract class MediatorApiController : ControllerBase
+    public abstract class RestfulApiController : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="mediator"></param>
-        protected MediatorApiController(IMediator mediator) => _mediator = mediator;
+        private IMediator? _mediator;
 
         /// <summary>
         /// Send an request and allow for async <see cref="ActionResult{TResponse}" />
@@ -46,88 +40,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
                 throw new ArgumentNullException(nameof(success));
             }
 
-            try
-            {
-                return await success(await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false))
-                   .ConfigureAwait(false);
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (RequestException e)
-            {
-                return BadRequest(
-                    ProblemDetailsFactory.CreateProblemDetails(
-                        HttpContext,
-                        StatusCodes.Status400BadRequest,
-                        detail: e.Message
-                    )
-                );
-            }
-            catch (ValidationException e)
-            {
-                HttpContext.Items[typeof(ValidationException)] = e;
-                return UnprocessableEntity(
-                    ProblemDetailsFactory.CreateValidationProblemDetails(
-                        HttpContext,
-                        ModelState,
-                        StatusCodes.Status422UnprocessableEntity
-                    )
-                );
-            }
-        }
-
-        /// <summary>
-        /// Send an request and allow for async <see cref="ActionResult" />
-        /// </summary>
-        /// <param name="request">The request model</param>
-        /// <param name="success">The method to call when the request succeeds</param>
-        protected async Task<ActionResult> Send<TResponse>(
-            IRequest<TResponse> request,
-            Func<Task<ActionResult>> success
-        )
-        {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
-            if (success is null)
-            {
-                throw new ArgumentNullException(nameof(success));
-            }
-
-            try
-            {
-                await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
-                return await success().ConfigureAwait(false);
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (RequestException e)
-            {
-                return BadRequest(
-                    ProblemDetailsFactory.CreateProblemDetails(
-                        HttpContext,
-                        StatusCodes.Status400BadRequest,
-                        detail: e.Message
-                    )
-                );
-            }
-            catch (ValidationException e)
-            {
-                HttpContext.Items[typeof(ValidationException)] = e;
-                return UnprocessableEntity(
-                    ProblemDetailsFactory.CreateValidationProblemDetails(
-                        HttpContext,
-                        ModelState,
-                        StatusCodes.Status422UnprocessableEntity
-                    )
-                );
-            }
+            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+            return await success(await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false))
+               .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -151,35 +66,33 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
                 throw new ArgumentNullException(nameof(success));
             }
 
-            try
+            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+            return success(await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Send an request and allow for async <see cref="ActionResult" />
+        /// </summary>
+        /// <param name="request">The request model</param>
+        /// <param name="success">The method to call when the request succeeds</param>
+        protected async Task<ActionResult> Send<TResponse>(
+            IRequest<TResponse> request,
+            Func<Task<ActionResult>> success
+        )
+        {
+            if (request is null)
             {
-                return success(await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false));
+                throw new ArgumentNullException(nameof(request));
             }
-            catch (NotFoundException)
+
+            if (success is null)
             {
-                return NotFound();
+                throw new ArgumentNullException(nameof(success));
             }
-            catch (RequestException e)
-            {
-                return BadRequest(
-                    ProblemDetailsFactory.CreateProblemDetails(
-                        HttpContext,
-                        StatusCodes.Status400BadRequest,
-                        detail: e.Message
-                    )
-                );
-            }
-            catch (ValidationException e)
-            {
-                HttpContext.Items[typeof(ValidationException)] = e;
-                return UnprocessableEntity(
-                    ProblemDetailsFactory.CreateValidationProblemDetails(
-                        HttpContext,
-                        ModelState,
-                        StatusCodes.Status422UnprocessableEntity
-                    )
-                );
-            }
+
+            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+            await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+            return await success().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -199,36 +112,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
                 throw new ArgumentNullException(nameof(success));
             }
 
-            try
-            {
-                await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
-                return success();
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (RequestException e)
-            {
-                return BadRequest(
-                    ProblemDetailsFactory.CreateProblemDetails(
-                        HttpContext,
-                        StatusCodes.Status400BadRequest,
-                        detail: e.Message
-                    )
-                );
-            }
-            catch (ValidationException e)
-            {
-                HttpContext.Items[typeof(ValidationException)] = e;
-                return UnprocessableEntity(
-                    ProblemDetailsFactory.CreateValidationProblemDetails(
-                        HttpContext,
-                        ModelState,
-                        StatusCodes.Status422UnprocessableEntity
-                    )
-                );
-            }
+            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+            await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+            return success();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -16,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.Restful.OpenApi {
             var patchCollections =
                 operation.Responses.Values.Select(x => x.Content ?? new Dictionary<string, OpenApiMediaType>())
                    .Concat(new[] { operation.RequestBody?.Content ?? new Dictionary<string, OpenApiMediaType>() })
-                   .Where(x => x.Keys.Any(z => z.Contains("patch")))
+                   .Where(x => x.Keys.Any(z => z.Contains("patch", StringComparison.OrdinalIgnoreCase)))
                    .ToArray();
 
             foreach (var item in contentCollections)
@@ -27,7 +28,7 @@ namespace Rocket.Surgery.LaunchPad.Restful.OpenApi {
 
             foreach (var item in patchCollections)
             {
-                foreach (var p in item.Where(z => z.Key.Contains("patch")).ToArray())
+                foreach (var p in item.Where(z => z.Key.Contains("patch", StringComparison.OrdinalIgnoreCase)).ToArray())
                 {
                     item.Remove(p.Key);
                 }

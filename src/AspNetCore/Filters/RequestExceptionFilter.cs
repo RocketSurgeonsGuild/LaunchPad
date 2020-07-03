@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Rocket.Surgery.LaunchPad.Extensions;
 
 // ReSharper disable ClassNeverInstantiated.Global
 

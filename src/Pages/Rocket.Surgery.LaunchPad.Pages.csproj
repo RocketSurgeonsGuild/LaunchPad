@@ -9,5 +9,9 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
 </Project>

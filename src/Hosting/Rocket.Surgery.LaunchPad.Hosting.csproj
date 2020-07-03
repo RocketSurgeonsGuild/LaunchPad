@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1</TargetFrameworks>
+        <PackageDescription></PackageDescription>
+        <PackageTags>$(PackageTags)</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Rocket.Surgery.Hosting" />
+        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />
+        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Yaml" />
+    </ItemGroup>
+</Project>

@@ -1,4 +1,5 @@
 using System;
+using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -8,6 +9,7 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
+using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 [assembly: Convention(typeof(AspNetCoreConvention))]
 
@@ -17,9 +19,19 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
     /// Class MvcConvention.
     /// </summary>
     /// <seealso cref="IServiceConvention" />
-    /// TODO Edit XML Comment Template for MvcConvention
     public class AspNetCoreConvention : IServiceConvention
     {
+        private readonly FluentValidationMvcConfiguration? _configuration;
+
+        /// <summary>
+        /// Configure aspnet with some logical defaults
+        /// </summary>
+        /// <param name="configuration"></param>
+        public AspNetCoreConvention(FluentValidationMvcConfiguration? configuration = null)
+        {
+            _configuration = configuration;
+        }
+
         /// <summary>
         /// Registers the specified context.
         /// </summary>
@@ -66,6 +78,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 options.Filters.Add<NotFoundExceptionFilter>();
                 options.Filters.Add<RequestExceptionFilter>();
             });
+
+            context.Services
+               .AddFluentValidationExtensions(_configuration);
         }
 
         /// <summary>

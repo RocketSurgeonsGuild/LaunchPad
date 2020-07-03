@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Rocket.Surgery.LaunchPad.Extensions;
 
 // ReSharper disable ClassNeverInstantiated.Global
 

@@ -18,13 +18,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
         /// </summary>
         public FluentValidationProblemDetails() : this(Array.Empty<ValidationFailure>()) { }
 
-#pragma warning disable CA1062 // Validate arguments of public methods
         /// <summary>
         /// Build Fluent Validation Problem Details from a <see cref="ValidationResult" />
         /// </summary>
         /// <param name="result"></param>
         public FluentValidationProblemDetails([NotNull] ValidationResult result) : this(result.Errors)
-#pragma warning restore CA1062 // Validate arguments of public methods
         {
             if (result == null)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
+#pragma warning disable 8618
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
 {
@@ -69,9 +70,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
             /// <summary>
             /// Required for JSON.NET deserialization.
             /// </summary>
-#pragma warning disable CS8618
             public AnnotatedProblemDetails() { }
-#pragma warning disable CS8618
 
             /// <summary>
             /// Required for JSON.NET deserialization.

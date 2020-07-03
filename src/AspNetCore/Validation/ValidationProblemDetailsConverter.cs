@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
+#pragma warning disable 8618
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
@@ -53,9 +54,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
         [UsedImplicitly]
         internal class AnnotatedProblemDetails
         {
-#pragma warning disable CS8618
             public AnnotatedProblemDetails() { }
-#pragma warning restore CS8618
 
             public AnnotatedProblemDetails(FluentValidationProblemDetails problemDetails)
             {

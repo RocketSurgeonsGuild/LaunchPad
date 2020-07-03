@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>netstandard2.1</TargetFrameworks>
         <PackageDescription></PackageDescription>
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
@@ -9,6 +9,10 @@
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+        <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+        <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Rocket.Surgery.LaunchPad.Extensions
 {
-    internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R>
+    internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where T : notnull
     {
         private readonly IValidatorFactory _validatorFactory;
         private readonly IServiceProvider _serviceProvider;

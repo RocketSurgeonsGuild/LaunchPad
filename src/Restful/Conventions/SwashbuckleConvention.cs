@@ -17,6 +17,7 @@ using Rocket.Surgery.LaunchPad.Restful.Conventions;
 using Rocket.Surgery.LaunchPad.Restful.OpenApi;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 [assembly: Convention(typeof(SwashbuckleConvention))]
 
@@ -41,6 +42,8 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
             {
                 throw new ArgumentNullException(nameof(context));
             }
+
+            context.Services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
 
             context.Services.AddSwaggerGen(
                 options =>
@@ -96,18 +99,20 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
                         {
                             options.IncludeXmlComments(item);
                         }
+#pragma warning disable CA1301
                         catch (Exception e)
                         {
                             context.Logger.LogDebug(e, "Error adding XML comments from {XmlFile}", item);
                         }
+#pragma warning enable CA1301
                     }
                 }
             );
 
-            AddFluentValdiationRules(context.Services);
+            AddFluentValidationRules(context.Services);
         }
 
-        private static void AddFluentValdiationRules(IServiceCollection services)
+        private static void AddFluentValidationRules(IServiceCollection services)
         {
             services.AddSingleton(
                 new FluentValidationRule("NotEmpty")
@@ -152,8 +157,8 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
                             )
                            .FirstOrDefault();
                         if (propertyType != null &&
-                            (propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ||
-                                propertyType.IsEnum))
+                            ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ||
+                                propertyType.IsEnum ))
                         {
                             context.Schema.Required.Add(context.PropertyKey);
                             context.Schema.Properties[context.PropertyKey].Nullable = false;
@@ -171,8 +176,8 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
                     Apply = context =>
                     {
                         context.Schema.Properties[context.PropertyKey].Nullable =
-                            !(context.PropertyValidator is INotNullValidator ||
-                                context.PropertyValidator is INotEmptyValidator);
+                            !( context.PropertyValidator is INotNullValidator ||
+                                context.PropertyValidator is INotEmptyValidator );
                     }
                 }
             );
@@ -191,4 +196,6 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
             );
         }
     }
+
+
 }

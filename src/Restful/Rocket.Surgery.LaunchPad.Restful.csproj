@@ -3,17 +3,21 @@
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
         <PackageDescription></PackageDescription>
         <PackageTags>$(PackageTags)</PackageTags>
+        <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Swashbuckle.AspNetCore" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" />
         <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />
+        <PackageReference Include="Hellang.Middleware.ProblemDetails" />
+        <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
 </Project>
