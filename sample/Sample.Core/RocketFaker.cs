@@ -3,7 +3,7 @@ using Sample.Core.Domain;
 
 namespace Sample.Core
 {
-    class RocketFaker : Faker<Sample.Core.Domain.ReadyRocket>
+    public class RocketFaker : Faker<Sample.Core.Domain.ReadyRocket>
     {
         public RocketFaker()
         {

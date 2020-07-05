@@ -7,6 +7,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.Extensions.Conventions;
+using Rocket.Surgery.LaunchPad.Extensions.Validation;
 
 [assembly: Convention(typeof(FluentValidationConvention))]
 

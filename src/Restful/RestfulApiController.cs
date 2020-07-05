@@ -18,6 +18,7 @@ namespace Rocket.Surgery.LaunchPad.Restful
     public abstract class RestfulApiController : ControllerBase
     {
         private IMediator? _mediator;
+        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
 
         /// <summary>
         /// Send an request and allow for async <see cref="ActionResult{TResponse}" />
@@ -40,8 +41,7 @@ namespace Rocket.Surgery.LaunchPad.Restful
                 throw new ArgumentNullException(nameof(success));
             }
 
-            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
-            return await success(await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false))
+            return await success(await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false))
                .ConfigureAwait(false);
         }
 
@@ -66,8 +66,7 @@ namespace Rocket.Surgery.LaunchPad.Restful
                 throw new ArgumentNullException(nameof(success));
             }
 
-            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
-            return success(await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false));
+            return success(await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -90,8 +89,7 @@ namespace Rocket.Surgery.LaunchPad.Restful
                 throw new ArgumentNullException(nameof(success));
             }
 
-            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
-            await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+            await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
             return await success().ConfigureAwait(false);
         }
 
@@ -112,9 +110,24 @@ namespace Rocket.Surgery.LaunchPad.Restful
                 throw new ArgumentNullException(nameof(success));
             }
 
-            _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
-            await _mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+            await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
             return success();
+        }
+
+        /// <summary>
+        /// Send an request and allow for sync <see cref="ActionResult" />
+        /// </summary>
+        /// <param name="request">The request model</param>
+        /// <param name="success">The method to call when the request succeeds</param>
+        protected async Task<ActionResult> Send(IRequest<Unit> request)
+        {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+            return NoContent();
         }
     }
 }

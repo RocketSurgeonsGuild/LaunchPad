@@ -12,22 +12,37 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
     /// <summary>
     /// Not found exception that catches not found messages that might have been thrown by calling code.
     /// </summary>
-    public class RequestExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
+    public class RequestFailedExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
     {
         private readonly ProblemDetailsFactory _problemDetailsFactory;
 
         /// <summary>
         /// Not found exception that catches not found messages that might have been thrown by calling code.
         /// </summary>
-        public RequestExceptionFilter(ProblemDetailsFactory problemDetailsFactory) => _problemDetailsFactory = problemDetailsFactory;
+        public RequestFailedExceptionFilter(ProblemDetailsFactory problemDetailsFactory) => _problemDetailsFactory = problemDetailsFactory;
 
         /// <inheritdoc />
         public void OnException(ExceptionContext context)
         {
-            if (context?.Exception is RequestException)
+            if (context?.Exception is RequestFailedException requestFailedException)
             {
                 context.ExceptionHandled = true;
-                context.Result = new BadRequestObjectResult(_problemDetailsFactory.CreateProblemDetails(context.HttpContext, StatusCodes.Status400BadRequest, detail: context.Exception.Message));
+                var problemDetails = _problemDetailsFactory.CreateProblemDetails(
+                    context.HttpContext,
+                    StatusCodes.Status400BadRequest,
+                    detail: requestFailedException.Message,
+                    title: requestFailedException.Title,
+                    type: requestFailedException.Link,
+                    instance: requestFailedException.Instance
+                );
+
+                foreach (var item in requestFailedException.Properties)
+                {
+                    if (problemDetails.Extensions.ContainsKey(item.Key)) continue;
+                    problemDetails.Extensions.Add(item);
+                }
+
+                context.Result = new BadRequestObjectResult(problemDetails);
             }
         }
 

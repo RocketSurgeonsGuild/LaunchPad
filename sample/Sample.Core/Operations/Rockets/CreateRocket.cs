@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,7 +7,6 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Rocket.Surgery.LaunchPad.Extensions;
 using Sample.Core.Domain;
 
@@ -15,10 +15,15 @@ namespace Sample.Core.Operations.Rockets
     [PublicAPI]
     public static class CreateRocket
     {
-        public class Request : IRequest<Guid>
+        public class Request : IRequest<Response>
         {
             public string SerialNumber { get; set; } = null!;
             public RocketType Type { get; set; }
+        }
+
+        public class Response
+        {
+            public Guid Id { get; set; }
         }
 
         class Mapper : Profile
@@ -43,7 +48,7 @@ namespace Sample.Core.Operations.Rockets
             }
         }
 
-        class Handler : IRequestHandler<Request, Guid>
+        class Handler : IRequestHandler<Request, Response>
         {
             private readonly RocketDbContext _dbContext;
             private readonly IMapper _mapper;
@@ -54,18 +59,35 @@ namespace Sample.Core.Operations.Rockets
                 _mapper = mapper;
             }
 
-            public async Task<Guid> Handle(Request request, CancellationToken cancellationToken)
+            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                if (_dbContext.Rockets.Any(z => z.SerialNumber == request.SerialNumber))
+                var existingRocket = await _dbContext.Rockets
+                   .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
+                if (existingRocket != null)
                 {
-                    throw new RequestException("A Rocket already exists with that serialnumber!");
+                    throw new RequestFailedException(
+                        "A Rocket already exists with that serial number!",
+                        title: "Rocket Creation Failed",
+                        properties: new Dictionary<string, object>()
+                        {
+                            ["data"] = new
+                            {
+                                id = existingRocket.Id,
+                                type = existingRocket.Type,
+                                sn = existingRocket.SerialNumber
+                            }
+                        }
+                    );
                 }
 
                 var rocket = _mapper.Map<ReadyRocket>(request);
                 await _dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
                 await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                return rocket.Id;
+                return new Response()
+                {
+                    Id = rocket.Id
+                };
             }
         }
     }

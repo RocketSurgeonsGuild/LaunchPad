@@ -41,7 +41,7 @@ namespace Sample.Core.Operations.Rockets
 
             public async Task<Unit> Handle(Request request, CancellationToken cancellationToken)
             {
-                var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
+                var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
                 if (rocket == null)
                 {
                     throw new NotFoundException();

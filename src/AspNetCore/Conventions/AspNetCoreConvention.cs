@@ -76,7 +76,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             {
                 options.Conventions.Add(new FeatureFolderProvider());
                 options.Filters.Add<NotFoundExceptionFilter>();
-                options.Filters.Add<RequestExceptionFilter>();
+                options.Filters.Add<RequestFailedExceptionFilter>();
             });
 
             context.Services

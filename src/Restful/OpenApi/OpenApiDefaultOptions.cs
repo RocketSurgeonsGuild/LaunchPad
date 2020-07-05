@@ -11,7 +11,15 @@ namespace Rocket.Surgery.LaunchPad.Restful.OpenApi
                                   IConfigureOptions<SwaggerOptions>,
                                   IConfigureOptions<ReDocOptions>
     {
-        void IConfigureOptions<SwaggerUIOptions>.Configure(SwaggerUIOptions options) { }
+        void IConfigureOptions<SwaggerUIOptions>.Configure(SwaggerUIOptions options)
+        {
+            options.ConfigObject.DeepLinking = true;
+            options.ConfigObject.ShowExtensions = true;
+            options.ConfigObject.ShowCommonExtensions = true;
+            options.ConfigObject.Filter = string.Empty;
+            options.ConfigObject.DisplayRequestDuration = true;
+            options.ConfigObject.DisplayOperationId = true;
+        }
 
         void IConfigureOptions<SwaggerGenOptions>.Configure(SwaggerGenOptions options) { }
 

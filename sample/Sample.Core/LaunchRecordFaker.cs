@@ -6,7 +6,7 @@ using Sample.Core.Domain;
 
 namespace Sample.Core
 {
-    class LaunchRecordFaker : Faker<LaunchRecord>
+    public class LaunchRecordFaker : Faker<LaunchRecord>
     {
         public LaunchRecordFaker(List<Sample.Core.Domain.ReadyRocket> rockets)
         {

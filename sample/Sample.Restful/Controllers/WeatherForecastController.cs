@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.Restful;
-using Sample.Core.Models;
-using Sample.Core.Operations.Rockets;
 
 namespace Sample.Restful.Controllers
 {
@@ -44,33 +37,5 @@ namespace Sample.Restful.Controllers
                 )
                .ToArray();
         }
-    }
-
-    [Route("[controller]")]
-    public class RocketController : RestfulApiController
-    {
-        private readonly IMapper _mapper;
-        public RocketController(IMapper mapper) => _mapper = mapper;
-
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public Task<ActionResult<IEnumerable<RocketModel>>> ListRockets() => Send(new ListRockets.Request(), x => Ok(x));
-
-        [HttpGet("{id:guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public Task<ActionResult<RocketModel>> GetRocket([BindRequired, FromRoute] GetRocket.Request request) => Send(request, x => Ok(x));
-
-        [HttpPost]
-        public Task<ActionResult<Guid>> CreateRocket([BindRequired, FromBody] CreateRocket.Request request) => Send(
-            request,
-            x => CreatedAtAction(nameof(GetRocket), new { id = x }, null)
-        );
-
-        [HttpPut("{id:guid}")]
-        public Task<ActionResult<RocketModel>> UpdateRocket([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditRocket.Model model)
-            => Send(EditRocket.CreateRequest(id, model, _mapper), x => Ok(x));
-
-        [HttpDelete("{id:guid}")]
-        public Task<ActionResult<Unit>> RemoveRocket([BindRequired, FromRoute] DeleteRocket.Request request) => Send(request, x => Ok(x));
     }
 }

@@ -12,7 +12,4 @@
         <ProjectReference Include="..\Extensions.NewtonsoftJson\Rocket.Surgery.LaunchPad.Extensions.NewtonsoftJson.csproj" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="__convert" />
-    </ItemGroup>
 </Project>

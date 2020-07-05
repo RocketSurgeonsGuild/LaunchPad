@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Restful.Composition;
 using Rocket.Surgery.LaunchPad.Restful.Conventions;
 using Rocket.Surgery.LaunchPad.Restful.Problems;
 

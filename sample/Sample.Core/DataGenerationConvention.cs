@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Bogus.Extensions;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,6 +15,7 @@ using Sample.Core.Domain;
 
 namespace Sample.Core
 {
+    [LiveConvention]
     public class DataGenerationConvention : IServiceConvention
     {
 
@@ -36,13 +35,9 @@ namespace Sample.Core
                 await _serviceProvider.WithScoped<RocketDbContext>().Invoke(
                     async dbContext =>
                     {
+
+
                         await dbContext.Database.EnsureCreatedAsync(cancellationToken).ConfigureAwait(false);
-                        // await dbContext.Database.MigrateAsync(cancellationToken).ConfigureAwait(false);
-                    }
-                ).ConfigureAwait(false);
-                await _serviceProvider.WithScoped<RocketDbContext>().Invoke(
-                    async dbContext =>
-                    {
                         var rocketFaker = new RocketFaker();
                         var rockets = rocketFaker.GenerateBetween(10, 100);
                         var launchFaker = new LaunchRecordFaker(rockets);
@@ -57,22 +52,6 @@ namespace Sample.Core
             }
 
             public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-        }
-    }
-
-    class DataConvention : IServiceConvention
-    {
-        public void Register(IServiceConventionContext context)
-        {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-            context.Services
-               .AddDbContext<RocketDbContext>(x => x
-                   .EnableDetailedErrors()
-                   .EnableSensitiveDataLogging()
-                   .EnableServiceProviderCaching()
-                   .UseSqlite(connection)
-                );
         }
     }
 }

@@ -32,6 +32,7 @@
         <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.1"/>
         <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="3.2.0"/>
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.5"/>
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.5" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="3.1.5" />
         <PackageVersion Include="Microsoft.Extensions.Configuration" Version="3.1.5"/>
@@ -50,6 +51,7 @@
         <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.0.0-beta.2"/>
         <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.0.0-beta.2"/>
         <PackageVersion Include="Rocket.Surgery.Conventions.AutoMapper" Version="8.0.0-beta.2" />
+        <PackageVersion Include="Rocket.Surgery.Conventions.TestHost" Version="10.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="10.0.0-beta.2"/>
         <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="10.0.0-beta.2"/>
         <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="10.0.0-beta.2"/>
@@ -62,7 +64,6 @@
         <PackageVersion Include="Scrutor" Version="3.2.1" />
         <PackageVersion Include="Swashbuckle.AspNetCore" Version="5.5.1"/>
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="5.5.1"/>
-        <PackageVersion Include="Swashbuckle.AspNetCore.Filters" Version="5.1.2"/>
         <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="1.3.0" />
         <PackageVersion Include="System.Collections.Immutable" Version="1.7.1"/>
         <PackageVersion Include="System.Interactive" Version="4.1.1"/>
@@ -70,6 +71,7 @@
         <PackageVersion Include="System.Reactive" Version="4.4.1"/>
         <PackageVersion Include="System.Reactive.Observable.Aliases" Version="4.4.1"/>
         <PackageVersion Include="System.Text.Json" Version="4.7.2"/>
+        <PackageVersion Include="System.Net.Http.Json" Version="3.2.1"/>
     </ItemGroup>
     <ItemGroup>
         <PackageVersion Include="Bogus" Version="29.0.2"/>
