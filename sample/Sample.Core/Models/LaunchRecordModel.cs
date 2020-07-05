@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoMapper;
+using NodaTime;
 using Sample.Core.Domain;
 
 namespace Sample.Core.Models
@@ -11,8 +12,8 @@ namespace Sample.Core.Models
         public string Partner { get; set; } = null!;
         public string Payload { get; set; } = null!;
         public long PayloadWeightKg { get; set; }
-        public DateTimeOffset? ActualLaunchDate { get; set; }
-        public DateTimeOffset ScheduledLaunchDate { get; set; }
+        public Instant? ActualLaunchDate { get; set; }
+        public Instant ScheduledLaunchDate { get; set; }
         public string RocketSerialNumber { get; set; } = null!;
         public RocketType RocketType { get; set; }
 

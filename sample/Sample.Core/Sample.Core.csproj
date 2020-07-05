@@ -5,10 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Operations\LaunchRecords" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Rocket.Surgery.Conventions.AutoMapper" />
       <PackageReference Include="Bogus" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />

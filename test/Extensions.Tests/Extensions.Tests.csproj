@@ -3,9 +3,12 @@
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
-      <ProjectReference Include="..\..\src\Extensions.NewtonsoftJson\Rocket.Surgery.LaunchPad.Extensions.NewtonsoftJson.csproj" />
-      <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.LaunchPad.Commands.csproj" />
-      <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.LaunchPad.Workers.csproj" />
+        <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj"/>
+        <ProjectReference Include="..\..\src\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj"/>
+        <ProjectReference Include="..\..\src\Extensions.NewtonsoftJson\Rocket.Surgery.LaunchPad.Extensions.NewtonsoftJson.csproj"/>
+        <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.LaunchPad.Commands.csproj"/>
+        <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj"/>
+        <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.LaunchPad.Workers.csproj"/>
+        <PackageReference Include="Rocket.Surgery.Conventions.TestHost"/>
     </ItemGroup>
 </Project>

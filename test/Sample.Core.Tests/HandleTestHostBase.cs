@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,12 +13,26 @@ using Rocket.Surgery.Extensions.Testing;
 using Sample.Core.Domain;
 using Serilog;
 using Serilog.Events;
-using xunit;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Core.Tests.Rockets
+namespace Sample.Core.Tests
 {
+    public class FoundationTests : HandleTestHostBase
+    {
+        public FoundationTests(ITestOutputHelper outputHelper) : base(outputHelper)
+        {
+            var testHost = ConventionTestHostBuilder.For(this, LoggerFactory)
+               .With(Logger)
+               .With(DiagnosticSource)
+               .Create();
+            ( _configuration, _serviceProvider ) = testHost.Build();
+        }
+
+        [Fact]
+        public void AutoMapper() => _serviceProvider.GetRequiredService<IMapper>().ConfigurationProvider.AssertConfigurationIsValid();
+    }
+
     public abstract class HandleTestHostBase : LoggerTest, IAsyncLifetime
     {
         protected IConfiguration _configuration;

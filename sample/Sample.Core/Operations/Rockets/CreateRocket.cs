@@ -30,7 +30,10 @@ namespace Sample.Core.Operations.Rockets
         {
             public Mapper()
             {
-                CreateMap<Request, ReadyRocket>();
+                CreateMap<Request, ReadyRocket>()
+                   .ForMember(x => x.Id, x => x.Ignore())
+                   .ForMember(x => x.LaunchRecords, x => x.Ignore())
+                    ;
             }
         }
 

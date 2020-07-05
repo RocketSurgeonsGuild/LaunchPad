@@ -39,32 +39,4 @@ namespace Sample.Restful.Controllers
         [HttpDelete("{id:guid}")]
         public Task<ActionResult> RemoveRocket([BindRequired, FromRoute] DeleteRocket.Request request) => Send(request);
     }
-
-    [Route("[controller]")]
-    public class LaunchRecordController : RestfulApiController
-    {
-        private readonly IMapper _mapper;
-        public LaunchRecordController(IMapper mapper) => _mapper = mapper;
-
-        // [HttpGet]
-        // [ProducesResponseType(StatusCodes.Status200OK)]
-        // public Task<ActionResult<IEnumerable<RocketModel>>> ListRockets() => Send(new ListRockets.Request(), x => Ok(x));
-        //
-        // [HttpGet("{id:guid}")]
-        // [ProducesResponseType(StatusCodes.Status200OK)]
-        // public Task<ActionResult<RocketModel>> GetRocket([BindRequired, FromRoute] GetRocket.Request request) => Send(request, x => Ok(x));
-        //
-        // [HttpPost]
-        // public Task<ActionResult<CreateRocket.Response>> CreateRocket([BindRequired, FromBody] CreateRocket.Request request) => Send(
-        //     request,
-        //     x => CreatedAtAction(nameof(GetRocket), new { id = x }, null)
-        // );
-        //
-        // [HttpPut("{id:guid}")]
-        // public Task<ActionResult> UpdateRocket([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditRocket.Model model)
-        //     => Send(EditRocket.CreateRequest(id, model, _mapper), NoContent);
-        //
-        // [HttpDelete("{id:guid}")]
-        // public Task<ActionResult> RemoveRocket([BindRequired, FromRoute] DeleteRocket.Request request) => Send(request);
-    }
 }

@@ -3,10 +3,8 @@
         <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\sample\Sample.Core\Sample.Core.csproj" />
-      <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="LaunchRecords" />
+        <ProjectReference Include="..\..\sample\Sample.Core\Sample.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj"/>
+        <PackageReference Include="Rocket.Surgery.Conventions.TestHost"/>
     </ItemGroup>
 </Project>

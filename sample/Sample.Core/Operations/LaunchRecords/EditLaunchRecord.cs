@@ -5,24 +5,29 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
+using NodaTime;
 using Rocket.Surgery.LaunchPad.Extensions;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
-namespace Sample.Core.Operations.Rockets
+namespace Sample.Core.Operations.LaunchRecords
 {
     [PublicAPI]
-    public static class EditRocket
+    public static class EditLaunchRecord
     {
         public static Request CreateRequest(Guid id, Model model, IMapper mapper) => mapper.Map(model, new Request(id));
 
         public class Model
         {
-            public string SerialNumber { get; set; }
-            public RocketType Type { get; set; }
+            public string Partner { get; set; } = null!;
+            public string Payload { get; set; } = null!;
+            public double PayloadWeightKg { get; set; }
+            public Instant? ActualLaunchDate { get; set; }
+            public Instant ScheduledLaunchDate { get; set; }
+            public Guid RocketId { get; set; }
         }
 
-        public class Request : Model, IRequest<RocketModel>
+        public class Request : Model, IRequest<LaunchRecordModel>
         {
             public Guid Id { get; }
 
@@ -38,12 +43,11 @@ namespace Sample.Core.Operations.Rockets
         {
             public Mapper()
             {
-                CreateMap<Request, ReadyRocket>()
+                CreateMap<Request, LaunchRecord>()
+                   .ForMember(x => x.Rocket, x => x.Ignore())
                    .ForMember(x => x.Id, x => x.Ignore())
-                   .ForMember(x => x.LaunchRecords, x => x.Ignore())
                     ;
-                CreateMap<Model, Request>()
-                    ;
+                CreateMap<Model, Request>();
             }
         }
 
@@ -51,23 +55,24 @@ namespace Sample.Core.Operations.Rockets
         {
             public Validator()
             {
-                RuleFor(x => x.Id)
+                RuleFor(x => x.Partner)
                    .NotEmpty()
                    .NotNull();
-
-                RuleFor(x => x.Type)
+                RuleFor(x => x.RocketId)
                    .NotEmpty()
-                   .NotNull()
-                   .IsInEnum();
-
-                RuleFor(x => x.SerialNumber)
+                   .NotNull();
+                RuleFor(x => x.Payload)
                    .NotEmpty()
-                   .MinimumLength(10)
-                   .MaximumLength(30);
+                   .NotNull();
+                RuleFor(x => x.ActualLaunchDate);
+                RuleFor(x => x.ScheduledLaunchDate)
+                   .NotNull();
+                RuleFor(x => x.PayloadWeightKg)
+                   .GreaterThanOrEqualTo(0d);
             }
         }
 
-        class Handler : IRequestHandler<Request, RocketModel>
+        class Handler : IRequestHandler<Request, LaunchRecordModel>
         {
             private readonly RocketDbContext _dbContext;
             private readonly IMapper _mapper;
@@ -78,9 +83,10 @@ namespace Sample.Core.Operations.Rockets
                 _mapper = mapper;
             }
 
-            public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
+            public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
             {
-                var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
+                var rocket
+                    = await _dbContext.LaunchRecords.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
                 if (rocket == null)
                 {
                     throw new NotFoundException();
@@ -90,7 +96,7 @@ namespace Sample.Core.Operations.Rockets
                 _dbContext.Update(rocket);
                 await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                return _mapper.Map<RocketModel>(rocket);
+                return _mapper.Map<LaunchRecordModel>(rocket);
             }
         }
     }

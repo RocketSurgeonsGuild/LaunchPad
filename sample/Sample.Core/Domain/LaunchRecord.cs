@@ -23,7 +23,7 @@ namespace Sample.Core.Domain
         public DateTimeOffset ScheduledLaunchDate { get; set; }
 
         public Guid RocketId { get; set; }
-        public ReadyRocket ReadyRocket { get; set; } = null!;
+        public ReadyRocket Rocket { get; set; } = null!;
 
         class Configure : ConfigureEntityType<LaunchRecord>
         {
