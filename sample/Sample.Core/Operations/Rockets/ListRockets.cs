@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,14 @@ namespace Sample.Core.Operations.Rockets
     {
         // TODO: Paging model!
         public class Request : IRequest<IEnumerable<RocketModel>> { }
+
+        class Validator : AbstractValidator<Request>
+        {
+            public Validator()
+            {
+
+            }
+        }
 
         class Handler : IRequestHandler<Request, IEnumerable<RocketModel>>
         {

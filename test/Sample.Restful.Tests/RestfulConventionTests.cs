@@ -8,15 +8,8 @@ using Xunit.Abstractions;
 
 namespace Sample.Restful.Tests
 {
-    public class RestfulConventionTests : AutoFakeTest, IClassFixture<TestWebHost>
+    public class RestfulConventionTests
     {
-        private readonly ConventionTestWebHost<Startup> _factory;
-
-        public RestfulConventionTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
-        {
-            _factory = factory.ConfigureLoggerFactory(LoggerFactory);
-        }
-
         [Theory]
         [ClassData(typeof(ApiDescriptionData<TestWebHost>))]
         public void Should_Have_Success_Response_Types(string name, ApiDescription description)

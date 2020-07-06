@@ -6,11 +6,10 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
-using Sample.Core.Operations.Rockets;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Core.Tests.Rockets
+namespace Sample.Core.Tests.LaunchRecords
 {
     public class ListLaunchRecordsTests : HandleTestHostBase
     {
@@ -21,7 +20,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_List_LaunchRecords()
         {
-            await _serviceProvider.WithScoped<RocketDbContext>()
+            await ServiceProvider.WithScoped<RocketDbContext>()
                .Invoke(
                     async z =>
                     {
@@ -34,7 +33,7 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            var response = await _serviceProvider.WithScoped<IMediator>().Invoke(
+            var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(new ListLaunchRecords.Request())
             );
 

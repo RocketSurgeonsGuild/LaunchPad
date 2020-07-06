@@ -1,22 +1,16 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Extensions;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
-using Sample.Core.Operations.Rockets;
 using Xunit;
 using Xunit.Abstractions;
-using ValidationException = FluentValidation.ValidationException;
 
-namespace Sample.Core.Tests.Rockets
+namespace Sample.Core.Tests.LaunchRecords
 {
     public class CreateLaunchRecordTests : HandleTestHostBase
     {
@@ -27,7 +21,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_Create_A_LaunchRecord()
         {
-            var rocket = await _serviceProvider.WithScoped<RocketDbContext>()
+            var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                .Invoke(
                     async z =>
                     {
@@ -43,7 +37,7 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            var response = await _serviceProvider.WithScoped<IMediator, IClock>().Invoke(
+            var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
                 (mediator, clock) => mediator.Send(
                     new CreateLaunchRecord.Request()
                     {

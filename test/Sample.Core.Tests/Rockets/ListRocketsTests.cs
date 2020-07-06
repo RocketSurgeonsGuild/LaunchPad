@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Core.Operations.LaunchRecords;
 using Sample.Core.Operations.Rockets;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,7 +22,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_List_Rockets()
         {
-            await _serviceProvider.WithScoped<RocketDbContext>()
+            await ServiceProvider.WithScoped<RocketDbContext>()
                .Invoke(
                     async z =>
                     {
@@ -31,7 +33,7 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            var response = await _serviceProvider.WithScoped<IMediator>().Invoke(
+            var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
                     new ListRockets.Request()
                         { }

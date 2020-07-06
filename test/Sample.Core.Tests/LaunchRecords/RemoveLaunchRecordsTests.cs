@@ -7,11 +7,10 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
-using Sample.Core.Operations.Rockets;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Core.Tests.Rockets
+namespace Sample.Core.Tests.LaunchRecords
 {
     public class RemoveLaunchRecordsTests : HandleTestHostBase
     {
@@ -22,7 +21,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_Remove_LaunchRecord()
         {
-            var id = await _serviceProvider.WithScoped<RocketDbContext>()
+            var id = await ServiceProvider.WithScoped<RocketDbContext>()
                .Invoke(
                     async z =>
                     {
@@ -37,11 +36,11 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            await _serviceProvider.WithScoped<IMediator>().Invoke(
+            await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(new DeleteLaunchRecord.Request() { Id = id})
             );
 
-            _serviceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
+            ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
         }
     }
 }

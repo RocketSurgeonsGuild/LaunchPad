@@ -15,6 +15,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics;
 
 namespace Sample.Restful
 {
@@ -63,6 +65,8 @@ namespace Sample.Restful
 
                     // Should this move into an extension method?
                     endpoints.MapSwagger();
+
+                    endpoints.MapAppMetrics();
                 }
             );
         }

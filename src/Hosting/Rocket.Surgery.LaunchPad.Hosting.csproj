@@ -9,4 +9,7 @@
         <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />
         <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Yaml" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+    </ItemGroup>
 </Project>

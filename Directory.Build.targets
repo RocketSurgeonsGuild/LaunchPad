@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <PropertyGroup>
-    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\.editorconfig.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <!-- .editorconfig analyzer work around -->
   <!--
   <PropertyGroup>

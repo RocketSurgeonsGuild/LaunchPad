@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -39,5 +40,24 @@ namespace FluentValidation
         /// <returns></returns>
         public static IRuleBuilderOptions<T, TProperty> IsOneOf<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder, params string[] values)
             => ruleBuilder.SetValidator(new StringInValidator(values, false));
+
+        /// <summary>
+        /// Uses the polymorphic validator.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TProperty">The type of the t property.</typeparam>
+        /// <param name="builder">The builder.</param>
+        /// <returns>IRuleBuilderOptions{T, TProperty}.</returns>
+        public static IRuleBuilderOptions<T, TProperty> UsePolymorphicValidator<T, TProperty>(
+            this IRuleBuilder<T, TProperty> builder
+        )
+        {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            return builder.SetValidator(new PolymorphicPropertyValidator<TProperty>());
+        }
     }
 }

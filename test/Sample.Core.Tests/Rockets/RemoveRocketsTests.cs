@@ -20,7 +20,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_Remove_Rocket()
         {
-            var id = await _serviceProvider.WithScoped<RocketDbContext>()
+            var id = await ServiceProvider.WithScoped<RocketDbContext>()
                .Invoke(
                     async z =>
                     {
@@ -33,11 +33,11 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            await _serviceProvider.WithScoped<IMediator>().Invoke(
+            await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(new DeleteRocket.Request() { Id = id})
             );
 
-            _serviceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
+            ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
         }
     }
 }

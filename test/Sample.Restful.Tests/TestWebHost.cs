@@ -1,7 +1,9 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Diagnostics;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 
@@ -15,6 +17,7 @@ namespace Sample.Restful.Tests
         {
             _connection = new SqliteConnection("DataSource=:memory:");
         }
+
         protected override IHostBuilder CreateHostBuilder()
         {
             _connection.Open();
@@ -30,7 +33,8 @@ namespace Sample.Restful.Tests
                                .UseSqlite(_connection)
                         );
                     }
-                );;
+                );
+            ;
         }
 
         protected override void Dispose(bool disposing)

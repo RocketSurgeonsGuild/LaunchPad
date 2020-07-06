@@ -30,21 +30,16 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             return hostBuilder;
         }
 
-        public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory)
-        {
-            _hostBuilderActions.Add(
-                builder =>
-                {
-                    builder.ConfigureServices(
-                        services =>
-                        {
-                            services.AddSingleton(loggerFactory);
-                        }
-                    );
-                });
-
-            return this;
-        }
+        public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory) => ConfigureHostBuilder(
+            builder =>
+            {
+                builder.ConfigureServices(
+                    services =>
+                    {
+                        services.AddSingleton(loggerFactory);
+                    }
+                );
+            });
 
         public ConventionTestWebHost<TEntryPoint> ConfigureHostBuilder(Action<IHostBuilder> action)
         {

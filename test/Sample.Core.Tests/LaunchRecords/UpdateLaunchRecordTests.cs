@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
@@ -10,11 +9,10 @@ using NodaTime.Extensions;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
-using Sample.Core.Operations.Rockets;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Core.Tests.Rockets
+namespace Sample.Core.Tests.LaunchRecords
 {
     public class UpdateLaunchRecordTests : HandleTestHostBase
     {
@@ -25,7 +23,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_Update_A_LaunchRecord()
         {
-            var record = await _serviceProvider.WithScoped<RocketDbContext, IClock>()
+            var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                .Invoke(
                     async (context, clock) =>
                     {
@@ -52,7 +50,7 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            var response = await _serviceProvider.WithScoped<IMediator, IClock>().Invoke(
+            var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
                 (mediator, clock) => mediator.Send(
                     new EditLaunchRecord.Request(record.Id)
                     {

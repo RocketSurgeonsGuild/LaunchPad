@@ -19,7 +19,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
 
         public async Task<R> Handle(T request, CancellationToken cancellationToken, RequestHandlerDelegate<R> next)
         {
-            var validator = _validatorFactory.GetValidator(typeof(T));
+            var validator = _validatorFactory.GetValidator<T>();
             if (validator != null)
             {
                 var context = new ValidationContext<T>(request);

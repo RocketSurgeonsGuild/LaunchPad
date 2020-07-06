@@ -21,7 +21,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_Update_A_Rocket()
         {
-            var rocket = await _serviceProvider.WithScoped<RocketDbContext>()
+            var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                .Invoke(
                     async z =>
                     {
@@ -37,7 +37,7 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            var response = await _serviceProvider.WithScoped<IMediator>().Invoke(
+            var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
                     new EditRocket.Request(rocket.Id)
                     {

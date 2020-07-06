@@ -8,6 +8,7 @@ using FluentValidation.Internal;
 using FluentValidation.Results;
 using FluentValidation.Validators;
 using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Rocket.Surgery.LaunchPad.Extensions.Validation
 {
@@ -19,20 +20,6 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
     /// <seealso cref="NoopPropertyValidator" />
     public class PolymorphicPropertyValidator<T> : NoopPropertyValidator
     {
-        private readonly IValidatorFactory _validatorFactory;
-        private readonly IServiceProvider _serviceProvider;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PolymorphicPropertyValidator{T}" /> class.
-        /// </summary>
-        /// <param name="validatorFactory">The validator factory.</param>
-        /// <param name="serviceProvider">The service provider.</param>
-        internal PolymorphicPropertyValidator(IValidatorFactory validatorFactory, IServiceProvider serviceProvider)
-        {
-            _validatorFactory = validatorFactory;
-            _serviceProvider = serviceProvider;
-        }
-
         /// <summary>
         /// Validates the specified context.
         /// </summary>
@@ -51,7 +38,9 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
                 return Enumerable.Empty<ValidationFailure>();
             }
 
-            var validator = _validatorFactory.GetValidator(value.GetType());
+            var factory = context.GetServiceProvider().GetRequiredService<IValidatorFactory>();
+
+            var validator = factory.GetValidator(value.GetType());
             if (context.ParentContext.IsChildCollectionContext)
             {
                 return validator.Validate(context.ParentContext.CloneForChildValidator(value)).Errors;
@@ -62,7 +51,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
                 PropertyChain.FromExpression(context.Rule.Expression),
                 context.ParentContext.Selector
             );
-            validationContext.SetServiceProvider(_serviceProvider);
+            validationContext.SetServiceProvider(context.GetServiceProvider());
             return validator.Validate(validationContext).Errors;
         }
 
@@ -88,7 +77,9 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
                 return Enumerable.Empty<ValidationFailure>();
             }
 
-            var validator = _validatorFactory.GetValidator(value.GetType());
+            var factory = context.GetServiceProvider().GetRequiredService<IValidatorFactory>();
+
+            var validator = factory.GetValidator(value.GetType());
             if (context.ParentContext.IsChildCollectionContext)
             {
                 return ( await validator.ValidateAsync(
@@ -102,7 +93,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
                 PropertyChain.FromExpression(context.Rule.Expression),
                 context.ParentContext.Selector
             );
-            validationContext.SetServiceProvider(_serviceProvider);
+            validationContext.SetServiceProvider(context.GetServiceProvider());
             return ( await validator.ValidateAsync(validationContext, cancellation).ConfigureAwait(false) ).Errors;
         }
     }

@@ -99,12 +99,10 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
                         {
                             options.IncludeXmlComments(item);
                         }
-#pragma warning disable CA1301
                         catch (Exception e)
                         {
                             context.Logger.LogDebug(e, "Error adding XML comments from {XmlFile}", item);
                         }
-#pragma warning enable CA1301
                     }
                 }
             );

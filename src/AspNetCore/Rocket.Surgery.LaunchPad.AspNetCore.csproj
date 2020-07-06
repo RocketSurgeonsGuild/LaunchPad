@@ -12,9 +12,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />
+        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Contributions" />
     </ItemGroup>
 </Project>

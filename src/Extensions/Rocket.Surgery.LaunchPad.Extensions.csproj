@@ -5,7 +5,6 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="App.Metrics" />
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="Humanizer.Core" />
@@ -17,7 +16,7 @@
         <PackageReference Include="Microsoft.Extensions.Options" />
         <PackageReference Include="NodaTime" />
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" />
-        <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" />
+        <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Rocket.Surgery.DependencyInjection.Extensions" />
         <PackageReference Include="Rocket.Surgery.Extensions" />
         <PackageReference Include="Rocket.Surgery.Extensions.Configuration" />

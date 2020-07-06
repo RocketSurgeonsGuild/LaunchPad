@@ -25,7 +25,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_Create_A_Rocket()
         {
-            var response = await _serviceProvider.WithScoped<IMediator>().Invoke(
+            var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
                     new CreateRocket.Request()
                     {
@@ -41,7 +41,7 @@ namespace Sample.Core.Tests.Rockets
         [Fact]
         public async Task Should_Throw_If_Rocket_Exists()
         {
-            await _serviceProvider.WithScoped<RocketDbContext>()
+            await ServiceProvider.WithScoped<RocketDbContext>()
                .Invoke(
                     async z =>
                     {
@@ -57,7 +57,7 @@ namespace Sample.Core.Tests.Rockets
                     }
                 );
 
-            Func<Task> action = () => _serviceProvider.WithScoped<IMediator>().Invoke(
+            Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
                     new CreateRocket.Request()
                     {
@@ -74,7 +74,7 @@ namespace Sample.Core.Tests.Rockets
         [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
         public void Should_Validate_Required_Fields(CreateRocket.Request request, string propertyName)
         {
-            using var scope = _serviceProvider.CreateScope();
+            using var scope = ServiceProvider.CreateScope();
 
             var mediater = scope.ServiceProvider.GetRequiredService<IMediator>();
 

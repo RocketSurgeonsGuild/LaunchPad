@@ -6,17 +6,17 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Testing;
 
-[assembly: Convention(typeof(ClockConvention))]
+[assembly: Convention(typeof(FakeClockConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Testing
 {
     [UnitTestConvention]
-    public class ClockConvention : IServiceConvention
+    public class FakeClockConvention : IServiceConvention
     {
         private readonly int _unixTimeSeconds;
         private Duration _advanceBy;
 
-        public ClockConvention(
+        public FakeClockConvention(
             int? unixTimeSeconds = null,
             Duration? advanceBy = null
         )

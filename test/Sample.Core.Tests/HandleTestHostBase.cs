@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
+using DryIoc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,25 +19,8 @@ using Xunit.Abstractions;
 
 namespace Sample.Core.Tests
 {
-    public class FoundationTests : HandleTestHostBase
+    public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     {
-        public FoundationTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-            var testHost = ConventionTestHostBuilder.For(this, LoggerFactory)
-               .With(Logger)
-               .With(DiagnosticSource)
-               .Create();
-            ( _configuration, _serviceProvider ) = testHost.Build();
-        }
-
-        [Fact]
-        public void AutoMapper() => _serviceProvider.GetRequiredService<IMapper>().ConfigurationProvider.AssertConfigurationIsValid();
-    }
-
-    public abstract class HandleTestHostBase : LoggerTest, IAsyncLifetime
-    {
-        protected IConfiguration _configuration;
-        protected IServiceProvider _serviceProvider;
         private readonly ConventionTestHost _hostBuilder;
         private SqliteConnection _connection;
 
@@ -72,9 +56,10 @@ namespace Sample.Core.Tests
                         );
                     }
                 );
-            ( _configuration, _serviceProvider ) = _hostBuilder.Build();
 
-            await _serviceProvider.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
+            Populate(_hostBuilder.Parse());
+
+            await ServiceProvider.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
         }
 
         public async Task DisposeAsync() => await _connection.DisposeAsync();
