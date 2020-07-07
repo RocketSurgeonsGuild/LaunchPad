@@ -6,7 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="App.Metrics.AppNetCore" />
-        <PackageReferecen Include="App.Metrics.Extensions.HealthChecks" />
+        <!--<PackageReferecen Include="App.Metrics.Extensions.HealthChecks" />-->
         <PackageReference Include="App.Metrics.Extensions.Hosting" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />

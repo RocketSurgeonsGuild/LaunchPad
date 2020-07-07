@@ -1,4 +1,6 @@
-﻿using App.Metrics;
+using App.Metrics;
+using App.Metrics.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
@@ -11,7 +13,7 @@ using Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
 {
-    public class AppMetricsConvention : IHostingConvention, IServiceConvention
+    public class AppMetricsConvention : IHostingConvention//, IServiceConvention
     {
         private readonly IConventionScanner _scanner;
         private readonly IAssemblyProvider _assemblyProvider;
@@ -44,19 +46,39 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
                 context.Properties
             ).Build();
 
+            IMetricsBuilder metricsBuilder;
             if (context.GetOrAdd(() => new ConventionMetricsOptions()).UseDefaults)
             {
-                context.Builder.ConfigureMetricsWithDefaults(ConfigureMetrics);
+                // throws during unit tests :(
+                // context.Builder.ConfigureMetricsWithDefaults(ConfigureMetrics);
+                metricsBuilder = global::App.Metrics.AppMetrics.CreateDefaultBuilder();
             }
             else
             {
-                context.Builder.ConfigureMetrics(ConfigureMetrics);
+                // throws during unit tests :(
+                // context.Builder.ConfigureMetrics(ConfigureMetrics);
+                metricsBuilder = new global::App.Metrics.MetricsBuilder();
             }
+
+            context.Builder.ConfigureServices(
+                (ctx, services) =>
+                {
+                    metricsBuilder.Configuration.ReadFrom(ctx.Configuration);
+
+                    if (metricsBuilder.CanReport())
+                    {
+                        services.AddMetricsReportingHostedService();
+                    }
+
+                    services.AddMetrics(metricsBuilder);
+                    ConfigureMetrics(ctx, metricsBuilder);
+                }
+            );
         }
 
-        public void Register(IServiceConventionContext context)
-        {
-            context.Services.AddAppMetricsHealthPublishing();
-        }
+        //public void Register(IServiceConventionContext context)
+        //{
+        //    context.Services.AddAppMetricsHealthPublishing();
+        //}
     }
 }
