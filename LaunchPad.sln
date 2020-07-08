@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.LaunchPad.As
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.LaunchPad.AppMetrics", "src\AppMetrics\Rocket.Surgery.LaunchPad.AppMetrics.csproj", "{A7812A6A-A349-4BFA-9053-A7678F48BF91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.LaunchPad.Serilog", "src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj", "{AE561959-1043-4154-9D48-F3F0A4ADF43E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -359,6 +361,18 @@ Global
 		{A7812A6A-A349-4BFA-9053-A7678F48BF91}.Release|x64.Build.0 = Release|Any CPU
 		{A7812A6A-A349-4BFA-9053-A7678F48BF91}.Release|x86.ActiveCfg = Release|Any CPU
 		{A7812A6A-A349-4BFA-9053-A7678F48BF91}.Release|x86.Build.0 = Release|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Debug|x64.Build.0 = Debug|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Debug|x86.Build.0 = Debug|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Release|x64.ActiveCfg = Release|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Release|x64.Build.0 = Release|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Release|x86.ActiveCfg = Release|Any CPU
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -391,5 +405,6 @@ Global
 		{84429E90-AD75-46FB-9AAF-DA1D96AA5B12} = {8FFDF555-DB50-45F9-9A2D-6410F39151C3}
 		{CCAE1CB9-CF4C-4D8C-8795-3E2C6054AC9B} = {8FFDF555-DB50-45F9-9A2D-6410F39151C3}
 		{A7812A6A-A349-4BFA-9053-A7678F48BF91} = {8FFDF555-DB50-45F9-9A2D-6410F39151C3}
+		{AE561959-1043-4154-9D48-F3F0A4ADF43E} = {8FFDF555-DB50-45F9-9A2D-6410F39151C3}
 	EndGlobalSection
 EndGlobal

@@ -5,5 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.LaunchPad.Commands.csproj" />
+    <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+    <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
   </ItemGroup>
 </Project>

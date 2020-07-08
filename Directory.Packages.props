@@ -21,7 +21,7 @@
     <ItemGroup>
         <PackageVersion Include="App.Metrics" Version="4.1.0"/>
         <PackageVersion Include="App.Metrics.AppNetCore" Version="4.1.0"/>
-<!--        <PackageVersion Include="App.Metrics.AspNetCore" Version="4.1.0"/>-->
+        <!--        <PackageVersion Include="App.Metrics.AspNetCore" Version="4.1.0"/>-->
         <PackageVersion Include="App.Metrics.Extensions.HealthChecks" Version="4.1.0"/>
         <PackageVersion Include="App.Metrics" Version="4.1.0"/>
         <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.1.0"/>
@@ -45,27 +45,39 @@
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5"/>
         <PackageVersion Include="Microsoft.Extensions.Options" Version="3.1.5"/>
         <PackageVersion Include="Microsoft.Reactive.Testing" Version="4.4.1"/>
-<!--        <PackageVersion Include="Newtonsoft.Json" Version="12.0.3"/>-->
+        <!--        <PackageVersion Include="Newtonsoft.Json" Version="12.0.3"/>-->
         <PackageVersion Include="NodaTime" Version="3.0.0"/>
         <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="2.3.0"/>
         <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0-beta02"/>
         <PackageVersion Include="NodaTime.Testing" Version="3.0.0"/>
         <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions" Version="10.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.0.0-beta.2"/>
+        <PackageVersion Include="Rocket.Surgery.Conventions" Version="10.0.0-beta.4"/>
+        <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.0.0-beta.4"/>
+        <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.0.0-beta.4"/>
         <PackageVersion Include="Rocket.Surgery.Conventions.AutoMapper" Version="8.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions.TestHost" Version="10.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="10.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="10.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="10.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Serilog" Version="11.0.0-beta.2"/>
+        <PackageVersion Include="Rocket.Surgery.Conventions.TestHost" Version="10.0.0-beta.4"/>
+        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="10.0.0-beta.4"/>
+        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="10.0.0-beta.4"/>
+        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="10.0.0-beta.4"/>
         <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="2.5.0"/>
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="2.5.0"/>
-        <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.0.0-beta.2"/>
-        <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.0.0-beta.2"/>
+        <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.0.0-beta.4"/>
+        <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.0.0-beta.4"/>
         <PackageVersion Include="Rocket.Surgery.System" Version="2.5.0"/>
         <PackageVersion Include="Scrutor" Version="3.2.1"/>
+        <PackageVersion Include="Serilog" Version="2.9.0" />
+        <PackageVersion Include="Serilog.AspNetCore" Version="3.2.0" />
+        <PackageVersion Include="Serilog.Enrichers.Demystify" Version="0.1.0-dev-*" />
+        <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.1.3" />
+        <PackageVersion Include="Serilog.Enrichers.Process" Version="2.0.1" />
+        <PackageVersion Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+        <PackageVersion Include="Serilog.Extensions.Hosting" Version="3.1.0" />
+        <PackageVersion Include="Serilog.Extensions.Logging" Version="3.0.1" />
+        <PackageVersion Include="Serilog.Settings.Configuration" Version="3.1.0" />
+        <PackageVersion Include="Serilog.Sinks.Async" Version="1.4.0" />
+        <PackageVersion Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageVersion Include="Serilog.Sinks.Debug" Version="1.0.1" />
+        <PackageVersion Include="Serilog.Sinks.Observable" Version="2.0.2" />
         <PackageVersion Include="Swashbuckle.AspNetCore" Version="5.5.1"/>
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="5.5.1"/>
         <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="1.3.0"/>

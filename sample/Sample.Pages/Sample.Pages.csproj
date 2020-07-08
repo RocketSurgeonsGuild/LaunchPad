@@ -4,5 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Pages\Rocket.Surgery.LaunchPad.Pages.csproj" />
+    <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+    <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
   </ItemGroup>
 </Project>

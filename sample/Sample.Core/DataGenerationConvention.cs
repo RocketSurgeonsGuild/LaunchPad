@@ -21,7 +21,7 @@ namespace Sample.Core
 
         public void Register(IServiceConventionContext context)
         {
-            context.Services.AddHostedService<HostedService>();
+            context.Services.Insert(0, ServiceDescriptor.Singleton<IHostedService, HostedService>());
         }
 
         class HostedService : IHostedService
@@ -35,8 +35,6 @@ namespace Sample.Core
                 await _serviceProvider.WithScoped<RocketDbContext>().Invoke(
                     async dbContext =>
                     {
-
-
                         await dbContext.Database.EnsureCreatedAsync(cancellationToken).ConfigureAwait(false);
                         var rocketFaker = new RocketFaker();
                         var rockets = rocketFaker.GenerateBetween(10, 100);
