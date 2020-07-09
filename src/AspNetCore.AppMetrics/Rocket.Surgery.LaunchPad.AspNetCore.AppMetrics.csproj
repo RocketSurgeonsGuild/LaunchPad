@@ -6,7 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\AppMetrics\Rocket.Surgery.LaunchPad.AppMetrics.csproj" />
-        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
 
         <PackageReference Include="App.Metrics" />
         <PackageReference Include="App.Metrics.AspNetCore.Endpoints" />

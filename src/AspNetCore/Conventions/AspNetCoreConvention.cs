@@ -46,35 +46,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 
             var coreBuilder = context.Services
                .AddMvcCore();
-            foreach (var item in context.AssemblyCandidateFinder.GetCandidateAssemblies("Rocket.Surgery.AspNetCore", "Microsoft.AspNetCore.Mvc"))
+            foreach (var item in context.AssemblyCandidateFinder.GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore"))
             {
                 coreBuilder
                     .AddApplicationPart(item);
             }
 
-            context.Services.Configure<RazorViewEngineOptions>(options =>
-            {
-                // {0} - Action Name
-                // {1} - Controller Name
-                // {2} - Area Name
-                // {3} - Feature Name
-                // Replace normal view location entirely
-                for (var i = Locations.Length - 1; i >= 0; i--)
-                {
-                    options.AreaViewLocationFormats.Insert(0, $"/Areas/{{2}}{Locations[i]}");
-                }
-
-                for (var i = Locations.Length - 1; i >= 0; i--)
-                {
-                    options.ViewLocationFormats.Insert(0, Locations[i]);
-                }
-
-                options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
-            });
-
             context.Services.Configure<MvcOptions>(options =>
             {
-                options.Conventions.Add(new FeatureFolderProvider());
                 options.Filters.Add<NotFoundExceptionFilter>();
                 options.Filters.Add<RequestFailedExceptionFilter>();
                 options.Filters.Add<SerilogLoggingActionFilter>(0);
@@ -84,17 +63,5 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             context.Services
                .AddFluentValidationExtensions(_configuration);
         }
-
-        /// <summary>
-        /// The locations
-        /// </summary>
-        private static readonly string[] Locations = {
-            "/{3}/{1}/{0}.cshtml",
-            "/{3}/{0}.cshtml",
-            "/{3}/{1}.cshtml",
-            "/Shared/{0}.cshtml",
-            "/Views/{0}.cshtml",
-            "/Views/{1}.cshtml",
-        };
     }
 }

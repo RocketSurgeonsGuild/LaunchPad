@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using Serilog;
 
 namespace Sample.Pages
 {
@@ -24,6 +26,7 @@ namespace Sample.Pages
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +45,16 @@ namespace Sample.Pages
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Should this move into an extension method?
+            app.UseSerilogRequestLogging(
+                x =>
+                {
+                    x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
+                    x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
+                }
+            );
+            app.UseMetricsAllMiddleware();
 
             app.UseRouting();
 

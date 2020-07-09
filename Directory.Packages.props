@@ -61,6 +61,7 @@
         <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="10.0.0-beta.5"/>
         <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="2.5.0"/>
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="2.5.0"/>
+        <PackageVersion Include="Rocket.Surgery.Hosting.DryIoc" Version="0.1.0-beta.2"/>
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.0.0-beta.5"/>
         <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.0.0-beta.5"/>
         <PackageVersion Include="Rocket.Surgery.System" Version="2.5.0"/>

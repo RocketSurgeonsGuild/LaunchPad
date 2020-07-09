@@ -1,8 +1,2 @@
 ﻿<Project>
-    <PropertyGroup>
-        <CoreCompileDependsOn>
-            $(CoreCompileDependsOn);
-            AddLaunchPadAspNetCoreMvcAttributes;
-        </CoreCompileDependsOn>
-    </PropertyGroup>
 </Project>
