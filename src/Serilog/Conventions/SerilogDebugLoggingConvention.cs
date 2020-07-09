@@ -35,6 +35,8 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
                 throw new ArgumentNullException(nameof(configuration));
             }
 
+            if (!_options.EnableDebugLogging) return;
+
             configuration.Debug(
                 LogEventLevel.Verbose,
                 _options.DebugMessageTemplate

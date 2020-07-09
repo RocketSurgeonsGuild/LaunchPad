@@ -10,13 +10,8 @@ using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.Conventions
 {
-    public class AppMetricsAspNetCoreConvention : IServiceConvention, IHostingConvention
+    public class AppMetricsAspNetCoreConvention : IServiceConvention
     {
-        public void Register(IHostingConventionContext context)
-        {
-            context.Builder.UseMetricsWebTracking();
-        }
-
         public void Register(IServiceConventionContext context)
         {
             context.Services

@@ -36,6 +36,8 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
                 throw new ArgumentNullException(nameof(configuration));
             }
 
+            if (!_options.EnableConsoleLogging) return;
+
             configuration.Console(
                 LogEventLevel.Verbose,
                 _options.ConsoleMessageTemplate,

@@ -16,7 +16,6 @@
 		<PackageReference Include="Serilog.Enrichers.Demystify" />
 		<PackageReference Include="Serilog.Extensions.Logging" />
 		<PackageReference Include="Serilog.Extensions.Hosting" />
-		<PackageReference Include="Serilog.AspNetCore" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
     </ItemGroup>

@@ -23,6 +23,7 @@
         <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />
         <PackageReference Include="Rocket.Surgery.System" />
         <PackageReference Include="Scrutor" />
+        <PackageReference Include="Serilog" />
         <PackageReference Include="System.Collections.Immutable" />
         <PackageReference Include="System.Interactive" />
         <PackageReference Include="System.Interactive.Async" />

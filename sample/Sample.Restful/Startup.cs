@@ -17,6 +17,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics;
+using Serilog;
 
 namespace Sample.Restful
 {
@@ -34,14 +35,14 @@ namespace Sample.Restful
         {
             services
                .Configure<SwaggerGenOptions>(
-                c => c.SwaggerDoc(
-                    "v1",
-                    new OpenApiInfo()
-                    {
-                        Title = "Test Application"
-                    }
-                )
-            );
+                    c => c.SwaggerDoc(
+                        "v1",
+                        new OpenApiInfo()
+                        {
+                            Title = "Test Application"
+                        }
+                    )
+                );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,11 +51,20 @@ namespace Sample.Restful
             app.UseHttpsRedirection();
 
             // Should this move into an extension method?
+            app.UseSerilogRequestLogging(
+                x =>
+                {
+                    x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
+                    x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
+                }
+            );
+            app.UseMetricsAllMiddleware();
+
+            app.UseRouting();
+
             app
                .UseSwaggerUI()
                .UseReDoc();
-
-            app.UseRouting();
 
             app.UseAuthorization();
 
@@ -65,7 +75,6 @@ namespace Sample.Restful
 
                     // Should this move into an extension method?
                     endpoints.MapSwagger();
-
                     endpoints.MapAppMetrics();
                 }
             );

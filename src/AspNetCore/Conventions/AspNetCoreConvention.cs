@@ -77,6 +77,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 options.Conventions.Add(new FeatureFolderProvider());
                 options.Filters.Add<NotFoundExceptionFilter>();
                 options.Filters.Add<RequestFailedExceptionFilter>();
+                options.Filters.Add<SerilogLoggingActionFilter>(0);
+                options.Filters.Add<SerilogLoggingPageFilter>(0);
             });
 
             context.Services

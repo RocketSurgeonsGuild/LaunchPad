@@ -12,10 +12,20 @@ namespace Rocket.Surgery.LaunchPad.Serilog
             "[{Timestamp:HH:mm:ss} {Level:w4}] {Message}{NewLine}{Exception}";
 
         /// <summary>
+        /// Enable or disable console logging, defaults to enabled
+        /// </summary>
+        public bool EnableConsoleLogging { get; set; } = true;
+
+        /// <summary>
         /// The default debug message template
         /// </summary>
         public string DebugMessageTemplate { get; set; } =
             "[{Timestamp:HH:mm:ss} {Level:w4}] {Message}{NewLine}{Exception}";
+
+        /// <summary>
+        /// Enable or disable debug logging, defaults to enabled
+        /// </summary>
+        public bool EnableDebugLogging { get; set; } = true;
 
         /// <summary>
         /// Base option from the serilog package
