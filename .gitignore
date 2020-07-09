@@ -191,7 +191,6 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
-lib/
 .nuget/
 project.lock.json
 *.nupkg
