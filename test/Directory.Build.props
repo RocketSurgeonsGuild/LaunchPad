@@ -1,0 +1,9 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    <PropertyGroup>
+        <MergeCoverage>true</MergeCoverage>
+        <IncludeTestAssembly>true</IncludeTestAssembly>
+        <NoWarn>$(NoWarn);CA1812</NoWarn>
+        <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    </PropertyGroup>
+</Project>

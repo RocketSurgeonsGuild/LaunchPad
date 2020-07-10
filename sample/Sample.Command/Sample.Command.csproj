@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.LaunchPad.Commands.csproj"/>
+        <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj"/>
+        <ProjectReference Include="..\Sample.Core\Sample.Core.csproj"/>
+        <PackageReference Include="Rocket.Surgery.Hosting.DryIoc"/>
+    </ItemGroup>
+</Project>

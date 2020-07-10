@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
+      <ProjectReference Include="..\..\src\AspNetCore.NewtonsoftJson\Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
+      <ProjectReference Include="..\..\src\Restful\Rocket.Surgery.LaunchPad.Restful.csproj" />
+      <ProjectReference Include="..\..\src\Pages\Rocket.Surgery.LaunchPad.Pages.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <PackageDescription></PackageDescription>
+    <PackageTags>$(PackageTags)</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+<!--    <PackageReference Include="Newtonsoft.Json" />-->
+    <PackageReference Include="NodaTime.Serialization.JsonNet" />
+  </ItemGroup>
+</Project>

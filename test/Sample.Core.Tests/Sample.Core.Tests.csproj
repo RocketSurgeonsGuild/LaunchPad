@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\sample\Sample.Core\Sample.Core.csproj" />
+        <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
+        <PackageReference Include="Rocket.Surgery.Conventions.TestHost" />
+    </ItemGroup>
+</Project>

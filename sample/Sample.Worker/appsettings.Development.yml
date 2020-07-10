@@ -1,0 +1,8 @@
+Serilog:
+  MinimumLevel:
+    Default: Debug
+    Override:
+      Microsoft: 'Warning'
+      Microsoft.AspNetCore.Hosting.Diagnostics: 'Debug'
+      Microsoft.Hosting.Lifetime": 'Debug'
+      System": 'Information'

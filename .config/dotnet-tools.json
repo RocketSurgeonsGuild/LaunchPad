@@ -1,0 +1,26 @@
+{
+    "version": 1,
+    "isRoot": true,
+    "tools": {
+        "dotnet-outdated": {
+            "version": "2.11.0",
+            "commands": ["dotnet-outdated"]
+        },
+        "gitversion.tool": {
+            "version": "5.3.5",
+            "commands": ["dotnet-gitversion"]
+        },
+        "dotnet-reportgenerator-globaltool": {
+            "version": "4.6.1",
+            "commands": ["reportgenerator"]
+        },
+        "nuke.globaltool": {
+            "version": "0.24.11",
+            "commands": ["nuke"]
+        },
+        "codecov.tool": {
+            "version": "1.11.1",
+            "commands": ["codecov"]
+        }
+    }
+}
