@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+using Sample.Grpc.Services;
 using Serilog;
 
 namespace Sample.Grpc

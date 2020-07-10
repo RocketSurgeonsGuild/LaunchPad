@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -15,11 +16,19 @@ namespace Sample.Restful.Tests
     {
         private readonly ConventionTestWebHost<Startup> _factory;
 
-        public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper) => _factory = factory.ConfigureLoggerFactory(LoggerFactory);
+        public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+            => _factory = factory.ConfigureLoggerFactory(LoggerFactory);
 
         [Fact]
         public void AutoMapper() => _factory.Services.GetRequiredService<IMapper>()
            .ConfigurationProvider.AssertConfigurationIsValid();
+
+        [Fact]
+        public async Task Starts()
+        {
+            var response = await _factory.CreateClient().GetAsync("/");
+            response.StatusCode.Should().Be(404);
+        }
 
         [Theory]
         [ClassData(typeof(OpenApiDocuments))]
