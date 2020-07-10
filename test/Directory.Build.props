@@ -4,5 +4,6 @@
         <MergeCoverage>true</MergeCoverage>
         <IncludeTestAssembly>true</IncludeTestAssembly>
         <NoWarn>$(NoWarn);CA1812</NoWarn>
+        <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     </PropertyGroup>
 </Project>
