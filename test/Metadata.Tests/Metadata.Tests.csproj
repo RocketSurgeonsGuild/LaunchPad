@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+        <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
+        <ProjectReference Include="..\..\src\Metadata\Rocket.Surgery.LaunchPad.Metadata.csproj" />
+        <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
+    </ItemGroup>
+</Project>
