@@ -1,4 +1,5 @@
 using System;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +22,21 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
     /// <seealso cref="IServiceConvention" />
     public class AspNetCoreConvention : IServiceConvention
     {
-        private readonly FluentValidationMvcConfiguration? _configuration;
+        private readonly ValidatorConfiguration? _validatorConfiguration;
+        private readonly FluentValidationMvcConfiguration? _validationMvcConfiguration;
 
         /// <summary>
         /// Configure aspnet with some logical defaults
         /// </summary>
-        /// <param name="configuration"></param>
-        public AspNetCoreConvention(FluentValidationMvcConfiguration? configuration = null)
+        /// <param name="validatorConfiguration"></param>
+        /// <param name="validationMvcConfiguration"></param>
+        public AspNetCoreConvention(
+            ValidatorConfiguration? validatorConfiguration = null,
+            FluentValidationMvcConfiguration? validationMvcConfiguration = null
+            )
         {
-            _configuration = configuration;
+            _validatorConfiguration = validatorConfiguration;
+            _validationMvcConfiguration = validationMvcConfiguration;
         }
 
         /// <summary>
@@ -61,7 +68,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             });
 
             context.Services
-               .AddFluentValidationExtensions(_configuration);
+               .AddFluentValidationExtensions(_validatorConfiguration, _validationMvcConfiguration);
         }
     }
 }

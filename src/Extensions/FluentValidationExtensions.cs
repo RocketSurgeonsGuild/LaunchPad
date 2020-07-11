@@ -57,7 +57,7 @@ namespace FluentValidation
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            return builder.SetValidator(new PolymorphicPropertyValidator<TProperty>());
+            return builder.SetValidator(new PolymorphicPropertyValidator<T, TProperty>());
         }
     }
 }

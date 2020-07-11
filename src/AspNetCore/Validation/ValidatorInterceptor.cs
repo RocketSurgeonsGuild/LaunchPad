@@ -7,14 +7,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     internal class ValidatorInterceptor : IValidatorInterceptor
     {
-        public ValidationContext BeforeMvcValidation(
+        public IValidationContext BeforeMvcValidation(
             ControllerContext controllerContext,
-            ValidationContext validationContext
+            IValidationContext validationContext
         ) => validationContext;
 
         public ValidationResult AfterMvcValidation(
             ControllerContext controllerContext,
-            ValidationContext validationContext,
+            IValidationContext validationContext,
             ValidationResult result
         )
         {
