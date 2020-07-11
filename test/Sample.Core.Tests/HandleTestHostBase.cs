@@ -11,6 +11,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.TestHost;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
+using Rocket.Surgery.LaunchPad.Extensions.Conventions;
 using Sample.Core.Domain;
 using Serilog;
 using Serilog.Events;
@@ -35,6 +36,7 @@ namespace Sample.Core.Tests
                .With(Logger)
                .With(DiagnosticSource)
                .Create();
+            _hostBuilder.Scanner.ExceptConvention(typeof(NodaTimeConvention));
         }
 
         public async Task InitializeAsync()

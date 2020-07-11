@@ -9,5 +9,6 @@
         <PackageReference Include="NodaTime.Testing" />
         <PackageReference Include="FluentAssertions" />
         <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" />
+        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
     </ItemGroup>
 </Project>

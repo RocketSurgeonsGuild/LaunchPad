@@ -17,8 +17,9 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
     /// Implements the <see cref="NoopPropertyValidator" />
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TProperty"></typeparam>
     /// <seealso cref="NoopPropertyValidator" />
-    public class PolymorphicPropertyValidator<T> : NoopPropertyValidator
+    public class PolymorphicPropertyValidator<T, TProperty> : NoopPropertyValidator
     {
         /// <summary>
         /// Validates the specified context.
@@ -33,7 +34,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
             }
 
             // bail out if the property is null
-            if (context.PropertyValue == null || !( context.PropertyValue is T value ))
+            if (context.PropertyValue == null || !( context.PropertyValue is TProperty value ))
             {
                 return Enumerable.Empty<ValidationFailure>();
             }
@@ -43,10 +44,10 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
             var validator = factory.GetValidator(value.GetType());
             if (context.ParentContext.IsChildCollectionContext)
             {
-                return validator.Validate(context.ParentContext.CloneForChildValidator(value)).Errors;
+                return validator.Validate(ValidationContext<T>.GetFromNonGenericContext(context.ParentContext).CloneForChildValidator(value)).Errors;
             }
 
-            var validationContext = new ValidationContext<T>(
+            var validationContext = new ValidationContext<TProperty>(
                 value,
                 PropertyChain.FromExpression(context.Rule.Expression),
                 context.ParentContext.Selector
@@ -72,7 +73,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
             }
 
             // bail out if the property is null
-            if (context.PropertyValue == null || !( context.PropertyValue is T value ))
+            if (context.PropertyValue == null || !( context.PropertyValue is TProperty value ))
             {
                 return Enumerable.Empty<ValidationFailure>();
             }
@@ -83,12 +84,12 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
             if (context.ParentContext.IsChildCollectionContext)
             {
                 return ( await validator.ValidateAsync(
-                    context.ParentContext.CloneForChildValidator(value),
+                    ValidationContext<T>.GetFromNonGenericContext(context.ParentContext).CloneForChildValidator(value),
                     cancellation
                 ).ConfigureAwait(false) ).Errors;
             }
 
-            var validationContext = new ValidationContext<T>(
+            var validationContext = new ValidationContext<TProperty>(
                 value,
                 PropertyChain.FromExpression(context.Rule.Expression),
                 context.ParentContext.Selector

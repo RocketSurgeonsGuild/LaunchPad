@@ -73,7 +73,7 @@ namespace Rocket.Surgery.LaunchPad.Restful.Composition
                 }
             }
 
-            if (!providerLookup[StatusCodes.Status404NotFound].Any())
+            if (!providerLookup[StatusCodes.Status404NotFound].Any() && match?.Method != RestfulApiMethod.List)
             {
                 actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
             }
