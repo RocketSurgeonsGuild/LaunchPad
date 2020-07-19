@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DryIoc;
+using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.TestHost;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Extensions.Conventions;
@@ -22,21 +22,22 @@ namespace Sample.Core.Tests
 {
     public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     {
-        private readonly ConventionTestHost _hostBuilder;
+        private readonly TestHostBuilder _hostBuilder;
         private SqliteConnection _connection;
 
         protected HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : base(
             outputHelper,
             logLevel,
-            logFormat: "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}",
-            configureLogger: ConfigureLogging
+            logFormat: "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
         )
         {
-            _hostBuilder = ConventionTestHostBuilder.For(this, LoggerFactory)
-               .With(Logger)
-               .With(DiagnosticSource)
+            _hostBuilder = TestHost.For(this, LoggerFactory)
+               .WithLogger(Logger)
                .Create();
             _hostBuilder.Scanner.ExceptConvention(typeof(NodaTimeConvention));
+            ExcludeSourceContext(nameof(TestHostBuilder));
+            ExcludeSourceContext(nameof(TestHost));
+            ExcludeSourceContext(nameof(DiagnosticSource));
         }
 
         public async Task InitializeAsync()
@@ -65,19 +66,5 @@ namespace Sample.Core.Tests
         }
 
         public async Task DisposeAsync() => await _connection.DisposeAsync();
-
-        static void ConfigureLogging(LoggerConfiguration loggerConfiguration)
-        {
-            loggerConfiguration.Filter.ByExcluding(
-                x =>
-                {
-                    if (!x.Properties.TryGetValue("SourceContext", out var c) || !( c is ScalarValue sv ) || !( sv.Value is string sourceContext ))
-                        return false;
-                    return sourceContext.Equals(nameof(ConventionTestHostBuilder))
-                     || sourceContext.Equals(nameof(ConventionTestHost))
-                     || sourceContext.Equals(nameof(DiagnosticSource));
-                }
-            );
-        }
     }
 }

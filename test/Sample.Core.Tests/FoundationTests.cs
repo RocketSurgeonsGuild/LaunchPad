@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Conventions.TestHost;
 using Xunit;
 using Xunit.Abstractions;
 

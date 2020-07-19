@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
+using Rocket.Surgery.Conventions.Scanners;
 using Rocket.Surgery.Hosting;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
@@ -19,6 +21,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
         protected override IHostBuilder CreateHostBuilder()
         {
             var hostBuilder = base.CreateHostBuilder()
+               .UseContentRoot(Path.GetDirectoryName(typeof(TEntryPoint).Assembly.Location))
                .ConfigureRocketSurgery(
                     builder => { builder.Set(HostType.UnitTestHost); }
                 );

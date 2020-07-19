@@ -34,7 +34,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
                 var depsFilePath = Path.Combine(location, functionsAssembly.GetName().Name + ".deps.json");
                 if (File.Exists(depsFilePath))
                 {
-                    using var stream = File.Open(depsFilePath, FileMode.Open, FileAccess.Read);
+                    using var stream = File.Open(depsFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                     using var reader = new DependencyContextJsonReader();
                     dependencyContext = reader.Read(stream);
                     break;
@@ -302,10 +302,15 @@ namespace Rocket.Surgery.LaunchPad.Functions
 
 
             var configuration = builder.Services
-               .Where(z => typeof(HostBuilderContext).IsAssignableFrom(z.ServiceType))
-               .Select(x => x.ImplementationInstance)
-               .OfType<HostBuilderContext>()
-               .FirstOrDefault()?.Configuration;
+                   .Where(z => typeof(IConfiguration).IsAssignableFrom(z.ServiceType))
+                   .Select(x => x.ImplementationInstance)
+                   .OfType<IConfiguration>()
+                   .FirstOrDefault() ??
+                builder.Services
+                   .Where(z => typeof(HostBuilderContext).IsAssignableFrom(z.ServiceType))
+                   .Select(x => x.ImplementationInstance)
+                   .OfType<HostBuilderContext>()
+                   .FirstOrDefault()?.Configuration;
             if (configuration == null)
                 throw new NotSupportedException($"Configuration could not be found, {string.Join("\n", builder.Services.Select(z => z.ServiceType.Name))}");
 
