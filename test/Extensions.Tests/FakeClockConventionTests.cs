@@ -28,7 +28,6 @@ namespace Extensions.Tests
         public void Clock_Convention_Override()
         {
             HostBuilder.AppendConvention(new FakeClockConvention(0, Duration.FromMinutes(1)));
-            Populate(HostBuilder.Parse());
 
             var clock = ServiceProvider.GetRequiredService<IClock>();
 
