@@ -28,7 +28,7 @@
         "ibm.output-colorizer"
     ],
 
-    "postCreateCommand": "dotnet tool restore && npm install"
+    "postCreateCommand": "dotnet tool restore && dotnet nuke restore && npm install"
     // Set *default* container specific settings.json values on container create.
     // "settings": {},
 
