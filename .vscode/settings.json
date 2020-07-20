@@ -1,7 +1,27 @@
 {
-  "coverage-gutters.customizable.status-bar-toggler-watchCoverageAndVisibleEditors-enabled": true,
-  "coverage-gutters.coverageFileNames": ["coverage/coverage.info"],
-  "coverage-gutters.showGutterCoverage": true,
-  "coverage-gutters.showRulerCoverage": true,
-  "powermode.enabled": false
+    "coverage-gutters.customizable.status-bar-toggler-watchCoverageAndVisibleEditors-enabled": true,
+    "coverage-gutters.coverageFileNames": ["coverage/coverage.info"],
+    "coverage-gutters.showGutterCoverage": true,
+    "coverage-gutters.showRulerCoverage": true,
+    "powermode.enabled": false,
+    "workbench.colorCustomizations": {
+        "tab.activeBorder": "#3d0099",
+        "activityBar.activeBackground": "#3d0099",
+        "activityBar.activeBorder": "#bf4c00",
+        "activityBar.background": "#3d0099",
+        "statusBar.background": "#3d0099",
+        "statusBar.border": "#3d0099",
+        "statusBarItem.hoverBackground": "#5100cc",
+        "titleBar.activeBackground": "#5100cc",
+        "titleBar.border": "#5100cc",
+        "titleBar.inactiveBackground": "#5100cc99",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "statusBar.foreground": "#e7e7e7",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#bf4c00",
+        "activityBarBadge.foreground": "#e7e7e7"
+    },
+    "peacock.remoteColor": "#3d0099"
 }

@@ -10,7 +10,23 @@
     "mounts": ["source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
 
     // Add the IDs of extensions you want installed when the container is created.
-    "extensions": ["ms-vsonline.vsonline", "GitHub.vscode-pull-request-github", "MS-vsliveshare.vsliveshare", "VisualStudioExptTeam.vscodeintellicode"],
+    "extensions": [
+        "ms-vsonline.vsonline",
+        "GitHub.vscode-pull-request-github",
+        "MS-vsliveshare.vsliveshare",
+        "VisualStudioExptTeam.vscodeintellicode",
+        "aaron-bond.better-comments",
+        "ms-dotnettools.csharp",
+        "editorconfig.editorconfig",
+        "codezombiech.gitignore",
+        "nuke.support",
+        "christian-kohler.path-intellisense",
+        "esbenp.prettier-vscode",
+        "hbenl.vscode-test-explorer",
+        "visualstudioexptteam.vscodeintellicode",
+        "redhat.vscode-yaml",
+        "ibm.output-colorizer"
+    ],
 
     "postCreateCommand": "dotnet tool restore && npm install"
     // Set *default* container specific settings.json values on container create.
