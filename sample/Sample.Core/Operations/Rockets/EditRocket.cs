@@ -44,26 +44,35 @@ namespace Sample.Core.Operations.Rockets
                     ;
                 CreateMap<Model, Request>()
                     ;
+                CreateMap<RocketModel, Model>()
+                   .ForMember(x => x.SerialNumber, x => x.MapFrom(z => z.Sn))
+                    ;
             }
         }
 
-        class Validator : AbstractValidator<Request>
+        class ModelValidator : AbstractValidator<Model>
         {
-            public Validator()
+            public ModelValidator()
             {
-                RuleFor(x => x.Id)
-                   .NotEmpty()
-                   .NotNull();
-
                 RuleFor(x => x.Type)
-                   .NotEmpty()
                    .NotNull()
                    .IsInEnum();
 
                 RuleFor(x => x.SerialNumber)
-                   .NotEmpty()
+                   .NotNull()
                    .MinimumLength(10)
                    .MaximumLength(30);
+            }
+        }
+
+        class RequestValidator : AbstractValidator<Request>
+        {
+            public RequestValidator()
+            {
+                Include(new ModelValidator());
+                RuleFor(x => x.Id)
+                   .NotEmpty()
+                   .NotNull();
             }
         }
 
