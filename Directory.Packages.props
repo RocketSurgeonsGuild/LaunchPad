@@ -73,7 +73,7 @@
     <PackageVersion Include="Rocket.Surgery.System" Version="2.5.0" />
     <PackageVersion Include="Scrutor" Version="3.2.1" />
     <PackageVersion Include="Serilog" Version="2.9.0" />
-    <PackageVersion Include="Serilog.AspNetCore" Version="3.2.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageVersion Include="Serilog.Enrichers.Demystify" Version="0.1.0-dev-*" />
     <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.1.3" />
     <PackageVersion Include="Serilog.Enrichers.Process" Version="2.0.1" />
