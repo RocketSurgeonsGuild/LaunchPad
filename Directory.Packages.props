@@ -32,9 +32,8 @@
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="9.0.1" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.30.0" />
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
-    <PackageVersion Include="Humanizer.Core" Version="2.8.26" />
     <PackageVersion Include="MediatR" Version="8.1.0" />
-    <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
+    <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="4.0.0-rc.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.6" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.6" />
