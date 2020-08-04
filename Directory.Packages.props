@@ -108,6 +108,6 @@
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="5.2.5" />
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.analyzers" Version="0.10.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
 </Project>
