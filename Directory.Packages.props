@@ -103,7 +103,7 @@
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.0.0" />
     <PackageVersion Include="FluentAssertions" Version="5.10.3" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.11.4" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.7.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="5.2.5" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="5.2.5" />
     <PackageVersion Include="xunit" Version="2.4.1" />
