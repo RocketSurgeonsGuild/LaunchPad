@@ -5,18 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
-    internal class ValidatorInterceptor : IValidatorInterceptor
+#pragma warning disable 618
+    internal class ValidatorInterceptor : IActionContextValidatorInterceptor
+#pragma warning restore 618
     {
-        public IValidationContext BeforeMvcValidation(
-            ControllerContext controllerContext,
-            IValidationContext validationContext
-        ) => validationContext;
+        public IValidationContext BeforeMvcValidation(ActionContext controllerContext, IValidationContext validationContext) => validationContext;
 
-        public ValidationResult AfterMvcValidation(
-            ControllerContext controllerContext,
-            IValidationContext validationContext,
-            ValidationResult result
-        )
+        public ValidationResult AfterMvcValidation(ActionContext controllerContext, IValidationContext validationContext, ValidationResult result)
         {
             controllerContext.HttpContext.Items[typeof(ValidationResult)] = result;
             return result;

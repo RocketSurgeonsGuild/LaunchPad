@@ -64,7 +64,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
                 }
             );
 
-            services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
+#pragma warning disable 618
+            services.AddSingleton<IActionContextValidatorInterceptor, ValidatorInterceptor>();
+#pragma warning restore 618
             services.AddSingleton<ProblemDetailsFactory, FluentValidationProblemDetailsFactory>();
             services.Configure<ApiBehaviorOptions>(
                 o =>
