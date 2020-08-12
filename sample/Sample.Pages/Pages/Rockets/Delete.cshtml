@@ -1,0 +1,22 @@
+@page "{id:guid}"
+@model RocketDeleteModel
+
+<form method="post">
+    <div class="card"
+         style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Rocket @Model.Rocket.Sn</h5>
+            <h6 class="card-subtitle mb-2 text-muted">@Model.Rocket.Id</h6>
+            Are you sure you want to delete Rocket @Model.Rocket.Sn?
+
+            <button class="btn btn-link card-link"
+                    type="submit">
+                Yes
+            </button>
+            <button class="btn btn-link card-link"
+                    onclick="history.go(-1);">
+                Cancel
+            </button>
+        </div>
+    </div>
+</form>

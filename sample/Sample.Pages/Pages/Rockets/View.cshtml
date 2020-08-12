@@ -1,0 +1,14 @@
+@page "{id:guid}"
+@model RocketViewModel
+
+<div class="card"
+     style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Rocket @Model.Rocket.Sn</h5>
+        <h6 class="card-subtitle mb-2 text-muted">@Model.Rocket.Id</h6>
+        <p class="card-text">@Model.Rocket.Type</p>
+
+        <a class="card-link" asp-page="Edit" asp-route-id="@Model.Rocket.Id">Edit</a>
+        <a class="card-link" asp-page="Delete" asp-route-id="@Model.Rocket.Id">Delete</a>
+    </div>
+</div>

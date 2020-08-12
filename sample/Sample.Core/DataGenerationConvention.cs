@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bogus.Extensions;
@@ -37,9 +38,10 @@ namespace Sample.Core
                     {
                         await dbContext.Database.EnsureCreatedAsync(cancellationToken).ConfigureAwait(false);
                         var rocketFaker = new RocketFaker();
+                        rocketFaker.UseSeed(0);
                         var rockets = rocketFaker.GenerateBetween(10, 100);
                         var launchFaker = new LaunchRecordFaker(rockets);
-
+                        launchFaker.UseSeed(1);
                         var launches = launchFaker.GenerateBetween(100, 1000);
 
                         await dbContext.Rockets.AddRangeAsync(rockets, cancellationToken).ConfigureAwait(false);

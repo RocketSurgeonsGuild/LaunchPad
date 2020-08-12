@@ -1,0 +1,38 @@
+@page
+@using Sample.Core.Domain
+@model RocketEditModel
+
+<form method="post">
+    <div class="card"
+         style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Rocket @Model.Rocket.Sn</h5>
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text"
+                           asp-for="Model.Type"/>
+                </div>
+                <select asp-for="Model.Type"
+                        asp-items="Enum.GetValues(typeof(RocketType)).OfType<RocketType>().Select(z => new SelectListItem() { Text = z.ToString(), Value = z.ToString(), Selected = z == Model.Model.Type })">
+                </select>
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text"
+                           asp-for="Model.SerialNumber"/>
+                </div>
+                <input asp-for="Model.SerialNumber"/>
+            </div>
+
+            <button class="btn btn-link card-link"
+                    type="submit">
+                Save
+            </button>
+            <button class="btn btn-link card-link"
+                    onclick="history.go(-1);">
+                Cancel
+            </button>
+        </div>
+    </div>
+</form>
