@@ -5,6 +5,7 @@
         <IncludeTestAssembly>true</IncludeTestAssembly>
         <NoWarn>$(NoWarn);CA1812</NoWarn>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
     <!-- used to trigger build information -->
     <PropertyGroup>
