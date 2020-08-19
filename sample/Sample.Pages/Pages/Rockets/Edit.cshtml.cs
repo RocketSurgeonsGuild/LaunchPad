@@ -19,7 +19,7 @@ namespace Sample.Pages.Pages.Rockets
         }
 
         [BindProperty]
-        public EditRocket.Model Model { get; set; }
+        public EditRocket.Model Model { get; set; } = new EditRocket.Model();
 
         public override async Task OnGet()
         {
@@ -31,6 +31,7 @@ namespace Sample.Pages.Pages.Rockets
         {
             if (!ModelState.IsValid)
             {
+                await base.OnGet();
                 return Page();
             }
 

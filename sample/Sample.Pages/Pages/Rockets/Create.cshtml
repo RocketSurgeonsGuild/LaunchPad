@@ -1,7 +1,40 @@
 @page
+@using Sample.Core.Domain
 @model RocketCreateModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<form method="post">
+    <div class="card"
+         style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Create Rocket</h5>
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text"
+                           asp-for="Model.Type"/>
+                </div>
+                <select asp-for="Model.Type"
+                        asp-items="Enum.GetValues(typeof(RocketType)).OfType<RocketType>().Select(z => new SelectListItem() { Text = z.ToString(), Value = z.ToString(), Selected = z == Model.Model.Type })">
+                </select>
+                <span asp-validation-for="Model.Type"></span>
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text"
+                           asp-for="Model.SerialNumber"/>
+                </div>
+                <input asp-for="Model.SerialNumber"/>
+                <span asp-validation-for="Model.SerialNumber"></span>
+            </div>
+
+            <button class="btn btn-link card-link"
+                    type="submit">
+                Save
+            </button>
+            <button class="btn btn-link card-link"
+                    onclick="history.go(-1);">
+                Cancel
+            </button>
+        </div>
+    </div>
+</form>

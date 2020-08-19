@@ -1,4 +1,4 @@
-@page
+@page "{id:guid}"
 @using Sample.Core.Domain
 @model RocketEditModel
 
@@ -16,6 +16,7 @@
                 <select asp-for="Model.Type"
                         asp-items="Enum.GetValues(typeof(RocketType)).OfType<RocketType>().Select(z => new SelectListItem() { Text = z.ToString(), Value = z.ToString(), Selected = z == Model.Model.Type })">
                 </select>
+                <span asp-validation-for="Model.Type"></span>
             </div>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -23,6 +24,7 @@
                            asp-for="Model.SerialNumber"/>
                 </div>
                 <input asp-for="Model.SerialNumber"/>
+                <span asp-validation-for="Model.SerialNumber"></span>
             </div>
 
             <button class="btn btn-link card-link"
