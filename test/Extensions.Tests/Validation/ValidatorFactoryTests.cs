@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using DryIoc;
 using FakeItEasy;
+using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Extensions.Testing;
@@ -13,7 +15,7 @@ namespace Extensions.Tests.Validation
     public class ValidatorFactoryTests : AutoFakeTest
     {
         [Fact]
-        public void Test1()
+        public void Should_Aggregate_Validators()
         {
             var sp = A.Fake<IServiceProvider>();
             A.CallTo(() => sp.GetService(typeof(IEnumerable<IValidator<AModel>>)))
@@ -22,14 +24,30 @@ namespace Extensions.Tests.Validation
 
             var factory = AutoFake.Resolve<ValidatorFactory>();
             var validator = factory.GetValidator<AModel>();
+            var result = validator.Validate(new AModel());
+            result.Errors.Should().HaveCount(2);
         }
 
         public ValidatorFactoryTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Information) { }
 
-        private class AModel
+        public interface IThing
+        {
+            public string? Thing { get; set; }
+        }
+
+        private class AModel : IThing
         {
             public string? Id { get; set; }
             public string? Other { get; set; }
+            public string? Thing { get; set; }
+        }
+
+        private class ThingValidator : AbstractValidator<IThing>
+        {
+            public ThingValidator()
+            {
+                RuleFor(x => x.Thing).NotEmpty();
+            }
         }
 
         private class ValidatorAa : AbstractValidator<AModel>

@@ -97,6 +97,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions.Tests", "test\Fun
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample_Function", "sample\Sample.Function\Sample_Function.csproj", "{041A8889-1B35-4BFD-B146-9DA7CB99DAF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.LaunchPad.Grpc", "src\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj", "{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -569,6 +571,18 @@ Global
 		{041A8889-1B35-4BFD-B146-9DA7CB99DAF1}.Release|x64.Build.0 = Release|Any CPU
 		{041A8889-1B35-4BFD-B146-9DA7CB99DAF1}.Release|x86.ActiveCfg = Release|Any CPU
 		{041A8889-1B35-4BFD-B146-9DA7CB99DAF1}.Release|x86.Build.0 = Release|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Debug|x64.Build.0 = Debug|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Debug|x86.Build.0 = Debug|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Release|x64.ActiveCfg = Release|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Release|x64.Build.0 = Release|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Release|x86.ActiveCfg = Release|Any CPU
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -616,5 +630,6 @@ Global
 		{90DD3DB0-0304-4D79-A249-09E123BBC1E4} = {8FFDF555-DB50-45F9-9A2D-6410F39151C3}
 		{3DC043AE-557B-4D07-85F2-2913E446C808} = {DF33E0FB-9790-4654-B60F-8AB22E0CC3D1}
 		{041A8889-1B35-4BFD-B146-9DA7CB99DAF1} = {5D11C19B-E8E4-4CE3-9C8A-1D368578EBCB}
+		{7A012ECC-B3E9-4A0B-96BB-EA87DE6EECA8} = {8FFDF555-DB50-45F9-9A2D-6410F39151C3}
 	EndGlobalSection
 EndGlobal

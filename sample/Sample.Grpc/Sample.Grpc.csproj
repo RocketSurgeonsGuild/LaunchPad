@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\rockets.proto" GrpcServices="Both" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AspNetCore.AppMetrics\Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />

@@ -29,7 +29,7 @@ namespace Sample.Core.Operations.LaunchRecords
 
         public class Request : Model, IRequest<LaunchRecordModel>
         {
-            public Guid Id { get; }
+            public Guid Id { get; set; }
 
             public Request(Guid id)
             {
@@ -47,7 +47,8 @@ namespace Sample.Core.Operations.LaunchRecords
                    .ForMember(x => x.Rocket, x => x.Ignore())
                    .ForMember(x => x.Id, x => x.Ignore())
                     ;
-                CreateMap<Model, Request>();
+                CreateMap<Model, Request>()
+                   .ForMember(z => z.Id, z => z.Ignore());
             }
         }
 
