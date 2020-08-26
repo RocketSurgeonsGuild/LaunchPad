@@ -1,5 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Reflection;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Rocket.Surgery.LaunchPad.Extensions.Validation
 {
@@ -25,13 +30,21 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
         /// <returns>IValidator.</returns>
         public override IValidator CreateInstance(Type validatorType)
         {
-            var service = _context.GetService(validatorType);
-            if (service is IValidator validator)
+            var services = _context.GetServices(validatorType).OfType<IValidator>().ToArray();
+            if (services.Length > 0 && validatorType.IsGenericType && validatorType.GetGenericArguments().Length == 1)
             {
-                return validator;
+                return (IValidator)CreateValidatorMethod.MakeGenericMethod(validatorType.GetGenericArguments()[0]).Invoke(null, new object[]
+                {
+                    services.AsEnumerable()
+                });
             }
 
             return null!;
         }
+
+        private static CompositeValidator<T> CreateValidator<T>(IEnumerable<object> validators) => new CompositeValidator<T>(validators.OfType<IValidator>());
+
+        private static readonly MethodInfo CreateValidatorMethod = typeof(ValidatorFactory)
+           .GetMethod(nameof(CreateValidator), BindingFlags.Static | BindingFlags.NonPublic)!;
     }
 }

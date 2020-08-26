@@ -24,7 +24,7 @@ namespace Sample.Core.Operations.Rockets
 
         public class Request : Model, IRequest<RocketModel>
         {
-            public Guid Id { get; }
+            public Guid Id { get; set; }
 
             public Request(Guid id)
             {
@@ -43,6 +43,7 @@ namespace Sample.Core.Operations.Rockets
                    .ForMember(x => x.LaunchRecords, x => x.Ignore())
                     ;
                 CreateMap<Model, Request>()
+                   .ForMember(z => z.Id, z => z.Ignore())
                     ;
                 CreateMap<RocketModel, Model>()
                    .ForMember(x => x.SerialNumber, x => x.MapFrom(z => z.Sn))

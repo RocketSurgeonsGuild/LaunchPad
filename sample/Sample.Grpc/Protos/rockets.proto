@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Sample.Grpc";
+
+message NullableTimestamp {
+  oneof kind {
+    google.protobuf.NullValue null = 1;
+    google.protobuf.Timestamp data = 2;
+  }
+}
+
+message CreateLaunchRecordRequest {
+    string Partner = 1;
+    string Payload = 2;
+    double PayloadWeightKg = 3;
+    NullableTimestamp ActualLaunchDate = 4;
+    google.protobuf.Timestamp ScheduledLaunchDate = 5;
+    string RocketId = 6;
+}
+
+message CreateLaunchRecordResponse
+{
+  string Id = 1;
+}
+
+message GetLaunchRecordRequest
+{
+  string Id = 1;
+}
+
+message ListLaunchRecordsRequest {
+
+}
+
+message ListLaunchRecordsResponse {
+  repeated LaunchRecordModel Results = 1;
+}
+
+message DeleteLaunchRecordRequest
+{
+  string Id = 1;
+}
+
+message UpdateLaunchRecordRequest {
+  string Id = 1;
+  string Partner = 2;
+  string Payload = 3;
+  double PayloadWeightKg = 4;
+  NullableTimestamp ActualLaunchDate = 5;
+  google.protobuf.Timestamp ScheduledLaunchDate = 6;
+  string RocketId = 7;
+}
+
+message LaunchRecordModel {
+  string Id = 1;
+  string Partner = 2;
+  string Payload = 3;
+  double PayloadWeightKg = 4;
+  NullableTimestamp ActualLaunchDate = 5;
+  google.protobuf.Timestamp ScheduledLaunchDate = 6;
+  string RocketSerialNumber = 7;
+  RocketType RocketType = 8;
+}
+
+enum RocketType {
+    Falcon9 = 0;
+    FalconHeavy = 1;
+    AtlasV = 2;
+}
+
+message CreateRocketRequest {
+  string SerialNumber = 1;
+  RocketType Type = 2;
+}
+
+message CreateRocketResponse
+{
+  string Id = 1;
+}
+
+message DeleteRocketRequest
+{
+  string Id = 1;
+}
+
+message GetRocketRequest
+{
+  string Id = 1;
+}
+
+message UpdateRocketRequest {
+  string Id = 1;
+  string SerialNumber = 2;
+  RocketType Type = 3;
+}
+
+message RocketModel {
+  string Id = 1;
+  string Sn = 2;
+  RocketType Type = 3;
+}
+
+message ListRocketsRequest
+{
+}
+
+message ListRocketsResponse
+{
+  repeated RocketModel Results = 1;
+}
+
+package greet;
+
+// The greeting service definition.
+service LaunchRecords {
+  // Sends a greeting
+  rpc GetLaunchRecords (GetLaunchRecordRequest) returns (LaunchRecordModel);
+  rpc ListLaunchRecords (ListLaunchRecordsRequest) returns (ListLaunchRecordsResponse);
+  rpc CreateLaunchRecord (CreateLaunchRecordRequest) returns (CreateLaunchRecordResponse);
+  rpc EditLaunchRecord (UpdateLaunchRecordRequest) returns (LaunchRecordModel);
+  rpc DeleteLaunchRecord (DeleteLaunchRecordRequest) returns (google.protobuf.Empty);
+}
+
+// The greeting service definition.
+service Rockets {
+  rpc GetRockets (GetRocketRequest) returns (RocketModel);
+  rpc ListRockets (ListRocketsRequest) returns (ListRocketsResponse);
+  rpc CreateRocket (CreateRocketRequest) returns (CreateRocketResponse);
+  rpc EditRocket (UpdateRocketRequest) returns (RocketModel);
+  rpc DeleteRocket(DeleteRocketRequest) returns (google.protobuf.Empty);
+}
