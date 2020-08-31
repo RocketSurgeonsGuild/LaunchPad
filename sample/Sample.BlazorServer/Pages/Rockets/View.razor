@@ -1,0 +1,13 @@
+@page "/rockets/{id:guid}"
+
+<div class="card"
+     style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Rocket @Model.Sn</h5>
+        <h6 class="card-subtitle mb-2 text-muted">@Model.Id</h6>
+        <p class="card-text">@Model.Type</p>
+
+        <a class="card-link" href="/rockets/edit/@Model.Id">Edit</a>
+        <a class="card-link" href="/rockets/delete/@Model.Id">Delete</a>
+    </div>
+</div>
