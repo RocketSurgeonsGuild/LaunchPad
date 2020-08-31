@@ -1,0 +1,25 @@
+@page "/rockets/delete/{id:guid}"
+
+<EditForm Model="Model" OnValidSubmit="Save">
+    <FluentValidator />
+    <div class="card"
+         style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Rocket @Model.Sn</h5>
+
+            <ValidationSummary Model="Model" />
+
+            <h6 class="card-subtitle mb-2 text-muted">@Model.Id</h6>
+            Are you sure you want to delete Rocket @Model.Sn?
+
+            <button class="btn btn-link card-link"
+                    type="submit">
+                Yes
+            </button>
+            <button class="btn btn-link card-link"
+                    onclick="history.go(-1);">
+                Cancel
+            </button>
+        </div>
+    </div>
+</EditForm>

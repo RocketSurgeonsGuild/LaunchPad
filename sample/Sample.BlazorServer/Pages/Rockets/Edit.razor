@@ -1,0 +1,48 @@
+@page "/rockets/edit/{id:guid}"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Sample.Core.Domain
+
+<EditForm Model="Model"
+          OnValidSubmit="Save">
+    <FluentValidator/>
+    <div class="card"
+         style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Rocket @Model.SerialNumber</h5>
+
+            <ValidationSummary Model="Model" />
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text"
+                           for="Model.Type">Type</label>
+                </div>
+                <InputSelect @bind-Value="Model.Type"
+                               id="Model.Type">
+                    @foreach (var item in Enum.GetValues(typeof(RocketType)).OfType<RocketType>()) {
+                        <option value="@item.ToString()">@item.ToString()</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Model.Type"/>
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text"
+                           for="Model.SerialNumber">Serial Number</label>
+                </div>
+                <InputText @bind-Value="Model.SerialNumber"
+                             id="Model.SerialNumber"/>
+                <ValidationMessage For="() => Model.SerialNumber"/>
+            </div>
+
+            <button class="btn btn-link card-link"
+                    type="submit">
+                Save
+            </button>
+            <button class="btn btn-link card-link"
+                    onclick="history.go(-1);">
+                Cancel
+            </button>
+        </div>
+    </div>
+</EditForm>
