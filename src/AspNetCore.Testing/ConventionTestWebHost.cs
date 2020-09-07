@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Scanners;
 using Rocket.Surgery.Hosting;
+using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
 {
@@ -23,7 +23,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             var hostBuilder = base.CreateHostBuilder()
                .UseContentRoot(Path.GetDirectoryName(typeof(TEntryPoint).Assembly.Location))
                .ConfigureRocketSurgery(
-                    builder => { builder.Set(HostType.UnitTestHost); }
+                    builder => builder.Set(HostType.UnitTest)
                 );
             foreach (var item in _hostBuilderActions)
             {
@@ -36,10 +36,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
         public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory) => ConfigureHostBuilder(
             builder =>
             {
-                builder.ConfigureServices(
-                    services =>
+                builder.ConfigureRocketSurgery(
+                    c =>
                     {
-                        services.AddSingleton(loggerFactory);
+                        c.ConfigureHosting(
+                            b =>
+                            {
+                               b.UseSerilog((context, logger) => logger.ApplyConventions()))
+                            });
+                        );
                     }
                 );
             });

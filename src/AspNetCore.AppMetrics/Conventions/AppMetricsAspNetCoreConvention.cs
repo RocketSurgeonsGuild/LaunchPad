@@ -1,5 +1,6 @@
 ﻿using App.Metrics.AspNetCore.Endpoints;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -12,11 +13,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.Conventions
 {
     public class AppMetricsAspNetCoreConvention : IServiceConvention
     {
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            context.Services
-               .AddMetricsEndpoints(context.Configuration.GetSection("Metrics:Endpoints"))
-               .AddMetricsTrackingMiddleware(context.Configuration.GetSection("Metrics:Tracking"))
+            services
+               .AddMetricsEndpoints(configuration.GetSection("Metrics:Endpoints"))
+               .AddMetricsTrackingMiddleware(configuration.GetSection("Metrics:Tracking"))
                .AddMetricsReportingHostedService()
                .Configure<MetricsEndpointsHostingOptions>(
                     options =>

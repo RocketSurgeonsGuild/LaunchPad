@@ -11,5 +11,6 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+      <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     </ItemGroup>
 </Project>

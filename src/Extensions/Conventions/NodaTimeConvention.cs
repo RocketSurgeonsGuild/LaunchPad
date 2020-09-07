@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.TimeZones;
@@ -23,16 +24,16 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.Services.AddSingleton<IClock>(SystemClock.Instance);
-            context.Services.AddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
-            context.Services.AddSingleton<IDateTimeZoneSource>(TzdbDateTimeZoneSource.Default);
+            services.AddSingleton<IClock>(SystemClock.Instance);
+            services.AddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
+            services.AddSingleton<IDateTimeZoneSource>(TzdbDateTimeZoneSource.Default);
         }
     }
 }

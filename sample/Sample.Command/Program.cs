@@ -24,9 +24,7 @@ namespace Sample.Command
            .ConfigureRocketSurgery(
                 builder => builder
                    .UseDryIoc()
-                   .AppendDelegate(new DryIocConventionDelegate(
-                        x => x.ConfigureContainer(x => x.UseInstance(new InstanceThing()))
-                    ))
+                   .ConfigureDryIoc(x => x.UseInstance(new InstanceThing()))
                    .ConfigureCommandLine(
                         context =>
                         {

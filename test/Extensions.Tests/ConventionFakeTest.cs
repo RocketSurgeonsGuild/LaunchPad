@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
@@ -10,47 +11,31 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
+using Rocket.Surgery.Hosting;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Extensions.Tests
 {
-    public abstract class ConventionFakeTest : AutoFakeTest, IAsyncLifetime
+    public abstract class ConventionFakeTest : AutoFakeTest
     {
-        protected TestHostBuilder HostBuilder { get; }
+        public ConventionFakeTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
 
-        public ConventionFakeTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        protected void Init(Action<ConventionContextBuilder>? action = null)
         {
-            HostBuilder = TestHost.For(this, LoggerFactory)
+            var c = Container;
+            var builder = TestHost.For(this, LoggerFactory)
                .WithLogger(Logger)
-               .Create();
+               .Create(
+                    z =>
+                    {
+                        z.Set(HostType.UnitTest);
+                        action?.Invoke(z);
+                    });
+            var conventions = builder.Conventions.GetAll(HostType.UnitTest);
+            var services = builder.Parse();
+            c.Populate(services);
+            Rebuild(c);
         }
-
-        protected override IContainer BuildContainer(IContainer container)
-        {
-            var services = HostBuilder.Parse();
-
-            var builder = new ServicesBuilder(
-                HostBuilder.Scanner,
-                HostBuilder.AssemblyProvider,
-                HostBuilder.AssemblyCandidateFinder,
-                services,
-                new ConfigurationBuilder().Build(),
-                services.Select(z => z.ImplementationInstance).OfType<IHostEnvironment>().First(),
-                HostBuilder.Get<ILogger>(),
-                HostBuilder.ServiceProperties
-            );
-            Composer.Register(HostBuilder.Scanner, builder, typeof(IServiceConvention), typeof(ServiceConventionDelegate));
-            container.Populate(services);
-
-            return container;
-        }
-
-        public async Task InitializeAsync()
-        {
-            await Task.Yield();
-        }
-
-        public Task DisposeAsync() => Task.CompletedTask;
     }
 }

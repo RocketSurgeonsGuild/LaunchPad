@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.EntityFramework.Conventions;
@@ -10,13 +11,13 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework.Conventions
 {
     public class EntityFrameworkConvention : IServiceConvention
     {
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            context.Services.AddSingleton<IOnModelCreating, SqliteDateTimeOffset>();
-            context.Services.AddSingleton<IOnModelCreating, ConfigureEntityTypes>();
+            services.AddSingleton<IOnModelCreating, SqliteDateTimeOffset>();
+            services.AddSingleton<IOnModelCreating, ConfigureEntityTypes>();
 
             var assemblies = context.AssemblyCandidateFinder.GetCandidateAssemblies("Rocket.Surgery.LaunchPad.EntityFramework");
-            context.Services.Scan(
+            services.Scan(
                 x => x
                    .FromAssemblies(assemblies)
                    .AddClasses(c => c.AssignableTo<IOnEntityCreating>())

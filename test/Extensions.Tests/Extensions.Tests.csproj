@@ -9,6 +9,6 @@
         <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.LaunchPad.Commands.csproj" />
         <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
         <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.LaunchPad.Workers.csproj" />
-        <PackageReference Include="Rocket.Surgery.Conventions.TestHost" />
+        <PackageReference Include="Rocket.Surgery.Hosting.TestHost" />
     </ItemGroup>
 </Project>

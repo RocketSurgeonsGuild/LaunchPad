@@ -3,6 +3,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using MediatR;
 using MediatR.Registration;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
@@ -19,8 +20,9 @@ namespace Rocket.Surgery.LaunchPad.Extensions
         /// Uses MediatR.
         /// </summary>
         /// <param name="builder">The builder.</param>
+        /// <param name="services"></param>
         /// <returns>IServiceConventionContext.</returns>
-        public static IServiceConventionContext UseMediatR([NotNull] this IServiceConventionContext builder)
+        public static IConventionContext UseMediatR([NotNull] this IConventionContext builder, IServiceCollection services)
         {
             if (builder == null)
             {
@@ -28,19 +30,17 @@ namespace Rocket.Surgery.LaunchPad.Extensions
             }
 
             var serviceConfig = builder.GetOrAdd(() => new MediatRServiceConfiguration());
-            return UseMediatR(builder, serviceConfig);
+            return UseMediatR(builder, services, serviceConfig);
         }
 
         /// <summary>
         /// Uses MediatR.
         /// </summary>
         /// <param name="builder">The builder.</param>
+        /// <param name="services"></param>
         /// <param name="serviceConfig">The MediatR service configuration.</param>
         /// <returns>IServiceConventionContext.</returns>
-        public static IServiceConventionContext UseMediatR(
-            this IServiceConventionContext builder,
-            MediatRServiceConfiguration serviceConfig
-        )
+        public static IConventionContext UseMediatR(this IConventionContext builder, IServiceCollection services, MediatRServiceConfiguration serviceConfig)
         {
             if (builder is null)
             {
@@ -52,14 +52,14 @@ namespace Rocket.Surgery.LaunchPad.Extensions
                 throw new ArgumentNullException(nameof(serviceConfig));
             }
 
-            if (builder.Services.Any(z => z.ServiceType == typeof(IMediator))) return builder;
+            if (services.Any(z => z.ServiceType == typeof(IMediator))) return builder;
 
             builder.Set(serviceConfig);
             var assemblies = builder.AssemblyCandidateFinder
                .GetCandidateAssemblies(nameof(MediatR)).ToArray();
 
-            ServiceRegistrar.AddRequiredServices(builder.Services, serviceConfig);
-            ServiceRegistrar.AddMediatRClasses(builder.Services, assemblies);
+            ServiceRegistrar.AddRequiredServices(services, serviceConfig);
+            ServiceRegistrar.AddMediatRClasses(services, assemblies);
             return builder;
         }
     }

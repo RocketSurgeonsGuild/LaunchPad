@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Conventions.Scanners;
 using Rocket.Surgery.Hosting;
 
 namespace Sample.BlazorServer
@@ -22,8 +21,7 @@ namespace Sample.BlazorServer
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-           .ConfigureRocketSurgery<SimpleConventionScanner>()
            .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default))
-           .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+           .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }

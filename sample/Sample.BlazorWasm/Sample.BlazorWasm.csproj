@@ -12,4 +12,9 @@
     <PackageReference Include="System.Net.Http.Json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WebAssembly.Hosting\Rocket.Surgery.LaunchPad.WebAssembly.Hosting.csproj" />
+    <ProjectReference Include="..\Sample.Restful.Client\Sample.Restful.Client.csproj" />
+  </ItemGroup>
+
 </Project>

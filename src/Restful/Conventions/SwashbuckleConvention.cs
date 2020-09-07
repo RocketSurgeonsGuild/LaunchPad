@@ -5,6 +5,7 @@ using System.Text.Json;
 using FluentValidation.Validators;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Any;
@@ -36,16 +37,16 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.Services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
+            services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
 
-            context.Services.AddSwaggerGen(
+            services.AddSwaggerGen(
                 options =>
                 {
                     options.ConfigureForNodaTime();
@@ -107,7 +108,7 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
                 }
             );
 
-            AddFluentValidationRules(context.Services);
+            AddFluentValidationRules(services);
         }
 
         private static void AddFluentValidationRules(IServiceCollection services)

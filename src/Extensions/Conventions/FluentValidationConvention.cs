@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
@@ -25,27 +26,23 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
-        public void Register([NotNull] IServiceConventionContext context)
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.Services.AddConventionValidatorsFromAssemblies(
+            services.AddConventionValidatorsFromAssemblies(
                 context
                    .AssemblyCandidateFinder
                    .GetCandidateAssemblies("FluentValidation")
             );
 
             var serviceConfig = context.GetOrAdd(() => new MediatRServiceConfiguration());
-            context.Services.TryAddEnumerable(
-                new ServiceDescriptor(
-                    typeof(IPipelineBehavior<,>),
-                    typeof(ValidationPipelineBehavior<,>),
-                    serviceConfig.Lifetime
-                )
-            );
+            services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), serviceConfig.Lifetime));
         }
     }
 }

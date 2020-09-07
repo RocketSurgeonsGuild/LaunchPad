@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -44,22 +45,21 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         /// </summary>
         /// <param name="context">The context.</param>
         /// TODO Edit XML Comment Template for Register
-        public void Register([NotNull] IServiceConventionContext context)
+        public void Register([NotNull] IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var coreBuilder = context.Services
-               .AddMvcCore();
+            var coreBuilder = services.AddMvcCore();
             foreach (var item in context.AssemblyCandidateFinder.GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore"))
             {
                 coreBuilder
                     .AddApplicationPart(item);
             }
 
-            context.Services.Configure<MvcOptions>(options =>
+            services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add<NotFoundExceptionFilter>();
                 options.Filters.Add<RequestFailedExceptionFilter>();
@@ -67,8 +67,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 options.Filters.Add<SerilogLoggingPageFilter>(0);
             });
 
-            context.Services
-               .AddFluentValidationExtensions(_validatorConfiguration, _validationMvcConfiguration);
+            services.AddFluentValidationExtensions(_validatorConfiguration, _validationMvcConfiguration);
         }
     }
 }

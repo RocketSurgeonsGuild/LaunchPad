@@ -15,7 +15,6 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
     /// Implements the <see cref="ISerilogConvention" />
     /// </summary>
     /// <seealso cref="ISerilogConvention" />
-    [LiveConvention]
     public sealed class SerilogDebugLoggingConvention : SerilogConditionallyAsyncLoggingConvention
     {
         private readonly LaunchPadLoggingOptions _options;

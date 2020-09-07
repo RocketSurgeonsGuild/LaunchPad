@@ -1,9 +1,7 @@
-// ReSharper disable once CheckNamespace
-
 using System;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog;
+using Rocket.Surgery.LaunchPad.AppMetrics;
+using Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 
 // ReSharper disable once CheckNamespace
 namespace Rocket.Surgery.Conventions
@@ -12,7 +10,7 @@ namespace Rocket.Surgery.Conventions
     /// Helper method for working with <see cref="ConventionContextBuilder" />
     /// </summary>
     [PublicAPI]
-    public static class SerilogAbstractionsHostBuilderExtensions
+    public static class AppMetricsAbstractionsHostBuilderExtensions
     {
         /// <summary>
         /// Configure the serilog delegate to the convention scanner
@@ -20,7 +18,7 @@ namespace Rocket.Surgery.Conventions
         /// <param name="container">The container.</param>
         /// <param name="delegate">The delegate.</param>
         /// <returns>IConventionHostBuilder.</returns>
-        public static ConventionContextBuilder ConfigureSerilog([NotNull] this ConventionContextBuilder container, [NotNull] SerilogConvention @delegate)
+        public static ConventionContextBuilder ConfigureSerilog([NotNull] this ConventionContextBuilder container, [NotNull] MetricsConvention @delegate)
         {
             if (container == null)
             {

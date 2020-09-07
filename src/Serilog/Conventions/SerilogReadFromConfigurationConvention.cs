@@ -19,20 +19,20 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
     /// </summary>
     /// <seealso cref="ISerilogConvention" />
     [LiveConvention]
-    public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigConvention
+    public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
     {
         /// <inheritdoc />
-        public void Register([NotNull] IConfigConventionContext context)
+        public void Register([NotNull] IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var applicationLogLevel = context.Configuration.GetValue<LogLevel?>("ApplicationState:LogLevel");
+            var applicationLogLevel = configuration.GetValue<LogLevel?>("ApplicationState:LogLevel");
             if (applicationLogLevel.HasValue)
             {
-                context.AddInMemoryCollection(
+                builder.AddInMemoryCollection(
                     new Dictionary<string, string>
                     {
                         {
@@ -45,14 +45,14 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
         }
 
         /// <inheritdoc />
-        public void Register([NotNull] ISerilogConventionContext context)
+        public void Register([NotNull] IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.LoggerConfiguration.ReadFrom.Configuration(context.Configuration);
+            loggerConfiguration.ReadFrom.Configuration(configuration);
         }
     }
 }

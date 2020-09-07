@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bogus.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,9 +21,9 @@ namespace Sample.Core
     public class DataGenerationConvention : IServiceConvention
     {
 
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            context.Services.Insert(0, ServiceDescriptor.Singleton<IHostedService, HostedService>());
+            services.Insert(0, ServiceDescriptor.Singleton<IHostedService, HostedService>());
         }
 
         class HostedService : IHostedService

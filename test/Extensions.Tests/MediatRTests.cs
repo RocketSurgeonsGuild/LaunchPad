@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.Conventions.Scanners;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Extensions;
 using Rocket.Surgery.LaunchPad.Extensions.Conventions;
@@ -23,25 +22,19 @@ namespace Extensions.Tests
         [Fact]
         public async Task Test1()
         {
-            AutoFake.Provide<IAssemblyProvider>(new TestAssemblyProvider());
-            AutoFake.Provide<IAssemblyCandidateFinder>(new TestAssemblyCandidateFinder());
-            AutoFake.Provide<IServiceCollection>(new ServiceCollection());
-            AutoFake.Provide<IConventionScanner>(
-                new BasicConventionScanner(A.Fake<IServiceProviderDictionary>(), new MediatRConvention())
-            );
-            var builder = AutoFake.Resolve<ServicesBuilder>();
-            builder.UseMediatR();
+            var builder = new ConventionContextBuilder(new Dictionary<object, object?>())
+               .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
+            var context = ConventionContext.From(builder);
+            var services = new ServiceCollection();
+            context.UseMediatR(services);
 
             var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
-            builder.Services.AddSingleton(sub);
+            services.AddSingleton(sub);
 
-            builder.Services.Should().Contain(
-                x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient
-            );
+            services.Should().Contain(x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient);
 
-            var r = builder.Build();
-
+            var r = services.BuildServiceProvider();
             var mediator = r.GetRequiredService<IMediator>();
 
             await mediator.Send(new Request()).ConfigureAwait(false);
@@ -53,24 +46,21 @@ namespace Extensions.Tests
         [Fact]
         public async Task Test2()
         {
-            AutoFake.Provide<IAssemblyProvider>(new TestAssemblyProvider());
-            AutoFake.Provide<IAssemblyCandidateFinder>(new TestAssemblyCandidateFinder());
-            AutoFake.Provide<IServiceCollection>(new ServiceCollection());
-            AutoFake.Provide<IConventionScanner>(
-                new BasicConventionScanner(A.Fake<IServiceProviderDictionary>(), new MediatRConvention())
-            );
-            var builder = AutoFake.Resolve<ServicesBuilder>();
-            builder.UseMediatR(new MediatRServiceConfiguration().AsSingleton());
+            var builder = new ConventionContextBuilder(new Dictionary<object, object?>())
+               .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
+            var context = ConventionContext.From(builder);
+            var services = new ServiceCollection();
+            context.UseMediatR(services, new MediatRServiceConfiguration().AsSingleton());
 
             var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
-            builder.Services.AddSingleton(sub);
+            services.AddSingleton(sub);
 
-            builder.Services.Should().Contain(
+            services.Should().Contain(
                 x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Singleton
             );
 
-            var r = builder.Build();
+            var r = services.BuildServiceProvider();
 
             var mediator = r.GetRequiredService<IMediator>();
 

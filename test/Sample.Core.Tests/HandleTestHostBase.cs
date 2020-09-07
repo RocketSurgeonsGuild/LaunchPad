@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
+using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Extensions.Conventions;
 using Sample.Core.Domain;
 using Serilog;
@@ -33,8 +34,7 @@ namespace Sample.Core.Tests
         {
             _hostBuilder = TestHost.For(this, LoggerFactory)
                .WithLogger(Logger)
-               .Create();
-            _hostBuilder.Scanner.ExceptConvention(typeof(NodaTimeConvention));
+               .Create(b => b.ExceptConvention(typeof(NodaTimeConvention)));
             ExcludeSourceContext(nameof(TestHostBuilder));
             ExcludeSourceContext(nameof(TestHost));
             ExcludeSourceContext(nameof(DiagnosticSource));
@@ -47,9 +47,9 @@ namespace Sample.Core.Tests
 
             _hostBuilder
                .ConfigureServices(
-                    context =>
+                    (context, services) =>
                     {
-                        context.Services.AddDbContext<RocketDbContext>(
+                        services.AddDbContext<RocketDbContext>(
                             x => x
                                .EnableDetailedErrors()
                                .EnableSensitiveDataLogging()

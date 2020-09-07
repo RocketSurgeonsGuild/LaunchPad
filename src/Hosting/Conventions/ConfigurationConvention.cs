@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Configuration;
 using Rocket.Surgery.Hosting;
@@ -15,9 +16,10 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
     public class ConfigurationConvention : IHostingConvention
     {
         /// <inheritdoc />
-        public void Register(IHostingConventionContext context)
+        public void Register(IConventionContext context, IHostBuilder builder)
         {
-            context.GetOrAdd(() => new ConfigOptions())
+            context
+               .GetOrAdd(() => new ConfigOptions())
                .UseJson()
                .UseYml()
                .UseYaml();

@@ -1,4 +1,7 @@
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
+using Rocket.Surgery.Conventions;
+using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Serilog
 {
@@ -6,5 +9,6 @@ namespace Rocket.Surgery.LaunchPad.Serilog
     /// Delegate SerilogConventionDelegate
     /// </summary>
     /// <param name="context">The context.</param>
-    [PublicAPI] public delegate void SerilogConventionDelegate(ISerilogConventionContext context);
+    [PublicAPI]
+    public delegate void SerilogConvention(IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration);
 }

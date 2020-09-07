@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
@@ -38,7 +39,8 @@ namespace Sample.Restful
                         "v1",
                         new OpenApiInfo()
                         {
-                            Title = "Test Application"
+                            Version = typeof(Startup).GetCustomAttribute<AssemblyVersionAttribute>()?.Version ?? typeof(Startup).GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.1.0",
+                            Title = "Test Application",
                         }
                     )
                 );
