@@ -35,9 +35,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services
-                .AddMvcCore()
-                .AddNewtonsoftJson();
+            services.WithMvcCore().AddNewtonsoftJson();
             services.Configure<MvcNewtonsoftJsonOptions>(
                 options =>
                 {

@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace Rocket.Surgery.LaunchPad.Serilog
 {
     /// <summary>
@@ -36,5 +38,10 @@ namespace Rocket.Surgery.LaunchPad.Serilog
         /// Base option from the serilog package
         /// </summary>
         public bool PreserveStaticLogger { get; set; }
+
+        /// <summary>
+        /// Set a custom logger factory
+        /// </summary>
+        public ILoggerFactory? LoggerFactory { get; set; }
     }
 }

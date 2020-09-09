@@ -15,5 +15,7 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
+      <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+      <ProjectReference Include="..\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
     </ItemGroup>
 </Project>

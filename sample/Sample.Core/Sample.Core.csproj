@@ -6,6 +6,8 @@
 
     <ItemGroup>
       <PackageReference Include="Rocket.Surgery.Conventions.AutoMapper" />
+      <PackageReference Include="Rocket.Surgery.Extensions.AutoMapper.SystemTextJson" />
+      <PackageReference Include="Rocket.Surgery.Extensions.AutoMapper.NodaTime" />
       <PackageReference Include="Bogus" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
       <PackageReference Include="Microsoft.Extensions.Hosting" />

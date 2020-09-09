@@ -20,7 +20,6 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
     /// Implements the <see cref="IHostingConvention" />
     /// </summary>
     /// <seealso cref="IHostingConvention" />
-    [LiveConvention]
     public class SerilogHostingConvention : IHostingConvention
     {
         private readonly LaunchPadLoggingOptions _options;
@@ -63,6 +62,11 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
                 _options.PreserveStaticLogger,
                 _options.WriteToProviders
             );
+
+            if (_options.LoggerFactory != null)
+            {
+                builder.ConfigureServices((ctx, services) => services.AddSingleton(_options.LoggerFactory));
+            }
         }
     }
 }

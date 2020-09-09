@@ -1,9 +1,9 @@
 using System;
+using System.Linq;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
@@ -50,13 +50,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
-            }
-
-            var coreBuilder = services.AddMvcCore();
-            foreach (var item in context.AssemblyCandidateFinder.GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore"))
-            {
-                coreBuilder
-                    .AddApplicationPart(item);
             }
 
             services.Configure<MvcOptions>(options =>
