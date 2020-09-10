@@ -39,9 +39,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             return hostBuilder;
         }
 
-        public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory) => ConfigureHostBuilder(
-            builder => builder.GetOrAdd(() => new LaunchPadLoggingOptions()).LoggerFactory = loggerFactory
-        );
+        public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory)
+            => ConfigureHostBuilder(builder => builder.Set(loggerFactory));
 
         public ConventionTestWebHost<TEntryPoint> ConfigureHostBuilder(Action<ConventionContextBuilder> action)
         {

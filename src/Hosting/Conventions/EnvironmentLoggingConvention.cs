@@ -3,12 +3,13 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Serilog.Conventions;
+using Rocket.Surgery.LaunchPad.Hosting.Conventions;
+using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 
 [assembly: Convention(typeof(EnvironmentLoggingConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
 {
     /// <summary>
     /// EnvironmentLoggingConvention.

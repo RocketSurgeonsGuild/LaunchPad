@@ -12,15 +12,17 @@ using Rocket.Surgery.Conventions.DryIoc;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Serilog;
 using DryIoc;
+using FluentValidation;
 
 namespace Sample.Command
 {
-    public class Program
+    [ImportConventions]
+    public partial class Program
     {
         public static Task<int> Main(string[] args) => CreateHostBuilder(args).RunCli();
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default))
+           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom<Program>())
            .ConfigureRocketSurgery(
                 builder => builder
                    .UseDryIoc()

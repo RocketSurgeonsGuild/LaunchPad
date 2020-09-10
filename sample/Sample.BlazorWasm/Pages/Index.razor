@@ -1,13 +1,9 @@
 ﻿@page "/"
 @using MediatR
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
-@using Microsoft.Extensions.Configuration
 @using Microsoft.Extensions.Logging
-@using Rocket.Surgery.Conventions
 @using Rocket.Surgery.WebAssembly.Hosting
-@using System.Reflection
-@using Microsoft.Extensions.DependencyInjection
-@using Microsoft.Extensions.DependencyModel
+@using FluentValidation
 @inject IMediator mediator
 @inject ILoggerFactory loggerFactory
 
@@ -38,10 +34,8 @@ Welcome to your new app.
     void Save() {
 
         var builder = WebAssemblyHostBuilder.CreateDefault(Array.Empty<string>())
-            .ConfigureRocketSurgery(
-                AppDomain.CurrentDomain,
-                z => z.WithConventionsFrom(_ => typeof(Program).GetMethod("GetConventions").Invoke(null, new object[] { _ }) as IEnumerable<IConventionWithDependencies>)
-            ).Build();
+            .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom<Program>())
+            .Build();
 
     }
 }

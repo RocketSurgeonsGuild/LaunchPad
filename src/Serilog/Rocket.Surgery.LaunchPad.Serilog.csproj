@@ -7,16 +7,12 @@
     <ItemGroup>
 		<PackageReference Include="Serilog.Settings.Configuration" />
 		<PackageReference Include="Serilog.Sinks.Async" />
-		<PackageReference Include="Serilog.Sinks.Console" />
-		<PackageReference Include="Serilog.Sinks.Debug" />
 		<PackageReference Include="Serilog.Sinks.Observable" />
 		<PackageReference Include="Serilog.Enrichers.Environment" />
 		<PackageReference Include="Serilog.Enrichers.Thread" />
 		<PackageReference Include="Serilog.Enrichers.Process" />
 		<PackageReference Include="Serilog.Enrichers.Demystify" />
 		<PackageReference Include="Serilog.Extensions.Logging" />
-		<PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
-        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
     </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Rocket.Surgery.LaunchPad.Extensions;
 using Sample.Core.Domain;
 

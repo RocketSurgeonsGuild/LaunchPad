@@ -2,7 +2,6 @@
 
 using System;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.LaunchPad.Serilog;
 
 // ReSharper disable once CheckNamespace

@@ -19,10 +19,7 @@ namespace Sample.BlazorWasm
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args)
-                .ConfigureRocketSurgery(
-                    AppDomain.CurrentDomain,
-                    z => z.WithConventionsFrom(_ => typeof(Program).GetMethod("GetConventions").Invoke(null, new object[] { _ }) as IEnumerable<IConventionWithDependencies>)
-                );
+                .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom<Program>());
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

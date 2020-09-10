@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using FluentAssertions;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -26,7 +27,7 @@ namespace Extensions.Tests
                .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
             var context = ConventionContext.From(builder);
             var services = new ServiceCollection();
-            context.UseMediatR(services);
+            new MediatRConvention().Register(context, new ConfigurationBuilder().Build(), services);
 
             var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
@@ -50,7 +51,8 @@ namespace Extensions.Tests
                .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
             var context = ConventionContext.From(builder);
             var services = new ServiceCollection();
-            context.UseMediatR(services, new MediatRServiceConfiguration().AsSingleton());
+            context.Set(new MediatRServiceConfiguration().AsSingleton());
+            new MediatRConvention().Register(context, new ConfigurationBuilder().Build(), services);
 
             var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
@@ -77,7 +79,7 @@ namespace Extensions.Tests
             public IEnumerable<Assembly> GetAssemblies() => new[]
             {
                 typeof(TestAssemblyProvider).GetTypeInfo().Assembly,
-                typeof(MediatRServicesExtensions).GetTypeInfo().Assembly
+                typeof(MediatRConvention).GetTypeInfo().Assembly
             };
         }
 
@@ -86,7 +88,7 @@ namespace Extensions.Tests
             public IEnumerable<Assembly> GetCandidateAssemblies(IEnumerable<string> candidates) => new[]
             {
                 typeof(TestAssemblyProvider).GetTypeInfo().Assembly,
-                typeof(MediatRServicesExtensions).GetTypeInfo().Assembly
+                typeof(MediatRConvention).GetTypeInfo().Assembly
             };
         }
 

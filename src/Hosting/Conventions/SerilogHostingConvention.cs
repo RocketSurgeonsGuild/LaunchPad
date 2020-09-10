@@ -4,16 +4,16 @@ using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog.Conventions;
+using Rocket.Surgery.LaunchPad.Hosting.Conventions;
+using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 [assembly: Convention(typeof(SerilogHostingConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
 {
     /// <summary>
     /// SerilogHostingConvention.
@@ -63,9 +63,9 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
                 _options.WriteToProviders
             );
 
-            if (_options.LoggerFactory != null)
+            if (context.Get<ILoggerFactory>() != null)
             {
-                builder.ConfigureServices((ctx, services) => services.AddSingleton(_options.LoggerFactory));
+                builder.ConfigureServices((ctx, services) => services.AddSingleton(context.Get<ILoggerFactory>()));
             }
         }
     }

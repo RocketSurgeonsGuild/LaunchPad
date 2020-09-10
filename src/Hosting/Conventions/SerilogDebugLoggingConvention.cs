@@ -1,21 +1,22 @@
 using System;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Serilog.Conventions;
+using Rocket.Surgery.LaunchPad.Hosting.Conventions;
+using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-using Serilog.Configuration;
 using Serilog.Events;
 
 [assembly: Convention(typeof(SerilogDebugLoggingConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
 {
     /// <summary>
     /// SerilogDebugLoggingConvention.
     /// Implements the <see cref="ISerilogConvention" />
     /// </summary>
     /// <seealso cref="ISerilogConvention" />
-    public sealed class SerilogDebugLoggingConvention : SerilogConditionallyAsyncLoggingConvention
+    public sealed class SerilogDebugLoggingConvention : ISerilogConvention
     {
         private readonly LaunchPadLoggingOptions _options;
 
@@ -27,7 +28,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
             => _options = options ?? new LaunchPadLoggingOptions();
 
         /// <inheritdoc />
-        protected override void Register([NotNull] LoggerSinkConfiguration configuration)
+        public void Register([NotNull] IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
         {
             if (configuration == null)
             {
@@ -36,10 +37,10 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
 
             if (!_options.EnableDebugLogging) return;
 
-            configuration.Debug(
+            loggerConfiguration.WriteTo.Async(c => c.Debug(
                 LogEventLevel.Verbose,
                 _options.DebugMessageTemplate
-            );
+            ));
         }
     }
 }

@@ -1,14 +1,10 @@
-﻿using System.Linq;
-using MediatR;
-using MediatR.Registration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.Extensions.Conventions;
 
-[assembly: Convention(typeof(MediatRConvention))]
+[assembly: Convention(typeof(DefaultConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
 {
@@ -17,7 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
     /// Implements the <see cref="IServiceConvention" />
     /// </summary>
     /// <seealso cref="IServiceConvention" />
-    public class MediatRConvention : IServiceConvention
+    public class DefaultConvention : IServiceConvention
     {
         /// <summary>
         /// Registers the specified context.
@@ -25,15 +21,10 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
         /// <param name="context">The context.</param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            var serviceConfig = context.GetOrAdd(() => new MediatRServiceConfiguration());
-            context.Set(serviceConfig);
-
-            var assemblies = context.AssemblyCandidateFinder
-               .GetCandidateAssemblies(nameof(MediatR))
-               .ToArray();
-
-            ServiceRegistrar.AddRequiredServices(services, serviceConfig);
-            ServiceRegistrar.AddMediatRClasses(services, assemblies);
+            services
+               .AddOptions()
+               .AddLogging()
+               .AddExecuteScopedServices();
         }
     }
 }

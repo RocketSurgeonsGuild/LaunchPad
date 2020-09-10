@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,10 +33,16 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
                 }
             );
 
-        public Task<ValidationResult> ValidateAsync(IValidationContext context, CancellationToken cancellation = new CancellationToken()) => _validators
-           .Select(z => Observable.FromAsync(ct => z.ValidateAsync(context, ct)))
-           .Concat()
-           .Aggregate(
+        public async Task<ValidationResult> ValidateAsync(IValidationContext context, CancellationToken cancellation = default)
+        {
+            var tasks = new List<Task<ValidationResult>>();
+            foreach (var validator in _validators)
+            {
+                tasks.Add(validator.ValidateAsync(context, cancellation));
+            }
+
+            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
+            return results.Aggregate(
                 new ValidationResult(),
                 (acc, result) =>
                 {
@@ -46,8 +50,8 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
                     RuleSetsExecutedProperty.SetValue(result, acc.RuleSetsExecuted?.Union(response.RuleSetsExecuted ?? Array.Empty<string>()).ToArray());
                     return response;
                 }
-            )
-           .ToTask(cancellation);
+            );
+        }
 
         public IValidatorDescriptor CreateDescriptor() => new CompositeValidatorDescriptor(_validators);
 

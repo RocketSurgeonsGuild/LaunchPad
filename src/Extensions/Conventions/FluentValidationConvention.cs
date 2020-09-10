@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +22,7 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
     /// </summary>
     /// <seealso cref="IServiceConvention" />
     /// <seealso cref="IServiceConvention" />
+    [AfterConvention(typeof(MediatRConvention))]
     public class FluentValidationConvention : IServiceConvention
     {
         /// <summary>
@@ -35,14 +38,17 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.AddConventionValidatorsFromAssemblies(
-                context
-                   .AssemblyCandidateFinder
-                   .GetCandidateAssemblies("FluentValidation")
-            );
+            var lifetime = context.Get<MediatRServiceConfiguration>()!.Lifetime!;
+            var assemblies = context
+               .AssemblyCandidateFinder
+               .GetCandidateAssemblies("FluentValidation");
+            foreach (var item in new AssemblyScanner(assemblies.SelectMany(z => z.DefinedTypes).Select(x => x.AsType())))
+            {
+                services.TryAddEnumerable(new ServiceDescriptor(item.InterfaceType, item.ValidatorType, lifetime));
+            }
 
-            var serviceConfig = context.GetOrAdd(() => new MediatRServiceConfiguration());
-            services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), serviceConfig.Lifetime));
+            services.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
+            services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), lifetime));
         }
     }
 }
