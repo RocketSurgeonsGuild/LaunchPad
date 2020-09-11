@@ -24,6 +24,7 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.AspNetCore | [![nuget-version-xwppntv3oyxg-badge]![nuget-downloads-xwppntv3oyxg-badge]][nuget-xwppntv3oyxg] |
 | Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics | [![nuget-version-nk9lkazybjxa-badge]![nuget-downloads-nk9lkazybjxa-badge]][nuget-nk9lkazybjxa] |
 | Rocket.Surgery.LaunchPad.AspNetCore.Blazor | [![nuget-version-trxsi+csbl6q-badge]![nuget-downloads-trxsi+csbl6q-badge]][nuget-trxsi+csbl6q] |
+| Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly | [![nuget-version-mujr0plht1xq-badge]![nuget-downloads-mujr0plht1xq-badge]][nuget-mujr0plht1xq] |
 | Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson | [![nuget-version-90qhcztnoaxa-badge]![nuget-downloads-90qhcztnoaxa-badge]][nuget-90qhcztnoaxa] |
 | Rocket.Surgery.LaunchPad.AspNetCore.Testing | [![nuget-version-vmr7vthhrumq-badge]![nuget-downloads-vmr7vthhrumq-badge]][nuget-vmr7vthhrumq] |
 | Rocket.Surgery.LaunchPad.Commands | [![nuget-version-yb7ebtcfpbqw-badge]![nuget-downloads-yb7ebtcfpbqw-badge]][nuget-yb7ebtcfpbqw] |
@@ -72,6 +73,9 @@ TBD
 [nuget-trxsi+csbl6q]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.Blazor/
 [nuget-version-trxsi+csbl6q-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-trxsi+csbl6q-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
+[nuget-mujr0plht1xq]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly/
+[nuget-version-mujr0plht1xq-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
+[nuget-downloads-mujr0plht1xq-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-90qhcztnoaxa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson/
 [nuget-version-90qhcztnoaxa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-90qhcztnoaxa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"

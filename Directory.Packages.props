@@ -13,7 +13,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageVersion Include="GitVersion.Tool" Version="5.3.7"/>
-        <PackageVersion Include="JetBrains.ReSharper.CommandLineTools" Version="2020.2.1"/>
+        <PackageVersion Include="JetBrains.ReSharper.CommandLineTools" Version="2020.2.2"/>
         <PackageVersion Include="Nuke.Common" Version="0.25.0-alpha0334"/>
         <PackageVersion Include="ReportGenerator" Version="4.6.7"/>
         <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.14.0-beta.10"/>
@@ -40,7 +40,8 @@
         <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.1.0"/>
         <!--    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="4.0.0-rc.2" />-->
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.8"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.7"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8"/>
         <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8"/>
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1"/>
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all"/>
@@ -82,7 +83,7 @@
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" Version="10.0.0-beta.22"/>
         <PackageVersion Include="Rocket.Surgery.System" Version="2.5.0"/>
         <PackageVersion Include="Scrutor" Version="3.2.2"/>
-        <PackageVersion Include="Serilog" Version="2.9.0"/>
+        <PackageVersion Include="Serilog" Version="2.10.0"/>
         <PackageVersion Include="Serilog.AspNetCore" Version="3.4.0"/>
         <PackageVersion Include="Serilog.Enrichers.Demystify" Version="0.1.0-dev-*"/>
         <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.1.3"/>
