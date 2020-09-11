@@ -39,6 +39,7 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.Restful | [![nuget-version-dqztqdouljwa-badge]![nuget-downloads-dqztqdouljwa-badge]][nuget-dqztqdouljwa] |
 | Rocket.Surgery.LaunchPad.Serilog | [![nuget-version-io9yqzwujeig-badge]![nuget-downloads-io9yqzwujeig-badge]][nuget-io9yqzwujeig] |
 | Rocket.Surgery.LaunchPad.Testing | [![nuget-version-bhdja8ikzcgq-badge]![nuget-downloads-bhdja8ikzcgq-badge]][nuget-bhdja8ikzcgq] |
+| Rocket.Surgery.LaunchPad.WebAssembly.Hosting | [![nuget-version-yamaca3l39wa-badge]![nuget-downloads-yamaca3l39wa-badge]][nuget-yamaca3l39wa] |
 | Rocket.Surgery.LaunchPad.Workers | [![nuget-version-qxab2sf9seaa-badge]![nuget-downloads-qxab2sf9seaa-badge]][nuget-qxab2sf9seaa] |
 <!-- nuget packages -->
 
@@ -53,9 +54,9 @@ TBD
 [github-license-badge]: https://img.shields.io/github/license/RocketSurgeonsGuild/LaunchPad.svg?style=flat "License"
 [codecov]: https://codecov.io/gh/RocketSurgeonsGuild/LaunchPad
 [codecov-badge]: https://img.shields.io/codecov/c/github/RocketSurgeonsGuild/LaunchPad.svg?color=E03997&label=codecov&logo=codecov&logoColor=E03997&style=flat "Code Coverage"
-[azurepipelines]: https://rocketsurgeonsguild.visualstudio.com/Libraries/_build/latest?definitionId=49&branchName=master
+[azurepipelines]: https://dev.azure.com/rocketsurgeonsguild/Libraries/_build/latest?definitionId=49&branchName=master
 [azurepipelines-badge]: https://img.shields.io/azure-devops/build/rocketsurgeonsguild/Libraries/49.svg?color=98C6FF&label=azure%20pipelines&logo=azuredevops&logoColor=98C6FF&style=flat "Azure Pipelines Status"
-[azurepipelines-history]: https://rocketsurgeonsguild.visualstudio.com/Libraries/_build?definitionId=49&branchName=master
+[azurepipelines-history]: https://dev.azure.com/rocketsurgeonsguild/Libraries/_build?definitionId=49&branchName=master
 [azurepipelines-history-badge]: https://buildstats.info/azurepipelines/chart/rocketsurgeonsguild/Libraries/49?includeBuildsFromPullRequest=false "Azure Pipelines History"
 [github]: https://github.com/RocketSurgeonsGuild/LaunchPad/actions?query=workflow%3Aci
 [github-badge]: https://img.shields.io/github/workflow/status/RocketSurgeonsGuild/LaunchPad/ci.svg?label=github&logo=github&color=b845fc&logoColor=b845fc&style=flat "GitHub Actions Status"
@@ -117,6 +118,9 @@ TBD
 [nuget-bhdja8ikzcgq]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Testing/
 [nuget-version-bhdja8ikzcgq-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Testing.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-bhdja8ikzcgq-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Testing.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
+[nuget-yamaca3l39wa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.WebAssembly.Hosting/
+[nuget-version-yamaca3l39wa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
+[nuget-downloads-yamaca3l39wa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-qxab2sf9seaa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Workers/
 [nuget-version-qxab2sf9seaa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Workers.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-qxab2sf9seaa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Workers.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"

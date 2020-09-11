@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +19,13 @@ namespace Functions.Tests
                .UseRocketBooster(RocketBooster.For(AppDomain.CurrentDomain))
                .Configure(
                     new WebJobsBuilder(
-                        new ServiceCollection()
-                           .AddSingleton<IHostEnvironment>(new HostEnvironment())
-                           .AddSingleton<IConfiguration>(new ConfigurationBuilder().Build())
+                        new ServiceCollection().AddSingleton(
+                            new HostBuilderContext(new Dictionary<object, object>())
+                            {
+                                Configuration = new ConfigurationBuilder().Build(),
+                                HostingEnvironment = new HostEnvironment()
+                            }
+                        )
                     )
                 );
         }
@@ -32,9 +37,13 @@ namespace Functions.Tests
                .UseRocketBooster(RocketBooster.For(new[] { typeof(RocketHostTests).Assembly }))
                .Configure(
                     new WebJobsBuilder(
-                        new ServiceCollection()
-                           .AddSingleton<IHostEnvironment>(new HostEnvironment())
-                           .AddSingleton<IConfiguration>(new ConfigurationBuilder().Build())
+                        new ServiceCollection().AddSingleton(
+                            new HostBuilderContext(new Dictionary<object, object>())
+                            {
+                                Configuration = new ConfigurationBuilder().Build(),
+                                HostingEnvironment = new HostEnvironment()
+                            }
+                        )
                     )
                 );
         }

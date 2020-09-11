@@ -1,4 +1,5 @@
-﻿using Humanizer;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -17,8 +18,27 @@ namespace Rocket.Surgery.LaunchPad.Restful.OpenApi
 
             foreach (var parameter in operation.Parameters)
             {
-                parameter.Name = parameter.Name.Camelize();
+                parameter.Name = Camelize(parameter.Name);
             }
+        }
+
+
+        /// <summary>
+        /// By default, pascalize converts strings to UpperCamelCase also removing underscores
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private static string Pascalize(string input) => Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
+
+        /// <summary>
+        /// Same as Pascalize except that the first character is lower case
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private static string Camelize(string input)
+        {
+            var word = Pascalize(input);
+            return word.Length > 0 ? word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + word.Substring(1) : word;
         }
     }
 }

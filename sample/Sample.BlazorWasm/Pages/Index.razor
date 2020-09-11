@@ -1,7 +1,41 @@
 ﻿@page "/"
+@using MediatR
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using Microsoft.Extensions.Logging
+@using Rocket.Surgery.WebAssembly.Hosting
+@using FluentValidation
+@inject IMediator mediator
+@inject ILoggerFactory loggerFactory
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<EditForm Model="request" OnValidSubmit="async () => response = await mediator.Send(request)">
+    <Rocket.Surgery.LaunchPad.AspNetCore.Blazor.FluentValidator />
+    <ValidationSummary Model="request"/>
+
+    <label>FirstName: <InputText @bind-Value="request.FirstName"/> <ValidationMessage For="() => request.FirstName"/></label>
+    <label>LastName: <InputText @bind-Value="request.LastName"/> <ValidationMessage For="() => request.LastName"/> </label>
+
+    <button type="submit">Save</button>
+</EditForm>
+
+<div>FullName: @response?.FullName</div>
+
+<div>
+    <button @onclick="Save">Go</button>
+</div>
+
+@code {
+    TestHandler.Request request = new TestHandler.Request();
+    TestHandler.Response response;
+
+    void Save() {
+
+        var builder = WebAssemblyHostBuilder.CreateDefault(Array.Empty<string>())
+            .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom<Program>())
+            .Build();
+
+    }
+}

@@ -2,13 +2,13 @@
 
 using System;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.LaunchPad.Serilog;
 
+// ReSharper disable once CheckNamespace
 namespace Rocket.Surgery.Conventions
 {
     /// <summary>
-    /// Helper method for working with <see cref="IConventionHostBuilder" />
+    /// Helper method for working with <see cref="ConventionContextBuilder" />
     /// </summary>
     [PublicAPI]
     public static class SerilogAbstractionsHostBuilderExtensions
@@ -19,10 +19,7 @@ namespace Rocket.Surgery.Conventions
         /// <param name="container">The container.</param>
         /// <param name="delegate">The delegate.</param>
         /// <returns>IConventionHostBuilder.</returns>
-        public static IConventionHostBuilder ConfigureSerilog(
-            [NotNull] this IConventionHostBuilder container,
-            [NotNull] SerilogConventionDelegate @delegate
-        )
+        public static ConventionContextBuilder ConfigureSerilog([NotNull] this ConventionContextBuilder container, [NotNull] SerilogConvention @delegate)
         {
             if (container == null)
             {
@@ -34,7 +31,7 @@ namespace Rocket.Surgery.Conventions
                 throw new ArgumentNullException(nameof(@delegate));
             }
 
-            container.Scanner.AppendDelegate(@delegate);
+            container.AppendDelegate(@delegate);
             return container;
         }
     }

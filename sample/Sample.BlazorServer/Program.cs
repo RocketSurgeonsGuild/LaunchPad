@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Conventions.Scanners;
+using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 
 namespace Sample.BlazorServer
 {
-    public class Program
+    [ImportConventions]
+    public partial class Program
     {
         public static void Main(string[] args)
         {
@@ -22,8 +24,7 @@ namespace Sample.BlazorServer
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-           .ConfigureRocketSurgery<SimpleConventionScanner>()
-           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default))
-           .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom<Program>())
+           .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }

@@ -1,17 +1,19 @@
 using System;
 using System.Linq;
+using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog.Conventions;
+using Rocket.Surgery.LaunchPad.Hosting.Conventions;
+using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 [assembly: Convention(typeof(SerilogHostingConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
 {
     /// <summary>
     /// SerilogHostingConvention.
@@ -20,36 +22,26 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
     /// <seealso cref="IHostingConvention" />
     public class SerilogHostingConvention : IHostingConvention
     {
-        private readonly IConventionScanner _scanner;
-        private readonly ILogger _diagnosticSource;
         private readonly LaunchPadLoggingOptions _options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SerilogHostingConvention" /> class.
         /// </summary>
-        /// <param name="scanner">The scanner.</param>
-        /// <param name="diagnosticSource">The diagnostic source.</param>
         /// <param name="options">The options.</param>
-        public SerilogHostingConvention(
-            IConventionScanner scanner,
-            ILogger diagnosticSource,
-            LaunchPadLoggingOptions? options = null
-        )
+        public SerilogHostingConvention(LaunchPadLoggingOptions? options = null)
         {
-            _scanner = scanner;
-            _diagnosticSource = diagnosticSource;
             _options = options ?? new LaunchPadLoggingOptions();
         }
 
         /// <inheritdoc />
-        public void Register([NotNull] IHostingConventionContext context)
+        public void Register([NotNull] IConventionContext context, IHostBuilder builder)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.Builder.ConfigureServices(
+            builder.ConfigureServices(
                 (context, services) =>
                 {
                     // removes default console loggers and such
@@ -65,23 +57,16 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
                     }
                 }
             );
-            context.Builder.UseSerilog(
-                (ctx, loggerConfiguration) =>
-                {
-                    new SerilogBuilder(
-                        _scanner,
-                        context.Get<IAssemblyProvider>(),
-                        context.Get<IAssemblyCandidateFinder>(),
-                        ctx.HostingEnvironment,
-                        ctx.Configuration,
-                        loggerConfiguration,
-                        _diagnosticSource,
-                        context.Properties
-                    ).Configure();
-                },
+            builder.UseSerilog(
+                (ctx, loggerConfiguration) => loggerConfiguration.ApplyConventions(context),
                 _options.PreserveStaticLogger,
                 _options.WriteToProviders
             );
+
+            if (context.Get<ILoggerFactory>() != null)
+            {
+                builder.ConfigureServices((ctx, services) => services.AddSingleton(context.Get<ILoggerFactory>()));
+            }
         }
     }
 }

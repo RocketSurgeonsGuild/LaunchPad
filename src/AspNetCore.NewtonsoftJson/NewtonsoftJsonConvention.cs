@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -27,17 +28,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.Services
-                .AddMvcCore()
-                .AddNewtonsoftJson();
-            context.Services.Configure<MvcNewtonsoftJsonOptions>(
+            services.WithMvcCore().AddNewtonsoftJson();
+            services.Configure<MvcNewtonsoftJsonOptions>(
                 options =>
                 {
                     options.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));

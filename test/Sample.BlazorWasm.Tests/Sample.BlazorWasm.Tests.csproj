@@ -7,5 +7,6 @@
       <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" />
     </ItemGroup>
 </Project>

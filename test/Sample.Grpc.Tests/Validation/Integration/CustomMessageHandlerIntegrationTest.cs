@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 using Grpc.Core;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
@@ -20,7 +19,7 @@ namespace Sample.Grpc.Tests.Validation.Integration
         public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper) => _factory = factory
            .ConfigureLoggerFactory(LoggerFactory)
            .ConfigureHostBuilder(
-                options => options.ConfigureServices((context, services) => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
+                options => options.ConfigureServices((services) => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
             );
 
         [Fact]

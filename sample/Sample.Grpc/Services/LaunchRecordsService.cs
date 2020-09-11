@@ -50,7 +50,7 @@ namespace Sample.Grpc.Services
             var response = await _mediator.Send(_mapper.Map<ListLaunchRecords.Request>(request), context.CancellationToken);
             return new ListLaunchRecordsResponse()
             {
-                Results = { response.Map(_mapper.Map<LaunchRecordModel>) }
+                Results = { response.Select(_mapper.Map<LaunchRecordModel>) }
             };
         }
 

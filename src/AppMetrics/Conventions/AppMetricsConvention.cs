@@ -13,39 +13,10 @@ using Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
 {
-    public class AppMetricsConvention : IHostingConvention//, IServiceConvention
+    public class AppMetricsConvention : IHostingConvention
     {
-        private readonly IConventionScanner _scanner;
-        private readonly IAssemblyProvider _assemblyProvider;
-        private readonly IAssemblyCandidateFinder _assemblyCandidateFinder;
-        private readonly ILogger _diagnosticSource;
-
-        public AppMetricsConvention(
-            IConventionScanner scanner,
-            IAssemblyProvider assemblyProvider,
-            IAssemblyCandidateFinder assemblyCandidateFinder,
-            ILogger diagnosticSource
-        )
+        public void Register(IConventionContext context, IHostBuilder builder)
         {
-            _scanner = scanner;
-            _assemblyProvider = assemblyProvider;
-            _assemblyCandidateFinder = assemblyCandidateFinder;
-            _diagnosticSource = diagnosticSource;
-        }
-
-        public void Register(IHostingConventionContext context)
-        {
-            void ConfigureMetrics(HostBuilderContext ctx, IMetricsBuilder metricsBuilder) => new AppMetricsBuilder(
-                _scanner,
-                _assemblyProvider,
-                _assemblyCandidateFinder,
-                metricsBuilder,
-                ctx.HostingEnvironment,
-                ctx.Configuration,
-                _diagnosticSource,
-                context.Properties
-            ).Build();
-
             IMetricsBuilder metricsBuilder;
             if (context.GetOrAdd(() => new ConventionMetricsOptions()).UseDefaults)
             {
@@ -60,7 +31,7 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
                 metricsBuilder = new global::App.Metrics.MetricsBuilder();
             }
 
-            context.Builder.ConfigureServices(
+            builder.ConfigureServices(
                 (ctx, services) =>
                 {
                     metricsBuilder.Configuration.ReadFrom(ctx.Configuration);
@@ -71,14 +42,9 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
                     }
 
                     services.AddMetrics(metricsBuilder);
-                    ConfigureMetrics(ctx, metricsBuilder);
+                    metricsBuilder.ApplyConventions(context);
                 }
             );
         }
-
-        //public void Register(IServiceConventionContext context)
-        //{
-        //    context.Services.AddAppMetricsHealthPublishing();
-        //}
     }
 }

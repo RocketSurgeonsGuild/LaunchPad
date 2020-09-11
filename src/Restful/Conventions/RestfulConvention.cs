@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
@@ -24,13 +25,13 @@ namespace Rocket.Surgery.LaunchPad.Restful.Conventions
     public class RestfulConvention : IServiceConvention
     {
         /// <inheritdoc />
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            context.Services
+            services
                .AddControllers()
                .AddControllersAsServices();
 
-            context.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, RestfulApiApplicationModelProvider>());
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, RestfulApiApplicationModelProvider>());
         }
     }
 }

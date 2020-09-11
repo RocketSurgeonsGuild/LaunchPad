@@ -1,23 +1,23 @@
 using System;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Serilog.Conventions;
+using Rocket.Surgery.LaunchPad.Hosting.Conventions;
+using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
 [assembly: Convention(typeof(SerilogConsoleLoggingConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
 {
     /// <summary>
     /// SerilogConsoleLoggingConvention.
     /// Implements the <see cref="ISerilogConvention" />
     /// </summary>
     /// <seealso cref="ISerilogConvention" />
-    [LiveConvention]
-    public sealed class SerilogConsoleLoggingConvention : SerilogConditionallyAsyncLoggingConvention
+    public sealed class SerilogConsoleLoggingConvention : ISerilogConvention
     {
         private readonly LaunchPadLoggingOptions _options;
 
@@ -29,7 +29,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
             => _options = options ?? new LaunchPadLoggingOptions();
 
         /// <inheritdoc />
-        protected override void Register([NotNull] LoggerSinkConfiguration configuration)
+        public void Register([NotNull] IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
         {
             if (configuration == null)
             {
@@ -38,11 +38,11 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
 
             if (!_options.EnableConsoleLogging) return;
 
-            configuration.Console(
+            loggerConfiguration.WriteTo.Async(c => c.Console(
                 LogEventLevel.Verbose,
                 _options.ConsoleMessageTemplate,
                 theme: AnsiConsoleTheme.Literate
-            );
+            ));
         }
     }
 }

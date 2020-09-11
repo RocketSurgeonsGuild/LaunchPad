@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
@@ -22,9 +23,9 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Conventions
     public class GrpcConvention : IServiceConvention
     {
         /// <inheritdoc />
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            context.Services
+            services
                .AddGrpcValidation()
                .AddGrpc(options =>
                     {

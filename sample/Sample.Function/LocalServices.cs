@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -9,9 +10,9 @@ namespace Sample_Function
 {
     public class LocalServices : IServiceConvention
     {
-        public void Register(IServiceConventionContext context)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            context.Services.AddSingleton(new Service());
+            services.AddSingleton(new Service());
         }
     }
 }

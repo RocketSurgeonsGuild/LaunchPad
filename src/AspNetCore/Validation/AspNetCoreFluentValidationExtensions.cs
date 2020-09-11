@@ -41,16 +41,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
             validatorConfiguration ??= ValidatorOptions.Global;
             validationMvcConfiguration ??= new FluentValidationMvcConfiguration(validatorConfiguration);
             services
-               .Configure<MvcOptions>(
-                    options =>
-                        options.Filters.Insert(0, new ValidationExceptionFilter())
-                )
-               .Configure<JsonOptions>(
-                    options =>
-                        options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter())
-                );
+               .Configure<MvcOptions>(options => options.Filters.Insert(0, new ValidationExceptionFilter()))
+               .Configure<JsonOptions>(options => options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()));
 
-            services.AddMvcCore().AddFluentValidation(
+            services.WithMvcCore().AddFluentValidation(
                 config =>
                 {
                     foreach (var field in typeof(FluentValidationMvcConfiguration).GetFields(
@@ -76,15 +70,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
                     {
                         // ProblemDetailsFactory depends on the ApiBehaviorOptions instance. We intentionally avoid constructor injecting
                         // it in this options setup to to avoid a DI cycle.
-                        problemDetailsFactory ??= context.HttpContext.RequestServices
-                           .GetRequiredService<ProblemDetailsFactory>();
+                        problemDetailsFactory ??= context.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
                         return problemDetailsInvalidModelStateResponse(problemDetailsFactory, context);
                     };
 
-                    static IActionResult problemDetailsInvalidModelStateResponse(
-                        ProblemDetailsFactory problemDetailsFactory,
-                        ActionContext context
-                    )
+                    static IActionResult problemDetailsInvalidModelStateResponse(ProblemDetailsFactory problemDetailsFactory, ActionContext context)
                     {
                         var problemDetails =
                             problemDetailsFactory.CreateValidationProblemDetails(

@@ -4,5 +4,6 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\src\Functions\Rocket.Surgery.LaunchPad.Functions.csproj" />
+        <PackageReference Include="Newtonsoft.Json" />
     </ItemGroup>
 </Project>

@@ -14,6 +14,7 @@ namespace Extensions.Tests
         [Fact]
         public async Task Should_Validate_Invalid()
         {
+            Init();
             var data = new Target()
             {
                 Type = "NotTruck",
@@ -33,6 +34,7 @@ namespace Extensions.Tests
         [Fact]
         public async Task Should_Validate_CaseSensitive()
         {
+            Init();
             var data = new Target()
             {
                 Type = "truck",
@@ -52,6 +54,7 @@ namespace Extensions.Tests
         [Fact]
         public async Task Should_Validate_CaseInsensitive()
         {
+            Init();
             var data = new Target()
             {
                 Type = "Truck",
