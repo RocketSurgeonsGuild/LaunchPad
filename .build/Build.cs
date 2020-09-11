@@ -18,18 +18,18 @@ using Rocket.Surgery.Nuke.DotNetCore;
 [MSBuildVerbosityMapping]
 [NuGetVerbosityMapping]
 public partial class Solution : NukeBuild,
-                        ICanRestoreWithDotNetCore,
-                        ICanBuildWithDotNetCore,
-                        ICanTestWithDotNetCore,
-                        ICanPackWithDotNetCore,
-                        IHaveDataCollector,
-                        ICanClean,
-                        ICanUpdateReadme,
-                        IGenerateCodeCoverageReport,
-                        IGenerateCodeCoverageSummary,
-                        IGenerateCodeCoverageBadges,
-                        IHaveConfiguration<Configuration>,
-                        ICanLint
+                                ICanRestoreWithDotNetCore,
+                                ICanBuildWithDotNetCore,
+                                ICanTestWithDotNetCore,
+                                IHaveNuGetPackages,
+                                IHaveDataCollector,
+                                ICanClean,
+                                ICanUpdateReadme,
+                                IGenerateCodeCoverageReport,
+                                IGenerateCodeCoverageSummary,
+                                IGenerateCodeCoverageBadges,
+                                IHaveConfiguration<Configuration>,
+                                ICanLint
 {
     /// <summary>
     /// Support plugins are available for:
@@ -51,8 +51,31 @@ public partial class Solution : NukeBuild,
 
     public Target Build => _ => _.Inherit<ICanBuildWithDotNetCore>(x => x.CoreBuild);
 
-    public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
-       .DependsOn(Clean);
+    // public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
+    //    .DependsOn(Clean);
+
+    /// <summary>
+    /// dotnet pack
+    /// </summary>
+    public Target Pack => _ => _
+       .Description("Packs all the NuGet packages.")
+       .DependsOn(Clean)
+       .After(Test)
+       .Executes(
+            () =>
+            {
+                IHaveSolution selfSolution = this;
+                IHaveNuGetPackages nuget = this;
+                IHaveOutputLogs logs = this;
+                return DotNetTasks.DotNetPack(
+                    s => s.SetProject(selfSolution.Solution)
+                       .SetDefaultLoggers(logs.LogsDirectory / "pack.log")
+                       .SetGitVersionEnvironment(GitVersion)
+                       .SetConfiguration(Configuration)
+                       .SetOutputDirectory(nuget.NuGetPackageDirectory)
+                );
+            }
+        );
 
     [ComputedGitVersion]
     public GitVersion GitVersion { get; } = null!;
