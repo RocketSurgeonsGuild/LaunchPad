@@ -1,128 +1,128 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-    <ItemGroup>
-        <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0"/>
-        <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0"/>
-        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.0.0"/>
-        <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.0.0"/>
-        <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.0.0"/>
-        <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.0.0" Condition="'$(MSBuildProjectName)'!='.build'"/>
-        <PackageVersion Include="Rocket.Surgery.MSBuild.Metadata" Version="1.0.0"/>
-        <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.0.0"/>
-        <PackageVersion Include="Roslynator.Analyzers" Version="3.0.0"/>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageVersion Include="GitVersion.Tool" Version="5.3.7"/>
-        <PackageVersion Include="JetBrains.ReSharper.CommandLineTools" Version="2020.2.2"/>
-        <PackageVersion Include="Nuke.Common" Version="0.25.0-alpha0334"/>
-        <PackageVersion Include="ReportGenerator" Version="4.6.7"/>
-        <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.14.0-beta.10"/>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageVersion Include="Newtonsoft.Json" Version="12.0.3"/>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageVersion Include="App.Metrics" Version="4.1.0"/>
-        <PackageVersion Include="App.Metrics.AppNetCore" Version="4.1.0"/>
-        <!--        <PackageVersion Include="App.Metrics.AspNetCore" Version="4.1.0"/>-->
-        <PackageVersion Include="App.Metrics.Extensions.HealthChecks" Version="4.1.0"/>
-        <PackageVersion Include="App.Metrics" Version="4.1.0"/>
-        <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.1.0"/>
-        <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.1.0"/>
-        <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.1.0"/>
-        <PackageVersion Include="FluentValidation" Version="9.2.0"/>
-        <PackageVersion Include="FluentValidation.AspNetCore" Version="9.2.0"/>
-        <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="9.2.0"/>
-        <PackageVersion Include="Grpc.AspNetCore" Version="2.31.0"/>
-        <PackageVersion Include="Humanizer.Core" Version="2.8.26"/>
-        <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="5.1.1"/>
-        <PackageVersion Include="MediatR" Version="8.1.0"/>
-        <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.1.0"/>
-        <!--    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="4.0.0-rc.2" />-->
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.7"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all"/>
-        <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0"/>
-        <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="3.0.9"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.Extensions.Options" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.Reactive.Testing" Version="4.4.1"/>
-        <!--        <PackageVersion Include="Newtonsoft.Json" Version="12.0.3" />-->
-        <PackageVersion Include="NodaTime" Version="3.0.0"/>
-        <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.0.0"/>
-        <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0"/>
-        <PackageVersion Include="NodaTime.Testing" Version="3.0.0"/>
-        <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.NodaTime" Version="8.0.0-beta.7"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.SystemTextJson" Version="8.0.0-beta.7"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.NewtonsoftJson" Version="8.0.0-beta.7"/>
-        <PackageVersion Include="Rocket.Surgery.Conventions.AutoMapper" Version="8.0.0-beta.7"/>
-        <PackageVersion Include="Rocket.Surgery.Hosting.TestHost" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="2.5.0"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions" Version="2.5.0"/>
-        <PackageVersion Include="Rocket.Surgery.Hosting.DryIoc" Version="0.2.0-beta.3"/>
-        <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.DryIoc" Version="0.2.0-beta.3"/>
-        <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" Version="10.0.0-beta.22"/>
-        <PackageVersion Include="Rocket.Surgery.System" Version="2.5.0"/>
-        <PackageVersion Include="Scrutor" Version="3.2.2"/>
-        <PackageVersion Include="Serilog" Version="2.10.0"/>
-        <PackageVersion Include="Serilog.AspNetCore" Version="3.4.0"/>
-        <PackageVersion Include="Serilog.Enrichers.Demystify" Version="0.1.0-dev-*"/>
-        <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.1.3"/>
-        <PackageVersion Include="Serilog.Enrichers.Process" Version="2.0.1"/>
-        <PackageVersion Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
-        <PackageVersion Include="Serilog.Extensions.Hosting" Version="3.1.0"/>
-        <PackageVersion Include="Serilog.Extensions.Logging" Version="3.0.1"/>
-        <PackageVersion Include="Serilog.Settings.Configuration" Version="3.1.0"/>
-        <PackageVersion Include="Serilog.Sinks.Async" Version="1.4.0"/>
-        <PackageVersion Include="Serilog.Sinks.Console" Version="3.1.1"/>
-        <PackageVersion Include="Serilog.Sinks.Debug" Version="1.0.1"/>
-        <PackageVersion Include="Serilog.Sinks.Observable" Version="2.0.2"/>
-        <PackageVersion Include="Swashbuckle.AspNetCore" Version="5.5.1"/>
-        <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="5.5.1"/>
-        <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="1.3.1"/>
-        <PackageVersion Include="System.Collections.Immutable" Version="1.7.1"/>
-        <PackageVersion Include="System.Interactive" Version="4.1.1"/>
-        <PackageVersion Include="System.Interactive.Async" Version="4.1.1"/>
-        <PackageVersion Include="System.Reactive" Version="4.4.1"/>
-        <PackageVersion Include="System.Reactive.Observable.Aliases" Version="4.4.1"/>
-        <PackageVersion Include="System.Text.Json" Version="4.7.2"/>
-        <PackageVersion Include="System.Net.Http.Json" Version="3.2.1"/>
-        <PackageVersion Include="NSwag.ApiDescription.Client" Version="13.7.0"/>
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="3.1.8"/>
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="3.1.8"/>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageVersion Include="Bogus" Version="30.0.4"/>
-        <PackageVersion Include="coverlet.collector" Version="1.3.0"/>
-        <PackageVersion Include="coverlet.msbuild" Version="2.9.0"/>
-        <PackageVersion Include="FakeItEasy" Version="6.2.1"/>
-        <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.0.0"/>
-        <PackageVersion Include="FluentAssertions" Version="5.10.3"/>
-        <PackageVersion Include="FluentAssertions.Analyzers" Version="0.11.4"/>
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.7.1"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="5.3.0"/>
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="5.3.0"/>
-        <PackageVersion Include="xunit" Version="2.4.1"/>
-        <PackageVersion Include="xunit.analyzers" Version="0.10.0"/>
-        <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0" />
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.0.0" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.0.0" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.0.0" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.0.0" Condition="'$(MSBuildProjectName)'!='.build'" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.Metadata" Version="1.0.0" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.0.0" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="GitVersion.Tool" Version="5.3.7" />
+    <PackageVersion Include="JetBrains.ReSharper.CommandLineTools" Version="2020.2.2" />
+    <PackageVersion Include="Nuke.Common" Version="0.25.0-alpha0334" />
+    <PackageVersion Include="ReportGenerator" Version="4.6.7" />
+    <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.14.0-beta.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="App.Metrics" Version="4.1.0" />
+    <PackageVersion Include="App.Metrics.AppNetCore" Version="4.1.0" />
+    <!--        <PackageVersion Include="App.Metrics.AspNetCore" Version="4.1.0"/>-->
+    <PackageVersion Include="App.Metrics.Extensions.HealthChecks" Version="4.1.0" />
+    <PackageVersion Include="App.Metrics" Version="4.1.0" />
+    <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.1.0" />
+    <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.1.0" />
+    <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.1.0" />
+    <PackageVersion Include="FluentValidation" Version="9.2.0" />
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="9.2.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="9.2.0" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.31.0" />
+    <PackageVersion Include="Humanizer.Core" Version="2.8.26" />
+    <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
+    <PackageVersion Include="MediatR" Version="8.1.0" />
+    <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <!--    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="4.0.0-rc.2" />-->
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.Reactive.Testing" Version="4.4.1" />
+    <!--        <PackageVersion Include="Newtonsoft.Json" Version="12.0.3" />-->
+    <PackageVersion Include="NodaTime" Version="3.0.0" />
+    <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
+    <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
+    <PackageVersion Include="NodaTime.Testing" Version="3.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
+    <PackageVersion Include="Rocket.Surgery.Conventions" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.NodaTime" Version="8.0.0-beta.7" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.SystemTextJson" Version="8.0.0-beta.7" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.NewtonsoftJson" Version="8.0.0-beta.7" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.AutoMapper" Version="8.0.0-beta.7" />
+    <PackageVersion Include="Rocket.Surgery.Hosting.TestHost" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="10.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="10.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="10.0.0" />
+    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="10.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions" Version="10.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Hosting.DryIoc" Version="0.2.0-beta.3" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.DryIoc" Version="0.2.0-beta.3" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" Version="10.0.0-beta.23" />
+    <PackageVersion Include="Rocket.Surgery.System" Version="10.0.0" />
+    <PackageVersion Include="Scrutor" Version="3.2.2" />
+    <PackageVersion Include="Serilog" Version="2.10.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="3.4.0" />
+    <PackageVersion Include="Serilog.Enrichers.Demystify" Version="0.1.0-dev-*" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.1.3" />
+    <PackageVersion Include="Serilog.Enrichers.Process" Version="2.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="3.1.0" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="3.1.0" />
+    <PackageVersion Include="Serilog.Sinks.Async" Version="1.4.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageVersion Include="Serilog.Sinks.Debug" Version="1.0.1" />
+    <PackageVersion Include="Serilog.Sinks.Observable" Version="2.0.2" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="5.5.1" />
+    <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="1.3.1" />
+    <PackageVersion Include="System.Collections.Immutable" Version="1.7.1" />
+    <PackageVersion Include="System.Interactive" Version="4.1.1" />
+    <PackageVersion Include="System.Interactive.Async" Version="4.1.1" />
+    <PackageVersion Include="System.Reactive" Version="4.4.1" />
+    <PackageVersion Include="System.Reactive.Observable.Aliases" Version="4.4.1" />
+    <PackageVersion Include="System.Text.Json" Version="4.7.2" />
+    <PackageVersion Include="System.Net.Http.Json" Version="3.2.1" />
+    <PackageVersion Include="NSwag.ApiDescription.Client" Version="13.7.1" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="3.1.8" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="3.1.8" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Bogus" Version="30.0.4" />
+    <PackageVersion Include="coverlet.collector" Version="1.3.0" />
+    <PackageVersion Include="coverlet.msbuild" Version="2.9.0" />
+    <PackageVersion Include="FakeItEasy" Version="6.2.1" />
+    <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.0.0" />
+    <PackageVersion Include="FluentAssertions" Version="5.10.3" />
+    <PackageVersion Include="FluentAssertions.Analyzers" Version="0.11.4" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="5.3.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="5.3.0" />
+    <PackageVersion Include="xunit" Version="2.4.1" />
+    <PackageVersion Include="xunit.analyzers" Version="0.10.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
+  </ItemGroup>
 </Project>
