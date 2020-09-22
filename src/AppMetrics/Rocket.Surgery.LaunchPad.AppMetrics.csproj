@@ -5,10 +5,10 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="App.Metrics.AppNetCore" />
+        <PackageReference Include="App.Metrics.AppNetCore"/>
         <!--<PackageReferecen Include="App.Metrics.Extensions.HealthChecks" />-->
-        <PackageReference Include="App.Metrics.Extensions.Hosting" />
-        <PackageReference Include="Rocket.Surgery.Conventions" />
-        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
+        <PackageReference Include="App.Metrics.Extensions.Hosting"/>
+        <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" Condition="$(UseConventions)"/>
+        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" Condition="$(UseConventions)"/>
     </ItemGroup>
 </Project>

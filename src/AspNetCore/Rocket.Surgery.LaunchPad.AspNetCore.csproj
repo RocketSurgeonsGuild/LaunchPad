@@ -12,8 +12,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />
-        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
-        <PackageReference Include="Rocket.Surgery.Build.Information" />
+        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" Condition="$(UseConventions)" />
+        <PackageReference Include="Rocket.Surgery.Build.Information" Condition="$(UseConventions)" />
         <PackageReference Include="Serilog.AspNetCore" />
     </ItemGroup>
 </Project>

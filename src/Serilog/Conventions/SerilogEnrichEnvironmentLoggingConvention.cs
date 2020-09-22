@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -27,12 +28,8 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            loggerConfiguration
-               .Enrich.WithEnvironmentUserName()
-               .Enrich.WithMachineName()
-               .Enrich.WithProcessId()
-               .Enrich.WithProcessName()
-               .Enrich.WithThreadId();
+            loggerConfiguration.AddLaunchPadLogging();
         }
     }
 }
+#endif

@@ -5,7 +5,7 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Rocket.Surgery.Conventions" />
-        <PackageReference Include="Microsoft.Azure.Functions.Extensions" />
+        <PackageReference Include="Rocket.Surgery.Conventions" Condition="$(UseConventions)"/>
+        <PackageReference Include="Microsoft.Azure.Functions.Extensions"/>
     </ItemGroup>
 </Project>

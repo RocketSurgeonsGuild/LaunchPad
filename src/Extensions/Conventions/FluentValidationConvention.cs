@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using System.Linq;
 using FluentValidation;
@@ -38,17 +39,14 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var lifetime = context.Get<MediatRServiceConfiguration>()!.Lifetime!;
-            var assemblies = context
-               .AssemblyCandidateFinder
-               .GetCandidateAssemblies("FluentValidation");
-            foreach (var item in new AssemblyScanner(assemblies.SelectMany(z => z.DefinedTypes).Select(x => x.AsType())))
-            {
-                services.TryAddEnumerable(new ServiceDescriptor(item.InterfaceType, item.ValidatorType, lifetime));
-            }
-
-            services.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
-            services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), lifetime));
+            AddLaunchPadValidationExtension.AddLaunchPadValidation(
+                services,
+                context
+                   .AssemblyCandidateFinder
+                   .GetCandidateAssemblies(nameof(global::FluentValidation)),
+                context.Get<FluentValidationConfiguration>()
+            );
         }
     }
 }
+#endif

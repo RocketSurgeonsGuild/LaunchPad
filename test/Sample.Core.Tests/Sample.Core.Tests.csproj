@@ -5,6 +5,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\sample\Sample.Core\Sample.Core.csproj" />
         <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
-        <PackageReference Include="Rocket.Surgery.Hosting.TestHost" />
+        <PackageReference Include="Rocket.Surgery.Hosting.TestHost" Condition="$(UseConventions)" />
     </ItemGroup>
 </Project>

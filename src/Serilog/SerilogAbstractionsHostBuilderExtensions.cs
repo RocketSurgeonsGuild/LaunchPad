@@ -1,5 +1,4 @@
-// ReSharper disable once CheckNamespace
-
+#if CONVENTIONS
 using System;
 using JetBrains.Annotations;
 using Rocket.Surgery.LaunchPad.Serilog;
@@ -36,3 +35,4 @@ namespace Rocket.Surgery.Conventions
         }
     }
 }
+#endif

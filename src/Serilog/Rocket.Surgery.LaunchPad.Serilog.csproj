@@ -13,6 +13,6 @@
 		<PackageReference Include="Serilog.Enrichers.Process" />
 		<PackageReference Include="Serilog.Enrichers.Demystify" />
 		<PackageReference Include="Serilog.Extensions.Logging" />
-        <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" Condition="$(UseConventions)" />
     </ItemGroup>
 </Project>

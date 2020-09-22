@@ -16,6 +16,14 @@
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Restful" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Pages" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Workers" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.AspNetCore" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.AspNetCore.NewtonsoftJson" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.Extensions" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.Extensions.NewtonsoftJson" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.Commands" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.Restful" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.Pages" />
+        <InternalsVisibleTo Include="Rocket.Surgery.Dock.Workers" />
         <InternalsVisibleTo Include="AspNetCore.Tests" />
         <InternalsVisibleTo Include="Extensions.Tests" />
     </ItemGroup>

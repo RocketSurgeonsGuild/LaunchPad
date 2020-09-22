@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -31,9 +32,8 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.AddSingleton<IClock>(SystemClock.Instance);
-            services.AddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
-            services.AddSingleton<IDateTimeZoneSource>(TzdbDateTimeZoneSource.Default);
+            services.AddLaunchPadNodaTime(context.Get<IClock>(), context.Get<IDateTimeZoneSource>());
         }
     }
 }
+#endif

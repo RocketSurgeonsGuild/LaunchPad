@@ -1,4 +1,5 @@
-﻿using App.Metrics;
+﻿#if CONVENTIONS
+using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
@@ -21,3 +22,4 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics
         void Register([NotNull] IConventionContext conventionContext, [NotNull] IConfiguration configuration, [NotNull] IMetricsBuilder metricsBuilder);
     }
 }
+#endif

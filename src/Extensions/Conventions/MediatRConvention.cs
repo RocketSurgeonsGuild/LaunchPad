@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#if CONVENTIONS
+using System.Linq;
 using MediatR;
 using MediatR.Registration;
 using Microsoft.Extensions.Configuration;
@@ -25,15 +26,12 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
         /// <param name="context">The context.</param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            var serviceConfig = context.GetOrAdd(() => new MediatRServiceConfiguration());
-            context.Set(serviceConfig);
-
-            var assemblies = context.AssemblyCandidateFinder
-               .GetCandidateAssemblies(nameof(MediatR))
-               .ToArray();
-
-            ServiceRegistrar.AddRequiredServices(services, serviceConfig);
-            ServiceRegistrar.AddMediatRClasses(services, assemblies);
+            services.AddLaunchPadMediatR(
+                context.AssemblyCandidateFinder
+                    .GetCandidateAssemblies(nameof(MediatR)),
+                context.GetOrAdd(() => new MediatRServiceConfiguration())
+            );
         }
     }
 }
+#endif

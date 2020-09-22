@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using App.Metrics;
 using Microsoft.Extensions.Configuration;
@@ -37,3 +38,4 @@ namespace App.Metrics
         }
     }
 }
+#endif

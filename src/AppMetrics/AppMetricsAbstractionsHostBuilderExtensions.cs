@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using JetBrains.Annotations;
 using Rocket.Surgery.LaunchPad.AppMetrics;
@@ -35,3 +36,4 @@ namespace Rocket.Surgery.Conventions
         }
     }
 }
+#endif

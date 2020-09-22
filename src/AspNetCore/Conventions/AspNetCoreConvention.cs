@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using System.Linq;
 using FluentValidation;
@@ -23,21 +24,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
     /// <seealso cref="IServiceConvention" />
     public class AspNetCoreConvention : IServiceConvention
     {
-        private readonly ValidatorConfiguration? _validatorConfiguration;
-        private readonly FluentValidationMvcConfiguration? _validationMvcConfiguration;
+        private readonly Action<FluentValidationMvcConfiguration>? _validatorConfiguration;
 
         /// <summary>
         /// Configure aspnet with some logical defaults
         /// </summary>
-        /// <param name="validatorConfiguration"></param>
-        /// <param name="validationMvcConfiguration"></param>
-        public AspNetCoreConvention(
-            ValidatorConfiguration? validatorConfiguration = null,
-            FluentValidationMvcConfiguration? validationMvcConfiguration = null
-            )
+        public AspNetCoreConvention(Action<FluentValidationMvcConfiguration>? validatorConfiguration = null)
         {
             _validatorConfiguration = validatorConfiguration;
-            _validationMvcConfiguration = validationMvcConfiguration;
         }
 
         /// <summary>
@@ -52,15 +46,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add<NotFoundExceptionFilter>();
-                options.Filters.Add<RequestFailedExceptionFilter>();
-                options.Filters.Add<SerilogLoggingActionFilter>(0);
-                options.Filters.Add<SerilogLoggingPageFilter>(0);
-            });
-
-            services.AddFluentValidationExtensions(_validatorConfiguration, _validationMvcConfiguration);
+            services.AddLaunchPadFluentValidation(_validatorConfiguration);
         }
     }
 }
+#endif

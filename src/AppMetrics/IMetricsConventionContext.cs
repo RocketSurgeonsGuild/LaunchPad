@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -36,3 +37,4 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics
         IHostEnvironment Environment { get; }
     }
 }
+#endif

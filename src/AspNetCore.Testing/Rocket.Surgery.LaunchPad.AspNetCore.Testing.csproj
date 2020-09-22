@@ -5,17 +5,17 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.Reactive.Testing" />
-        <PackageReference Include="NodaTime.Testing" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <PackageReference Include="Microsoft.Reactive.Testing"/>
+        <PackageReference Include="NodaTime.Testing"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-        <PackageReference Include="Rocket.Surgery.Hosting" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+        <PackageReference Include="Rocket.Surgery.Hosting" Condition="$(UseConventions)"/>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
-      <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
-      <ProjectReference Include="..\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all"/>
+        <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj"/>
+        <ProjectReference Include="..\Testing\Rocket.Surgery.LaunchPad.Testing.csproj"/>
     </ItemGroup>
 </Project>

@@ -33,10 +33,13 @@ namespace Rocket.Surgery.LaunchPad.Extensions.Validation
             var services = _context.GetServices(validatorType).OfType<IValidator>().ToArray();
             if (services.Length > 0 && validatorType.IsGenericType && validatorType.GetGenericArguments().Length == 1)
             {
-                return (IValidator)CreateValidatorMethod.MakeGenericMethod(validatorType.GetGenericArguments()[0]).Invoke(null, new object[]
-                {
-                    services.AsEnumerable()
-                });
+                return (IValidator)CreateValidatorMethod.MakeGenericMethod(validatorType.GetGenericArguments()[0]).Invoke(
+                    null,
+                    new object[]
+                    {
+                        services.AsEnumerable()
+                    }
+                );
             }
 
             return null!;

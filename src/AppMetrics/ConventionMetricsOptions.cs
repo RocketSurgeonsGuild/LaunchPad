@@ -1,3 +1,4 @@
+#if CONVENTIONS
 namespace Rocket.Surgery.LaunchPad.AppMetrics
 {
     /// <summary>
@@ -11,3 +12,4 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics
         public bool UseDefaults { get; set; } = true;
     }
 }
+#endif

@@ -13,6 +13,6 @@
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Rocket.Surgery.Hosting" />
+        <PackageReference Include="Rocket.Surgery.Hosting" Condition="$(UseConventions)" />
     </ItemGroup>
 </Project>

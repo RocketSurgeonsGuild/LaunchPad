@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentValidation;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Extensions.Validation;
 
 
@@ -63,18 +61,5 @@ namespace FluentValidation
 
             return builder.SetValidator(new PolymorphicPropertyValidator<T, TProperty>());
         }
-    }
-
-    public static class TempExtensions
-    {
-        /// <summary>
-        /// This method is here to make it easier work around lack of code generation working in Blazor / Rider at the moment
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static ConventionContextBuilder WithConventionsFrom<T>(this ConventionContextBuilder builder) => builder
-           .WithConventionsFrom(
-                _ => ( typeof(T).GetMethod("GetConventions")!.Invoke(null, new object[] { _ }) as IEnumerable<IConventionWithDependencies> )!
-            );
     }
 }

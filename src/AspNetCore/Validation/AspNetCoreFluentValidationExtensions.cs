@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -10,36 +11,31 @@ using Rocket.Surgery.LaunchPad.Extensions.Validation;
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
     [PublicAPI]
-    public static class AspNetCoreFluentValidationExtensions
+    internal static class AspNetCoreFluentValidationExtensions
     {
         public static IMvcCoreBuilder AddFluentValidationExtensions(
             this IMvcCoreBuilder builder,
-            ValidatorConfiguration? validatorConfiguration = null,
-            FluentValidationMvcConfiguration? validationMvcConfiguration = null
+            Action<FluentValidationMvcConfiguration>? validatorConfiguration = null
         )
         {
-            AddFluentValidationExtensions(builder.Services, validatorConfiguration, validationMvcConfiguration);
+            AddFluentValidationExtensions(builder.Services, validatorConfiguration);
             return builder;
         }
 
         public static IMvcBuilder AddFluentValidationExtensions(
             this IMvcBuilder builder,
-            ValidatorConfiguration? validatorConfiguration = null,
-            FluentValidationMvcConfiguration? validationMvcConfiguration = null
+            Action<FluentValidationMvcConfiguration>? validatorConfiguration = null
         )
         {
-            AddFluentValidationExtensions(builder.Services, validatorConfiguration, validationMvcConfiguration);
+            AddFluentValidationExtensions(builder.Services, validatorConfiguration);
             return builder;
         }
 
         public static IServiceCollection AddFluentValidationExtensions(
             this IServiceCollection services,
-            ValidatorConfiguration? validatorConfiguration = null,
-            FluentValidationMvcConfiguration? validationMvcConfiguration = null
+            Action<FluentValidationMvcConfiguration>? validatorConfiguration = null
         )
         {
-            validatorConfiguration ??= ValidatorOptions.Global;
-            validationMvcConfiguration ??= new FluentValidationMvcConfiguration(validatorConfiguration);
             services
                .Configure<MvcOptions>(options => options.Filters.Insert(0, new ValidationExceptionFilter()))
                .Configure<JsonOptions>(options => options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()));
@@ -47,14 +43,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
             services.WithMvcCore().AddFluentValidation(
                 config =>
                 {
-                    foreach (var field in typeof(FluentValidationMvcConfiguration).GetFields(
-                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                    ))
-                    {
-                        field.SetValue(config, field.GetValue(validationMvcConfiguration));
-                    }
-
                     config.ValidatorFactoryType ??= typeof(ValidatorFactory);
+                    validatorConfiguration?.Invoke(config);
                 }
             );
 

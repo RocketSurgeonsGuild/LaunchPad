@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -52,7 +53,8 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            loggerConfiguration.ReadFrom.Configuration(configuration);
+            loggerConfiguration.AddLaunchPadLoggingConfiguration(configuration);
         }
     }
 }
+#endif

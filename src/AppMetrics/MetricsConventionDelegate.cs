@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -13,3 +14,4 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics
     /// <param name="metricsBuilder"></param>
     public delegate void MetricsConvention([NotNull] IConventionContext conventionContext, [NotNull] IConfiguration configuration, [NotNull] IMetricsBuilder metricsBuilder);
 }
+#endif

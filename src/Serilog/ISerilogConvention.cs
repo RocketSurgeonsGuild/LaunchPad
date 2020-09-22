@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
@@ -21,3 +22,4 @@ namespace Rocket.Surgery.LaunchPad.Serilog
         void Register(IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration);
     }
 }
+#endif

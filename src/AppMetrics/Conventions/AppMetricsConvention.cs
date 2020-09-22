@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using App.Metrics;
 using App.Metrics.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,3 +49,4 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
         }
     }
 }
+#endif

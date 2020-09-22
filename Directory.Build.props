@@ -13,6 +13,10 @@
         <NoWarn>NU5105;CS0579;CS0436;$(NoWarn)</NoWarn>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <Features>strict</Features>
+        <UseConventions Condition="'$(UseConventions)' == ''">true</UseConventions>
+        <UseConventions>false</UseConventions>
+        <DefineConstants Condition="'$(UseConventions)' == 'true'">$(DefineConstants);CONVENTIONS</DefineConstants>
+        <AssemblyName Condition="'$(UseConventions)' != 'true'">$(AssemblyName).Replace('LaunchPad', 'Dock')</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <None Include="$(MSBuildThisFileDirectory)/.tmp/packageicon.png" Condition="Exists('$(MSBuildThisFileDirectory)/.tmp/packageicon.png')" Pack="true" PackagePath="/images/" Visible="false"/>

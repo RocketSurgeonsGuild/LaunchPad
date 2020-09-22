@@ -7,7 +7,7 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-<!--        <PackageReference Include="Humanizer.Core" />-->
+        <!--        <PackageReference Include="Humanizer.Core" />-->
         <PackageReference Include="MediatR" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Configuration" />
@@ -16,12 +16,12 @@
         <PackageReference Include="Microsoft.Extensions.Options" />
         <PackageReference Include="NodaTime" />
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" />
-        <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" Condition="$(UseConventions)" />
         <PackageReference Include="Rocket.Surgery.DependencyInjection.Extensions" />
-<!--        <PackageReference Include="Rocket.Surgery.Extensions" />-->
-<!--        <PackageReference Include="Rocket.Surgery.Extensions.Configuration" />-->
-<!--        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />-->
-<!--        <PackageReference Include="Rocket.Surgery.System" />-->
+        <!--        <PackageReference Include="Rocket.Surgery.Extensions" />-->
+        <!--        <PackageReference Include="Rocket.Surgery.Extensions.Configuration" />-->
+        <!--        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />-->
+        <!--        <PackageReference Include="Rocket.Surgery.System" />-->
         <PackageReference Include="Serilog" />
         <!--
         <PackageReference Include="Scrutor" />

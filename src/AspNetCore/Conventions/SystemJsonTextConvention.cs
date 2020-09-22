@@ -1,3 +1,4 @@
+#if CONVENTIONS
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -35,14 +36,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.Configure<JsonOptions>(
-                options =>
-                {
-                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                }
-            );
+            services.AddLaunchPadSystemJsonText(context.Get<IDateTimeZoneProvider>());
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if CONVENTIONS
+using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -33,3 +34,4 @@ namespace Rocket.Surgery.LaunchPad.Testing
         }
     }
 }
+#endif
