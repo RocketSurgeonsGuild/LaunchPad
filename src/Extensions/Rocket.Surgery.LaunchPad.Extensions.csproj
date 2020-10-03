@@ -7,7 +7,6 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-<!--        <PackageReference Include="Humanizer.Core" />-->
         <PackageReference Include="MediatR" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Configuration" />
@@ -18,19 +17,9 @@
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Rocket.Surgery.DependencyInjection.Extensions" />
-<!--        <PackageReference Include="Rocket.Surgery.Extensions" />-->
-<!--        <PackageReference Include="Rocket.Surgery.Extensions.Configuration" />-->
-<!--        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />-->
-<!--        <PackageReference Include="Rocket.Surgery.System" />-->
-        <PackageReference Include="Serilog" />
-        <!--
-        <PackageReference Include="Scrutor" />
-        <PackageReference Include="System.Collections.Immutable" />
-        <PackageReference Include="System.Interactive" />
-        <PackageReference Include="System.Interactive.Async" />
-        <PackageReference Include="System.Reactive" />
-        <PackageReference Include="System.Reactive.Observable.Aliases" />
-        -->
         <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     </ItemGroup>
 </Project>
