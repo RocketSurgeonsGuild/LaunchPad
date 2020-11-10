@@ -104,7 +104,7 @@
     <PackageVersion Include="System.Interactive.Async" Version="4.1.1" />
     <PackageVersion Include="System.Reactive" Version="4.4.1" />
     <PackageVersion Include="System.Reactive.Observable.Aliases" Version="4.4.1" />
-    <PackageVersion Include="System.Text.Json" Version="4.7.2" />
+    <PackageVersion Include="System.Text.Json" Version="5.0.0" />
     <PackageVersion Include="System.Net.Http.Json" Version="3.2.1" />
     <PackageVersion Include="NSwag.ApiDescription.Client" Version="13.8.2" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="3.1.8" />
