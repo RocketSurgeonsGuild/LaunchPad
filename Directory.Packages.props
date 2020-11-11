@@ -5,7 +5,7 @@
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.0.0" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.0.0" />
-    <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.0.0" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.1.0" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.0.0" Condition="'$(MSBuildProjectName)'!='.build'" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.Metadata" Version="1.0.0" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.0.0" />
