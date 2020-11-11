@@ -101,7 +101,7 @@
     <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="1.3.3" />
     <PackageVersion Include="System.Collections.Immutable" Version="1.7.1" />
     <PackageVersion Include="System.Interactive" Version="4.1.1" />
-    <PackageVersion Include="System.Interactive.Async" Version="4.1.1" />
+    <PackageVersion Include="System.Interactive.Async" Version="5.0.0" />
     <PackageVersion Include="System.Reactive" Version="4.4.1" />
     <PackageVersion Include="System.Reactive.Observable.Aliases" Version="4.4.1" />
     <PackageVersion Include="System.Text.Json" Version="4.7.2" />
