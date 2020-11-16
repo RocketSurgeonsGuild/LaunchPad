@@ -12,7 +12,7 @@
     <PackageVersion Include="Roslynator.Analyzers" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="GitVersion.Tool" Version="5.5.0" />
+    <PackageVersion Include="GitVersion.Tool" Version="5.5.1" />
     <PackageVersion Include="JetBrains.ReSharper.CommandLineTools" Version="2020.2.4" />
     <PackageVersion Include="Nuke.Common" Version="0.25.0-alpha0334" />
     <PackageVersion Include="ReportGenerator" Version="4.7.1" />
