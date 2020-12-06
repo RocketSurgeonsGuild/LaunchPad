@@ -20,6 +20,8 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="loggerConfiguration"></param>
         public void Register([NotNull] IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
         {
             if (context == null)

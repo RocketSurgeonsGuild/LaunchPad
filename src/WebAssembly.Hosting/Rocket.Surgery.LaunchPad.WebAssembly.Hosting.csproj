@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net5.0</TargetFrameworks>
         <PackageDescription></PackageDescription>
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
@@ -9,7 +9,7 @@
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\AspNetCore.Blazor\Rocket.Surgery.LaunchPad.AspNetCore.Blazor.csproj" />
+        <ProjectReference Include="..\AspNetCore.Blazor.WebAssembly\Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly.csproj" />
         <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
         <PackageReference Include="Rocket.Surgery.WebAssembly.Hosting" />

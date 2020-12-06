@@ -20,7 +20,7 @@ namespace Sample.Worker
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom<Program>())
+           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
            .ConfigureServices((hostContext, services) => { services.AddHostedService<Worker>(); });
     }
 }
