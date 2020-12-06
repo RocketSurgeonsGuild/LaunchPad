@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
 using FluentValidation;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +20,10 @@ namespace Sample.BlazorWasm
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args)
-                .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom<Program>());
+                .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
+                ;
             builder.RootComponents.Add<App>("app");
-
-            builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             await builder.Build().RunAsync();
         }
@@ -30,17 +31,15 @@ namespace Sample.BlazorWasm
 
     public static class TestHandler
     {
-        public class Request : IRequest<Response>
+        public record Request : IRequest<Response>
         {
             public string FirstName { get; set; }
             public string LastName { get; set; }
         }
 
-        public class Response
-        {
-            public string FullName { get; set; }
-        }
+        public record Response(string FullName);
 
+        [UsedImplicitly]
         class RequestValidator : AbstractValidator<Request>
         {
             public RequestValidator()
@@ -56,6 +55,7 @@ namespace Sample.BlazorWasm
             }
         }
 
+        [UsedImplicitly]
         class ResponseValidator : AbstractValidator<Response>
         {
             public ResponseValidator()
@@ -64,13 +64,11 @@ namespace Sample.BlazorWasm
             }
         }
 
+        [UsedImplicitly]
         class Handler : IRequestHandler<Request, Response>
         {
             public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
-                new Response()
-                {
-                    FullName = request.FirstName + " " + request.LastName
-                }
+                new Response(request.FirstName + " " + request.LastName)
             );
         }
     }

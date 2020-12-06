@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2" />
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.0.0" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.1.0" />
@@ -13,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="GitVersion.Tool" Version="5.5.1" />
-    <PackageVersion Include="JetBrains.ReSharper.CommandLineTools" Version="2020.2.4" />
+    <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2020.2.4" />
     <PackageVersion Include="Nuke.Common" Version="5.0.1" />
     <PackageVersion Include="ReportGenerator" Version="4.8.1" />
     <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.14.2" />

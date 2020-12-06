@@ -22,7 +22,7 @@ namespace Sample.Command
         public static Task<int> Main(string[] args) => CreateHostBuilder(args).RunCli();
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom<Program>())
+           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
            .ConfigureRocketSurgery(
                 builder => builder
                    .UseDryIoc()
