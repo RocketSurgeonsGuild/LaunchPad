@@ -40,7 +40,7 @@ pull_request_rules:
         remove:
           - ':shipit: merge'
       delete_head_branch: {}
-  - name: automatic merge for JetBrains.ReSharper.CommandLineTools pull requests
+  - name: automatic merge for JetBrains.ReSharper.GlobalTools pull requests
     conditions:
       - title~=^Bump JetBrains\.ReSharper\.CommandLineTools.*$
       - author~=^dependabot(|-preview)\[bot\]$
