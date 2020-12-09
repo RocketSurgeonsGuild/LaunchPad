@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.Restful
 {
@@ -118,7 +118,6 @@ namespace Rocket.Surgery.LaunchPad.Restful
         /// Send an request and allow for sync <see cref="ActionResult" />
         /// </summary>
         /// <param name="request">The request model</param>
-        /// <param name="success">The method to call when the request succeeds</param>
         protected async Task<ActionResult> Send(IRequest<Unit> request)
         {
             if (request is null)

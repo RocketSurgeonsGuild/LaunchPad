@@ -4,8 +4,8 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
-        <ProjectReference Include="..\..\src\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
-        <ProjectReference Include="..\..\src\Extensions.NewtonsoftJson\Rocket.Surgery.LaunchPad.Extensions.NewtonsoftJson.csproj" />
+        <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+        <ProjectReference Include="..\..\src\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
         <ProjectReference Include="..\..\src\Commands\Rocket.Surgery.LaunchPad.Commands.csproj" />
         <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
         <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.LaunchPad.Workers.csproj" />

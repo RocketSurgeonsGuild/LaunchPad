@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Rocket.Surgery.LaunchPad.Extensions.Validation
+namespace Rocket.Surgery.LaunchPad.Foundation.Validation
 {
     class CompositeValidatorDescriptor : IValidatorDescriptor
     {

@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
 using FluentValidation;
-using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +6,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.LaunchPad.Extensions.Conventions;
-using Rocket.Surgery.LaunchPad.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Foundation.Conventions;
+using Rocket.Surgery.LaunchPad.Foundation.Validation;
+using System;
+using System.Linq;
 
 [assembly: Convention(typeof(FluentValidationConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Extensions.Conventions
+namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
 {
     /// <summary>
     /// ValidationConvention.

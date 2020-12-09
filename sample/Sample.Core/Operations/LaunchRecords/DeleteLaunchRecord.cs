@@ -5,7 +5,7 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 
 namespace Sample.Core.Operations.LaunchRecords
@@ -13,9 +13,9 @@ namespace Sample.Core.Operations.LaunchRecords
     [PublicAPI]
     public static class DeleteLaunchRecord
     {
-        public class Request : IRequest
+        public record Request : IRequest
         {
-            public Guid Id { get; set; }
+            public Guid Id { get; init; }
         }
 
         class Validator : AbstractValidator<Request>

@@ -1,14 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using FluentValidation;
 using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Extensions.Validation;
-
+using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 // ReSharper disable once CheckNamespace
 namespace FluentValidation

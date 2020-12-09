@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.Extensions.Conventions;
+using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.WebAssembly.Hosting;
 using Xunit;
 using Xunit.Abstractions;

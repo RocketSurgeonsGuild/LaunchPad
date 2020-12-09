@@ -7,6 +7,7 @@
         <PackageReference Include="System.Net.Http.Json" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\..\sample\Sample.Restful.Client\Sample.Restful.Client.csproj" />
       <ProjectReference Include="..\..\sample\Sample.Restful\Sample.Restful.csproj" />
       <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
     </ItemGroup>

@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
@@ -62,7 +62,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
             services.AddSingleton<IActionContextValidatorInterceptor, ValidatorInterceptor>();
 #pragma warning restore 618
             services.AddSingleton<ProblemDetailsFactory, FluentValidationProblemDetailsFactory>();
-            services.Configure<ApiBehaviorOptions>(
+            services.PostConfigure<ApiBehaviorOptions>(
                 o =>
                 {
                     ProblemDetailsFactory? problemDetailsFactory = null;

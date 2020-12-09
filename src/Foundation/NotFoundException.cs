@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace Rocket.Surgery.LaunchPad.Extensions
+namespace Rocket.Surgery.LaunchPad.Foundation
 {
     /// <summary>
     /// NotFoundException.
@@ -23,5 +24,25 @@ namespace Rocket.Surgery.LaunchPad.Extensions
         /// Initializes a new instance of the <see cref="NotFoundException"/> class.
         /// </summary>
         public NotFoundException() { }
+
+        /// <summary>
+        /// Additional properties
+        /// </summary>
+        public IDictionary<string, object> Properties { get; init; } = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        /// <summary>
+        /// Request title
+        /// </summary>
+        public string? Title { get; init; }
+
+        /// <summary>
+        /// Request Type
+        /// </summary>
+        public string? Link { get; init; }
+
+        /// <summary>
+        /// The instance for the request
+        /// </summary>
+        public string? Instance { get; init; }
     }
 }

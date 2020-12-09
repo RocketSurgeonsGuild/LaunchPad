@@ -65,6 +65,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 
             if (httpContext.Items[typeof(ValidationResult)] is ValidationResult result)
             {
+                statusCode = 422;
                 problemDetails = new FluentValidationProblemDetails(result!)
                 {
                     Status = 422,
@@ -75,6 +76,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
             }
             else if (httpContext.Items[typeof(ValidationException)] is ValidationException failures)
             {
+                statusCode = 422;
                 problemDetails = new FluentValidationProblemDetails(failures.Errors)
                 {
                     Status = 422,

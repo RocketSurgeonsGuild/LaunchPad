@@ -20,6 +20,7 @@
         <PackageReference Include="System.Text.Json" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+        <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+        <ProjectReference Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 </Project>

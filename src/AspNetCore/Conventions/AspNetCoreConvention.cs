@@ -11,6 +11,7 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
+using Rocket.Surgery.LaunchPad.AspNetCore.ModelBinding;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 [assembly: Convention(typeof(AspNetCoreConvention))]
@@ -44,6 +45,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         /// TODO Edit XML Comment Template for Register
         public void Register([NotNull] IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
@@ -58,6 +61,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 options.Filters.Add<RequestFailedExceptionFilter>();
                 options.Filters.Add<SerilogLoggingActionFilter>(0);
                 options.Filters.Add<SerilogLoggingPageFilter>(0);
+                options.ModelMetadataDetailsProviders.Add(new IgnoreBindingMetadataProvider());
             });
 
             services.AddFluentValidationExtensions(_validatorConfiguration, _validationMvcConfiguration);

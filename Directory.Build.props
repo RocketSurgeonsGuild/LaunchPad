@@ -13,9 +13,11 @@
         <NoWarn>NU5105;CS0579;CS0436;$(NoWarn)</NoWarn>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <Features>strict</Features>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="$(MSBuildThisFileDirectory)/.tmp/packageicon.png" Condition="Exists('$(MSBuildThisFileDirectory)/.tmp/packageicon.png')" Pack="true" PackagePath="/images/" Visible="false"/>
+        <None Include="$(MSBuildThisFileDirectory)/.tmp/packageicon.png" Condition="Exists('$(MSBuildThisFileDirectory)/.tmp/packageicon.png')" Pack="true" PackagePath="/images/" Visible="false" />
         <None Include="$(MSBuildThisFileDirectory)/LICENSE" Pack="true" PackagePath="/" Visible="false"/>
     </ItemGroup>
     <ItemGroup>

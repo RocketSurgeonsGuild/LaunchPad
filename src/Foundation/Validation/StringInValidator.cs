@@ -1,10 +1,10 @@
+using FluentValidation.Validators;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentValidation.Validators;
-using JetBrains.Annotations;
 
-namespace Rocket.Surgery.LaunchPad.Extensions.Validation
+namespace Rocket.Surgery.LaunchPad.Foundation.Validation
 {
     /// <summary>
     /// A validator that is used to verify the value is in a defined list without creating a specific enum

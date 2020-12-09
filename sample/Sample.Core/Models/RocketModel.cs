@@ -4,11 +4,11 @@ using Sample.Core.Domain;
 
 namespace Sample.Core.Models
 {
-    public class RocketModel
+    public record RocketModel
     {
-        public Guid Id { get; set; }
-        public string Sn { get; set; } = null!;
-        public RocketType Type { get; set; }
+        public Guid Id { get; init; }
+        public string Sn { get; init; } = null!;
+        public RocketType Type { get; init; }
 
         class Mapper : Profile
         {

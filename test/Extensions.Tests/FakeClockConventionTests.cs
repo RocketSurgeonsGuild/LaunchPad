@@ -6,7 +6,7 @@ using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Foundation.Validation;
 using Rocket.Surgery.LaunchPad.Testing;
 using Xunit;
 using Xunit.Abstractions;

@@ -21,16 +21,16 @@ namespace Sample.BlazorServer.Pages.Rockets
         [Parameter]
         public Guid Id { get; set; }
 
-        public EditRocket.Model Model { get; set; } = new EditRocket.Model();
+        public EditRocket.Request Model { get; set; } = new EditRocket.Request();
 
         protected override async Task OnInitializedAsync()
         {
-            Model = Mapper.Map<EditRocket.Model>(await Mediator.Send(new GetRocket.Request() { Id = Id }));
+            Model = Mapper.Map<EditRocket.Request>(await Mediator.Send(new GetRocket.Request() { Id = Id }));
         }
 
         public async Task Save()
         {
-            await Mediator.Send(EditRocket.CreateRequest(Id, Model, Mapper));
+            await Mediator.Send(Model with { Id = Id });
             NavigationManager.NavigateTo("/rockets");
         }
     }

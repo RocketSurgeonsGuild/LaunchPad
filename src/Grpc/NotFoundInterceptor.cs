@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Grpc

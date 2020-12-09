@@ -13,7 +13,7 @@
         <PackageReference Include="Serilog.Sinks.Debug" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
-      <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+        <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     </ItemGroup>
 </Project>

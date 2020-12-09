@@ -6,37 +6,33 @@ using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using NodaTime;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using System.ComponentModel;
 
 namespace Sample.Core.Operations.LaunchRecords
 {
     [PublicAPI]
-    public static class EditLaunchRecord
+    public static partial class EditLaunchRecord
     {
-        public static Request CreateRequest(Guid id, Model model, IMapper mapper) => mapper.Map(model, new Request(id));
+        // TODO: Make generator that can be used to map this directly
+        public static Request CreateRequest(Guid id, Model model, IMapper mapper) => mapper.Map(model, new Request { Id = id });
 
-        public class Model
+        public record Model
         {
-            public string Partner { get; set; } = null!;
-            public string Payload { get; set; } = null!;
-            public double PayloadWeightKg { get; set; }
-            public Instant? ActualLaunchDate { get; set; }
-            public Instant ScheduledLaunchDate { get; set; }
-            public Guid RocketId { get; set; }
+            public string Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+            public string Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+            public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
+            public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+            public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+            public Guid RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
         }
 
-        public class Request : Model, IRequest<LaunchRecordModel>
+        [InheritFrom(typeof(Model))]
+        public partial record Request : Model, IRequest<LaunchRecordModel>
         {
-            public Guid Id { get; set; }
-
-            public Request(Guid id)
-            {
-                Id = id;
-            }
-
-            private Request() { }
+            public Guid Id { get; init; }
         }
 
         class Mapper : Profile
@@ -52,9 +48,9 @@ namespace Sample.Core.Operations.LaunchRecords
             }
         }
 
-        class Validator : AbstractValidator<Request>
+        class ModelValidator : AbstractValidator<Model>
         {
-            public Validator()
+            public ModelValidator()
             {
                 RuleFor(x => x.Partner)
                    .NotEmpty()
@@ -70,6 +66,17 @@ namespace Sample.Core.Operations.LaunchRecords
                    .NotNull();
                 RuleFor(x => x.PayloadWeightKg)
                    .GreaterThanOrEqualTo(0d);
+            }
+        }
+
+        class Validator : AbstractValidator<Request>
+        {
+            public Validator()
+            {
+                Include(new ModelValidator());
+                RuleFor(z => z.Id)
+                   .NotEmpty()
+                   .NotNull();
             }
         }
 

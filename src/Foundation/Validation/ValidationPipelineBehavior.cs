@@ -1,10 +1,10 @@
+using FluentValidation;
+using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using MediatR;
 
-namespace Rocket.Surgery.LaunchPad.Extensions.Validation
+namespace Rocket.Surgery.LaunchPad.Foundation.Validation
 {
     internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where T : notnull
     {

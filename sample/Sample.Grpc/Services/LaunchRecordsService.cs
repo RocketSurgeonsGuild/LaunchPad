@@ -29,7 +29,7 @@ namespace Sample.Grpc.Services
 
         public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context)
         {
-            var response = await _mediator.Send(_mapper.Map<EditLaunchRecord.Model>(request), context.CancellationToken);
+            var response = await _mediator.Send(_mapper.Map<EditLaunchRecord.Request>(request), context.CancellationToken);
             return _mapper.Map<LaunchRecordModel>(response);
         }
 

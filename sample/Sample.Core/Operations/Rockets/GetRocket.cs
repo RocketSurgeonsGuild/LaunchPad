@@ -5,7 +5,7 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -14,7 +14,7 @@ namespace Sample.Core.Operations.Rockets
     [PublicAPI]
     public static class GetRocket
     {
-        public class Request : IRequest<RocketModel>
+        public record Request : IRequest<RocketModel>
         {
             public Guid Id { get; set; }
         }

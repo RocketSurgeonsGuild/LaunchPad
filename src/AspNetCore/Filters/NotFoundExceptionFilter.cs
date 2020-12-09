@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -12,13 +14,34 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
     /// </summary>
     public class NotFoundExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
     {
+        private readonly ProblemDetailsFactory _problemDetailsFactory;
+
+        public NotFoundExceptionFilter(ProblemDetailsFactory problemDetailsFactory) => _problemDetailsFactory = problemDetailsFactory;
+
         /// <inheritdoc />
         public void OnException(ExceptionContext context)
         {
-            if (context?.Exception is NotFoundException)
+            if (context?.Exception is NotFoundException exception)
             {
                 context.ExceptionHandled = true;
-                context.Result = new NotFoundResult();
+                var problemDetails = _problemDetailsFactory.CreateProblemDetails(
+                    context.HttpContext,
+                    StatusCodes.Status404NotFound,
+                    detail: exception.Message,
+                    title: exception.Title,
+                    type: exception.Link,
+                    instance: exception.Instance
+                );
+
+                foreach (var item in exception.Properties)
+                {
+                    if (problemDetails.Extensions.ContainsKey(item.Key)) continue;
+                    problemDetails.Extensions.Add(item);
+                }
+
+                context.Result = new ObjectResult(problemDetails) {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
         }
 

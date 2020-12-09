@@ -12,7 +12,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Extensions.Conventions;
+using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Sample.Core.Domain;
 using Serilog;
 using Serilog.Events;

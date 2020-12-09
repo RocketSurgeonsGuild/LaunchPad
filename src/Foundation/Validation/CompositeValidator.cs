@@ -1,13 +1,13 @@
+using FluentValidation;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
 
-namespace Rocket.Surgery.LaunchPad.Extensions.Validation
+namespace Rocket.Surgery.LaunchPad.Foundation.Validation
 {
     class CompositeValidator<T> : IValidator<T>
     {

@@ -5,10 +5,10 @@
     <PackageTags>$(PackageTags)</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+    <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
   </ItemGroup>
   <ItemGroup>
-<!--    <PackageReference Include="Newtonsoft.Json" />-->
+    <!--    <PackageReference Include="Newtonsoft.Json" />-->
     <PackageReference Include="NodaTime.Serialization.JsonNet" />
   </ItemGroup>
 </Project>

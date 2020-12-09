@@ -1,0 +1,6 @@
+<Project>
+    <ItemGroup>
+        <ProjectReference Include="../../src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+</Project>
