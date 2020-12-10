@@ -13,7 +13,6 @@ using Sample.Core;
 using Sample.Core.Domain;
 
 [assembly: Convention(typeof(DataGenerationConvention))]
-[assembly: Convention(typeof(DataConvention))]
 
 namespace Sample.Core
 {

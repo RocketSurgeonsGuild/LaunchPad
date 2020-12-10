@@ -31,12 +31,10 @@ namespace Sample.Core.Operations.Rockets
         class Handler : IRequestHandler<Request>
         {
             private readonly RocketDbContext _dbContext;
-            private readonly IMapper _mapper;
 
-            public Handler(RocketDbContext dbContext, IMapper mapper)
+            public Handler(RocketDbContext dbContext)
             {
                 _dbContext = dbContext;
-                _mapper = mapper;
             }
 
             public async Task<Unit> Handle(Request request, CancellationToken cancellationToken)

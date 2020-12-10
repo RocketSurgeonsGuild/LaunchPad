@@ -9,7 +9,6 @@ namespace Sample.Core.Models
     public record LaunchRecordModel
     {
         public Guid Id { get; init; }
-
         public string Partner { get; init; } = null!;
         public string Payload { get; init; } = null!;
         public long PayloadWeightKg { get; init; }

@@ -16,4 +16,7 @@
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="ModelBinding" />
+    </ItemGroup>
 </Project>
