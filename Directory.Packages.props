@@ -64,7 +64,7 @@
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.0.0-beta.98" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.0.0-beta.98" />
     <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.NodaTime" Version="8.0.0-beta.8" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.SystemTextJson" Version="8.0.0-beta.8" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.SystemTextJson" Version="8.0.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.NewtonsoftJson" Version="8.0.0-beta.8" />
     <PackageVersion Include="Rocket.Surgery.Conventions.AutoMapper" Version="8.0.0-beta.8" />
     <PackageVersion Include="Rocket.Surgery.Hosting.TestHost" Version="10.0.0-beta.98" />
