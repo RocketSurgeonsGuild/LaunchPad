@@ -14,8 +14,6 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
         /// <returns>service collection</returns>
         public static IServiceCollection AddGrpcValidation(this IServiceCollection services)
         {
-            services.AddScoped<IValidatorLocator>(provider => new ServiceCollectionValidationProvider(provider));
-
             if (services.All(r => r.ServiceType != typeof(IValidatorErrorMessageHandler)))
                 services.AddSingleton<IValidatorErrorMessageHandler, DefaultErrorMessageHandler>();
 

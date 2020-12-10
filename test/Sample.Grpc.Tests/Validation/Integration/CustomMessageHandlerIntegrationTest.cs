@@ -26,7 +26,7 @@ namespace Sample.Grpc.Tests.Validation.Integration
         public async Task Should_ThrowInvalidArgument_When_NameOfMessageIsEmpty()
         {
             // Given
-            var client = new Rockets.RocketsClient(_factory.CreateGrpcChannel());
+            var client = new Grpc.Rockets.RocketsClient(_factory.CreateGrpcChannel());
 
             // When
             async Task Action()

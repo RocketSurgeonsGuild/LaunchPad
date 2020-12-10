@@ -7,7 +7,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
     /// NotFoundException.
     /// </summary>
     /// <seealso cref="System.Exception" />
-    public class NotFoundException : Exception
+    public class NotFoundException : Exception, IProblemDetailsData
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NotFoundException"/> class.

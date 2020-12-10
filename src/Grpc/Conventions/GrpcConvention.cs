@@ -31,6 +31,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Conventions
                     {
                         options.EnableMessageValidation();
                         options.Interceptors.Add<NotFoundInterceptor>();
+                        options.Interceptors.Add<RequestFailedInterceptor>();
                     }
                 )
                ;

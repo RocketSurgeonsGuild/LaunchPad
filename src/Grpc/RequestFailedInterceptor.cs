@@ -1,13 +1,11 @@
-using System.Linq;
-using System.Threading.Tasks;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Grpc.Validation;
+using System.Threading.Tasks;
 
 namespace Rocket.Surgery.LaunchPad.Grpc
 {
-    internal class NotFoundInterceptor : Interceptor
+    internal class RequestFailedInterceptor : Interceptor
     {
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
             TRequest request,
@@ -19,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc
             {
                 return await continuation(request, context);
             }
-            catch (NotFoundException exception)
+            catch (RequestFailedException exception)
             {
                 throw CreateException(exception);
             }
@@ -35,7 +33,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc
             {
                 return continuation(request, context);
             }
-            catch (NotFoundException exception)
+            catch (RequestFailedException exception)
             {
                 throw CreateException(exception);
             }
@@ -51,19 +49,19 @@ namespace Rocket.Surgery.LaunchPad.Grpc
             {
                 return continuation(request, context);
             }
-            catch (NotFoundException exception)
+            catch (RequestFailedException exception)
             {
                 throw CreateException(exception);
             }
         }
 
-        private RpcException CreateException(NotFoundException exception) => new(
-            new Status(StatusCode.NotFound, exception.Title, exception),
+        private RpcException CreateException(RequestFailedException exception) => new RpcException(
+            new Status(StatusCode.FailedPrecondition, exception.Title, exception),
             CreateMetadata(exception),
             exception.Message
         );
 
-        private Metadata CreateMetadata(NotFoundException exception)
+        private Metadata CreateMetadata(RequestFailedException exception)
         {
             var metadata = new Metadata();
             if (exception.Title is { })

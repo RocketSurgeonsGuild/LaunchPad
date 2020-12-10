@@ -5,6 +5,7 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
@@ -94,7 +95,10 @@ namespace Sample.Core.Operations.LaunchRecords
             public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
             {
                 var rocket
-                    = await _dbContext.LaunchRecords.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
+                    = await _dbContext.LaunchRecords
+                       .Include(z => z.Rocket)
+                       .FirstOrDefaultAsync(z => z.Id == request.Id, cancellationToken)
+                       .ConfigureAwait(false);
                 if (rocket == null)
                 {
                     throw new NotFoundException();

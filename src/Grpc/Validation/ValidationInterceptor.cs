@@ -1,19 +1,25 @@
+using FluentValidation;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
+using System;
+using System.ComponentModel.DataAnnotations;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {
     internal class ValidationInterceptor : Interceptor
     {
-        private readonly IValidatorLocator _locator;
+        private readonly IValidatorFactory _factory;
         private readonly IValidatorErrorMessageHandler _handler;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ValidationInterceptor(IValidatorLocator locator, IValidatorErrorMessageHandler handler)
+        public ValidationInterceptor(IValidatorFactory factory, IValidatorErrorMessageHandler handler, IServiceProvider serviceProvider)
         {
-            _locator = locator;
+            _factory = factory;
             _handler = handler;
+            _serviceProvider = serviceProvider;
         }
 
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
@@ -21,9 +27,12 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
             ServerCallContext context,
             UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            if (_locator.TryGetValidator<TRequest>(out var validator))
+            if (_factory.GetValidator<TRequest>() is { } validator)
             {
-                var results = await validator.ValidateAsync(request);
+                var validationContext = new ValidationContext<TRequest>(request);
+                validationContext.SetServiceProvider(_serviceProvider);
+
+                var results = await validator.ValidateAsync(validationContext, context.CancellationToken).ConfigureAwait(false);
 
                 if (results.IsValid || !results.Errors.Any())
                 {
@@ -31,8 +40,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
                 }
 
                 var message = await _handler.HandleAsync(results.Errors);
-                var validationMetadata = results.Errors.ToValidationMetadata();
-                throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata);
+                throw CreateException(results, message);
             }
             return await continuation(request, context);
         }
@@ -43,7 +51,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
             AsyncUnaryCallContinuation<TRequest, TResponse> continuation
         )
         {
-            if (_locator.TryGetValidator<TRequest>(out var validator))
+            if (_factory.GetValidator<TRequest>() is { } validator)
             {
                 var results = validator.Validate(request);
 
@@ -53,8 +61,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
                 }
 
                 var message = _handler.Handle(results.Errors);
-                var validationMetadata = results.Errors.ToValidationMetadata();
-                throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata);
+                throw CreateException(results, message);
             }
             return continuation(request, context);
         }
@@ -65,7 +72,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
             BlockingUnaryCallContinuation<TRequest, TResponse> continuation
         )
         {
-            if (_locator.TryGetValidator<TRequest>(out var validator))
+            if (_factory.GetValidator<TRequest>() is { } validator)
             {
                 var results = validator.Validate(request);
 
@@ -75,10 +82,18 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
                 }
 
                 var message = _handler.Handle(results.Errors);
-                var validationMetadata = results.Errors.ToValidationMetadata();
-                throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata);
+                throw CreateException(results, message);
             }
             return continuation(request, context);
+        }
+
+        private RpcException CreateException(ValidationResult results, string? message)
+        {
+            var validationMetadata = results.Errors.ToValidationMetadata();
+            validationMetadata.Add("title", "Unprocessable Entity");
+            validationMetadata.Add("link", "https://tools.ietf.org/html/rfc4918#section-11.2");
+            if (message is {}) validationMetadata.Add("message", message);
+            throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata, message);
         }
     }
 }

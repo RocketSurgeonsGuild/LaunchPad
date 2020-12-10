@@ -6,6 +6,8 @@ using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using NodaTime;
+using NodaTime.Extensions;
 using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Grpc.Services
@@ -23,31 +25,36 @@ namespace Sample.Grpc.Services
 
         public override async Task<CreateLaunchRecordResponse> CreateLaunchRecord(CreateLaunchRecordRequest request, ServerCallContext context)
         {
-            var response = await _mediator.Send(_mapper.Map<CreateLaunchRecord.Request>(request), context.CancellationToken);
+            var mRequest = _mapper.Map<CreateLaunchRecord.Request>(request);
+            var response = await _mediator.Send(mRequest, context.CancellationToken);
             return _mapper.Map<CreateLaunchRecordResponse>(response);
         }
 
         public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context)
         {
-            var response = await _mediator.Send(_mapper.Map<EditLaunchRecord.Request>(request), context.CancellationToken);
+            var mRequest = _mapper.Map<EditLaunchRecord.Request>(request);
+            var response = await _mediator.Send(mRequest, context.CancellationToken);
             return _mapper.Map<LaunchRecordModel>(response);
         }
 
         public override async Task<Empty> DeleteLaunchRecord(DeleteLaunchRecordRequest request, ServerCallContext context)
         {
-            await _mediator.Send(_mapper.Map<DeleteLaunchRecord.Request>(request), context.CancellationToken);
+            var mRequest = _mapper.Map<DeleteLaunchRecord.Request>(request);
+            await _mediator.Send(mRequest, context.CancellationToken);
             return new Empty();
         }
 
         public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context)
         {
-            var response = await _mediator.Send(_mapper.Map<GetLaunchRecord.Request>(request), context.CancellationToken);
+            var mRequest = _mapper.Map<GetLaunchRecord.Request>(request);
+            var response = await _mediator.Send(mRequest, context.CancellationToken);
             return _mapper.Map<LaunchRecordModel>(response);
         }
 
         public override async Task<ListLaunchRecordsResponse> ListLaunchRecords(ListLaunchRecordsRequest request, ServerCallContext context)
         {
-            var response = await _mediator.Send(_mapper.Map<ListLaunchRecords.Request>(request), context.CancellationToken);
+            var mRequest = _mapper.Map<ListLaunchRecords.Request>(request);
+            var response = await _mediator.Send(mRequest, context.CancellationToken);
             return new ListLaunchRecordsResponse()
             {
                 Results = { response.Select(_mapper.Map<LaunchRecordModel>) }
@@ -126,10 +133,7 @@ namespace Sample.Grpc.Services
 
         class ListLaunchRecordsRequestValidator : AbstractValidator<ListLaunchRecordsRequest>
         {
-            public ListLaunchRecordsRequestValidator()
-            {
-
-            }
+            public ListLaunchRecordsRequestValidator() { }
         }
 
         class DeleteLaunchRecordRequestValidator : AbstractValidator<DeleteLaunchRecordRequest>

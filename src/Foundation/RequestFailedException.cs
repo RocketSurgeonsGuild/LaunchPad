@@ -10,7 +10,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
     /// This data can then be used to surface information to the user through something like problem details.
     /// </remarks>
     /// <seealso cref="System.Exception" />
-    public class RequestFailedException : Exception
+    public class RequestFailedException : Exception, IProblemDetailsData
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestFailedException"/> class.
