@@ -22,10 +22,7 @@ namespace Sample.Core.Models
         {
             public Mapper()
             {
-                CreateMap<LaunchRecord, LaunchRecordModel>()
-                   .ForMember(z => z.ActualLaunchDate, o => o.MapFrom(z => z.ActualLaunchDate.HasValue ? (Instant?)Instant.FromDateTimeOffset(z.ActualLaunchDate.Value) : default))
-                   .ForMember(z => z.ScheduledLaunchDate, o => o.MapFrom(z => Instant.FromDateTimeOffset(z.ScheduledLaunchDate)))
-                    ;
+                CreateMap<LaunchRecord, LaunchRecordModel>();
             }
         }
     }

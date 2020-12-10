@@ -25,11 +25,11 @@ namespace Sample.Restful.Controllers
         [HttpPost]
         public Task<ActionResult<CreateLaunchRecord.Response>> CreateLaunchRecord([BindRequired, FromBody] CreateLaunchRecord.Request request) => Send(
             request,
-            x => CreatedAtAction(nameof(GetLaunchRecord), new { id = x }, x)
+            x => CreatedAtAction(nameof(GetLaunchRecord), new { id = x.Id }, x)
         );
 
         [HttpPut("{id:guid}")]
-        public Task<ActionResult> UpdateLaunchRecord([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditLaunchRecord.Request model)
+        public Task<ActionResult> UpdateLaunchRecord([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditLaunchRecord.Model model)
             => Send(new EditLaunchRecord.Request() { Id = id }.With(model), NoContent);
 
         [HttpDelete("{id:guid}")]

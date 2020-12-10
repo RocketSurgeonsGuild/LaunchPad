@@ -25,7 +25,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers
 
         class SyntaxReceiver : ISyntaxReceiver
         {
-            public void OnVisitSyntaxNode(SyntaxNode syntaxNode) => throw new NotImplementedException();
+            public void OnVisitSyntaxNode(SyntaxNode syntaxNode) { }
         }
     }
 }

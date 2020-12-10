@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OpenApiGenerateCodeOnBuild>true</OpenApiGenerateCodeOnBuild>
   </PropertyGroup>
     <ItemGroup>
@@ -21,5 +21,5 @@
     <!-- Hack to fix multi-targeting -->
 <!--    <ItemGroup Condition="Exists('$(OpenApiCodeDirectory)\$(MSBuildProjectName).$(TargetFramework).cs') AND '$(OpenApiGenerateCodeOnBuild)'=='false'">-->
 <!--    </ItemGroup>-->
-    <Target Name="_TieInGenerateOpenApiCodeHack" BeforeTargets="BeforeCompile" Condition="'$(OpenApiGenerateCodeOnBuild)'=='true'" DependsOnTargets="GenerateOpenApiCode" />
+<!--    <Target Name="_TieInGenerateOpenApiCodeHack" BeforeTargets="BeforeCompile" Condition="'$(OpenApiGenerateCodeOnBuild)'=='true'" DependsOnTargets="GenerateOpenApiCode" />-->
 </Project>

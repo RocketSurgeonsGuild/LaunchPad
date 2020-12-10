@@ -10,26 +10,36 @@ using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Sample.Restful.Tests
 {
-    public abstract class HandleWebHostBase : LoggerTest, IAsyncLifetime
+    [ImportConventions]
+    public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
     {
-        private SqliteConnection _connection;
+        private SqliteConnection _connection = null!;
 
         protected ConventionTestWebHost<Startup> Factory { get; private set; }
         protected IServiceProvider ServiceProvider => Factory.Services;
 
-        protected HandleWebHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Trace) : base(
+        protected HandleWebHostBase(
+            ITestOutputHelper outputHelper,
+            LogLevel logLevel = LogLevel.Trace) : base(
             outputHelper,
             logLevel,
             logFormat: "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
         )
         {
-            Factory = new TestWebHost().ConfigureLogger(SerilogLogger);
+            Factory = new TestWebHost()
+               .ConfigureHostBuilder(b => b
+                   .ConfigureHosting((context, z) => z.ConfigureServices((c, s) => s.AddSingleton(context)))
+                   // .WithConventionsFrom(GetConventions)
+                   .EnableConventionAttributes()
+                )
+               .ConfigureLoggerFactory(LoggerFactory);
         }
 
         public async Task InitializeAsync()

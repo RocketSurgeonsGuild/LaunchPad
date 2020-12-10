@@ -12,6 +12,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
+using Serilog.Extensions.Logging;
 using ILogger = Serilog.ILogger;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
@@ -41,10 +42,22 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
         }
 
         public ConventionTestWebHost<TEntryPoint> ConfigureLogger(ILogger logger)
-            => ConfigureHostBuilder(builder => builder.Set(logger));
+            => ConfigureHostBuilder(builder =>
+                {
+                    builder.Set(logger);
+                    var factory = new SerilogLoggerFactory(logger);
+                    builder.Set<ILoggerFactory>(factory);
+                    builder.Set(factory.CreateLogger(nameof(ConventionTestWebHost<object>)));
+                }
+            );
 
         public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory)
-            => ConfigureHostBuilder(builder => builder.Set(loggerFactory));
+            => ConfigureHostBuilder(builder =>
+                {
+                    builder.Set(loggerFactory);
+                    builder.Set(loggerFactory.CreateLogger(nameof(ConventionTestWebHost<object>)));
+                }
+            );
 
         public ConventionTestWebHost<TEntryPoint> ConfigureHostBuilder(Action<ConventionContextBuilder> action)
         {

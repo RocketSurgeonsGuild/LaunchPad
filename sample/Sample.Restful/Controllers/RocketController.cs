@@ -30,7 +30,7 @@ namespace Sample.Restful.Controllers
         );
 
         [HttpPut("{id:guid}")]
-        public Task<ActionResult> UpdateRocket([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditRocket.Model model)
+        public Task<ActionResult> UpdateRocket([BindRequired] Guid id, [BindRequired, FromBody] EditRocket.Model model)
             => Send(new EditRocket.Request() { Id = id }.With(model), NoContent);
 
         [HttpDelete("{id:guid}")]

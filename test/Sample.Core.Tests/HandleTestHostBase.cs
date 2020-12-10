@@ -33,11 +33,9 @@ namespace Sample.Core.Tests
         )
         {
             _hostBuilder = TestHost.For(this, LoggerFactory)
-               .WithLogger(Logger)
+               .WithLogger(LoggerFactory.CreateLogger(nameof(TestHost)))
                .Create(b => b.ExceptConvention(typeof(NodaTimeConvention)));
-            ExcludeSourceContext(nameof(TestHostBuilder));
             ExcludeSourceContext(nameof(TestHost));
-            ExcludeSourceContext(nameof(DiagnosticSource));
         }
 
         public async Task InitializeAsync()
