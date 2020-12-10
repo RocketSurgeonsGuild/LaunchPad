@@ -11,8 +11,8 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.Extensions;
-using Rocket.Surgery.LaunchPad.Extensions.Conventions;
+using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Xunit;
 using Xunit.Abstractions;
 

@@ -10,10 +10,13 @@
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
+        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="ModelBinding" />
     </ItemGroup>
 </Project>

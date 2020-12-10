@@ -5,14 +5,14 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="build/*.*" Pack="true" PackagePath="build"/>
-        <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting"/>
+        <None Include="build/*.*" Pack="true" PackagePath="build" />
+        <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj"/>
-        <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj"/>
+        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+        <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Rocket.Surgery.Hosting"/>
+        <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
 </Project>

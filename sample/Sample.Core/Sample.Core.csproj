@@ -1,21 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Rocket.Surgery.Conventions.AutoMapper" />
-      <PackageReference Include="Rocket.Surgery.Extensions.AutoMapper.SystemTextJson" />
-      <PackageReference Include="Rocket.Surgery.Extensions.AutoMapper.NodaTime" />
-      <PackageReference Include="Bogus" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Rocket.Surgery.Conventions.AutoMapper" />
+    <PackageReference Include="Rocket.Surgery.Extensions.AutoMapper.SystemTextJson" />
+    <PackageReference Include="Rocket.Surgery.Extensions.AutoMapper.NodaTime" />
+    <PackageReference Include="Bogus" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
-      <ProjectReference Include="..\..\src\Extensions\Rocket.Surgery.LaunchPad.Extensions.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    <None Include="$(MSBuildThisFileDirectory)\..\Analyzers\bin\$(Configuration)\netstandard2.0\Rocket.Surgery.Conventions.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
 
 </Project>

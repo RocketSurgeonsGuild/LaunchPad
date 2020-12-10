@@ -14,27 +14,24 @@ namespace Sample.Restful.Controllers
     [Route("[controller]")]
     public class LaunchRecordController : RestfulApiController
     {
-        private readonly IMapper _mapper;
-        public LaunchRecordController(IMapper mapper) => _mapper = mapper;
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public Task<ActionResult<IEnumerable<LaunchRecordModel>>> ListLaunchRecords() => Send(new ListLaunchRecords.Request(), x => Ok(x));
-        
+
         [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public Task<ActionResult<LaunchRecordModel>> GetLaunchRecord([BindRequired, FromRoute] GetLaunchRecord.Request request) => Send(request, x => Ok(x));
-        
+
         [HttpPost]
         public Task<ActionResult<CreateLaunchRecord.Response>> CreateLaunchRecord([BindRequired, FromBody] CreateLaunchRecord.Request request) => Send(
             request,
-            x => CreatedAtAction(nameof(GetLaunchRecord), new { id = x }, null)
+            x => CreatedAtAction(nameof(GetLaunchRecord), new { id = x.Id }, x)
         );
-        
+
         [HttpPut("{id:guid}")]
         public Task<ActionResult> UpdateLaunchRecord([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditLaunchRecord.Model model)
-            => Send(EditLaunchRecord.CreateRequest(id, model, _mapper), NoContent);
-        
+            => Send(new EditLaunchRecord.Request() { Id = id }.With(model), NoContent);
+
         [HttpDelete("{id:guid}")]
         public Task<ActionResult> RemoveLaunchRecord([BindRequired, FromRoute] DeleteLaunchRecord.Request request) => Send(request);
     }

@@ -15,9 +15,6 @@ namespace Sample.Restful.Controllers
     [Route("[controller]")]
     public class RocketController : RestfulApiController
     {
-        private readonly IMapper _mapper;
-        public RocketController(IMapper mapper) => _mapper = mapper;
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public Task<ActionResult<IEnumerable<RocketModel>>> ListRockets() => Send(new ListRockets.Request(), x => Ok(x));
@@ -29,12 +26,12 @@ namespace Sample.Restful.Controllers
         [HttpPost]
         public Task<ActionResult<CreateRocket.Response>> CreateRocket([BindRequired, FromBody] CreateRocket.Request request) => Send(
             request,
-            x => CreatedAtAction(nameof(GetRocket), new { id = x.Id }, null)
+            x => CreatedAtAction(nameof(GetRocket), new { id = x.Id }, x)
         );
 
         [HttpPut("{id:guid}")]
-        public Task<ActionResult> UpdateRocket([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditRocket.Model model)
-            => Send(EditRocket.CreateRequest(id, model, _mapper), NoContent);
+        public Task<ActionResult> UpdateRocket([BindRequired] Guid id, [BindRequired, FromBody] EditRocket.Model model)
+            => Send(new EditRocket.Request() { Id = id }.With(model), NoContent);
 
         [HttpDelete("{id:guid}")]
         public Task<ActionResult> RemoveRocket([BindRequired, FromRoute] DeleteRocket.Request request) => Send(request);

@@ -6,7 +6,7 @@ using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -15,9 +15,9 @@ namespace Sample.Core.Operations.LaunchRecords
     [PublicAPI]
     public static class GetLaunchRecord
     {
-        public class Request : IRequest<LaunchRecordModel>
+        public record Request : IRequest<LaunchRecordModel>
         {
-            public Guid Id { get; set; }
+            public Guid Id { get; init; }
         }
 
         class Validator : AbstractValidator<Request>

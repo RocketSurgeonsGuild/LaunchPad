@@ -44,6 +44,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         /// TODO Edit XML Comment Template for Register
         public void Register([NotNull] IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {

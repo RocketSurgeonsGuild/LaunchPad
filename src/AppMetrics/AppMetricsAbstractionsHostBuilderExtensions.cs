@@ -18,7 +18,7 @@ namespace Rocket.Surgery.Conventions
         /// <param name="container">The container.</param>
         /// <param name="delegate">The delegate.</param>
         /// <returns>IConventionHostBuilder.</returns>
-        public static ConventionContextBuilder ConfigureSerilog([NotNull] this ConventionContextBuilder container, [NotNull] MetricsConvention @delegate)
+        public static ConventionContextBuilder ConfigureAppMetrics([NotNull] this ConventionContextBuilder container, [NotNull] MetricsConvention @delegate)
         {
             if (container == null)
             {

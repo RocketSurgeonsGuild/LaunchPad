@@ -19,12 +19,12 @@ namespace Sample.Pages.Pages.Rockets
         }
 
         [BindProperty]
-        public EditRocket.Model Model { get; set; } = new EditRocket.Model();
+        public EditRocket.Request Model { get; set; } = new();
 
         public override async Task OnGet()
         {
             await base.OnGet();
-            Model = _mapper.Map<EditRocket.Model>(Rocket);
+            Model = _mapper.Map<EditRocket.Request>(Rocket);
         }
 
         public async Task<ActionResult> OnPost()
@@ -35,7 +35,7 @@ namespace Sample.Pages.Pages.Rockets
                 return Page();
             }
 
-            await Send(EditRocket.CreateRequest(Id, Model, _mapper));
+            await Send(Model with {Id = Id});
             return RedirectToPage("Index");
         }
     }

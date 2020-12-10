@@ -8,23 +8,23 @@ using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 
 namespace Sample.Core.Operations.Rockets
 {
     [PublicAPI]
-    public static class CreateRocket
+    public static partial class CreateRocket
     {
-        public class Request : IRequest<Response>
+        public record Request : IRequest<Response>
         {
-            public string SerialNumber { get; set; } = null!;
-            public RocketType Type { get; set; }
+            public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+            public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
         }
 
-        public class Response
+        public record Response
         {
-            public Guid Id { get; set; }
+            public Guid Id { get; init; }
         }
 
         class Mapper : Profile
@@ -69,10 +69,10 @@ namespace Sample.Core.Operations.Rockets
                    .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
                 if (existingRocket != null)
                 {
-                    throw new RequestFailedException(
-                        "A Rocket already exists with that serial number!",
-                        title: "Rocket Creation Failed",
-                        properties: new Dictionary<string, object>()
+                    throw new RequestFailedException("A Rocket already exists with that serial number!")
+                    {
+                        Title = "Rocket Creation Failed",
+                        Properties = new Dictionary<string, object>
                         {
                             ["data"] = new
                             {
@@ -81,7 +81,7 @@ namespace Sample.Core.Operations.Rockets
                                 sn = existingRocket.SerialNumber
                             }
                         }
-                    );
+                    };
                 }
 
                 var rocket = _mapper.Map<ReadyRocket>(request);

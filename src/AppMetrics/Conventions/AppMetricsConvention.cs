@@ -18,18 +18,9 @@ namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
         public void Register(IConventionContext context, IHostBuilder builder)
         {
             IMetricsBuilder metricsBuilder;
-            if (context.GetOrAdd(() => new ConventionMetricsOptions()).UseDefaults)
-            {
-                // throws during unit tests :(
-                // context.Builder.ConfigureMetricsWithDefaults(ConfigureMetrics);
-                metricsBuilder = global::App.Metrics.AppMetrics.CreateDefaultBuilder();
-            }
-            else
-            {
-                // throws during unit tests :(
-                // context.Builder.ConfigureMetrics(ConfigureMetrics);
-                metricsBuilder = new global::App.Metrics.MetricsBuilder();
-            }
+            metricsBuilder = context.GetOrAdd(() => new ConventionMetricsOptions()).UseDefaults
+                ? global::App.Metrics.AppMetrics.CreateDefaultBuilder()
+                : new MetricsBuilder();
 
             builder.ConfigureServices(
                 (ctx, services) =>

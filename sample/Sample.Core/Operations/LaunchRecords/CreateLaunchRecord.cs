@@ -8,7 +8,7 @@ using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using NodaTime;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 
 namespace Sample.Core.Operations.LaunchRecords
@@ -16,19 +16,19 @@ namespace Sample.Core.Operations.LaunchRecords
     [PublicAPI]
     public static class CreateLaunchRecord
     {
-        public class Request : IRequest<Response>
+        public record Request : IRequest<Response>
         {
-            public string Partner { get; set; } = null!;
-            public string Payload { get; set; } = null!;
-            public double PayloadWeightKg { get; set; }
-            public Instant? ActualLaunchDate { get; set; }
-            public Instant ScheduledLaunchDate { get; set; }
-            public Guid RocketId { get; set; }
+            public string Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+            public string Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+            public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
+            public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+            public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+            public Guid RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
         }
 
-        public class Response
+        public record Response
         {
-            public Guid Id { get; set; }
+            public Guid Id { get; init; }
         }
 
         class Mapper : Profile

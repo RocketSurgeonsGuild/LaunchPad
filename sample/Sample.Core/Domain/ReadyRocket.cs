@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rocket.Surgery.LaunchPad.EntityFramework;
+using System.Linq;
 
 namespace Sample.Core.Domain
 {
@@ -12,7 +13,7 @@ namespace Sample.Core.Domain
         public string SerialNumber { get; set; } = null!;
         public RocketType Type { get; set; }
 
-        public IEnumerable<LaunchRecord> LaunchRecords { get; set; }
+        public IEnumerable<LaunchRecord> LaunchRecords { get; set; } = null!;
 
         class Configure : ConfigureEntityType<ReadyRocket>
         {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -24,25 +24,29 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
         /// <inheritdoc />
         public void OnException(ExceptionContext context)
         {
-            if (context?.Exception is RequestFailedException requestFailedException)
+            if (context?.Exception is RequestFailedException exception)
             {
                 context.ExceptionHandled = true;
                 var problemDetails = _problemDetailsFactory.CreateProblemDetails(
                     context.HttpContext,
                     StatusCodes.Status400BadRequest,
-                    detail: requestFailedException.Message,
-                    title: requestFailedException.Title,
-                    type: requestFailedException.Link,
-                    instance: requestFailedException.Instance
+                    detail: exception.Message,
+                    title: exception.Title,
+                    type: exception.Link,
+                    instance: exception.Instance
                 );
 
-                foreach (var item in requestFailedException.Properties)
+                foreach (var item in exception.Properties)
                 {
-                    if (problemDetails.Extensions.ContainsKey(item.Key)) continue;
+                    if (problemDetails.Extensions.ContainsKey(item.Key))
+                        continue;
                     problemDetails.Extensions.Add(item);
                 }
 
-                context.Result = new BadRequestObjectResult(problemDetails);
+                context.Result = new ObjectResult(problemDetails)
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
         }
 

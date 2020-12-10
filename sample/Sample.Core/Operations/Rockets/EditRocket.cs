@@ -5,33 +5,26 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using System.ComponentModel;
 
 namespace Sample.Core.Operations.Rockets
 {
     [PublicAPI]
-    public static class EditRocket
+    public static partial class EditRocket
     {
-        public static Request CreateRequest(Guid id, Model model, IMapper mapper) => mapper.Map(model, new Request(id));
-
-        public class Model
+        public record Model
         {
-            public string SerialNumber { get; set; }
-            public RocketType Type { get; set; }
+            public string SerialNumber { get; set; } // TODO: Make generator that can be used to create a writable view model
+            public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
         }
 
-        public class Request : Model, IRequest<RocketModel>
+        [InheritFrom(typeof(Model))]
+        public partial record Request : Model, IRequest<RocketModel>
         {
-            public Guid Id { get; set; }
-
-            public Request(Guid id)
-            {
-                Id = id;
-            }
-
-            private Request() { }
+            public Guid Id { get; init; }
         }
 
         class Mapper : Profile
@@ -42,10 +35,7 @@ namespace Sample.Core.Operations.Rockets
                    .ForMember(x => x.Id, x => x.Ignore())
                    .ForMember(x => x.LaunchRecords, x => x.Ignore())
                     ;
-                CreateMap<Model, Request>()
-                   .ForMember(z => z.Id, z => z.Ignore())
-                    ;
-                CreateMap<RocketModel, Model>()
+                CreateMap<RocketModel, Request>()
                    .ForMember(x => x.SerialNumber, x => x.MapFrom(z => z.Sn))
                     ;
             }

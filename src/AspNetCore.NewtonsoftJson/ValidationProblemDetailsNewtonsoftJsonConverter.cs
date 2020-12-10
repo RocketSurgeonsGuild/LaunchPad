@@ -17,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
         public override FluentValidationProblemDetails ReadJson(
             JsonReader reader,
             Type objectType,
-            FluentValidationProblemDetails existingValue,
+            FluentValidationProblemDetails? existingValue,
             bool hasExistingValue,
             [NotNull] JsonSerializer serializer
         )
@@ -41,7 +41,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
         /// <inheritdoc />
         public override void WriteJson(
             [NotNull] JsonWriter writer,
-            FluentValidationProblemDetails value,
+            FluentValidationProblemDetails? value,
             [NotNull] JsonSerializer serializer
         )
         {

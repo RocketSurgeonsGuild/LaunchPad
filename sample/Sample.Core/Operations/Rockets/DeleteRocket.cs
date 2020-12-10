@@ -5,7 +5,7 @@ using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using Rocket.Surgery.LaunchPad.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 
 namespace Sample.Core.Operations.Rockets
@@ -13,9 +13,9 @@ namespace Sample.Core.Operations.Rockets
     [PublicAPI]
     public static class DeleteRocket
     {
-        public class Request : IRequest
+        public record Request : IRequest
         {
-            public Guid Id { get; set; }
+            public Guid Id { get; init; }
         }
 
         class Validator : AbstractValidator<Request>
@@ -31,12 +31,10 @@ namespace Sample.Core.Operations.Rockets
         class Handler : IRequestHandler<Request>
         {
             private readonly RocketDbContext _dbContext;
-            private readonly IMapper _mapper;
 
-            public Handler(RocketDbContext dbContext, IMapper mapper)
+            public Handler(RocketDbContext dbContext)
             {
                 _dbContext = dbContext;
-                _mapper = mapper;
             }
 
             public async Task<Unit> Handle(Request request, CancellationToken cancellationToken)

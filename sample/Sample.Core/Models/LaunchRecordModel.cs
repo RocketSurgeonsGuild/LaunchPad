@@ -1,21 +1,21 @@
 ﻿using System;
 using AutoMapper;
+using Bogus.Extensions;
 using NodaTime;
 using Sample.Core.Domain;
 
 namespace Sample.Core.Models
 {
-    public class LaunchRecordModel
+    public record LaunchRecordModel
     {
-        public Guid Id { get; set; }
-
-        public string Partner { get; set; } = null!;
-        public string Payload { get; set; } = null!;
-        public long PayloadWeightKg { get; set; }
-        public Instant? ActualLaunchDate { get; set; }
-        public Instant ScheduledLaunchDate { get; set; }
-        public string RocketSerialNumber { get; set; } = null!;
-        public RocketType RocketType { get; set; }
+        public Guid Id { get; init; }
+        public string Partner { get; init; } = null!;
+        public string Payload { get; init; } = null!;
+        public long PayloadWeightKg { get; init; }
+        public Instant? ActualLaunchDate { get; init; }
+        public Instant ScheduledLaunchDate { get; init; }
+        public string RocketSerialNumber { get; init; } = null!;
+        public RocketType RocketType { get; init; }
 
         class Mapper : Profile
         {

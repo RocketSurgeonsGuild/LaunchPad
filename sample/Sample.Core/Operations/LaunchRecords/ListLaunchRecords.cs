@@ -18,7 +18,7 @@ namespace Sample.Core.Operations.LaunchRecords
     public static class ListLaunchRecords
     {
         // TODO: Paging model!
-        public class Request : IRequest<IEnumerable<LaunchRecordModel>> { }
+        public record Request : IRequest<IEnumerable<LaunchRecordModel>> { }
 
         class Validator : AbstractValidator<Request>
         {
@@ -42,9 +42,9 @@ namespace Sample.Core.Operations.LaunchRecords
             public async Task<IEnumerable<LaunchRecordModel>> Handle(Request request, CancellationToken cancellationToken) => (
                     await _dbContext.LaunchRecords
                        .Include(x => x.Rocket)
+                       .ProjectTo<LaunchRecordModel>(_mapper.ConfigurationProvider)
                        .ToListAsync(cancellationToken)
                 )
-               .Select(z => _mapper.Map<LaunchRecordModel>(z))
                .ToArray();
         }
     }

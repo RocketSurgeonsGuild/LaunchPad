@@ -12,7 +12,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Extensions.Validation;
+using Rocket.Surgery.LaunchPad.Foundation.Validation;
 using Rocket.Surgery.LaunchPad.Restful.Conventions;
 using Rocket.Surgery.LaunchPad.Restful.OpenApi;
 using Rocket.Surgery.LaunchPad.Restful.OpenApi.Validation;

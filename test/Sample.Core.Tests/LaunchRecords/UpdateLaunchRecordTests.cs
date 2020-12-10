@@ -52,8 +52,9 @@ namespace Sample.Core.Tests.LaunchRecords
 
             var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
                 (mediator, clock) => mediator.Send(
-                    new EditLaunchRecord.Request(record.Id)
+                    new EditLaunchRecord.Request()
                     {
+                        Id = record.Id,
                         Partner = "partner",
                         Payload = "geo-fence-ftl",
                         RocketId = record.RocketId,

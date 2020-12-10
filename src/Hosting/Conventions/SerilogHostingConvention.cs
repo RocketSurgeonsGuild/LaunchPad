@@ -10,6 +10,7 @@ using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Hosting.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 [assembly: Convention(typeof(SerilogHostingConvention))]
 
@@ -57,15 +58,23 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
                     }
                 }
             );
-            builder.UseSerilog(
-                (ctx, loggerConfiguration) => loggerConfiguration.ApplyConventions(context),
-                _options.PreserveStaticLogger,
-                _options.WriteToProviders
-            );
 
-            if (context.Get<ILoggerFactory>() != null)
+            if (context.Get<ILogger>() is { } logger)
             {
-                builder.ConfigureServices((ctx, services) => services.AddSingleton(context.Get<ILoggerFactory>()));
+                builder.UseSerilog(logger);
+            }
+            else
+            {
+                builder.UseSerilog(
+                    (ctx, loggerConfiguration) => loggerConfiguration.ApplyConventions(context),
+                    _options.PreserveStaticLogger,
+                    _options.WriteToProviders
+                );
+
+                if (context.Get<ILoggerFactory>() != null)
+                {
+                    builder.ConfigureServices((_, services) => services.AddSingleton(context.Get<ILoggerFactory>()));
+                }
             }
         }
     }
