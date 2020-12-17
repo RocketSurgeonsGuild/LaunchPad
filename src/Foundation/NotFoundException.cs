@@ -23,7 +23,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <summary>
         /// Initializes a new instance of the <see cref="NotFoundException"/> class.
         /// </summary>
-        public NotFoundException() { }
+        public NotFoundException(): base("Not Found") { }
 
         /// <summary>
         /// Additional properties

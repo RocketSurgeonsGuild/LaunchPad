@@ -15,9 +15,9 @@ namespace Sample.Core.Domain
 
         public IEnumerable<LaunchRecord> LaunchRecords { get; set; } = null!;
 
-        class Configure : ConfigureEntityType<ReadyRocket>
+        class EntityConfiguration : IEntityTypeConfiguration<ReadyRocket>
         {
-            protected override void OnEntityCreating(DbContext context, ModelBuilder modelBuilder, EntityTypeBuilder<ReadyRocket> builder)
+            public void Configure(EntityTypeBuilder<ReadyRocket> builder)
             {
                 builder.HasKey(x => x.Id);
                 builder.ToTable("Rockets");

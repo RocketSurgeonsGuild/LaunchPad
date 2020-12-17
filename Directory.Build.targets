@@ -10,4 +10,7 @@
     <PackageReference Include="Rocket.Surgery.MSBuild.SourceLink" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
     <PackageReference Include="Roslynator.Analyzers" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
   </ItemGroup>
+    <PropertyGroup>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+    </PropertyGroup>
 </Project>

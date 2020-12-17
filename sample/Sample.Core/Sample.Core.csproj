@@ -11,6 +11,7 @@
     <PackageReference Include="Bogus" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+<!--    <PackageReference Include="HotChocolate.Abstractions" />-->
   </ItemGroup>
 
   <ItemGroup>

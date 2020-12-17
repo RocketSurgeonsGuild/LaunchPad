@@ -29,12 +29,18 @@
     <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.1.0" />
     <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.1.0" />
     <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.1.0" />
+    <PackageVersion Include="FairyBread" Version="2.0.0-preview.1" />
     <PackageVersion Include="FluentValidation" Version="9.3.0" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="9.3.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.33.1" />
     <PackageVersion Include="Humanizer.Core" Version="2.8.26" />
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
+    <PackageVersion Include="HotChocolate" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.Abstractions" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.Data" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="11.0.4" />
     <PackageVersion Include="MediatR" Version="9.0.0" />
     <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <!--    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="4.0.0-rc.2" />-->
@@ -70,18 +76,17 @@
     <PackageVersion Include="Rocket.Surgery.Extensions.AutoMapper.NewtonsoftJson" Version="8.0.1-beta.1" />
     <PackageVersion Include="Rocket.Surgery.Conventions.AutoMapper" Version="8.0.1-beta.1" />
     <PackageVersion Include="Rocket.Surgery.Hosting.TestHost" Version="10.0.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.0.1" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.0.1" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.0.1" />
-    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="11.0.1" />
-    <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.0.1" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.1.0-beta.4" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.1.0-beta.4" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.1.0-beta.4" />
+    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="11.1.0-beta.4" />
+    <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.1.0-beta.4" />
     <PackageVersion Include="Rocket.Surgery.Hosting.DryIoc" Version="0.2.0" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.DryIoc" Version="0.2.0" />
     <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.0.0" />
     <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="10.0.0" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" Version="10.0.0" />
-    <PackageVersion Include="Rocket.Surgery.System" Version="11.0.1" />
     <PackageVersion Include="Scrutor" Version="3.3.0" />
     <PackageVersion Include="Serilog" Version="2.10.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="3.4.0" />

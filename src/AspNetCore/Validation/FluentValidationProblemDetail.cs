@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.Results;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
@@ -57,6 +59,18 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
                 RuleFor(x => x.ErrorCode).NotNull();
                 RuleFor(x => x.ErrorMessage).NotNull();
             }
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, object?>(FluentValidationProblemDetail detail)
+        {
+            return new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>
+            {
+                ["propertyName"] = detail.PropertyName,
+                ["errorMessage"] = detail.ErrorMessage,
+                ["attemptedValue"] = detail.AttemptedValue,
+                ["severity"] = detail.Severity,
+                ["errorCode"] = detail.ErrorCode,
+            });
         }
     }
 }

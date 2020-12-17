@@ -21,6 +21,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
-        <ProjectReference Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" IncludeAssets="analyzers" ExcludeAssets="compile;runtime;native" PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive" OutputItemType="Analyzer" />
     </ItemGroup>
 </Project>
