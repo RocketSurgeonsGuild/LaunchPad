@@ -24,7 +24,7 @@ namespace Sample.Graphql.Tests
                     (context, services) =>
                     {
                         services.AddHostedService<SqliteConnectionService>();
-                        services.AddDbContext<RocketDbContext>(
+                        services.AddDbContextPool<RocketDbContext>(
                             x => x
                                .EnableDetailedErrors()
                                .EnableSensitiveDataLogging()

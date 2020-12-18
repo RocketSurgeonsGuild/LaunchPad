@@ -49,13 +49,11 @@ namespace Sample.Grpc.Tests
                    .ConfigureServices(
                         (_, services) =>
                         {
-                            services.AddDbContext<RocketDbContext>(
+                            services.AddDbContextPool<RocketDbContext>(
                                 x => x
                                    .EnableDetailedErrors()
                                    .EnableSensitiveDataLogging()
-                                   .UseSqlite(_connection),
-                                ServiceLifetime.Scoped,
-                                ServiceLifetime.Scoped
+                                   .UseSqlite(_connection)
                             );
                         }
                     )

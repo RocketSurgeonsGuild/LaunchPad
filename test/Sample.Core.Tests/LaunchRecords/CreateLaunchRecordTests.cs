@@ -2,6 +2,7 @@
 using Bogus;
 using FluentAssertions;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
@@ -21,21 +22,15 @@ namespace Sample.Core.Tests.LaunchRecords
         [Fact]
         public async Task Should_Create_A_LaunchRecord()
         {
-            var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-               .Invoke(
-                    async z =>
-                    {
-                        var rocket = new ReadyRocket()
-                        {
-                            Type = RocketType.Falcon9,
-                            SerialNumber = "12345678901234"
-                        };
-                        z.Add(rocket);
+            var context = ServiceProvider.GetRequiredService<RocketDbContext>();
+            var rocket = new ReadyRocket()
+            {
+                Type = RocketType.Falcon9,
+                SerialNumber = "12345678901234"
+            };
+            context.Add(rocket);
 
-                        await z.SaveChangesAsync();
-                        return rocket;
-                    }
-                );
+            await context.SaveChangesAsync();
 
             var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
                 (mediator, clock) => mediator.Send(
