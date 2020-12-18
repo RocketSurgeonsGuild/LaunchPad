@@ -5,8 +5,10 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="FairyBread" />
         <PackageReference Include="HotChocolate" />
+        <PackageReference Include="NodaTime" />
+<!--        <PackageReference Include="Scrutor" />-->
         <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Humanizer.Core" />
     </ItemGroup>
 </Project>

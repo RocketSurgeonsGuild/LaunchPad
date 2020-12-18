@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Sample.Core.Domain
 {
+    /// <summary>
+    /// A rocket in inventory
+    /// </summary>
     public class ReadyRocket
     {
         public Guid Id { get; set; }
