@@ -30,6 +30,7 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.AspNetCore.Testing | [![nuget-version-vmr7vthhrumq-badge]![nuget-downloads-vmr7vthhrumq-badge]][nuget-vmr7vthhrumq] |
 | Rocket.Surgery.LaunchPad.Commands | [![nuget-version-yb7ebtcfpbqw-badge]![nuget-downloads-yb7ebtcfpbqw-badge]][nuget-yb7ebtcfpbqw] |
 | Rocket.Surgery.LaunchPad.EntityFramework | [![nuget-version-nutptsm/tbya-badge]![nuget-downloads-nutptsm/tbya-badge]][nuget-nutptsm/tbya] |
+| Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate | [![nuget-version-bpcodlgj17qg-badge]![nuget-downloads-bpcodlgj17qg-badge]][nuget-bpcodlgj17qg] |
 | Rocket.Surgery.LaunchPad.Foundation | [![nuget-version-kb2xyygxvala-badge]![nuget-downloads-kb2xyygxvala-badge]][nuget-kb2xyygxvala] |
 | Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson | [![nuget-version-m0yumfedtfoa-badge]![nuget-downloads-m0yumfedtfoa-badge]][nuget-m0yumfedtfoa] |
 | Rocket.Surgery.LaunchPad.Functions | [![nuget-version-hllqtixjuvag-badge]![nuget-downloads-hllqtixjuvag-badge]][nuget-hllqtixjuvag] |
@@ -90,6 +91,9 @@ TBD
 [nuget-nutptsm/tbya]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.EntityFramework/
 [nuget-version-nutptsm/tbya-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.EntityFramework.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-nutptsm/tbya-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.EntityFramework.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
+[nuget-bpcodlgj17qg]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate/
+[nuget-version-bpcodlgj17qg-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
+[nuget-downloads-bpcodlgj17qg-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-kb2xyygxvala]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation/
 [nuget-version-kb2xyygxvala-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Foundation.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-kb2xyygxvala-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Foundation.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
