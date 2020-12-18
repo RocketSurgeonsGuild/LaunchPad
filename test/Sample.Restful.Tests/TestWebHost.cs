@@ -9,5 +9,38 @@ using Sample.Core.Domain;
 
 namespace Sample.Restful.Tests
 {
-    public class TestWebHost : ConventionTestWebHost<Startup> { }
+    public class TestWebHost : ConventionTestWebHost<Startup>
+    {
+        private SqliteConnection _connection;
+
+        public TestWebHost()
+        {
+            _connection = new SqliteConnection("DataSource=:memory:");
+        }
+
+        protected override IHostBuilder CreateHostBuilder()
+        {
+            _connection.Open();
+            return base.CreateHostBuilder()
+               .ConfigureServices(
+                    (context, services) =>
+                    {
+                        services.AddHostedService<SqliteConnectionService>();
+                        services.AddDbContextPool<RocketDbContext>(
+                            x => x
+                               .EnableDetailedErrors()
+                               .EnableSensitiveDataLogging()
+                               .UseSqlite(_connection)
+                        );
+                    }
+                );
+            ;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _connection.Dispose();
+            base.Dispose(disposing);
+        }
+    }
 }

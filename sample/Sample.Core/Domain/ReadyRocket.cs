@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Sample.Core.Domain
 {
+    /// <summary>
+    /// A rocket in inventory
+    /// </summary>
     public class ReadyRocket
     {
         public Guid Id { get; set; }
@@ -15,9 +18,9 @@ namespace Sample.Core.Domain
 
         public IEnumerable<LaunchRecord> LaunchRecords { get; set; } = null!;
 
-        class Configure : ConfigureEntityType<ReadyRocket>
+        class EntityConfiguration : IEntityTypeConfiguration<ReadyRocket>
         {
-            protected override void OnEntityCreating(DbContext context, ModelBuilder modelBuilder, EntityTypeBuilder<ReadyRocket> builder)
+            public void Configure(EntityTypeBuilder<ReadyRocket> builder)
             {
                 builder.HasKey(x => x.Id);
                 builder.ToTable("Rockets");

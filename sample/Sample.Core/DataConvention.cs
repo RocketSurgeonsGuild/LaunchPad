@@ -18,7 +18,7 @@ namespace Sample.Core
         {
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
-            services.AddDbContext<RocketDbContext>(x => x
+            services.AddPooledDbContextFactory<RocketDbContext>(x => x
                .EnableDetailedErrors()
                .EnableSensitiveDataLogging()
                .EnableServiceProviderCaching()

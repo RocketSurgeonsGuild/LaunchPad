@@ -24,9 +24,9 @@ namespace Sample.Core.Domain
         public Guid RocketId { get; set; }
         public ReadyRocket Rocket { get; set; } = null!;
 
-        class Configure : ConfigureEntityType<LaunchRecord>
+        class EntityConfiguration : IEntityTypeConfiguration<LaunchRecord>
         {
-            protected override void OnEntityCreating(DbContext context, ModelBuilder modelBuilder, EntityTypeBuilder<LaunchRecord> builder)
+            public void Configure(EntityTypeBuilder<LaunchRecord> builder)
             {
                 builder.HasKey(x => x.Id);
             }

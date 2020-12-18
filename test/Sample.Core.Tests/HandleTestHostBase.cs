@@ -47,13 +47,11 @@ namespace Sample.Core.Tests
                .ConfigureServices(
                     (context, services) =>
                     {
-                        services.AddDbContext<RocketDbContext>(
+                        services.AddDbContextPool<RocketDbContext>(
                             x => x
                                .EnableDetailedErrors()
                                .EnableSensitiveDataLogging()
-                               .UseSqlite(_connection),
-                            ServiceLifetime.Scoped,
-                            ServiceLifetime.Scoped
+                               .UseSqlite(_connection)
                         );
                     }
                 );

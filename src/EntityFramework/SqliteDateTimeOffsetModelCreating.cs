@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Rocket.Surgery.LaunchPad.EntityFramework
 {
-    class SqliteDateTimeOffset : IOnModelCreating
+    static class SqliteDateTimeOffsetModelCreating
     {
-        public void OnModelCreating(DbContext context, ModelBuilder modelBuilder)
+        public static void OnModelCreating(DbContext context, ModelBuilder modelBuilder)
         {
             if (context.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
             {

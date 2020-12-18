@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+        <PackageDescription></PackageDescription>
+        <PackageTags>$(PackageTags)</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="HotChocolate" />
+        <PackageReference Include="NodaTime" />
+<!--        <PackageReference Include="Scrutor" />-->
+        <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Humanizer.Core" />
+    </ItemGroup>
+</Project>

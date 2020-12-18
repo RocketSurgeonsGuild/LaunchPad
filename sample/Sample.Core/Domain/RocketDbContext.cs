@@ -7,12 +7,7 @@ namespace Sample.Core.Domain
 {
     public class RocketDbContext : LpContext<RocketDbContext>
     {
-        public RocketDbContext(
-            DbContextOptions<RocketDbContext> options,
-            [NotNull] [ItemNotNull] IEnumerable<IOnConfiguringDbContext> configurationHandlers,
-            [NotNull] [ItemNotNull] IEnumerable<IOnModelCreating> modelCreationHandlers
-        ) : base(options, configurationHandlers, modelCreationHandlers) { }
-
+        public RocketDbContext(DbContextOptions<RocketDbContext> options) : base(options) { }
         public DbSet<ReadyRocket> Rockets { get; set; } = null!;
         public DbSet<LaunchRecord> LaunchRecords { get; set; } = null!;
     }

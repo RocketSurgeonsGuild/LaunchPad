@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using NodaTime.Text;
