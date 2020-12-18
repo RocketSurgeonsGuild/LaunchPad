@@ -1,4 +1,5 @@
-﻿using HotChocolate.Resolvers;
+using HotChocolate.Language;
+using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,12 @@ using System.Threading;
 
 namespace Sample.Graphql
 {
-    public class AutoConfigureDbContextConfigureQueryType<TContext> : ConfigureQueryTypeBase
+    public class AutoConfigureDbContextConfigureQueryType<TContext> : ConfigureGraphqlRootTypeBase
         where TContext : DbContext
     {
         private readonly IEnumerable<IDbContextConfigureQueryEntity> _configureQueryEntities;
 
-        public AutoConfigureDbContextConfigureQueryType(IEnumerable<IDbContextConfigureQueryEntity> configureQueryEntities)
+        public AutoConfigureDbContextConfigureQueryType(IEnumerable<IDbContextConfigureQueryEntity> configureQueryEntities) : base(OperationType.Query)
         {
             _configureQueryEntities = configureQueryEntities;
         }

@@ -34,7 +34,7 @@ namespace Sample.Core.Tests
         {
             _hostBuilder = TestHost.For(this, LoggerFactory)
                .WithLogger(LoggerFactory.CreateLogger(nameof(TestHost)))
-               .Create(b => b.ExceptConvention(typeof(NodaTimeConvention)));
+               .Create();
             ExcludeSourceContext(nameof(TestHost));
         }
 
