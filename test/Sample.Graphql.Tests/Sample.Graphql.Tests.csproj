@@ -5,6 +5,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
         <PackageReference Include="System.Net.Http.Json" />
+        <PackageReference Include="Rocket.Surgery.Hosting.TestHost" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />

@@ -24,7 +24,7 @@ namespace Sample.BlazorWasm.Tests
         {
             _hostBuilder = TestWebAssemblyHost.For(AppDomain.CurrentDomain, LoggerFactory)
                .WithLogger(Logger)
-               .Create(b => b.ExceptConvention(typeof(NodaTimeConvention)));
+               .Create();
             ExcludeSourceContext(nameof(WebAssemblyHostBuilder));
             ExcludeSourceContext(nameof(WebAssemblyHost));
             ExcludeSourceContext(nameof(DiagnosticSource));

@@ -1,4 +1,6 @@
-﻿using HotChocolate.Execution.Configuration;
+using HotChocolate;
+using HotChocolate.Execution.Configuration;
+using HotChocolate.Execution.Configuration;
 using HotChocolate.Language;
 using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,36 +9,60 @@ using System;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
-
     public static class ConfigureGraphqlRootTypeExtensions
     {
-        public static IRequestExecutorBuilder ConfigureRootType(this IRequestExecutorBuilder builder, OperationType operationType, Action<IObjectTypeDescriptor> descriptor)
+        public static IRequestExecutorBuilder ConfigureRootType(
+            this IRequestExecutorBuilder builder,
+            NameString? schemaName,
+            OperationType operationType,
+            Action<IObjectTypeDescriptor> descriptor
+        )
         {
-            switch (operationType)
-            {
-                case OperationType.Mutation:
-                    builder.Services.AddSingleton(new ConfigureMutationType(descriptor));
-                    break;
-                case OperationType.Query:
-                    builder.Services.AddSingleton( new ConfigureQueryType(descriptor));
-                    break;
-                case OperationType.Subscription:
-                    builder.Services.AddSingleton(new ConfigureSubscriptionType(descriptor));
-                    break;
-                default:
-                    throw new NotSupportedException("Operation type is not supported");
-            }
-
+            builder.Services.AddSingleton(new DelegateConfigureGraphqlRootType(operationType, schemaName, descriptor));
             return builder;
         }
 
-        public static IRequestExecutorBuilder ConfigureQueryType(this IRequestExecutorBuilder builder, Action<IObjectTypeDescriptor> descriptor)
-            => ConfigureRootType(builder, OperationType.Query, descriptor);
+        public static IRequestExecutorBuilder ConfigureRootType(
+            this IRequestExecutorBuilder builder,
+            OperationType operationType,
+            Action<IObjectTypeDescriptor> descriptor
+        )
+        {
+            builder.Services.AddSingleton(new DelegateConfigureGraphqlRootType(operationType, null, descriptor));
+            return builder;
+        }
 
-        public static IRequestExecutorBuilder ConfigureMutationType(this IRequestExecutorBuilder builder, Action<IObjectTypeDescriptor> descriptor)
-            => ConfigureRootType(builder, OperationType.Mutation, descriptor);
+        public static IRequestExecutorBuilder ConfigureQueryType(
+            this IRequestExecutorBuilder builder,
+            NameString? schemaName,
+            Action<IObjectTypeDescriptor> descriptor
+        ) => ConfigureRootType(builder, schemaName, OperationType.Query, descriptor);
 
-        public static IRequestExecutorBuilder ConfigureSubscriptionType(this IRequestExecutorBuilder builder, Action<IObjectTypeDescriptor> descriptor)
-            => ConfigureRootType(builder, OperationType.Subscription, descriptor);
+        public static IRequestExecutorBuilder ConfigureQueryType(
+            this IRequestExecutorBuilder builder,
+            Action<IObjectTypeDescriptor> descriptor
+        ) => ConfigureRootType(builder, OperationType.Query, descriptor);
+
+        public static IRequestExecutorBuilder ConfigureMutationType(
+            this IRequestExecutorBuilder builder,
+            NameString? schemaName,
+            Action<IObjectTypeDescriptor> descriptor
+        ) => ConfigureRootType(builder, schemaName, OperationType.Mutation, descriptor);
+
+        public static IRequestExecutorBuilder ConfigureMutationType(
+            this IRequestExecutorBuilder builder,
+            Action<IObjectTypeDescriptor> descriptor
+        ) => ConfigureRootType(builder, OperationType.Mutation, descriptor);
+
+        public static IRequestExecutorBuilder ConfigureSubscriptionType(
+            this IRequestExecutorBuilder builder,
+            NameString? schemaName,
+            Action<IObjectTypeDescriptor> descriptor
+        ) => ConfigureRootType(builder, schemaName, OperationType.Subscription, descriptor);
+
+        public static IRequestExecutorBuilder ConfigureSubscriptionType(
+            this IRequestExecutorBuilder builder,
+            Action<IObjectTypeDescriptor> descriptor
+        ) => ConfigureRootType(builder, OperationType.Subscription, descriptor);
     }
 }

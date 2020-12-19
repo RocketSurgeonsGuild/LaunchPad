@@ -5,6 +5,7 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
+using System;
 
 [assembly: Convention(typeof(HotChocolateConvention))]
 
@@ -15,9 +16,8 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services
+               .ConfigureOptions<HotChocolateContextDataConfigureOptions>()
                .AddGraphQL()
-               .TryAddSchemaInterceptor<ConfigureRootTypeSchemaInterceptor>()
-               .TryAddTypeInterceptor<NestedTypeNameTypeInterceptor>()
                .ConfigureSchema(sb => sb.AddNodaTime())
                ;
         }
