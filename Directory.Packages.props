@@ -39,7 +39,7 @@
     <PackageVersion Include="HotChocolate" Version="11.0.4" />
     <PackageVersion Include="HotChocolate.Abstractions" Version="11.0.4" />
     <PackageVersion Include="HotChocolate.AspNetCore" Version="11.0.4" />
-    <PackageVersion Include="HotChocolate.Data" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.Data" Version="11.0.5" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="11.0.4" />
     <PackageVersion Include="MediatR" Version="9.0.0" />
     <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
