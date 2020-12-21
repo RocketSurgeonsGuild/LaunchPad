@@ -38,7 +38,7 @@
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
     <PackageVersion Include="HotChocolate" Version="11.0.4" />
     <PackageVersion Include="HotChocolate.Abstractions" Version="11.0.4" />
-    <PackageVersion Include="HotChocolate.AspNetCore" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="11.0.5" />
     <PackageVersion Include="HotChocolate.Data" Version="11.0.4" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="11.0.4" />
     <PackageVersion Include="MediatR" Version="9.0.0" />
