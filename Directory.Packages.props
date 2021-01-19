@@ -29,15 +29,15 @@
     <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.1.0" />
     <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.1.0" />
     <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.1.0" />
-    <PackageVersion Include="FairyBread" Version="2.0.0-preview.1" />
+    <PackageVersion Include="FairyBread" Version="3.0.0" />
     <PackageVersion Include="FluentValidation" Version="9.4.0" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="9.4.0" />
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="9.4.0" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.34.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.8.26" />
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
     <PackageVersion Include="HotChocolate" Version="11.0.6" />
-    <PackageVersion Include="HotChocolate.Abstractions" Version="11.0.6" />
+    <PackageVersion Include="HotChocolate.Abstractions" Version="11.0.8" />
     <PackageVersion Include="HotChocolate.AspNetCore" Version="11.0.4" />
     <PackageVersion Include="HotChocolate.Data" Version="11.0.4" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="11.0.4" />
@@ -52,7 +52,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.1" PrivateAssets="all" />
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
@@ -118,7 +118,7 @@
   <ItemGroup>
     <PackageVersion Include="Bogus" Version="32.0.2" />
     <PackageVersion Include="coverlet.collector" Version="3.0.1" />
-    <PackageVersion Include="coverlet.msbuild" Version="3.0.0" />
+    <PackageVersion Include="coverlet.msbuild" Version="3.0.1" />
     <PackageVersion Include="FakeItEasy" Version="6.2.1" />
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.0.0" />
     <PackageVersion Include="FluentAssertions" Version="5.10.3" />
