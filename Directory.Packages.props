@@ -36,11 +36,11 @@
     <PackageVersion Include="Grpc.AspNetCore" Version="2.34.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.8.26" />
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
-    <PackageVersion Include="HotChocolate" Version="11.0.6" />
+    <PackageVersion Include="HotChocolate" Version="11.0.8" />
     <PackageVersion Include="HotChocolate.Abstractions" Version="11.0.8" />
-    <PackageVersion Include="HotChocolate.AspNetCore" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="11.0.8" />
     <PackageVersion Include="HotChocolate.Data" Version="11.0.8" />
-    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="11.0.4" />
+    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="11.0.8" />
     <PackageVersion Include="MediatR" Version="9.0.0" />
     <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <!--    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="4.0.0-rc.2" />-->
