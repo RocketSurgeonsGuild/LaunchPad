@@ -117,7 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Bogus" Version="32.0.2" />
-    <PackageVersion Include="coverlet.collector" Version="3.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="3.0.2" />
     <PackageVersion Include="coverlet.msbuild" Version="3.0.2" />
     <PackageVersion Include="FakeItEasy" Version="6.2.1" />
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.0.0" />
