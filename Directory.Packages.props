@@ -116,7 +116,7 @@
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Bogus" Version="32.1.1" />
+    <PackageVersion Include="Bogus" Version="33.0.1" />
     <PackageVersion Include="coverlet.collector" Version="3.0.2" />
     <PackageVersion Include="coverlet.msbuild" Version="3.0.2" />
     <PackageVersion Include="FakeItEasy" Version="6.2.1" />
