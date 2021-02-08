@@ -31,7 +31,7 @@
     <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.1.0" />
     <PackageVersion Include="FairyBread" Version="3.0.0" />
     <PackageVersion Include="FluentValidation" Version="9.5.0" />
-    <PackageVersion Include="FluentValidation.AspNetCore" Version="9.4.0" />
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="9.5.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.0" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.35.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.8.26" />
