@@ -1,6 +1,7 @@
 ﻿using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
 using HotChocolate.Types.Pagination;
+using Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate;
 using Sample.Core.Domain;
 
 namespace Sample.Graphql

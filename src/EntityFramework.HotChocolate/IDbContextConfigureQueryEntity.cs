@@ -1,7 +1,7 @@
 ﻿using HotChocolate.Types;
 using System.Reflection;
 
-namespace Sample.Graphql
+namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
 {
     public interface IDbContextConfigureQueryEntity
     {

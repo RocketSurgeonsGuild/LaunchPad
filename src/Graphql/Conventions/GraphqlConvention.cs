@@ -16,6 +16,13 @@ namespace Rocket.Surgery.LaunchPad.Graphql.Conventions
 {
     public class GraphqlConvention : IServiceConvention
     {
+        private readonly IFairyBreadOptions _options;
+
+        public GraphqlConvention(IFairyBreadOptions? options = null)
+        {
+            _options = options ?? new DefaultFairyBreadOptions();
+        }
+
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             var types = context.AssemblyCandidateFinder.GetCandidateAssemblies("MediatR")
@@ -25,8 +32,8 @@ namespace Rocket.Surgery.LaunchPad.Graphql.Conventions
                .ToArray();
 
             services.TryAddSingleton<IValidatorProvider, FairyBreadValidatorProvider>();
-            services.TryAddSingleton<IValidationResultHandler, DefaultValidationResultHandler>();
-            services.TryAddSingleton<IFairyBreadOptions>(new DefaultFairyBreadOptions());
+            services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
+            services.TryAddSingleton(_options);
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureGraphqlRootType>(new AutoConfigureMediatRMutation(types)));
 
             var sb = services

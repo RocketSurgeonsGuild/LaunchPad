@@ -10,22 +10,22 @@ namespace Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime
 
         public LocalDateTimeAssertions(LocalDateTime? subject) => Subject = subject;
 
-        public AndConstraint<LocalDateTimeAssertions> Be(LocalDateTime expected, string because, params object[] becauseArgs) =>
+        public AndConstraint<LocalDateTimeAssertions> Be(LocalDateTime expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject.HasValue && Subject.Value == expected, "to be", expected, because, becauseArgs);
 
-        public AndConstraint<LocalDateTimeAssertions> NotBe(LocalDateTime expected, string because, params object[] becauseArgs) =>
+        public AndConstraint<LocalDateTimeAssertions> NotBe(LocalDateTime expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject.HasValue && Subject.Value != expected, "to be", expected, because, becauseArgs);
 
-        public AndConstraint<LocalDateTimeAssertions> BeLessThan(LocalDateTime expected, string because, params object[] becauseArgs) =>
+        public AndConstraint<LocalDateTimeAssertions> BeLessThan(LocalDateTime expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject.HasValue && Subject.Value < expected, "to be less than", expected, because, becauseArgs);
 
-        public AndConstraint<LocalDateTimeAssertions> BeLessOrEqualTo(LocalDateTime expected, string because, params object[] becauseArgs) =>
+        public AndConstraint<LocalDateTimeAssertions> BeLessOrEqualTo(LocalDateTime expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject.HasValue && Subject.Value <= expected, "to be less than", expected, because, becauseArgs);
 
-        public AndConstraint<LocalDateTimeAssertions> BeGreaterThan(LocalDateTime expected, string because, params object[] becauseArgs) =>
+        public AndConstraint<LocalDateTimeAssertions> BeGreaterThan(LocalDateTime expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject.HasValue && Subject.Value > expected, "to be less than", expected, because, becauseArgs);
 
-        public AndConstraint<LocalDateTimeAssertions> BeGreaterOrEqualTo(LocalDateTime expected, string because, params object[] becauseArgs) =>
+        public AndConstraint<LocalDateTimeAssertions> BeGreaterOrEqualTo(LocalDateTime expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject.HasValue && Subject.Value >= expected, "to be less than", expected, because, becauseArgs);
 
         AndConstraint<LocalDateTimeAssertions> ExecuteAssertion(bool condition, string description, LocalDateTime expected, string because = null, params object[] becauseArgs)

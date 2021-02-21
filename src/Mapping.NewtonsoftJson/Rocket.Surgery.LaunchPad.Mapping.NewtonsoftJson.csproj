@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+    <PackageDescription></PackageDescription>
+    <PackageTags>$(PackageTags)</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+</Project>

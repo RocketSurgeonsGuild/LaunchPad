@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 
-namespace Sample.Graphql
+namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
 {
     public class AutoConfigureDbContextConfigureQueryType<TContext> : ConfigureGraphqlRootTypeBase
         where TContext : DbContext
