@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace Sample.Graphql
+namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
 {
     public abstract class DbContextConfigureQueryEntity<TEntity> : IDbContextConfigureQueryEntity
         where TEntity : class

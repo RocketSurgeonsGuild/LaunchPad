@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.EntityFramework;
+using Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Sample.Core.Domain;
 using Sample.Core.Models;
