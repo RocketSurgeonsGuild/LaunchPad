@@ -16,26 +16,27 @@ namespace Rocket.Surgery.LaunchPad.Graphql
         private readonly FieldDelegate _next;
         private readonly IFairyBreadOptions _options;
         private readonly IValidatorProvider _validatorProvider;
-        private readonly IValidationResultHandler _validationResultHandler;
+        private readonly IValidationErrorsHandler _validationErrorsHandler;
 
         public CustomInputValidationMiddleware(
             FieldDelegate next,
             IFairyBreadOptions options,
             IValidatorProvider validatorProvider,
-            IValidationResultHandler validationResultHandler
+            IValidationErrorsHandler validationErrorsHandler
         )
         {
             _next = next;
             _options = options;
             _validatorProvider = validatorProvider;
-            _validationResultHandler = validationResultHandler;
+            _validationErrorsHandler = validationErrorsHandler;
         }
+
 
         public async Task InvokeAsync(IMiddlewareContext context)
         {
             var arguments = context.Field.Arguments;
 
-            var validationResults = new List<ValidationResult>();
+            var invalidResults = new List<ValidationResult>();
 
             foreach (var argument in arguments)
             {
@@ -45,19 +46,27 @@ namespace Rocket.Surgery.LaunchPad.Graphql
                     continue;
                 }
 
-                var resolvedValidators = _validatorProvider.GetValidators(context, argument).ToArray();
+                var resolvedValidators = _validatorProvider.GetValidators(context, argument);
                 try
                 {
-                    var value = context.ArgumentValue<object>(argument.Name);
+                    var value = context.ArgumentValue<object?>(argument.Name);
+                    if (value == null)
+                    {
+                        continue;
+                    }
+
                     foreach (var resolvedValidator in resolvedValidators)
                     {
-                        var validationContext = new ValidationContext<object>(value);
+                        var validationContext = new ValidationContext<object?>(value);
                         validationContext.SetServiceProvider(context.Services);
-                        var validationResult = await resolvedValidator.Validator.ValidateAsync(validationContext, context.RequestAborted);
-                        if (validationResult != null)
+                        var validationResult = await resolvedValidator.Validator.ValidateAsync(
+                            validationContext,
+                            context.RequestAborted
+                        );
+                        if (validationResult != null &&
+                            !validationResult.IsValid)
                         {
-                            validationResults.Add(validationResult);
-                            _validationResultHandler.Handle(context, validationResult);
+                            invalidResults.Add(validationResult);
                         }
                     }
                 }
@@ -70,18 +79,15 @@ namespace Rocket.Surgery.LaunchPad.Graphql
                 }
             }
 
-            var invalidValidationResults = validationResults.Where(r => !r.IsValid);
-            if (invalidValidationResults.Any())
+            if (invalidResults.Any())
             {
-                OnInvalid(context, invalidValidationResults);
+                _validationErrorsHandler.Handle(context, invalidResults);
+                context.Result = null;
             }
-
-            await _next(context);
-        }
-
-        protected virtual void OnInvalid(IMiddlewareContext context, IEnumerable<ValidationResult> invalidValidationResults)
-        {
-            throw new ValidationException(invalidValidationResults.SelectMany(vr => vr.Errors));
+            else
+            {
+                await _next(context);
+            }
         }
     }
 }
