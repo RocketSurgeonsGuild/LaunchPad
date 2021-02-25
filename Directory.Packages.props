@@ -84,7 +84,7 @@
     <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.0.0" />
     <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="10.0.0" />
-    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" Version="10.0.0" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" Version="10.1.0" />
     <PackageVersion Include="Scrutor" Version="3.3.0" />
     <PackageVersion Include="Serilog" Version="2.10.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="3.4.0" />
