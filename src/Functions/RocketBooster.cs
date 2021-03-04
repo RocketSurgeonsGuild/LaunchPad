@@ -26,31 +26,119 @@ namespace Rocket.Surgery.LaunchPad.Functions
         /// Fors the application domain.
         /// </summary>
         /// <param name="appDomain">The application domain.</param>
+        /// <param name="getConventions"></param>
         /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
-        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAppDomain(AppDomain appDomain)
-            => builder => new ConventionContextBuilder(new Dictionary<object, object?>()).UseAppDomain(appDomain);
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAppDomain(
+            AppDomain appDomain,
+            Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
+        ) => builder => new ConventionContextBuilder(new Dictionary<object, object?>())
+           .UseAppDomain(appDomain)
+           .WithConventionsFrom(getConventions);
+
+        /// <summary>
+        /// Fors the application domain.
+        /// </summary>
+        /// <param name="appDomain">The application domain.</param>
+        /// <param name="conventionContextBuilderAction"></param>
+        /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAppDomain(
+            AppDomain appDomain,
+            Action<ConventionContextBuilder>? conventionContextBuilderAction = null
+        ) => builder =>
+        {
+            var conventionContextBuilder = new ConventionContextBuilder(new Dictionary<object, object?>())
+               .UseAppDomain(appDomain);
+            conventionContextBuilderAction?.Invoke(conventionContextBuilder);
+            return conventionContextBuilder;
+        };
 
         /// <summary>
         /// Fors the specified application domain.
         /// </summary>
         /// <param name="appDomain">The application domain.</param>
+        /// <param name="getConventions"></param>
         /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
-        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(AppDomain appDomain) => ForAppDomain(appDomain);
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(
+            AppDomain appDomain,
+            Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
+        ) => ForAppDomain(appDomain, getConventions);
+
+        /// <summary>
+        /// Fors the specified application domain.
+        /// </summary>
+        /// <param name="appDomain">The application domain.</param>
+        /// <param name="conventionContextBuilderAction"></param>
+        /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(
+            AppDomain appDomain,
+            Action<ConventionContextBuilder>? conventionContextBuilderAction = null
+        ) => ForAppDomain(appDomain, conventionContextBuilderAction);
 
         /// <summary>
         /// Fors the assemblies.
         /// </summary>
         /// <param name="assemblies">The assemblies.</param>
+        /// <param name="getConventions"></param>
         /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
-        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAssemblies(IEnumerable<Assembly> assemblies)
-            => builder => new ConventionContextBuilder(new Dictionary<object, object?>()).UseAssemblies(assemblies);
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAssemblies(
+            IEnumerable<Assembly> assemblies,
+            Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
+        ) => builder => new ConventionContextBuilder(new Dictionary<object, object?>())
+           .UseAssemblies(assemblies)
+           .WithConventionsFrom(getConventions);
+
+        /// <summary>
+        /// Fors the assemblies.
+        /// </summary>
+        /// <param name="assemblies">The assemblies.</param>
+        /// <param name="conventionContextBuilderAction"></param>
+        /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAssemblies(
+            IEnumerable<Assembly> assemblies,
+            Action<ConventionContextBuilder>? conventionContextBuilderAction = null
+        ) => builder =>
+        {
+            var conventionContextBuilder = new ConventionContextBuilder(new Dictionary<object, object?>()).UseAssemblies(assemblies);
+            conventionContextBuilderAction?.Invoke(conventionContextBuilder);
+            return conventionContextBuilder;
+        };
 
         /// <summary>
         /// Fors the specified assemblies.
         /// </summary>
         /// <param name="assemblies">The assemblies.</param>
+        /// <param name="getConventions"></param>
         /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
-        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(IEnumerable<Assembly> assemblies) => ForAssemblies(assemblies);
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(
+            IEnumerable<Assembly> assemblies,
+            Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
+        ) => ForAssemblies(assemblies, getConventions);
+
+        /// <summary>
+        /// Fors the specified assemblies.
+        /// </summary>
+        /// <param name="assemblies">The assemblies.</param>
+        /// <param name="conventionContextBuilderAction"></param>
+        /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
+        public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(
+            IEnumerable<Assembly> assemblies,
+            Action<ConventionContextBuilder>? conventionContextBuilderAction = null
+        ) => ForAssemblies(assemblies, conventionContextBuilderAction);
+
+        // /// <summary>
+        // /// Use the given dependency context for resolving assemblies
+        // /// </summary>
+        // /// <param name="dependencyContext"></param>
+        // /// <returns></returns>
+        // public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForDependencyContext(DependencyContext dependencyContext)
+        //     => builder => new ConventionContextBuilder(new Dictionary<object, object?>()).UseDependencyContext(dependencyContext);
+        //
+        // /// <summary>
+        // /// Use the given dependency context for resolving assemblies
+        // /// </summary>
+        // /// <param name="dependencyContext"></param>
+        // /// <returns></returns>
+        // public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(DependencyContext dependencyContext) => ForDependencyContext(dependencyContext);
 
         // /// <summary>
         // /// Use the given dependency context for resolving assemblies
