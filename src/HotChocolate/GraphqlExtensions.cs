@@ -1,7 +1,7 @@
 ﻿using HotChocolate;
 using Rocket.Surgery.LaunchPad.Foundation;
 
-namespace Rocket.Surgery.LaunchPad.Graphql
+namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
     public static class GraphqlExtensions
     {

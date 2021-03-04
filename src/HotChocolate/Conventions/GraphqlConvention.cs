@@ -6,14 +6,15 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.LaunchPad.Graphql.Conventions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
+using Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 using System.Linq;
 
 [assembly: Convention(typeof(GraphqlConvention))]
-namespace Rocket.Surgery.LaunchPad.Graphql.Conventions
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
 {
+    [BeforeConvention(typeof(HotChocolateConvention))]
     public class GraphqlConvention : IServiceConvention
     {
         private readonly IFairyBreadOptions _options;
@@ -40,7 +41,6 @@ namespace Rocket.Surgery.LaunchPad.Graphql.Conventions
                .AddGraphQL()
                .UseField<CustomInputValidationMiddleware>()
                .AddErrorFilter<GraphqlErrorFilter>()
-               .ConfigureSchema(sb => sb.AddNodaTime())
                ;
         }
     }

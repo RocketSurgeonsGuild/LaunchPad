@@ -1,23 +1,12 @@
-using App.Metrics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
-using Serilog;
-using Serilog.Extensions.Logging;
-using ILogger = Serilog.ILogger;
 
 namespace Rocket.Surgery.LaunchPad.Functions
 {
@@ -55,7 +44,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
             // }
         }
 
-        protected LaunchPadFunctionStartup(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure) : this()
+        protected LaunchPadFunctionStartup(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure)
         {
             _builder = configure(this).Set(HostType.Live);
             if (this is IConvention convention)

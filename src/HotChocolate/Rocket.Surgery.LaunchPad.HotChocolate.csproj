@@ -6,9 +6,14 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="HotChocolate" />
+        <PackageReference Include="FluentValidation" />
         <PackageReference Include="NodaTime" />
 <!--        <PackageReference Include="Scrutor" />-->
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Humanizer.Core" />
+        <PackageReference Include="FairyBread" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
 </Project>

@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using HotChocolate;
-using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using Rocket.Surgery.LaunchPad.Foundation;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Rocket.Surgery.LaunchPad.Graphql
+namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
     class GraphqlErrorFilter : IErrorFilter
     {

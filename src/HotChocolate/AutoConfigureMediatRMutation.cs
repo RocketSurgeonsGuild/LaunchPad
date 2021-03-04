@@ -1,5 +1,4 @@
-﻿using HotChocolate;
-using HotChocolate.Language;
+﻿using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Rocket.Surgery.LaunchPad.Graphql
+namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
     public class AutoConfigureMediatRMutation : ConfigureGraphqlRootTypeBase
     {
@@ -19,6 +18,9 @@ namespace Rocket.Surgery.LaunchPad.Graphql
         public AutoConfigureMediatRMutation(IEnumerable<Type> mediatorRequestTypes) : base(OperationType.Mutation)
         {
             _mediatorRequestTypes = mediatorRequestTypes;
+            Console.WriteLine(nameof(AutoConfigureMediatRMutation));
+            foreach (var type in _mediatorRequestTypes)
+            Console.WriteLine(type.FullName);
         }
 
         public override void Configure(IObjectTypeDescriptor descriptor)
