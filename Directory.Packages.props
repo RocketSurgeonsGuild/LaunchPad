@@ -72,7 +72,7 @@
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
     <PackageVersion Include="Rocket.Surgery.Conventions" Version="10.1.1-beta.1" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.1.1-beta.1" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.1.1-beta.1" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.1.1" />
     <PackageVersion Include="Rocket.Surgery.Hosting.TestHost" Version="10.1.1-beta.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.1.0-beta.4" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.1.0-beta.4" />
