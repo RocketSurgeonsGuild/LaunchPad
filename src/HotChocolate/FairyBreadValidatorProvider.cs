@@ -5,7 +5,7 @@ using HotChocolate.Types;
 using System;
 using System.Collections.Generic;
 
-namespace Rocket.Surgery.LaunchPad.Graphql
+namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
     class FairyBreadValidatorProvider : IValidatorProvider
     {

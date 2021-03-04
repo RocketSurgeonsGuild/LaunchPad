@@ -1,5 +1,4 @@
-﻿using HotChocolate;
-using HotChocolate.Language;
+﻿using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Rocket.Surgery.LaunchPad.Graphql
+namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
     public class AutoConfigureMediatRMutation : ConfigureGraphqlRootTypeBase
     {

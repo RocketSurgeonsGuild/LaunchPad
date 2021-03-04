@@ -1,9 +1,8 @@
 ﻿using HotChocolate;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.Options;
-using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Configuration
 {
     class HotChocolateContextDataConfigureOptions : IConfigureNamedOptions<RequestExecutorSetup>
     {

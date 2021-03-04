@@ -1,12 +1,12 @@
-using System;
-using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.Results;
 using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.Foundation
 {
     /// <summary>
     /// A validation error problem

@@ -13,7 +13,6 @@
         <ProjectReference Include="..\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="FairyBread" />
         <PackageReference Include="HotChocolate.AspNetCore" />
         <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
