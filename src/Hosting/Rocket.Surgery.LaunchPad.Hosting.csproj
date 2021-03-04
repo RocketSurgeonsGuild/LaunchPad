@@ -6,8 +6,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Hosting" />
-        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />
-        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Yaml" />
         <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.Debug" />

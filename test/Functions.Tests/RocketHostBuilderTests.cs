@@ -24,40 +24,35 @@ namespace Functions.Tests
     {
         public Startup() : base() { }
         public Startup([NotNull] Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure) : base(configure) { }
-        public override void Setup(IFunctionsHostBuilder builder, ConventionContextBuilder contextBuilder) { }
 
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services) => services.AddSingleton(new object());
-    }
-
-    internal class HostEnvironment : IHostEnvironment
-    {
-        public string EnvironmentName { get; set; } = "Test";
-        public string ApplicationName { get; set; } = "Test";
-        public string ContentRootPath { get; set; } = "";
-        public IFileProvider ContentRootFileProvider { get; set; } = null!;
-    }
-
-    class WebJobsBuilder : IWebJobsBuilder
-    {
-        public WebJobsBuilder(IServiceCollection services) => Services = services;
-        public IServiceCollection Services { get; }
+        public override void Configure(IFunctionsHostBuilder builder, IConventionContext context) {}
     }
 
     public class RocketHostBuilderTests : AutoFakeTest
     {
+        private static IFunctionsConfigurationBuilder ConfigureConfiguration(IConfigurationBuilder configurationBuilder)
+        {
+            var functionsConfigurationBuilder = A.Fake<IFunctionsConfigurationBuilder>();
+            A.CallTo(() => functionsConfigurationBuilder.ConfigurationBuilder).Returns(configurationBuilder);
+            return functionsConfigurationBuilder;
+        }
+        private static IFunctionsHostBuilder ConfigureHost()
+        {
+            var functionsHostBuilder = A.Fake<IFunctionsHostBuilder>();
+            return functionsHostBuilder;
+        }
+
         [Fact]
         public void Should_UseAssemblies()
         {
             var startup = new Startup(RocketBooster.ForAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-            var services = new ServiceCollection()
-               .AddSingleton(
-                    new HostBuilderContext(new Dictionary<object, object>())
-                    {
-                        Configuration = new ConfigurationBuilder().Build(),
-                        HostingEnvironment = new HostEnvironment()
-                    }
-                );
-            startup.Configure(new WebJobsBuilder(services));
+            var configBuilder = new ConfigurationBuilder();
+            var functionsConfigurationBuilder = ConfigureConfiguration(configBuilder);
+            var functionsHostBuilder = ConfigureHost();
+            startup.ConfigureAppConfiguration(functionsConfigurationBuilder);
+            var services = new ServiceCollection();
+            startup.Configure(functionsHostBuilder);
 
             var sp = services.BuildServiceProvider();
             sp.Should().NotBeNull();
@@ -67,15 +62,12 @@ namespace Functions.Tests
         public void Should_UseRocketBooster()
         {
             var startup = new Startup(RocketBooster.ForAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-            var services = new ServiceCollection()
-               .AddSingleton(
-                    new HostBuilderContext(new Dictionary<object, object>())
-                    {
-                        Configuration = new ConfigurationBuilder().Build(),
-                        HostingEnvironment = new HostEnvironment()
-                    }
-                );
-            startup.Configure(new WebJobsBuilder(services));
+            var configBuilder = new ConfigurationBuilder();
+            var functionsConfigurationBuilder = ConfigureConfiguration(configBuilder);
+            var functionsHostBuilder = ConfigureHost();
+            startup.ConfigureAppConfiguration(functionsConfigurationBuilder);
+            var services = new ServiceCollection();
+            startup.Configure(functionsHostBuilder);
 
             var sp = services.BuildServiceProvider();
             sp.Should().NotBeNull();
@@ -85,15 +77,12 @@ namespace Functions.Tests
         public void Should_Build_The_Host_Correctly()
         {
             var startup = new Startup(RocketBooster.ForAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-            var services = new ServiceCollection()
-               .AddSingleton(
-                    new HostBuilderContext(new Dictionary<object, object>())
-                    {
-                        Configuration = new ConfigurationBuilder().Build(),
-                        HostingEnvironment = new HostEnvironment()
-                    }
-                );
-            startup.Configure(new WebJobsBuilder(services));
+            var configBuilder = new ConfigurationBuilder();
+            var functionsConfigurationBuilder = ConfigureConfiguration(configBuilder);
+            var functionsHostBuilder = ConfigureHost();
+            startup.ConfigureAppConfiguration(functionsConfigurationBuilder);
+            var services = new ServiceCollection();
+            startup.Configure(functionsHostBuilder);
 
             var sp = services.BuildServiceProvider();
             sp.Should().NotBeNull();

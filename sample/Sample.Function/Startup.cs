@@ -9,6 +9,19 @@ namespace Sample_Function
 {
     public class Startup : LaunchPadFunctionStartup
     {
-        public override void Setup(IFunctionsHostBuilder builder, ConventionContextBuilder contextBuilder) { }
+        public override void Setup(ConventionContextBuilder contextBuilder)
+        {
+
+        }
+
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder, IConventionContext context)
+        {
+
+        }
+
+        public override void Configure(IFunctionsHostBuilder builder, IConventionContext context)
+        {
+
+        }
     }
 }
