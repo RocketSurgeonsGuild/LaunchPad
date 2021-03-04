@@ -81,7 +81,7 @@
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.1.0-beta.4" />
     <PackageVersion Include="Rocket.Surgery.Hosting.DryIoc" Version="0.2.0" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.DryIoc" Version="0.2.0" />
-    <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.1.1-beta.1" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="10.1.1" />
     <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="10.1.1-beta.1" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="10.1.1-beta.1" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting.TestHost" Version="10.1.1-beta.1" />
