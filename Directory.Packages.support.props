@@ -5,10 +5,10 @@
         <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
         <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.8" />
         <PackageVersion Update="System.Net.Http.Json" Version="3.2.1" />
-        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="3.1.12" />
-        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="3.1.12" />
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="3.1.12" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.12" />
-        <PackageVersion Include="Microsoft.Extensions.Options" Version="3.1.12" />
+        <PackageVersion Update="Microsoft.Extensions.Configuration" Version="3.1.12" />
+        <PackageVersion Update="Microsoft.Extensions.Hosting" Version="3.1.12" />
+        <PackageVersion Update="Microsoft.Extensions.Logging" Version="3.1.12" />
+        <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="3.1.12" />
+        <PackageVersion Update="Microsoft.Extensions.Options" Version="3.1.12" />
     </ItemGroup>
 </Project>
