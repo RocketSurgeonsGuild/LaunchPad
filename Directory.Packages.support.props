@@ -1,9 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.1'">
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.1'">
         <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
         <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
         <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.8" />
         <PackageVersion Update="System.Net.Http.Json" Version="3.2.1" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="3.1.12" />
+        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="3.1.12" />
+        <PackageVersion Include="Microsoft.Extensions.Logging" Version="3.1.12" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.12" />
+        <PackageVersion Include="Microsoft.Extensions.Options" Version="3.1.12" />
     </ItemGroup>
 </Project>

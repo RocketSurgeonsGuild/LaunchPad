@@ -17,6 +17,8 @@
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Rocket.Surgery.DependencyInjection.Extensions" />
+        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />
+        <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Yaml" />
         <PackageReference Include="System.Text.Json" />
     </ItemGroup>
     <ItemGroup>

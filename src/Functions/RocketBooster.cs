@@ -52,67 +52,6 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(IEnumerable<Assembly> assemblies) => ForAssemblies(assemblies);
 
         /// <summary>
-        /// Applys all conventions for hosting, configuration, services and logging
-        /// </summary>
-        /// <param name="startup"></param>
-        /// <param name="builder"></param>
-        /// <param name="contextBuilder"></param>
-        public static IConventionContext ApplyConventions(LaunchPadFunctionStartup startup, IFunctionsHostBuilder builder, ConventionContextBuilder contextBuilder)
-        {
-            if (startup is IConvention convention)
-            {
-                contextBuilder.AppendConvention(convention);
-            }
-            return ApplyConventions(builder, ConventionContext.From(contextBuilder));
-        }
-
-        /// <summary>
-        /// Applys all conventions for hosting, configuration, services and logging
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="context"></param>
-        public static IConventionContext ApplyConventions(IFunctionsHostBuilder builder, IConventionContext context)
-        {
-            var existingHostedServices = builder.Services.Where(x => x.ServiceType == typeof(IHostedService)).ToArray();
-
-            var hostContext = builder.Services
-               .Where(z => typeof(HostBuilderContext).IsAssignableFrom(z.ServiceType))
-               .Select(x => x.ImplementationInstance)
-               .OfType<HostBuilderContext>()
-               .FirstOrDefault();
-            if (hostContext == null)
-                throw new NotSupportedException("hostContext could not be found");
-
-            context.Set(hostContext.Configuration);
-            context.Set(hostContext.HostingEnvironment);
-
-            var hostEnvironment = hostContext.HostingEnvironment;
-
-            hostEnvironment.EnvironmentName = new[]
-            {
-                Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT"),
-                Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT"),
-                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
-                Environment.GetEnvironmentVariable("WEBSITE_SLOT_NAME"),
-                hostEnvironment.EnvironmentName
-            }.First(z => !string.IsNullOrWhiteSpace(z));
-
-            hostEnvironment.ApplicationName = new[]
-            {
-                Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"),
-                hostEnvironment.ApplicationName
-            }.First(z => !string.IsNullOrWhiteSpace(z));
-
-            builder.Services
-               .ApplyConventions(context)
-               .AddLogging(z => z.ApplyConventions(context));
-
-            builder.Services.RemoveAll<IHostedService>();
-            builder.Services.Add(existingHostedServices);
-            return context;
-        }
-
-        /// <summary>
         /// Uses the assembly candidate finder.
         /// </summary>
         /// <param name="builder">The builder.</param>

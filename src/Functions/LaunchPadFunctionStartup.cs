@@ -1,3 +1,4 @@
+using App.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,19 +15,26 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
+using Serilog;
+using Serilog.Extensions.Logging;
+using ILogger = Serilog.ILogger;
 
 namespace Rocket.Surgery.LaunchPad.Functions
 {
     public abstract class LaunchPadFunctionStartup : FunctionsStartup
     {
         internal ConventionContextBuilder _builder;
-        internal ILogger Logger;
+        internal IConventionContext _context;
 
         protected LaunchPadFunctionStartup()
         {
             _builder = new ConventionContextBuilder(new Dictionary<object, object?>())
                .UseAppDomain(AppDomain.CurrentDomain)
                .Set(HostType.Live);
+            if (this is IConvention convention)
+            {
+                _builder.AppendConvention(convention);
+            }
 
             // TODO: Restore this sometime
             // var functionsAssembly = this.GetType().Assembly;
@@ -50,15 +58,38 @@ namespace Rocket.Surgery.LaunchPad.Functions
         protected LaunchPadFunctionStartup(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure) : this()
         {
             _builder = configure(this).Set(HostType.Live);
+            if (this is IConvention convention)
+            {
+                _builder.AppendConvention(convention);
+            }
+        }
+
+        public sealed override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            Setup(_builder);
+            _context = ConventionContext.From(_builder);
+            builder.ConfigurationBuilder.ApplyConventions(_context);
+            ConfigureAppConfiguration(builder, _context);
         }
 
         public sealed override void Configure(IFunctionsHostBuilder builder)
         {
-            Setup(builder, _builder);
-            RocketBooster.ApplyConventions(this, builder, _builder);
+            var existingHostedServices = builder.Services.Where(x => x.ServiceType == typeof(IHostedService)).ToArray();
+            var builderContext = builder.GetContext();
+
+            _context.Set(builderContext.Configuration);
+            builder.Services.ApplyConventions(_context);
+
+            builder.Services.RemoveAll<IHostedService>();
+            builder.Services.Add(existingHostedServices);
+            Configure(builder, _context);
         }
 
-        public abstract void Setup(IFunctionsHostBuilder builder, ConventionContextBuilder contextBuilder);
+        public virtual void Setup(ConventionContextBuilder contextBuilder) { }
+
+        public virtual void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder, IConventionContext context) { }
+
+        public abstract void Configure(IFunctionsHostBuilder builder, IConventionContext context);
 
         public LaunchPadFunctionStartup UseRocketBooster(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure)
         {
