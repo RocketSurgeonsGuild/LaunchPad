@@ -140,6 +140,21 @@ namespace Rocket.Surgery.LaunchPad.Functions
         // /// <returns></returns>
         // public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(DependencyContext dependencyContext) => ForDependencyContext(dependencyContext);
 
+        // /// <summary>
+        // /// Use the given dependency context for resolving assemblies
+        // /// </summary>
+        // /// <param name="dependencyContext"></param>
+        // /// <returns></returns>
+        // public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForDependencyContext(DependencyContext dependencyContext)
+        //     => builder => new ConventionContextBuilder(new Dictionary<object, object?>()).UseDependencyContext(dependencyContext);
+        //
+        // /// <summary>
+        // /// Use the given dependency context for resolving assemblies
+        // /// </summary>
+        // /// <param name="dependencyContext"></param>
+        // /// <returns></returns>
+        // public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(DependencyContext dependencyContext) => ForDependencyContext(dependencyContext);
+
         /// <summary>
         /// Uses the assembly candidate finder.
         /// </summary>
