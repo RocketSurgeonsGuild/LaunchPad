@@ -18,6 +18,9 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
         public AutoConfigureMediatRMutation(IEnumerable<Type> mediatorRequestTypes) : base(OperationType.Mutation)
         {
             _mediatorRequestTypes = mediatorRequestTypes;
+            Console.WriteLine(nameof(AutoConfigureMediatRMutation));
+            foreach (var type in _mediatorRequestTypes)
+            Console.WriteLine(type.FullName);
         }
 
         public override void Configure(IObjectTypeDescriptor descriptor)

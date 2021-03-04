@@ -7,6 +7,7 @@ using System.Reflection;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
@@ -50,6 +51,21 @@ namespace Rocket.Surgery.LaunchPad.Functions
         /// <param name="assemblies">The assemblies.</param>
         /// <returns>Func&lt;IHostBuilder, ConventionContextBuilder&gt;.</returns>
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(IEnumerable<Assembly> assemblies) => ForAssemblies(assemblies);
+
+        // /// <summary>
+        // /// Use the given dependency context for resolving assemblies
+        // /// </summary>
+        // /// <param name="dependencyContext"></param>
+        // /// <returns></returns>
+        // public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForDependencyContext(DependencyContext dependencyContext)
+        //     => builder => new ConventionContextBuilder(new Dictionary<object, object?>()).UseDependencyContext(dependencyContext);
+        //
+        // /// <summary>
+        // /// Use the given dependency context for resolving assemblies
+        // /// </summary>
+        // /// <param name="dependencyContext"></param>
+        // /// <returns></returns>
+        // public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> For(DependencyContext dependencyContext) => ForDependencyContext(dependencyContext);
 
         /// <summary>
         /// Uses the assembly candidate finder.

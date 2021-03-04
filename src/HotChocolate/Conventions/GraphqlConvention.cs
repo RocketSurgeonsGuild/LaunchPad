@@ -14,6 +14,7 @@ using System.Linq;
 [assembly: Convention(typeof(GraphqlConvention))]
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
 {
+    [BeforeConvention(typeof(HotChocolateConvention))]
     public class GraphqlConvention : IServiceConvention
     {
         private readonly IFairyBreadOptions _options;
@@ -40,7 +41,6 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
                .AddGraphQL()
                .UseField<CustomInputValidationMiddleware>()
                .AddErrorFilter<GraphqlErrorFilter>()
-               .ConfigureSchema(sb => sb.AddNodaTime())
                ;
         }
     }
