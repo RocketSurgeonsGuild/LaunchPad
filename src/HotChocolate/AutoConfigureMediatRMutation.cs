@@ -1,5 +1,6 @@
 ﻿using HotChocolate.Language;
 using HotChocolate.Types;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
