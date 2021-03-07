@@ -3,12 +3,13 @@
         <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
         <PackageDescription></PackageDescription>
         <PackageTags>$(PackageTags)</PackageTags>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Foundation</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj"/>
+        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json"/>
-        <PackageReference Include="NodaTime.Serialization.JsonNet"/>
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="NodaTime.Serialization.JsonNet" />
     </ItemGroup>
 </Project>

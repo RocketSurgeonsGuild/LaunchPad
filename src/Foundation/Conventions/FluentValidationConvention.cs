@@ -24,6 +24,12 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     [AfterConvention(typeof(MediatRConvention))]
     public class FluentValidationConvention : IServiceConvention
     {
+        private readonly FoundationOptions _options;
+
+        public FluentValidationConvention(FoundationOptions? options = null)
+        {
+            _options = options ?? new FoundationOptions();
+        }
         /// <summary>
         /// Registers the specified context.
         /// </summary>
@@ -37,17 +43,16 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var lifetime = context.Get<MediatRServiceConfiguration>()!.Lifetime!;
             var assemblies = context
                .AssemblyCandidateFinder
                .GetCandidateAssemblies("FluentValidation");
             foreach (var item in new AssemblyScanner(assemblies.SelectMany(z => z.DefinedTypes).Select(x => x.AsType())))
             {
-                services.TryAddEnumerable(new ServiceDescriptor(item.InterfaceType, item.ValidatorType, lifetime));
+                services.TryAddEnumerable(new ServiceDescriptor(item.InterfaceType, item.ValidatorType, _options.ValidationLifetime));
             }
 
             services.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
-            services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), lifetime));
+            services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
         }
     }
 }
