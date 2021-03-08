@@ -21,7 +21,7 @@ namespace Sample.Core
             connection.Open();
             services
 #if NETSTANDARD
-               .AddDbContext<RocketDbContext>(
+               .AddDbContextPool<RocketDbContext>(
 #else
                .AddPooledDbContextFactory<RocketDbContext>(
 #endif

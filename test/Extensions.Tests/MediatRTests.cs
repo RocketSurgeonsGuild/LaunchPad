@@ -51,8 +51,10 @@ namespace Extensions.Tests
                .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
             var context = ConventionContext.From(builder);
             var services = new ServiceCollection();
-            context.Set(new MediatRServiceConfiguration().AsSingleton());
-            new MediatRConvention().Register(context, new ConfigurationBuilder().Build(), services);
+            new MediatRConvention(new FoundationOptions()
+            {
+                MediatorLifetime = ServiceLifetime.Singleton
+            }).Register(context, new ConfigurationBuilder().Build(), services);
 
             var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
