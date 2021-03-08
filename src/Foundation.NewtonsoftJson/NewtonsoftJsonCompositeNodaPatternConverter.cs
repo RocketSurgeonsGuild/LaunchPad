@@ -4,14 +4,14 @@ using NodaTime.Text;
 using NodaTime.Utility;
 using System;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
+namespace Rocket.Surgery.LaunchPad.Foundation
 {
     /// <summary>
     /// A JSON converter for types which can be represented by a single string value, parsed or formatted
     /// from an <see cref="IPattern{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type to convert to/from JSON.</typeparam>
-    public sealed class CompositeNodaPatternConverter<T> : NodaConverterBase<T>
+    public sealed class NewtonsoftJsonCompositeNodaPatternConverter<T> : NodaConverterBase<T>
     {
         private readonly IPattern<T>[] _patterns;
         private readonly Action<T>? _validator;
@@ -20,7 +20,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
         /// Creates a new instance with a pattern and no validator.
         /// </summary>
         /// <param name="patterns">The patterns to use for parsing and formatting.</param>
-        public CompositeNodaPatternConverter(params IPattern<T>[] patterns) : this(null, patterns) { }
+        public NewtonsoftJsonCompositeNodaPatternConverter(params IPattern<T>[] patterns) : this(null, patterns) { }
 
         /// <summary>
         /// Creates a new instance with a pattern and an optional validator. The validator will be called before each
@@ -28,7 +28,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
         /// </summary>
         /// <param name="patterns">The patterns to use for parsing and formatting.</param>
         /// <param name="validator">The validator to call before writing values. May be null, indicating that no validation is required.</param>
-        public CompositeNodaPatternConverter(Action<T>? validator, params IPattern<T>[] patterns)
+        public NewtonsoftJsonCompositeNodaPatternConverter(Action<T>? validator, params IPattern<T>[] patterns)
         {
             this._patterns = patterns;
             this._validator = validator;

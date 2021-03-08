@@ -4,9 +4,9 @@ using NodaTime.Text;
 using System;
 using System.Text;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore
+namespace Rocket.Surgery.LaunchPad.Foundation
 {
-    class DateTimeOffsetPattern : IPattern<Instant>
+    class NewtonsoftJsonDateTimeOffsetPattern : IPattern<Instant>
     {
         public ParseResult<Instant> Parse(string text) => DateTimeOffset.TryParse(text, out var value)
             ? ParseResult<Instant>.ForValue(value.ToInstant())

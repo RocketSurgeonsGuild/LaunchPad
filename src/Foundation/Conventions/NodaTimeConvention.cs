@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NodaTime;
 using NodaTime.TimeZones;
 using Rocket.Surgery.Conventions;
@@ -20,6 +21,12 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     [LiveConvention]
     public class NodaTimeConvention : IServiceConvention
     {
+        private readonly FoundationOptions _options;
+
+        public NodaTimeConvention(FoundationOptions? options = null)
+        {
+            _options = options ?? new FoundationOptions();
+        }
         /// <summary>
         /// Registers the specified context.
         /// </summary>
@@ -31,9 +38,9 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.AddSingleton<IClock>(SystemClock.Instance);
-            services.AddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
-            services.AddSingleton<IDateTimeZoneSource>(TzdbDateTimeZoneSource.Default);
+            services.TryAddSingleton<IClock>(SystemClock.Instance);
+            services.TryAddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
+            services.TryAddSingleton(_options.DateTimeZoneSource);
         }
     }
 }

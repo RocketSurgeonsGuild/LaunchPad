@@ -6,6 +6,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
+using System;
 using System.Linq;
 
 [assembly: Convention(typeof(MediatRConvention))]
@@ -19,21 +20,41 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     /// <seealso cref="IServiceConvention" />
     public class MediatRConvention : IServiceConvention
     {
+        private readonly FoundationOptions _options;
+
+        public MediatRConvention(FoundationOptions? options = null)
+        {
+            _options = options ?? new FoundationOptions();
+        }
+
         /// <summary>
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            var serviceConfig = context.GetOrAdd(() => new MediatRServiceConfiguration());
-            context.Set(serviceConfig);
-
-            var assemblies = context.AssemblyCandidateFinder
-               .GetCandidateAssemblies(nameof(MediatR))
-               .ToArray();
-
-            ServiceRegistrar.AddRequiredServices(services, serviceConfig);
-            ServiceRegistrar.AddMediatRClasses(services, assemblies);
+            services.AddMediatR(
+                c =>
+                {
+                    switch (_options.MediatorLifetime)
+                    {
+                        case ServiceLifetime.Singleton:
+                            c.AsSingleton();
+                            break;
+                        case ServiceLifetime.Scoped:
+                            c.AsScoped();
+                            break;
+                        case ServiceLifetime.Transient:
+                            c.AsTransient();
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                },
+                context.AssemblyCandidateFinder
+                   .GetCandidateAssemblies(nameof(MediatR))
+                   .ToArray()
+            );
         }
     }
 }

@@ -22,18 +22,24 @@ namespace Sample.Core.Tests.LaunchRecords
         [Fact]
         public async Task Should_Create_A_LaunchRecord()
         {
-            var context = ServiceProvider.GetRequiredService<RocketDbContext>();
-            var rocket = new ReadyRocket()
-            {
-                Type = RocketType.Falcon9,
-                SerialNumber = "12345678901234"
-            };
-            context.Add(rocket);
+            var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
+               .Invoke(
+                    async (context, ct) =>
+                    {
+                        var rocket = new ReadyRocket()
+                        {
+                            Type = RocketType.Falcon9,
+                            SerialNumber = "12345678901234"
+                        };
+                        context.Add(rocket);
 
-            await context.SaveChangesAsync();
+                        await context.SaveChangesAsync(ct);
+                        return rocket;
+                    }
+                );
 
             var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
-                (mediator, clock) => mediator.Send(
+                async (mediator, clock, ct) => await mediator.Send(
                     new CreateLaunchRecord.Request()
                     {
                         Partner = "partner",
@@ -41,7 +47,8 @@ namespace Sample.Core.Tests.LaunchRecords
                         RocketId = rocket.Id,
                         ScheduledLaunchDate = clock.GetCurrentInstant(),
                         PayloadWeightKg = 100,
-                    }
+                    },
+                    ct
                 )
             );
 

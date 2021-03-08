@@ -10,6 +10,7 @@ using Sample.Core.Domain;
 using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
 [assembly: Convention(typeof(DataConvention))]
+
 namespace Sample.Core
 {
     class DataConvention : IServiceConvention
@@ -18,12 +19,18 @@ namespace Sample.Core
         {
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
-            services.AddPooledDbContextFactory<RocketDbContext>(x => x
-               .EnableDetailedErrors()
-               .EnableSensitiveDataLogging()
-               .EnableServiceProviderCaching()
-               .UseSqlite(connection)
-            );
+            services
+#if NETSTANDARD
+               .AddDbContextPool<RocketDbContext>(
+#else
+               .AddPooledDbContextFactory<RocketDbContext>(
+#endif
+                    x => x
+                       .EnableDetailedErrors()
+                       .EnableSensitiveDataLogging()
+                       .EnableServiceProviderCaching()
+                       .UseSqlite(connection)
+                );
         }
     }
 }
