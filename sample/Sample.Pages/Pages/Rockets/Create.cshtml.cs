@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Rocket.Surgery.LaunchPad.Pages;
+using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Pages.Pages.Rockets

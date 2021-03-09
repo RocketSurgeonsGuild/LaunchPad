@@ -102,7 +102,7 @@ namespace Rocket.Surgery.LaunchPad.Functions.Conventions
                         if (loggerProviders != null)
                             loggerConfiguration.WriteTo.Providers(loggerProviders);
 
-                        loggerConfiguration.ApplyConventions(context);
+                        loggerConfiguration.ApplyConventions(context, _);
 
                         return loggerConfiguration.CreateLogger();
                     }

@@ -29,14 +29,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
     /// <seealso cref="IServiceConvention" />
     /// <seealso cref="IServiceConvention" />
     [PublicAPI]
+    [AfterConvention(typeof(AspNetCoreConvention))]
     public class SystemJsonTextConvention : IServiceConvention
     {
         private readonly FoundationOptions _options;
 
-        public SystemJsonTextConvention(FoundationOptions? options = null)
-        {
-            _options = options ?? new();
-        }
+        public SystemJsonTextConvention(FoundationOptions? options = null) => _options = options ?? new();
+
         /// <summary>
         /// Registers the specified context.
         /// </summary>
@@ -48,11 +47,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.Configure<JsonOptions>(
-                options =>
-                {
-                    options.JsonSerializerOptions.ConfigureForLaunchPad(_options.DateTimeZoneProvider);
-                }
+            services.AddOptions<JsonOptions>().Configure<IDateTimeZoneProvider>(
+                (options, provider) => options.JsonSerializerOptions.ConfigureForLaunchPad(provider)
             );
         }
     }

@@ -2,23 +2,16 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using NodaTime;
-using NodaTime.Serialization.JsonNet;
-using NodaTime.Text;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.Conventions;
+using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 [assembly: Convention(typeof(NewtonsoftJsonConvention))]
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.Conventions
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 {
     /// <summary>
     /// ValidationConvention.
@@ -35,6 +28,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.Conventions
         {
             _options = options ?? new();
         }
+
         /// <summary>
         /// Registers the specified context.
         /// </summary>
@@ -49,12 +43,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.Conventions
             }
 
             services.WithMvcCore().AddNewtonsoftJson();
-            services.Configure<MvcNewtonsoftJsonOptions>(
-                options =>
-                {
-                    options.SerializerSettings.ConfigureForLaunchPad(_options.DateTimeZoneProvider);
-                }
+            services.AddOptions<MvcNewtonsoftJsonOptions>().Configure<IDateTimeZoneProvider>(
+                (options, provider) => options.SerializerSettings.ConfigureForLaunchPad(provider)
             );
+            services
+               .Configure<MvcNewtonsoftJsonOptions>(
+                    options => options.SerializerSettings.Converters.Add(
+                        new ValidationProblemDetailsNewtonsoftJsonConverter()
+                    )
+                );
         }
     }
 }

@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using Rocket.Surgery.LaunchPad.Foundation;
+using System;
+using System.Collections.Generic;
 
 #pragma warning disable 8618
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson
+namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
     /// <summary>
     /// A RFC 7807 compliant <see cref="Newtonsoft.Json.JsonConverter" /> for <see cref="FluentValidationProblemDetails" />.

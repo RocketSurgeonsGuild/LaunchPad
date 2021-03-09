@@ -29,7 +29,12 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
             => _options = options ?? new LaunchPadLoggingOptions();
 
         /// <inheritdoc />
-        public void Register([NotNull] IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
+        public void Register(
+            [NotNull] IConventionContext context,
+            IServiceProvider services,
+            IConfiguration configuration,
+            LoggerConfiguration loggerConfiguration
+        )
         {
             if (configuration == null)
             {

@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.Restful;
 
 namespace Sample.Restful.Controllers
 {
