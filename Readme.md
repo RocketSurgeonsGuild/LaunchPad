@@ -28,7 +28,6 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly | [![nuget-version-mujr0plht1xq-badge]![nuget-downloads-mujr0plht1xq-badge]][nuget-mujr0plht1xq] |
 | Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson | [![nuget-version-90qhcztnoaxa-badge]![nuget-downloads-90qhcztnoaxa-badge]][nuget-90qhcztnoaxa] |
 | Rocket.Surgery.LaunchPad.AspNetCore.Testing | [![nuget-version-vmr7vthhrumq-badge]![nuget-downloads-vmr7vthhrumq-badge]][nuget-vmr7vthhrumq] |
-| Rocket.Surgery.LaunchPad.Commands | [![nuget-version-yb7ebtcfpbqw-badge]![nuget-downloads-yb7ebtcfpbqw-badge]][nuget-yb7ebtcfpbqw] |
 | Rocket.Surgery.LaunchPad.EntityFramework | [![nuget-version-nutptsm/tbya-badge]![nuget-downloads-nutptsm/tbya-badge]][nuget-nutptsm/tbya] |
 | Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate | [![nuget-version-bpcodlgj17qg-badge]![nuget-downloads-bpcodlgj17qg-badge]][nuget-bpcodlgj17qg] |
 | Rocket.Surgery.LaunchPad.Foundation | [![nuget-version-kb2xyygxvala-badge]![nuget-downloads-kb2xyygxvala-badge]][nuget-kb2xyygxvala] |
@@ -41,12 +40,9 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.Mapping | [![nuget-version-w0a1ec96onsq-badge]![nuget-downloads-w0a1ec96onsq-badge]][nuget-w0a1ec96onsq] |
 | Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson | [![nuget-version-fog68ak3napq-badge]![nuget-downloads-fog68ak3napq-badge]][nuget-fog68ak3napq] |
 | Rocket.Surgery.LaunchPad.Metadata | [![nuget-version-3qzc9nszspsw-badge]![nuget-downloads-3qzc9nszspsw-badge]][nuget-3qzc9nszspsw] |
-| Rocket.Surgery.LaunchPad.Pages | [![nuget-version-t3syqh0xwuka-badge]![nuget-downloads-t3syqh0xwuka-badge]][nuget-t3syqh0xwuka] |
-| Rocket.Surgery.LaunchPad.Restful | [![nuget-version-dqztqdouljwa-badge]![nuget-downloads-dqztqdouljwa-badge]][nuget-dqztqdouljwa] |
 | Rocket.Surgery.LaunchPad.Serilog | [![nuget-version-io9yqzwujeig-badge]![nuget-downloads-io9yqzwujeig-badge]][nuget-io9yqzwujeig] |
 | Rocket.Surgery.LaunchPad.Testing | [![nuget-version-bhdja8ikzcgq-badge]![nuget-downloads-bhdja8ikzcgq-badge]][nuget-bhdja8ikzcgq] |
 | Rocket.Surgery.LaunchPad.WebAssembly.Hosting | [![nuget-version-yamaca3l39wa-badge]![nuget-downloads-yamaca3l39wa-badge]][nuget-yamaca3l39wa] |
-| Rocket.Surgery.LaunchPad.Workers | [![nuget-version-qxab2sf9seaa-badge]![nuget-downloads-qxab2sf9seaa-badge]][nuget-qxab2sf9seaa] |
 <!-- nuget packages -->
 
 # Whats next?
@@ -87,9 +83,6 @@ TBD
 [nuget-vmr7vthhrumq]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.Testing/
 [nuget-version-vmr7vthhrumq-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.Testing.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-vmr7vthhrumq-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.Testing.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-yb7ebtcfpbqw]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Commands/
-[nuget-version-yb7ebtcfpbqw-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Commands.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-yb7ebtcfpbqw-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Commands.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-nutptsm/tbya]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.EntityFramework/
 [nuget-version-nutptsm/tbya-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.EntityFramework.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-nutptsm/tbya-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.EntityFramework.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
@@ -126,12 +119,6 @@ TBD
 [nuget-3qzc9nszspsw]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Metadata/
 [nuget-version-3qzc9nszspsw-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Metadata.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-3qzc9nszspsw-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Metadata.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-t3syqh0xwuka]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Pages/
-[nuget-version-t3syqh0xwuka-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Pages.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-t3syqh0xwuka-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Pages.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-dqztqdouljwa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Restful/
-[nuget-version-dqztqdouljwa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Restful.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-dqztqdouljwa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Restful.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-io9yqzwujeig]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Serilog/
 [nuget-version-io9yqzwujeig-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Serilog.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-io9yqzwujeig-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Serilog.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
@@ -141,9 +128,6 @@ TBD
 [nuget-yamaca3l39wa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.WebAssembly.Hosting/
 [nuget-version-yamaca3l39wa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-yamaca3l39wa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-qxab2sf9seaa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Workers/
-[nuget-version-qxab2sf9seaa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Workers.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-qxab2sf9seaa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Workers.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 <!-- generated references -->
 
 <!-- nuke-data

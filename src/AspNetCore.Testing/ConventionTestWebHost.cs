@@ -6,9 +6,13 @@ using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NodaTime;
+using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
+using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
@@ -31,6 +35,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
                     builder =>
                     {
                         builder.Set(HostType.UnitTest);
+                        ConfigureClock();
                         foreach (var item in _hostBuilderActions)
                         {
                             item(builder);
@@ -40,6 +45,23 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
 
             return hostBuilder;
         }
+
+        public ConventionTestWebHost<TEntryPoint> ConfigureClock(int? unixTimeSeconds = null, Duration? advanceBy = null) => ConfigureClock(new FakeClock(Instant.FromUnixTimeSeconds(unixTimeSeconds ?? 1577836800), advanceBy ?? Duration.FromSeconds(1)));
+
+        public ConventionTestWebHost<TEntryPoint> ConfigureClock(IClock clock) => ConfigureHostBuilder(
+            builder =>
+            {
+                builder.PrependDelegate(
+                    new ServiceConvention(
+                        (context, configuration, services) =>
+                        {
+                            services.RemoveAll<IClock>();
+                            services.AddSingleton(clock);
+                        }
+                    )
+                );
+            }
+        );
 
         public ConventionTestWebHost<TEntryPoint> ConfigureLogger(ILogger logger)
             => ConfigureHostBuilder(builder =>

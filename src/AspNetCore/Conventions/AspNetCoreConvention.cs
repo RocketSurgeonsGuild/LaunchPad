@@ -58,7 +58,12 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             }
 
             services.AddMvcCore();
-            PopulateDefaultParts(GetServiceFromCollection<ApplicationPartManager>(services), context.AssemblyCandidateFinder.GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore"));
+            PopulateDefaultParts(
+                GetServiceFromCollection<ApplicationPartManager>(services),
+                context.AssemblyCandidateFinder
+                   .GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore")
+                   .SelectMany(GetApplicationPartAssemblies)
+                );
 
             services.Configure<MvcOptions>(options =>
             {
@@ -100,20 +105,18 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             }
         }
 
-        private static IEnumerable<Assembly> GetApplicationPartAssemblies(string entryAssemblyName)
+        private static IEnumerable<Assembly> GetApplicationPartAssemblies(Assembly assembly)
         {
-            var entryAssembly = Assembly.Load(new AssemblyName(entryAssemblyName));
-
             // Use ApplicationPartAttribute to get the closure of direct or transitive dependencies
             // that reference MVC.
-            var assembliesFromAttributes = entryAssembly.GetCustomAttributes<ApplicationPartAttribute>()
+            var assembliesFromAttributes = assembly.GetCustomAttributes<ApplicationPartAttribute>()
                 .Select(name => Assembly.Load(name.AssemblyName))
                 .OrderBy(assembly => assembly.FullName, StringComparer.Ordinal)
                 .SelectMany(GetAssemblyClosure);
 
             // The SDK will not include the entry assembly as an application part. We'll explicitly list it
             // and have it appear before all other assemblies \ ApplicationParts.
-            return GetAssemblyClosure(entryAssembly)
+            return GetAssemblyClosure(assembly)
                 .Concat(assembliesFromAttributes);
         }
 
