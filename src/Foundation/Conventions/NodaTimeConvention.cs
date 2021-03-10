@@ -18,7 +18,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     /// </summary>
     /// <seealso cref="IServiceConvention" />
     [PublicAPI]
-    [LiveConvention]
     public class NodaTimeConvention : IServiceConvention
     {
         private readonly FoundationOptions _options;

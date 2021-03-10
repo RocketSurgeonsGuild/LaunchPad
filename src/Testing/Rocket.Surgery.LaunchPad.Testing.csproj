@@ -11,4 +11,7 @@
         <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" />
         <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    </ItemGroup>
 </Project>

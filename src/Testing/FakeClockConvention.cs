@@ -8,6 +8,7 @@ using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Hosting;
+using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Testing;
 
 [assembly: Convention(typeof(FakeClockConvention))]
@@ -15,6 +16,7 @@ using Rocket.Surgery.LaunchPad.Testing;
 namespace Rocket.Surgery.LaunchPad.Testing
 {
     [UnitTestConvention]
+    [BeforeConvention(typeof(NodaTimeConvention))]
     public class FakeClockConvention : IServiceConvention
     {
         private readonly int _unixTimeSeconds;
@@ -28,8 +30,7 @@ namespace Rocket.Surgery.LaunchPad.Testing
 
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
-            services.RemoveAll<IClock>();
-            services.AddSingleton<IClock>(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
+            services.TryAddSingleton<IClock>(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
         }
     }
 }

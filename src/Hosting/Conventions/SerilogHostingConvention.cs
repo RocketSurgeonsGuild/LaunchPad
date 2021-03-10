@@ -66,7 +66,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
             else
             {
                 builder.UseSerilog(
-                    (ctx, loggerConfiguration) => loggerConfiguration.ApplyConventions(context),
+                    (ctx, services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, services),
                     _options.PreserveStaticLogger,
                     _options.WriteToProviders
                 );

@@ -24,11 +24,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <summary>
         /// The NodaTime timezone source
         /// </summary>
-        public IDateTimeZoneProvider DateTimeZoneProvider { get; set; } = DateTimeZoneProviders.Tzdb;
-
-        /// <summary>
-        /// The NodaTime timezone source
-        /// </summary>
         public IDateTimeZoneSource DateTimeZoneSource { get; set; } = TzdbDateTimeZoneSource.Default;
 
         /// <summary>

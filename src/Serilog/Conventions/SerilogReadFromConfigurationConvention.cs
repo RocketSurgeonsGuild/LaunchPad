@@ -45,7 +45,12 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
         }
 
         /// <inheritdoc />
-        public void Register([NotNull] IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
+        public void Register(
+            [NotNull] IConventionContext context,
+            IServiceProvider services,
+            IConfiguration configuration,
+            LoggerConfiguration loggerConfiguration
+        )
         {
             if (context == null)
             {

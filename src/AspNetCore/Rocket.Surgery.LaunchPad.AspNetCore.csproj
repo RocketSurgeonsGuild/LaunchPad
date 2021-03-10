@@ -3,6 +3,7 @@
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
         <PackageDescription></PackageDescription>
         <PackageTags>$(PackageTags)</PackageTags>
+        <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -15,5 +16,10 @@
         <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Swashbuckle.AspNetCore" />
+        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />
+        <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />
+        <PackageReference Include="Hellang.Middleware.ProblemDetails" />
+        <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
 </Project>

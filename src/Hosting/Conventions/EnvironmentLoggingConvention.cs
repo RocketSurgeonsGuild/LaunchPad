@@ -22,9 +22,15 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <param name="loggerConfiguration"></param>
-        public void Register([NotNull] IConventionContext context, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
+        public void Register(
+            [NotNull] IConventionContext context,
+            IServiceProvider services,
+            IConfiguration configuration,
+            LoggerConfiguration loggerConfiguration
+        )
         {
             if (context == null)
             {

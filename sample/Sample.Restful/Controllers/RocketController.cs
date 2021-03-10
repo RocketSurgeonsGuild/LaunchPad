@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.Restful;
+using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
 

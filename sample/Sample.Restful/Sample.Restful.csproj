@@ -7,8 +7,8 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore.AppMetrics\Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.csproj"/>
         <ProjectReference Include="..\..\src\AppMetrics\Rocket.Surgery.LaunchPad.AppMetrics.csproj"/>
-        <ProjectReference Include="..\..\src\Restful\Rocket.Surgery.LaunchPad.Restful.csproj"/>
-        <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj"/>
+        <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj"/>
+        <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj"/>
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj"/>
         <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" PrivateAssets="all" IncludeAssets="runtime;build;native;contentfiles;analyzers;buildtransitive"/>
     </ItemGroup>
