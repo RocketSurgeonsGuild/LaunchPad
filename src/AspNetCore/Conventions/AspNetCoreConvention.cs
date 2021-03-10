@@ -57,7 +57,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.AddMvcCore();
+            services.AddMvcCore().AddApiExplorer();
             PopulateDefaultParts(
                 GetServiceFromCollection<ApplicationPartManager>(services),
                 context.AssemblyCandidateFinder
