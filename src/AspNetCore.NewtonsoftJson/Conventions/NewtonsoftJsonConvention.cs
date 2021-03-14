@@ -2,6 +2,8 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NodaTime;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -43,8 +45,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             }
 
             services.WithMvcCore().AddNewtonsoftJson();
-            services.AddOptions<MvcNewtonsoftJsonOptions>().Configure<IDateTimeZoneProvider>(
-                (options, provider) => options.SerializerSettings.ConfigureForLaunchPad(provider)
+            services.AddOptions<MvcNewtonsoftJsonOptions>().Configure<IServiceProvider>(
+                (options, provider) => ActivatorUtilities.CreateInstance<ExistingValueOptionsFactory<JsonSerializerSettings>>(provider, options.SerializerSettings)
+                   .Create(nameof(MvcNewtonsoftJsonOptions))
             );
             services
                .Configure<MvcNewtonsoftJsonOptions>(

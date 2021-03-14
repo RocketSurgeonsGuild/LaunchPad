@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+        <PackageDescription></PackageDescription>
+        <PackageTags>$(PackageTags)</PackageTags>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Spatial</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="NetTopologySuite" />
+        <PackageReference Include="NetTopologySuite.IO.GeoJSON" />
+        <PackageReference Include="Rocket.Surgery.Conventions" />
+    </ItemGroup>
+</Project>

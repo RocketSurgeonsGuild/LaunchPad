@@ -19,7 +19,7 @@ namespace Extensions.Tests
         public NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : base(outputHelper)
         {
             _settings = new JsonSerializerSettings()
-               .ConfigureForLaunchPad(DateTimeZoneProviders.Tzdb);
+               .ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);
         }
 
         [Theory]

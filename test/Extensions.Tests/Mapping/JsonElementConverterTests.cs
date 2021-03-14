@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FluentAssertions;
-using Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.Profiles;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using System.Text;
 using System.Text.Json;

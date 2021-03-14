@@ -17,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
             services
                .AddOptions<JsonSerializerSettings>()
                .Configure<IDateTimeZoneProvider>(
-                    (options, provider) => options.ConfigureForLaunchPad(provider)
+                    (options, provider) => options.ConfigureNodaTimeForLaunchPad(provider)
                 );
         }
     }

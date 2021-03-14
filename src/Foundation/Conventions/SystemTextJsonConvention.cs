@@ -25,9 +25,9 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services
-               .AddOptions<JsonSerializerOptions>()
-               .Configure<IDateTimeZoneProvider>(
-                    (options, provider) => options.ConfigureForLaunchPad(provider)
+               .AddOptions<JsonSerializerOptions>(null)
+               .PostConfigure<IDateTimeZoneProvider>(
+                    (options, provider) => options.ConfigureNodaTimeForLaunchPad(provider)
                 );
         }
     }
