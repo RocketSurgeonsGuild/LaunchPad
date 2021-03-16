@@ -119,7 +119,7 @@
     <PackageVersion Include="Bogus" Version="33.0.2" />
     <PackageVersion Include="coverlet.collector" Version="3.0.3" />
     <PackageVersion Include="coverlet.msbuild" Version="3.0.3" />
-    <PackageVersion Include="FakeItEasy" Version="6.2.1" />
+    <PackageVersion Include="FakeItEasy" Version="7.0.0" />
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.0.0" />
     <PackageVersion Include="FluentAssertions" Version="5.10.3" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.11.4" />
