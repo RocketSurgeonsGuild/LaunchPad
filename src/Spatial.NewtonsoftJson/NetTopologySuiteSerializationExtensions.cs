@@ -21,14 +21,32 @@ namespace Rocket.Surgery.LaunchPad.Spatial
         /// Configure System.Text.Json with defaults for launchpad
         /// </summary>
         /// <param name="options"></param>
+        /// <param name="dateTimeZoneProvider"></param>
+        /// <returns></returns>
+        public static JsonSerializer ConfigureNetTopologySuiteForLaunchPad(this JsonSerializer options, GeometryFactory? factory, int dimension = 2)
+        {
+            factory ??= NtsGeometryServices.Instance.CreateGeometryFactory(4326);
+            var converters = options.Converters;
+            ApplyConverters(factory, dimension, options.Converters);
+            return options;
+        }
+
+        /// <summary>
+        /// Configure System.Text.Json with defaults for launchpad
+        /// </summary>
+        /// <param name="options"></param>
         /// <param name="factory"></param>
         /// <param name="dimension"></param>
         /// <returns></returns>
         public static JsonSerializerSettings ConfigureNetTopologySuiteForLaunchPad(this JsonSerializerSettings options, GeometryFactory? factory, int dimension = 2)
         {
             factory ??= NtsGeometryServices.Instance.CreateGeometryFactory(4326);
-            var converters = options.Converters;
+            ApplyConverters(factory, dimension, options.Converters);
+            return options;
+        }
 
+        private static void ApplyConverters(GeometryFactory factory, int dimension, IList<JsonConverter> converters)
+        {
             converters.Add(new FeatureCollectionConverter());
             converters.Add(new FeatureConverter());
             converters.Add(new AttributesTableConverter());
@@ -36,7 +54,6 @@ namespace Rocket.Surgery.LaunchPad.Spatial
             converters.Add(new GeometryArrayConverter(factory, dimension));
             converters.Add(new CoordinateConverter(factory.PrecisionModel, dimension));
             converters.Add(new EnvelopeConverter());
-            return options;
         }
     }
 }
