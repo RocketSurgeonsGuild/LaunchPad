@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
@@ -31,7 +32,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                                {
                                    Type = "string",
                                    Format = format,
-                                   Example = new OpenApiString(JsonSerializer.Serialize(value, settings).Trim('"'))
+                                   Example = new OpenApiString(JsonSerializer.Serialize(value, settings).Trim('"')),
+                                   Extensions = new Dictionary<string, IOpenApiExtension>()
+                                   {
+                                       ["clrType"] = new  OpenApiString(type.FullName)
+                                   }
                                });
                 if (type.IsValueType)
                 {
@@ -42,7 +47,12 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                                        Format = format,
                                        Example = new OpenApiString(
                                            JsonSerializer.Serialize(value, settings).Trim('"')
-                                       )
+                                       ),
+                                       Nullable = true,
+                                       Extensions = new Dictionary<string, IOpenApiExtension>()
+                                       {
+                                           ["clrType"] = new  OpenApiString(type.FullName)
+                                       }
                                    });
                 }
             }
@@ -132,7 +142,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                     {
                         Type = "object",
                         Nullable = false,
-                        Properties = { ["start"] = instantSchemas[0].schema(), ["end"] = instantSchemas[0].schema(), }
+                        Properties = { ["start"] = instantSchemas[0].schema(), ["end"] = instantSchemas[0].schema(), },
+                        Extensions = new Dictionary<string, IOpenApiExtension>()
+                        {
+                            ["clrType"] = new  OpenApiString(typeof(Interval).FullName)
+                        }
                     };
                 });
             c.MapType<Interval?>(
@@ -140,7 +154,12 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 {
                     Type = "object",
                     Nullable = true,
-                    Properties = { ["start"] = instantSchemas[0].schema(), ["end"] = instantSchemas[0].schema(), }
+                    Properties = { ["start"] = instantSchemas[0].schema(), ["end"] = instantSchemas[0].schema(), },
+
+                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    {
+                        ["clrType"] = new  OpenApiString(typeof(Interval).FullName)
+                    }
                 }
             );
 
