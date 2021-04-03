@@ -18,7 +18,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
             Action<IObjectTypeDescriptor> descriptor
         )
         {
-            builder.Services.AddSingleton(new DelegateConfigureGraphqlRootType(operationType, schemaName, descriptor));
+            builder.Services.AddSingleton<IConfigureGraphqlRootType>(new DelegateConfigureGraphqlRootType(operationType, schemaName, descriptor));
             return builder;
         }
 
@@ -28,7 +28,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
             Action<IObjectTypeDescriptor> descriptor
         )
         {
-            builder.Services.AddSingleton(new DelegateConfigureGraphqlRootType(operationType, null, descriptor));
+            builder.Services.AddSingleton<IConfigureGraphqlRootType>(new DelegateConfigureGraphqlRootType(operationType, null, descriptor));
             return builder;
         }
 

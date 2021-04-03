@@ -47,7 +47,6 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
             services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
             services.TryAddSingleton(_options);
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureGraphqlRootType>(new AutoConfigureMediatRMutation(types)));
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureGraphqlRootType>(new AutoConfigureMediatRMutation(types)));
 
             var sb = services
                    .AddGraphQL()
