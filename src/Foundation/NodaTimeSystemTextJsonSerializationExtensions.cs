@@ -23,8 +23,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <returns></returns>
         public static JsonSerializerOptions ConfigureNodaTimeForLaunchPad(this JsonSerializerOptions options, IDateTimeZoneProvider dateTimeZoneProvider)
         {
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.ConfigureForNodaTime(dateTimeZoneProvider);
             ReplaceConverter(
                 options.Converters,

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
@@ -46,10 +47,16 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 
             services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
 
+            services.AddOptions<SwaggerGenOptions>()
+               .Configure<IOptions<JsonOptions>>(
+                    (options, mvcOptions) =>
+                    {
+                        options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions);
+                    }
+                );
             services.AddSwaggerGen(
                 options =>
                 {
-                    options.ConfigureForNodaTime();
                     options.SchemaFilter<ProblemDetailsSchemaFilter>();
                     options.OperationFilter<OperationIdFilter>();
                     options.OperationFilter<StatusCode201Filter>();

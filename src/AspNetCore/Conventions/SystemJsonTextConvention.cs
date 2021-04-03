@@ -48,10 +48,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.AddOptions<JsonOptions>().Configure<IServiceProvider>(
-                (options, provider) => ActivatorUtilities.CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.JsonSerializerOptions)
-                   .Create(nameof(JsonOptions))
-            );
+            services
+               .AddOptions<JsonOptions>()
+               .Configure<IServiceProvider>(
+                    (options, provider) => ActivatorUtilities
+                       .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.JsonSerializerOptions)
+                       .Create(nameof(JsonOptions))
+                );
         }
     }
 }

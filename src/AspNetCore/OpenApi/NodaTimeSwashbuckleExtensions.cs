@@ -16,11 +16,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
     [ExcludeFromCodeCoverage]
     internal static class NodaTimeSwashbuckleExtensions
     {
-        public static SwaggerGenOptions ConfigureForNodaTime(this SwaggerGenOptions c)
+        public static SwaggerGenOptions ConfigureForNodaTime(this SwaggerGenOptions c, JsonSerializerOptions settings)
         {
-            var settings = new JsonSerializerOptions();
-            settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-
             IEnumerable<(Type type, Func<OpenApiSchema> schema)> createStringSchema(
                 Type type,
                 object value,

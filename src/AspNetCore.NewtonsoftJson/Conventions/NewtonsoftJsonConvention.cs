@@ -45,10 +45,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             }
 
             services.WithMvcCore().AddNewtonsoftJson();
-            services.AddOptions<MvcNewtonsoftJsonOptions>().Configure<IServiceProvider>(
-                (options, provider) => ActivatorUtilities.CreateInstance<ExistingValueOptionsFactory<JsonSerializerSettings>>(provider, options.SerializerSettings)
-                   .Create(nameof(MvcNewtonsoftJsonOptions))
-            );
+            services
+               .AddOptions<MvcNewtonsoftJsonOptions>()
+               .Configure<IServiceProvider>(
+                    (options, provider) => ActivatorUtilities
+                       .CreateInstance<ExistingValueOptionsFactory<JsonSerializerSettings>>(provider, options.SerializerSettings)
+                       .Create(nameof(MvcNewtonsoftJsonOptions))
+                );
             services
                .Configure<MvcNewtonsoftJsonOptions>(
                     options => options.SerializerSettings.Converters.Add(

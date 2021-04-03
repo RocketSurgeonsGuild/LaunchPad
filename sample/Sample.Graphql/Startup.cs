@@ -35,6 +35,7 @@ namespace Sample.Graphql
 
             services
                .AddGraphQLServer()
+               .AddDefaultTransactionScopeHandler()
                .AddSorting()
                .AddFiltering()
                .AddProjections();
