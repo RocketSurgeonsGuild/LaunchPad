@@ -114,10 +114,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         private static void AddFluentValidationRules(IServiceCollection services)
         {
             services.AddSingleton(
-                new FluentValidationRule("NotEmpty")
-                {
-                    Matches = propertyValidator => propertyValidator is INotEmptyValidator,
-                    Apply = context =>
+                new FluentValidationRule(
+                    "NotEmpty",
+                    new Func<IPropertyValidator, bool>[]
+                    {
+                        propertyValidator => propertyValidator is INotEmptyValidator
+                    },
+                    context =>
                     {
                         var propertyType = context.SchemaFilterContext.Type
                            .GetProperties()
@@ -135,14 +138,17 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                             context.Schema.Properties[context.PropertyKey].MinLength = 1;
                         }
                     }
-                }
+                )
             );
 
             services.AddSingleton(
-                new FluentValidationRule("ValueTypeOrEnum")
-                {
-                    Matches = propertyValidator => true,
-                    Apply = context =>
+                new FluentValidationRule(
+                    "ValueTypeOrEnum",
+                    new Func<IPropertyValidator, bool>[]
+                    {
+                        propertyValidator => true
+                    },
+                    context =>
                     {
                         var propertyType = context.SchemaFilterContext.Type
                            .GetProperties()
@@ -163,38 +169,40 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                             context.Schema.Properties[context.PropertyKey].Nullable = false;
                         }
                     }
-                }
+                )
             );
 
             services.AddSingleton(
-                new FluentValidationRule("Nullable")
-                {
-                    Matches = propertyValidator => propertyValidator is INotNullValidator ||
-                        propertyValidator is INotEmptyValidator ||
-                        propertyValidator is INullValidator,
-                    Apply = context =>
+                new FluentValidationRule(
+                    "Nullable",
+                    new Func<IPropertyValidator, bool>[]
+                    {
+                        propertyValidator => propertyValidator is INotNullValidator ||
+                            propertyValidator is INotEmptyValidator ||
+                            propertyValidator is INullValidator
+                    },
+                    context =>
                     {
                         context.Schema.Properties[context.PropertyKey].Nullable =
                             !( context.PropertyValidator is INotNullValidator ||
                                 context.PropertyValidator is INotEmptyValidator );
                     }
-                }
+                )
             );
 
             services.AddSingleton(
-                new FluentValidationRule("IsOneOf")
-                {
-                    Matches = propertyValidator => propertyValidator is StringInValidator,
-                    Apply = context =>
+                new FluentValidationRule(
+                    "IsOneOf",
+                    new Func<IPropertyValidator, bool>[]
+                        { propertyValidator => propertyValidator is StringInValidator },
+                    context =>
                     {
                         var validator = context.PropertyValidator as StringInValidator;
                         context.Schema.Properties[context.PropertyKey].Enum =
                             validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
                     }
-                }
+                )
             );
         }
     }
-
-
 }
