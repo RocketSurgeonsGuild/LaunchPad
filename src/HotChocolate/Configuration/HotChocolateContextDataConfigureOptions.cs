@@ -15,7 +15,6 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Configuration
                 (provider, builder) =>
                 {
                     builder
-                       .TryAddSchemaInterceptor<ConfigureRootTypeSchemaInterceptor>()
                        .TryAddTypeInterceptor<NestedTypeNameTypeInterceptor>();
                 }));
         }

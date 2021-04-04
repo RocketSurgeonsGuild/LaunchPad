@@ -46,18 +46,23 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
             services.TryAddSingleton<IValidatorProvider, FairyBreadValidatorProvider>();
             services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
             services.TryAddSingleton(_options);
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureGraphqlRootType>(new AutoConfigureMediatRMutation(types)));
+
+            // services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureGraphqlRootType>(new AutoConfigureMediatRMutation(types)));
 
             var sb = services
                    .AddGraphQL()
                    .UseField<CustomInputValidationMiddleware>()
                    .AddErrorFilter<GraphqlErrorFilter>()
                 ;
-            if (_rocketChocolateOptions.IncludeAssemblyInfoQuery)
+
+            sb.ConfigureSchema(c => c.AddType(new AutoConfigureMediatRMutation(types)));
+            if (!_rocketChocolateOptions.IncludeAssemblyInfoQuery)
             {
-                services.TryAddSingleton(_foundationOptions);
-                sb.AddType<AssemblyInfoQuery>();
+                return;
             }
+
+            services.TryAddSingleton(_foundationOptions);
+            sb.AddType<AssemblyInfoQuery>();
         }
     }
 }

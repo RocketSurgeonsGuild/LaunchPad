@@ -29,13 +29,21 @@ namespace Sample.Graphql
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureGraphqlRootType, AutoConfigureDbContextConfigureQueryType<RocketDbContext>>());
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfigureQueryEntity, ConfigureReadyRocketQueryType>());
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfigureQueryEntity, ConfigureLaunchRecordQueryType>());
-
             services
                .AddGraphQLServer()
                .AddDefaultTransactionScopeHandler()
+               .AddQueryType()
+               .AddMutationType()
+               .ConfigureSchema(
+                    s =>
+                    {
+                        s.AddType(
+                            new ConfigureConfigureEntityFrameworkContextQueryType<RocketDbContext>(
+                                new ConfigureReadyRocketType(),
+                                new ConfigureLaunchRecordType()
+                            )
+                        );
+                    })
                .AddSorting()
                .AddFiltering()
                .AddProjections();
