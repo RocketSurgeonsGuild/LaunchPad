@@ -24,7 +24,7 @@
     <PackageVersion Include="AutoMapper" Version="10.1.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageVersion Include="App.Metrics" Version="4.1.0" />
-    <PackageVersion Include="App.Metrics.AppNetCore" Version="4.1.0" />
+    <PackageVersion Include="App.Metrics.AppNetCore" Version="4.2.0" />
     <!--        <PackageVersion Include="App.Metrics.AspNetCore" Version="4.1.0"/>-->
     <PackageVersion Include="App.Metrics.Extensions.HealthChecks" Version="4.1.0" />
     <PackageVersion Include="App.Metrics" Version="4.1.0" />
