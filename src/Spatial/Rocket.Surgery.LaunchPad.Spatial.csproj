@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+        <PackageDescription></PackageDescription>
+        <PackageTags>$(PackageTags)</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" />
+        <PackageReference Include="NetTopologySuite" />
+        <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" />
+        <PackageReference Include="Rocket.Surgery.Conventions" />
+    </ItemGroup>
+</Project>

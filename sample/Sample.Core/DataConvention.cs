@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Sample.Core;
@@ -31,6 +32,10 @@ namespace Sample.Core
                        .EnableServiceProviderCaching()
                        .UseSqlite(connection)
                 );
+#if NET
+            // temp?
+            services.TryAddScoped(_ => _.GetRequiredService<IDbContextFactory<RocketDbContext>>().CreateDbContext());
+#endif
         }
     }
 }

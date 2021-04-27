@@ -1,5 +1,9 @@
 using FluentAssertions;
+using FluentAssertions.Collections;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite;
+using NetTopologySuite.IO;
+using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Text;
 using Rocket.Surgery.Extensions.Testing;
@@ -9,6 +13,7 @@ using System;
 using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Extensions.Tests
 {
@@ -18,8 +23,7 @@ namespace Extensions.Tests
 
         public SystemTextJsonNodaTimeTests(ITestOutputHelper outputHelper) : base(outputHelper)
         {
-            _settings = new JsonSerializerOptions()
-               .ConfigureForLaunchPad(DateTimeZoneProviders.Tzdb);
+            _settings = new JsonSerializerOptions().ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);
         }
 
         [Theory]

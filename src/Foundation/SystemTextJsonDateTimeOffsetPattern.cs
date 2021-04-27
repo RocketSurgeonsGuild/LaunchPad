@@ -4,7 +4,7 @@ using NodaTime.Text;
 using System;
 using System.Text;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore
+namespace Rocket.Surgery.LaunchPad.Foundation
 {
     class SystemTextJsonDateTimeOffsetPattern : IPattern<Instant>
     {

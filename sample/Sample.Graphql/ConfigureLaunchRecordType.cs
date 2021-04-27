@@ -6,7 +6,7 @@ using Sample.Core.Domain;
 
 namespace Sample.Graphql
 {
-    public class ConfigureLaunchRecordQueryType : DbContextConfigureQueryEntity<LaunchRecord>
+    public class ConfigureLaunchRecordType : ConfigureEntityFrameworkEntityQueryType<LaunchRecord>
     {
         public override void Configure(IObjectFieldDescriptor fieldDescriptor)
         {

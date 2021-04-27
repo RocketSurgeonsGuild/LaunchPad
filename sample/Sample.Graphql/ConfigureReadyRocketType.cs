@@ -6,7 +6,7 @@ using Sample.Core.Domain;
 
 namespace Sample.Graphql
 {
-    public class ConfigureReadyRocketQueryType : DbContextConfigureQueryEntity<ReadyRocket>
+    public class ConfigureReadyRocketType : ConfigureEntityFrameworkEntityQueryType<ReadyRocket>
     {
         public override void Configure(IObjectFieldDescriptor fieldDescriptor)
         {

@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using NodaTime.Text;
@@ -47,9 +48,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            services.AddOptions<JsonOptions>().Configure<IDateTimeZoneProvider>(
-                (options, provider) => options.JsonSerializerOptions.ConfigureForLaunchPad(provider)
-            );
+            services
+               .AddOptions<JsonOptions>()
+               .Configure<IServiceProvider>(
+                    (options, provider) => ActivatorUtilities
+                       .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.JsonSerializerOptions)
+                       .Create(nameof(JsonOptions))
+                );
         }
     }
 }
