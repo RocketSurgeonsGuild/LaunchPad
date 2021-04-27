@@ -2,7 +2,8 @@
 using Newtonsoft.Json.Linq;
 using System.IO;
 
-namespace Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson {
+namespace Rocket.Surgery.LaunchPad.Mapping
+{
     static class ConverterHelpers
     {
         internal static byte[] WriteToBytes(JToken source)

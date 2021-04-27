@@ -20,7 +20,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
     }
 
 
-    [ExtendObjectType("Query")]
+    [ExtendObjectType(OperationTypeNames.Query)]
     [PublicAPI]
     public class AssemblyInfoQuery
     {

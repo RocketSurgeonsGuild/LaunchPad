@@ -2,12 +2,12 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson;
+using Rocket.Surgery.LaunchPad.Mapping;
 using System;
 
 [assembly: Convention(typeof(AutoMapperNewtonsoftJsonConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson
+namespace Rocket.Surgery.LaunchPad.Mapping
 {
     /// <summary>
     /// AutoMapperConvention.

@@ -2,7 +2,6 @@ using JetBrains.Annotations;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using NodaTime.Text;
-using Rocket.Surgery.LaunchPad.AspNetCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -22,10 +21,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <param name="options"></param>
         /// <param name="dateTimeZoneProvider"></param>
         /// <returns></returns>
-        public static JsonSerializerOptions ConfigureForLaunchPad(this JsonSerializerOptions options, IDateTimeZoneProvider dateTimeZoneProvider)
+        public static JsonSerializerOptions ConfigureNodaTimeForLaunchPad(this JsonSerializerOptions options, IDateTimeZoneProvider dateTimeZoneProvider)
         {
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.ConfigureForNodaTime(dateTimeZoneProvider);
             ReplaceConverter(
                 options.Converters,

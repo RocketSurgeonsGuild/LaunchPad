@@ -13,19 +13,19 @@ using System.Threading;
 
 namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
 {
-    public class AutoConfigureDbContextConfigureQueryType<TContext> : ConfigureGraphqlRootTypeBase
+    public class ConfigureConfigureEntityFrameworkContextQueryType<TContext> : ObjectTypeExtension
         where TContext : DbContext
     {
-        private readonly IEnumerable<IDbContextConfigureQueryEntity> _configureQueryEntities;
+        private readonly IEnumerable<IConfigureEntityFrameworkEntityQueryType> _configureQueryEntities;
 
-        public AutoConfigureDbContextConfigureQueryType(IEnumerable<IDbContextConfigureQueryEntity> configureQueryEntities) : base(OperationType.Query)
-        {
-            _configureQueryEntities = configureQueryEntities;
-        }
+        public ConfigureConfigureEntityFrameworkContextQueryType(IEnumerable<IConfigureEntityFrameworkEntityQueryType> configureQueryEntities) => _configureQueryEntities = configureQueryEntities;
 
-        public override void Configure(IObjectTypeDescriptor descriptor)
+        public ConfigureConfigureEntityFrameworkContextQueryType(params IConfigureEntityFrameworkEntityQueryType[] configureQueryEntities) => _configureQueryEntities = configureQueryEntities;
+
+        protected override void Configure(IObjectTypeDescriptor descriptor)
         {
-            var configure = typeof(AutoConfigureDbContextConfigureQueryType<TContext>).GetMethod(
+            descriptor.Name(OperationTypeNames.Query);
+            var configure = typeof(ConfigureConfigureEntityFrameworkContextQueryType<TContext>).GetMethod(
                 nameof(ConfigureResolve),
                 BindingFlags.NonPublic | BindingFlags.Static
             )!;

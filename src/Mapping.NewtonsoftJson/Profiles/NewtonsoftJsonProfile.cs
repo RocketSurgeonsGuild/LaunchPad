@@ -3,10 +3,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using System.Text.Json;
-using static Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.ConverterHelpers;
+using static Rocket.Surgery.LaunchPad.Mapping.ConverterHelpers;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.Profiles
+namespace Rocket.Surgery.LaunchPad.Mapping.Profiles
 {
     public class NewtonsoftJsonProfile : Profile
     {

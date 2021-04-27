@@ -5,7 +5,6 @@ using Newtonsoft.Json.Serialization;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using NodaTime.Text;
-using Rocket.Surgery.LaunchPad.AspNetCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,12 +22,33 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <param name="options"></param>
         /// <param name="dateTimeZoneProvider"></param>
         /// <returns></returns>
-        public static JsonSerializerSettings ConfigureForLaunchPad(this JsonSerializerSettings options, IDateTimeZoneProvider dateTimeZoneProvider)
+        public static JsonSerializer ConfigureNodaTimeForLaunchPad(this JsonSerializer options, IDateTimeZoneProvider dateTimeZoneProvider)
         {
             options.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
             options.ConfigureForNodaTime(dateTimeZoneProvider);
+            ReplaceConverters(options.Converters);
+            return options;
+        }
+
+        /// <summary>
+        /// Configure System.Text.Json with defaults for launchpad
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="dateTimeZoneProvider"></param>
+        /// <returns></returns>
+        public static JsonSerializerSettings ConfigureNodaTimeForLaunchPad(this JsonSerializerSettings options, IDateTimeZoneProvider dateTimeZoneProvider)
+        {
+            options.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+            options.ConfigureForNodaTime(dateTimeZoneProvider);
+            ReplaceConverters(options.Converters);
+
+            return options;
+        }
+
+        private static void ReplaceConverters(IList<JsonConverter> converters)
+        {
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<Instant>(
                     InstantPattern.ExtendedIso,
                     InstantPattern.General,
@@ -36,14 +56,14 @@ namespace Rocket.Surgery.LaunchPad.Foundation
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<LocalDate>(
                     LocalDatePattern.Iso,
                     LocalDatePattern.FullRoundtrip
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<LocalDateTime>(
                     LocalDateTimePattern.ExtendedIso,
                     LocalDateTimePattern.GeneralIso,
@@ -53,7 +73,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<LocalTime>(
                     LocalTimePattern.ExtendedIso,
                     LocalTimePattern.GeneralIso,
@@ -61,49 +81,49 @@ namespace Rocket.Surgery.LaunchPad.Foundation
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<Offset>(
                     OffsetPattern.GeneralInvariant,
                     OffsetPattern.GeneralInvariantWithZ
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<Duration>(
                     DurationPattern.JsonRoundtrip,
                     DurationPattern.Roundtrip
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<Duration>(
                     DurationPattern.JsonRoundtrip,
                     DurationPattern.Roundtrip
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<Period>(
                     PeriodPattern.Roundtrip,
                     PeriodPattern.NormalizingIso
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<OffsetDateTime>(
                     OffsetDateTimePattern.GeneralIso,
                     OffsetDateTimePattern.FullRoundtrip
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<OffsetDate>(
                     OffsetDatePattern.GeneralIso,
                     OffsetDatePattern.FullRoundtrip
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<OffsetTime>(
                     OffsetTimePattern.Rfc3339,
                     OffsetTimePattern.GeneralIso,
@@ -111,13 +131,11 @@ namespace Rocket.Surgery.LaunchPad.Foundation
                 )
             );
             ReplaceConverter(
-                options.Converters,
+                converters,
                 new NewtonsoftJsonCompositeNodaPatternConverter<ZonedDateTime>(
                     ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", DateTimeZoneProviders.Tzdb)
                 )
             );
-
-            return options;
         }
 
         private static void ReplaceConverter<T>(ICollection<JsonConverter> converters, NewtonsoftJsonCompositeNodaPatternConverter<T> converter)

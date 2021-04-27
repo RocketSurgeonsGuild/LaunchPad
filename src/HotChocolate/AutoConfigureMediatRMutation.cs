@@ -12,20 +12,15 @@ using System.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
-    public class AutoConfigureMediatRMutation : ConfigureGraphqlRootTypeBase
+    public class AutoConfigureMediatRMutation : ObjectTypeExtension
     {
         private readonly IEnumerable<Type> _mediatorRequestTypes;
 
-        public AutoConfigureMediatRMutation(IEnumerable<Type> mediatorRequestTypes) : base(OperationType.Mutation)
-        {
-            _mediatorRequestTypes = mediatorRequestTypes;
-            Console.WriteLine(nameof(AutoConfigureMediatRMutation));
-            foreach (var type in _mediatorRequestTypes)
-            Console.WriteLine(type.FullName);
-        }
+        public AutoConfigureMediatRMutation(IEnumerable<Type> mediatorRequestTypes) => _mediatorRequestTypes = mediatorRequestTypes;
 
-        public override void Configure(IObjectTypeDescriptor descriptor)
+        protected override void Configure(IObjectTypeDescriptor descriptor)
         {
+            descriptor.Name(OperationTypeNames.Mutation);
             var method = typeof(AutoConfigureMediatRMutation).GetMethod(nameof(Configure), BindingFlags.Static | BindingFlags.NonPublic)!;
 
             foreach (var type in _mediatorRequestTypes)
@@ -51,7 +46,6 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
                 d.Argument("request", z => z.Type(typeof(TRequest)));
             }
 
-            ;
             if (typeof(TResponse) == typeof(Unit))
             {
                 d.Type<VoidType>();
