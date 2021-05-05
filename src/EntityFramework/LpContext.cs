@@ -3,12 +3,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Rocket.Surgery.LaunchPad.EntityFramework
 {
-    public class LpContext<TContext> : DbContext where TContext : DbContext
+    /// <summary>
+    /// Default DB Context that ensures that configuration is pulled from the assembly of TContext
+    /// Also enables DateTimeOffset support with Sqlite
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    public abstract class LpContext<TContext> : DbContext where TContext : DbContext
     {
-        public LpContext(DbContextOptions<TContext> options) : base(options)
+        /// <inheritdoc />
+        protected LpContext(DbContextOptions<TContext> options) : base(options)
         {
         }
 
+        /// <inheritdoc />
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(TContext).Assembly);

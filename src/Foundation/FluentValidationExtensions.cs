@@ -20,11 +20,11 @@ namespace FluentValidation
         /// <param name="caseSensitive">If the comparison between the string and the enum names should be case sensitive</param>
         /// <param name="values">The values to match against</param>
         /// <returns></returns>
-        public static IRuleBuilderOptions<T, TProperty> IsOneOf<T, TProperty>(
-            this IRuleBuilder<T, TProperty> ruleBuilder,
+        public static IRuleBuilderOptions<T, TProperty?> IsOneOf<T, TProperty>(
+            this IRuleBuilder<T, TProperty?> ruleBuilder,
             bool caseSensitive,
             params string[] values
-        ) => ruleBuilder.SetValidator(new StringInValidator(values, caseSensitive));
+        ) where TProperty : notnull => ruleBuilder.SetValidator(new StringInValidator<T, TProperty>(values, caseSensitive));
 
         /// <summary>
         /// Defines a validator on the current rule builder that ensures that the specific value is one of the values given in the list.
@@ -34,8 +34,11 @@ namespace FluentValidation
         /// <param name="ruleBuilder">The rule builder on which the validator should be defined</param>
         /// <param name="values">The values to match against</param>
         /// <returns></returns>
-        public static IRuleBuilderOptions<T, TProperty> IsOneOf<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder, params string[] values)
-            => ruleBuilder.SetValidator(new StringInValidator(values, false));
+        public static IRuleBuilderOptions<T, TProperty> IsOneOf<T, TProperty>(
+            this IRuleBuilder<T, TProperty> ruleBuilder,
+            params string[] values
+        ) where TProperty : notnull
+            => ruleBuilder.SetValidator(new StringInValidator<T, TProperty>(values, false));
 
         /// <summary>
         /// Uses the polymorphic validator.
@@ -53,7 +56,7 @@ namespace FluentValidation
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            return builder.SetValidator(new PolymorphicPropertyValidator<T, TProperty>());
+            return builder.SetAsyncValidator(new PolymorphicPropertyValidator<T, TProperty>());
         }
     }
 }

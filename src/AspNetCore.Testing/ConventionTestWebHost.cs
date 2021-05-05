@@ -21,12 +21,17 @@ using ILogger = Serilog.ILogger;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
 {
+    /// <summary>
+    /// A base test class that configures rocket surgery for unit or integration testing
+    /// </summary>
+    /// <typeparam name="TEntryPoint"></typeparam>
     [PublicAPI]
     public class ConventionTestWebHost<TEntryPoint> : WebApplicationFactory<TEntryPoint>
         where TEntryPoint : class
     {
         private readonly List<Action<ConventionContextBuilder>> _hostBuilderActions = new List<Action<ConventionContextBuilder>>();
 
+        /// <inheritdoc/>
         protected override IHostBuilder CreateHostBuilder()
         {
             var hostBuilder = base.CreateHostBuilder()
@@ -46,8 +51,19 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             return hostBuilder;
         }
 
+        /// <summary>
+        /// Configure the default <see cref="FakeClock"/>
+        /// </summary>
+        /// <param name="unixTimeSeconds"></param>
+        /// <param name="advanceBy"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureClock(int? unixTimeSeconds = null, Duration? advanceBy = null) => ConfigureClock(new FakeClock(Instant.FromUnixTimeSeconds(unixTimeSeconds ?? 1577836800), advanceBy ?? Duration.FromSeconds(1)));
 
+        /// <summary>
+        /// Configure the default <see cref="IClock"/>
+        /// </summary>
+        /// <param name="clock"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureClock(IClock clock) => ConfigureHostBuilder(
             builder =>
             {
@@ -63,6 +79,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             }
         );
 
+        /// <summary>
+        /// Configure the the default <see cref="ILogger"/>
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureLogger(ILogger logger)
             => ConfigureHostBuilder(builder =>
                 {
@@ -73,6 +94,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
                 }
             );
 
+        /// <summary>
+        /// Configure the the default <see cref="ILoggerFactory"/>
+        /// </summary>
+        /// <param name="loggerFactory"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory)
             => ConfigureHostBuilder(builder =>
                 {
@@ -81,6 +107,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
                 }
             );
 
+        /// <summary>
+        /// Add additional configuration to the Host
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureHostBuilder(Action<ConventionContextBuilder> action)
         {
             _hostBuilderActions.Add(action);

@@ -10,11 +10,17 @@ using Rocket.Surgery.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.Functions
 {
+    /// <summary>
+    /// Default startup class for interacting with Azure Functions
+    /// </summary>
     public abstract class LaunchPadFunctionStartup : FunctionsStartup
     {
         internal ConventionContextBuilder _builder;
-        internal IConventionContext _context;
+        internal IConventionContext _context = null!;
 
+        /// <summary>
+        /// The default constuctor
+        /// </summary>
         protected LaunchPadFunctionStartup()
         {
             _builder = new ConventionContextBuilder(new Dictionary<object, object?>())
@@ -44,6 +50,10 @@ namespace Rocket.Surgery.LaunchPad.Functions
             // }
         }
 
+        /// <summary>
+        /// The default constructor with the given configuration method
+        /// </summary>
+        /// <param name="configure"></param>
         protected LaunchPadFunctionStartup(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure)
         {
             _builder = configure(this).Set(HostType.Live);
@@ -53,6 +63,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
             }
         }
 
+        /// <inheritdoc />
         public sealed override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
             Setup(_builder);
@@ -61,6 +72,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
             ConfigureAppConfiguration(builder, _context);
         }
 
+        /// <inheritdoc />
         public sealed override void Configure(IFunctionsHostBuilder builder)
         {
             var existingHostedServices = builder.Services.Where(x => x.ServiceType == typeof(IHostedService)).ToArray();
@@ -74,18 +86,42 @@ namespace Rocket.Surgery.LaunchPad.Functions
             Configure(builder, _context);
         }
 
+        /// <summary>
+        /// Method called to setup the conventions
+        /// </summary>
+        /// <param name="contextBuilder"></param>
         public virtual void Setup(ConventionContextBuilder contextBuilder) { }
 
+        /// <summary>
+        /// Method called to configure the application with the conventions
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="context"></param>
         public virtual void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder, IConventionContext context) { }
 
+        /// <summary>
+        /// Method called to configure the services with the conventions
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="context"></param>
         public abstract void Configure(IFunctionsHostBuilder builder, IConventionContext context);
 
+        /// <summary>
+        /// Use the given rocket booster
+        /// </summary>
+        /// <param name="configure"></param>
+        /// <returns></returns>
         public LaunchPadFunctionStartup UseRocketBooster(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure)
         {
             _builder = configure(this);
             return this;
         }
 
+        /// <summary>
+        /// Use the given rocket booster
+        /// </summary>
+        /// <param name="configure"></param>
+        /// <returns></returns>
         public LaunchPadFunctionStartup LaunchWith(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure)
         {
             _builder = configure(this);

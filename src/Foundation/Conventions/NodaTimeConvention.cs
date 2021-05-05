@@ -22,6 +22,10 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     {
         private readonly FoundationOptions _options;
 
+        /// <summary>
+        /// Create the NodaTime convention
+        /// </summary>
+        /// <param name="options"></param>
         public NodaTimeConvention(FoundationOptions? options = null)
         {
             _options = options ?? new FoundationOptions();

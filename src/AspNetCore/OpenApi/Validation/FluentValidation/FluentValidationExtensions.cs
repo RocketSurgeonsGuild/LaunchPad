@@ -23,7 +23,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidatio
             /// <summary>
             /// PropertyRule.
             /// </summary>
-            public readonly PropertyRule PropertyRule;
+            public readonly IValidationRule PropertyRule;
 
             /// <summary>
             /// Flag indication whether the <see cref="PropertyRule"/> is the CollectionRule.
@@ -35,11 +35,23 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidatio
             /// </summary>
             /// <param name="propertyRule">PropertyRule.</param>
             /// <param name="isCollectionRule">Is a CollectionPropertyRule.</param>
-            public ValidationRuleContext(PropertyRule propertyRule, bool isCollectionRule)
+            public ValidationRuleContext(IValidationRule propertyRule, bool isCollectionRule)
             {
                 PropertyRule = propertyRule;
                 IsCollectionRule = isCollectionRule;
             }
+        }
+
+        /// <summary>
+        /// Gets validation rules for validator.
+        /// </summary>
+        /// <param name="validator">Validator.</param>
+        /// <returns>enumeration.</returns>
+        public static IEnumerable<ValidationRuleContext> GetValidationRules(this IValidator validator)
+        {
+            return (validator as IEnumerable<IValidationRule>)
+                .NotNull()
+                .GetPropertyRules();
         }
 
         /// <summary>
@@ -50,10 +62,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidatio
         /// <returns>enumeration.</returns>
         public static IEnumerable<ValidationRuleContext> GetValidationRulesForMemberIgnoreCase(this IValidator validator, string name)
         {
-            return (validator as IEnumerable<IValidationRule>)
-                .NotNull()
-                .GetPropertyRules()
-                .Where(propertyRule => HasNoCondition((PropertyRule) propertyRule.PropertyRule) && StringExtensions.EqualsIgnoreAll(propertyRule.PropertyRule.PropertyName, name));
+            return validator
+                .GetValidationRules()
+                .Where(propertyRule => propertyRule.PropertyRule.PropertyName.EqualsIgnoreAll(name));
         }
 
         /// <summary>
@@ -65,7 +76,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidatio
         public static IEnumerable<IPropertyValidator> GetValidatorsForMemberIgnoreCase(this IValidator validator, string name)
         {
             return GetValidationRulesForMemberIgnoreCase(validator, name)
-                .SelectMany(propertyRule => propertyRule.PropertyRule.Validators);
+                .SelectMany(propertyRule => propertyRule.PropertyRule.Components)
+                .OfType<IPropertyValidator>();
         }
 
         /// <summary>
@@ -75,25 +87,46 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidatio
         internal static IEnumerable<ValidationRuleContext> GetPropertyRules(
             this IEnumerable<IValidationRule> validationRules)
         {
-            foreach (var validationRule in validationRules)
-            {
-                if (validationRule is PropertyRule propertyRule)
+            return validationRules
+                .Where(rule => rule.HasNoCondition())
+                .Select(rule =>
                 {
                     // CollectionPropertyRule<T, TElement> is also a PropertyRule.
-                    var isCollectionRule = propertyRule.GetType().Name.StartsWith("CollectionPropertyRule");
-                    yield return new ValidationRuleContext(propertyRule, isCollectionRule);
-                }
-            }
+                    var isCollectionRule = rule.GetType().Name.StartsWith("CollectionPropertyRule");
+                    return new ValidationRuleContext(rule, isCollectionRule);
+                });
         }
-
-        /// <summary>
-        /// Returns a <see cref="bool"/> indicating if the <paramref name="propertyValidator"/> is conditional.
-        /// </summary>
-        internal static bool HasNoCondition(this IPropertyValidator propertyValidator) => propertyValidator.Options.HasCondition != true && propertyValidator.Options?.HasAsyncCondition != true;
 
         /// <summary>
         /// Returns a <see cref="bool"/> indicating if the <paramref name="propertyRule"/> is conditional.
         /// </summary>
-        internal static bool HasNoCondition(this PropertyRule propertyRule) => !propertyRule.HasCondition && !propertyRule.HasAsyncCondition;
+        internal static bool HasNoCondition(this IValidationRule propertyRule)
+        {
+            var hasCondition = propertyRule.HasCondition || propertyRule.HasAsyncCondition;
+            return !hasCondition;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="bool"/> indicating if the <paramref name="propertyRule"/> is conditional.
+        /// </summary>
+        internal static bool HasNoCondition(this IRuleComponent ruleComponent)
+        {
+            var hasCondition = ruleComponent.HasCondition || ruleComponent.HasAsyncCondition;
+            return !hasCondition;
+        }
+
+        /// <summary>
+        /// Gets validators for <see cref="IValidationRule"/>.
+        /// </summary>
+        /// <param name="validationRule">Validator.</param>
+        /// <returns>enumeration.</returns>
+        public static IEnumerable<IPropertyValidator> GetValidators(this IValidationRule validationRule)
+        {
+            return validationRule
+                .Components
+                .NotNull()
+                .Where(component => component.HasNoCondition())
+                .Select(component => component.Validator);
+        }
     }
 }

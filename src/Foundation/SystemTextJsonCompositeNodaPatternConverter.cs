@@ -33,6 +33,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
             this._validator = validator;
         }
 
+        /// <inheritdoc />
         protected override T ReadJsonImpl(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             string text = reader!.GetString()!;
@@ -48,6 +49,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
             return result.Value;
         }
 
+        /// <inheritdoc />
         protected override void WriteJsonImpl(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
             _validator?.Invoke(value);

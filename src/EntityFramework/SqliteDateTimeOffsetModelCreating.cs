@@ -19,15 +19,20 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework
                 // This only supports millisecond precision, but should be sufficient for most use cases.
                 foreach (var entityType in modelBuilder.Model.GetEntityTypes())
                 {
-                    foreach (var property in entityType.ClrType.GetProperties().Where(
-                        p =>
-                            p.PropertyType == typeof(DateTimeOffset) || p.PropertyType == typeof(DateTimeOffset?)
-                    ))
+                    foreach (var property in entityType.ClrType.GetProperties())
                     {
-                        modelBuilder
-                           .Entity(entityType.Name)
-                           .Property(property.Name)
-                           .HasConversion(new DateTimeOffsetToBinaryConverter());
+                        if (property.PropertyType == typeof(DateTimeOffset) || property.PropertyType == typeof(DateTimeOffset?))
+                        {
+                            modelBuilder.Entity(entityType.Name)
+                               .Property(property.Name)
+                               .HasConversion(new DateTimeOffsetToBinaryConverter());
+                        }
+                        if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+                        {
+                            modelBuilder.Entity(entityType.Name)
+                               .Property(property.Name)
+                               .HasConversion(new DateTimeToBinaryConverter());
+                        }
                     }
                 }
             }

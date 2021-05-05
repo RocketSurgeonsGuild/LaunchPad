@@ -61,6 +61,11 @@ namespace Rocket.Surgery.LaunchPad.Foundation
             }
         }
 
+        /// <summary>
+        /// Convert the problem details into a dictionary of information in graphql
+        /// </summary>
+        /// <param name="detail"></param>
+        /// <returns></returns>
         public static implicit operator ReadOnlyDictionary<string, object?>(FluentValidationProblemDetail detail)
         {
             return new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>

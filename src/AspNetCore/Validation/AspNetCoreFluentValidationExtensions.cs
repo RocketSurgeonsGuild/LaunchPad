@@ -9,9 +9,19 @@ using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {
+    /// <summary>
+    /// Extensions for configuring fluent validation based Launch Pad defaults
+    /// </summary>
     [PublicAPI]
     public static class AspNetCoreFluentValidationExtensions
     {
+        /// <summary>
+        /// Adds the extensions with the given configuration
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="validatorConfiguration"></param>
+        /// <param name="validationMvcConfiguration"></param>
+        /// <returns></returns>
         public static IMvcCoreBuilder AddFluentValidationExtensions(
             this IMvcCoreBuilder builder,
             ValidatorConfiguration? validatorConfiguration = null,
@@ -22,6 +32,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
             return builder;
         }
 
+        /// <summary>
+        /// Adds the extensions with the given configuration
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="validatorConfiguration"></param>
+        /// <param name="validationMvcConfiguration"></param>
+        /// <returns></returns>
         public static IMvcBuilder AddFluentValidationExtensions(
             this IMvcBuilder builder,
             ValidatorConfiguration? validatorConfiguration = null,
@@ -32,6 +49,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
             return builder;
         }
 
+        /// <summary>
+        /// Adds the extensions with the given configuration
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="validatorConfiguration"></param>
+        /// <param name="validationMvcConfiguration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddFluentValidationExtensions(
             this IServiceCollection services,
             ValidatorConfiguration? validatorConfiguration = null,
@@ -58,9 +82,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
                 }
             );
 
-#pragma warning disable 618
-            services.AddSingleton<IActionContextValidatorInterceptor, ValidatorInterceptor>();
-#pragma warning restore 618
+            services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
             services.AddSingleton<ProblemDetailsFactory, FluentValidationProblemDetailsFactory>();
             services.PostConfigure<ApiBehaviorOptions>(
                 o =>

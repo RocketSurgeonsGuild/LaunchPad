@@ -37,7 +37,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var environment = context.Get<IHostEnvironment>();
+            var environment = context.Get<IHostEnvironment>()!;
             loggerConfiguration.Enrich.WithProperty(nameof(environment.EnvironmentName), environment.EnvironmentName);
             loggerConfiguration.Enrich.WithProperty(nameof(environment.ApplicationName), environment.ApplicationName);
         }

@@ -23,7 +23,7 @@ namespace AspNetCore.Tests.Restful
         [Fact]
         public void Should_Have_Method()
         {
-            var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
+            IRestfulApiMethodMatcher builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
             builder.Method.Should().Be(RestfulApiMethod.List);
         }
 

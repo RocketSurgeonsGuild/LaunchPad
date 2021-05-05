@@ -26,12 +26,20 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
             _options = options;
         }
 
+        /// <summary>
+        /// The scoped middleware
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="swaggerProvider"></param>
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
         {
             await new SwaggerMiddleware(_next, _options).Invoke(httpContext, swaggerProvider);
         }
     }
 
+    /// <summary>
+    /// Allows using scoped swagger middleware
+    /// </summary>
     public static class SwaggerBuilderExtensions
     {
         /// <summary>

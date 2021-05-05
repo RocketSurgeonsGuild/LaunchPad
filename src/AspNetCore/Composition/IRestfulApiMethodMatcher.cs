@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
 {
-    public interface IRestfulApiMethodMatcher
+    internal interface IRestfulApiMethodMatcher
     {
         RestfulApiMethod Method { get; }
         ApiConventionNameMatchBehavior NameMatch { get; }

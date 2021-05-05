@@ -17,6 +17,9 @@ using System.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
 {
+    /// <summary>
+    /// The graph ql convention
+    /// </summary>
     [BeforeConvention(typeof(HotChocolateConvention))]
     public class GraphqlConvention : IServiceConvention
     {
@@ -24,6 +27,12 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
         private readonly RocketChocolateOptions _rocketChocolateOptions;
         private readonly IFairyBreadOptions _options;
 
+        /// <summary>
+        /// The graphql convention
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="rocketChocolateOptions"></param>
+        /// <param name="foundationOptions"></param>
         public GraphqlConvention(
             IFairyBreadOptions? options = null,
             RocketChocolateOptions? rocketChocolateOptions = null,
@@ -35,6 +44,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
             _options = options ?? new DefaultFairyBreadOptions();
         }
 
+        /// <inheritdoc />
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             var types = context.AssemblyCandidateFinder.GetCandidateAssemblies("MediatR")

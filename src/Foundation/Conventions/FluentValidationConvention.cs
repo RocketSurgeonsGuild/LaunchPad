@@ -26,6 +26,10 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     {
         private readonly FoundationOptions _options;
 
+        /// <summary>
+        /// Create the fluent validation convention
+        /// </summary>
+        /// <param name="options"></param>
         public FluentValidationConvention(FoundationOptions? options = null)
         {
             _options = options ?? new FoundationOptions();

@@ -13,8 +13,12 @@ using Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions
 {
+    /// <summary>
+    /// Convention for activating app metrics
+    /// </summary>
     public class AppMetricsConvention : IHostingConvention
     {
+        /// <inheritdoc />
         public void Register(IConventionContext context, IHostBuilder builder)
         {
             IMetricsBuilder metricsBuilder;

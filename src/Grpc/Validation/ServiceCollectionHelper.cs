@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {
+    /// <summary>
+    /// Service collection helpers with grpc
+    /// </summary>
     public static class ServiceCollectionHelper
     {
         /// <summary>

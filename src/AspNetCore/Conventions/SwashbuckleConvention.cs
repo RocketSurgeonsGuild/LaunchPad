@@ -13,6 +13,7 @@ using Rocket.Surgery.Extensions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -122,8 +123,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         {
             services.AddSingleton(
                 new FluentValidationRule("NotEmpty")
-                   .MatchesValidatorWithNoCondition()
-                   .MatchesValidator(propertyValidator => propertyValidator is INotEmptyValidator)
+                   .WithCondition(propertyValidator => propertyValidator is INotEmptyValidator)
                    .WithApply(
                         context =>
                         {
@@ -137,10 +137,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             );
 
             services.AddSingleton(
-                new FluentValidationRule(
-                        "ValueTypeOrEnum"
-                    )
-                   .MatchesValidatorWithNoCondition()
+                new FluentValidationRule("ValueTypeOrEnum")
                    .WithApply(
                         context =>
                         {
@@ -158,7 +155,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 
             services.AddSingleton(
                 new FluentValidationRule("Nullable")
-                   .MatchesValidatorWithNoCondition()
                    .WithApply(
                         context =>
                         {
@@ -177,12 +173,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 
             services.AddSingleton(
                 new FluentValidationRule("IsOneOf")
-                   .MatchesValidatorWithNoCondition()
-                   .MatchesValidator(propertyValidator => propertyValidator is StringInValidator)
+                   .WithCondition(propertyValidator => propertyValidator is IStringInValidator)
                    .WithApply(
                         context =>
                         {
-                            var validator = context.PropertyValidator as StringInValidator;
+                            var validator = context.PropertyValidator as IStringInValidator;
                             context.Schema.Properties[context.PropertyKey].Enum =
                                 validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
                         }

@@ -8,9 +8,12 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
 {
+    /// <summary>
+    /// Blazor FluentValidator component
+    /// </summary>
     public class FluentValidator : ComponentBase
     {
-        private readonly static char[] separators = new[] { '.', '[' };
+        private static readonly char[] separators = new[] { '.', '[' };
 
         [Inject]
         IValidatorFactory ValidatorFactory { get; set; }
@@ -18,9 +21,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
         [CascadingParameter]
         EditContext CurrentEditContext { get; set; } = null!;
 
+        /// <summary>
+        /// The validator to validate against
+        /// </summary>
         [Parameter]
         public IValidator Validator { get; set; } = null!;
 
+        /// <inheritdoc/>
         protected override void OnInitialized()
         {
             if (CurrentEditContext == null)

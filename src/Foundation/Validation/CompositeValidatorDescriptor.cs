@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Internal;
 using FluentValidation.Validators;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +16,17 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation
            .Select(z => z.CreateDescriptor().GetName(property))
            .FirstOrDefault()!;
 
-        public ILookup<string, IPropertyValidator> GetMembersWithValidators() => _validators
+        public ILookup<string, (IPropertyValidator Validator, IRuleComponent Options)> GetMembersWithValidators() => _validators
            .SelectMany(z => z.CreateDescriptor().GetMembersWithValidators())
            .SelectMany(outer => outer.Select(item => ( outer.Key, item )))
            .ToLookup(z => z.Key, z => z.item);
 
-        public IEnumerable<IPropertyValidator> GetValidatorsForMember(string name) => _validators
+        public IEnumerable<(IPropertyValidator Validator, IRuleComponent Options)> GetValidatorsForMember(string name) => _validators
            .SelectMany(z => z.CreateDescriptor().GetValidatorsForMember(name));
 
         public IEnumerable<IValidationRule> GetRulesForMember(string name) => _validators
            .SelectMany(z => z.CreateDescriptor().GetRulesForMember(name));
+
+        public IEnumerable<IValidationRule> Rules { get; }
     }
 }

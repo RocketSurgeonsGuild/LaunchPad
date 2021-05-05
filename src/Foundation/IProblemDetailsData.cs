@@ -2,6 +2,9 @@
 
 namespace Rocket.Surgery.LaunchPad.Foundation
 {
+    /// <summary>
+    /// A common interface used for definiting problems
+    /// </summary>
     public interface IProblemDetailsData
     {
         /// <summary>

@@ -4,16 +4,36 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
 {
+    /// <summary>
+    /// String class base type
+    /// </summary>
+    /// <typeparam name="TRuntimeType"></typeparam>
     public abstract class StringToClassBaseType<TRuntimeType> : ScalarType<TRuntimeType, StringValueNode>
         where TRuntimeType : class
     {
+        /// <summary>
+        /// Create the base type
+        /// </summary>
+        /// <param name="name"></param>
         public StringToClassBaseType(string name) : base(name, bind: BindingBehavior.Implicit)
         {
         }
 
+        /// <summary>
+        /// Method to serialize
+        /// </summary>
+        /// <param name="baseValue"></param>
+        /// <returns></returns>
         protected abstract string Serialize(TRuntimeType baseValue);
+        /// <summary>
+        /// Method to try and deserialize
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
         protected abstract bool TryDeserialize(string str, [NotNullWhen(true)] out TRuntimeType? output);
 
+        /// <inheritdoc />
         protected override TRuntimeType ParseLiteral(StringValueNode literal)
         {
             if (TryDeserialize(literal.Value, out TRuntimeType? value))
@@ -22,15 +42,17 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize string to {this.Name}", 
+                $"Unable to deserialize string to {this.Name}",
                 this);
         }
 
+        /// <inheritdoc />
         protected override StringValueNode ParseValue(TRuntimeType value)
         {
             return new(Serialize(value));
         }
 
+        /// <inheritdoc />
         public override IValueNode ParseResult(object? resultValue)
         {
             if (resultValue is null)
@@ -53,6 +75,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
                 this);
         }
 
+        /// <inheritdoc />
         public override bool TrySerialize(object? runtimeValue, out object? resultValue)
         {
             if (runtimeValue is null)
@@ -71,6 +94,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             return false;
         }
 
+        /// <inheritdoc />
         public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
         {
             if (resultValue is null)

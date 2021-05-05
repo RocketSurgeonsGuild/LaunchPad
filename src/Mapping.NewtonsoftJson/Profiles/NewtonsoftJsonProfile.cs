@@ -8,8 +8,14 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Rocket.Surgery.LaunchPad.Mapping.Profiles
 {
+    /// <summary>
+    /// Configures methods for handling well known conversions for newtonsoft json
+    /// </summary>
     public class NewtonsoftJsonProfile : Profile
     {
+        /// <summary>
+        /// The default constructor
+        /// </summary>
         public NewtonsoftJsonProfile()
         {
             {

@@ -26,10 +26,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
     {
         private readonly FoundationOptions _options;
 
-        public NewtonsoftJsonConvention(FoundationOptions? options = null)
-        {
-            _options = options ?? new();
-        }
+        /// <summary>
+        /// Creates a convention for newtonsoft json
+        /// </summary>
+        /// <param name="options"></param>
+        public NewtonsoftJsonConvention(FoundationOptions? options = null) => _options = options ?? new();
 
         /// <summary>
         /// Registers the specified context.

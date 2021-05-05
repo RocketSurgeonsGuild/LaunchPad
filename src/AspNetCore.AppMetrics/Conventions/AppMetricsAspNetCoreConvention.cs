@@ -11,8 +11,12 @@ using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.Conventions
 {
+    /// <summary>
+    /// Convention for activating App Metrics with Asp.Net Core
+    /// </summary>
     public class AppMetricsAspNetCoreConvention : IServiceConvention
     {
+        /// <inheritdoc />
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services

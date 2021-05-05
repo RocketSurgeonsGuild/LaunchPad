@@ -10,8 +10,12 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 {
+    /// <summary>
+    /// Convention to register spatial types
+    /// </summary>
     public class AspNetCoreSpatialConvention : IServiceConvention
     {
+        /// <inheritdoc/>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
             => services.Configure<SwaggerGenOptions>(o => o.ConfigureForNetTopologySuite());
     }

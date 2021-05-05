@@ -16,7 +16,14 @@ using System.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
 {
-    public record OpenApiValidationFilterContext(Type Type, MemberInfo MemberInfo, ISchemaGenerator SchemaGenerator,SchemaRepository SchemaRepository);
+    /// <summary>
+    /// The context used to investigate type information about a given schema node.
+    /// </summary>
+    /// <param name="Type"></param>
+    /// <param name="MemberInfo"></param>
+    /// <param name="SchemaGenerator"></param>
+    /// <param name="SchemaRepository"></param>
+    public record OpenApiValidationFilterContext(Type Type, MemberInfo MemberInfo, ISchemaGenerator SchemaGenerator, SchemaRepository SchemaRepository);
 
     /// <summary>
     /// OpenApi schema builder.
@@ -33,12 +40,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
             OpenApiValidationFilterContext schemaFilterContext,
             IValidator validator,
             IReadOnlyCollection<FluentValidationRule> rules,
-            ILogger logger)
+            ILogger logger
+        )
         {
             var schemaTypeName = schemaType.Name;
 
             if (logger.IsEnabled(LogLevel.Debug))
-            logger.LogDebug("Applying FluentValidation rules to swagger schema '{SchemaTypeName}'", schemaTypeName);
+                logger.LogDebug("Applying FluentValidation rules to swagger schema '{SchemaTypeName}'", schemaTypeName);
 
             schemaPropertyNames ??= schema.Properties?.Keys ?? Array.Empty<string>();
             foreach (var schemaPropertyName in schemaPropertyNames)
@@ -46,7 +54,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
                 var validationRules = validator.GetValidationRulesForMemberIgnoreCase(schemaPropertyName).ToArrayDebug();
                 foreach (var ruleContext in validationRules)
                 {
-                    var propertyValidators = ruleContext.PropertyRule.Validators;
+                    var propertyValidators = ruleContext.PropertyRule.GetValidators();
                     foreach (var propertyValidator in propertyValidators)
                     {
                         foreach (var rule in rules)
@@ -55,23 +63,50 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
                             {
                                 try
                                 {
-                                    var ruleHistoryItem = new RuleHistoryCache.RuleHistoryItem(schemaTypeName, schemaPropertyName, propertyValidator, rule.Name);
+                                    var ruleHistoryItem = new RuleHistoryCache.RuleHistoryItem(
+                                        schemaTypeName,
+                                        schemaPropertyName,
+                                        propertyValidator,
+                                        rule.Name
+                                    );
                                     if (!schema.ContainsRuleHistoryItem(ruleHistoryItem))
                                     {
+                                        rule.Apply(
+                                            new RuleContext(
+                                                schema,
+                                                schemaPropertyName,
+                                                propertyValidator,
+                                                schemaFilterContext.Type,
+                                                schemaFilterContext.MemberInfo,
+                                                isCollectionValidator: ruleContext.IsCollectionRule
+                                            )
+                                        );
 
-                                        rule.Apply(new RuleContext(schema, schemaPropertyName, propertyValidator, schemaFilterContext.Type, schemaFilterContext.MemberInfo, isCollectionValidator: ruleContext.IsCollectionRule));
-
-                                        logger.LogDebug("Rule '{rule.Name}' applied for property '{SchemaTypeName}.{SchemaPropertyName}'", schemaTypeName, schemaPropertyName);
+                                        logger.LogDebug(
+                                            "Rule '{rule.Name}' applied for property '{SchemaTypeName}.{SchemaPropertyName}'",
+                                            schemaTypeName,
+                                            schemaPropertyName
+                                        );
                                         schema.AddRuleHistoryItem(ruleHistoryItem);
                                     }
                                     else
                                     {
-                                        logger.LogDebug("Rule '{rule.Name}' already applied for property '{SchemaTypeName}.{SchemaPropertyName}'", schemaTypeName, schemaPropertyName);
+                                        logger.LogDebug(
+                                            "Rule '{rule.Name}' already applied for property '{SchemaTypeName}.{SchemaPropertyName}'",
+                                            schemaTypeName,
+                                            schemaPropertyName
+                                        );
                                     }
                                 }
                                 catch (Exception e)
                                 {
-                                    logger.LogWarning(0, e, "Error on apply rule '{rule.Name}' for property '{SchemaTypeName}.{SchemaPropertyName}'", schemaTypeName, schemaPropertyName);
+                                    logger.LogWarning(
+                                        0,
+                                        e,
+                                        "Error on apply rule '{rule.Name}' for property '{SchemaTypeName}.{SchemaPropertyName}'",
+                                        schemaTypeName,
+                                        schemaPropertyName
+                                    );
                                 }
                             }
                         }
@@ -85,20 +120,18 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
             OpenApiValidationFilterContext schemaFilterContext,
             IValidator validator,
             IReadOnlyCollection<FluentValidationRule> rules,
-            ILogger logger)
-        {
-            // Note: IValidatorDescriptor doesn't return IncludeRules so we need to get validators manually.
-            var validationRules = (validator as IEnumerable<IValidationRule>)
-                .NotNull()
-                .OfType<PropertyRule>()
-                .Where(includeRule => includeRule.HasNoCondition())
-                .ToArray();
+            ILogger logger
+        )
+        {            // Note: IValidatorDescriptor doesn't return IncludeRules so we need to get validators manually.
+            var validationRules = validator
+               .GetValidationRules()
+               .ToArrayDebug();
 
             var propertiesWithChildAdapters = validationRules
-                .Select(rule => (rule, rule.Validators.OfType<IChildValidatorAdaptor>().ToArray()))
-                .ToArrayDebug();
+               .Select(context => (context.PropertyRule, context.PropertyRule.GetValidators().OfType<IChildValidatorAdaptor>().ToArray()))
+               .ToArrayDebug();
 
-            foreach ((PropertyRule propertyRule, IChildValidatorAdaptor[] childAdapters) in propertiesWithChildAdapters)
+            foreach (( IValidationRule propertyRule, IChildValidatorAdaptor[] childAdapters ) in propertiesWithChildAdapters)
             {
                 foreach (var childAdapter in childAdapters)
                 {
@@ -117,14 +150,16 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
                                 schemaFilterContext: schemaFilterContext,
                                 validator: childValidator,
                                 rules: rules,
-                                logger: logger);
+                                logger: logger
+                            );
 
                             AddRulesFromIncludedValidators(
                                 schema: schema,
                                 schemaFilterContext: schemaFilterContext,
                                 validator: childValidator,
                                 rules: rules,
-                                logger: logger);
+                                logger: logger
+                            );
                         }
                         else
                         {
@@ -133,7 +168,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
                                 schemaRepository: schemaFilterContext.SchemaRepository,
                                 schemaGenerator: schemaFilterContext.SchemaGenerator,
                                 schemaIdSelector: type => type.Name,
-                                parameterType: propertyRule.TypeToValidate);
+                                parameterType: propertyRule.TypeToValidate
+                            );
 
                             ApplyRulesToSchema(
                                 schema: schemaForChildValidator,
@@ -142,14 +178,16 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
                                 schemaFilterContext: schemaFilterContext,
                                 validator: childValidator,
                                 rules: rules,
-                                logger: logger);
+                                logger: logger
+                            );
 
                             AddRulesFromIncludedValidators(
                                 schema: schemaForChildValidator,
                                 schemaFilterContext: schemaFilterContext,
                                 validator: childValidator,
                                 rules: rules,
-                                logger: logger);
+                                logger: logger
+                            );
                         }
                     }
                 }
@@ -158,26 +196,58 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
 
         internal static IValidator? GetValidatorFromChildValidatorAdapter(this IChildValidatorAdaptor childValidatorAdapter)
         {
-            // Fake context. We have not got real context because no validation yet.
-            var fakeContext = new PropertyValidatorContext(new ValidationContext<object>(null), null, string.Empty);
-
             // Try to validator with reflection.
             var childValidatorAdapterType = childValidatorAdapter.GetType();
-            var getValidatorMethod = childValidatorAdapterType.GetMethod(nameof(ChildValidatorAdaptor<object, object>.GetValidator));
-            if (getValidatorMethod != null)
+            var genericTypeArguments = childValidatorAdapterType.GenericTypeArguments;
+            if (genericTypeArguments.Length != 2)
+                return null;
+
+            var getValidatorGeneric = typeof(FluentValidationSchemaBuilder)
+               .GetMethod(nameof(GetValidatorGeneric), BindingFlags.Static | BindingFlags.NonPublic)
+              ?.MakeGenericMethod(genericTypeArguments[0]);
+
+            if (getValidatorGeneric != null)
             {
-                var validator = (IValidator)getValidatorMethod.Invoke(childValidatorAdapter, new[] {fakeContext});
+                var validator = (IValidator)getValidatorGeneric.Invoke(null, new []{ childValidatorAdapter });
                 return validator;
             }
 
             return null;
         }
 
+        internal static IValidator? GetValidatorGeneric<T>(this IChildValidatorAdaptor childValidatorAdapter)
+        {
+            // public class ChildValidatorAdaptor<T,TProperty>
+            // public virtual IValidator GetValidator(ValidationContext<T> context, TProperty value) {
+            var getValidatorMethodName = nameof(ChildValidatorAdaptor<object, object>.GetValidator);
+            var getValidatorMethod = childValidatorAdapter.GetType().GetMethod(getValidatorMethodName);
+            if (getValidatorMethod != null)
+            {
+                // Fake context. We have not got real context because no validation yet.
+                var fakeContext = new ValidationContext<T>(default);
+                object? value = null;
+
+                var validator = (IValidator)getValidatorMethod.Invoke(childValidatorAdapter, new[] { fakeContext, value })!;
+                return validator;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get the schema for the given type
+        /// </summary>
+        /// <param name="schemaRepository"></param>
+        /// <param name="schemaGenerator"></param>
+        /// <param name="schemaIdSelector"></param>
+        /// <param name="parameterType"></param>
+        /// <returns></returns>
         public static OpenApiSchema GetSchemaForType(
             SchemaRepository schemaRepository,
             ISchemaGenerator schemaGenerator,
             Func<Type, string> schemaIdSelector,
-            Type parameterType)
+            Type parameterType
+        )
         {
             var schemaId = schemaIdSelector(parameterType);
 
@@ -186,7 +256,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
                 schema = schemaGenerator.GenerateSchema(parameterType, schemaRepository);
             }
 
-            if ((schema.Properties == null || schema.Properties.Count == 0) &&
+            if (( schema.Properties == null || schema.Properties.Count == 0 ) &&
                 schemaRepository.Schemas.ContainsKey(schemaId))
             {
                 schema = schemaRepository.Schemas[schemaId];

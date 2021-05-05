@@ -11,6 +11,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core
     /// </summary>
     public class IgnoreAllStringComparer : StringComparer
     {
+        /// <summary>
+        /// The default comparer instance
+        /// </summary>
         public static readonly StringComparer Instance = new IgnoreAllStringComparer();
 
         /// <inheritdoc />

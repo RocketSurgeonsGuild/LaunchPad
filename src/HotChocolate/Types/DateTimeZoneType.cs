@@ -4,8 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
 {
+    /// <summary>
+    /// Represents a <see cref="DateTimeZone"/> in Hot Chocolate
+    /// </summary>
     public class DateTimeZoneType : StringToClassBaseType<DateTimeZone>
     {
+        /// <summary>
+        /// The constuctor
+        /// </summary>
         public DateTimeZoneType() : base("DateTimeZone")
         {
             Description =
@@ -14,9 +20,11 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
                     "to the offset from UTC at any particular instant.";
         }
 
+        /// <inheritdoc />
         protected override string Serialize(DateTimeZone val)
             => val.Id;
 
+        /// <inheritdoc />
         protected override bool TryDeserialize(string str, [NotNullWhen(true)] out DateTimeZone? output)
         {
             var result = DateTimeZoneProviders.Tzdb.GetZoneOrNull(str);

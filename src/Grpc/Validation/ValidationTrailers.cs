@@ -2,13 +2,25 @@ using System;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {
+    /// <summary>
+    /// Validation information for grpc
+    /// </summary>
     [Serializable]
     public class ValidationTrailers
     {
-        public string PropertyName { get; set; }
+        /// <summary>
+        /// The property name
+        /// </summary>
+        public string PropertyName { get; set; } = null!;
 
-        public string ErrorMessage { get; set; }
+        /// <summary>
+        /// The error message
+        /// </summary>
+        public string ErrorMessage { get; set; } = null!;
 
-        public object AttemptedValue { get; set; }
+        /// <summary>
+        /// The given value
+        /// </summary>
+        public object AttemptedValue { get; set; } = null!;
     }
 }

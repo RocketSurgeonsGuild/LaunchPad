@@ -12,8 +12,12 @@ using System.Text.Json;
 
 namespace Rocket.Surgery.LaunchPad.Spatial.Conventions
 {
+    /// <summary>
+    /// Adds support for spatial types into STJ
+    /// </summary>
     public class SpatialConvention : IServiceConvention
     {
+        /// <inheritdoc />
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services.TryAddSingleton(_ => NtsGeometryServices.Instance.CreateGeometryFactory(4326));

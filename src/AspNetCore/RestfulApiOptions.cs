@@ -6,8 +6,14 @@ using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
+    /// <summary>
+    /// Options used for Restful Api Options.
+    /// </summary>
     public class RestfulApiOptions
     {
+        /// <summary>
+        /// The related method builders that are used to identify methods by name, prefix, type, etc.
+        /// </summary>
         public List<RestfulApiMethodBuilder> Builders { get; } = new List<RestfulApiMethodBuilder>()
         {
             new RestfulApiMethodBuilder(RestfulApiMethod.List)
@@ -35,10 +41,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
                .MatchParameterSuffix(^1, "id"),
         };
 
-        public ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> GetMatchers() => Builders.Where(z => z.IsValid())
+        internal ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> GetMatchers() => Builders.Where(z => z.IsValid())
            .OfType<IRestfulApiMethodMatcher>()
            .ToLookup(x => x.Method);
 
+        /// <summary>
+        /// The cache of default status codes for a given method type.
+        /// </summary>
         public IDictionary<RestfulApiMethod, int> MethodStatusCodeMap = new Dictionary<RestfulApiMethod, int>()
         {
             [RestfulApiMethod.List] = StatusCodes.Status200OK,
@@ -48,6 +57,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
             [RestfulApiMethod.Delete] = StatusCodes.Status204NoContent,
         };
 
+        /// <summary>
+        /// The factory to use for Validation results
+        /// </summary>
         public IValidationActionResultFactory ValidationActionResultFactory { get; set; } = new UnprocessableEntityActionResultFactory();
     }
 }

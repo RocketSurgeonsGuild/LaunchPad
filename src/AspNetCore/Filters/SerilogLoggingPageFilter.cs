@@ -3,7 +3,7 @@ using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
 {
-    public class SerilogLoggingPageFilter : IPageFilter
+    class SerilogLoggingPageFilter : IPageFilter
     {
         private readonly IDiagnosticContext _diagnosticContext;
         public SerilogLoggingPageFilter(IDiagnosticContext diagnosticContext)

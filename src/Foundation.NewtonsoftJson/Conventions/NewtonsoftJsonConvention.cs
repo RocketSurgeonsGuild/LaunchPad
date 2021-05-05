@@ -15,8 +15,12 @@ using System.Text.Json.Serialization;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
 {
+    /// <summary>
+    /// Convention for working with Newtonsoft Json
+    /// </summary>
     public class NewtonsoftJsonConvention : IServiceConvention
     {
+        /// <inheritdoc />
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services.AddTransient<IConfigureOptions<JsonSerializerSettings>>(

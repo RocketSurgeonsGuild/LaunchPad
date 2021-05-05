@@ -6,10 +6,16 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
 {
+    /// <summary>
+    /// Represents a <see cref="ZonedDateTime"/> in Hot Chocolate
+    /// </summary>
     public class ZonedDateTimeType : StringToStructBaseType<ZonedDateTime>
     {
         private static string formatString = "uuuu'-'MM'-'dd'T'HH':'mm':'ss' 'z' 'o<g>";
 
+        /// <summary>
+        /// The constructor
+        /// </summary>
         public ZonedDateTimeType()
             : base("ZonedDateTime")
         {
@@ -19,11 +25,13 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
                 "A ZonedDateTime is global, in that it maps to a single Instant.";
         }
 
+        /// <inheritdoc />
         protected override string Serialize(ZonedDateTime baseValue)
             => ZonedDateTimePattern
                 .CreateWithInvariantCulture(formatString, DateTimeZoneProviders.Tzdb)
                 .Format(baseValue);
 
+        /// <inheritdoc />
         protected override bool TryDeserialize(string str, [NotNullWhen(true)] out ZonedDateTime? output)
             => ZonedDateTimePattern
                 .CreateWithInvariantCulture(formatString, DateTimeZoneProviders.Tzdb)

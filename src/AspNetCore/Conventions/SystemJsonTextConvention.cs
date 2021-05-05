@@ -35,12 +35,18 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
     {
         private readonly FoundationOptions _options;
 
+        /// <summary>
+        /// Create a new SystemJsonTextConvention
+        /// </summary>
+        /// <param name="options"></param>
         public SystemJsonTextConvention(FoundationOptions? options = null) => _options = options ?? new();
 
         /// <summary>
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context is null)

@@ -4,8 +4,12 @@ using System.Collections.Generic;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
+    /// <summary>
+    /// Adds a type interceptor to be aware of nested types and ensure that they get named with the outer type and the inner type combined
+    /// </summary>
     public class NestedTypeNameTypeInterceptor : TypeInterceptor
     {
+        /// <inheritdoc />
         public override void OnBeforeCompleteName(
             ITypeCompletionContext completionContext,
             DefinitionBase? definition,

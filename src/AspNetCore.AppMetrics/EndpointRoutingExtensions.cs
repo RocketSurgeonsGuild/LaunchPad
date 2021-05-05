@@ -12,8 +12,17 @@ using Microsoft.Extensions.Options;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
 {
+    /// <summary>
+    /// App Metrics extenison methods
+    /// </summary>
     public static class EndpointRoutingExtensions
     {
+        /// <summary>
+        /// Map app metrics
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="configureEndpointMetadata"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointRouteBuilder MapAppMetrics(
             this IEndpointRouteBuilder builder,
@@ -27,6 +36,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
             return builder;
         }
 
+        /// <summary>
+        /// Map text endpoints
+        /// </summary>
+        /// <param name="endpoints"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointConventionBuilder MapMetricsTextEndpoint(this IEndpointRouteBuilder endpoints)
         {
@@ -35,6 +49,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
             return endpoints.Map("/metrics/text", endpoints.CreateApplicationBuilder().UseMiddleware<MetricsEndpointMiddleware>(responseWriter).Build());
         }
 
+        /// <summary>
+        /// Map metrics endpoint
+        /// </summary>
+        /// <param name="endpoints"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointConventionBuilder MapMetricsEndpoint(this IEndpointRouteBuilder endpoints)
         {
@@ -43,6 +62,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
             return endpoints.Map("/metrics", endpoints.CreateApplicationBuilder().UseMiddleware<MetricsEndpointMiddleware>(responseWriter).Build());
         }
 
+        /// <summary>
+        /// Map env info endpoint
+        /// </summary>
+        /// <param name="endpoints"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointConventionBuilder MapEnvInfoEndpoint(this IEndpointRouteBuilder endpoints)
         {

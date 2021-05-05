@@ -12,7 +12,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
     /// <summary>
     /// Not found exception that catches not found messages that might have been thrown by calling code.
     /// </summary>
-    public class RequestFailedExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
+    class RequestFailedExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
     {
         private readonly ProblemDetailsFactory _problemDetailsFactory;
 

@@ -39,8 +39,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
         /// </summary>
         public OpenApiSchema Property => !IsCollectionValidator ? Schema.Properties[PropertyKey] : Schema.Properties[PropertyKey].Items;
 
+        /// <summary>
+        /// The runtime type of the schema
+        /// </summary>
         public Type SchemaType { get; }
 
+        /// <summary>
+        /// The associated member info
+        /// </summary>
         public MemberInfo MemberInfo { get; }
 
         /// <summary>

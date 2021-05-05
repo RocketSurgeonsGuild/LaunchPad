@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
 {
-    public class UnprocessableEntityActionResultFactory : IValidationActionResultFactory
+    class UnprocessableEntityActionResultFactory : IValidationActionResultFactory
     {
         public ActionResult CreateActionResult(ValidationProblemDetails problemDetails)
         {

@@ -22,6 +22,10 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     {
         private readonly FoundationOptions _options;
 
+        /// <summary>
+        /// Create the MediatR convention
+        /// </summary>
+        /// <param name="options"></param>
         public MediatRConvention(FoundationOptions? options = null)
         {
             _options = options ?? new FoundationOptions();
