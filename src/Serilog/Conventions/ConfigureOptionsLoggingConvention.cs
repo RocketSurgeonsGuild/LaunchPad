@@ -26,7 +26,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
         /// <param name="configuration"></param>
         /// <param name="loggerConfiguration"></param>
         public void Register(
-            [NotNull] IConventionContext context,
+            IConventionContext context,
             IServiceProvider services,
             IConfiguration configuration,
             LoggerConfiguration loggerConfiguration

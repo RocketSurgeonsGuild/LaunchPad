@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -18,7 +19,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
     /// </summary>
     public class FluentValidationRules : ISchemaFilter
     {
-        private readonly IValidatorFactory? _validatorFactory;
+        private readonly IServiceProvider _serviceProvider;
         private readonly FluentValidationSwaggerGenOptions _options;
         private readonly ILogger _logger;
         private readonly IReadOnlyList<FluentValidationRule> _rules;
@@ -26,18 +27,18 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentValidationRules"/> class.
         /// </summary>
-        /// <param name="validatorFactory">Validator factory.</param>
+        /// <param name="serviceProvider">The service provider.</param>
         /// <param name="rules">External FluentValidation rules. External rule overrides default rule with the same name.</param>
         /// <param name="loggerFactory"><see cref="ILoggerFactory"/> for logging. Can be null.</param>
         /// <param name="options">Schema generation options.</param>
         public FluentValidationRules(
-            IValidatorFactory? validatorFactory = null,
+            IServiceProvider serviceProvider,
             IEnumerable<FluentValidationRule>? rules = null,
             ILoggerFactory? loggerFactory = null,
             IOptions<FluentValidationSwaggerGenOptions>? options = null
         )
         {
-            _validatorFactory = validatorFactory;
+            _serviceProvider = serviceProvider;
             _options = options?.Value ?? new FluentValidationSwaggerGenOptions();
             _logger = loggerFactory?.CreateLogger(typeof(FluentValidationRules)) ?? NullLogger.Instance;
             _rules = new DefaultFluentValidationRuleProvider(options).GetRules().ToArray().OverrideRules(rules);
@@ -46,19 +47,12 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
         /// <inheritdoc />
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            if (_validatorFactory == null)
-            {
-                _logger.LogWarning(0, "ValidatorFactory is not provided. Please register FluentValidation");
-                return;
-            }
-
-            if (schema == null)
-                return;
-
+            using var scope = _serviceProvider.CreateScope();
+            var validatorFactory = scope.ServiceProvider.GetRequiredService<IValidatorFactory>();
             IValidator? validator = null;
             try
             {
-                validator = _validatorFactory.GetValidator(context.Type);
+                validator = validatorFactory.GetValidator(context.Type);
             }
             catch (Exception e)
             {

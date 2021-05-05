@@ -27,6 +27,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation
         public IEnumerable<IValidationRule> GetRulesForMember(string name) => _validators
            .SelectMany(z => z.CreateDescriptor().GetRulesForMember(name));
 
-        public IEnumerable<IValidationRule> Rules { get; }
+        public IEnumerable<IValidationRule> Rules => _validators.SelectMany(z => z.CreateDescriptor().Rules);
     }
 }

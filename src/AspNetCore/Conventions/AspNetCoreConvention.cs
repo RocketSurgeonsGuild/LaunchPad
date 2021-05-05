@@ -1,6 +1,5 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
@@ -50,7 +49,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         /// <param name="configuration"></param>
         /// <param name="services"></param>
         /// TODO Edit XML Comment Template for Register
-        public void Register([NotNull] IConventionContext context, IConfiguration configuration, IServiceCollection services)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context == null)
             {
@@ -59,7 +58,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 
             services.AddMvcCore().AddApiExplorer();
             PopulateDefaultParts(
-                GetServiceFromCollection<ApplicationPartManager>(services),
+                GetServiceFromCollection<ApplicationPartManager>(services)!,
                 context.AssemblyCandidateFinder
                    .GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore")
                    .SelectMany(GetApplicationPartAssemblies)
@@ -76,7 +75,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             services.AddFluentValidationExtensions(_validatorConfiguration, _validationMvcConfiguration);
         }
 
-        private static T GetServiceFromCollection<T>(IServiceCollection services) => (T)services
+        private static T? GetServiceFromCollection<T>(IServiceCollection services) => (T?)services
            .LastOrDefault(d => d.ServiceType == typeof(T))
           ?.ImplementationInstance;
 
@@ -111,7 +110,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             // that reference MVC.
             var assembliesFromAttributes = assembly.GetCustomAttributes<ApplicationPartAttribute>()
                 .Select(name => Assembly.Load(name.AssemblyName))
-                .OrderBy(assembly => assembly.FullName, StringComparer.Ordinal)
+                .OrderBy(a => a.FullName, StringComparer.Ordinal)
                 .SelectMany(GetAssemblyClosure);
 
             // The SDK will not include the entry assembly as an application part. We'll explicitly list it
@@ -125,7 +124,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
             yield return assembly;
 
             var relatedAssemblies = RelatedAssemblyAttribute.GetRelatedAssemblies(assembly, throwOnError: false)
-                .OrderBy(assembly => assembly.FullName, StringComparer.Ordinal);
+                .OrderBy(a => a.FullName, StringComparer.Ordinal);
 
             foreach (var relatedAssembly in relatedAssemblies)
             {

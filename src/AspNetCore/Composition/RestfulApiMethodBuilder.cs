@@ -116,7 +116,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
                 new RestfulApiParameterMatcher(
                     parameter,
                     item.NameMatch,
-                    item.Names?.Length > 0 ? item.Names : Array.Empty<string>(),
+                    item.Names.Length > 0 ? item.Names : Array.Empty<string>(),
                     item.TypeMatch,
                     item.Type
                 );
@@ -221,7 +221,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
         private static RestfulApiParameterMatcher defaultMatcher(Index index) => new RestfulApiParameterMatcher(
             index,
             ApiConventionNameMatchBehavior.Any,
-            null,
+            Array.Empty<string>(),
             ApiConventionTypeMatchBehavior.Any,
             null
         );

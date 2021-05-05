@@ -12,7 +12,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
             var metadata = new Metadata();
             if (failures.Any())
             {
-                metadata.Add(new Metadata.Entry("errors-bin", failures.ToValidationTrailers().ToBytes()));
+                // metadata.Add(new Metadata.Entry("errors-bin", failures.ToValidationTrailers().ToBytes()));
             }
             return metadata;
         }

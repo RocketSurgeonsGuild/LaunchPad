@@ -22,7 +22,7 @@ namespace Rocket.Surgery.LaunchPad.Mapping
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
-        public void Register([NotNull] IConventionContext context, IConfiguration configuration, IServiceCollection services)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context == null)
             {

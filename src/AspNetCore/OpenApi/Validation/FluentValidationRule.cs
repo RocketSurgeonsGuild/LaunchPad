@@ -40,7 +40,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
         {
             Name = name;
             Conditions = matches ?? Array.Empty<Func<IPropertyValidator, bool>>();
-            Apply = apply ?? (context => { });
+            Apply = apply ?? (_ => { });
         }
 
         /// <summary>

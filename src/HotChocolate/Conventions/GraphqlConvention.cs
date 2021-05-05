@@ -1,4 +1,5 @@
 ﻿using FairyBread;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,11 +51,15 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
                .Where(z => z is { IsNested: true, DeclaringType: { } }) // TODO: Configurable?
                .ToArray();
 
-            services.TryAddSingleton<IValidatorProvider, FairyBreadValidatorProvider>();
+            services.TryAdd(
+                ServiceDescriptor.Describe(
+                    typeof(IValidatorProvider),
+                    typeof(FairyBreadValidatorProvider),
+                    services.FirstOrDefault(z => z.ServiceType == typeof(IValidatorFactory))?.Lifetime ?? _foundationOptions.ValidationLifetime
+                )
+            );
             services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
             services.TryAddSingleton(_options);
-
-            // services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureGraphqlRootType>(new AutoConfigureMediatRMutation(types)));
 
             var sb = services
                    .AddGraphQL()

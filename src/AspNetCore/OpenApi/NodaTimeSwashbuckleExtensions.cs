@@ -138,7 +138,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                     {
                         Type = "object",
                         Nullable = false,
-                        Properties = { ["start"] = instantSchemas[0].schema(), ["end"] = instantSchemas[0].schema(), },
+                        Properties = { ["start"] = instantSchema, ["end"] = instantSchema, },
                         Extensions = new Dictionary<string, IOpenApiExtension>
                         {
                             ["clrType"] = new  OpenApiString(typeof(Interval).FullName)

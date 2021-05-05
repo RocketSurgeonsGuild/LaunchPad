@@ -40,7 +40,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation
             if (value == null) return true;
             var comparison = _caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-            var stringValue = value is string s ? s : value?.ToString();
+            var stringValue = value is string s ? s : value.ToString();
             var result = Values.Any(n => n.Equals(stringValue, comparison));
             if (result)
             {

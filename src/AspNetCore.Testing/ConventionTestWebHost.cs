@@ -65,7 +65,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             {
                 builder.PrependDelegate(
                     new ServiceConvention(
-                        (context, configuration, services) =>
+                        (_, _, services) =>
                         {
                             services.RemoveAll<IClock>();
                             services.AddSingleton(clock);

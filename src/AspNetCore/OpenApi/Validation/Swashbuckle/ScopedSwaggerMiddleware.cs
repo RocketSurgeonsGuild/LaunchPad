@@ -44,9 +44,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
     {
         /// <summary>
         /// Replaces standard <see cref="SwaggerMiddleware"/> with <see cref="ScopedSwaggerMiddleware"/>.
-        /// Use instead of <see cref="SwaggerBuilderExtensions.UseSwagger"/> if you have services with scoped services like DbContext.
+        /// Use instead of <see cref="SwaggerBuilderExtensions.UseScopedSwagger"/> if you have services with scoped services like DbContext.
         /// </summary>
-        public static IApplicationBuilder UseScopedSwagger(this IApplicationBuilder app, Action<SwaggerOptions> setupAction = null)
+        public static IApplicationBuilder UseScopedSwagger(this IApplicationBuilder app, Action<SwaggerOptions>? setupAction = null)
         {
             SwaggerOptions swaggerOptions = new SwaggerOptions();
             setupAction?.Invoke(swaggerOptions);

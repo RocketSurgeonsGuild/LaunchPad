@@ -35,7 +35,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation
                 return (IValidator)CreateValidatorMethod.MakeGenericMethod(validatorType.GetGenericArguments()[0]).Invoke(null, new object[]
                 {
                     services.AsEnumerable()
-                });
+                })!;
             }
 
             return null!;

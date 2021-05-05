@@ -16,7 +16,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
         private static readonly char[] separators = { '.', '[' };
 
         [Inject]
-        IValidatorFactory ValidatorFactory { get; set; }
+        IValidatorFactory ValidatorFactory { get; set; } = null!;
 
         [CascadingParameter]
         EditContext CurrentEditContext { get; set; } = null!;
@@ -47,10 +47,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
             var messages = new ValidationMessageStore(CurrentEditContext);
 
             CurrentEditContext.OnValidationRequested +=
-                (sender, eventArgs) => ValidateModel(messages, validator);
+                (_, _) => ValidateModel(messages, validator);
 
             CurrentEditContext.OnFieldChanged +=
-                (sender, eventArgs) => ValidateField(messages, eventArgs.FieldIdentifier, validator);
+                (_, eventArgs) => ValidateField(messages, eventArgs.FieldIdentifier, validator);
         }
 
         private async void ValidateModel(ValidationMessageStore messages, IValidator? validator = null)

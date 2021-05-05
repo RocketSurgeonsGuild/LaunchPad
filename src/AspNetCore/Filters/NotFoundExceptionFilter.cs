@@ -25,7 +25,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
         /// <inheritdoc />
         public void OnException(ExceptionContext context)
         {
-            if (context?.Exception is NotFoundException exception)
+            if (context.Exception is NotFoundException exception)
             {
                 context.ExceptionHandled = true;
                 var problemDetails = _problemDetailsFactory.CreateProblemDetails(

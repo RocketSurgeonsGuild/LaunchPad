@@ -107,7 +107,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidatio
         }
 
         /// <summary>
-        /// Returns a <see cref="bool"/> indicating if the <paramref name="propertyRule"/> is conditional.
+        /// Returns a <see cref="bool"/> indicating if the <paramref name="ruleComponent"/> is conditional.
         /// </summary>
         internal static bool HasNoCondition(this IRuleComponent ruleComponent)
         {

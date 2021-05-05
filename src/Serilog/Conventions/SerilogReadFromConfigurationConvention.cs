@@ -22,7 +22,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
     public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
     {
         /// <inheritdoc />
-        public void Register([NotNull] IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
+        public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
         {
             if (context == null)
             {
@@ -46,7 +46,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
 
         /// <inheritdoc />
         public void Register(
-            [NotNull] IConventionContext context,
+            IConventionContext context,
             IServiceProvider services,
             IConfiguration configuration,
             LoggerConfiguration loggerConfiguration

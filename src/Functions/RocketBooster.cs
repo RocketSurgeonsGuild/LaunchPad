@@ -24,7 +24,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAppDomain(
             AppDomain appDomain,
             Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
-        ) => builder => new ConventionContextBuilder(new Dictionary<object, object?>())
+        ) => _ => new ConventionContextBuilder(new Dictionary<object, object?>())
            .UseAppDomain(appDomain)
            .WithConventionsFrom(getConventions);
 
@@ -37,7 +37,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAppDomain(
             AppDomain appDomain,
             Action<ConventionContextBuilder>? conventionContextBuilderAction = null
-        ) => builder =>
+        ) => _ =>
         {
             var conventionContextBuilder = new ConventionContextBuilder(new Dictionary<object, object?>())
                .UseAppDomain(appDomain);
@@ -76,7 +76,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAssemblies(
             IEnumerable<Assembly> assemblies,
             Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
-        ) => builder => new ConventionContextBuilder(new Dictionary<object, object?>())
+        ) => _ => new ConventionContextBuilder(new Dictionary<object, object?>())
            .UseAssemblies(assemblies)
            .WithConventionsFrom(getConventions);
 
@@ -89,7 +89,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAssemblies(
             IEnumerable<Assembly> assemblies,
             Action<ConventionContextBuilder>? conventionContextBuilderAction = null
-        ) => builder =>
+        ) => _ =>
         {
             var conventionContextBuilder = new ConventionContextBuilder(new Dictionary<object, object?>()).UseAssemblies(assemblies);
             conventionContextBuilderAction?.Invoke(conventionContextBuilder);

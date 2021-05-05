@@ -30,10 +30,13 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
         {
             _options = options ?? new FoundationOptions();
         }
+
         /// <summary>
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context == null)

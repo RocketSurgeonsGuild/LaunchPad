@@ -32,6 +32,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <summary>
         /// The lifetime for validation services
         /// </summary>
-        public ServiceLifetime ValidationLifetime { get; set; } = ServiceLifetime.Transient;
+        public ServiceLifetime ValidationLifetime { get; } = ServiceLifetime.Scoped;
     }
 }

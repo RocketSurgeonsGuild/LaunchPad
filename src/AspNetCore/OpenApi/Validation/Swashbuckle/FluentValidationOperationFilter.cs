@@ -57,7 +57,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
             catch (Exception e)
             {
                 var operationId = operation.OperationId ?? context.ApiDescription.RelativePath;
-                _logger.LogWarning(0, e, $"Error on apply rules for operation '{operationId}'.");
+                _logger.LogWarning(0, e, "Error on apply rules for operation '{OperationId}'", operationId);
             }
         }
 
@@ -118,13 +118,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
                         );
 
                         if (schema.Required != null)
+                            // ReSharper disable once PossibleUnintendedLinearSearchInSet
                             operationParameter.Required = schema.Required.Contains(schemaPropertyName, IgnoreAllStringComparer.Instance);
 
                         var parameterSchema = operationParameter.Schema;
                         if (parameterSchema != null)
                         {
-                            if (schema.Properties.TryGetValue(schemaPropertyName.ToLowerCamelCase(), out var property)
-                             || schema.Properties.TryGetValue(schemaPropertyName, out property))
+                            if (schema.Properties.TryGetValue(schemaPropertyName?.ToLowerCamelCase() ?? string.Empty, out var property)
+                             || schema.Properties.TryGetValue(schemaPropertyName ?? string.Empty, out property))
                             {
                                 // Copy from property schema to parameter schema.
                                 parameterSchema.MinLength = property.MinLength;

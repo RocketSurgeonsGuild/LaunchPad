@@ -15,7 +15,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
         private readonly ApiBehaviorOptions _apiBehaviorOptions;
 
         public FluentValidationProblemDetailsFactory(IOptions<ApiBehaviorOptions> apiBehavior) => _apiBehaviorOptions =
-            apiBehavior?.Value ?? throw new ArgumentNullException(nameof(apiBehavior));
+            apiBehavior.Value ?? throw new ArgumentNullException(nameof(apiBehavior));
 
         /// <inheritdoc />
         public override ProblemDetails CreateProblemDetails(
@@ -118,11 +118,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
                 problemDetails.Type ??= clientErrorData.Link;
             }
 
-            var traceId = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
-            if (traceId != null)
-            {
-                problemDetails.Extensions["traceId"] = traceId;
-            }
+            var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
+            problemDetails.Extensions["traceId"] = traceId;
         }
     }
 }

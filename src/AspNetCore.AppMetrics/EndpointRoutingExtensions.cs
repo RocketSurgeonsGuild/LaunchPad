@@ -29,7 +29,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
             Action<IEndpointConventionBuilder>? configureEndpointMetadata = null
         )
         {
-            configureEndpointMetadata ??= b => { };
+            configureEndpointMetadata ??= _ => { };
             // configureEndpointMetadata(builder.MapMetricsTextEndpoint());
             configureEndpointMetadata(builder.MapMetricsEndpoint());
             // configureEndpointMetadata(builder.MapEnvInfoEndpoint());

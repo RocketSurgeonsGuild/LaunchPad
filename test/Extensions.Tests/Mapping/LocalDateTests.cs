@@ -68,7 +68,7 @@ namespace Extensions.Tests.Mapping
             }
         }
 
-        protected override void Configure([NotNull] IMapperConfigurationExpression x)
+        protected override void Configure(IMapperConfigurationExpression x)
         {
             if (x == null)
             {

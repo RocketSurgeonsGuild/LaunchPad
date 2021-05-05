@@ -22,7 +22,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidatio
         }
 
         /// <summary>
-        /// Sets <see cref="Apply"/> action.
+        /// Sets <see cref="WithApply"/> action.
         /// </summary>
         /// <param name="rule">Source rule.</param>
         /// <param name="applyAction">New apply action.</param>

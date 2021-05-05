@@ -43,6 +43,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context is null)
@@ -83,7 +85,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                     );
 
                     options.DocInclusionPredicate(
-                        (docName, apiDesc) =>
+                        (_, apiDesc) =>
                         {
                             if (!apiDesc.TryGetMethodInfo(out var methodInfo))
                                 return false;

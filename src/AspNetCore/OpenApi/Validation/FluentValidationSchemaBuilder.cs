@@ -207,7 +207,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
 
             if (getValidatorGeneric != null)
             {
-                var validator = (IValidator)getValidatorGeneric.Invoke(null, new []{ childValidatorAdapter });
+                var validator = (IValidator)getValidatorGeneric.Invoke(null, new object []{ childValidatorAdapter })!;
                 return validator;
             }
 

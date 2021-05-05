@@ -35,7 +35,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
         }
 
         /// <inheritdoc />
-        public void Register([NotNull] IConventionContext context, IHostBuilder builder)
+        public void Register(IConventionContext context, IHostBuilder builder)
         {
             if (context == null)
             {

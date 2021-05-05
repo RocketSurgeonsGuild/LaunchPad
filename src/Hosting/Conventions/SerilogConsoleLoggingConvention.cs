@@ -30,7 +30,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
 
         /// <inheritdoc />
         public void Register(
-            [NotNull] IConventionContext context,
+            IConventionContext context,
             IServiceProvider services,
             IConfiguration configuration,
             LoggerConfiguration loggerConfiguration

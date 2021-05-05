@@ -24,7 +24,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
         /// <inheritdoc />
         public void OnException(ExceptionContext context)
         {
-            if (context?.Exception is RequestFailedException exception)
+            if (context.Exception is RequestFailedException exception)
             {
                 context.ExceptionHandled = true;
                 var problemDetails = _problemDetailsFactory.CreateProblemDetails(
