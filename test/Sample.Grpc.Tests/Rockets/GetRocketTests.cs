@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
@@ -15,7 +14,7 @@ namespace Sample.Grpc.Tests.Rockets
     {
         private static readonly Faker Faker = new Faker();
 
-        public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_Get_A_Rocket()
@@ -25,7 +24,7 @@ namespace Sample.Grpc.Tests.Rockets
                .Invoke(
                     async z =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
                             Type = Core.Domain.RocketType.Falcon9,
                             SerialNumber = "12345678901234"
@@ -37,7 +36,7 @@ namespace Sample.Grpc.Tests.Rockets
                     }
                 );
 
-            var response = await client.GetRocketsAsync(new GetRocketRequest() { Id = rocket.ToString()} );
+            var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.ToString()} );
 
             response.Type.Should().Be(RocketType.Falcon9);
             response.Sn.Should().Be("12345678901234");

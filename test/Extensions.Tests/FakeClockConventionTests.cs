@@ -1,12 +1,8 @@
-﻿using DryIoc;
-using FluentAssertions;
-using FluentValidation.Validators;
+﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Foundation.Validation;
 using Rocket.Surgery.LaunchPad.Testing;
 using Xunit;
 using Xunit.Abstractions;

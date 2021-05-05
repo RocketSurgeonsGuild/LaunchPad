@@ -137,7 +137,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
         /// <returns></returns>
         public Task<string?> Product(IResolverContext context, CancellationToken cancellationToken) => context.CacheDataLoader<string, string?>(
             (key, ct) =>
-                Task.FromResult<string?>(
+                Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product
                 ),
             nameof(Product)
@@ -151,7 +151,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
         /// <returns></returns>
         public Task<string?> Title(IResolverContext context, CancellationToken cancellationToken) => context.CacheDataLoader<string, string?>(
             (key, ct) =>
-                Task.FromResult<string?>(
+                Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title
                 ),
             nameof(Title)
@@ -165,7 +165,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate
         /// <returns></returns>
         public Task<string?> Trademark(IResolverContext context, CancellationToken cancellationToken) => context.CacheDataLoader<string, string?>(
             (key, ct) =>
-                Task.FromResult<string?>(
+                Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyTrademarkAttribute>()?.Trademark
                 ),
             nameof(Trademark)

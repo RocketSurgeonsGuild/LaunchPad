@@ -1,7 +1,5 @@
-using System;
-using System.Linq;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {

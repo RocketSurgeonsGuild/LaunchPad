@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sample.Pages.Pages.Rockets
 {
@@ -23,7 +22,7 @@ namespace Sample.Pages.Pages.Rockets
 
         public async Task OnGet()
         {
-            Rockets = await _mediator.Send(new ListRockets.Request() { });
+            Rockets = await _mediator.Send(new ListRockets.Request());
         }
     }
 }

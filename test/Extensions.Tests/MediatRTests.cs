@@ -1,18 +1,17 @@
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using FakeItEasy;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -51,7 +50,7 @@ namespace Extensions.Tests
                .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
             var context = ConventionContext.From(builder);
             var services = new ServiceCollection();
-            new MediatRConvention(new FoundationOptions()
+            new MediatRConvention(new FoundationOptions
             {
                 MediatorLifetime = ServiceLifetime.Singleton
             }).Register(context, new ConfigurationBuilder().Build(), services);

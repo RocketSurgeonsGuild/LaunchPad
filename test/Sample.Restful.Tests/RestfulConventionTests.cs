@@ -1,10 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Restful.Tests
 {

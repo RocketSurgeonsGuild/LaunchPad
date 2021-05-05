@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FluentValidation;
 using JetBrains.Annotations;
@@ -10,7 +6,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Core.Operations.Rockets;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sample.Core.Operations.LaunchRecords
 {
@@ -21,12 +19,7 @@ namespace Sample.Core.Operations.LaunchRecords
         public record Request : IRequest<IEnumerable<LaunchRecordModel>> { }
 
         class Validator : AbstractValidator<Request>
-        {
-            public Validator()
-            {
-
-            }
-        }
+        { }
 
         class Handler : IRequestHandler<Request, IEnumerable<LaunchRecordModel>>
         {

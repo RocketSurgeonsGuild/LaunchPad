@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sample.BlazorServer.Pages.Rockets
 {
@@ -17,7 +16,7 @@ namespace Sample.BlazorServer.Pages.Rockets
 
         protected override async Task OnInitializedAsync()
         {
-            Rockets = await Mediator.Send(new ListRockets.Request() { });
+            Rockets = await Mediator.Send(new ListRockets.Request());
         }
     }
 }

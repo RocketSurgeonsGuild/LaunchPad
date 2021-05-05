@@ -1,12 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using System;
+using System.Diagnostics;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {

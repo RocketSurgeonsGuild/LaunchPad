@@ -1,20 +1,14 @@
-using System;
-using System.Collections.Generic;
 using FakeItEasy;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Configuration;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Functions;
+using System;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,7 +16,7 @@ namespace Functions.Tests
 {
     internal class Startup : LaunchPadFunctionStartup, IServiceConvention
     {
-        public Startup() : base() { }
+        public Startup() { }
         public Startup([NotNull] Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure) : base(configure) { }
 
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services) => services.AddSingleton(new object());

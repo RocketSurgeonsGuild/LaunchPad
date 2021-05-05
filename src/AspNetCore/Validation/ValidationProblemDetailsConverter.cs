@@ -1,10 +1,10 @@
+using JetBrains.Annotations;
+using Rocket.Surgery.LaunchPad.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using JetBrains.Annotations;
-using Rocket.Surgery.LaunchPad.Foundation;
 
 #pragma warning disable 8618
 

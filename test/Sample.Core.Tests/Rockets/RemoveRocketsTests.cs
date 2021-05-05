@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,7 +34,7 @@ namespace Sample.Core.Tests.Rockets
                 );
 
             await ServiceProvider.WithScoped<IMediator>().Invoke(
-                mediator => mediator.Send(new DeleteRocket.Request() { Id = id})
+                mediator => mediator.Send(new DeleteRocket.Request { Id = id})
             );
 
             ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());

@@ -12,10 +12,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
             {
                 value.Headers.Add(
                     "www-authenticate",
-                    new OpenApiHeader()
+                    new OpenApiHeader
                     {
                         // Required = true,
-                        Schema = new OpenApiSchema() { Type = "string" },
+                        Schema = new OpenApiSchema { Type = "string" },
                         Description = "The error details"
                     }
                 );
@@ -25,10 +25,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
             {
                 value.Headers.Add(
                     "www-authenticate",
-                    new OpenApiHeader()
+                    new OpenApiHeader
                     {
                         // Required = true,
-                        Schema = new OpenApiSchema() { Type = "string" },
+                        Schema = new OpenApiSchema { Type = "string" },
                         Description = "The error details"
                     }
                 );

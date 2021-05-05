@@ -45,13 +45,13 @@ namespace AspNetCore.Tests.Validation
             }
 
             // 10 digits, starts with 3
-            ShouldBeSuccess(new PhoneEntity() { MobilePhoneNumber = "3123456789" });
+            ShouldBeSuccess(new PhoneEntity { MobilePhoneNumber = "3123456789" });
             // less then 10
-            ShouldBeFailed(new PhoneEntity() { MobilePhoneNumber = "333" });
+            ShouldBeFailed(new PhoneEntity { MobilePhoneNumber = "333" });
             // has symbols
-            ShouldBeFailed(new PhoneEntity() { MobilePhoneNumber = "3a23456789" });
+            ShouldBeFailed(new PhoneEntity { MobilePhoneNumber = "3a23456789" });
             // has symbols, not starts with 3
-            ShouldBeFailed(new PhoneEntity() { MobilePhoneNumber = "1a23456789" });
+            ShouldBeFailed(new PhoneEntity { MobilePhoneNumber = "1a23456789" });
 
             // *********************************
             // FluentValidation swagger behavior

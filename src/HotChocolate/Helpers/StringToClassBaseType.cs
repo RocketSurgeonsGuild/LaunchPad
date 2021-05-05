@@ -42,7 +42,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize string to {this.Name}",
+                $"Unable to deserialize string to {Name}",
                 this);
         }
 
@@ -71,7 +71,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize string to {this.Name}",
+                $"Unable to deserialize string to {Name}",
                 this);
         }
 

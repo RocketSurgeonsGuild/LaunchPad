@@ -1,21 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using DryIoc;
-using FluentAssertions;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Sample.Core.Domain;
-using Serilog;
-using Serilog.Events;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 

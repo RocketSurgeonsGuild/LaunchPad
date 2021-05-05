@@ -1,13 +1,12 @@
-﻿using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,7 +25,7 @@ namespace Sample.Core.Tests.LaunchRecords
                .Invoke(
                     async (context, ct) =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
                             Type = RocketType.Falcon9,
                             SerialNumber = "12345678901234"
@@ -40,7 +39,7 @@ namespace Sample.Core.Tests.LaunchRecords
 
             var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
                 async (mediator, clock, ct) => await mediator.Send(
-                    new CreateLaunchRecord.Request()
+                    new CreateLaunchRecord.Request
                     {
                         Partner = "partner",
                         Payload = "geo-fence-ftl",

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -7,6 +6,7 @@ using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 

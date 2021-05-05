@@ -7,11 +7,8 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
-using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 using System.Linq;
-using System.Reflection;
 
 [assembly: Convention(typeof(GraphqlConvention))]
 

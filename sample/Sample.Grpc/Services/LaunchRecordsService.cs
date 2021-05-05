@@ -1,14 +1,11 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
-using NodaTime;
-using NodaTime.Extensions;
 using Sample.Core.Operations.LaunchRecords;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sample.Grpc.Services
 {
@@ -55,7 +52,7 @@ namespace Sample.Grpc.Services
         {
             var mRequest = _mapper.Map<ListLaunchRecords.Request>(request);
             var response = await _mediator.Send(mRequest, context.CancellationToken);
-            return new ListLaunchRecordsResponse()
+            return new ListLaunchRecordsResponse
             {
                 Results = { response.Select(_mapper.Map<LaunchRecordModel>) }
             };
@@ -72,7 +69,7 @@ namespace Sample.Grpc.Services
                 CreateMap<UpdateLaunchRecordRequest, EditLaunchRecord.Request>();
                 CreateMap<ListLaunchRecordsRequest, ListLaunchRecords.Request>();
                 CreateMap<DeleteLaunchRecordRequest, DeleteLaunchRecord.Request>();
-                CreateMap<Sample.Core.Models.LaunchRecordModel, LaunchRecordModel>();
+                CreateMap<Core.Models.LaunchRecordModel, LaunchRecordModel>();
             }
         }
 
@@ -132,9 +129,7 @@ namespace Sample.Grpc.Services
         }
 
         class ListLaunchRecordsRequestValidator : AbstractValidator<ListLaunchRecordsRequest>
-        {
-            public ListLaunchRecordsRequestValidator() { }
-        }
+        { }
 
         class DeleteLaunchRecordRequestValidator : AbstractValidator<DeleteLaunchRecordRequest>
         {

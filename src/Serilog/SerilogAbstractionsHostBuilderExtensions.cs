@@ -1,8 +1,8 @@
 // ReSharper disable once CheckNamespace
 
-using System;
 using JetBrains.Annotations;
 using Rocket.Surgery.LaunchPad.Serilog;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace Rocket.Surgery.Conventions

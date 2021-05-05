@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -21,7 +22,7 @@ namespace Rocket.Surgery.LaunchPad.Mapping
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
-        public void Register([NotNull] IConventionContext context, Microsoft.Extensions.Configuration.IConfiguration configuration, IServiceCollection services)
+        public void Register([NotNull] IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context == null)
             {

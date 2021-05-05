@@ -1,12 +1,7 @@
-﻿using HotChocolate.Resolvers;
-using HotChocolate.Types;
-using Humanizer;
+﻿using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading;
 
 namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
 {

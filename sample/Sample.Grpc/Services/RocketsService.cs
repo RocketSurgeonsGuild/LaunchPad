@@ -1,13 +1,11 @@
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Sample.Core.Operations.Rockets;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sample.Grpc.Services
 {
@@ -49,7 +47,7 @@ namespace Sample.Grpc.Services
         public override async Task<ListRocketsResponse> ListRockets(ListRocketsRequest request, ServerCallContext context)
         {
             var response = await _mediator.Send(_mapper.Map<ListRockets.Request>(request), context.CancellationToken);
-            return new ListRocketsResponse()
+            return new ListRocketsResponse
             {
                 Results = { response.Select(_mapper.Map<RocketModel>) }
             };
@@ -65,7 +63,7 @@ namespace Sample.Grpc.Services
                 CreateMap<UpdateRocketRequest, EditRocket.Request>();
                 CreateMap<ListRocketsRequest, ListRockets.Request>();
                 CreateMap<DeleteRocketRequest, DeleteRocket.Request>();
-                CreateMap<Sample.Core.Models.RocketModel, RocketModel>();
+                CreateMap<Core.Models.RocketModel, RocketModel>();
             }
         }
 

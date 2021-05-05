@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +7,9 @@ using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 using ValidationException = FluentValidation.ValidationException;
@@ -27,7 +27,7 @@ namespace Sample.Core.Tests.Rockets
         {
             var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
-                    new CreateRocket.Request()
+                    new CreateRocket.Request
                     {
                         Type = RocketType.Falcon9,
                         SerialNumber = "12345678901234"
@@ -46,7 +46,7 @@ namespace Sample.Core.Tests.Rockets
                     async z =>
                     {
                         z.Add(
-                            new ReadyRocket()
+                            new ReadyRocket
                             {
                                 Type = RocketType.Falcon9,
                                 SerialNumber = "12345678901234"
@@ -59,7 +59,7 @@ namespace Sample.Core.Tests.Rockets
 
             Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
-                    new CreateRocket.Request()
+                    new CreateRocket.Request
                     {
                         Type = RocketType.Falcon9,
                         SerialNumber = "12345678901234"
@@ -88,14 +88,14 @@ namespace Sample.Core.Tests.Rockets
             {
                 Add(new CreateRocket.Request(), nameof(CreateRocket.Request.SerialNumber));
                 Add(
-                    new CreateRocket.Request()
+                    new CreateRocket.Request
                     {
                         SerialNumber = Faker.Random.String2(0, 9)
                     },
                     nameof(CreateRocket.Request.SerialNumber)
                 );
                 Add(
-                    new CreateRocket.Request()
+                    new CreateRocket.Request
                     {
                         SerialNumber = Faker.Random.String2(600, 800)
                     },

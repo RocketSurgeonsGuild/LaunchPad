@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Rocket.Surgery.LaunchPad.Foundation;
+using System.Threading.Tasks;
 
 // ReSharper disable ClassNeverInstantiated.Global
 

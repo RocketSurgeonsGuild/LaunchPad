@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentValidation.Results;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.Foundation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 {

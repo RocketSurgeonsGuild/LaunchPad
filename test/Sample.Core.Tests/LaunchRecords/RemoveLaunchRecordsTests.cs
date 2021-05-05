@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -37,7 +37,7 @@ namespace Sample.Core.Tests.LaunchRecords
                 );
 
             await ServiceProvider.WithScoped<IMediator>().Invoke(
-                mediator => mediator.Send(new DeleteLaunchRecord.Request() { Id = id})
+                mediator => mediator.Send(new DeleteLaunchRecord.Request { Id = id})
             );
 
             ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());

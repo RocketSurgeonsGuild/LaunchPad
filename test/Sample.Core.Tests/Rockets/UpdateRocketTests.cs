@@ -1,6 +1,4 @@
 ﻿using Bogus;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +7,8 @@ using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 using ValidationException = FluentValidation.ValidationException;
@@ -28,7 +28,7 @@ namespace Sample.Core.Tests.Rockets
                .Invoke(
                     async z =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
                             Type = RocketType.Falcon9,
                             SerialNumber = "12345678901234"
@@ -42,7 +42,7 @@ namespace Sample.Core.Tests.Rockets
 
             var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
-                    new EditRocket.Request()
+                    new EditRocket.Request
                     {
                         Id = rocket.Id,
                         Type = RocketType.FalconHeavy,
@@ -71,12 +71,12 @@ namespace Sample.Core.Tests.Rockets
         {
             public ShouldValidateUsersRequiredFieldData()
             {
-                Add(new EditRocket.Request()
+                Add(new EditRocket.Request
                 {
                     Id = Guid.NewGuid()
                 }, nameof(EditRocket.Request.SerialNumber));
                 Add(
-                    new EditRocket.Request()
+                    new EditRocket.Request
                     {
                         Id = Guid.NewGuid(),
                         SerialNumber = Faker.Random.String2(0, 9)
@@ -84,7 +84,7 @@ namespace Sample.Core.Tests.Rockets
                     nameof(EditRocket.Request.SerialNumber)
                 );
                 Add(
-                    new EditRocket.Request()
+                    new EditRocket.Request
                     {
                         Id = Guid.NewGuid(),
                         SerialNumber = Faker.Random.String2(600, 800)

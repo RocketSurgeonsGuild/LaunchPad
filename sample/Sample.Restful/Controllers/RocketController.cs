@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sample.Restful.Controllers
 {
@@ -31,7 +29,7 @@ namespace Sample.Restful.Controllers
 
         [HttpPut("{id:guid}")]
         public Task<ActionResult> UpdateRocket([BindRequired] Guid id, [BindRequired, FromBody] EditRocket.Model model)
-            => Send(new EditRocket.Request() { Id = id }.With(model), NoContent);
+            => Send(new EditRocket.Request { Id = id }.With(model), NoContent);
 
         [HttpDelete("{id:guid}")]
         public Task<ActionResult> RemoveRocket([BindRequired, FromRoute] DeleteRocket.Request request) => Send(request);

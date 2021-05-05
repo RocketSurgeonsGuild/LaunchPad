@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -8,6 +6,8 @@ using Rocket.Surgery.Conventions.Configuration;
 using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
 using Serilog.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 [assembly: Convention(typeof(SerilogReadFromConfigurationConvention))]
 

@@ -1,9 +1,7 @@
-using HotChocolate.Language;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
-using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;

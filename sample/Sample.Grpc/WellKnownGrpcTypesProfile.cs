@@ -1,8 +1,7 @@
-using System;
 using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
 using NodaTime;
-using NodaTime.Extensions;
+using System;
 using Duration = NodaTime.Duration;
 using WktDuration = Google.Protobuf.WellKnownTypes.Duration;
 
@@ -32,7 +31,7 @@ namespace Sample.Grpc
                 static ts =>
                     ts.HasValue
                         ? Timestamp.FromDateTimeOffset(ts.Value.ToDateTimeOffset())
-                        : new Timestamp() { Seconds = 0 }
+                        : new Timestamp { Seconds = 0 }
             );
 
             CreateMap<NullableTimestamp?, Instant>().ConvertUsing(
@@ -50,13 +49,13 @@ namespace Sample.Grpc
             CreateMap<Instant, NullableTimestamp>()
                .ConvertUsing(
                     static ts =>
-                        new NullableTimestamp() { Data = Timestamp.FromDateTimeOffset(ts.ToDateTimeOffset()) }
+                        new NullableTimestamp { Data = Timestamp.FromDateTimeOffset(ts.ToDateTimeOffset()) }
                 );
             CreateMap<Instant?, NullableTimestamp>().ConvertUsing(
                 static ts =>
                     ts.HasValue
-                        ? new NullableTimestamp() { Data = Timestamp.FromDateTimeOffset(ts.Value.ToDateTimeOffset()) }
-                        : new NullableTimestamp() { Null = NullValue.NullValue }
+                        ? new NullableTimestamp { Data = Timestamp.FromDateTimeOffset(ts.Value.ToDateTimeOffset()) }
+                        : new NullableTimestamp { Null = NullValue.NullValue }
             );
 
             CreateMap<Timestamp?, DateTimeOffset>().ConvertUsing(
@@ -80,7 +79,7 @@ namespace Sample.Grpc
                     static ts =>
                         ts.HasValue
                             ? Timestamp.FromDateTimeOffset(ts.Value)
-                            : new Timestamp() { Seconds = 0 }
+                            : new Timestamp { Seconds = 0 }
                 );
 
             CreateMap<NullableTimestamp?, DateTimeOffset>().ConvertUsing(
@@ -97,13 +96,13 @@ namespace Sample.Grpc
             );
             CreateMap<DateTimeOffset, NullableTimestamp>().ConvertUsing(
                 static ts =>
-                    new NullableTimestamp() { Data = Timestamp.FromDateTimeOffset(ts) }
+                    new NullableTimestamp { Data = Timestamp.FromDateTimeOffset(ts) }
             );
             CreateMap<DateTimeOffset?, NullableTimestamp>().ConvertUsing(
                 static ts =>
                     ts.HasValue
-                        ? new NullableTimestamp() { Data = Timestamp.FromDateTimeOffset(ts.Value) }
-                        : new NullableTimestamp() { Null = NullValue.NullValue }
+                        ? new NullableTimestamp { Data = Timestamp.FromDateTimeOffset(ts.Value) }
+                        : new NullableTimestamp { Null = NullValue.NullValue }
             );
 
             CreateMap<Timestamp?, DateTime>().ConvertUsing(
@@ -125,7 +124,7 @@ namespace Sample.Grpc
                 static ts =>
                     ts.HasValue
                         ? Timestamp.FromDateTime(ts.Value)
-                        : new Timestamp() { Seconds = 0 }
+                        : new Timestamp { Seconds = 0 }
             );
 
             CreateMap<NullableTimestamp?, DateTime>().ConvertUsing(
@@ -142,12 +141,12 @@ namespace Sample.Grpc
             );
             CreateMap<DateTime, NullableTimestamp>().ConvertUsing(
                 static ts =>
-                    new NullableTimestamp() { Data = Timestamp.FromDateTime(ts) }
+                    new NullableTimestamp { Data = Timestamp.FromDateTime(ts) }
             );
             CreateMap<DateTime?, NullableTimestamp>().ConvertUsing(
                 static ts => ts.HasValue
-                    ? new NullableTimestamp() { Data = Timestamp.FromDateTime(ts.Value) }
-                    : new NullableTimestamp() { Null = NullValue.NullValue }
+                    ? new NullableTimestamp { Data = Timestamp.FromDateTime(ts.Value) }
+                    : new NullableTimestamp { Null = NullValue.NullValue }
             );
 
             CreateMap<WktDuration?, Duration>().ConvertUsing(
@@ -170,7 +169,7 @@ namespace Sample.Grpc
                 static ts =>
                     ts.HasValue
                         ? WktDuration.FromTimeSpan(ts.Value.ToTimeSpan())
-                        : new WktDuration() { Seconds = 0 }
+                        : new WktDuration { Seconds = 0 }
             );
 
             CreateMap<WktDuration?, TimeSpan>().ConvertUsing(
@@ -193,7 +192,7 @@ namespace Sample.Grpc
                 static ts =>
                     ts.HasValue
                         ? WktDuration.FromTimeSpan(ts.Value)
-                        : new WktDuration() { Seconds = 0 }
+                        : new WktDuration { Seconds = 0 }
             );
         }
     }

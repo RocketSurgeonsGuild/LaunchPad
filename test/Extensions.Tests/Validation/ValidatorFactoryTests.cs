@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using DryIoc;
 using FakeItEasy;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
+using System;
+using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 

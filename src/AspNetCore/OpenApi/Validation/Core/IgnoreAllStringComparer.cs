@@ -17,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core
         public static readonly StringComparer Instance = new IgnoreAllStringComparer();
 
         /// <inheritdoc />
-        public override int Compare(string left, string right)
+        public override int Compare(string? left, string? right)
         {
             int leftIndex = 0;
             int rightIndex = 0;
@@ -38,7 +38,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core
         }
 
         /// <inheritdoc />
-        public override bool Equals(string left, string right)
+        public override bool Equals(string? left, string? right)
         {
             if (left == null || right == null)
                 return false;
@@ -62,7 +62,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core
         }
 
         /// <inheritdoc />
-        public override int GetHashCode(string obj)
+        public override int GetHashCode(string? obj)
         {
             unchecked
             {
@@ -70,16 +70,16 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core
                 int hash = 0;
                 while (GetNextSymbol(obj, ref index, out char symbol))
                 {
-                    hash = 31 * hash + char.ToUpperInvariant(symbol).GetHashCode();
+                    hash = ( 31 * hash ) + char.ToUpperInvariant(symbol).GetHashCode();
                 }
 
                 return hash;
             }
         }
 
-        internal static bool GetNextSymbol(string value, ref int startIndex, out char symbol)
+        internal static bool GetNextSymbol(string? value, ref int startIndex, out char symbol)
         {
-            while (startIndex >= 0 && startIndex < value.Length)
+            while (startIndex >= 0 && startIndex < value?.Length)
             {
                 var current = value[startIndex++];
                 if (char.IsLetterOrDigit(current))

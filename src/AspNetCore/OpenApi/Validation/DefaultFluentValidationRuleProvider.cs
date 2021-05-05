@@ -93,7 +93,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
                                 {
                                     // Add first pattern as AllOf
                                     schemaProperty.AllOf.Add(
-                                        new OpenApiSchema()
+                                        new OpenApiSchema
                                         {
                                             Pattern = schemaProperty.Pattern,
                                         }
@@ -102,7 +102,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
 
                                 // Add another pattern as AllOf
                                 schemaProperty.AllOf.Add(
-                                    new OpenApiSchema()
+                                    new OpenApiSchema
                                     {
                                         Pattern = regularExpressionValidator.Expression,
                                     }

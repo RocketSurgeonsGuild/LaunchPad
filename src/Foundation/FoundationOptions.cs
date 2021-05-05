@@ -1,8 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using NodaTime;
 using NodaTime.TimeZones;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.Foundation
@@ -19,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <remarks>
         /// Useful so that applications and conventions can know the "true" executing assembly when running in an environment like azure functions
         /// </remarks>
-        public Assembly? EntryAssembly { get; set; } = null!;
+        public Assembly? EntryAssembly { get; set; }
 
         /// <summary>
         /// The NodaTime timezone source

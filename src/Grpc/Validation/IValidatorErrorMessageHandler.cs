@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using FluentValidation.Results;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentValidation.Results;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {

@@ -1,6 +1,6 @@
-using System;
 using JetBrains.Annotations;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace FluentValidation

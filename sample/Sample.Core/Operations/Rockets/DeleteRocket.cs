@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sample.Core.Operations.Rockets
 {

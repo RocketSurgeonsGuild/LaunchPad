@@ -30,8 +30,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <param name="validator">The validator to call before writing values. May be null, indicating that no validation is required.</param>
         public NewtonsoftJsonCompositeNodaPatternConverter(Action<T>? validator, params IPattern<T>[] patterns)
         {
-            this._patterns = patterns;
-            this._validator = validator;
+            _patterns = patterns;
+            _validator = validator;
         }
 
         /// <summary>

@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +8,8 @@ using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Hosting.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
+using System;
+using System.Linq;
 using ILogger = Serilog.ILogger;
 
 [assembly: Convention(typeof(SerilogHostingConvention))]

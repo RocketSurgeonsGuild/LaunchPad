@@ -1,7 +1,7 @@
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
 {

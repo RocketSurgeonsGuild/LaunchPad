@@ -8,7 +8,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
     {
         public RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> options)
         {
-            ActionModelConventions = new List<IActionModelConvention>()
+            ActionModelConventions = new List<IActionModelConvention>
             {
                 new RestfulApiActionModelConvention(options)
             };

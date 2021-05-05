@@ -178,13 +178,13 @@ namespace AspNetCore.Tests.Validation
             void ShouldBeSuccess(NumberEntity entity) => new NumberEntity.Validator().ValidateAndThrow(entity);
             void ShouldBeFailed(NumberEntity entity) => new NumberEntity.Validator().Validate(entity).IsValid.Should().BeFalse();
 
-            ShouldBeSuccess(new NumberEntity() { Number = 1 });
-            ShouldBeFailed(new NumberEntity() { Number = 0 });
+            ShouldBeSuccess(new NumberEntity { Number = 1 });
+            ShouldBeFailed(new NumberEntity { Number = 0 });
 
-            ShouldBeSuccess(new NumberEntity() { Number = 1, NullableNumber = 1 });
-            ShouldBeFailed(new NumberEntity() { Number = 1, NullableNumber = 0 });
+            ShouldBeSuccess(new NumberEntity { Number = 1, NullableNumber = 1 });
+            ShouldBeFailed(new NumberEntity { Number = 1, NullableNumber = 0 });
             // null is also valid
-            ShouldBeSuccess(new NumberEntity() { Number = 1, NullableNumber = null });
+            ShouldBeSuccess(new NumberEntity { Number = 1, NullableNumber = null });
 
             // *********************************
             // FluentValidation swagger behavior

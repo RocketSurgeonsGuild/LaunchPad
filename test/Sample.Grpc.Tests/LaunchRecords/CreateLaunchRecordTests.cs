@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
@@ -18,7 +17,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
     {
         private static readonly Faker Faker = new Faker();
 
-        public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_Create_A_LaunchRecord()
@@ -29,7 +28,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
                .Invoke(
                     async z =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
                             Type = Core.Domain.RocketType.Falcon9,
                             SerialNumber = "12345678901234"
@@ -43,7 +42,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
 
 
             var response = await client.CreateLaunchRecordAsync(
-                new CreateLaunchRecordRequest()
+                new CreateLaunchRecordRequest
                 {
                     Partner = "partner",
                     Payload = "geo-fence-ftl",

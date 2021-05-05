@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using App.Metrics.AspNetCore;
+﻿using App.Metrics.AspNetCore;
 using App.Metrics.AspNetCore.Endpoints;
 using App.Metrics.AspNetCore.Endpoints.Middleware;
 using App.Metrics.Formatters;
@@ -9,6 +7,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
 {
@@ -29,7 +29,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
             Action<IEndpointConventionBuilder>? configureEndpointMetadata = null
         )
         {
-            configureEndpointMetadata ??= (b) => { };
+            configureEndpointMetadata ??= b => { };
             // configureEndpointMetadata(builder.MapMetricsTextEndpoint());
             configureEndpointMetadata(builder.MapMetricsEndpoint());
             // configureEndpointMetadata(builder.MapEnvInfoEndpoint());

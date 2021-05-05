@@ -1,14 +1,14 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace Rocket.Surgery.LaunchPad.Metadata
 {
     /// <summary>
     /// GitVersion.
-    /// Implements the <see cref="IEquatable{GitVersion}" />
+    /// Implements the <see cref="IEquatable{T}" />
     /// </summary>
     /// <seealso cref="IEquatable{GitVersion}" />
     public sealed class GitVersion : IEquatable<GitVersion?>

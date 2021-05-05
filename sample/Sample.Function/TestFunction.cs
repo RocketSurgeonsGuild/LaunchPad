@@ -1,14 +1,11 @@
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Rocket.Surgery.Conventions;
-using Sample_Function;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Sample_Function
 {

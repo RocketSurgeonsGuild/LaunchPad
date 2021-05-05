@@ -1,6 +1,6 @@
-using System;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace FluentAssertions

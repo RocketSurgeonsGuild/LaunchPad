@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 

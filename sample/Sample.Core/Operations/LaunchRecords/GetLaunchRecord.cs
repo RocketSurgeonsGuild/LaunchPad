@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
@@ -9,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sample.Core.Operations.LaunchRecords
 {

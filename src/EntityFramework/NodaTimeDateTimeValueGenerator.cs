@@ -23,6 +23,6 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework
         public override DateTime Next(EntityEntry entry) => _clock.GetCurrentInstant().ToDateTimeUtc();
 
         /// <inheritdoc />
-        public override bool GeneratesTemporaryValues { get; } = false;
+        public override bool GeneratesTemporaryValues { get; }
     }
 }

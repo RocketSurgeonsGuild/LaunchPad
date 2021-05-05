@@ -1,8 +1,8 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using NodaTime;
+using System;
 
 namespace Rocket.Surgery.LaunchPad.EntityFramework
 {
@@ -23,6 +23,6 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework
         public override DateTimeOffset Next(EntityEntry entry) => _clock.GetCurrentInstant().ToDateTimeOffset();
 
         /// <inheritdoc />
-        public override bool GeneratesTemporaryValues { get; } = false;
+        public override bool GeneratesTemporaryValues { get; }
     }
 }

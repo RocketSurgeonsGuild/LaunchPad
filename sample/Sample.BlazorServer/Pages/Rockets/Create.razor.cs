@@ -1,10 +1,7 @@
-using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sample.Core.Operations.Rockets;
+using System.Threading.Tasks;
 
 namespace Sample.BlazorServer.Pages.Rockets
 {

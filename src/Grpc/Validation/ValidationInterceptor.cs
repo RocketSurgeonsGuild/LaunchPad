@@ -1,11 +1,10 @@
 using FluentValidation;
-using System.Linq;
-using System.Threading.Tasks;
+using FluentValidation.Results;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using System;
-using System.ComponentModel.DataAnnotations;
-using ValidationResult = FluentValidation.Results.ValidationResult;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {

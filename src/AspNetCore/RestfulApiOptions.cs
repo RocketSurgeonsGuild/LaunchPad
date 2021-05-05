@@ -14,7 +14,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
         /// <summary>
         /// The related method builders that are used to identify methods by name, prefix, type, etc.
         /// </summary>
-        public List<RestfulApiMethodBuilder> Builders { get; } = new List<RestfulApiMethodBuilder>()
+        public List<RestfulApiMethodBuilder> Builders { get; } = new List<RestfulApiMethodBuilder>
         {
             new RestfulApiMethodBuilder(RestfulApiMethod.List)
                .MatchPrefix("List", "Search")
@@ -48,7 +48,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
         /// <summary>
         /// The cache of default status codes for a given method type.
         /// </summary>
-        public IDictionary<RestfulApiMethod, int> MethodStatusCodeMap = new Dictionary<RestfulApiMethod, int>()
+        public IDictionary<RestfulApiMethod, int> MethodStatusCodeMap = new Dictionary<RestfulApiMethod, int>
         {
             [RestfulApiMethod.List] = StatusCodes.Status200OK,
             [RestfulApiMethod.Read] = StatusCodes.Status200OK,

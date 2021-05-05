@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sample.Restful.Controllers
 {
     [Route("[controller]")]
     public class WeatherForecastController : RestfulApiController
     {
-        private static readonly string[] Summaries = new[]
-        {
+        private static readonly string[] Summaries = {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 

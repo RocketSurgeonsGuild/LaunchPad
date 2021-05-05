@@ -1,11 +1,8 @@
 ﻿using Bogus;
 using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
-using Sample.Core.Operations.LaunchRecords;
 using Sample.Restful.Client;
 using System.Threading.Tasks;
 using Xunit;
@@ -17,7 +14,7 @@ namespace Sample.Restful.Tests.LaunchRecords
     {
         private static readonly Faker Faker = new Faker();
 
-        public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_List_LaunchRecords()

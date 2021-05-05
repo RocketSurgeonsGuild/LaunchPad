@@ -8,8 +8,6 @@ using NodaTime;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 [assembly: Convention(typeof(NewtonsoftJsonConvention))]
 

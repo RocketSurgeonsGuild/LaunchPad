@@ -1,16 +1,11 @@
-using System.Threading.Tasks;
 using FluentAssertions;
-using FluentValidation;
 using Grpc.Core;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
-using Rocket.Surgery.LaunchPad.Grpc.Validation;
 using Sample.Core;
 using Sample.Core.Domain;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -58,7 +53,7 @@ namespace Sample.Grpc.Tests.Validation.Integration
             // When
             async Task Action()
             {
-                await client.GetRocketsAsync(new GetRocketRequest() { Id = "" });
+                await client.GetRocketsAsync(new GetRocketRequest { Id = "" });
             }
 
             // Then

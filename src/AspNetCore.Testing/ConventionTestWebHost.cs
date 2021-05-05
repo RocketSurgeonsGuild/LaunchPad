@@ -1,23 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Extensions.Logging;
-using ILogger = Serilog.ILogger;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
 {

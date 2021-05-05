@@ -11,7 +11,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
         /// <summary>
         /// Gets or sets a value indicating whether property should be set to not nullable if MinLength is greater then zero.
         /// </summary>
-        public bool SetNotNullableIfMinLengthGreaterThenZero { get; set; } = false;
+        public bool SetNotNullableIfMinLengthGreaterThenZero { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether schema supports AllOf.

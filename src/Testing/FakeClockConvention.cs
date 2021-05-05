@@ -1,13 +1,10 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Testing;
 

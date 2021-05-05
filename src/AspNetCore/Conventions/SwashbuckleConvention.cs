@@ -1,4 +1,5 @@
-﻿using FluentValidation.Validators;
+﻿using FluentValidation;
+using FluentValidation.Validators;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,7 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Extensions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
@@ -22,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using FluentValidationRule = Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidationRule;
 
 [assembly: Convention(typeof(SwashbuckleConvention))]
 
@@ -66,14 +67,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                     options.AddFluentValidationRules();
 
                     options.MapType<JsonElement>(
-                        () => new OpenApiSchema()
+                        () => new OpenApiSchema
                         {
                             Type = "object",
                             AdditionalPropertiesAllowed = true,
                         }
                     );
                     options.MapType<JsonElement?>(
-                        () => new OpenApiSchema()
+                        () => new OpenApiSchema
                         {
                             Type = "object",
                             AdditionalPropertiesAllowed = true,
@@ -95,8 +96,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                     options.CustomSchemaIds(
                         type =>
                         {
-                            if (type == typeof(global::FluentValidation.Severity))
-                                return $"Validation{nameof(global::FluentValidation.Severity)}";
+                            if (type == typeof(Severity))
+                                return $"Validation{nameof(Severity)}";
                             return type.IsNested ? type.DeclaringType?.Name + type.Name : type.Name;
                         }
                     );

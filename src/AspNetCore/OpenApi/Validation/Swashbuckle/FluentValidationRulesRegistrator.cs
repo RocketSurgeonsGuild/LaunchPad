@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using FluentValidationOperationFilter = Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle.FluentValidationOperationFilter;
-using FluentValidationRules = Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle.FluentValidationRules;
 
 // ReSharper disable once CheckNamespace
 namespace Swashbuckle.AspNetCore.Swagger

@@ -1,9 +1,9 @@
-using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
+using System;
 
 [assembly: Convention(typeof(SerilogEnrichLoggingConvention))]
 

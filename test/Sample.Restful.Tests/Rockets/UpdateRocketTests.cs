@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
-using RocketType = Sample.Restful.Client.RocketType;
+using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.Rockets
 {
@@ -26,9 +26,9 @@ namespace Sample.Restful.Tests.Rockets
                .Invoke(
                     async z =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
-                            Type = Sample.Core.Domain.RocketType.Falcon9,
+                            Type = RocketType.Falcon9,
                             SerialNumber = "12345678901234"
                         };
                         z.Add(rocket);
@@ -40,9 +40,9 @@ namespace Sample.Restful.Tests.Rockets
 
             var u = await client.UpdateRocketAsync(
                 rocket.Id,
-                new EditRocketModel()
+                new EditRocketModel
                 {
-                    Type = RocketType.FalconHeavy,
+                    Type = Client.RocketType.FalconHeavy,
                     SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
                 }
             );
@@ -73,17 +73,15 @@ namespace Sample.Restful.Tests.Rockets
             public ShouldValidateUsersRequiredFieldData()
             {
                 Add(
-                    new EditRocketModel() { },
+                    new EditRocketModel(),
                     nameof(EditRocketModel.SerialNumber)
                 );
                 Add(
-                    new EditRocketModel()
-                        { SerialNumber = Faker.Random.String2(0, 9) },
+                    new EditRocketModel { SerialNumber = Faker.Random.String2(0, 9) },
                     nameof(EditRocketModel.SerialNumber)
                 );
                 Add(
-                    new EditRocketModel()
-                        { SerialNumber = Faker.Random.String2(600, 800) },
+                    new EditRocketModel { SerialNumber = Faker.Random.String2(600, 800) },
                     nameof(EditRocketModel.SerialNumber)
                 );
             }

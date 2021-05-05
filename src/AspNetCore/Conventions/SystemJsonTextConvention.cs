@@ -1,23 +1,13 @@
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using NodaTime;
-using NodaTime.Serialization.SystemTextJson;
-using NodaTime.Text;
-using NodaTime.Utility;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
-using System.Collections.Generic;
-using System.Linq;
-using JsonConverter = System.Text.Json.Serialization.JsonConverter;
-using JsonSerializer = System.Text.Json.JsonSerializer;
+using System;
+using System.Text.Json;
 
 [assembly: Convention(typeof(SystemJsonTextConvention))]
 

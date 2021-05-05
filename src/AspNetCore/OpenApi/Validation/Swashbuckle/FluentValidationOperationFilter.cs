@@ -6,12 +6,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
-using System.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
 {

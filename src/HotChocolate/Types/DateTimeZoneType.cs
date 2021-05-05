@@ -33,11 +33,9 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
                 output = null;
                 return false;
             }
-            else
-            {
-                output = result;
-                return true;
-            }
+
+            output = result;
+            return true;
         }
     }
 }

@@ -1,10 +1,10 @@
-using System;
-using System.Globalization;
-using System.Linq;
 using FluentValidation;
 using FluentValidation.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
 {
@@ -13,7 +13,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
     /// </summary>
     public class FluentValidator : ComponentBase
     {
-        private static readonly char[] separators = new[] { '.', '[' };
+        private static readonly char[] separators = { '.', '[' };
 
         [Inject]
         IValidatorFactory ValidatorFactory { get; set; }
@@ -130,7 +130,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
                     var prop = obj.GetType().GetProperty("Item");
                     var indexerType = prop!.GetIndexParameters()[0].ParameterType;
                     var indexerValue = Convert.ChangeType(nextToken, indexerType, CultureInfo.InvariantCulture);
-                    newObj = prop.GetValue(obj, new object[] { indexerValue });
+                    newObj = prop.GetValue(obj, new[] { indexerValue });
                 }
                 else
                 {

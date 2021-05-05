@@ -1,14 +1,11 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
-using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
 [assembly: Convention(typeof(DataConvention))]
 

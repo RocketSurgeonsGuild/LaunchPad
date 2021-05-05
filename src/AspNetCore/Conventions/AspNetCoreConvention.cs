@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
@@ -13,7 +11,9 @@ using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 [assembly: Convention(typeof(AspNetCoreConvention))]

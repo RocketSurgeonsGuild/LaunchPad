@@ -1,18 +1,8 @@
-using System;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Threading.Tasks;
-using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.Hosting;
-using Xunit;
+using System;
 using Xunit.Abstractions;
 
 namespace Extensions.Tests

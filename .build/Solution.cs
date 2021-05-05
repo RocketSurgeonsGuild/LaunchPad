@@ -1,10 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
 using Nuke.Common.CI.GitHubActions;
 using Rocket.Surgery.Nuke;
 using Rocket.Surgery.Nuke.ContinuousIntegration;
 using Rocket.Surgery.Nuke.DotNetCore;
 using Rocket.Surgery.Nuke.GithubActions;
+using System.Collections.Generic;
+using System.Linq;
 
 [GitHubActionsSteps("ci", GitHubActionsImage.MacOsLatest, GitHubActionsImage.WindowsLatest, GitHubActionsImage.UbuntuLatest,
     AutoGenerate = false,

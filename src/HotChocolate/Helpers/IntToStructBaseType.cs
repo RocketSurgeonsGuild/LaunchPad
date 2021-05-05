@@ -42,7 +42,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize integer to {this.Name}",
+                $"Unable to deserialize integer to {Name}",
                 this
             );
         }
@@ -56,7 +56,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize integer to {this.Name}",
+                $"Unable to deserialize integer to {Name}",
                 this
             );
         }
@@ -80,7 +80,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize integer to {this.Name}",
+                $"Unable to deserialize integer to {Name}",
                 this
             );
         }

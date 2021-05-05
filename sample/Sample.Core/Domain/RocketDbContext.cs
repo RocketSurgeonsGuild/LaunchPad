@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Rocket.Surgery.LaunchPad.EntityFramework;
 
 namespace Sample.Core.Domain

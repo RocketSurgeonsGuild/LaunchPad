@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DryIoc;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyModel;
@@ -8,11 +6,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.CommandLine;
-using Rocket.Surgery.Conventions.DryIoc;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog;
-using DryIoc;
-using FluentValidation;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sample.Command
 {

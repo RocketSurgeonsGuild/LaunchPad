@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using MediatR.Registration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;

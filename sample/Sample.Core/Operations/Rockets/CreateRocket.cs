@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sample.Core.Operations.Rockets
 {
     [PublicAPI]
-    public static partial class CreateRocket
+    public static class CreateRocket
     {
         public record Request : IRequest<Response>
         {
@@ -88,7 +87,7 @@ namespace Sample.Core.Operations.Rockets
                 await _dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
                 await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                return new Response()
+                return new Response
                 {
                     Id = rocket.Id
                 };

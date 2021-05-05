@@ -1,7 +1,6 @@
-using System;
 using JetBrains.Annotations;
 using Rocket.Surgery.LaunchPad.AppMetrics;
-using Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace Rocket.Surgery.Conventions
