@@ -1,11 +1,8 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NodaTime;
-using NodaTime.Text;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Serilog;
 using System;
 using Xunit;
 using Xunit.Abstractions;

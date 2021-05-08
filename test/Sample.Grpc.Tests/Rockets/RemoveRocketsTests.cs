@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
@@ -16,7 +15,7 @@ namespace Sample.Grpc.Tests.Rockets
     {
         private static readonly Faker Faker = new Faker();
 
-        public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_Remove_Rocket()
@@ -35,7 +34,7 @@ namespace Sample.Grpc.Tests.Rockets
                     }
                 );
 
-            await client.DeleteRocketAsync(new DeleteRocketRequest() { Id = id.ToString() });
+            await client.DeleteRocketAsync(new DeleteRocketRequest { Id = id.ToString() });
 
             ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
         }

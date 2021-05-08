@@ -3,8 +3,14 @@ using System.Text.Json;
 
 namespace Rocket.Surgery.LaunchPad.Mapping.Profiles
 {
+    /// <summary>
+    /// Configures methods for well know conversions with STJ
+    /// </summary>
     public class SystemJsonTextProfile : Profile
     {
+        /// <summary>
+        /// The default constructor
+        /// </summary>
         public SystemJsonTextProfile()
         {
             CreateMap<JsonElement, byte[]?>().ConvertUsing(

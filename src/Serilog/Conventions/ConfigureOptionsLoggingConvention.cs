@@ -1,4 +1,3 @@
-using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
+using System;
 
 [assembly: Convention(typeof(ConfigureOptionsLoggingConvention))]
 
@@ -26,7 +26,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
         /// <param name="configuration"></param>
         /// <param name="loggerConfiguration"></param>
         public void Register(
-            [NotNull] IConventionContext context,
+            IConventionContext context,
             IServiceProvider services,
             IConfiguration configuration,
             LoggerConfiguration loggerConfiguration

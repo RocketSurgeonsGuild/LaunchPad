@@ -1,13 +1,9 @@
 ﻿using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging;
-using Sample.Core.Operations.Rockets;
 using Sample.Restful.Client;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
-using RocketType = Sample.Restful.Client.RocketType;
 
 namespace Sample.Restful.Tests.Rockets
 {
@@ -21,7 +17,7 @@ namespace Sample.Restful.Tests.Rockets
             var client = new RocketClient(Factory.CreateClient());
 
             var response = await client.CreateRocketAsync(
-                new CreateRocketRequest()
+                new CreateRocketRequest
                 {
                     Type = RocketType.Falcon9,
                     SerialNumber = "12345678901234"
@@ -36,7 +32,7 @@ namespace Sample.Restful.Tests.Rockets
         {
             var client = new RocketClient(Factory.CreateClient());
             await client.CreateRocketAsync(
-                new CreateRocketRequest()
+                new CreateRocketRequest
                 {
                     Type = RocketType.Falcon9,
                     SerialNumber = "12345678901234"
@@ -44,7 +40,7 @@ namespace Sample.Restful.Tests.Rockets
             );
 
             Func<Task> action = () => client.CreateRocketAsync(
-                new CreateRocketRequest()
+                new CreateRocketRequest
                 {
                     Type = RocketType.Falcon9,
                     SerialNumber = "12345678901234"

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using Rocket.Surgery.Conventions;
@@ -24,6 +23,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services.AddTransient<IConfigureOptions<JsonSerializerOptions>>(

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sample.Restful.Controllers
 {
@@ -30,7 +29,7 @@ namespace Sample.Restful.Controllers
 
         [HttpPut("{id:guid}")]
         public Task<ActionResult> UpdateLaunchRecord([BindRequired, FromRoute] Guid id, [BindRequired, FromBody] EditLaunchRecord.Model model)
-            => Send(new EditLaunchRecord.Request() { Id = id }.With(model), NoContent);
+            => Send(new EditLaunchRecord.Request { Id = id }.With(model), NoContent);
 
         [HttpDelete("{id:guid}")]
         public Task<ActionResult> RemoveLaunchRecord([BindRequired, FromRoute] DeleteLaunchRecord.Request request) => Send(request);

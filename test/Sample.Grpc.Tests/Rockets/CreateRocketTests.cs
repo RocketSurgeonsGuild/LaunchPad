@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Grpc.Core;
-using Microsoft.AspNetCore.Mvc;
 using Sample.Grpc.Tests.Validation;
 using System;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace Sample.Grpc.Tests.Rockets
             var client = new R.RocketsClient(Factory.CreateGrpcChannel());
 
             var response = await client.CreateRocketAsync(
-                new CreateRocketRequest()
+                new CreateRocketRequest
                 {
                     Type = RocketType.Falcon9,
                     SerialNumber = "12345678901234"
@@ -35,7 +34,7 @@ namespace Sample.Grpc.Tests.Rockets
         {
             var client = new R.RocketsClient(Factory.CreateGrpcChannel());
             await client.CreateRocketAsync(
-                new CreateRocketRequest()
+                new CreateRocketRequest
                 {
                     Type = RocketType.Falcon9,
                     SerialNumber = "12345678901234"
@@ -43,7 +42,7 @@ namespace Sample.Grpc.Tests.Rockets
             );
 
             Func<Task> action = async () => await client.CreateRocketAsync(
-                new CreateRocketRequest()
+                new CreateRocketRequest
                 {
                     Type = RocketType.Falcon9,
                     SerialNumber = "12345678901234"

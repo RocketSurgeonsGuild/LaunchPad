@@ -1,6 +1,6 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Sample.Core.Domain;
+using System;
 
 namespace Sample.Core.Models
 {

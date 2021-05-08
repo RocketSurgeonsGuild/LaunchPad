@@ -1,32 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using App.Metrics;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Extensions.Logging;
-using ILogger = Serilog.ILogger;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
 {
+    /// <summary>
+    /// A base test class that configures rocket surgery for unit or integration testing
+    /// </summary>
+    /// <typeparam name="TEntryPoint"></typeparam>
     [PublicAPI]
     public class ConventionTestWebHost<TEntryPoint> : WebApplicationFactory<TEntryPoint>
         where TEntryPoint : class
     {
         private readonly List<Action<ConventionContextBuilder>> _hostBuilderActions = new List<Action<ConventionContextBuilder>>();
 
+        /// <inheritdoc/>
         protected override IHostBuilder CreateHostBuilder()
         {
             var hostBuilder = base.CreateHostBuilder()
@@ -46,14 +47,25 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             return hostBuilder;
         }
 
+        /// <summary>
+        /// Configure the default <see cref="FakeClock"/>
+        /// </summary>
+        /// <param name="unixTimeSeconds"></param>
+        /// <param name="advanceBy"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureClock(int? unixTimeSeconds = null, Duration? advanceBy = null) => ConfigureClock(new FakeClock(Instant.FromUnixTimeSeconds(unixTimeSeconds ?? 1577836800), advanceBy ?? Duration.FromSeconds(1)));
 
+        /// <summary>
+        /// Configure the default <see cref="IClock"/>
+        /// </summary>
+        /// <param name="clock"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureClock(IClock clock) => ConfigureHostBuilder(
             builder =>
             {
                 builder.PrependDelegate(
                     new ServiceConvention(
-                        (context, configuration, services) =>
+                        (_, _, services) =>
                         {
                             services.RemoveAll<IClock>();
                             services.AddSingleton(clock);
@@ -63,6 +75,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
             }
         );
 
+        /// <summary>
+        /// Configure the the default <see cref="ILogger"/>
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureLogger(ILogger logger)
             => ConfigureHostBuilder(builder =>
                 {
@@ -73,6 +90,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
                 }
             );
 
+        /// <summary>
+        /// Configure the the default <see cref="ILoggerFactory"/>
+        /// </summary>
+        /// <param name="loggerFactory"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureLoggerFactory(ILoggerFactory loggerFactory)
             => ConfigureHostBuilder(builder =>
                 {
@@ -81,6 +103,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing
                 }
             );
 
+        /// <summary>
+        /// Add additional configuration to the Host
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public ConventionTestWebHost<TEntryPoint> ConfigureHostBuilder(Action<ConventionContextBuilder> action)
         {
             _hostBuilderActions.Add(action);

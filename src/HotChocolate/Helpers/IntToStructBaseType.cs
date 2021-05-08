@@ -4,17 +4,36 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
 {
+    /// <summary>
+    /// Additional struct types
+    /// </summary>
+    /// <typeparam name="TRuntimeType"></typeparam>
     public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeType, IntValueNode>
         where TRuntimeType : struct
     {
+        /// <summary>
+        /// Create the base type
+        /// </summary>
+        /// <param name="name"></param>
+        public IntToStructBaseType(string name) : base(name, bind: BindingBehavior.Implicit) { }
 
-        public IntToStructBaseType(string name) : base(name, bind: BindingBehavior.Implicit)
-        {
-        }
-
+        /// <summary>
+        /// Method to try and serialize
+        /// </summary>
+        /// <param name="baseValue"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
         protected abstract bool TrySerialize(TRuntimeType baseValue, [NotNullWhen(true)] out int? output);
+
+        /// <summary>
+        /// Method to try and deserialize
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
         protected abstract bool TryDeserialize(int val, [NotNullWhen(true)] out TRuntimeType? output);
 
+        /// <inheritdoc />
         protected override TRuntimeType ParseLiteral(IntValueNode literal)
         {
             if (TryDeserialize(literal.ToInt32(), out TRuntimeType? value))
@@ -23,22 +42,26 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize integer to {this.Name}", 
-                this);
+                $"Unable to deserialize integer to {Name}",
+                this
+            );
         }
 
+        /// <inheritdoc />
         protected override IntValueNode ParseValue(TRuntimeType value)
         {
             if (TrySerialize(value, out int? val))
             {
                 return new IntValueNode(val.Value);
             }
-        
+
             throw new SerializationException(
-                $"Unable to deserialize integer to {this.Name}", 
-                this);
+                $"Unable to deserialize integer to {Name}",
+                this
+            );
         }
 
+        /// <inheritdoc />
         public override IValueNode ParseResult(object? resultValue)
         {
             if (resultValue is null)
@@ -57,10 +80,12 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             }
 
             throw new SerializationException(
-                $"Unable to deserialize integer to {this.Name}",
-                this);
+                $"Unable to deserialize integer to {Name}",
+                this
+            );
         }
 
+        /// <inheritdoc />
         public override bool TrySerialize(object? runtimeValue, out object? resultValue)
         {
             if (runtimeValue is null)
@@ -79,6 +104,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
             return false;
         }
 
+        /// <inheritdoc />
         public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
         {
             if (resultValue is null)

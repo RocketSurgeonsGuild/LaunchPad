@@ -54,7 +54,7 @@ namespace Rocket.Surgery.LaunchPad.Functions.Conventions
                 services.Remove(item);
             }
 
-            LoggerProviderCollection loggerProviders = null;
+            LoggerProviderCollection? loggerProviders = null;
             if (_options.WriteToProviders)
             {
                 loggerProviders = new LoggerProviderCollection();
@@ -64,7 +64,7 @@ namespace Rocket.Surgery.LaunchPad.Functions.Conventions
                 _ =>
                 {
                     var logger = _.GetRequiredService<ILogger>();
-                    ILogger registeredLogger = null;
+                    ILogger? registeredLogger = null;
                     if (_options.PreserveStaticLogger)
                     {
                         registeredLogger = logger;

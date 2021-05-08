@@ -1,8 +1,8 @@
+using Grpc.Net.Client;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Grpc.Net.Client;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Sample.Grpc.Tests.Validation
 {

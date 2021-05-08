@@ -1,18 +1,20 @@
 ﻿using App.Metrics.AspNetCore.Endpoints;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.Conventions;
 
 [assembly: Convention(typeof(AppMetricsAspNetCoreConvention))]
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.Conventions
 {
+    /// <summary>
+    /// Convention for activating App Metrics with Asp.Net Core
+    /// </summary>
     public class AppMetricsAspNetCoreConvention : IServiceConvention
     {
+        /// <inheritdoc />
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services

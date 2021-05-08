@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,7 +15,7 @@ namespace Extensions.Tests
         public async Task Should_Validate_Invalid()
         {
             Init();
-            var data = new Target()
+            var data = new Target
             {
                 Type = "NotTruck",
                 TypeIgnoreCase = "nottruck"
@@ -35,7 +35,7 @@ namespace Extensions.Tests
         public async Task Should_Validate_CaseSensitive()
         {
             Init();
-            var data = new Target()
+            var data = new Target
             {
                 Type = "truck",
                 TypeIgnoreCase = "truck"
@@ -55,7 +55,7 @@ namespace Extensions.Tests
         public async Task Should_Validate_CaseInsensitive()
         {
             Init();
-            var data = new Target()
+            var data = new Target
             {
                 Type = "Truck",
                 TypeIgnoreCase = "nottruck"

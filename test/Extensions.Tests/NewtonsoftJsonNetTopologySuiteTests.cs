@@ -6,7 +6,6 @@ using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Spatial;
 using Xunit;
 using Xunit.Abstractions;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Extensions.Tests
 {

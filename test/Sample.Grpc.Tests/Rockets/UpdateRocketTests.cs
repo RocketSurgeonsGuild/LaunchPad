@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
 using System;
@@ -28,9 +27,9 @@ namespace Sample.Grpc.Tests.Rockets
                .Invoke(
                     async z =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
-                            Type = Sample.Core.Domain.RocketType.Falcon9,
+                            Type = Core.Domain.RocketType.Falcon9,
                             SerialNumber = "12345678901234"
                         };
                         z.Add(rocket);
@@ -41,7 +40,7 @@ namespace Sample.Grpc.Tests.Rockets
                 );
 
             var u = await client.EditRocketAsync(
-                new UpdateRocketRequest()
+                new UpdateRocketRequest
                 {
                     Id = rocket.Id.ToString(),
                     Type = RocketType.FalconHeavy,
@@ -72,17 +71,15 @@ namespace Sample.Grpc.Tests.Rockets
             public ShouldValidateUsersRequiredFieldData()
             {
                 Add(
-                    new UpdateRocketRequest() { },
+                    new UpdateRocketRequest(),
                     nameof(UpdateRocketRequest.SerialNumber)
                 );
                 Add(
-                    new UpdateRocketRequest()
-                        { SerialNumber = Faker.Random.String2(0, 9) },
+                    new UpdateRocketRequest { SerialNumber = Faker.Random.String2(0, 9) },
                     nameof(UpdateRocketRequest.SerialNumber)
                 );
                 Add(
-                    new UpdateRocketRequest()
-                        { SerialNumber = Faker.Random.String2(600, 800) },
+                    new UpdateRocketRequest { SerialNumber = Faker.Random.String2(600, 800) },
                     nameof(UpdateRocketRequest.SerialNumber)
                 );
             }

@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
@@ -16,7 +15,7 @@ namespace Sample.Grpc.Tests.Rockets
     {
         private static readonly Faker Faker = new Faker();
 
-        public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_List_Rockets()

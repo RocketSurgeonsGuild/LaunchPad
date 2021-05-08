@@ -12,10 +12,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 return;
             value.Headers.Add(
                 "location",
-                new OpenApiHeader()
+                new OpenApiHeader
                 {
                     // Required = true,
-                    Schema = new OpenApiSchema() { Type = "string" },
+                    Schema = new OpenApiSchema { Type = "string" },
                     Description = "The location of the entity that was created"
                 }
             );

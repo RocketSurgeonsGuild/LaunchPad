@@ -20,7 +20,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("1234")]
         public void ShouldMap_StringValue_To_JsonElement(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -34,7 +34,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_StringValue_To_JsonElement_With_Content(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -47,7 +47,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JsonElement_From_Null()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = null
             };
@@ -59,7 +59,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JsonElement_From_Empty()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = string.Empty
             };
@@ -71,7 +71,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldNotMap_StringValue_To_JsonElement()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = "null"
             };
@@ -84,7 +84,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_StringValue()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -99,7 +99,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_JsonElement_To_StringValue_With_Content(string value)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -112,7 +112,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_StringValue_From_Null()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = default
             };
@@ -129,7 +129,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("1234")]
         public void ShouldMap_ByteArray_To_JsonElement(string value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(value)
             };
@@ -144,7 +144,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_ByteArray_To_JsonElement_With_Content(string value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(value)
             };
@@ -157,7 +157,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JsonElement_From_Null()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = null
             };
@@ -169,7 +169,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JsonElement_From_Empty()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(string.Empty)
             };
@@ -181,7 +181,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldNotMap_ByteArray_To_JsonElement()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes("null")
             };
@@ -194,7 +194,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_ByteArray()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -209,7 +209,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_JsonElement_To_ByteArray_With_Content(string value)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -222,7 +222,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_ByteArray_From_Null()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = default
             };
@@ -239,7 +239,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("1234")]
         public void ShouldMap_StringValue_To_Nullable_JsonElement(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -254,7 +254,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_StringValue_To_Nullable_JsonElement_With_Content(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -267,7 +267,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_Nullable_JsonElement_From_Null()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = null
             };
@@ -279,7 +279,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_Nullable_JsonElement_From_Empty()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = string.Empty
             };
@@ -291,7 +291,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldNotMap_StringValue_To_Nullable_JsonElement()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = "null"
             };
@@ -304,7 +304,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_StringValue()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -319,7 +319,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_Nullable_JsonElement_To_StringValue_With_Content(string value)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -332,7 +332,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_StringValue_From_Null()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -348,7 +348,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("1234")]
         public void ShouldMap_ByteArray_To_Nullable_JsonElement(string value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(value)
             };
@@ -363,7 +363,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_ByteArray_To_Nullable_JsonElement_With_Content(string value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(value)
             };
@@ -376,7 +376,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_Nullable_JsonElement_From_Null()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = null
             };
@@ -388,7 +388,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_Nullable_JsonElement_From_Empty()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(string.Empty)
             };
@@ -400,7 +400,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldNotMap_ByteArray_To_Nullable_JsonElement()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes("null")
             };
@@ -413,7 +413,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_ByteArray()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -428,7 +428,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_Nullable_JsonElement_To_ByteArray_With_Content(string value)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -441,7 +441,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_ByteArray_From_Null()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -454,7 +454,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_Nullable_JsonElement()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -468,7 +468,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_Nullable_JsonElement_To_Nullable_JsonElement_With_Content(string value)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -480,7 +480,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_Nullable_JsonElement_From_Null()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -493,7 +493,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_JsonElement()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -507,7 +507,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_JsonElement_To_JsonElement_With_Content(string value)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -519,7 +519,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_JsonElement_From_Null()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = default
             };
@@ -533,7 +533,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_Nullable_JsonElement()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -547,7 +547,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_JsonElement_To_Nullable_JsonElement_With_Content(string value)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -559,7 +559,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JsonElement_To_Nullable_JsonElement_From_Null()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = default
             };
@@ -572,7 +572,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_JsonElement()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse("null").RootElement
             };
@@ -586,7 +586,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_Nullable_JsonElement_To_JsonElement_With_Content(string value)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse(value).RootElement
             };
@@ -598,7 +598,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_Nullable_JsonElement_To_JsonElement_From_Null()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };

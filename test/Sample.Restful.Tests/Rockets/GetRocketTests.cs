@@ -1,16 +1,13 @@
 ﻿using Bogus;
 using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
-using Sample.Core.Operations.Rockets;
 using Sample.Restful.Client;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
-using RocketType = Sample.Core.Domain.RocketType;
 using HttpRocketType = Sample.Restful.Client.RocketType;
+using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.Rockets
 {
@@ -18,7 +15,7 @@ namespace Sample.Restful.Tests.Rockets
     {
         private static readonly Faker Faker = new Faker();
 
-        public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_Get_A_Rocket()
@@ -28,7 +25,7 @@ namespace Sample.Restful.Tests.Rockets
                .Invoke(
                     async z =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
                             Type = RocketType.Falcon9,
                             SerialNumber = "12345678901234"

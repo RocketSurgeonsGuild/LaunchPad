@@ -1,10 +1,10 @@
+using JetBrains.Annotations;
+using Rocket.Surgery.LaunchPad.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using JetBrains.Annotations;
-using Rocket.Surgery.LaunchPad.Foundation;
 
 #pragma warning disable 8618
 
@@ -14,10 +14,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
     /// A RFC 7807 compliant <see cref="JsonConverter" /> for <see cref="FluentValidationProblemDetails" />.
     /// </summary>
     [PublicAPI]
-    public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentValidationProblemDetails>
+    public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentValidationProblemDetails?>
     {
         /// <inheritdoc />
-        public override FluentValidationProblemDetails Read(
+        public override FluentValidationProblemDetails? Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
             JsonSerializerOptions options
@@ -32,8 +32,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
 
         /// <inheritdoc />
         public override void Write(
-            [JetBrains.Annotations.NotNull] Utf8JsonWriter writer,
-            FluentValidationProblemDetails value,
+            Utf8JsonWriter writer,
+            FluentValidationProblemDetails? value,
             JsonSerializerOptions options
         )
         {

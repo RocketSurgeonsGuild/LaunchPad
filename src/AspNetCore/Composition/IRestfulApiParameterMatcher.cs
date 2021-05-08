@@ -4,7 +4,7 @@ using System;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
 {
-    public interface IRestfulApiParameterMatcher
+    internal interface IRestfulApiParameterMatcher
     {
         Index ParameterIndex { get; }
         ApiConventionNameMatchBehavior NameMatch { get; }

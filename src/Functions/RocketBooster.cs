@@ -1,17 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.DependencyModel;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Reflection;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 //using Microsoft.Azure.WebJobs.Hosting;
 
@@ -31,7 +24,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAppDomain(
             AppDomain appDomain,
             Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
-        ) => builder => new ConventionContextBuilder(new Dictionary<object, object?>())
+        ) => _ => new ConventionContextBuilder(new Dictionary<object, object?>())
            .UseAppDomain(appDomain)
            .WithConventionsFrom(getConventions);
 
@@ -44,7 +37,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAppDomain(
             AppDomain appDomain,
             Action<ConventionContextBuilder>? conventionContextBuilderAction = null
-        ) => builder =>
+        ) => _ =>
         {
             var conventionContextBuilder = new ConventionContextBuilder(new Dictionary<object, object?>())
                .UseAppDomain(appDomain);
@@ -83,7 +76,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAssemblies(
             IEnumerable<Assembly> assemblies,
             Func<IServiceProvider, IEnumerable<IConventionWithDependencies>> getConventions
-        ) => builder => new ConventionContextBuilder(new Dictionary<object, object?>())
+        ) => _ => new ConventionContextBuilder(new Dictionary<object, object?>())
            .UseAssemblies(assemblies)
            .WithConventionsFrom(getConventions);
 
@@ -96,7 +89,7 @@ namespace Rocket.Surgery.LaunchPad.Functions
         public static Func<LaunchPadFunctionStartup, ConventionContextBuilder> ForAssemblies(
             IEnumerable<Assembly> assemblies,
             Action<ConventionContextBuilder>? conventionContextBuilderAction = null
-        ) => builder =>
+        ) => _ =>
         {
             var conventionContextBuilder = new ConventionContextBuilder(new Dictionary<object, object?>()).UseAssemblies(assemblies);
             conventionContextBuilderAction?.Invoke(conventionContextBuilder);

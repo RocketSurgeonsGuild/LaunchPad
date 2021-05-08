@@ -21,7 +21,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
             Type objectType,
             FluentValidationProblemDetails? existingValue,
             bool hasExistingValue,
-            [NotNull] JsonSerializer serializer
+            [System.Diagnostics.CodeAnalysis.NotNull] JsonSerializer serializer
         )
         {
             if (serializer == null)
@@ -42,9 +42,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
 
         /// <inheritdoc />
         public override void WriteJson(
-            [NotNull] JsonWriter writer,
+            [System.Diagnostics.CodeAnalysis.NotNull] JsonWriter writer,
             FluentValidationProblemDetails? value,
-            [NotNull] JsonSerializer serializer
+            [System.Diagnostics.CodeAnalysis.NotNull] JsonSerializer serializer
         )
         {
             if (writer == null)

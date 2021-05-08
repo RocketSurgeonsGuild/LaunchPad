@@ -1,9 +1,9 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Rocket.Surgery.LaunchPad.Foundation;
+using System.Threading.Tasks;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -12,7 +12,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
     /// <summary>
     /// Not found exception that catches not found messages that might have been thrown by calling code.
     /// </summary>
-    public class RequestFailedExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
+    class RequestFailedExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
     {
         private readonly ProblemDetailsFactory _problemDetailsFactory;
 
@@ -24,7 +24,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
         /// <inheritdoc />
         public void OnException(ExceptionContext context)
         {
-            if (context?.Exception is RequestFailedException exception)
+            if (context.Exception is RequestFailedException exception)
             {
                 context.ExceptionHandled = true;
                 var problemDetails = _problemDetailsFactory.CreateProblemDetails(

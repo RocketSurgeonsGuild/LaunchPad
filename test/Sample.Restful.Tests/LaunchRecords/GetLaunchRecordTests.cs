@@ -1,18 +1,15 @@
 ﻿using Bogus;
 using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
-using Sample.Core.Operations.LaunchRecords;
 using Sample.Restful.Client;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
-using RocketType = Sample.Core.Domain.RocketType;
 using HttpRocketType = Sample.Restful.Client.RocketType;
+using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords
 {
@@ -20,7 +17,7 @@ namespace Sample.Restful.Tests.LaunchRecords
     {
         private static readonly Faker Faker = new Faker();
 
-        public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_Get_A_LaunchRecord()
@@ -30,14 +27,14 @@ namespace Sample.Restful.Tests.LaunchRecords
                .Invoke(
                     async (context, clock) =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
                             Id = Guid.NewGuid(),
                             Type = RocketType.Falcon9,
                             SerialNumber = "12345678901234"
                         };
 
-                        var record = new LaunchRecord()
+                        var record = new LaunchRecord
                         {
                             Partner = "partner",
                             Payload = "geo-fence-ftl",

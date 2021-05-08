@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sample.Core.Operations.LaunchRecords
 {
@@ -91,7 +89,7 @@ namespace Sample.Core.Operations.LaunchRecords
                 await _dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);
                 await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                return new Response()
+                return new Response
                 {
                     Id = record.Id
                 };

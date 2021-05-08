@@ -1,25 +1,10 @@
-﻿using AutoMapper.QueryableExtensions;
-using HotChocolate.Execution;
-using HotChocolate.Internal;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.EntityFramework;
 using Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate;
-using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Sample.Core.Domain;
-using Sample.Core.Models;
-using Sample.Core.Operations.Rockets;
-using Sample.Graphql;
 using Serilog;
-using System.Linq.Expressions;
-using RequestDelegate = Microsoft.AspNetCore.Http.RequestDelegate;
 
 namespace Sample.Graphql
 {

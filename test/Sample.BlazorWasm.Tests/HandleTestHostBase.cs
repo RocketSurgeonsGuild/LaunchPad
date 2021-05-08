@@ -1,13 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Logging;
-using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.WebAssembly.Hosting;
-using Xunit;
+using System;
 using Xunit.Abstractions;
 
 namespace Sample.BlazorWasm.Tests

@@ -1,11 +1,8 @@
-using System;
-using System.Linq;
-using System.Reflection;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Metadata;
+using System.Linq;
+using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 

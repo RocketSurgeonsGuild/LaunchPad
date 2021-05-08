@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Rocket.Surgery.Conventions.Reflection;
+﻿using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.Functions;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Functions.Tests
 {

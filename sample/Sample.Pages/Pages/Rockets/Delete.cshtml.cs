@@ -1,9 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using System.Threading.Tasks;
 
 namespace Sample.Pages.Pages.Rockets
 {
@@ -11,7 +8,7 @@ namespace Sample.Pages.Pages.Rockets
     {
         public async Task<ActionResult> OnPost()
         {
-            await Send(new DeleteRocket.Request() { Id = Id });
+            await Send(new DeleteRocket.Request { Id = Id });
             return RedirectToPage("Index");
         }
     }

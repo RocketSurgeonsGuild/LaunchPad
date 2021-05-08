@@ -7,18 +7,26 @@ using System.Globalization;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
 {
+    /// <summary>
+    /// Represents a <see cref="OffsetDateTime"/> in Hot Chocolate
+    /// </summary>
     public class OffsetDateTimeType : StringToStructBaseType<OffsetDateTime>
     {
+        /// <summary>
+        /// The constructor
+        /// </summary>
         public OffsetDateTimeType() : base("OffsetDateTime")
         {
             Description = "A local date and time in a particular calendar system, combined with an offset from UTC.";
         }
 
+        /// <inheritdoc />
         protected override string Serialize(OffsetDateTime baseValue)
             => OffsetDateTimePattern.GeneralIso
                 .WithCulture(CultureInfo.InvariantCulture)
                 .Format(baseValue);
 
+        /// <inheritdoc />
         protected override bool TryDeserialize(string str, [NotNullWhen(true)] out OffsetDateTime? output)
             => OffsetDateTimePattern.ExtendedIso
                 .WithCulture(CultureInfo.InvariantCulture)

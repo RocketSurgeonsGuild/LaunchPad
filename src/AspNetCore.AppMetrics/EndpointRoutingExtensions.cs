@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using App.Metrics.AspNetCore;
+﻿using App.Metrics.AspNetCore;
 using App.Metrics.AspNetCore.Endpoints;
 using App.Metrics.AspNetCore.Endpoints.Middleware;
 using App.Metrics.Formatters;
@@ -9,24 +7,40 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
 {
+    /// <summary>
+    /// App Metrics extenison methods
+    /// </summary>
     public static class EndpointRoutingExtensions
     {
+        /// <summary>
+        /// Map app metrics
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="configureEndpointMetadata"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointRouteBuilder MapAppMetrics(
             this IEndpointRouteBuilder builder,
             Action<IEndpointConventionBuilder>? configureEndpointMetadata = null
         )
         {
-            configureEndpointMetadata ??= (b) => { };
+            configureEndpointMetadata ??= _ => { };
             // configureEndpointMetadata(builder.MapMetricsTextEndpoint());
             configureEndpointMetadata(builder.MapMetricsEndpoint());
             // configureEndpointMetadata(builder.MapEnvInfoEndpoint());
             return builder;
         }
 
+        /// <summary>
+        /// Map text endpoints
+        /// </summary>
+        /// <param name="endpoints"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointConventionBuilder MapMetricsTextEndpoint(this IEndpointRouteBuilder endpoints)
         {
@@ -35,6 +49,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
             return endpoints.Map("/metrics/text", endpoints.CreateApplicationBuilder().UseMiddleware<MetricsEndpointMiddleware>(responseWriter).Build());
         }
 
+        /// <summary>
+        /// Map metrics endpoint
+        /// </summary>
+        /// <param name="endpoints"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointConventionBuilder MapMetricsEndpoint(this IEndpointRouteBuilder endpoints)
         {
@@ -43,6 +62,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics
             return endpoints.Map("/metrics", endpoints.CreateApplicationBuilder().UseMiddleware<MetricsEndpointMiddleware>(responseWriter).Build());
         }
 
+        /// <summary>
+        /// Map env info endpoint
+        /// </summary>
+        /// <param name="endpoints"></param>
+        /// <returns></returns>
         [PublicAPI]
         public static IEndpointConventionBuilder MapEnvInfoEndpoint(this IEndpointRouteBuilder endpoints)
         {

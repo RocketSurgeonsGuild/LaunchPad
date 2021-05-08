@@ -29,10 +29,11 @@ namespace Rocket.Surgery.LaunchPad.Foundation
         /// <param name="validator">The validator to call before writing values. May be null, indicating that no validation is required.</param>
         public SystemTextJsonCompositeNodaPatternConverter(Action<T>? validator, params IPattern<T>[] patterns)
         {
-            this._patterns = patterns;
-            this._validator = validator;
+            _patterns = patterns;
+            _validator = validator;
         }
 
+        /// <inheritdoc />
         protected override T ReadJsonImpl(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             string text = reader!.GetString()!;
@@ -48,6 +49,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation
             return result.Value;
         }
 
+        /// <inheritdoc />
         protected override void WriteJsonImpl(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
             _validator?.Invoke(value);

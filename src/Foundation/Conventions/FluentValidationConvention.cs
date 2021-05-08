@@ -26,6 +26,10 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     {
         private readonly FoundationOptions _options;
 
+        /// <summary>
+        /// Create the fluent validation convention
+        /// </summary>
+        /// <param name="options"></param>
         public FluentValidationConvention(FoundationOptions? options = null)
         {
             _options = options ?? new FoundationOptions();
@@ -48,11 +52,15 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
                .GetCandidateAssemblies("FluentValidation");
             foreach (var item in new AssemblyScanner(assemblies.SelectMany(z => z.DefinedTypes).Select(x => x.AsType())))
             {
-                services.TryAddEnumerable(new ServiceDescriptor(item.InterfaceType, item.ValidatorType, _options.ValidationLifetime));
+                services.TryAddEnumerable(ServiceDescriptor.Describe(item.InterfaceType, item.ValidatorType, ServiceLifetime.Singleton));
             }
 
-            services.TryAddSingleton<IValidatorFactory, ValidatorFactory>();
-            services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
+            if (services.FirstOrDefault(z => z.ServiceType == typeof(IValidatorFactory)) is { } s && s.Lifetime != ServiceLifetime.Singleton)
+            {
+                services.Remove(s);
+            }
+            services.TryAdd(ServiceDescriptor.Describe(typeof(IValidatorFactory), typeof(ValidatorFactory), ServiceLifetime.Singleton));
+            services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
         }
     }
 }

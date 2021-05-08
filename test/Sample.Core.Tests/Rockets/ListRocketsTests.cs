@@ -1,13 +1,11 @@
-﻿using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
-using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
-using Sample.Core.Operations.LaunchRecords;
 using Sample.Core.Operations.Rockets;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,7 +34,6 @@ namespace Sample.Core.Tests.Rockets
             var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
                 mediator => mediator.Send(
                     new ListRockets.Request()
-                        { }
                 )
             );
 

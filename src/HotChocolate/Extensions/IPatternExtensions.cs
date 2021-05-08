@@ -13,11 +13,9 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Extensions
                 output = result.Value;
                 return true;
             }
-            else
-            {
-                output = null;
-                return false;
-            }
+
+            output = null;
+            return false;
         }
 
         public static bool TryParse<NodaTimeType>(this IPattern<NodaTimeType> pattern, string text, out NodaTimeType? output)
@@ -29,11 +27,9 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Extensions
                 output = result.Value;
                 return true;
             }
-            else
-            {
-                output = null;
-                return false;
-            }
+
+            output = null;
+            return false;
         }
     }
 }

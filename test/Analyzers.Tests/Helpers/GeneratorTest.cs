@@ -1,6 +1,9 @@
-using FluentAssertions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
+using Rocket.Surgery.Extensions.Testing;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -8,10 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Extensions.Testing;
 using Xunit;
 using Xunit.Abstractions;
 

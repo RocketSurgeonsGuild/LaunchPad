@@ -7,8 +7,14 @@ using System.Globalization;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
 {
+    /// <summary>
+    /// Represents a <see cref="OffsetTime"/> in Hot Chocolate
+    /// </summary>
     public class OffsetTimeType : StringToStructBaseType<OffsetTime>
     {
+        /// <summary>
+        /// The constructor
+        /// </summary>
         public OffsetTimeType() : base("OffsetTime")
         {
             Description =
@@ -17,11 +23,13 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
                     "but without any date information.";
         }
 
+        /// <inheritdoc />
         protected override string Serialize(OffsetTime baseValue)
             => OffsetTimePattern.GeneralIso
                 .WithCulture(CultureInfo.InvariantCulture)
                 .Format(baseValue);
 
+        /// <inheritdoc />
         protected override bool TryDeserialize(string str, [NotNullWhen(true)] out OffsetTime? output)
             => OffsetTimePattern.GeneralIso
                 .WithCulture(CultureInfo.InvariantCulture)

@@ -1,9 +1,6 @@
-﻿using HotChocolate.Language;
-using HotChocolate.Types;
-using JetBrains.Annotations;
+﻿using HotChocolate.Types;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Rocket.Surgery.LaunchPad.HotChocolate.Types;
 using System;
 using System.Collections.Generic;
@@ -12,12 +9,20 @@ using System.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
+    /// <summary>
+    /// Creates mutations from all of the given <see cref="IRequest"/> or <see cref="IRequest{TResponse}"/> types
+    /// </summary>
     public class AutoConfigureMediatRMutation : ObjectTypeExtension
     {
         private readonly IEnumerable<Type> _mediatorRequestTypes;
 
+        /// <summary>
+        /// Create the given MediatR Mutation
+        /// </summary>
+        /// <param name="mediatorRequestTypes"></param>
         public AutoConfigureMediatRMutation(IEnumerable<Type> mediatorRequestTypes) => _mediatorRequestTypes = mediatorRequestTypes;
 
+        /// <inheritdoc />
         protected override void Configure(IObjectTypeDescriptor descriptor)
         {
             descriptor.Name(OperationTypeNames.Mutation);

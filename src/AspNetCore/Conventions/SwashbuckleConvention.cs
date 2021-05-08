@@ -1,6 +1,6 @@
-﻿using FluentValidation.Validators;
+﻿using FluentValidation;
+using FluentValidation.Validators;
 using JetBrains.Annotations;
-using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,14 +10,19 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.Extensions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 
 [assembly: Convention(typeof(SwashbuckleConvention))]
@@ -38,6 +43,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             if (context is null)
@@ -49,10 +56,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
 
             services.AddOptions<SwaggerGenOptions>()
                .Configure<IOptions<JsonOptions>>(
-                    (options, mvcOptions) =>
-                    {
-                        options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions);
-                    }
+                    (options, mvcOptions) => { options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions); }
                 );
             services.AddSwaggerGen(
                 options =>
@@ -65,14 +69,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                     options.AddFluentValidationRules();
 
                     options.MapType<JsonElement>(
-                        () => new OpenApiSchema()
+                        () => new OpenApiSchema
                         {
                             Type = "object",
                             AdditionalPropertiesAllowed = true,
                         }
                     );
                     options.MapType<JsonElement?>(
-                        () => new OpenApiSchema()
+                        () => new OpenApiSchema
                         {
                             Type = "object",
                             AdditionalPropertiesAllowed = true,
@@ -81,7 +85,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                     );
 
                     options.DocInclusionPredicate(
-                        (docName, apiDesc) =>
+                        (_, apiDesc) =>
                         {
                             if (!apiDesc.TryGetMethodInfo(out var methodInfo))
                                 return false;
@@ -94,8 +98,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
                     options.CustomSchemaIds(
                         type =>
                         {
-                            if (type == typeof(global::FluentValidation.Severity))
-                                return $"Validation{nameof(global::FluentValidation.Severity)}";
+                            if (type == typeof(Severity))
+                                return $"Validation{nameof(Severity)}";
                             return type.IsNested ? type.DeclaringType?.Name + type.Name : type.Name;
                         }
                     );
@@ -121,94 +125,66 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
         private static void AddFluentValidationRules(IServiceCollection services)
         {
             services.AddSingleton(
-                new FluentValidationRule(
-                    "NotEmpty",
-                    new Func<IPropertyValidator, bool>[]
-                    {
-                        propertyValidator => propertyValidator is INotEmptyValidator
-                    },
-                    context =>
-                    {
-                        var propertyType = context.SchemaFilterContext.Type
-                           .GetProperties()
-                           .Where(x => x.Name.Equals(context.PropertyKey, StringComparison.OrdinalIgnoreCase))
-                           .Select(x => x.PropertyType)
-                           .Concat(
-                                context.SchemaFilterContext.Type
-                                   .GetFields()
-                                   .Where(x => x.Name.Equals(context.PropertyKey, StringComparison.OrdinalIgnoreCase))
-                                   .Select(x => x.FieldType)
-                            )
-                           .FirstOrDefault();
-                        if (propertyType == typeof(string))
+                new FluentValidationRule("NotEmpty")
+                   .WithCondition(propertyValidator => propertyValidator is INotEmptyValidator)
+                   .WithApply(
+                        context =>
                         {
-                            context.Schema.Properties[context.PropertyKey].MinLength = 1;
+                            var propertyType = context.MemberInfo.GetMemberType();
+                            if (propertyType == typeof(string))
+                            {
+                                context.Schema.Properties[context.PropertyKey].MinLength = 1;
+                            }
                         }
-                    }
-                )
+                    )
             );
 
             services.AddSingleton(
-                new FluentValidationRule(
-                    "ValueTypeOrEnum",
-                    new Func<IPropertyValidator, bool>[]
-                    {
-                        propertyValidator => true
-                    },
-                    context =>
-                    {
-                        var propertyType = context.SchemaFilterContext.Type
-                           .GetProperties()
-                           .Where(x => x.Name.Equals(context.PropertyKey, StringComparison.OrdinalIgnoreCase))
-                           .Select(x => x.PropertyType)
-                           .Concat(
-                                context.SchemaFilterContext.Type
-                                   .GetFields()
-                                   .Where(x => x.Name.Equals(context.PropertyKey, StringComparison.OrdinalIgnoreCase))
-                                   .Select(x => x.FieldType)
-                            )
-                           .FirstOrDefault();
-                        if (propertyType != null &&
-                            ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ||
-                                propertyType.IsEnum ))
+                new FluentValidationRule("ValueTypeOrEnum")
+                   .WithApply(
+                        context =>
                         {
-                            context.Schema.Required.Add(context.PropertyKey);
-                            context.Schema.Properties[context.PropertyKey].Nullable = false;
+                            var propertyType = context.MemberInfo.GetMemberType();
+                            if (propertyType != null &&
+                                ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) ||
+                                    propertyType.IsEnum ))
+                            {
+                                context.Schema.Required.Add(context.PropertyKey);
+                                context.Schema.Properties[context.PropertyKey].Nullable = false;
+                            }
                         }
-                    }
-                )
+                    )
             );
 
             services.AddSingleton(
-                new FluentValidationRule(
-                    "Nullable",
-                    new Func<IPropertyValidator, bool>[]
-                    {
-                        propertyValidator => propertyValidator is INotNullValidator ||
-                            propertyValidator is INotEmptyValidator ||
-                            propertyValidator is INullValidator
-                    },
-                    context =>
-                    {
-                        context.Schema.Properties[context.PropertyKey].Nullable =
-                            !( context.PropertyValidator is INotNullValidator ||
-                                context.PropertyValidator is INotEmptyValidator );
-                    }
-                )
+                new FluentValidationRule("Nullable")
+                   .WithApply(
+                        context =>
+                        {
+                            context.Schema.Properties[context.PropertyKey].Nullable =
+                                context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
+                             || ( context.MemberInfo is PropertyInfo pi && pi.GetNullability() switch
+                                {
+                                    Nullability.Nullable    => true,
+                                    Nullability.NonNullable => false,
+                                    Nullability.NotDefined  => !pi.PropertyType.IsValueType || Nullable.GetUnderlyingType(pi.PropertyType) is not null,
+                                    _                       => false
+                                } );
+                        }
+                    )
             );
 
             services.AddSingleton(
-                new FluentValidationRule(
-                    "IsOneOf",
-                    new Func<IPropertyValidator, bool>[]
-                        { propertyValidator => propertyValidator is StringInValidator },
-                    context =>
-                    {
-                        var validator = context.PropertyValidator as StringInValidator;
-                        context.Schema.Properties[context.PropertyKey].Enum =
-                            validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
-                    }
-                )
+                new FluentValidationRule("IsOneOf")
+                   .WithCondition(propertyValidator => propertyValidator is IStringInValidator)
+                   .WithApply(
+                        context =>
+                        {
+                            var validator = context.PropertyValidator as IStringInValidator;
+                            context.Schema.Properties[context.PropertyKey].Enum =
+                                validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
+                        }
+                    )
             );
         }
     }

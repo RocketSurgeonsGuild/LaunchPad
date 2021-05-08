@@ -1,26 +1,33 @@
-using System;
-using System.Globalization;
-using System.Linq;
 using FluentValidation;
 using FluentValidation.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
 {
+    /// <summary>
+    /// Blazor FluentValidator component
+    /// </summary>
     public class FluentValidator : ComponentBase
     {
-        private readonly static char[] separators = new[] { '.', '[' };
+        private static readonly char[] separators = { '.', '[' };
 
         [Inject]
-        IValidatorFactory ValidatorFactory { get; set; }
+        IValidatorFactory ValidatorFactory { get; set; } = null!;
 
         [CascadingParameter]
         EditContext CurrentEditContext { get; set; } = null!;
 
+        /// <summary>
+        /// The validator to validate against
+        /// </summary>
         [Parameter]
         public IValidator Validator { get; set; } = null!;
 
+        /// <inheritdoc/>
         protected override void OnInitialized()
         {
             if (CurrentEditContext == null)
@@ -40,10 +47,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
             var messages = new ValidationMessageStore(CurrentEditContext);
 
             CurrentEditContext.OnValidationRequested +=
-                (sender, eventArgs) => ValidateModel(messages, validator);
+                (_, _) => ValidateModel(messages, validator);
 
             CurrentEditContext.OnFieldChanged +=
-                (sender, eventArgs) => ValidateField(messages, eventArgs.FieldIdentifier, validator);
+                (_, eventArgs) => ValidateField(messages, eventArgs.FieldIdentifier, validator);
         }
 
         private async void ValidateModel(ValidationMessageStore messages, IValidator? validator = null)
@@ -123,7 +130,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor
                     var prop = obj.GetType().GetProperty("Item");
                     var indexerType = prop!.GetIndexParameters()[0].ParameterType;
                     var indexerValue = Convert.ChangeType(nextToken, indexerType, CultureInfo.InvariantCulture);
-                    newObj = prop.GetValue(obj, new object[] { indexerValue });
+                    newObj = prop.GetValue(obj, new[] { indexerValue });
                 }
                 else
                 {

@@ -22,7 +22,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("null", typeof(JValue))]
         public void ShouldMap_From_Nullable_JsonElementA_To_JToken(string json, Type type)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse(json).RootElement
             };
@@ -33,7 +33,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_Nullable_JsonElement_To_JToken_Null()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = null
             };
@@ -44,7 +44,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_Nullable_JsonElement_To_JToken_Null_Allow_Nulls()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = null
             };
@@ -56,7 +56,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldMap_From_JToken_To_Nullable_JsonElement_Data))]
         public void ShouldMap_From_JToken_To_Nullable_JsonElement(string json, JsonValueKind kind)
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JToken.Parse(json)
             };
@@ -78,7 +78,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JToken_To_Nullable_JsonElement_Null()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = null
             };
@@ -89,7 +89,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JToken_To_Nullable_JsonElement_Null_Allow_Nulls()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = null
             };
@@ -103,7 +103,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("null", typeof(JValue))]
         public void ShouldMap_From_JsonElement_To_JToken(string json, Type type)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse(json).RootElement
             };
@@ -114,7 +114,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JsonElement_To_JToken_Null()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -125,7 +125,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JsonElement_To_JToken_Null_Allow_Nulls()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -137,7 +137,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldMap_From_JToken_To_JsonElement_Data))]
         public void ShouldMap_From_JToken_To_JsonElement(string json, JsonValueKind kind)
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JToken.Parse(json)
             };
@@ -158,7 +158,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JToken_To_JsonElement_Null()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = null
             };
@@ -169,7 +169,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JToken_To_JsonElement_Null_Allow_Nulls()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = null
             };
@@ -182,7 +182,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("[]", typeof(JArray))]
         public void ShouldMap_From_Nullable_JsonElementA_To_JArray(string json, Type type)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse(json).RootElement
             };
@@ -193,7 +193,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_Nullable_JsonElement_To_JArray_Null()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = null
             };
@@ -204,7 +204,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_Nullable_JsonElement_To_JArray_Null_Allow_Nulls()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = null
             };
@@ -216,7 +216,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldMap_From_JArray_To_Nullable_JsonElement_Data))]
         public void ShouldMap_From_JArray_To_Nullable_JsonElement(string json, JsonValueKind kind)
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = JArray.Parse(json)
             };
@@ -236,7 +236,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JArray_To_Nullable_JsonElement_Null()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = null
             };
@@ -247,7 +247,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JArray_To_Nullable_JsonElement_Null_Allow_Nulls()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = null
             };
@@ -259,7 +259,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("[]", typeof(JArray))]
         public void ShouldMap_From_JsonElement_To_JArray(string json, Type type)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse(json).RootElement
             };
@@ -270,7 +270,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JsonElement_To_JArray_Null()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -281,7 +281,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JsonElement_To_JArray_Null_Allow_Nulls()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -293,7 +293,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldMap_From_JArray_To_JsonElement_Data))]
         public void ShouldMap_From_JArray_To_JsonElement(string json, JsonValueKind kind)
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = JArray.Parse(json)
             };
@@ -312,7 +312,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JArray_To_JsonElement_Null()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = null
             };
@@ -323,7 +323,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JArray_To_JsonElement_Null_Allow_Nulls()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = null
             };
@@ -336,7 +336,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{}", typeof(JObject))]
         public void ShouldMap_From_Nullable_JsonElementA_To_JObject(string json, Type type)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = JsonDocument.Parse(json).RootElement
             };
@@ -347,7 +347,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_Nullable_JsonElement_To_JObject_Null()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = null
             };
@@ -358,7 +358,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_Nullable_JsonElement_To_JObject_Null_Allow_Nulls()
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = null
             };
@@ -370,7 +370,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldMap_From_JObject_To_Nullable_JsonElement_Data))]
         public void ShouldMap_From_JObject_To_Nullable_JsonElement(string json, JsonValueKind kind)
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = JObject.Parse(json)
             };
@@ -390,7 +390,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JObject_To_Nullable_JsonElement_Null()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = null
             };
@@ -401,7 +401,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JObject_To_Nullable_JsonElement_Null_Allow_Nulls()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = null
             };
@@ -413,7 +413,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{}", typeof(JObject))]
         public void ShouldMap_From_JsonElement_To_JObject(string json, Type type)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = JsonDocument.Parse(json).RootElement
             };
@@ -424,7 +424,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JsonElement_To_JObject_Null()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -435,7 +435,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JsonElement_To_JObject_Null_Allow_Nulls()
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = default
             };
@@ -447,7 +447,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldMap_From_JObject_To_JsonElement_Data))]
         public void ShouldMap_From_JObject_To_JsonElement(string json, JsonValueKind kind)
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = JObject.Parse(json)
             };
@@ -466,7 +466,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JObject_To_JsonElement_Null()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = null
             };
@@ -477,7 +477,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_From_JObject_To_JsonElement_Null_Allow_Nulls()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = null
             };
@@ -489,7 +489,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data))]
         public void ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element(JsonElement? element)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = element
             };
@@ -512,7 +512,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data))]
         public void ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element(JsonElement element)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = element
             };
@@ -535,7 +535,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data))]
         public void ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element(JsonElement? element)
         {
-            var item = new JsonElementA()
+            var item = new JsonElementA
             {
                 Bar = element
             };
@@ -558,7 +558,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data))]
         public void ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element(JsonElement element)
         {
-            var item = new JsonElementB()
+            var item = new JsonElementB
             {
                 Bar = element
             };

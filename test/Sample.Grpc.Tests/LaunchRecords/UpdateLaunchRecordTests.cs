@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using NodaTime.Extensions;
 using Rocket.Surgery.DependencyInjection;
@@ -21,7 +20,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
     {
         private static readonly Faker Faker = new Faker();
 
-        public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+        public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
         [Fact]
         public async Task Should_Update_A_LaunchRecord()
@@ -32,7 +31,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
                .Invoke(
                     async (context, clock) =>
                     {
-                        var rocket = new ReadyRocket()
+                        var rocket = new ReadyRocket
                         {
                             Id = Guid.NewGuid(),
                             Type = Core.Domain.RocketType.Falcon9,
@@ -40,7 +39,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
                         };
                         context.Add(rocket);
 
-                        var record = new LaunchRecord()
+                        var record = new LaunchRecord
                         {
                             Partner = "partner",
                             Payload = "geo-fence-ftl",
@@ -57,7 +56,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
                 );
 
             await client.EditLaunchRecordAsync(
-                new UpdateLaunchRecordRequest()
+                new UpdateLaunchRecordRequest
                 {
                     Id = record.Id.ToString(),
                     Partner = "partner",
@@ -68,7 +67,7 @@ namespace Sample.Grpc.Tests.LaunchRecords
                 }
             );
 
-            var response = await client.GetLaunchRecordsAsync(new GetLaunchRecordRequest() { Id = record.Id.ToString() });
+            var response = await client.GetLaunchRecordsAsync(new GetLaunchRecordRequest { Id = record.Id.ToString() });
 
             response.ScheduledLaunchDate.Should().Be(( record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1) ).ToDateTimeOffset().ToTimestamp());
             response.PayloadWeightKg.Should().Be(200);

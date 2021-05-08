@@ -1,8 +1,7 @@
-﻿using System;
-using AutoMapper;
-using Bogus.Extensions;
+﻿using AutoMapper;
 using NodaTime;
 using Sample.Core.Domain;
+using System;
 
 namespace Sample.Core.Models
 {

@@ -14,7 +14,7 @@
                            asp-for="Model.Type"/>
                 </div>
                 <select asp-for="Model.Type"
-                        asp-items="Enum.GetValues(typeof(RocketType)).OfType<RocketType>().Select(z => new SelectListItem() { Text = z.ToString(), Value = z.ToString(), Selected = z == Model.Model.Type })">
+                        asp-items="Enum.GetValues(typeof(RocketType)).OfType<RocketType>().Select(z => new SelectListItem { Text = z.ToString(), Value = z.ToString(), Selected = z == Model.Model.Type })">
                 </select>
                 <span asp-validation-for="Model.Type"></span>
             </div>

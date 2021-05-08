@@ -1,24 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Rocket.Surgery.Conventions;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.SwaggerUI;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace Sample.Restful
 {
@@ -39,7 +28,7 @@ namespace Sample.Restful
                .Configure<SwaggerGenOptions>(
                     c => c.SwaggerDoc(
                         "v1",
-                        new OpenApiInfo()
+                        new OpenApiInfo
                         {
                             Version = typeof(Startup).GetCustomAttribute<AssemblyVersionAttribute>()?.Version ?? typeof(Startup).GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.1.0",
                             Title = "Test Application",

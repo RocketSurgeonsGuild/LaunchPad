@@ -1,11 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using System;
+using System.Threading.Tasks;
 
 namespace Sample.Pages.Pages.Rockets
 {
@@ -18,7 +16,7 @@ namespace Sample.Pages.Pages.Rockets
 
         public virtual async Task OnGet()
         {
-            Rocket =  await Send(new GetRocket.Request() { Id = Id });
+            Rocket =  await Send(new GetRocket.Request { Id = Id });
         }
     }
 }

@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Threading;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
@@ -10,7 +5,10 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.WebAssembly.Hosting;
-using static Sample.BlazorWasm.Program;
+using System;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sample.BlazorWasm
 {

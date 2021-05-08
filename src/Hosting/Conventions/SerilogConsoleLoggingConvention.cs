@@ -1,4 +1,3 @@
-using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
@@ -7,6 +6,7 @@ using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using System;
 
 [assembly: Convention(typeof(SerilogConsoleLoggingConvention))]
 
@@ -30,7 +30,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
 
         /// <inheritdoc />
         public void Register(
-            [NotNull] IConventionContext context,
+            IConventionContext context,
             IServiceProvider services,
             IConfiguration configuration,
             LoggerConfiguration loggerConfiguration

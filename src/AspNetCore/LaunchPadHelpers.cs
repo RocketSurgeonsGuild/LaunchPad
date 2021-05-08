@@ -1,12 +1,20 @@
-using System;
 using Microsoft.AspNetCore.Http;
 using Serilog;
 using Serilog.Events;
+using System;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
+    /// <summary>
+    /// Helpers for during application startup and in middleware
+    /// </summary>
     public static class LaunchPadLogHelpers
     {
+        /// <summary>
+        /// Setup the <see cref="IDiagnosticContext"/> with default values from the request
+        /// </summary>
+        /// <param name="diagnosticContext"></param>
+        /// <param name="httpContext"></param>
         public static void DefaultEnrichDiagnosticContext(IDiagnosticContext diagnosticContext, HttpContext httpContext)
         {
             var request = httpContext.Request;
@@ -45,6 +53,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
             return false;
         }
 
+        /// <summary>
+        /// Gets the default logging level based on the response status code
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="_"></param>
+        /// <param name="ex"></param>
+        /// <returns></returns>
         public static LogEventLevel DefaultGetLevel(HttpContext ctx, double _, Exception? ex) => ex is {} ?
             LogEventLevel.Error :
             ctx.Response.StatusCode > 499 ? LogEventLevel.Error :

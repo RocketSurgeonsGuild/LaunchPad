@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using Grpc.Core;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {
@@ -12,7 +12,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation
             var metadata = new Metadata();
             if (failures.Any())
             {
-                metadata.Add(new Metadata.Entry("errors-bin", failures.ToValidationTrailers().ToBytes()));
+                // metadata.Add(new Metadata.Entry("errors-bin", failures.ToValidationTrailers().ToBytes()));
             }
             return metadata;
         }

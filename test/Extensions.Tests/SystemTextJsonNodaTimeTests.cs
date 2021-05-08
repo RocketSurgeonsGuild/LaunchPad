@@ -1,19 +1,11 @@
 using FluentAssertions;
-using FluentAssertions.Collections;
-using Microsoft.Extensions.Logging;
-using NetTopologySuite;
-using NetTopologySuite.IO;
-using Newtonsoft.Json;
 using NodaTime;
-using NodaTime.Text;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Serilog;
 using System;
 using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Extensions.Tests
 {

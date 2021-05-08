@@ -7,8 +7,14 @@ using System.Globalization;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
 {
+    /// <summary>
+    /// Represents an <see cref="Offset"/> in Hot Chocolate
+    /// </summary>
     public class OffsetType : StringToStructBaseType<Offset>
     {
+        /// <summary>
+        /// The constructor
+        /// </summary>
         public OffsetType() : base("Offset")
         {
             Description =
@@ -17,11 +23,13 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
                     "a negative value means that the local time is behind UTC (e.g. for America).";
         }
 
+        /// <inheritdoc />
         protected override string Serialize(Offset baseValue)
             => OffsetPattern.GeneralInvariantWithZ
                 .WithCulture(CultureInfo.InvariantCulture)
                 .Format(baseValue);
 
+        /// <inheritdoc />
         protected override bool TryDeserialize(string str, [NotNullWhen(true)] out Offset? output)
             => OffsetPattern.GeneralInvariantWithZ
                 .WithCulture(CultureInfo.InvariantCulture)

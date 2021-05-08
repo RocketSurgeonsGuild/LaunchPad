@@ -1,10 +1,11 @@
-using System;
-using System.Linq;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation
 {
+    /// <summary>
+    /// Service collection helpers with grpc
+    /// </summary>
     public static class ServiceCollectionHelper
     {
         /// <summary>

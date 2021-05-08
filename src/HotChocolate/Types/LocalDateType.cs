@@ -7,8 +7,14 @@ using System.Globalization;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
 {
+    /// <summary>
+    /// Represents a <see cref="LocalDate"/> in Hot Chocolate
+    /// </summary>
     public class LocalDateType : StringToStructBaseType<LocalDate>
     {
+        /// <summary>
+        /// The constructor
+        /// </summary>
         public LocalDateType() : base("LocalDate")
         {
             Description =
@@ -17,11 +23,13 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
                     "time zone or time of day.";
         }
 
+        /// <inheritdoc />
         protected override string Serialize(LocalDate baseValue)
             => LocalDatePattern.Iso
                 .WithCulture(CultureInfo.InvariantCulture)
                 .Format(baseValue);
 
+        /// <inheritdoc />
         protected override bool TryDeserialize(string str, [NotNullWhen(true)] out LocalDate? output)
             => LocalDatePattern.Iso
                 .WithCulture(CultureInfo.InvariantCulture)

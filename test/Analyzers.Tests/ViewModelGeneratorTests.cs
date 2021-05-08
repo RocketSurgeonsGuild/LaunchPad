@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;

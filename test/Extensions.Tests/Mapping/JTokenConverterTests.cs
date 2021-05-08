@@ -16,7 +16,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JObject()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = "{}"
             };
@@ -29,7 +29,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JObject_With_Content()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = "{\"a\": \"123\"}"
             };
@@ -42,7 +42,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JObject_From_Null()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = null
             };
@@ -54,7 +54,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JObject_From_Empty()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = string.Empty
             };
@@ -67,7 +67,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_StringValue_To_JObject_Data))]
         public void ShouldNotMap_StringValue_To_JObject(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -89,7 +89,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_StringValue()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = new JObject()
             };
@@ -102,7 +102,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_StringValue_With_Content()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = JObject.Parse("{\"a\": \"123\"}")
             };
@@ -115,7 +115,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_StringValue_From_Null()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = null
             };
@@ -129,7 +129,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JArray()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = "[]"
             };
@@ -142,7 +142,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JArray_With_Content()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = "[1234,5678]"
             };
@@ -155,7 +155,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JArray_From_Null()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = null
             };
@@ -167,7 +167,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JArray_From_Empty()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = string.Empty
             };
@@ -180,7 +180,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_StringValue_To_JArray_Data))]
         public void ShouldNotMap_StringValue_To_JArray(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -202,7 +202,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_StringValue()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = new JArray()
             };
@@ -215,7 +215,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_StringValue_With_Content()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = JArray.Parse("[1234,5678]")
             };
@@ -228,7 +228,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_StringValue_From_Null()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = null
             };
@@ -247,7 +247,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("1234")]
         public void ShouldMap_StringValue_To_JToken(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -262,7 +262,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_StringValue_To_JToken_With_Content(string value)
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = value
             };
@@ -275,7 +275,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JToken_From_Null()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = null
             };
@@ -287,7 +287,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_StringValue_To_JToken_From_Empty()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = string.Empty
             };
@@ -299,7 +299,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldNotMap_StringValue_To_JToken()
         {
-            var item = new StringValue()
+            var item = new StringValue
             {
                 Bar = "null"
             };
@@ -312,7 +312,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JToken_To_StringValue()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JValue.CreateNull()
             };
@@ -327,7 +327,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_JToken_To_StringValue_With_Content(string value)
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JToken.Parse(value)
             };
@@ -340,7 +340,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JToken_To_StringValue_From_Null()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = null
             };
@@ -352,7 +352,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JObject()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes("{}")
             };
@@ -365,7 +365,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JObject_With_Content()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes("{\"a\": \"123\"}")
             };
@@ -378,7 +378,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JObject_From_Null()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = null
             };
@@ -390,7 +390,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JObject_From_Empty()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(string.Empty)
             };
@@ -403,7 +403,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_ByteArray_To_JObject_Data))]
         public void ShouldNotMap_ByteArray_To_JObject(byte[] value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = value
             };
@@ -425,7 +425,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_ByteArray()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = new JObject()
             };
@@ -438,7 +438,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_ByteArray_With_Content()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = JObject.Parse("{\"a\": \"123\"}")
             };
@@ -451,7 +451,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_ByteArray_From_Null()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = null
             };
@@ -463,7 +463,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_JObject()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = JObject.Parse("{}")
             };
@@ -476,7 +476,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JObject_To_JObject_With_Content()
         {
-            var item = new JObjectA()
+            var item = new JObjectA
             {
                 Bar = JObject.Parse("{\"a\": \"123\"}")
             };
@@ -489,7 +489,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JArray()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes("[]")
             };
@@ -502,7 +502,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JArray_With_Content()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes("[1234,5678]")
             };
@@ -515,7 +515,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JArray_From_Null()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = null
             };
@@ -527,7 +527,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JArray_From_Empty()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(string.Empty)
             };
@@ -540,7 +540,7 @@ namespace Extensions.Tests.Mapping
         [ClassData(typeof(ShouldNotMap_ByteArray_To_JArray_Data))]
         public void ShouldNotMap_ByteArray_To_JArray(byte[] value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = value
             };
@@ -562,7 +562,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_ByteArray()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = new JArray()
             };
@@ -575,7 +575,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_ByteArray_With_Content()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = JArray.Parse("[1234,5678]")
             };
@@ -588,7 +588,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_ByteArray_From_Null()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = null
             };
@@ -600,7 +600,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_JArray()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
                 Bar = new JArray()
             };
@@ -613,9 +613,9 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JArray_To_JArray_With_Content()
         {
-            var item = new JArrayA()
+            var item = new JArrayA
             {
-                Bar = new JArray() { 1234, 5678 }
+                Bar = new JArray { 1234, 5678 }
             };
             var result = Mapper.Map<JArrayA>(item);
 
@@ -631,7 +631,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("1234")]
         public void ShouldMap_ByteArray_To_JToken(string value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(value)
             };
@@ -646,7 +646,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_ByteArray_To_JToken_With_Content(string value)
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(value)
             };
@@ -659,7 +659,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JToken_From_Null()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = null
             };
@@ -671,7 +671,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_ByteArray_To_JToken_From_Empty()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes(string.Empty)
             };
@@ -683,7 +683,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldNotMap_ByteArray_To_JToken()
         {
-            var item = new ByteArray()
+            var item = new ByteArray
             {
                 Bar = Encoding.UTF8.GetBytes("null")
             };
@@ -696,7 +696,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JToken_To_ByteArray()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JValue.CreateNull()
             };
@@ -711,7 +711,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_JToken_To_ByteArray_With_Content(string value)
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JToken.Parse(value)
             };
@@ -724,7 +724,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldMap_JToken_To_ByteArray_From_Null()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = null
             };
@@ -741,7 +741,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("1234")]
         public void ShouldMap_JToken_To_JToken(string value)
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JToken.Parse(value)
             };
@@ -756,7 +756,7 @@ namespace Extensions.Tests.Mapping
         [InlineData("{\"a\":1234}")]
         public void ShouldMap_JToken_To_JToken_With_Content(string value)
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JToken.Parse(value)
             };
@@ -769,7 +769,7 @@ namespace Extensions.Tests.Mapping
         [Fact]
         public void ShouldNotMap_JToken_To_JToken()
         {
-            var item = new JTokenA()
+            var item = new JTokenA
             {
                 Bar = JToken.Parse("null")
             };

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,7 +22,7 @@ namespace AspNetCore.Tests.Restful
         [Fact]
         public void Should_Have_Method()
         {
-            var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
+            IRestfulApiMethodMatcher builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
             builder.Method.Should().Be(RestfulApiMethod.List);
         }
 

@@ -15,6 +15,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
     public abstract class RestfulApiController : ControllerBase
     {
         private IMediator? _mediator;
+        /// <summary>
+        /// The mediator instance available on demand
+        /// </summary>
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
 
         /// <summary>

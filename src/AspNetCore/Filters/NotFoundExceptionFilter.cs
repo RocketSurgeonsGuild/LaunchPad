@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Rocket.Surgery.LaunchPad.Foundation;
+using System.Threading.Tasks;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -12,16 +12,20 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
     /// <summary>
     /// Not found exception that catches not found messages that might have been thrown by calling code.
     /// </summary>
-    public class NotFoundExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
+    class NotFoundExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
     {
         private readonly ProblemDetailsFactory _problemDetailsFactory;
 
+        /// <summary>
+        /// Create a new NotFoundExceptionFilter
+        /// </summary>
+        /// <param name="problemDetailsFactory"></param>
         public NotFoundExceptionFilter(ProblemDetailsFactory problemDetailsFactory) => _problemDetailsFactory = problemDetailsFactory;
 
         /// <inheritdoc />
         public void OnException(ExceptionContext context)
         {
-            if (context?.Exception is NotFoundException exception)
+            if (context.Exception is NotFoundException exception)
             {
                 context.ExceptionHandled = true;
                 var problemDetails = _problemDetailsFactory.CreateProblemDetails(

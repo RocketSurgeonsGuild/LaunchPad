@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -11,14 +10,19 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers
 {
+    /// <summary>
+    /// A generator that is used to copy properties, fields and methods from one type onto another.
+    /// </summary>
     [Generator]
     public class InheritFromGenerator : ISourceGenerator
     {
+        /// <inheritdoc cref="ISourceGenerator"/>
         public void Initialize(GeneratorInitializationContext context)
         {
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
         }
 
+        /// <inheritdoc cref="ISourceGenerator"/>
         public void Execute(GeneratorExecutionContext context)
         {
             if (!( context.SyntaxReceiver is SyntaxReceiver syntaxReceiver ))
@@ -60,7 +64,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers
                 {
                     if (attribute.ApplicationSyntaxReference?.GetSyntax() is not { } attributeSyntax)
                         continue;
-                    if (attribute is { ConstructorArguments: { Length: 0 } arguments } ||
+                    if (attribute is { ConstructorArguments: { Length: 0 }  } ||
                         attribute.ConstructorArguments[0] is { Kind: not TypedConstantKind.Type })
                     {
                         // will be a normal compiler error
@@ -328,7 +332,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers
         }
     }
 
-    public static class SyntaxExtensions
+    internal static class SyntaxExtensions
     {
         public static TypeSyntax EnsureNullable(this TypeSyntax typeSyntax) => typeSyntax is NullableTypeSyntax nts ? nts : NullableType(typeSyntax);
         public static TypeSyntax EnsureNotNullable(this TypeSyntax typeSyntax) => typeSyntax is NullableTypeSyntax nts ? nts.ElementType : typeSyntax;
@@ -354,7 +358,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers
                     context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.MustBePartial, parentSyntax.Identifier.GetLocation(), parentSyntax.GetFullMetadataName()));
                 }
 
-                parent = parentSyntax?.Parent;
+                parent = parentSyntax.Parent;
             }
 
             return classToNest;

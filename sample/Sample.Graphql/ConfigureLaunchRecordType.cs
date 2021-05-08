@@ -13,7 +13,7 @@ namespace Sample.Graphql
             fieldDescriptor
                .UsePaging(
                     typeof(ObjectType<ReadyRocket>),
-                    options: new PagingOptions()
+                    options: new PagingOptions
                     {
                         DefaultPageSize = 10,
                         IncludeTotalCount = true,
@@ -22,7 +22,7 @@ namespace Sample.Graphql
                 )
                .UseOffsetPaging(
                     typeof(ObjectType<LaunchRecord>),
-                    options: new PagingOptions()
+                    options: new PagingOptions
                     {
                         DefaultPageSize = 10,
                         IncludeTotalCount = true,

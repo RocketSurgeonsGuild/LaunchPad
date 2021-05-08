@@ -1,4 +1,3 @@
-using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -6,6 +5,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Hosting.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
+using System;
 
 [assembly: Convention(typeof(EnvironmentLoggingConvention))]
 
@@ -26,7 +26,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
         /// <param name="configuration"></param>
         /// <param name="loggerConfiguration"></param>
         public void Register(
-            [NotNull] IConventionContext context,
+            IConventionContext context,
             IServiceProvider services,
             IConfiguration configuration,
             LoggerConfiguration loggerConfiguration
@@ -37,7 +37,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var environment = context.Get<IHostEnvironment>();
+            var environment = context.Get<IHostEnvironment>()!;
             loggerConfiguration.Enrich.WithProperty(nameof(environment.EnvironmentName), environment.EnvironmentName);
             loggerConfiguration.Enrich.WithProperty(nameof(environment.ApplicationName), environment.ApplicationName);
         }

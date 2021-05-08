@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
-using Sample.Core.Models;
-using System.Net.Http.Json;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sample.Restful.Tests
 {

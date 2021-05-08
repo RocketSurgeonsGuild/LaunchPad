@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using MediatR.Registration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
@@ -22,6 +21,10 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
     {
         private readonly FoundationOptions _options;
 
+        /// <summary>
+        /// Create the MediatR convention
+        /// </summary>
+        /// <param name="options"></param>
         public MediatRConvention(FoundationOptions? options = null)
         {
             _options = options ?? new FoundationOptions();
@@ -31,6 +34,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
         /// Registers the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="configuration"></param>
+        /// <param name="services"></param>
         public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             services.AddMediatR(

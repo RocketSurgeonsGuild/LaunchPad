@@ -1,9 +1,7 @@
-using HotChocolate.Language;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
-using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +11,28 @@ using System.Threading;
 
 namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
 {
+    /// <summary>
+    /// Configure the GraphQl values for a given Entity Framework type.
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
     public class ConfigureConfigureEntityFrameworkContextQueryType<TContext> : ObjectTypeExtension
         where TContext : DbContext
     {
         private readonly IEnumerable<IConfigureEntityFrameworkEntityQueryType> _configureQueryEntities;
 
+        /// <summary>
+        /// The constructor
+        /// </summary>
+        /// <param name="configureQueryEntities"></param>
         public ConfigureConfigureEntityFrameworkContextQueryType(IEnumerable<IConfigureEntityFrameworkEntityQueryType> configureQueryEntities) => _configureQueryEntities = configureQueryEntities;
 
+        /// <summary>
+        /// The constructor
+        /// </summary>
+        /// <param name="configureQueryEntities"></param>
         public ConfigureConfigureEntityFrameworkContextQueryType(params IConfigureEntityFrameworkEntityQueryType[] configureQueryEntities) => _configureQueryEntities = configureQueryEntities;
 
+        /// <inheritdoc />
         protected override void Configure(IObjectTypeDescriptor descriptor)
         {
             descriptor.Name(OperationTypeNames.Query);
@@ -46,6 +57,11 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
             }
         }
 
+        /// <summary>
+        /// Allows further customization by the child class.
+        /// </summary>
+        /// <param name="fieldDescriptor"></param>
+        /// <param name="propertyInfo"></param>
         protected virtual void Configure(IObjectFieldDescriptor fieldDescriptor, PropertyInfo propertyInfo) { }
 
         private static IObjectFieldDescriptor ConfigureResolve<TEntity>(IObjectFieldDescriptor typeDescriptor, PropertyInfo propertyInfo)

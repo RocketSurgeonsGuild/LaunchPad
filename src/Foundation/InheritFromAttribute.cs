@@ -13,8 +13,15 @@ namespace Rocket.Surgery.LaunchPad.Foundation
     [Conditional("CodeGeneration")]
     public class InheritFromAttribute : Attribute
     {
+        /// <summary>
+        /// The class that is being copied from
+        /// </summary>
         public Type ClassToCopy { get; }
 
+        /// <summary>
+        /// Create  the inherit from attribute
+        /// </summary>
+        /// <param name="classToCopy"></param>
         public InheritFromAttribute(Type classToCopy)
         {
             ClassToCopy = classToCopy;

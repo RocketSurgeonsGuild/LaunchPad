@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Rocket.Surgery.LaunchPad.EntityFramework;
-using System.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace Sample.Core.Domain
 {

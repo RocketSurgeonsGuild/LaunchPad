@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentValidation.Results;
 using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +5,8 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,7 +19,7 @@ namespace Sample.Grpc.Tests.Validation.Integration
         public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper) => _factory = factory
            .ConfigureLoggerFactory(LoggerFactory)
            .ConfigureHostBuilder(
-                options => options.ConfigureServices((services) => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
+                options => options.ConfigureServices(services => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
             );
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Sample.Grpc.Tests.Validation.Integration
             // When
             async Task Action()
             {
-                await client.GetRocketsAsync(new GetRocketRequest()
+                await client.GetRocketsAsync(new GetRocketRequest
                 {
                     Id = ""
                 });

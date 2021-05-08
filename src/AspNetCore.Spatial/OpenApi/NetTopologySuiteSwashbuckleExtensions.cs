@@ -4,15 +4,10 @@ using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
-using NodaTime;
-using NodaTime.Serialization.SystemTextJson;
-using Rocket.Surgery.LaunchPad.Spatial;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text.Json;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
 {
@@ -25,17 +20,17 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
             {
                 swaggerDoc.Components.Schemas.Add(
                     "Point3D",
-                    new OpenApiSchema()
+                    new OpenApiSchema
                     {
                         Type = "array",
                         Description = "Point in 3D space",
-                        ExternalDocs = new OpenApiExternalDocs()
+                        ExternalDocs = new OpenApiExternalDocs
                         {
                             Url = new Uri("http://geojson.org/geojson-spec.html#id2")
                         },
                         MinItems = 2,
                         MaxItems = 3,
-                        Items = new OpenApiSchema()
+                        Items = new OpenApiSchema
                         {
                             Type = "number"
                         }
@@ -48,29 +43,29 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
         {
             c.DocumentFilter<DocumentFilter>();
             c.MapType<Geometry>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#geometry-objects"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(Geometry).FullName)
                     },
                     Description = "GeoJSon geometry",
-                    Discriminator = new OpenApiDiscriminator()
+                    Discriminator = new OpenApiDiscriminator
                     {
                         PropertyName = "type",
                     },
-                    Required = new HashSet<string>() { "type" },
-                    Properties = new Dictionary<string, OpenApiSchema>()
+                    Required = new HashSet<string> { "type" },
+                    Properties = new Dictionary<string, OpenApiSchema>
                     {
-                        ["type"] = new OpenApiSchema()
+                        ["type"] = new OpenApiSchema
                         {
                             Type = "string",
-                            Enum = new List<IOpenApiAny>()
+                            Enum = new List<IOpenApiAny>
                             {
                                 new OpenApiString("Point"),
                                 new OpenApiString("LineString"),
@@ -86,35 +81,35 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
             );
 
             c.MapType<Point>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#id2"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(Point).FullName)
                     },
                     Description = "GeoJSon geometry",
-                    AllOf = new List<OpenApiSchema>()
+                    AllOf = new List<OpenApiSchema>
                     {
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Reference = new OpenApiReference()
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.Schema,
                                 Id = "Geometry",
                             }
                         },
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Properties = new Dictionary<string, OpenApiSchema>()
+                            Properties = new Dictionary<string, OpenApiSchema>
                             {
-                                ["coordinates"] = new OpenApiSchema()
+                                ["coordinates"] = new OpenApiSchema
                                 {
-                                    Reference = new OpenApiReference()
+                                    Reference = new OpenApiReference
                                     {
                                         Type = ReferenceType.Schema,
                                         Id = "Point3D"
@@ -126,38 +121,38 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 }
             );
             c.MapType<LineString>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#id3"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(LineString).FullName)
                     },
                     Description = "GeoJSon geometry",
-                    AllOf = new List<OpenApiSchema>()
+                    AllOf = new List<OpenApiSchema>
                     {
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Reference = new OpenApiReference()
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.Schema,
                                 Id = "Geometry",
                             }
                         },
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Properties = new Dictionary<string, OpenApiSchema>()
+                            Properties = new Dictionary<string, OpenApiSchema>
                             {
-                                ["coordinates"] = new OpenApiSchema()
+                                ["coordinates"] = new OpenApiSchema
                                 {
                                     Type = "array",
-                                    Items = new OpenApiSchema()
+                                    Items = new OpenApiSchema
                                     {
-                                        Reference = new OpenApiReference()
+                                        Reference = new OpenApiReference
                                         {
                                             Type = ReferenceType.Schema,
                                             Id = "Point3D"
@@ -170,41 +165,41 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 }
             );
             c.MapType<Polygon>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#id4"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(Polygon).FullName)
                     },
                     Description = "GeoJSon geometry",
-                    AllOf = new List<OpenApiSchema>()
+                    AllOf = new List<OpenApiSchema>
                     {
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Reference = new OpenApiReference()
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.Schema,
                                 Id = "Geometry",
                             }
                         },
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Properties = new Dictionary<string, OpenApiSchema>()
+                            Properties = new Dictionary<string, OpenApiSchema>
                             {
-                                ["coordinates"] = new OpenApiSchema()
+                                ["coordinates"] = new OpenApiSchema
                                 {
                                     Type = "array",
-                                    Items = new OpenApiSchema()
+                                    Items = new OpenApiSchema
                                     {
                                         Type = "array",
-                                        Items = new OpenApiSchema()
+                                        Items = new OpenApiSchema
                                         {
-                                            Reference = new OpenApiReference()
+                                            Reference = new OpenApiReference
                                             {
                                                 Type = ReferenceType.Schema,
                                                 Id = "Point3D"
@@ -218,38 +213,38 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 }
             );
             c.MapType<MultiPoint>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#id4"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(MultiPoint).FullName)
                     },
                     Description = "GeoJSon geometry",
-                    AllOf = new List<OpenApiSchema>()
+                    AllOf = new List<OpenApiSchema>
                     {
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Reference = new OpenApiReference()
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.Schema,
                                 Id = "Geometry",
                             }
                         },
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Properties = new Dictionary<string, OpenApiSchema>()
+                            Properties = new Dictionary<string, OpenApiSchema>
                             {
-                                ["coordinates"] = new OpenApiSchema()
+                                ["coordinates"] = new OpenApiSchema
                                 {
                                     Type = "array",
-                                    Items = new OpenApiSchema()
+                                    Items = new OpenApiSchema
                                     {
-                                        Reference = new OpenApiReference()
+                                        Reference = new OpenApiReference
                                         {
                                             Type = ReferenceType.Schema,
                                             Id = "Point3D"
@@ -262,41 +257,41 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 }
             );
             c.MapType<MultiLineString>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#id5"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(MultiLineString).FullName)
                     },
                     Description = "GeoJSon geometry",
-                    AllOf = new List<OpenApiSchema>()
+                    AllOf = new List<OpenApiSchema>
                     {
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Reference = new OpenApiReference()
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.Schema,
                                 Id = "Geometry",
                             }
                         },
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Properties = new Dictionary<string, OpenApiSchema>()
+                            Properties = new Dictionary<string, OpenApiSchema>
                             {
-                                ["coordinates"] = new OpenApiSchema()
+                                ["coordinates"] = new OpenApiSchema
                                 {
                                     Type = "array",
-                                    Items = new OpenApiSchema()
+                                    Items = new OpenApiSchema
                                     {
                                         Type = "array",
-                                        Items = new OpenApiSchema()
+                                        Items = new OpenApiSchema
                                         {
-                                            Reference = new OpenApiReference()
+                                            Reference = new OpenApiReference
                                             {
                                                 Type = ReferenceType.Schema,
                                                 Id = "Point3D"
@@ -310,44 +305,44 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 }
             );
             c.MapType<MultiPolygon>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#id6"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(MultiPolygon).FullName)
                     },
                     Description = "GeoJSon geometry",
-                    AllOf = new List<OpenApiSchema>()
+                    AllOf = new List<OpenApiSchema>
                     {
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Reference = new OpenApiReference()
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.Schema,
                                 Id = "Geometry",
                             }
                         },
-                        new OpenApiSchema()
+                        new OpenApiSchema
                         {
-                            Properties = new Dictionary<string, OpenApiSchema>()
+                            Properties = new Dictionary<string, OpenApiSchema>
                             {
-                                ["coordinates"] = new OpenApiSchema()
+                                ["coordinates"] = new OpenApiSchema
                                 {
                                     Type = "array",
-                                    Items = new OpenApiSchema()
+                                    Items = new OpenApiSchema
                                     {
                                         Type = "array",
-                                        Items = new OpenApiSchema()
+                                        Items = new OpenApiSchema
                                         {
                                             Type = "array",
-                                            Items = new OpenApiSchema()
+                                            Items = new OpenApiSchema
                                             {
-                                                Reference = new OpenApiReference()
+                                                Reference = new OpenApiReference
                                                 {
                                                     Type = ReferenceType.Schema,
                                                     Id = "Point3D"
@@ -362,32 +357,32 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
                 }
             );
             c.MapType<GeometryCollection>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
-                    ExternalDocs = new OpenApiExternalDocs()
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("http://geojson.org/geojson-spec.html#geometrycollection"),
                     },
                     Type = "object",
-                    Extensions = new Dictionary<string, IOpenApiExtension>()
+                    Extensions = new Dictionary<string, IOpenApiExtension>
                     {
                         ["clrType"] = new OpenApiString(typeof(GeometryCollection).FullName)
                     },
-                    Required = new HashSet<string>() { "type", "geometries" },
+                    Required = new HashSet<string> { "type", "geometries" },
                     Description = "GeoJSon geometry collection",
-                    Properties = new Dictionary<string, OpenApiSchema>()
+                    Properties = new Dictionary<string, OpenApiSchema>
                     {
-                        ["type"] = new OpenApiSchema()
+                        ["type"] = new OpenApiSchema
                         {
                             Type = "string",
-                            Enum = new List<IOpenApiAny>() { new OpenApiString("GeometryCollection") },
+                            Enum = new List<IOpenApiAny> { new OpenApiString("GeometryCollection") },
                         },
-                        ["geometries"] = new OpenApiSchema()
+                        ["geometries"] = new OpenApiSchema
                         {
                             Type = "array",
-                            Items = new OpenApiSchema()
+                            Items = new OpenApiSchema
                             {
-                                Reference = new OpenApiReference()
+                                Reference = new OpenApiReference
                                 {
                                     Type = ReferenceType.Schema,
                                     Id = "Geometry"
@@ -399,35 +394,35 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
             );
 
             c.MapType<Feature>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
                     Type = "object",
                     Description = "GeoJSon Feature",
-                    Required = new HashSet<string>() { "type", "id", "geometry" },
-                    ExternalDocs = new OpenApiExternalDocs()
+                    Required = new HashSet<string> { "type", "id", "geometry" },
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("https://tools.ietf.org/html/rfc7946#section-3.2")
                     },
-                    Properties = new Dictionary<string, OpenApiSchema>()
+                    Properties = new Dictionary<string, OpenApiSchema>
                     {
-                        ["type"] = new OpenApiSchema()
+                        ["type"] = new OpenApiSchema
                         {
                             Type = "string",
-                            Enum = new List<IOpenApiAny>() { new OpenApiString("Feature") }
+                            Enum = new List<IOpenApiAny> { new OpenApiString("Feature") }
                         },
-                        ["id"] = new OpenApiSchema()
+                        ["id"] = new OpenApiSchema
                         {
                             Type = "integer",
                         },
-                        ["geometry"] = new OpenApiSchema()
+                        ["geometry"] = new OpenApiSchema
                         {
-                            Reference = new OpenApiReference()
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.Schema,
                                 Id = "GeometryCollection",
                             }
                         },
-                        ["properties"] = new OpenApiSchema()
+                        ["properties"] = new OpenApiSchema
                         {
                             Type = "object"
                         }
@@ -436,28 +431,28 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
             );
 
             c.MapType<FeatureCollection>(
-                () => new OpenApiSchema()
+                () => new OpenApiSchema
                 {
                     Type = "object",
                     Description = "GeoJSon Feature collection",
-                    Required = new HashSet<string>() { "type", "features" },
-                    ExternalDocs = new OpenApiExternalDocs()
+                    Required = new HashSet<string> { "type", "features" },
+                    ExternalDocs = new OpenApiExternalDocs
                     {
                         Url = new("https://tools.ietf.org/html/rfc7946#section-3.2")
                     },
-                    Properties = new Dictionary<string, OpenApiSchema>()
+                    Properties = new Dictionary<string, OpenApiSchema>
                     {
-                        ["type"] = new OpenApiSchema()
+                        ["type"] = new OpenApiSchema
                         {
                             Type = "string",
-                            Enum = new List<IOpenApiAny>() { new OpenApiString("FeatureCollection") }
+                            Enum = new List<IOpenApiAny> { new OpenApiString("FeatureCollection") }
                         },
-                        ["features"] = new OpenApiSchema()
+                        ["features"] = new OpenApiSchema
                         {
                             Type = "array",
-                            Items = new OpenApiSchema()
+                            Items = new OpenApiSchema
                             {
-                                Reference = new OpenApiReference()
+                                Reference = new OpenApiReference
                                 {
                                     Type = ReferenceType.Schema,
                                     Id = "Feature"

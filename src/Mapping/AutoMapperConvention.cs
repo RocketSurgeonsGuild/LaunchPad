@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -31,7 +32,7 @@ namespace Rocket.Surgery.LaunchPad.Mapping
         /// <param name="context">The context.</param>
         /// <param name="configuration"></param>
         /// <param name="services"></param>
-        public void Register([NotNull] IConventionContext context, Microsoft.Extensions.Configuration.IConfiguration configuration, IServiceCollection services)
+        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
         {
             var assemblies = context.AssemblyCandidateFinder.GetCandidateAssemblies(nameof(AutoMapper)).ToArray();
             services.AddAutoMapper(assemblies,_options.ServiceLifetime);

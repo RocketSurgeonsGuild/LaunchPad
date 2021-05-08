@@ -1,9 +1,8 @@
-using System;
-using App.Metrics;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace App.Metrics

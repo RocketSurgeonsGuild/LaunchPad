@@ -3,8 +3,17 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate
 {
+    /// <summary>
+    /// GraphQl extensions
+    /// </summary>
     public static class GraphqlExtensions
     {
+        /// <summary>
+        /// Add problem details to the error
+        /// </summary>
+        /// <param name="error"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static IErrorBuilder WithProblemDetails(this IErrorBuilder error, IProblemDetailsData data)
         {
             error.SetExtension("type", "ProblemDetails");

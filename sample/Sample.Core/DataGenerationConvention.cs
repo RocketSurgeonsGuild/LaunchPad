@@ -1,16 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Bogus.Extensions;
+﻿using Bogus.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 [assembly: Convention(typeof(DataGenerationConvention))]
 
