@@ -1,4 +1,6 @@
+using FakeItEasy;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation;
@@ -19,7 +21,8 @@ namespace AspNetCore.Tests.Validation
 
         public SchemaGenerator SchemaGenerator(
             Action<SchemaGeneratorOptions> configureGenerator = null,
-            Action<JsonSerializerOptions> configureSerializer = null)
+            Action<JsonSerializerOptions> configureSerializer = null
+        )
         {
             var generatorOptions = new SchemaGeneratorOptions();
             configureGenerator?.Invoke(generatorOptions);
@@ -33,7 +36,12 @@ namespace AspNetCore.Tests.Validation
         private void ConfigureGenerator(SchemaGeneratorOptions options, params IValidator[] validators)
         {
             IValidatorFactory validatorFactory = new CustomValidatorFactory(validators);
-            options.SchemaFilters.Add(new FluentValidationRules(validatorFactory));
+
+            options.SchemaFilters.Add(
+                new FluentValidationRules(
+                    validatorFactory
+                )
+            );
         }
     }
 
@@ -54,7 +62,8 @@ namespace AspNetCore.Tests.Validation
         public OpenApiSchema AddRule<TProperty>(
             Expression<Func<T, TProperty>> propertyExpression,
             Action<IRuleBuilderInitial<T, TProperty>>? configureRule = null,
-            Action<OpenApiSchema>? schemaCheck = null)
+            Action<OpenApiSchema>? schemaCheck = null
+        )
         {
             IRuleBuilderInitial<T, TProperty> ruleBuilder = Validator.RuleFor(propertyExpression);
             configureRule?.Invoke(ruleBuilder);
@@ -72,12 +81,17 @@ namespace AspNetCore.Tests.Validation
 
     public static class TestExtensions
     {
-        public static OpenApiSchema GenerateSchemaForValidator<T>(this SchemaRepository schemaRepository, IValidator<T> validator, FluentValidationSwaggerGenOptions? fluentValidationSwaggerGenOptions = null)
+        public static OpenApiSchema GenerateSchemaForValidator<T>(
+            this SchemaRepository schemaRepository,
+            IValidator<T> validator,
+            FluentValidationSwaggerGenOptions? fluentValidationSwaggerGenOptions = null
+        )
         {
             OpenApiSchema schema = CreateSchemaGenerator(
-                    new []{ validator },
-                    fluentValidationSwaggerGenOptions: fluentValidationSwaggerGenOptions)
-                .GenerateSchema(typeof(T), schemaRepository);
+                    new[] { validator },
+                    fluentValidationSwaggerGenOptions: fluentValidationSwaggerGenOptions
+                )
+               .GenerateSchema(typeof(T), schemaRepository);
 
             if (schema.Reference?.Id != null)
                 schema = schemaRepository.Schemas[schema.Reference.Id];
@@ -87,23 +101,32 @@ namespace AspNetCore.Tests.Validation
 
         public static SchemaGenerator CreateSchemaGenerator(
             IValidator[] validators,
-            FluentValidationSwaggerGenOptions? fluentValidationSwaggerGenOptions = null)
+            FluentValidationSwaggerGenOptions? fluentValidationSwaggerGenOptions = null
+        )
         {
-            return CreateSchemaGenerator(options =>
-            {
-                IValidatorFactory validatorFactory = new CustomValidatorFactory(validators);
+            return CreateSchemaGenerator(
+                options =>
+                {
+                    IValidatorFactory validatorFactory = new CustomValidatorFactory(validators);
 
-                options.SchemaFilters.Add(new FluentValidationRules(
-                    validatorFactory: validatorFactory,
-                    rules: null,
-                    loggerFactory: null,
-                    options: fluentValidationSwaggerGenOptions != null ? new OptionsWrapper<FluentValidationSwaggerGenOptions>(fluentValidationSwaggerGenOptions) : null));
-            });
+                    options.SchemaFilters.Add(
+                        new FluentValidationRules(
+                           validatorFactory,
+                            rules: null,
+                            loggerFactory: null,
+                            options: fluentValidationSwaggerGenOptions != null
+                                ? new OptionsWrapper<FluentValidationSwaggerGenOptions>(fluentValidationSwaggerGenOptions)
+                                : null
+                        )
+                    );
+                }
+            );
         }
 
         public static SchemaGenerator CreateSchemaGenerator(
             Action<SchemaGeneratorOptions>? configureGenerator = null,
-            Action<JsonSerializerOptions>? configureSerializer = null)
+            Action<JsonSerializerOptions>? configureSerializer = null
+        )
         {
             var generatorOptions = new SchemaGeneratorOptions();
             configureGenerator?.Invoke(generatorOptions);

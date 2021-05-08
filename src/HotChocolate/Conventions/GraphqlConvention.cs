@@ -55,7 +55,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
                 ServiceDescriptor.Describe(
                     typeof(IValidatorProvider),
                     typeof(FairyBreadValidatorProvider),
-                    services.FirstOrDefault(z => z.ServiceType == typeof(IValidatorFactory))?.Lifetime ?? _foundationOptions.ValidationLifetime
+                    ServiceLifetime.Singleton
                 )
             );
             services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();

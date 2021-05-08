@@ -20,29 +20,29 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
     /// </summary>
     public class FluentValidationOperationFilter : IOperationFilter
     {
+        private readonly IValidatorFactory _validatorFactory;
         private readonly ILogger _logger;
         private readonly SwaggerGenOptions _swaggerGenOptions;
-        private readonly IValidatorFactory? _validatorFactory;
         private readonly IReadOnlyList<FluentValidationRule> _rules;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentValidationOperationFilter"/> class.
         /// </summary>
         /// <param name="swaggerGenOptions">Swagger generation options.</param>
-        /// <param name="validatorFactory">FluentValidation factory.</param>
+        /// <param name="validatorFactory">The validator factory.</param>
         /// <param name="rules">External FluentValidation rules. External rule overrides default rule with the same name.</param>
         /// <param name="loggerFactory">Logger factory.</param>
         /// <param name="options">Schema generation options.</param>
         public FluentValidationOperationFilter(
             IOptions<SwaggerGenOptions> swaggerGenOptions,
-            IValidatorFactory? validatorFactory = null,
+            IValidatorFactory validatorFactory,
             IEnumerable<FluentValidationRule>? rules = null,
             ILoggerFactory? loggerFactory = null,
             IOptions<FluentValidationSwaggerGenOptions>? options = null
         )
         {
-            _swaggerGenOptions = swaggerGenOptions.Value;
             _validatorFactory = validatorFactory;
+            _swaggerGenOptions = swaggerGenOptions.Value;
             _logger = loggerFactory?.CreateLogger(typeof(FluentValidationRules)) ?? NullLogger.Instance;
             _rules = new DefaultFluentValidationRuleProvider(options).GetRules().ToArray().OverrideRules(rules);
         }
@@ -65,12 +65,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Swashbuckle
         {
             if (operation.Parameters == null)
                 return;
-
-            if (_validatorFactory == null)
-            {
-                _logger.LogWarning(0, "ValidatorFactory is not provided. Please register FluentValidation");
-                return;
-            }
 
             var schemaIdSelector = _swaggerGenOptions.SchemaGeneratorOptions.SchemaIdSelector ?? new SchemaGeneratorOptions().SchemaIdSelector;
 

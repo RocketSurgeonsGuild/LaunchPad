@@ -52,10 +52,14 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
                .GetCandidateAssemblies("FluentValidation");
             foreach (var item in new AssemblyScanner(assemblies.SelectMany(z => z.DefinedTypes).Select(x => x.AsType())))
             {
-                services.TryAddEnumerable(ServiceDescriptor.Describe(item.InterfaceType, item.ValidatorType, _options.ValidationLifetime));
+                services.TryAddEnumerable(ServiceDescriptor.Describe(item.InterfaceType, item.ValidatorType, ServiceLifetime.Singleton));
             }
 
-            services.TryAdd(ServiceDescriptor.Describe(typeof(IValidatorFactory), typeof(ValidatorFactory), _options.ValidationLifetime));
+            if (services.FirstOrDefault(z => z.ServiceType == typeof(IValidatorFactory)) is { } s && s.Lifetime != ServiceLifetime.Singleton)
+            {
+                services.Remove(s);
+            }
+            services.TryAdd(ServiceDescriptor.Describe(typeof(IValidatorFactory), typeof(ValidatorFactory), ServiceLifetime.Singleton));
             services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
         }
     }
