@@ -137,11 +137,7 @@ namespace Sample.Core.Operations.Rockets
     {
         public partial record Request
         {
-            public string SerialNumber
-            {
-                get;
-                set;
-            }
+            public string SerialNumber { get; set; }
 
             public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
         }
@@ -247,11 +243,7 @@ namespace Sample.Core.Operations.Rockets
     {
         public partial class Request
         {
-            public string SerialNumber
-            {
-                get;
-                set;
-            }
+            public string SerialNumber { get; set; }
 
             public Request With(Model value) => new Request{Id = this.Id, SerialNumber = value.SerialNumber};
         }
