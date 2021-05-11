@@ -18,6 +18,100 @@ namespace Analyzers.Tests
             WithGenerator<MutableGenerator>();
             AddReferences(typeof(MutableAttribute));
         }
+
+        [Fact]
+        public async Task Should_Require_Partial_Type_Declaration()
+        {
+            var source = @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Players
+{
+    [Mutable]
+    public record Player(string Name)
+    {
+        public int Health { get; init; }
+    }
+}
+";
+            var result = await GenerateAsync(source);
+            result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
+            var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+            diagnostic.Id.Should().Be("LPAD0001");
+            diagnostic.ToString().Should().Contain("Type Sample.Players.Player must be made partial.");
+        }
+
+        [Fact]
+        public async Task Should_Require_Partial_Parent_Type_Declaration()
+        {
+            var source = @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Players
+{
+    public class Parent
+    {
+        [Mutable]
+        public record Player(string Name)
+        {
+            public int Health { get; init; }
+        }
+    }
+}
+";
+            var result = await GenerateAsync(source);
+            result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
+            var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+            diagnostic.Id.Should().Be("LPAD0001");
+            diagnostic.ToString().Should().Contain("Type Sample.Players.Parent+Player must be made partial.");
+        }
+
+        [Fact]
+        public async Task Should_Generate_Mutable_Record()
+        {
+            var source = @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Players
+{
+    [Mutable]
+    public record Player(string Name)
+    {
+        public int Health { get; init; }
+    }
+}
+";
+
+            var expected = @"
+#nullable enable
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Players
+{
+    public partial record PlayerViewModel
+    {
+        public string Name { get; set; }
+        public string Health { get; set; }
+        public static implicit operator Player (PlayerViewModel model) => new Player(model.Name) { Health = model.Health };
+        public static implicit operator PlayerViewModel (Player model) => new PlayerViewModel { Name = model.Name, Health = model.Health };
+    }
+}
+#nullable restore
+";
+
+            var result = await GenerateAsync(source);
+            result.EnsureDiagnosticSeverity();
+            result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
+        }
+
     }
 
     public class InheritFromGeneratorTests : GeneratorTest
