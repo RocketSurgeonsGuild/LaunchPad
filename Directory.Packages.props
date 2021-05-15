@@ -54,7 +54,7 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="3.0.12" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.5" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
