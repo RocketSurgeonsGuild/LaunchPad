@@ -72,7 +72,7 @@
     <PackageVersion Include="NodaTime" Version="3.0.5" />
     <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
     <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
-    <PackageVersion Include="NodaTime.Testing" Version="3.0.5" />
+    <PackageVersion Include="NodaTime.Testing" Version="3.0.6" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
     <PackageVersion Include="Rocket.Surgery.Conventions" Version="10.2.0" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.2.0" />
