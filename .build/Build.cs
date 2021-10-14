@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Nuke.Common;
+using Nuke.Common.CI;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.Tools.DotNet;
@@ -13,15 +14,16 @@ using Rocket.Surgery.Nuke.DotNetCore;
 [UnsetVisualStudioEnvironmentVariables]
 [PackageIcon("https://raw.githubusercontent.com/RocketSurgeonsGuild/graphics/master/png/social-square-thrust-rounded.png")]
 [EnsureGitHooks(GitHook.PreCommit)]
-[EnsureReadmeIsUpdated]
+[EnsureReadmeIsUpdated("Readme.md")]
 [DotNetVerbosityMapping]
 [MSBuildVerbosityMapping]
 [NuGetVerbosityMapping]
+[ShutdownDotNetAfterServerBuild]
 public partial class Solution : NukeBuild,
                                 ICanRestoreWithDotNetCore,
                                 ICanBuildWithDotNetCore,
                                 ICanTestWithDotNetCore,
-                                IHaveNuGetPackages,
+                                ICanPackWithDotNetCore,
                                 IHaveDataCollector,
                                 ICanClean,
                                 ICanUpdateReadme,
@@ -51,36 +53,14 @@ public partial class Solution : NukeBuild,
 
     public Target Build => _ => _.Inherit<ICanBuildWithDotNetCore>(x => x.CoreBuild);
 
-    // public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
-    //    .DependsOn(Clean);
-
-    /// <summary>
-    /// dotnet pack
-    /// </summary>
-    public Target Pack => _ => _
-       .Description("Packs all the NuGet packages.")
-       .DependsOn(Clean)
-       .After(Test)
-       .Executes(
-            () =>
-            {
-                IHaveSolution selfSolution = this;
-                IHaveNuGetPackages nuget = this;
-                IHaveOutputLogs logs = this;
-                return DotNetTasks.DotNetPack(
-                    s => s.SetProject(selfSolution.Solution)
-                       .SetDefaultLoggers(logs.LogsDirectory / "pack.log")
-                       .SetGitVersionEnvironment(GitVersion)
-                       .SetConfiguration(Configuration)
-                       .SetOutputDirectory(nuget.NuGetPackageDirectory)
-                );
-            }
-        );
+    public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
+       .DependsOn(Clean);
 
     [ComputedGitVersion]
     public GitVersion GitVersion { get; } = null!;
 
     public Target Clean => _ => _.Inherit<ICanClean>(x => x.Clean);
+    public Target Lint => _ => _.Inherit<ICanLint>(x => x.Lint);
     public Target Restore => _ => _.Inherit<ICanRestoreWithDotNetCore>(x => x.CoreRestore);
     public Target Test => _ => _.Inherit<ICanTestWithDotNetCore>(x => x.CoreTest);
 
