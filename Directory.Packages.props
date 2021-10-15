@@ -80,7 +80,7 @@
     <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="10.2.0" />
     <PackageVersion Include="Rocket.Surgery.Hosting.TestHost" Version="10.2.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.2.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.2.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.2.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.2.0" />
     <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="11.2.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.2.0" />
