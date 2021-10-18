@@ -105,7 +105,7 @@
     <PackageVersion Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageVersion Include="Serilog.Sinks.Observable" Version="2.0.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.1.4" />
-    <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="6.1.4" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.3" />
     <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="5.0.2" />
     <PackageVersion Include="System.Collections.Immutable" Version="5.0.0" />
     <PackageVersion Include="System.Interactive" Version="5.0.0" />
