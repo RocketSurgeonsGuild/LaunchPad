@@ -29,7 +29,7 @@
     <PackageVersion Include="App.Metrics.Extensions.HealthChecks" Version="4.2.0" />
     <PackageVersion Include="App.Metrics" Version="4.2.0" />
     <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.2.0" />
-    <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.2.0" />
+    <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.3.0" />
     <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.2.0" />
     <PackageVersion Include="FairyBread" Version="6.0.1" />
     <PackageVersion Include="FluentValidation" Version="10.1.0" />
