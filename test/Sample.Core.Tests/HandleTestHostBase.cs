@@ -7,6 +7,12 @@ using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.Hosting;
 using Sample.Core.Domain;
 using System.Threading.Tasks;
+using DryIoc;
+using DryIoc.Microsoft.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
+using Microsoft.Extensions.Hosting;
+using Rocket.Surgery.Conventions;
+using Rocket.Surgery.Conventions.Testing;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -14,8 +20,8 @@ namespace Sample.Core.Tests
 {
     public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     {
-        private readonly TestHostBuilder _hostBuilder;
         private SqliteConnection _connection;
+        private readonly ConventionContextBuilder _context;
 
         protected HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : base(
             outputHelper,
@@ -23,10 +29,11 @@ namespace Sample.Core.Tests
             logFormat: "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
         )
         {
-            _hostBuilder = TestHost.For(this, LoggerFactory)
-               .WithLogger(LoggerFactory.CreateLogger(nameof(TestHost)))
-               .Create();
-            ExcludeSourceContext(nameof(TestHost));
+            _context =
+                ConventionContextBuilder.Create()
+                                        .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
+                                        .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)));
+            ExcludeSourceContext(nameof(AutoFakeTest));
         }
 
         public async Task InitializeAsync()
@@ -34,20 +41,20 @@ namespace Sample.Core.Tests
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();
 
-            _hostBuilder
+            _context
                .ConfigureServices(
                     (context, services) =>
                     {
                         services.AddDbContextPool<RocketDbContext>(
                             x => x
-                               .EnableDetailedErrors()
-                               .EnableSensitiveDataLogging()
-                               .UseSqlite(_connection)
+                                .EnableDetailedErrors()
+                                .EnableSensitiveDataLogging()
+                                .UseSqlite(_connection)
                         );
                     }
                 );
 
-            Populate(_hostBuilder.Parse());
+            Populate(new ServiceCollection().ApplyConventions(ConventionContext.From(_context)));
 
             await ServiceProvider.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
         }

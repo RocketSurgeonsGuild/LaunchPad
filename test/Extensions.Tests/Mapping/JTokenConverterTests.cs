@@ -785,13 +785,10 @@ namespace Extensions.Tests.Mapping
             expression.AddProfile(new NewtonsoftJsonProfile());
             expression.CreateMap<StringValue, JTokenA>().ReverseMap();
             expression.CreateMap<ByteArray, JTokenA>().ReverseMap();
-            expression.CreateMap<JTokenA, JTokenA>().ReverseMap();
             expression.CreateMap<StringValue, JObjectA>().ReverseMap();
             expression.CreateMap<ByteArray, JObjectA>().ReverseMap();
-            expression.CreateMap<JObjectA, JObjectA>().ReverseMap();
             expression.CreateMap<StringValue, JArrayA>().ReverseMap();
             expression.CreateMap<ByteArray, JArrayA>().ReverseMap();
-            expression.CreateMap<JArrayA, JArrayA>().ReverseMap();
         }
 
         private class ByteArray

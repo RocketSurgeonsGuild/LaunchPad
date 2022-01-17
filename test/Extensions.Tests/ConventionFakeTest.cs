@@ -3,6 +3,9 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.Hosting;
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
+using Rocket.Surgery.Conventions.Testing;
 using Xunit.Abstractions;
 
 namespace Extensions.Tests
@@ -13,19 +16,13 @@ namespace Extensions.Tests
 
         protected void Init(Action<ConventionContextBuilder>? action = null)
         {
-            var c = Container;
-            var builder = TestHost.For(this, LoggerFactory)
-               .WithLogger(Logger)
-               .Create(
-                    z =>
-                    {
-                        z.Set(HostType.UnitTest);
-                        action?.Invoke(z);
-                    });
-            var conventions = builder.Conventions.GetAll(HostType.UnitTest);
-            var services = builder.Parse();
-            c.Populate(services);
-            Rebuild(c);
+            var conventionContextBuilder = ConventionContextBuilder.Create()
+                                                                   .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
+                                                                   .WithLogger(Logger);
+            action?.Invoke(conventionContextBuilder);
+            var context = ConventionContext.From(conventionContextBuilder);
+
+            Populate(new ServiceCollection().ApplyConventions(context));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
         public override bool IsInstanceOfType(IValueNode valueSyntax) => false;
 
         /// <inheritdoc />
-        public override object? ParseLiteral(IValueNode valueSyntax, bool withDefaults = true) => null;
+        public override object? ParseLiteral(IValueNode valueSyntax) => null;
 
         /// <inheritdoc />
         public override IValueNode ParseValue(object? runtimeValue) => new NullValueNode(null);

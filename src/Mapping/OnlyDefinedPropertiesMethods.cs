@@ -16,7 +16,7 @@ namespace Rocket.Surgery.LaunchPad.Mapping
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool ForStrings(PropertyMap map)
         {
-            if (map.HasSource && map.SourceType == typeof(string) && map.DestinationType == typeof(string))
+            if (map.SourceType == typeof(string) && map.DestinationType == typeof(string))
             {
                 return true;
             }
@@ -49,14 +49,14 @@ namespace Rocket.Surgery.LaunchPad.Mapping
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool ForValueTypes(PropertyMap map)
         {
-            if (!map.HasSource)
+            if (map.SourceType == null)
             {
                 return false;
             }
 
             var source = map.SourceType.GetTypeInfo();
             var destination = map.DestinationType.GetTypeInfo();
-            if (source != null && !source.IsEnum && source.IsValueType && destination.IsValueType)
+            if (!source.IsEnum && source.IsValueType && destination.IsValueType)
             {
                 return true;
             }
@@ -92,7 +92,7 @@ namespace Rocket.Surgery.LaunchPad.Mapping
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool ForNullableValueTypes(PropertyMap map)
         {
-            if (!map.HasSource)
+            if (map.SourceType == null)
             {
                 return false;
             }

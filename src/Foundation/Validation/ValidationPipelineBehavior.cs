@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Validation
 {
-    internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where T : notnull
+    internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where T : IRequest<R>
     {
         private readonly IValidatorFactory _validatorFactory;
         private readonly IServiceProvider _serviceProvider;

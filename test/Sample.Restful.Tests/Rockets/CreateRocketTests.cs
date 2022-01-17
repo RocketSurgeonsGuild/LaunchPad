@@ -9,7 +9,9 @@ namespace Sample.Restful.Tests.Rockets
 {
     public class CreateRocketTests : HandleWebHostBase
     {
-        public CreateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
+        public CreateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        {
+        }
 
         [Fact]
         public async Task Should_Create_A_Rocket()
@@ -46,8 +48,8 @@ namespace Sample.Restful.Tests.Rockets
                     SerialNumber = "12345678901234"
                 }
             );
-            var r = action.Should().Throw<ApiException<ProblemDetails>>()
-               .And.Result;
+            var r = ( await action.Should().ThrowAsync<ApiException<ProblemDetails>>() )
+                   .And.Result;
             r.Title.Should().Be("Rocket Creation Failed");
         }
     }

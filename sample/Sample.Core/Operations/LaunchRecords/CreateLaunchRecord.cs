@@ -16,8 +16,8 @@ namespace Sample.Core.Operations.LaunchRecords
     {
         public record Request : IRequest<Response>
         {
-            public string Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
-            public string Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+            public string? Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+            public string? Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
             public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
             public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
             public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model

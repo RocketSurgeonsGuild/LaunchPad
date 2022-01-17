@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.Internal;
 using JetBrains.Annotations;
 
 namespace Rocket.Surgery.LaunchPad.Mapping
@@ -18,15 +19,15 @@ namespace Rocket.Surgery.LaunchPad.Mapping
         public static T OnlyDefinedProperties<T>(this T configuration)
             where T : IProfileExpression
         {
-            configuration.ForAllPropertyMaps(
+            configuration.Internal().ForAllPropertyMaps(
                 OnlyDefinedPropertiesMethods.ForStrings,
                 OnlyDefinedPropertiesMethods.StringCondition
             );
-            configuration.ForAllPropertyMaps(
+            configuration.Internal().ForAllPropertyMaps(
                 OnlyDefinedPropertiesMethods.ForValueTypes,
                 OnlyDefinedPropertiesMethods.ValueTypeCondition
             );
-            configuration.ForAllPropertyMaps(
+            configuration.Internal().ForAllPropertyMaps(
                 OnlyDefinedPropertiesMethods.ForNullableValueTypes,
                 OnlyDefinedPropertiesMethods.NullableValueTypeCondition
             );

@@ -25,7 +25,7 @@ namespace Analyzers.Tests
         public InheritFromGeneratorTests([NotNull] ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
         {
             WithGenerator<InheritFromGenerator>();
-            AddReferences(typeof(InheritFromAttribute), typeof(IMediator));
+            AddReferences(typeof(InheritFromAttribute), typeof(IMediator), typeof(IBaseRequest));
         }
 
         [Fact]

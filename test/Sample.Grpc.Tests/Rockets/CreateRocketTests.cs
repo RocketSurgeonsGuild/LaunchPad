@@ -48,7 +48,7 @@ namespace Sample.Grpc.Tests.Rockets
                     SerialNumber = "12345678901234"
                 }
             );
-            var r = action.Should().Throw<RpcException>()
+            var r = (await action.Should().ThrowAsync<RpcException>())
                .And;
             r.Message.Should().Contain("Rocket Creation Failed");
         }
