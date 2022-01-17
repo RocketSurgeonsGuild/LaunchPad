@@ -76,7 +76,7 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
                .Compile();
             return typeDescriptor
                .UseDbContext<TContext>()
-               .Resolver(method);
+               .Resolve(method);
         }
     }
 }

@@ -17,7 +17,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
     <PropertyGroup>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+<!--        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
     </PropertyGroup>
     <ItemGroup>
         <None Include="$(MSBuildThisFileDirectory)/.nuke/temp/packageicon.png" Condition="Exists('$(MSBuildThisFileDirectory)/.nuke/temp/packageicon.png')" Pack="true" PackagePath="/images/" Visible="false" />
