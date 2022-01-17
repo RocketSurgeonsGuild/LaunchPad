@@ -77,7 +77,7 @@
     <PackageVersion Include="Rocket.Surgery.Conventions" Version="10.2.0" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="10.2.0" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="10.2.0" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="10.2.0" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="11.1.0" />
     <PackageVersion Include="Rocket.Surgery.Hosting.TestHost" Version="10.2.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.2.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.2.0" />
