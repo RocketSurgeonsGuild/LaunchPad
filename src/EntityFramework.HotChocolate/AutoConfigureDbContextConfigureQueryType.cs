@@ -66,10 +66,10 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate
 
         private static IObjectFieldDescriptor ConfigureResolve<TEntity>(IObjectFieldDescriptor typeDescriptor, PropertyInfo propertyInfo)
         {
-            var resolverContextProperty = Expression.Parameter(typeof(IResolverContext), "ctx");
+            var resolverContextProperty = Expression.Parameter(typeof(IPureResolverContext), "ctx");
             var cancellationTokenProperty = Expression.Parameter(typeof(CancellationToken), "ct");
 
-            var serviceCall = Expression.Call(resolverContextProperty, nameof(IResolverContext.Service), new[] { typeof(TContext) });
+            var serviceCall = Expression.Call(resolverContextProperty, nameof(IPureResolverContext.Service), new[] { typeof(TContext) });
             var contextProperty = Expression.Property(serviceCall, propertyInfo);
 
             var method = Expression.Lambda<Func<IResolverContext, CancellationToken, TEntity>>(contextProperty, resolverContextProperty, cancellationTokenProperty)
