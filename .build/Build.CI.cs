@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.CI.GitHubActions.Configuration;
-using Rocket.Surgery.Nuke;
 using Rocket.Surgery.Nuke.ContinuousIntegration;
 using Rocket.Surgery.Nuke.DotNetCore;
 using Rocket.Surgery.Nuke.GithubActions;
@@ -34,6 +33,7 @@ internal class LocalConstants
     "ci-ignore",
     GitHubActionsImage.WindowsLatest,
     GitHubActionsImage.UbuntuLatest,
+    AutoGenerate = false,
     On = new[] { GitHubActionsTrigger.Push },
     OnPushTags = new[] { "v*" },
     OnPushBranches = new[] { "master", "main", "next" },
@@ -45,6 +45,7 @@ internal class LocalConstants
     GitHubActionsImage.MacOsLatest,
     GitHubActionsImage.WindowsLatest,
     GitHubActionsImage.UbuntuLatest,
+    AutoGenerate = false,
     On = new[] { GitHubActionsTrigger.Push },
     OnPushTags = new[] { "v*" },
     OnPushBranches = new[] { "master", "main", "next" },

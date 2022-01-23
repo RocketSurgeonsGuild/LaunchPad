@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
@@ -8,14 +8,14 @@
     <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.1.0" Condition="'$(MSBuildProjectName)'!='.build'" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.Metadata" Version="1.1.0" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.1.0" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="3.3.0" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="GitVersion.Tool" Version="5.8.1" />
     <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2021.3.2" />
     <PackageVersion Include="Nuke.Common" Version="6.0.1" />
     <PackageVersion Include="ReportGenerator" Version="5.0.2" />
-    <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.17.1" />
+    <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.17.3" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
@@ -35,7 +35,7 @@
     <PackageVersion Include="FluentValidation" Version="10.3.6" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="10.3.6" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="10.3.6" />
-    <PackageVersion Include="Grpc.AspNetCore" Version="2.41.0" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.42.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.13.14" />
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="6.3.0" />
     <PackageVersion Include="HotChocolate" Version="12.5.0" />
@@ -121,16 +121,19 @@
     <PackageVersion Include="Bogus" Version="34.0.1" />
     <PackageVersion Include="coverlet.collector" Version="3.1.0" />
     <PackageVersion Include="coverlet.msbuild" Version="3.1.0" />
-    <PackageVersion Include="FakeItEasy" Version="7.2.0" />
+    <PackageVersion Include="FakeItEasy" Version="7.3.0" />
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.0" />
-    <PackageVersion Include="FluentAssertions" Version="6.3.0" />
+    <PackageVersion Include="FluentAssertions" Version="6.4.0" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.15.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="6.0.3" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="6.0.3" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="6.0.4" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="6.0.4" />
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.analyzers" Version="0.10.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
-  <Import Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props" Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')" />
+  <Import
+        Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
+        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
+    />
 </Project>
