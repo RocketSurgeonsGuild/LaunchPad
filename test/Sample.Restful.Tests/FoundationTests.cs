@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -27,7 +28,7 @@ namespace Sample.Restful.Tests
         public async Task Starts()
         {
             var response = await _factory.CreateClient().GetAsync("/");
-            response.StatusCode.Should().Be(404);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Theory]

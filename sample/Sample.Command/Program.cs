@@ -1,85 +1,77 @@
 ﻿using DryIoc;
-using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.CommandLine;
 using Rocket.Surgery.Hosting;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Rocket.Surgery.Conventions.CommandLine;
+using Sample.Command.Conventions;
 
-namespace Sample.Command
+[assembly: ImportConventions]
+
+await Rocket.Surgery.Conventions.CommandLine.App.Create<Default>(
+                 builder => builder
+                           .WithConventionsFrom(Imports.GetConventions)
+                           .ConfigureLogging(z => z.AddConsole())
+                           .UseDryIoc()
+                           .ConfigureDryIoc(
+                                x =>
+                                {
+                                    x.UseInstance(new InstanceThing());
+                                    x.Register<Dump>(Reuse.Singleton);
+                                }
+                            )
+                           .ConfigureCommandLine((context, app) => app.AddCommand<Dump>("dump"))
+             )
+            .RunAsync(args);
+
+public class InstanceThing
 {
-    [ImportConventions]
-    public partial class Program
-    {
-        public static Task<int> Main(string[] args) => CreateHostBuilder(args).RunCli();
+    public string From = "DryIoc";
+}
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
-           .ConfigureRocketSurgery(
-                builder => builder
-                   .UseDryIoc()
-                   .ConfigureDryIoc(x => x.UseInstance(new InstanceThing()))
-                   .ConfigureCommandLine(
-                        context =>
-                        {
-                            context.OnRun<Default>();
-                            context.AddCommand<Dump>();
-                        }
-                    )
-            );
+public class Dump : Spectre.Console.Cli.Command<AppSettings>
+{
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<Dump> _logger;
+    private readonly InstanceThing _instanceThing;
+
+    public Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceThing instanceThing)
+    {
+        _configuration = configuration;
+        _logger = logger;
+        _instanceThing = instanceThing;
     }
 
-    public class InstanceThing
+    public override int Execute(Spectre.Console.Cli.CommandContext context, AppSettings settings)
     {
-        public string From = "DryIoc";
+        _logger.LogInformation(_instanceThing.From);
+        foreach (var item in _configuration.AsEnumerable().Reverse())
+        {
+            _logger.LogInformation("{Key}: {Value}", item.Key, item.Value ?? string.Empty);
+        }
+
+        return 1;
+    }
+}
+
+public class Default : Spectre.Console.Cli.Command<AppSettings>
+{
+    private readonly ILogger<Default> _logger;
+
+    public Default(ILogger<Default> logger)
+    {
+        _logger = logger;
     }
 
-    [Command("dump")]
-    public class Dump
+    public override int Execute(Spectre.Console.Cli.CommandContext context, AppSettings settings)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<Dump> _logger;
-        private readonly InstanceThing _instanceThing;
-
-        public Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceThing instanceThing)
-        {
-            _configuration = configuration;
-            _logger = logger;
-            _instanceThing = instanceThing;
-        }
-
-        public Task<int> OnExecuteAsync()
-        {
-            _logger.LogInformation(_instanceThing.From);
-            foreach (var item in _configuration.AsEnumerable().Reverse())
-            {
-                _logger.LogInformation("{Key}: {Value}", item.Key, item.Value ?? string.Empty);
-            }
-
-            return Task.FromResult(1);
-        }
-    }
-
-    public class Default : IDefaultCommand
-    {
-        private readonly IApplicationState _state;
-        private readonly ILogger<Default> _logger;
-
-        public Default(IApplicationState state, ILogger<Default> logger)
-        {
-            _state = state;
-            _logger = logger;
-        }
-
-        public int Run(IApplicationState state)
-        {
-            Console.WriteLine("Hello World!");
-            return 1;
-        }
+        Console.WriteLine("Hello World!");
+        _logger.LogInformation("Test");
+        return 1;
     }
 }

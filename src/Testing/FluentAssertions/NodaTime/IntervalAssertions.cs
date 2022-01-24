@@ -19,9 +19,8 @@ namespace Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime
         /// The constructor
         /// </summary>
         /// <param name="value"></param>
-        public IntervalAssertions(Interval value)
+        public IntervalAssertions(Interval value) : base(value)
         {
-            Subject = value;
         }
 
         /// <summary>

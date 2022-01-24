@@ -63,7 +63,6 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions
 
             var sb = services
                    .AddGraphQL()
-                   .UseField<CustomInputValidationMiddleware>()
                    .AddErrorFilter<GraphqlErrorFilter>()
                 ;
 

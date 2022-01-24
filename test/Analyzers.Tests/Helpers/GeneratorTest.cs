@@ -49,7 +49,7 @@ namespace Analyzers.Tests
         }
 
         protected GeneratorTest WithGenerator<T>()
-            where T : ISourceGenerator, new()
+            where T : new()
         {
             _generators.Add(typeof(T));
             return this;
@@ -138,7 +138,7 @@ namespace Analyzers.Tests
             foreach (var generatorType in _generators)
             {
                 Logger.LogInformation("--- {Generator} ---", generatorType.FullName);
-                var generator = ( Activator.CreateInstance(generatorType) as ISourceGenerator )!;
+                var generator = ( Activator.CreateInstance(generatorType) as IIncrementalGenerator )!;
                 var driver = CSharpGeneratorDriver.Create(generator);
 
                 driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out diagnostics);

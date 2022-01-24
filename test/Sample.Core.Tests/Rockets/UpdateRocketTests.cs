@@ -57,14 +57,14 @@ namespace Sample.Core.Tests.Rockets
 
         [Theory]
         [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
-        public void Should_Validate_Required_Fields(EditRocket.Request request, string propertyName)
+        public async Task Should_Validate_Required_Fields(EditRocket.Request request, string propertyName)
         {
             using var scope = ServiceProvider.CreateScope();
 
             var mediater = scope.ServiceProvider.GetRequiredService<IMediator>();
 
             Func<Task> a = () => mediater.Send(request);
-            a.Should().Throw<ValidationException>().And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
+            (await a.Should().ThrowAsync<ValidationException>()).And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
         }
 
         class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocket.Request, string>

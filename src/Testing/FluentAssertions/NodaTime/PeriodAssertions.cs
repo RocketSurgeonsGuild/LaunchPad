@@ -19,9 +19,8 @@ namespace Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime
         /// The constructor
         /// </summary>
         /// <param name="subject"></param>
-        public PeriodAssertions(Period subject)
+        public PeriodAssertions(Period subject) : base(subject)
         {
-            Subject = subject;
         }
 
         /// <summary>
@@ -34,13 +33,13 @@ namespace Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime
         public AndConstraint<PeriodAssertions> Be(Period expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject != null && Subject == expected, "to be", expected, because, becauseArgs);
 
-            /// <summary>
-            /// Should not be the given <see cref="Period"/>
-            /// </summary>
-            /// <param name="expected"></param>
-            /// <param name="because"></param>
-            /// <param name="becauseArgs"></param>
-            /// <returns></returns>
+        /// <summary>
+        /// Should not be the given <see cref="Period"/>
+        /// </summary>
+        /// <param name="expected"></param>
+        /// <param name="because"></param>
+        /// <param name="becauseArgs"></param>
+        /// <returns></returns>
         public AndConstraint<PeriodAssertions> NotBe(Period expected, string because = "", params object[] becauseArgs) =>
             ExecuteAssertion(Subject != null && Subject != expected, "to not be", expected, because, becauseArgs);
 
@@ -56,15 +55,18 @@ namespace Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime
         // public AndConstraint<PeriodAssertions> NotIntersectWith(Period expected, string because = "", params object[] becauseArgs) =>
         //     throw new NotImplementedException();
 
-        AndConstraint<PeriodAssertions> ExecuteAssertion(bool condition, string description, Period expected, string because = null, params object[] becauseArgs)
+        AndConstraint<PeriodAssertions> ExecuteAssertion(
+            bool condition, string description, Period expected, string because = null, params object[] becauseArgs
+        )
         {
             Execute.Assertion
-                .ForCondition(condition)
-                .BecauseOf(because, becauseArgs)
-                .FailWith(
-                    $"Expected period {description} {{0}}{{reason}}, but found {{1}}.",
-                    expected,
-                    Subject);
+                   .ForCondition(condition)
+                   .BecauseOf(because, becauseArgs)
+                   .FailWith(
+                        $"Expected period {description} {{0}}{{reason}}, but found {{1}}.",
+                        expected,
+                        Subject
+                    );
 
             return new AndConstraint<PeriodAssertions>(this);
         }

@@ -35,31 +35,31 @@ namespace Rocket.Surgery.LaunchPad.Mapping.Profiles
             {
                 CreateMap<JObject?, JsonElement>().ConvertUsing(source => source == null ? default : JsonDocument.Parse(WriteToBytes(source), default).RootElement.Clone());
                 CreateMap<JsonElement, JObject?>()
-                   .ConvertUsing(source => source.ValueKind == JsonValueKind.Undefined ? default : JObject.Parse(JsonSerializer.Serialize(source, default)));
+                   .ConvertUsing(source => source.ValueKind == JsonValueKind.Undefined ? default : JObject.Parse(JsonSerializer.Serialize(source, (JsonSerializerOptions?)default)));
                 CreateMap<JObject?, JsonElement?>().ConvertUsing(
                     source => source == default ? default(JsonElement?) : JsonDocument.Parse(WriteToBytes(source), default).RootElement.Clone()
                 );
                 CreateMap<JsonElement?, JObject?>().ConvertUsing(
-                    source => !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined ? default : JObject.Parse(JsonSerializer.Serialize(source, default))
+                    source => !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined ? default : JObject.Parse(JsonSerializer.Serialize(source, (JsonSerializerOptions?)default))
                 );
                 CreateMap<JArray?, JsonElement>()
                    .ConvertUsing(source => source == default ? default : JsonDocument.Parse(WriteToBytes(source), default).RootElement.Clone());
                 CreateMap<JsonElement, JArray?>()
-                   .ConvertUsing(source => source.ValueKind == JsonValueKind.Undefined ? default : JArray.Parse(JsonSerializer.Serialize(source, default)));
+                   .ConvertUsing(source => source.ValueKind == JsonValueKind.Undefined ? default : JArray.Parse(JsonSerializer.Serialize(source, (JsonSerializerOptions?)default)));
                 CreateMap<JArray?, JsonElement?>().ConvertUsing(
                     source => source == null ? default(JsonElement?) : JsonDocument.Parse(WriteToBytes(source), default).RootElement.Clone()
                 );
                 CreateMap<JsonElement?, JArray?>().ConvertUsing(
-                    source => !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined ? default : JArray.Parse(JsonSerializer.Serialize(source, default))
+                    source => !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined ? default : JArray.Parse(JsonSerializer.Serialize(source, (JsonSerializerOptions?)default))
                 );
                 CreateMap<JToken?, JsonElement>().ConvertUsing(source => source == null ? default : JsonDocument.Parse(WriteToBytes(source), default).RootElement.Clone());
                 CreateMap<JsonElement, JToken?>()
-                   .ConvertUsing(source => source.ValueKind == JsonValueKind.Undefined ? default : JToken.Parse(JsonSerializer.Serialize(source, default), default));
+                   .ConvertUsing(source => source.ValueKind == JsonValueKind.Undefined ? default : JToken.Parse(JsonSerializer.Serialize(source, (JsonSerializerOptions?)default), default));
                 CreateMap<JToken?, JsonElement?>().ConvertUsing(
                     source => source == default ? default(JsonElement?) : JsonDocument.Parse(WriteToBytes(source), default).RootElement.Clone()
                 );
                 CreateMap<JsonElement?, JToken?>().ConvertUsing(
-                    source => !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined ? default : JToken.Parse(JsonSerializer.Serialize(source, default))
+                    source => !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined ? default : JToken.Parse(JsonSerializer.Serialize(source, (JsonSerializerOptions?)default))
                 );
             }
         }

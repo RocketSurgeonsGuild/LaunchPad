@@ -18,7 +18,7 @@ namespace Analyzers.Tests
         public bool TryGetResult(Type type, [NotNullWhen(true)] out GenerationTestResult? result) => Results.TryGetValue(type, out result);
 
         public bool TryGetResult<T>([NotNullWhen(true)] out GenerationTestResult? result)
-            where T : ISourceGenerator, new() => Results.TryGetValue(typeof(T), out result);
+            where T : new() => Results.TryGetValue(typeof(T), out result);
 
         public void EnsureDiagnosticSeverity(DiagnosticSeverity severity = DiagnosticSeverity.Warning)
         {
@@ -30,7 +30,7 @@ namespace Analyzers.Tests
         }
 
         public void AssertGeneratedAsExpected<T>(string expectedValue, params string[] expectedValues)
-            where T : ISourceGenerator, new()
+            where T : new()
         {
             if (!TryGetResult<T>(out var result))
             {

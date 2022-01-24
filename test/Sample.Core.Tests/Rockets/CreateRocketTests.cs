@@ -66,20 +66,20 @@ namespace Sample.Core.Tests.Rockets
                     }
                 )
             );
-            action.Should().Throw<RequestFailedException>()
+            (await action.Should().ThrowAsync<RequestFailedException>())
                .And.Title.Should().Be("Rocket Creation Failed");
         }
 
         [Theory]
         [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
-        public void Should_Validate_Required_Fields(CreateRocket.Request request, string propertyName)
+        public async Task Should_Validate_Required_Fields(CreateRocket.Request request, string propertyName)
         {
             using var scope = ServiceProvider.CreateScope();
 
             var mediater = scope.ServiceProvider.GetRequiredService<IMediator>();
 
             Func<Task<CreateRocket.Response>> a = () => mediater.Send(request);
-            a.Should().Throw<ValidationException>().And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
+            (await a.Should().ThrowAsync<ValidationException>()).And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
         }
 
         class ShouldValidateUsersRequiredFieldData : TheoryData<CreateRocket.Request, string>

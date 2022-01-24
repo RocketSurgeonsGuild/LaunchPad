@@ -617,8 +617,6 @@ namespace Extensions.Tests.Mapping
             expression.CreateMap<StringValue, JsonElementB>().ReverseMap();
             expression.CreateMap<ByteArray, JsonElementB>().ReverseMap();
             expression.CreateMap<JsonElementA, JsonElementB>().ReverseMap();
-            expression.CreateMap<JsonElementA, JsonElementA>().ReverseMap();
-            expression.CreateMap<JsonElementB, JsonElementB>().ReverseMap();
         }
 
         private class ByteArray

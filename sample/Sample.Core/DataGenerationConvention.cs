@@ -10,6 +10,7 @@ using Sample.Core.Domain;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
 
 [assembly: Convention(typeof(DataGenerationConvention))]
 

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
@@ -10,7 +10,6 @@
         <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
         <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
         <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.LaunchPad.Workers.csproj" />
-        <PackageReference Include="Rocket.Surgery.Hosting.TestHost" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Mapping" />

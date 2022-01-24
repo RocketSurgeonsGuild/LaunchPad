@@ -15,7 +15,10 @@ namespace Sample.Restful.Tests.Rockets
     public class UpdateRocketTests : HandleWebHostBase
     {
         private static readonly Faker Faker = new Faker();
-        public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
+
+        public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+        {
+        }
 
         [Fact]
         public async Task Should_Update_A_Rocket()
@@ -23,20 +26,20 @@ namespace Sample.Restful.Tests.Rockets
             var client = new RocketClient(Factory.CreateClient());
 
             var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-               .Invoke(
-                    async z =>
-                    {
-                        var rocket = new ReadyRocket
-                        {
-                            Type = RocketType.Falcon9,
-                            SerialNumber = "12345678901234"
-                        };
-                        z.Add(rocket);
+                                              .Invoke(
+                                                   async z =>
+                                                   {
+                                                       var rocket = new ReadyRocket
+                                                       {
+                                                           Type = RocketType.Falcon9,
+                                                           SerialNumber = "12345678901234"
+                                                       };
+                                                       z.Add(rocket);
 
-                        await z.SaveChangesAsync();
-                        return rocket;
-                    }
-                );
+                                                       await z.SaveChangesAsync();
+                                                       return rocket;
+                                                   }
+                                               );
 
             var u = await client.UpdateRocketAsync(
                 rocket.Id,
@@ -56,11 +59,12 @@ namespace Sample.Restful.Tests.Rockets
 
         [Theory]
         [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
-        public void Should_Validate_Required_Fields(EditRocketModel request, string propertyName)
+        public async Task Should_Validate_Required_Fields(EditRocketModel request, string propertyName)
         {
             var client = new RocketClient(Factory.CreateClient());
             Func<Task> a = () => client.UpdateRocketAsync(Guid.NewGuid(), request);
-            a.Should().Throw<ApiException<FluentValidationProblemDetails>>().And
+            ( await a.Should().ThrowAsync<ApiException<FluentValidationProblemDetails>>() )
+               .And
                .Result.Errors.Values
                .SelectMany(x => x)
                .Select(z => z.PropertyName)

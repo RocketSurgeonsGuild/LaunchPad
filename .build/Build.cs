@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Nuke.Common;
+using Nuke.Common.CI;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.Tools.DotNet;
@@ -17,6 +18,7 @@ using Rocket.Surgery.Nuke.DotNetCore;
 [DotNetVerbosityMapping]
 [MSBuildVerbosityMapping]
 [NuGetVerbosityMapping]
+[ShutdownDotNetAfterServerBuild]
 public partial class Solution : NukeBuild,
                                 ICanRestoreWithDotNetCore,
                                 ICanBuildWithDotNetCore,
@@ -28,8 +30,7 @@ public partial class Solution : NukeBuild,
                                 IGenerateCodeCoverageReport,
                                 IGenerateCodeCoverageSummary,
                                 IGenerateCodeCoverageBadges,
-                                IHaveConfiguration<Configuration>,
-                                ICanLint
+                                IHaveConfiguration<Configuration>
 {
     /// <summary>
     /// Support plugins are available for:

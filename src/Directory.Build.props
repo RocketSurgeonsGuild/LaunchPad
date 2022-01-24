@@ -6,8 +6,6 @@
         <RootNamespace>$(MSBuildProjectName.Replace('.Abstractions', '').Replace('.Attributes', ''))</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <AdditionalFiles Condition="Exists('PublicAPI.Shipped.txt')" Include="PublicAPI.Shipped.txt" />
-        <AdditionalFiles Condition="Exists('PublicAPI.Unshipped.txt')" Include="PublicAPI.Unshipped.txt" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.AspNetCore" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Extensions" />

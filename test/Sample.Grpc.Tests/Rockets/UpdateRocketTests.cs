@@ -57,11 +57,11 @@ namespace Sample.Grpc.Tests.Rockets
 
         [Theory]
         [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
-        public void Should_Validate_Required_Fields(UpdateRocketRequest request, string propertyName)
+        public async Task Should_Validate_Required_Fields(UpdateRocketRequest request, string propertyName)
         {
             var client = new R.RocketsClient(Factory.CreateGrpcChannel());
             Func<Task> a = async () => await client.EditRocketAsync(request);
-            var e = a.Should().Throw<RpcException>().And;
+            var e = (await a.Should().ThrowAsync<RpcException>()).And;
                 e.Status.StatusCode.Should().Be(StatusCode.InvalidArgument);
                 e.Message.Should().Contain(propertyName);
         }

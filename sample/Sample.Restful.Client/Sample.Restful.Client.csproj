@@ -1,25 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <OpenApiGenerateCodeOnBuild>true</OpenApiGenerateCodeOnBuild>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1;netcoreapp3.1;net6.0</TargetFrameworks>
+        <OpenApiGenerateCodeOnBuild>true</OpenApiGenerateCodeOnBuild>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" PrivateAssets="all" IncludeAssets="runtime;build;native;contentfiles;analyzers;buildtransitive" />
+        <PackageReference
+            Include="Microsoft.Extensions.ApiDescription.Client"
+            PrivateAssets="all"
+            IncludeAssets="runtime;build;native;contentfiles;analyzers;buildtransitive"
+        />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="NSwag.ApiDescription.Client" />
     </ItemGroup>
     <ItemGroup>
-        <OpenApiProjectReference Include="../Sample.Restful/Sample.Restful.csproj" ClassName="{controller}Client" CodeGenerator="NSwagCSharp" Namespace="$(RootNamespace)">
-            <Options>/generateClientClasses:true /generateClientInterfaces:true /injectHttpClient:true /disposeHttpClient:false /generateExceptionClasses:true /wrapDtoExceptions:true /useBaseUrl:false /generateBaseUrlProperty:false /operationGenerationMode:"MultipleClientsFromFirstTagAndOperationId" /generateOptionalParameters:true /generateJsonMethods:false /enforceFlagEnums:true /parameterArrayType:"System.Collections.Generic.IEnumerable" /parameterDictionaryType:"System.Collections.Generic.IDictionary" /responseArrayType:"System.Collections.Generic.ICollection" /responseDictionaryType:"System.Collections.Generic.IDictionary" /wrapResponses:true /generateResponseClasses:true /responseClass:"Response" /requiredPropertiesMustBeDefined:true /dateType:"System.DateTimeOffset" /dateTimeType:"System.DateTimeOffset" /timeType:"System.TimeSpan" /timeSpanType:"System.TimeSpan" /arrayType:"System.Collections.ObjectModel.Collection" /arrayInstanceType:"System.Collections.ObjectModel.Collection" /dictionaryType:"System.Collections.Generic.IDictionary" /dictionaryInstanceType:"System.Collections.Generic.Dictionary" /arrayBaseType:"System.Collections.ObjectModel.Collection" /dictionaryBaseType:"System.Collections.Generic.Dictionary" /classStyle:"Poco" /generateDefaultValues:true /generateDataAnnotations:true /generateImmutableArrayProperties:true /generateImmutableDictionaryProperties:true /generateDtoTypes:true /generateOptionalPropertiesAsNullable:true</Options>
+        <OpenApiProjectReference
+            Include="../Sample.Restful/Sample.Restful.csproj"
+            ClassName="{controller}Client"
+            CodeGenerator="NSwagCSharp"
+            Namespace="$(RootNamespace)"
+        >
+            <Options
+            >/generateClientClasses:true /generateClientInterfaces:true /injectHttpClient:true /disposeHttpClient:false /generateExceptionClasses:true /wrapDtoExceptions:true /useBaseUrl:false /generateBaseUrlProperty:false /operationGenerationMode:"MultipleClientsFromFirstTagAndOperationId" /generateOptionalParameters:true /generateJsonMethods:false /enforceFlagEnums:true /parameterArrayType:"System.Collections.Generic.IEnumerable" /parameterDictionaryType:"System.Collections.Generic.IDictionary" /responseArrayType:"System.Collections.Generic.ICollection" /responseDictionaryType:"System.Collections.Generic.IDictionary" /wrapResponses:true /generateResponseClasses:true /responseClass:"Response" /requiredPropertiesMustBeDefined:true /dateType:"System.DateTimeOffset" /dateTimeType:"System.DateTimeOffset" /timeType:"System.TimeSpan" /timeSpanType:"System.TimeSpan" /arrayType:"System.Collections.ObjectModel.Collection" /arrayInstanceType:"System.Collections.ObjectModel.Collection" /dictionaryType:"System.Collections.Generic.IDictionary" /dictionaryInstanceType:"System.Collections.Generic.Dictionary" /arrayBaseType:"System.Collections.ObjectModel.Collection" /dictionaryBaseType:"System.Collections.Generic.Dictionary" /classStyle:"Poco" /generateDefaultValues:true /generateDataAnnotations:true /generateImmutableArrayProperties:true /generateImmutableDictionaryProperties:true /generateDtoTypes:true /generateOptionalPropertiesAsNullable:true</Options>
         </OpenApiProjectReference>
     </ItemGroup>
-    <ItemGroup>
-        <Compile Remove="$(OpenApiCodeDirectory)\Sample.RestfulClient.cs" Condition="Exists('$(OpenApiCodeDirectory)\Sample.RestfulClient.cs')" />
-        <Compile Include="$(OpenApiCodeDirectory)\Sample.RestfulClient.cs" Condition="Exists('$(OpenApiCodeDirectory)\Sample.RestfulClient.cs')" />
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--        <Compile Remove="$(OpenApiCodeDirectory)\Sample.RestfulClient.cs" Condition="Exists('$(OpenApiCodeDirectory)\Sample.RestfulClient.cs')" />-->
+<!--        <Compile Include="$(OpenApiCodeDirectory)\Sample.RestfulClient.cs" Condition="Exists('$(OpenApiCodeDirectory)\Sample.RestfulClient.cs')" />-->
+<!--    </ItemGroup>-->
 
     <!-- Hack to fix multi-targeting -->
-<!--    <ItemGroup Condition="Exists('$(OpenApiCodeDirectory)\$(MSBuildProjectName).$(TargetFramework).cs') AND '$(OpenApiGenerateCodeOnBuild)'=='false'">-->
-<!--    </ItemGroup>-->
-<!--    <Target Name="_TieInGenerateOpenApiCodeHack" BeforeTargets="BeforeCompile" Condition="'$(OpenApiGenerateCodeOnBuild)'=='true'" DependsOnTargets="GenerateOpenApiCode" />-->
+        <ItemGroup Condition="Exists('$(OpenApiCodeDirectory)\$(MSBuildProjectName).$(TargetFramework).cs') AND '$(OpenApiGenerateCodeOnBuild)'=='false'">
+        </ItemGroup>
+        <Target
+        Name="_TieInGenerateOpenApiCodeHack"
+        BeforeTargets="BeforeCompile"
+        Condition="'$(OpenApiGenerateCodeOnBuild)'=='true'"
+        DependsOnTargets="GenerateOpenApiCode"
+    />
 </Project>

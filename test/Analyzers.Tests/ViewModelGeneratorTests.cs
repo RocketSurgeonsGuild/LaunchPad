@@ -25,7 +25,7 @@ namespace Analyzers.Tests
         public InheritFromGeneratorTests([NotNull] ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
         {
             WithGenerator<InheritFromGenerator>();
-            AddReferences(typeof(InheritFromAttribute), typeof(IMediator));
+            AddReferences(typeof(InheritFromAttribute), typeof(IMediator), typeof(IBaseRequest));
         }
 
         [Fact]
@@ -139,6 +139,69 @@ namespace Sample.Core.Operations.Rockets
             public string SerialNumber { get; set; }
 
             public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
+        }
+    }
+}
+#nullable restore
+";
+
+            var result = await GenerateAsync(source);
+            result.EnsureDiagnosticSeverity();
+            result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
+        }
+
+        [Fact]
+        public async Task Should_Inherit_Multiple_With_Method_For_Record()
+        {
+            var source = @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        public partial record Model
+        {
+            public string SerialNumber { get; set; }
+        }
+
+        public partial record Other
+        {
+            public string OtherNumber { get; set; }
+        }
+
+        [InheritFrom(typeof(Model))]
+        [InheritFrom(typeof(Other))]
+        public partial record Request : IRequest<Response>
+        {
+            public Guid Id { get; init; }
+        }
+
+        public partial record Response {}
+    }
+}
+";
+
+            var expected = @"
+#nullable enable
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        public partial record Request
+        {
+            public string SerialNumber { get; set; }
+
+            public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
+            public string OtherNumber { get; set; }
+
+            public Request With(Other value) => this with {OtherNumber = value.OtherNumber};
         }
     }
 }

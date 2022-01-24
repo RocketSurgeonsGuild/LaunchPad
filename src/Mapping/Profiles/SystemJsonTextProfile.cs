@@ -16,43 +16,43 @@ namespace Rocket.Surgery.LaunchPad.Mapping.Profiles
             CreateMap<JsonElement, byte[]?>().ConvertUsing(
                 source => source.ValueKind == JsonValueKind.Undefined
                     ? null
-                    : JsonSerializer.SerializeToUtf8Bytes(source, null)
+                    : JsonSerializer.SerializeToUtf8Bytes(source, (JsonSerializerOptions?)null)
             );
             CreateMap<JsonElement, string?>().ConvertUsing(
                 source => source.ValueKind == JsonValueKind.Undefined
                     ? null
-                    : JsonSerializer.Serialize(source, null)
+                    : JsonSerializer.Serialize(source, (JsonSerializerOptions?)null)
             );
             CreateMap<JsonElement?, byte[]?>().ConvertUsing(
                 source =>
                     !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined
                         ? null
-                        : JsonSerializer.SerializeToUtf8Bytes(source, null)
+                        : JsonSerializer.SerializeToUtf8Bytes(source, (JsonSerializerOptions?)null)
             );
             CreateMap<JsonElement?, string?>().ConvertUsing(
                 source => !source.HasValue || source.Value.ValueKind == JsonValueKind.Undefined
                     ? null
-                    : JsonSerializer.Serialize(source, null)
+                    : JsonSerializer.Serialize(source, (JsonSerializerOptions?)null)
             );
             CreateMap<byte[]?, JsonElement>().ConvertUsing(
                 source => source == null || source.Length == 0
                     ? default
-                    : JsonSerializer.Deserialize<JsonElement>(source, null)
+                    : JsonSerializer.Deserialize<JsonElement>(source,(JsonSerializerOptions?) null)
             );
             CreateMap<string?, JsonElement>().ConvertUsing(
                 source => source == null || source.Length == 0
                     ? default
-                    : JsonSerializer.Deserialize<JsonElement>(source, null)
+                    : JsonSerializer.Deserialize<JsonElement>(source,(JsonSerializerOptions?) null)
             );
             CreateMap<byte[]?, JsonElement?>().ConvertUsing(
                 source => source == null || source.Length == 0
                     ? null
-                    : JsonSerializer.Deserialize<JsonElement>(source, null)
+                    : JsonSerializer.Deserialize<JsonElement>(source, (JsonSerializerOptions?)null)
             );
             CreateMap<string?, JsonElement?>().ConvertUsing(
                 source => string.IsNullOrEmpty(source)
                     ? null
-                    : JsonSerializer.Deserialize<JsonElement>(source, null)
+                    : JsonSerializer.Deserialize<JsonElement>(source, (JsonSerializerOptions?)null)
             );
             CreateMap<JsonElement, JsonElement?>().ConvertUsing(
                 source => source.ValueKind == JsonValueKind.Undefined

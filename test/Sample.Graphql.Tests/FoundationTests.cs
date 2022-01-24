@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using FluentAssertions;
 using HotChocolate.Execution;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ namespace Sample.Graphql.Tests
         public async Task Starts()
         {
             var response = await _factory.CreateClient().GetAsync("/graphql/index.html");
-            response.StatusCode.Should().Be(200);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
