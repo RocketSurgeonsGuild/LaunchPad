@@ -1,17 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
         <PackageReference Include="System.Net.Http.Json" />
+        <PackageReference Include="Rocket.Surgery.WebAssembly.Hosting" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
-        <ProjectReference Include="..\..\src\WebAssembly.Hosting\Rocket.Surgery.LaunchPad.WebAssembly.Hosting.csproj" />
+        <ProjectReference Include="..\..\src\AspNetCore.Blazor\Rocket.Surgery.LaunchPad.AspNetCore.Blazor.csproj" />
+        <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Sample.Restful.Client\Sample.Restful.Client.csproj" />
     </ItemGroup>
 

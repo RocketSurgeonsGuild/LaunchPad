@@ -1,3 +1,7 @@
+using System;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
@@ -5,10 +9,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.WebAssembly.Hosting;
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sample.BlazorWasm
 {
@@ -18,7 +18,7 @@ namespace Sample.BlazorWasm
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args)
-                .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
+                                                .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
                 ;
             builder.RootComponents.Add<App>("app");
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
@@ -38,7 +38,7 @@ namespace Sample.BlazorWasm
         public record Response(string FullName);
 
         [UsedImplicitly]
-        class RequestValidator : AbstractValidator<Request>
+        private class RequestValidator : AbstractValidator<Request>
         {
             public RequestValidator()
             {
@@ -54,7 +54,7 @@ namespace Sample.BlazorWasm
         }
 
         [UsedImplicitly]
-        class ResponseValidator : AbstractValidator<Response>
+        private class ResponseValidator : AbstractValidator<Response>
         {
             public ResponseValidator()
             {
@@ -63,11 +63,14 @@ namespace Sample.BlazorWasm
         }
 
         [UsedImplicitly]
-        class Handler : IRequestHandler<Request, Response>
+        private class Handler : IRequestHandler<Request, Response>
         {
-            public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
-                new Response(request.FirstName + " " + request.LastName)
-            );
+            public Task<Response> Handle(Request request, CancellationToken cancellationToken)
+            {
+                return Task.FromResult(
+                    new Response(request.FirstName + " " + request.LastName)
+                );
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
 {
     /// <summary>
-    /// Registers json configuration
+    ///     Registers json configuration
     /// </summary>
     [PublicAPI]
     public class ConfigurationConvention : ISetupConvention
@@ -21,7 +21,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
                .GetOrAdd(() => new ConfigOptions())
                .UseJson()
                .UseYml()
-               .UseYaml();
+               .UseYaml()
+                ;
         }
     }
 }
