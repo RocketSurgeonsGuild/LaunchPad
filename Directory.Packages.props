@@ -37,7 +37,7 @@
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="10.3.6" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.42.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.13.14" />
-    <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="6.3.0" />
+    <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="6.4.0" />
     <PackageVersion Include="HotChocolate" Version="12.5.0" />
     <PackageVersion Include="HotChocolate.Abstractions" Version="12.5.0" />
     <PackageVersion Include="HotChocolate.AspNetCore" Version="12.5.0" />
