@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;

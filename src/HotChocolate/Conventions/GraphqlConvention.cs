@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using FairyBread;
+﻿using FairyBread;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

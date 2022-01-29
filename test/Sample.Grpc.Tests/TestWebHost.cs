@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
@@ -7,7 +9,7 @@ namespace Sample.Grpc.Tests;
 
 public class TestWebHost : ConventionTestWebHost<Startup>
 {
-    private readonly SqliteConnection _connection;
+    private SqliteConnection _connection;
 
     public TestWebHost()
     {

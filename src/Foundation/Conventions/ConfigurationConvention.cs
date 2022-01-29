@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Rocket.Surgery.Conventions;
+﻿using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Setup;
 using Rocket.Surgery.Extensions.Configuration;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;

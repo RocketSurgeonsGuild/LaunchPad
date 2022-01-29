@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using HotChocolate.Configuration;
+﻿using HotChocolate.Configuration;
 using HotChocolate.Types.Descriptors.Definitions;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;

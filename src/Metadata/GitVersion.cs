@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace Rocket.Surgery.LaunchPad.Metadata;
 
@@ -78,7 +74,7 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// </summary>
     /// <param name="typeInfo">The type information.</param>
     /// <returns>GitVersion.</returns>
-    public static GitVersion For([NotNull] TypeInfo typeInfo)
+    public static GitVersion For(TypeInfo typeInfo)
     {
         if (typeInfo == null)
         {

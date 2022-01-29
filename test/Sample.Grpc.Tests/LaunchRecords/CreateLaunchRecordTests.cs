@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Xunit;
 using Xunit.Abstractions;

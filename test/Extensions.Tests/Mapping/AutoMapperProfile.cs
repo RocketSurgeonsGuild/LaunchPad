@@ -1,7 +1,6 @@
 using AutoMapper;
 using FluentAssertions;
 using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.Mapping;
 using Xunit;
 using Xunit.Abstractions;
 

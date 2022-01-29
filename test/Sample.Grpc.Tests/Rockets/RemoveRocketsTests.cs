@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
+using FluentAssertions;
+using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Xunit;

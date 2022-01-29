@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.OpenApi.Models;

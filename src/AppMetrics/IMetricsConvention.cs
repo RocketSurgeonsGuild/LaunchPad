@@ -1,5 +1,4 @@
 ﻿using App.Metrics;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 
@@ -18,5 +17,5 @@ public interface IMetricsConvention : IConvention
     /// <param name="conventionContext"></param>
     /// <param name="configuration"></param>
     /// <param name="metricsBuilder"></param>
-    void Register([NotNull] IConventionContext conventionContext, [NotNull] IConfiguration configuration, [NotNull] IMetricsBuilder metricsBuilder);
+    void Register(IConventionContext conventionContext, IConfiguration configuration, IMetricsBuilder metricsBuilder);
 }

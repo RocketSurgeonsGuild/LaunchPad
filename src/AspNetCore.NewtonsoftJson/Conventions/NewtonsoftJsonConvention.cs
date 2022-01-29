@@ -1,5 +1,3 @@
-using System;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +6,6 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
-using OptionsServiceCollectionExtensions = Microsoft.Extensions.DependencyInjection.OptionsServiceCollectionExtensions;
 
 [assembly: Convention(typeof(NewtonsoftJsonConvention))]
 
@@ -48,14 +45,13 @@ public class NewtonsoftJsonConvention : IServiceConvention
         }
 
         services.WithMvcCore().AddNewtonsoftJson();
-        OptionsServiceCollectionExtensions.AddOptions<MvcNewtonsoftJsonOptions>(services)
-                                          .Configure<IServiceProvider>(
-                                               (options, provider) => ActivatorUtilities
-                                                                     .CreateInstance<ExistingValueOptionsFactory<JsonSerializerSettings>>(
-                                                                          provider, options.SerializerSettings
-                                                                      )
-                                                                     .Create(nameof(MvcNewtonsoftJsonOptions))
-                                           );
+        services
+           .AddOptions<MvcNewtonsoftJsonOptions>()
+           .Configure<IServiceProvider>(
+                (options, provider) => ActivatorUtilities
+                                      .CreateInstance<ExistingValueOptionsFactory<JsonSerializerSettings>>(provider, options.SerializerSettings)
+                                      .Create(nameof(MvcNewtonsoftJsonOptions))
+            );
         services
            .Configure<MvcNewtonsoftJsonOptions>(
                 options => options.SerializerSettings.Converters.Add(

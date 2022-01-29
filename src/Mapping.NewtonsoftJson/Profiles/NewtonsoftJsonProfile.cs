@@ -3,6 +3,7 @@ using System.Text.Json;
 using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static Rocket.Surgery.LaunchPad.Mapping.ConverterHelpers;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Rocket.Surgery.LaunchPad.Mapping.Profiles;

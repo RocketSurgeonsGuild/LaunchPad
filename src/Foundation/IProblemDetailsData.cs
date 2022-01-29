@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Rocket.Surgery.LaunchPad.Foundation;
+﻿namespace Rocket.Surgery.LaunchPad.Foundation;
 
 /// <summary>
 ///     A common interface used for definiting problems

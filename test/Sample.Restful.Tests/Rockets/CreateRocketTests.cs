@@ -1,6 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Sample.Restful.Client;
 using Xunit;
 using Xunit.Abstractions;
 

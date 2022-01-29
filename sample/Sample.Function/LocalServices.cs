@@ -12,8 +12,6 @@ public class LocalServices : IServiceConvention
 {
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.AddSingleton(ne
-        S
-        ervice());
+        services.AddSingleton(new Service());
     }
 }

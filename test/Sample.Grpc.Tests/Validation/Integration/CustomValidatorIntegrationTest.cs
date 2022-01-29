@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using FluentAssertions;
 using Grpc.Core;
 using Rocket.Surgery.Extensions.Testing;

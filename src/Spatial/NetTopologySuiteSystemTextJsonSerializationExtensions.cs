@@ -1,5 +1,4 @@
 using System.Text.Json;
-using JetBrains.Annotations;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Converters;

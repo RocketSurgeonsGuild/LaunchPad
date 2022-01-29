@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using FakeItEasy;
 using FluentValidation;
 using Microsoft.Extensions.Logging;

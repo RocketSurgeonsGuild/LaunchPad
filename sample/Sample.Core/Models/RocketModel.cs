@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Sample.Core.Domain;
 
 namespace Sample.Core.Models;

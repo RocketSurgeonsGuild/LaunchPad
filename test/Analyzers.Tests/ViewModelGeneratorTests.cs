@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions;
-using JetBrains.Annotations;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
@@ -13,7 +10,7 @@ namespace Analyzers.Tests;
 
 public class MutableGeneratorTests : GeneratorTest
 {
-    public MutableGeneratorTests([NotNull] ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
+    public MutableGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
     {
         WithGenerator<MutableGenerator>();
         AddReferences(typeof(MutableAttribute));
@@ -313,7 +310,7 @@ namespace Sample.Core.Operations.Rockets
         result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
     }
 
-    public InheritFromGeneratorTests([NotNull] ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
+    public InheritFromGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
     {
         WithGenerator<InheritFromGenerator>();
         AddReferences(typeof(InheritFromAttribute), typeof(IMediator), typeof(IBaseRequest));

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -179,8 +176,8 @@ public static class RocketBooster
     /// <param name="logger">The assembly candidate finder.</param>
     /// <returns>IConventionHostBuilder.</returns>
     public static LaunchPadFunctionStartup UseDiagnosticLogger(
-        [NotNull] this LaunchPadFunctionStartup builder,
-        [NotNull] ILogger logger
+        this LaunchPadFunctionStartup builder,
+        ILogger logger
     )
     {
         if (builder == null)
@@ -204,8 +201,8 @@ public static class RocketBooster
     /// <param name="action">The action.</param>
     /// <returns>LaunchPadFunctionStartup.</returns>
     public static LaunchPadFunctionStartup UseDiagnosticLogging(
-        [NotNull] this LaunchPadFunctionStartup builder,
-        [NotNull] Action<ILoggingBuilder> action
+        this LaunchPadFunctionStartup builder,
+        Action<ILoggingBuilder> action
     )
     {
         if (builder == null)

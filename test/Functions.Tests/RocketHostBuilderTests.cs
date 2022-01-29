@@ -1,7 +1,5 @@
-using System;
 using FakeItEasy;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +18,7 @@ internal class Startup : LaunchPadFunctionStartup, IServiceConvention
     {
     }
 
-    public Startup([NotNull] Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure) : base(configure)
+    public Startup(Func<LaunchPadFunctionStartup, ConventionContextBuilder> configure) : base(configure)
     {
     }
 

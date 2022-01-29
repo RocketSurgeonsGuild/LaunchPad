@@ -1,4 +1,3 @@
-using System;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime;
 

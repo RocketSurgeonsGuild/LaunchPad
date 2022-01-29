@@ -1,11 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
+using FluentAssertions;
 using NodaTime;
+using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Restful.Client;
 using Xunit;
 using Xunit.Abstractions;
 using HttpRocketType = Sample.Restful.Client.RocketType;
+using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 

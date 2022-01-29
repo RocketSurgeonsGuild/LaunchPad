@@ -1,10 +1,8 @@
-﻿using JetBrains.Annotations;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Grpc.Conventions;
-using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
 [assembly: Convention(typeof(GrpcConvention))]
 

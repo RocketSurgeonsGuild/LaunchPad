@@ -1,10 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
+using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Restful.Client;
 using Xunit;
 using Xunit.Abstractions;
+using FluentValidationProblemDetails = Rocket.Surgery.LaunchPad.AspNetCore.Validation.FluentValidationProblemDetails;
+using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.Rockets;
 
@@ -61,7 +63,7 @@ public class UpdateRocketTests : HandleWebHostBase
         Func<Task> a = () => client.UpdateRocketAsync(Guid.NewGuid(), request);
         ( await a.Should().ThrowAsync<ApiException<FluentValidationProblemDetails>>() )
            .And
-           .Result.Errors.Values
+           .Result.ValidationErrors.Values
            .SelectMany(x => x)
            .Select(z => z.PropertyName)
            .Should()

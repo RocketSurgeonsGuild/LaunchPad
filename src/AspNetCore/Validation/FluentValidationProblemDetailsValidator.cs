@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using JetBrains.Annotations;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 

@@ -1,7 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -108,18 +105,18 @@ public class InheritFromGenerator : IIncrementalGenerator
         }
 
         var cu = CompilationUnit(
-            List<ExternAliasDirectiveSyntax>(),
-            List(declaration.SyntaxTree.GetCompilationUnitRoot().Usings),
-            List<AttributeListSyntax>(),
-            SingletonList<MemberDeclarationSyntax>(
-                NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                   .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
-            )
-        ).WithLeadingTrivia().WithTrailingTrivia().WithLeadingTrivia(
-            Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true))
-        ).WithTrailingTrivia(
-            Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed
-        );
+                     List<ExternAliasDirectiveSyntax>(),
+                     List(declaration.SyntaxTree.GetCompilationUnitRoot().Usings),
+                     List<AttributeListSyntax>(),
+                     SingletonList<MemberDeclarationSyntax>(
+                         NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                            .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                     )
+                 )
+                .WithLeadingTrivia()
+                .WithTrailingTrivia()
+                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
+                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
         context.AddSource(
             $"{Path.GetFileNameWithoutExtension(declaration.SyntaxTree.FilePath)}_{declaration.Identifier.Text}",
@@ -295,22 +292,19 @@ public class InheritFromGenerator : IIncrementalGenerator
                                      node is (ClassDeclarationSyntax or RecordDeclarationSyntax) and TypeDeclarationSyntax
                                      {
                                          AttributeLists: { Count: > 0 }
-                                     } recordDeclarationSyntax
-                                  && recordDeclarationSyntax.AttributeLists.ContainsAttribute("InheritFrom"),
+                                     } recordDeclarationSyntax && recordDeclarationSyntax.AttributeLists.ContainsAttribute("InheritFrom"),
                                  static (syntaxContext, token) => (
-                                     syntax: (TypeDeclarationSyntax)syntaxContext.Node,
-                                     semanticModel: syntaxContext.SemanticModel,
-                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol(
-                                         (TypeDeclarationSyntax)syntaxContext.Node, token
-                                     )! )
+                                     syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
+                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)! )
                              ).Combine(
-                                 context.CompilationProvider.Select(
-                                     static (z, _) => (
-                                         compilation: z,
-                                         inheritFromAttribute: z.GetTypeByMetadataName(
-                                             "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute"
-                                         )! )
-                                 )
+                                 context.CompilationProvider
+                                        .Select(
+                                             static (z, _) => (
+                                                 compilation: z,
+                                                 inheritFromAttribute: z.GetTypeByMetadataName(
+                                                     "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute"
+                                                 )! )
+                                         )
                              )
                             .Select(
                                  static (tuple, _) => (
@@ -319,16 +313,11 @@ public class InheritFromGenerator : IIncrementalGenerator
                                      tuple.Left.symbol,
                                      tuple.Right.compilation,
                                      attributes: tuple.Left.symbol?.GetAttributes()
-                                                      .Where(
-                                                           z => SymbolEqualityComparer.Default.Equals(
-                                                               tuple.Right.inheritFromAttribute, z.AttributeClass
-                                                           )
-                                                       )
+                                                      .Where(z => SymbolEqualityComparer.Default.Equals(tuple.Right.inheritFromAttribute, z.AttributeClass))
                                                       .ToArray()
                                  )
-                             ).Where(
-                                 x => !( x.symbol is null || x.attributes is null or { Length: 0 } )
-                             );
+                             )
+                            .Where(x => !( x.symbol is null || x.attributes is null or { Length: 0 } ));
 
         context.RegisterSourceOutput(
             values,
@@ -457,7 +446,7 @@ internal static class SyntaxExtensions
 
     public static bool ContainsAttribute(this TypeDeclarationSyntax syntax, string attributePrefixes) // string is comma separated
     {
-        return syntax.AttributeLists.ContainsAttribute(attributePrefixes);
+    return syntax.AttributeLists.ContainsAttribute(attributePrefixes);
     }
 
     public static bool ContainsAttribute(this AttributeListSyntax list, string attributePrefixes) // string is comma separated
@@ -475,9 +464,7 @@ internal static class SyntaxExtensions
         return false;
     }
 
-    public static bool ContainsAttribute(
-        this in SyntaxList<AttributeListSyntax> list, string attributePrefixes
-    ) // string is comma separated
+    public static bool ContainsAttribute(this in SyntaxList<AttributeListSyntax> list, string attributePrefixes) // string is comma separated
     {
         if (list is { Count: 0 })
             return false;
@@ -515,8 +502,7 @@ internal static class SyntaxExtensions
         return null;
     }
 
-    public static AttributeSyntax?
-        GetAttribute(this in SyntaxList<AttributeListSyntax> list, string attributePrefixes) // string is comma separated
+    public static AttributeSyntax? GetAttribute(this in SyntaxList<AttributeListSyntax> list, string attributePrefixes) // string is comma separated
     {
         if (list is { Count: 0 })
             return null;

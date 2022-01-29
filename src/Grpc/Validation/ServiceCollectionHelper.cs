@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation;

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using App.Metrics.AspNetCore;
+﻿using App.Metrics.AspNetCore;
 using App.Metrics.AspNetCore.Endpoints;
 using App.Metrics.AspNetCore.Endpoints.Middleware;
 using App.Metrics.Formatters;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;

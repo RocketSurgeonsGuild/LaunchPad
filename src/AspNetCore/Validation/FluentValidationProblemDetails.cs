@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentValidation.Results;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -25,7 +21,7 @@ public class FluentValidationProblemDetails : ValidationProblemDetails
     ///     Build Fluent Validation Problem Details from a <see cref="ValidationResult" />
     /// </summary>
     /// <param name="result"></param>
-    public FluentValidationProblemDetails([NotNull] ValidationResult result) : this(result.Errors)
+    public FluentValidationProblemDetails(ValidationResult result) : this(result.Errors)
     {
         if (result == null)
         {
@@ -39,7 +35,7 @@ public class FluentValidationProblemDetails : ValidationProblemDetails
     ///     Build Fluent Validation Problem Details from a <see cref="IEnumerable{T}" />
     /// </summary>
     /// <param name="errors"></param>
-    public FluentValidationProblemDetails([NotNull] IEnumerable<ValidationFailure> errors)
+    public FluentValidationProblemDetails(IEnumerable<ValidationFailure> errors)
     {
         if (errors == null)
         {

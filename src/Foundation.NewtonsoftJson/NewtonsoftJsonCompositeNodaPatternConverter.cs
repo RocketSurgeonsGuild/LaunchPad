@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NodaTime.Serialization.JsonNet;
 using NodaTime.Text;
 using NodaTime.Utility;

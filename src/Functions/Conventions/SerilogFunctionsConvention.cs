@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using App.Metrics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

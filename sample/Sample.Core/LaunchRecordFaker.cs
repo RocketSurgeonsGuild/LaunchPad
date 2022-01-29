@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Bogus;
+﻿using Bogus;
 using Sample.Core.Domain;
 
 namespace Sample.Core;

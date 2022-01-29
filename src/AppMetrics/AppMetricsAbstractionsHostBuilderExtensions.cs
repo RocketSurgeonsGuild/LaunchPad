@@ -1,5 +1,3 @@
-using System;
-using JetBrains.Annotations;
 using Rocket.Surgery.LaunchPad.AppMetrics;
 
 // ReSharper disable once CheckNamespace
@@ -17,7 +15,7 @@ public static class AppMetricsAbstractionsHostBuilderExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureAppMetrics([NotNull] this ConventionContextBuilder container, [NotNull] MetricsConvention @delegate)
+    public static ConventionContextBuilder ConfigureAppMetrics(this ConventionContextBuilder container, MetricsConvention @delegate)
     {
         if (container == null)
         {

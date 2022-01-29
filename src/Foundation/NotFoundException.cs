@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Rocket.Surgery.LaunchPad.Foundation;
+﻿namespace Rocket.Surgery.LaunchPad.Foundation;
 
 /// <summary>
 ///     NotFoundException.

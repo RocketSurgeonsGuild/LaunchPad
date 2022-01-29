@@ -1,5 +1,4 @@
-﻿using System;
-using HotChocolate.Language;
+﻿using HotChocolate.Language;
 using HotChocolate.Types;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;

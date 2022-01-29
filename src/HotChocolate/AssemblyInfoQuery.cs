@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
-using System.Threading;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 

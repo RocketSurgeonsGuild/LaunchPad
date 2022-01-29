@@ -1,5 +1,6 @@
 ﻿using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Grpc.Services;
+using Serilog;
 
 namespace Sample.Grpc;
 

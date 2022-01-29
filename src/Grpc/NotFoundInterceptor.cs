@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Rocket.Surgery.LaunchPad.Foundation;

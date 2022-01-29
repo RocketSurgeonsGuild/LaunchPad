@@ -1,5 +1,3 @@
-using System;
-using JetBrains.Annotations;
 using Rocket.Surgery.LaunchPad.Mapping;
 
 // ReSharper disable once CheckNamespace
@@ -17,7 +15,7 @@ public static class AutoMapperHostBuilderExtensions
     /// <param name="container">The container.</param>
     /// <param name="options">The options object</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder UseAutoMapper([NotNull] this ConventionContextBuilder container, AutoMapperOptions? options = null)
+    public static ConventionContextBuilder UseAutoMapper(this ConventionContextBuilder container, AutoMapperOptions? options = null)
     {
         if (container == null)
         {

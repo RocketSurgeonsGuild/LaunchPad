@@ -1,12 +1,14 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
 using AutoMapper;
-using HotChocolate.Execution;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Xunit;
 using Xunit.Abstractions;
+using IRequestExecutorResolver = HotChocolate.Execution.IRequestExecutorResolver;
 
 namespace Sample.Graphql.Tests;
 

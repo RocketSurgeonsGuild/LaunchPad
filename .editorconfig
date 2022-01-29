@@ -510,7 +510,7 @@ dotnet_diagnostic.ca2007.severity = none
 # dotnet_diagnostic.CA2231.severity = warning
 
 # CA2234: Pass system uri objects instead of strings
-# dotnet_diagnostic.CA2234.severity = none
+# dotnet_diagnostic.CA2234.severity = warning
 
 # CA2244: Do not duplicate indexed element initializations
 # dotnet_diagnostic.CA2244.severity = warning

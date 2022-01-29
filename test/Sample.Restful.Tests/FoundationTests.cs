@@ -1,6 +1,7 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
 using AutoMapper;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;

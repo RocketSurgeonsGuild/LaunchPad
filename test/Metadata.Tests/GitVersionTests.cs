@@ -1,6 +1,4 @@
-using System.Linq;
 using System.Reflection;
-using FluentAssertions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Metadata;
 using Xunit;

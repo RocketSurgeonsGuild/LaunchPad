@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.Results;
-using JetBrains.Annotations;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
 
@@ -36,7 +33,7 @@ public class FluentValidationProblemDetail
     /// <summary>
     ///     A validation error problem
     /// </summary>
-    public FluentValidationProblemDetail([NotNull] ValidationFailure validationFailure)
+    public FluentValidationProblemDetail(ValidationFailure validationFailure)
     {
         if (validationFailure == null)
         {

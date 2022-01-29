@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FairyBread;
+﻿using FairyBread;
 using FluentValidation;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;

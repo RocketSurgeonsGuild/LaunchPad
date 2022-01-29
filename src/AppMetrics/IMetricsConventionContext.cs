@@ -1,5 +1,4 @@
 using App.Metrics;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
@@ -17,14 +16,12 @@ public interface IMetricsConventionContext : IConventionContext
     ///     Gets the configuration.
     /// </summary>
     /// <value>The configuration.</value>
-    [NotNull]
     IConfiguration Configuration { get; }
 
     /// <summary>
     ///     Gets the metrics builder.
     /// </summary>
     /// <value>The metrics builder.</value>
-    [NotNull]
     IMetricsBuilder MetricsBuilder { get; }
 
     /// <summary>
@@ -32,6 +29,5 @@ public interface IMetricsConventionContext : IConventionContext
     ///     Based on IHostEnvironment / IHostingEnvironment
     /// </summary>
     /// <value>The environment.</value>
-    [NotNull]
     IHostEnvironment Environment { get; }
 }

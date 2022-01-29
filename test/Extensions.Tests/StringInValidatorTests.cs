@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;

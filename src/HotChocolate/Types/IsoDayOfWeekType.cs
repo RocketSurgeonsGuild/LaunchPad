@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
 

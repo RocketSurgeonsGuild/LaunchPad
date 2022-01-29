@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using FluentAssertions;
 using Grpc.Core;
+using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Xunit;
 using Xunit.Abstractions;
