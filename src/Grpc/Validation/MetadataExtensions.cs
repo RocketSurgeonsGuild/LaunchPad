@@ -1,20 +1,20 @@
-﻿using FluentValidation.Results;
-using Grpc.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using FluentValidation.Results;
+using Grpc.Core;
 
-namespace Rocket.Surgery.LaunchPad.Grpc.Validation
+namespace Rocket.Surgery.LaunchPad.Grpc.Validation;
+
+internal static class MetadataExtensions
 {
-    internal static class MetadataExtensions
+    public static Metadata ToValidationMetadata(this IList<ValidationFailure> failures)
     {
-        public static Metadata ToValidationMetadata(this IList<ValidationFailure> failures)
+        var metadata = new Metadata();
+        if (failures.Any())
         {
-            var metadata = new Metadata();
-            if (failures.Any())
-            {
-                // metadata.Add(new Metadata.Entry("errors-bin", failures.ToValidationTrailers().ToBytes()));
-            }
-            return metadata;
+            // metadata.Add(new Metadata.Entry("errors-bin", failures.ToValidationTrailers().ToBytes()));
         }
+
+        return metadata;
     }
 }

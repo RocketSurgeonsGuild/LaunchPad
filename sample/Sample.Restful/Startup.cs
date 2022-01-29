@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+
+y.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -30,7 +28,8 @@ namespace Sample.Restful
                         "v1",
                         new OpenApiInfo
                         {
-                            Version = typeof(Startup).GetCustomAttribute<AssemblyVersionAttribute>()?.Version ?? typeof(Startup).GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.1.0",
+                            Version = typeof(Startup).GetCustomAttribute<AssemblyVersionAttribute>()?.Version
+                                   ?? typeof(Startup).GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.1.0",
                             Title = "Test Application",
                         }
                     )
@@ -57,6 +56,7 @@ namespace Sample.Restful
             app
                .UseSwaggerUI()
                .UseReDoc();
+
 
             app.UseAuthorization();
 

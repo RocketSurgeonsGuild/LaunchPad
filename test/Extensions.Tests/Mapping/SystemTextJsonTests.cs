@@ -1,617 +1,621 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Text.Json;
+using AutoMapper;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
-using System;
-using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Extensions.Tests.Mapping
+namespace Extensions.Tests.Mapping;
+
+public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
 {
-    public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
+    [Fact]
+    public void ValidateMapping()
     {
-        public SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
+        Config.AssertConfigurationIsValid();
+    }
 
-        [Fact]
-        public void ValidateMapping() => Config.AssertConfigurationIsValid();
-
-        [Theory]
-        [InlineData("{}", typeof(JObject))]
-        [InlineData("[]", typeof(JArray))]
-        [InlineData("null", typeof(JValue))]
-        public void ShouldMap_From_Nullable_JsonElementA_To_JToken(string json, Type type)
+    [Fact]
+    public void ShouldMap_From_Nullable_JsonElement_To_JToken_Null()
+    {
+        var item = new JsonElementA
         {
-            var item = new JsonElementA
-            {
-                Bar = JsonDocument.Parse(json).RootElement
-            };
-            var result = Mapper.Map<JTokenA>(item);
-            result.Bar.Should().BeOfType(type);
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JTokenA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_Nullable_JsonElement_To_JToken_Null()
+    [Fact]
+    public void ShouldMap_From_Nullable_JsonElement_To_JToken_Null_Allow_Nulls()
+    {
+        var item = new JsonElementA
         {
-            var item = new JsonElementA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JTokenA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JTokenA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_Nullable_JsonElement_To_JToken_Null_Allow_Nulls()
+    [Fact]
+    public void ShouldMap_From_JToken_To_Nullable_JsonElement_Null()
+    {
+        var item = new JTokenA
         {
-            var item = new JsonElementA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JTokenA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldMap_From_JToken_To_Nullable_JsonElement_Data))]
-        public void ShouldMap_From_JToken_To_Nullable_JsonElement(string json, JsonValueKind kind)
+    [Fact]
+    public void ShouldMap_From_JToken_To_Nullable_JsonElement_Null_Allow_Nulls()
+    {
+        var item = new JTokenA
         {
-            var item = new JTokenA
-            {
-                Bar = JToken.Parse(json)
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().NotBeNull();
-            result.Bar.Value.ValueKind.Should().Be(kind);
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        public class ShouldMap_From_JToken_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    [Fact]
+    public void ShouldMap_From_JsonElement_To_JToken_Null()
+    {
+        var item = new JsonElementB
         {
-            public ShouldMap_From_JToken_To_Nullable_JsonElement_Data()
-            {
-                Add("{}", JsonValueKind.Object);
-                Add("[]", JsonValueKind.Array);
-                Add("null", JsonValueKind.Null);
-            }
-        }
+            Bar = default
+        };
+        var result = Mapper.Map<JTokenA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JToken_To_Nullable_JsonElement_Null()
+    [Fact]
+    public void ShouldMap_From_JsonElement_To_JToken_Null_Allow_Nulls()
+    {
+        var item = new JsonElementB
         {
-            var item = new JTokenA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = default
+        };
+        var result = Mapper.Map<JTokenA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JToken_To_Nullable_JsonElement_Null_Allow_Nulls()
+    [Fact]
+    public void ShouldMap_From_JToken_To_JsonElement_Null()
+    {
+        var item = new JTokenA
         {
-            var item = new JTokenA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+    }
 
-        [Theory]
-        [InlineData("{}", typeof(JObject))]
-        [InlineData("[]", typeof(JArray))]
-        [InlineData("null", typeof(JValue))]
-        public void ShouldMap_From_JsonElement_To_JToken(string json, Type type)
+    [Fact]
+    public void ShouldMap_From_JToken_To_JsonElement_Null_Allow_Nulls()
+    {
+        var item = new JTokenA
         {
-            var item = new JsonElementB
-            {
-                Bar = JsonDocument.Parse(json).RootElement
-            };
-            var result = Mapper.Map<JTokenA>(item);
-            result.Bar.Should().BeOfType(type);
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+    }
 
-        [Fact]
-        public void ShouldMap_From_JsonElement_To_JToken_Null()
+    [Fact]
+    public void ShouldMap_From_Nullable_JsonElement_To_JArray_Null()
+    {
+        var item = new JsonElementA
         {
-            var item = new JsonElementB
-            {
-                Bar = default
-            };
-            var result = Mapper.Map<JTokenA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JArrayA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JsonElement_To_JToken_Null_Allow_Nulls()
+    [Fact]
+    public void ShouldMap_From_Nullable_JsonElement_To_JArray_Null_Allow_Nulls()
+    {
+        var item = new JsonElementA
         {
-            var item = new JsonElementB
-            {
-                Bar = default
-            };
-            var result = Mapper.Map<JTokenA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JArrayA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldMap_From_JToken_To_JsonElement_Data))]
-        public void ShouldMap_From_JToken_To_JsonElement(string json, JsonValueKind kind)
+    [Fact]
+    public void ShouldMap_From_JArray_To_Nullable_JsonElement_Null()
+    {
+        var item = new JArrayA
         {
-            var item = new JTokenA
-            {
-                Bar = JToken.Parse(json)
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(kind);
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        public class ShouldMap_From_JToken_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    [Fact]
+    public void ShouldMap_From_JArray_To_Nullable_JsonElement_Null_Allow_Nulls()
+    {
+        var item = new JArrayA
         {
-            public ShouldMap_From_JToken_To_JsonElement_Data()
-            {
-                Add("{}", JsonValueKind.Object);
-                Add("[]", JsonValueKind.Array);
-                Add("null", JsonValueKind.Null);
-            }
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JToken_To_JsonElement_Null()
+    [Fact]
+    public void ShouldMap_From_JsonElement_To_JArray_Null()
+    {
+        var item = new JsonElementB
         {
-            var item = new JTokenA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
-        }
+            Bar = default
+        };
+        var result = Mapper.Map<JArrayA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JToken_To_JsonElement_Null_Allow_Nulls()
+    [Fact]
+    public void ShouldMap_From_JsonElement_To_JArray_Null_Allow_Nulls()
+    {
+        var item = new JsonElementB
         {
-            var item = new JTokenA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
-        }
+            Bar = default
+        };
+        var result = Mapper.Map<JArrayA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-
-        [Theory]
-        [InlineData("[]", typeof(JArray))]
-        public void ShouldMap_From_Nullable_JsonElementA_To_JArray(string json, Type type)
+    [Fact]
+    public void ShouldMap_From_JArray_To_JsonElement_Null()
+    {
+        var item = new JArrayA
         {
-            var item = new JsonElementA
-            {
-                Bar = JsonDocument.Parse(json).RootElement
-            };
-            var result = Mapper.Map<JArrayA>(item);
-            result.Bar.Should().BeOfType(type);
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+    }
 
-        [Fact]
-        public void ShouldMap_From_Nullable_JsonElement_To_JArray_Null()
+    [Fact]
+    public void ShouldMap_From_JArray_To_JsonElement_Null_Allow_Nulls()
+    {
+        var item = new JArrayA
         {
-            var item = new JsonElementA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JArrayA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+    }
 
-        [Fact]
-        public void ShouldMap_From_Nullable_JsonElement_To_JArray_Null_Allow_Nulls()
+    [Fact]
+    public void ShouldMap_From_Nullable_JsonElement_To_JObject_Null()
+    {
+        var item = new JsonElementA
         {
-            var item = new JsonElementA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JArrayA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JObjectA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldMap_From_JArray_To_Nullable_JsonElement_Data))]
-        public void ShouldMap_From_JArray_To_Nullable_JsonElement(string json, JsonValueKind kind)
+    [Fact]
+    public void ShouldMap_From_Nullable_JsonElement_To_JObject_Null_Allow_Nulls()
+    {
+        var item = new JsonElementA
         {
-            var item = new JArrayA
-            {
-                Bar = JArray.Parse(json)
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().NotBeNull();
-            result.Bar.Value.ValueKind.Should().Be(kind);
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JObjectA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        public class ShouldMap_From_JArray_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    [Fact]
+    public void ShouldMap_From_JObject_To_Nullable_JsonElement_Null()
+    {
+        var item = new JObjectA
         {
-            public ShouldMap_From_JArray_To_Nullable_JsonElement_Data()
-            {
-                Add("[]", JsonValueKind.Array);
-            }
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JArray_To_Nullable_JsonElement_Null()
+    [Fact]
+    public void ShouldMap_From_JObject_To_Nullable_JsonElement_Null_Allow_Nulls()
+    {
+        var item = new JObjectA
         {
-            var item = new JArrayA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JArray_To_Nullable_JsonElement_Null_Allow_Nulls()
+    [Fact]
+    public void ShouldMap_From_JsonElement_To_JObject_Null()
+    {
+        var item = new JsonElementB
         {
-            var item = new JArrayA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = default
+        };
+        var result = Mapper.Map<JObjectA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Theory]
-        [InlineData("[]", typeof(JArray))]
-        public void ShouldMap_From_JsonElement_To_JArray(string json, Type type)
+    [Fact]
+    public void ShouldMap_From_JsonElement_To_JObject_Null_Allow_Nulls()
+    {
+        var item = new JsonElementB
         {
-            var item = new JsonElementB
-            {
-                Bar = JsonDocument.Parse(json).RootElement
-            };
-            var result = Mapper.Map<JArrayA>(item);
-            result.Bar.Should().BeOfType(type);
-        }
+            Bar = default
+        };
+        var result = Mapper.Map<JObjectA>(item);
+        result.Bar.Should().BeNull();
+    }
 
-        [Fact]
-        public void ShouldMap_From_JsonElement_To_JArray_Null()
+    [Fact]
+    public void ShouldMap_From_JObject_To_JsonElement_Null()
+    {
+        var item = new JObjectA
         {
-            var item = new JsonElementB
-            {
-                Bar = default
-            };
-            var result = Mapper.Map<JArrayA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+    }
 
-        [Fact]
-        public void ShouldMap_From_JsonElement_To_JArray_Null_Allow_Nulls()
+    [Fact]
+    public void ShouldMap_From_JObject_To_JsonElement_Null_Allow_Nulls()
+    {
+        var item = new JObjectA
         {
-            var item = new JsonElementB
-            {
-                Bar = default
-            };
-            var result = Mapper.Map<JArrayA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = null
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldMap_From_JArray_To_JsonElement_Data))]
-        public void ShouldMap_From_JArray_To_JsonElement(string json, JsonValueKind kind)
+    public SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
+    [Theory]
+    [InlineData("{}", typeof(JObject))]
+    [InlineData("[]", typeof(JArray))]
+    [InlineData("null", typeof(JValue))]
+    public void ShouldMap_From_Nullable_JsonElementA_To_JToken(string json, Type type)
+    {
+        var item = new JsonElementA
         {
-            var item = new JArrayA
-            {
-                Bar = JArray.Parse(json)
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(kind);
-        }
+            Bar = JsonDocument.Parse(json).RootElement
+        };
+        var result = Mapper.Map<JTokenA>(item);
+        result.Bar.Should().BeOfType(type);
+    }
 
-        public class ShouldMap_From_JArray_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    [Theory]
+    [ClassData(typeof(ShouldMap_From_JToken_To_Nullable_JsonElement_Data))]
+    public void ShouldMap_From_JToken_To_Nullable_JsonElement(string json, JsonValueKind kind)
+    {
+        var item = new JTokenA
         {
-            public ShouldMap_From_JArray_To_JsonElement_Data()
-            {
-                Add("[]", JsonValueKind.Array);
-            }
-        }
+            Bar = JToken.Parse(json)
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().NotBeNull();
+        result.Bar.Value.ValueKind.Should().Be(kind);
+    }
 
-        [Fact]
-        public void ShouldMap_From_JArray_To_JsonElement_Null()
+    public class ShouldMap_From_JToken_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JToken_To_Nullable_JsonElement_Data()
         {
-            var item = new JArrayA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+            Add("{}", JsonValueKind.Object);
+            Add("[]", JsonValueKind.Array);
+            Add("null", JsonValueKind.Null);
         }
+    }
 
-        [Fact]
-        public void ShouldMap_From_JArray_To_JsonElement_Null_Allow_Nulls()
+    [Theory]
+    [InlineData("{}", typeof(JObject))]
+    [InlineData("[]", typeof(JArray))]
+    [InlineData("null", typeof(JValue))]
+    public void ShouldMap_From_JsonElement_To_JToken(string json, Type type)
+    {
+        var item = new JsonElementB
         {
-            var item = new JArrayA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
-        }
+            Bar = JsonDocument.Parse(json).RootElement
+        };
+        var result = Mapper.Map<JTokenA>(item);
+        result.Bar.Should().BeOfType(type);
+    }
 
-
-        [Theory]
-        [InlineData("{}", typeof(JObject))]
-        public void ShouldMap_From_Nullable_JsonElementA_To_JObject(string json, Type type)
+    [Theory]
+    [ClassData(typeof(ShouldMap_From_JToken_To_JsonElement_Data))]
+    public void ShouldMap_From_JToken_To_JsonElement(string json, JsonValueKind kind)
+    {
+        var item = new JTokenA
         {
-            var item = new JsonElementA
-            {
-                Bar = JsonDocument.Parse(json).RootElement
-            };
-            var result = Mapper.Map<JObjectA>(item);
-            result.Bar.Should().BeOfType(type);
-        }
+            Bar = JToken.Parse(json)
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(kind);
+    }
 
-        [Fact]
-        public void ShouldMap_From_Nullable_JsonElement_To_JObject_Null()
+    public class ShouldMap_From_JToken_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JToken_To_JsonElement_Data()
         {
-            var item = new JsonElementA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JObjectA>(item);
-            result.Bar.Should().BeNull();
+            Add("{}", JsonValueKind.Object);
+            Add("[]", JsonValueKind.Array);
+            Add("null", JsonValueKind.Null);
         }
+    }
 
-        [Fact]
-        public void ShouldMap_From_Nullable_JsonElement_To_JObject_Null_Allow_Nulls()
-        {
-            var item = new JsonElementA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JObjectA>(item);
-            result.Bar.Should().BeNull();
-        }
 
-        [Theory]
-        [ClassData(typeof(ShouldMap_From_JObject_To_Nullable_JsonElement_Data))]
-        public void ShouldMap_From_JObject_To_Nullable_JsonElement(string json, JsonValueKind kind)
+    [Theory]
+    [InlineData("[]", typeof(JArray))]
+    public void ShouldMap_From_Nullable_JsonElementA_To_JArray(string json, Type type)
+    {
+        var item = new JsonElementA
         {
-            var item = new JObjectA
-            {
-                Bar = JObject.Parse(json)
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().NotBeNull();
-            result.Bar.Value.ValueKind.Should().Be(kind);
-        }
+            Bar = JsonDocument.Parse(json).RootElement
+        };
+        var result = Mapper.Map<JArrayA>(item);
+        result.Bar.Should().BeOfType(type);
+    }
 
-        public class ShouldMap_From_JObject_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    [Theory]
+    [ClassData(typeof(ShouldMap_From_JArray_To_Nullable_JsonElement_Data))]
+    public void ShouldMap_From_JArray_To_Nullable_JsonElement(string json, JsonValueKind kind)
+    {
+        var item = new JArrayA
         {
-            public ShouldMap_From_JObject_To_Nullable_JsonElement_Data()
-            {
-                Add("{}", JsonValueKind.Object);
-            }
-        }
+            Bar = JArray.Parse(json)
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().NotBeNull();
+        result.Bar.Value.ValueKind.Should().Be(kind);
+    }
 
-        [Fact]
-        public void ShouldMap_From_JObject_To_Nullable_JsonElement_Null()
+    public class ShouldMap_From_JArray_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JArray_To_Nullable_JsonElement_Data()
         {
-            var item = new JObjectA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().BeNull();
+            Add("[]", JsonValueKind.Array);
         }
+    }
 
-        [Fact]
-        public void ShouldMap_From_JObject_To_Nullable_JsonElement_Null_Allow_Nulls()
+    [Theory]
+    [InlineData("[]", typeof(JArray))]
+    public void ShouldMap_From_JsonElement_To_JArray(string json, Type type)
+    {
+        var item = new JsonElementB
         {
-            var item = new JObjectA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementA>(item);
-            result.Bar.Should().BeNull();
-        }
+            Bar = JsonDocument.Parse(json).RootElement
+        };
+        var result = Mapper.Map<JArrayA>(item);
+        result.Bar.Should().BeOfType(type);
+    }
 
-        [Theory]
-        [InlineData("{}", typeof(JObject))]
-        public void ShouldMap_From_JsonElement_To_JObject(string json, Type type)
+    [Theory]
+    [ClassData(typeof(ShouldMap_From_JArray_To_JsonElement_Data))]
+    public void ShouldMap_From_JArray_To_JsonElement(string json, JsonValueKind kind)
+    {
+        var item = new JArrayA
         {
-            var item = new JsonElementB
-            {
-                Bar = JsonDocument.Parse(json).RootElement
-            };
-            var result = Mapper.Map<JObjectA>(item);
-            result.Bar.Should().BeOfType(type);
-        }
+            Bar = JArray.Parse(json)
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(kind);
+    }
 
-        [Fact]
-        public void ShouldMap_From_JsonElement_To_JObject_Null()
+    public class ShouldMap_From_JArray_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JArray_To_JsonElement_Data()
         {
-            var item = new JsonElementB
-            {
-                Bar = default
-            };
-            var result = Mapper.Map<JObjectA>(item);
-            result.Bar.Should().BeNull();
+            Add("[]", JsonValueKind.Array);
         }
+    }
 
-        [Fact]
-        public void ShouldMap_From_JsonElement_To_JObject_Null_Allow_Nulls()
-        {
-            var item = new JsonElementB
-            {
-                Bar = default
-            };
-            var result = Mapper.Map<JObjectA>(item);
-            result.Bar.Should().BeNull();
-        }
 
-        [Theory]
-        [ClassData(typeof(ShouldMap_From_JObject_To_JsonElement_Data))]
-        public void ShouldMap_From_JObject_To_JsonElement(string json, JsonValueKind kind)
+    [Theory]
+    [InlineData("{}", typeof(JObject))]
+    public void ShouldMap_From_Nullable_JsonElementA_To_JObject(string json, Type type)
+    {
+        var item = new JsonElementA
         {
-            var item = new JObjectA
-            {
-                Bar = JObject.Parse(json)
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(kind);
-        }
+            Bar = JsonDocument.Parse(json).RootElement
+        };
+        var result = Mapper.Map<JObjectA>(item);
+        result.Bar.Should().BeOfType(type);
+    }
 
-        public class ShouldMap_From_JObject_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    [Theory]
+    [ClassData(typeof(ShouldMap_From_JObject_To_Nullable_JsonElement_Data))]
+    public void ShouldMap_From_JObject_To_Nullable_JsonElement(string json, JsonValueKind kind)
+    {
+        var item = new JObjectA
         {
-            public ShouldMap_From_JObject_To_JsonElement_Data()
-            {
-                Add("{}", JsonValueKind.Object);
-            }
-        }
+            Bar = JObject.Parse(json)
+        };
+        var result = Mapper.Map<JsonElementA>(item);
+        result.Bar.Should().NotBeNull();
+        result.Bar.Value.ValueKind.Should().Be(kind);
+    }
 
-        [Fact]
-        public void ShouldMap_From_JObject_To_JsonElement_Null()
+    public class ShouldMap_From_JObject_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JObject_To_Nullable_JsonElement_Data()
         {
-            var item = new JObjectA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
+            Add("{}", JsonValueKind.Object);
         }
+    }
 
-        [Fact]
-        public void ShouldMap_From_JObject_To_JsonElement_Null_Allow_Nulls()
+    [Theory]
+    [InlineData("{}", typeof(JObject))]
+    public void ShouldMap_From_JsonElement_To_JObject(string json, Type type)
+    {
+        var item = new JsonElementB
         {
-            var item = new JObjectA
-            {
-                Bar = null
-            };
-            var result = Mapper.Map<JsonElementB>(item);
-            result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
-        }
+            Bar = JsonDocument.Parse(json).RootElement
+        };
+        var result = Mapper.Map<JObjectA>(item);
+        result.Bar.Should().BeOfType(type);
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data))]
-        public void ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element(JsonElement? element)
+    [Theory]
+    [ClassData(typeof(ShouldMap_From_JObject_To_JsonElement_Data))]
+    public void ShouldMap_From_JObject_To_JsonElement(string json, JsonValueKind kind)
+    {
+        var item = new JObjectA
         {
-            var item = new JsonElementA
-            {
-                Bar = element
-            };
-            Action a = () => Mapper.Map<JObjectA>(item);
-            a.Should().Throw<AutoMapperMappingException>();
-        }
+            Bar = JObject.Parse(json)
+        };
+        var result = Mapper.Map<JsonElementB>(item);
+        result.Bar.ValueKind.Should().Be(kind);
+    }
 
-        class ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement?>
+    public class ShouldMap_From_JObject_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JObject_To_JsonElement_Data()
         {
-            public ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data()
-            {
-                Add(JsonDocument.Parse("[1234]").RootElement);
-                Add(JsonDocument.Parse("null").RootElement);
-                Add(JsonDocument.Parse("1234").RootElement);
-                Add(JsonDocument.Parse("\"1234\"").RootElement);
-            }
+            Add("{}", JsonValueKind.Object);
         }
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data))]
-        public void ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element(JsonElement element)
+    [Theory]
+    [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data))]
+    public void ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element(JsonElement? element)
+    {
+        var item = new JsonElementA
         {
-            var item = new JsonElementB
-            {
-                Bar = element
-            };
-            Action a = () => Mapper.Map<JObjectA>(item);
-            a.Should().Throw<AutoMapperMappingException>();
-        }
+            Bar = element
+        };
+        Action a = () => Mapper.Map<JObjectA>(item);
+        a.Should().Throw<AutoMapperMappingException>();
+    }
 
-        class ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement>
+    private class ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement?>
+    {
+        public ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data()
         {
-            public ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data()
-            {
-                Add(JsonDocument.Parse("[1234]").RootElement);
-                Add(JsonDocument.Parse("null").RootElement);
-                Add(JsonDocument.Parse("1234").RootElement);
-                Add(JsonDocument.Parse("\"1234\"").RootElement);
-            }
+            Add(JsonDocument.Parse("[1234]").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
         }
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data))]
-        public void ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element(JsonElement? element)
+    [Theory]
+    [ClassData(typeof(ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data))]
+    public void ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element(JsonElement element)
+    {
+        var item = new JsonElementB
         {
-            var item = new JsonElementA
-            {
-                Bar = element
-            };
-            Action a = () => Mapper.Map<JArrayA>(item);
-            a.Should().Throw<AutoMapperMappingException>();
-        }
+            Bar = element
+        };
+        Action a = () => Mapper.Map<JObjectA>(item);
+        a.Should().Throw<AutoMapperMappingException>();
+    }
 
-        class ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement?>
+    private class ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement>
+    {
+        public ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data()
         {
-            public ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data()
-            {
-                Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
-                Add(JsonDocument.Parse("null").RootElement);
-                Add(JsonDocument.Parse("1234").RootElement);
-                Add(JsonDocument.Parse("\"1234\"").RootElement);
-            }
+            Add(JsonDocument.Parse("[1234]").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
         }
+    }
 
-        [Theory]
-        [ClassData(typeof(ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data))]
-        public void ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element(JsonElement element)
+    [Theory]
+    [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data))]
+    public void ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element(JsonElement? element)
+    {
+        var item = new JsonElementA
         {
-            var item = new JsonElementB
-            {
-                Bar = element
-            };
-            Action a = () => Mapper.Map<JArrayA>(item);
-            a.Should().Throw<AutoMapperMappingException>();
-        }
+            Bar = element
+        };
+        Action a = () => Mapper.Map<JArrayA>(item);
+        a.Should().Throw<AutoMapperMappingException>();
+    }
 
-        class ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement>
+    private class ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement?>
+    {
+        public ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data()
         {
-            public ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data()
-            {
-                Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
-                Add(JsonDocument.Parse("null").RootElement);
-                Add(JsonDocument.Parse("1234").RootElement);
-                Add(JsonDocument.Parse("\"1234\"").RootElement);
-            }
+            Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
         }
+    }
 
-        protected override void Configure(IMapperConfigurationExpression expression)
+    [Theory]
+    [ClassData(typeof(ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data))]
+    public void ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element(JsonElement element)
+    {
+        var item = new JsonElementB
         {
-            expression.AddProfile(new NewtonsoftJsonProfile());
-            expression.AddProfile(new SystemJsonTextProfile());
-            expression.CreateMap<JsonElementA, JTokenA>().ReverseMap();
-            expression.CreateMap<JsonElementB, JTokenA>().ReverseMap();
-            expression.CreateMap<JsonElementA, JObjectA>().ReverseMap();
-            expression.CreateMap<JsonElementB, JObjectA>().ReverseMap();
-            expression.CreateMap<JsonElementA, JArrayA>().ReverseMap();
-            expression.CreateMap<JsonElementB, JArrayA>().ReverseMap();
-        }
+            Bar = element
+        };
+        Action a = () => Mapper.Map<JArrayA>(item);
+        a.Should().Throw<AutoMapperMappingException>();
+    }
 
-        private class JsonElementA
+    private class ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement>
+    {
+        public ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data()
         {
-            public JsonElement? Bar { get; set; }
+            Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
         }
+    }
 
-        private class JsonElementB
-        {
-            public JsonElement Bar { get; set; }
-        }
+    protected override void Configure(IMapperConfigurationExpression expression)
+    {
+        expression.AddProfile(new NewtonsoftJsonProfile());
+        expression.AddProfile(new SystemJsonTextProfile());
+        expression.CreateMap<JsonElementA, JTokenA>().ReverseMap();
+        expression.CreateMap<JsonElementB, JTokenA>().ReverseMap();
+        expression.CreateMap<JsonElementA, JObjectA>().ReverseMap();
+        expression.CreateMap<JsonElementB, JObjectA>().ReverseMap();
+        expression.CreateMap<JsonElementA, JArrayA>().ReverseMap();
+        expression.CreateMap<JsonElementB, JArrayA>().ReverseMap();
+    }
 
-        private class JTokenA
-        {
-            public JToken? Bar { get; set; }
-        }
+    private class JsonElementA
+    {
+        public JsonElement? Bar { get; set; }
+    }
 
-        private class JObjectA
-        {
-            public JObject? Bar { get; set; }
-        }
+    private class JsonElementB
+    {
+        public JsonElement Bar { get; set; }
+    }
 
-        private class JArrayA
-        {
-            public JArray? Bar { get; set; }
-        }
+    private class JTokenA
+    {
+        public JToken? Bar { get; set; }
+    }
+
+    private class JObjectA
+    {
+        public JObject? Bar { get; set; }
+    }
+
+    private class JArrayA
+    {
+        public JArray? Bar { get; set; }
     }
 }

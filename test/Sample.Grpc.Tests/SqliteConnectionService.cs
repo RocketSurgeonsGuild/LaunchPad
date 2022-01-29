@@ -1,28 +1,30 @@
-﻿using Microsoft.Extensions.Hosting;
-using Rocket.Surgery.DependencyInjection;
-using Sample.Core.Domain;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Rocket.Surgery.DependencyInjection;
+using Sample.Core.Domain;
 
-namespace Sample.Grpc.Tests
+namespace Sample.Grpc.Tests;
+
+internal class SqliteConnectionService : IHostedService
 {
-    class SqliteConnectionService : IHostedService
+    private readonly IServiceProvider _serviceProvider;
+
+    public SqliteConnectionService(IServiceProvider serviceProvider)
     {
-        private readonly IServiceProvider _serviceProvider;
+        _serviceProvider = serviceProvider;
+    }
 
-        public SqliteConnectionService(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        await _serviceProvider.WithScoped<RocketDbContext>()
+                              .Invoke(z => z.Database.EnsureCreatedAsync(cancellationToken))
+                              .ConfigureAwait(false);
+    }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await _serviceProvider.WithScoped<RocketDbContext>()
-               .Invoke(z => z.Database.EnsureCreatedAsync(cancellationToken))
-               .ConfigureAwait(false);
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 }

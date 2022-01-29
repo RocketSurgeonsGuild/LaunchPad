@@ -1,34 +1,34 @@
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Operations.Rockets;
-using System.Threading.Tasks;
 
-namespace Sample.Pages.Pages.Rockets
+namespace Sample.Pages.Pages.Rockets;
+
+public class RocketCreateModel : MediatorPageModel
 {
-    public class RocketCreateModel : MediatorPageModel
+    private readonly IMapper _mapper;
+
+    public RocketCreateModel(IMapper mapper)
     {
-        private readonly IMapper _mapper;
+        _mapper = mapper;
+    }
 
-        public RocketCreateModel(IMapper mapper)
+    [BindProperty] public CreateRocket.Request Model { get; set; } = new CreateRocket.Request();
+
+    public void OnGet()
+    {
+    }
+
+    public async Task<ActionResult> OnPost()
+    {
+        if (!ModelState.IsValid)
         {
-            _mapper = mapper;
+            return Page();
         }
 
-        [BindProperty]
-        public CreateRocket.Request Model { get; set; }= new CreateRocket.Request();
-
-        public void OnGet() { }
-
-        public async Task<ActionResult> OnPost()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            await Send(Model);
-            return RedirectToPage("Index");
-        }
+        await Send(Model);
+        return RedirectToPage("Index");
     }
 }

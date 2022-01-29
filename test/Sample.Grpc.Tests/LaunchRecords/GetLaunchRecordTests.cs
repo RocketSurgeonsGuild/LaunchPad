@@ -1,62 +1,60 @@
-﻿using Bogus;
-using FluentAssertions;
-using Google.Protobuf.WellKnownTypes;
-using NodaTime;
-using Rocket.Surgery.DependencyInjection;
-using Sample.Core.Domain;
-using Sample.Grpc.Tests.Validation;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Bogus;
+using FluentAssertions;
+using NodaTime;
+using Sample.Core.Domain;
 using Xunit;
 using Xunit.Abstractions;
 using LR = Sample.Grpc.LaunchRecords;
 
-namespace Sample.Grpc.Tests.LaunchRecords
+namespace Sample.Grpc.Tests.LaunchRecords;
+
+public class GetLaunchRecordTests : HandleGrpcHostBase
 {
-    public class GetLaunchRecordTests : HandleGrpcHostBase
+    [Fact]
+    public async Task Should_Get_A_LaunchRecord()
     {
-        private static readonly Faker Faker = new Faker();
+        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
+                                          .Invoke(
+                                               async (context, clock) =>
+                                               {
+                                                   var rocket = new ReadyRocket
+                                                   {
+                                                       Id = Guid.NewGuid(),
+                                                       Type = Core.Domain.RocketType.Falcon9,
+                                                       SerialNumber = "12345678901234"
+                                                   };
 
-        public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+                                                   var record = new LaunchRecord
+                                                   {
+                                                       Partner = "partner",
+                                                       Payload = "geo-fence-ftl",
+                                                       RocketId = rocket.Id,
+                                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                                                       PayloadWeightKg = 100,
+                                                   };
+                                                   context.Add(rocket);
+                                                   context.Add(record);
 
-        [Fact]
-        public async Task Should_Get_A_LaunchRecord()
-        {
-            var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
-            var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
-               .Invoke(
-                    async (context, clock) =>
-                    {
-                        var rocket = new ReadyRocket
-                        {
-                            Id = Guid.NewGuid(),
-                            Type = Core.Domain.RocketType.Falcon9,
-                            SerialNumber = "12345678901234"
-                        };
+                                                   await context.SaveChangesAsync();
+                                                   return record;
+                                               }
+                                           );
 
-                        var record = new LaunchRecord
-                        {
-                            Partner = "partner",
-                            Payload = "geo-fence-ftl",
-                            RocketId = rocket.Id,
-                            ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
-                            PayloadWeightKg = 100,
-                        };
-                        context.Add(rocket);
-                        context.Add(record);
+        var response = await client.GetLaunchRecordsAsync(new GetLaunchRecordRequest { Id = record.Id.ToString() });
 
-                        await context.SaveChangesAsync();
-                        return record;
-                    }
-                );
-
-            var response = await client.GetLaunchRecordsAsync( new GetLaunchRecordRequest { Id = record.Id.ToString() } );
-
-            response.Partner.Should().Be("partner");
-            response.Payload.Should().Be("geo-fence-ftl");
-            response.RocketType.Should().Be(RocketType.Falcon9);
-            response.RocketSerialNumber.Should().Be("12345678901234");
-            response.ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate.ToTimestamp());
-        }
+        response.Partner.Should().Be("partner");
+        response.Payload.Should().Be("geo-fence-ftl");
+        response.RocketType.Should().Be(RocketType.Falcon9);
+        response.RocketSerialNumber.Should().Be("12345678901234");
+        response.ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate.ToTimestamp());
     }
+
+    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
+    private static readonly Faker Faker = new Faker();
 }

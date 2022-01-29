@@ -1,55 +1,54 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Sample.Core.Operations.Rockets
+namespace Sample.Core.Operations.Rockets;
+
+[PublicAPI]
+public static class GetRocket
 {
-    [PublicAPI]
-    public static class GetRocket
+    public record Request : IRequest<RocketModel>
     {
-        public record Request : IRequest<RocketModel>
+        public Guid Id { get; set; }
+    }
+
+    private class Validator : AbstractValidator<Request>
+    {
+        public Validator()
         {
-            public Guid Id { get; set; }
+            RuleFor(x => x.Id)
+               .NotEmpty()
+               .NotNull();
+        }
+    }
+
+    private class Handler : IRequestHandler<Request, RocketModel>
+    {
+        private readonly RocketDbContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public Handler(RocketDbContext dbContext, IMapper mapper)
+        {
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        class Validator : AbstractValidator<Request>
+        public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            public Validator()
+            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
+            if (rocket == null)
             {
-                RuleFor(x => x.Id)
-                   .NotEmpty()
-                   .NotNull();
-            }
-        }
-
-        class Handler : IRequestHandler<Request, RocketModel>
-        {
-            private readonly RocketDbContext _dbContext;
-            private readonly IMapper _mapper;
-
-            public Handler(RocketDbContext dbContext, IMapper mapper)
-            {
-                _dbContext = dbContext;
-                _mapper = mapper;
+                throw new NotFoundException();
             }
 
-            public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
-            {
-                var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
-                if (rocket == null)
-                {
-                    throw new NotFoundException();
-                }
-
-                return _mapper.Map<RocketModel>(rocket);
-            }
+            return _mapper.Map<RocketModel>(rocket);
         }
     }
 }

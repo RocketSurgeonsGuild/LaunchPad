@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,46 +8,44 @@ using NodaTime.TimeZones;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
-using System;
 
 [assembly: Convention(typeof(NodaTimeConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Foundation.Conventions
+namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
+
+/// <summary>
+///     NodaTimeConvention.
+/// </summary>
+/// <seealso cref="IServiceConvention" />
+[PublicAPI]
+public class NodaTimeConvention : IServiceConvention
 {
+    private readonly FoundationOptions _options;
+
     /// <summary>
-    /// NodaTimeConvention.
+    ///     Create the NodaTime convention
     /// </summary>
-    /// <seealso cref="IServiceConvention" />
-    [PublicAPI]
-    public class NodaTimeConvention : IServiceConvention
+    /// <param name="options"></param>
+    public NodaTimeConvention(FoundationOptions? options = null)
     {
-        private readonly FoundationOptions _options;
+        _options = options ?? new FoundationOptions();
+    }
 
-        /// <summary>
-        /// Create the NodaTime convention
-        /// </summary>
-        /// <param name="options"></param>
-        public NodaTimeConvention(FoundationOptions? options = null)
+    /// <summary>
+    ///     Registers the specified context.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="configuration"></param>
+    /// <param name="services"></param>
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    {
+        if (context == null)
         {
-            _options = options ?? new FoundationOptions();
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <summary>
-        /// Registers the specified context.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="configuration"></param>
-        /// <param name="services"></param>
-        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            services.TryAddSingleton<IClock>(SystemClock.Instance);
-            services.TryAddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
-            services.TryAddSingleton(_options.DateTimeZoneSource);
-        }
+        services.TryAddSingleton<IClock>(SystemClock.Instance);
+        services.TryAddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
+        services.TryAddSingleton(_options.DateTimeZoneSource);
     }
 }

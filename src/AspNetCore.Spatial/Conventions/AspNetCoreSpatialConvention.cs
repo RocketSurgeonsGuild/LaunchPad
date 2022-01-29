@@ -8,15 +8,16 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 [assembly: Convention(typeof(AspNetCoreSpatialConvention))]
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+
+/// <summary>
+///     Convention to register spatial types
+/// </summary>
+public class AspNetCoreSpatialConvention : IServiceConvention
 {
-    /// <summary>
-    /// Convention to register spatial types
-    /// </summary>
-    public class AspNetCoreSpatialConvention : IServiceConvention
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        /// <inheritdoc/>
-        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-            => services.Configure<SwaggerGenOptions>(o => o.ConfigureForNetTopologySuite());
+        services.Configure<SwaggerGenOptions>(o => o.ConfigureForNetTopologySuite());
     }
 }

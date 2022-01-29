@@ -1,54 +1,53 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Sample.Core.Operations.Rockets
+namespace Sample.Core.Operations.Rockets;
+
+[PublicAPI]
+public static class DeleteRocket
 {
-    [PublicAPI]
-    public static class DeleteRocket
+    public record Request : IRequest
     {
-        public record Request : IRequest
+        public Guid Id { get; init; }
+    }
+
+    private class Validator : AbstractValidator<Request>
+    {
+        public Validator()
         {
-            public Guid Id { get; init; }
+            RuleFor(x => x.Id)
+               .NotEmpty()
+               .NotNull();
+        }
+    }
+
+    private class Handler : IRequestHandler<Request>
+    {
+        private readonly RocketDbContext _dbContext;
+
+        public Handler(RocketDbContext dbContext)
+        {
+            _dbContext = dbContext;
         }
 
-        class Validator : AbstractValidator<Request>
+        public async Task<Unit> Handle(Request request, CancellationToken cancellationToken)
         {
-            public Validator()
+            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
+            if (rocket == null)
             {
-                RuleFor(x => x.Id)
-                   .NotEmpty()
-                   .NotNull();
-            }
-        }
-
-        class Handler : IRequestHandler<Request>
-        {
-            private readonly RocketDbContext _dbContext;
-
-            public Handler(RocketDbContext dbContext)
-            {
-                _dbContext = dbContext;
+                throw new NotFoundException();
             }
 
-            public async Task<Unit> Handle(Request request, CancellationToken cancellationToken)
-            {
-                var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
-                if (rocket == null)
-                {
-                    throw new NotFoundException();
-                }
+            _dbContext.Remove(rocket);
+            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                _dbContext.Remove(rocket);
-                await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }

@@ -2,36 +2,35 @@ using AutoMapper;
 using AutoMapper.Internal;
 using JetBrains.Annotations;
 
-namespace Rocket.Surgery.LaunchPad.Mapping
+namespace Rocket.Surgery.LaunchPad.Mapping;
+
+/// <summary>
+///     AutoMapperProfileExpressionExtensions.
+/// </summary>
+[PublicAPI]
+public static class AutoMapperProfileExpressionExtensions
 {
     /// <summary>
-    /// AutoMapperProfileExpressionExtensions.
+    ///     Called when [defined properties].
     /// </summary>
-    [PublicAPI]
-    public static class AutoMapperProfileExpressionExtensions
+    /// <typeparam name="T"></typeparam>
+    /// <param name="configuration">The configuration.</param>
+    /// <returns>T.</returns>
+    public static T OnlyDefinedProperties<T>(this T configuration)
+        where T : IProfileExpression
     {
-        /// <summary>
-        /// Called when [defined properties].
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="configuration">The configuration.</param>
-        /// <returns>T.</returns>
-        public static T OnlyDefinedProperties<T>(this T configuration)
-            where T : IProfileExpression
-        {
-            configuration.Internal().ForAllPropertyMaps(
-                OnlyDefinedPropertiesMethods.ForStrings,
-                OnlyDefinedPropertiesMethods.StringCondition
-            );
-            configuration.Internal().ForAllPropertyMaps(
-                OnlyDefinedPropertiesMethods.ForValueTypes,
-                OnlyDefinedPropertiesMethods.ValueTypeCondition
-            );
-            configuration.Internal().ForAllPropertyMaps(
-                OnlyDefinedPropertiesMethods.ForNullableValueTypes,
-                OnlyDefinedPropertiesMethods.NullableValueTypeCondition
-            );
-            return configuration;
-        }
+        configuration.Internal().ForAllPropertyMaps(
+            OnlyDefinedPropertiesMethods.ForStrings,
+            OnlyDefinedPropertiesMethods.StringCondition
+        );
+        configuration.Internal().ForAllPropertyMaps(
+            OnlyDefinedPropertiesMethods.ForValueTypes,
+            OnlyDefinedPropertiesMethods.ValueTypeCondition
+        );
+        configuration.Internal().ForAllPropertyMaps(
+            OnlyDefinedPropertiesMethods.ForNullableValueTypes,
+            OnlyDefinedPropertiesMethods.NullableValueTypeCondition
+        );
+        return configuration;
     }
 }

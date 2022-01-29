@@ -1,37 +1,36 @@
+using System;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime;
-using System;
 
 // ReSharper disable once CheckNamespace
-namespace FluentAssertions
+namespace FluentAssertions;
+
+/// <summary>
+///     <see cref="Duration" /> fluent assertion extensions
+/// </summary>
+public static class DurationAssertionsExtensions
 {
     /// <summary>
-    /// <see cref="Duration"/> fluent assertion extensions
+    ///     Match nullable <see cref="Duration" />
     /// </summary>
-    public static class DurationAssertionsExtensions
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static DurationAssertions Should(this Duration? value)
     {
-        /// <summary>
-        /// Match nullable <see cref="Duration"/>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static DurationAssertions Should(this Duration? value)
-        {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-            return new DurationAssertions(value);
-        }
+        if (value == null) throw new ArgumentNullException(nameof(value));
+        return new DurationAssertions(value);
+    }
 
-        /// <summary>
-        /// Match <see cref="Duration"/>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static DurationAssertions Should(this Duration value)
-        {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-            return new DurationAssertions(value);
-        }
+    /// <summary>
+    ///     Match <see cref="Duration" />
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static DurationAssertions Should(this Duration value)
+    {
+        if (value == null) throw new ArgumentNullException(nameof(value));
+        return new DurationAssertions(value);
     }
 }

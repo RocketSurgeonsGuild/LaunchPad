@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+e.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,21 +48,24 @@ namespace Sample.Pages
             // Should this move into an extension method?
             app.UseSerilogRequestLogging(
                 x =>
-                {
-                    x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
-                    x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
-                }
-            );
-            app.UseMetricsAllMiddleware();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-            });
+                    x.GetLevel = L gHelpers.D
+            a
+                ultGetLevel;
+            x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
         }
-    }
+        );
+
+        app.UseMetricsAllMiddleware();
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapRazorPages();
+        });
+}
+
+}
 }

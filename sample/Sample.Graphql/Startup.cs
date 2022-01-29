@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore;
+﻿using Rocket.Surgery.LaunchPad.AspNetCore;
+
+ad.AspNetCore;
 using Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate;
 using Sample.Core.Domain;
 using Serilog;
@@ -16,19 +15,23 @@ namespace Sample.Graphql
         {
             services
                .AddGraphQLServer()
-               .AddDefaultTransactionScopeHandler()
+
+            f
+            ndler()
                .AddQueryType()
                .AddMutationType()
                .ConfigureSchema(
                     s =>
                     {
                         s.AddType(
-                            new ConfigureConfigureEntityFrameworkContextQueryType<RocketDbContext>(
-                                new ConfigureReadyRocketType(),
-                                new ConfigureLaunchRecordType()
+                            new ConfigureConfigureEntityFrameworkContextQueryType<Roc
+
+                        new ConfigureReadyRocketType(),
+                        new ConfigureLaunchRecordType()
                             )
-                        );
-                    })
+                            );
+                    }
+                )
                .AddSorting()
                .AddFiltering()
                .AddProjections();
@@ -42,7 +45,9 @@ namespace Sample.Graphql
                 x =>
                 {
                     x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
-                    x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
+                    x.EnrichDiagnostic
+                    n
+                        text = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
                 }
             );
             app.UseMetricsAllMiddleware();

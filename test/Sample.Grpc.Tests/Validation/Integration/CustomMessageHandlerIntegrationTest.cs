@@ -1,56 +1,61 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentValidation.Results;
 using Grpc.Core;
-using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Grpc.Tests.Validation.Integration
+namespace Sample.Grpc.Tests.Validation.Integration;
+
+public class CustomMessageHandlerIntegrationTest : LoggerTest, IClassFixture<TestWebHost>
 {
-    public class CustomMessageHandlerIntegrationTest : LoggerTest, IClassFixture<TestWebHost>
+    [Fact]
+    public async Task Should_ThrowInvalidArgument_When_NameOfMessageIsEmpty()
     {
-        private readonly ConventionTestWebHost<Startup> _factory;
+        // Given
+        var client = new Grpc.Rockets.RocketsClient(_factory.CreateGrpcChannel());
 
-        public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper) => _factory = factory
-           .ConfigureLoggerFactory(LoggerFactory)
-           .ConfigureHostBuilder(
-                options => options.ConfigureServices(services => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
-            );
-
-        [Fact]
-        public async Task Should_ThrowInvalidArgument_When_NameOfMessageIsEmpty()
+        // When
+        async Task Action()
         {
-            // Given
-            var client = new Grpc.Rockets.RocketsClient(_factory.CreateGrpcChannel());
-
-            // When
-            async Task Action()
-            {
-                await client.GetRocketsAsync(new GetRocketRequest
+            await client.GetRocketsAsync(
+                new GetRocketRequest
                 {
                     Id = ""
-                });
-            }
-
-            // Then
-            var rpcException = await Assert.ThrowsAsync<RpcException>(Action);
-            Assert.Equal(StatusCode.InvalidArgument, rpcException.Status.StatusCode);
-            Assert.Equal("Validation Error!", rpcException.Status.Detail);
+                }
+            );
         }
 
-        class CustomMessageHandler : IValidatorErrorMessageHandler
-        {
-            public Task<string> HandleAsync(IEnumerable<ValidationFailure> failures)
-            {
-                return Task.FromResult("Validation Error!");
-            }
+        // Then
+        var rpcException = await Assert.ThrowsAsync<RpcException>(Action);
+        Assert.Equal(StatusCode.InvalidArgument, rpcException.Status.StatusCode);
+        Assert.Equal("Validation Error!", rpcException.Status.Detail);
+    }
 
-            public string Handle(IEnumerable<ValidationFailure> failures) => "Validation Error!";
+    public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+    {
+        _factory = factory
+                  .ConfigureLoggerFactory(LoggerFactory)
+                  .ConfigureHostBuilder(
+                       options => options.ConfigureServices(services => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
+                   );
+    }
+
+    private readonly ConventionTestWebHost<Startup> _factory;
+
+    private class CustomMessageHandler : IValidatorErrorMessageHandler
+    {
+        public Task<string> HandleAsync(IEnumerable<ValidationFailure> failures)
+        {
+            return Task.FromResult("Validation Error!");
+        }
+
+        public string Handle(IEnumerable<ValidationFailure> failures)
+        {
+            return "Validation Error!";
         }
     }
 }

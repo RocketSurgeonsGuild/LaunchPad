@@ -1,115 +1,118 @@
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Language;
 using HotChocolate.Types;
-using System.Diagnostics.CodeAnalysis;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
+
+/// <summary>
+///     String to struct base type
+/// </summary>
+/// <typeparam name="TRuntimeType"></typeparam>
+public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntimeType, StringValueNode>
+    where TRuntimeType : struct
 {
     /// <summary>
-    /// String to struct base type
+    ///     Create the base type
     /// </summary>
-    /// <typeparam name="TRuntimeType"></typeparam>
-    public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntimeType, StringValueNode>
-        where TRuntimeType : struct
+    /// <param name="name"></param>
+    public StringToStructBaseType(string name) : base(name, BindingBehavior.Implicit)
     {
-        /// <summary>
-        /// Create the base type
-        /// </summary>
-        /// <param name="name"></param>
-        public StringToStructBaseType(string name) : base(name, bind: BindingBehavior.Implicit)
-        {
-        }
-        /// <summary>
-        /// Method to serialize
-        /// </summary>
-        /// <param name="baseValue"></param>
-        /// <returns></returns>
-        protected abstract string Serialize(TRuntimeType baseValue);
-        /// <summary>
-        /// Method to try and deserialize
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="output"></param>
-        /// <returns></returns>
-        protected abstract bool TryDeserialize(string str, [NotNullWhen(true)] out TRuntimeType? output);
+    }
 
-        /// <inheritdoc />
-        protected override TRuntimeType ParseLiteral(StringValueNode literal)
-        {
-            if (TryDeserialize(literal.Value, out TRuntimeType? value))
-            {
-                return value.Value;
-            }
+    /// <summary>
+    ///     Method to serialize
+    /// </summary>
+    /// <param name="baseValue"></param>
+    /// <returns></returns>
+    protected abstract string Serialize(TRuntimeType baseValue);
 
-            throw new SerializationException(
-                $"Unable to deserialize string to {Name}",
-                this);
+    /// <summary>
+    ///     Method to try and deserialize
+    /// </summary>
+    /// <param name="str"></param>
+    /// <param name="output"></param>
+    /// <returns></returns>
+    protected abstract bool TryDeserialize(string str, [NotNullWhen(true)] out TRuntimeType? output);
+
+    /// <inheritdoc />
+    protected override TRuntimeType ParseLiteral(StringValueNode literal)
+    {
+        if (TryDeserialize(literal.Value, out var value))
+        {
+            return value.Value;
         }
 
-        /// <inheritdoc />
-        protected override StringValueNode ParseValue(TRuntimeType value)
+        throw new SerializationException(
+            $"Unable to deserialize string to {Name}",
+            this
+        );
+    }
+
+    /// <inheritdoc />
+    protected override StringValueNode ParseValue(TRuntimeType value)
+    {
+        return new(Serialize(value));
+    }
+
+    /// <inheritdoc />
+    public override IValueNode ParseResult(object? resultValue)
+    {
+        if (resultValue is null)
         {
-            return new(Serialize(value));
+            return NullValueNode.Default;
         }
 
-        /// <inheritdoc />
-        public override IValueNode ParseResult(object? resultValue)
+        if (resultValue is string s)
         {
-            if (resultValue is null)
-            {
-                return NullValueNode.Default;
-            }
-
-            if (resultValue is string s)
-            {
-                return new StringValueNode(s);
-            }
-
-            if (resultValue is TRuntimeType v)
-            {
-                return ParseValue(v);
-            }
-
-            throw new SerializationException(
-                $"Unable to deserialize string to {Name}",
-                this);
+            return new StringValueNode(s);
         }
 
-        /// <inheritdoc />
-        public override bool TrySerialize(object? runtimeValue, out object? resultValue)
+        if (resultValue is TRuntimeType v)
         {
-            if (runtimeValue is null)
-            {
-                resultValue = null;
-                return true;
-            }
+            return ParseValue(v);
+        }
 
-            if (runtimeValue is TRuntimeType dt)
-            {
-                resultValue = Serialize(dt);
-                return true;
-            }
+        throw new SerializationException(
+            $"Unable to deserialize string to {Name}",
+            this
+        );
+    }
 
+    /// <inheritdoc />
+    public override bool TrySerialize(object? runtimeValue, out object? resultValue)
+    {
+        if (runtimeValue is null)
+        {
             resultValue = null;
-            return false;
+            return true;
         }
 
-        /// <inheritdoc />
-        public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
+        if (runtimeValue is TRuntimeType dt)
         {
-            if (resultValue is null)
-            {
-                runtimeValue = null;
-                return true;
-            }
-
-            if (resultValue is string str && TryDeserialize(str, out TRuntimeType? val))
-            {
-                runtimeValue = val;
-                return true;
-            }
-
-            runtimeValue = null;
-            return false;
+            resultValue = Serialize(dt);
+            return true;
         }
+
+        resultValue = null;
+        return false;
+    }
+
+    /// <inheritdoc />
+    public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
+    {
+        if (resultValue is null)
+        {
+            runtimeValue = null;
+            return true;
+        }
+
+        if (resultValue is string str && TryDeserialize(str, out var val))
+        {
+            runtimeValue = val;
+            return true;
+        }
+
+        runtimeValue = null;
+        return false;
     }
 }

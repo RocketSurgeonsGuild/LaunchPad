@@ -1,27 +1,32 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Serilog;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters;
+
+internal class SerilogLoggingPageFilter : IPageFilter
 {
-    class SerilogLoggingPageFilter : IPageFilter
+    private readonly IDiagnosticContext _diagnosticContext;
+
+    public SerilogLoggingPageFilter(IDiagnosticContext diagnosticContext)
     {
-        private readonly IDiagnosticContext _diagnosticContext;
-        public SerilogLoggingPageFilter(IDiagnosticContext diagnosticContext)
-        {
-            _diagnosticContext = diagnosticContext;
-        }
+        _diagnosticContext = diagnosticContext;
+    }
 
-        public void OnPageHandlerSelected(PageHandlerSelectedContext context)
+    public void OnPageHandlerSelected(PageHandlerSelectedContext context)
+    {
+        var name = context.HandlerMethod?.Name ?? context.HandlerMethod?.MethodInfo.Name;
+        if (name != null)
         {
-            var name = context.HandlerMethod?.Name ?? context.HandlerMethod?.MethodInfo.Name;
-            if (name != null)
-            {
-                _diagnosticContext.Set("RazorPageHandler", name);
-            }
+            _diagnosticContext.Set("RazorPageHandler", name);
         }
+    }
 
-        // Required by the interface
-        public void OnPageHandlerExecuted(PageHandlerExecutedContext context){}
-        public void OnPageHandlerExecuting(PageHandlerExecutingContext context) {}
+    // Required by the interface
+    public void OnPageHandlerExecuted(PageHandlerExecutedContext context)
+    {
+    }
+
+    public void OnPageHandlerExecuting(PageHandlerExecutingContext context)
+    {
     }
 }

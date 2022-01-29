@@ -1,35 +1,34 @@
 using NodaTime.Text;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Extensions
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
+
+internal static class IPatternExtensions
 {
-    internal static class IPatternExtensions
+    public static bool TryParse<NodaTimeType>(this IPattern<NodaTimeType> pattern, string text, out NodaTimeType? output)
+        where NodaTimeType : struct
     {
-        public static bool TryParse<NodaTimeType>(this IPattern<NodaTimeType> pattern, string text, out NodaTimeType? output)
-            where NodaTimeType : struct
+        var result = pattern.Parse(text);
+        if (result.Success)
         {
-            var result = pattern.Parse(text);
-            if (result.Success)
-            {
-                output = result.Value;
-                return true;
-            }
-
-            output = null;
-            return false;
+            output = result.Value;
+            return true;
         }
 
-        public static bool TryParse<NodaTimeType>(this IPattern<NodaTimeType> pattern, string text, out NodaTimeType? output)
-            where NodaTimeType : class
-        {
-            var result = pattern.Parse(text);
-            if (result.Success)
-            {
-                output = result.Value;
-                return true;
-            }
+        output = null;
+        return false;
+    }
 
-            output = null;
-            return false;
+    public static bool TryParse<NodaTimeType>(this IPattern<NodaTimeType> pattern, string text, out NodaTimeType? output)
+        where NodaTimeType : class
+    {
+        var result = pattern.Parse(text);
+        if (result.Success)
+        {
+            output = result.Value;
+            return true;
         }
+
+        output = null;
+        return false;
     }
 }

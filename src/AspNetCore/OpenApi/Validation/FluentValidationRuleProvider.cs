@@ -4,41 +4,44 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation;
+
+/// <summary>
+///     Provider for <see cref="FluentValidationRule" />.
+/// </summary>
+public static class FluentValidationRuleProvider
 {
     /// <summary>
-    /// Provider for <see cref="FluentValidationRule"/>.
+    ///     Creates default rules.
     /// </summary>
-    public static class FluentValidationRuleProvider
+    /// <returns>Enumeration of <see cref="FluentValidationRule" />.</returns>
+    public static FluentValidationRule[] CreateDefaultRules()
     {
-        /// <summary>
-        /// Creates default rules.
-        /// </summary>
-        /// <returns>Enumeration of <see cref= "FluentValidationRule" />.</returns>
-        public static FluentValidationRule[] CreateDefaultRules() => DefaultFluentValidationRuleProvider.Instance.GetRules().ToArray();
+        return DefaultFluentValidationRuleProvider.Instance.GetRules().ToArray();
+    }
 
-        /// <summary>
-        /// Overrides source rules with <paramref name="overrides"/> by name.
-        /// </summary>
-        /// <param name="source">Source rules.</param>
-        /// <param name="overrides">Overrides list.</param>
-        /// <returns>New rule list.</returns>
-        public static IReadOnlyList<FluentValidationRule> OverrideRules(
-            this IReadOnlyList<FluentValidationRule> source,
-            IEnumerable<FluentValidationRule>? overrides)
+    /// <summary>
+    ///     Overrides source rules with <paramref name="overrides" /> by name.
+    /// </summary>
+    /// <param name="source">Source rules.</param>
+    /// <param name="overrides">Overrides list.</param>
+    /// <returns>New rule list.</returns>
+    public static IReadOnlyList<FluentValidationRule> OverrideRules(
+        this IReadOnlyList<FluentValidationRule> source,
+        IEnumerable<FluentValidationRule>? overrides
+    )
+    {
+        if (overrides != null)
         {
-            if (overrides != null)
+            var validationRules = source.ToDictionary(rule => rule.Name, rule => rule);
+            foreach (var validationRule in overrides)
             {
-                var validationRules = source.ToDictionary(rule => rule.Name, rule => rule);
-                foreach (var validationRule in overrides)
-                {
-                    validationRules[validationRule.Name] = validationRule;
-                }
-
-                return validationRules.Values.ToList();
+                validationRules[validationRule.Name] = validationRule;
             }
 
-            return source;
+            return validationRules.Values.ToList();
         }
+
+        return source;
     }
 }

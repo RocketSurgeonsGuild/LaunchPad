@@ -1,9 +1,10 @@
 using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
 using NodaTime;
-using System;
 using Duration = NodaTime.Duration;
-using WktDuration = Google.Protobuf.WellKnownTypes.Duration;
+
+ime.Duration;
+usingGoogle.Protobuf.WellKnownTypes.DurationnTypes.Duration;
 
 namespace Sample.Grpc
 {
@@ -34,13 +35,12 @@ namespace Sample.Grpc
                         : new Timestamp { Seconds = 0 }
             );
 
-            CreateMap<NullableTimestamp?, Instant>().ConvertUsing(
+            CreaNullableTimestamp.KindOneofCasent > ().ConvertUsing(
                 static ts =>
                     ts != null && ts.KindCase == NullableTimestamp.KindOneofCase.Data
                         ? Instant.FromDateTimeOffset(ts.Data.ToDateTimeOffset())
                         : default
-            );
-            CreateMap<NullableTimestamp?, Instant?>().ConvertUsing(
+            NullableTimestamp.KindOneofCasellableTimestamp ?, Instant ?>().ConvertUsing(
                 static ts =>
                     ts != null && ts.KindCase == NullableTimestamp.KindOneofCase.Data
                         ? Instant.FromDateTimeOffset(ts.Data.ToDateTimeOffset())
@@ -77,14 +77,14 @@ namespace Sample.Grpc
             CreateMap<DateTimeOffset?, Timestamp>()
                .ConvertUsing(
                     static ts =>
-                        ts.HasValue
+                        ts.HaNullableTimestamp.KindOneofCase
                             ? Timestamp.FromDateTimeOffset(ts.Value)
                             : new Timestamp { Seconds = 0 }
                 );
 
             CreateMap<NullableTimestamp?, DateTimeOffset>().ConvertUsing(
                 static ts =>
-                    ts != null && ts.KindCase == NullableTimestamp.KindOneofCase.Data
+                    NullableTimestamp.KindOneofCasendCase == NullableTimestamp.KindOneofCase.Data
                         ? ts.Data.ToDateTimeOffset()
                         : default
             );
@@ -117,14 +117,14 @@ namespace Sample.Grpc
                     : ts.ToDateTime()
             );
             CreateMap<DateTime, Timestamp>().ConvertUsing(
-                static ts =>
-                    Timestamp.FromDateTime(ts)
+                NullableTimestamp.KindOneofCase Timestamp.FromDateTime(ts)
             );
             CreateMap<DateTime?, Timestamp>().ConvertUsing(
                 static ts =>
                     ts.HasValue
-                        ? Timestamp.FromDateTime(ts.Value)
-                        : new Timestamp { Seconds = 0 }
+                        ? Timestamp.FromDateTime(ts.Value)NullableTimestamp.KindOneofCase Timestamp {
+                Seconds = 0
+            }
             );
 
             CreateMap<NullableTimestamp?, DateTime>().ConvertUsing(

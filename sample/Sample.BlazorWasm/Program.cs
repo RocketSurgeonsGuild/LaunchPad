@@ -1,11 +1,8 @@
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentValidation;
-using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
+AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.WebAssembly.Hosting;
@@ -20,10 +17,12 @@ namespace Sample.BlazorWasm
             var builder = WebAssemblyHostBuilder.CreateDefault(args)
                                                 .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
                 ;
-            builder.RootComponents.Add<App>("app");
+            bui
+            er.RootComponents.Add<App>("app");
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            await builder.Build().RunAsync();
+            await build
+            ld().RunAsync();
         }
     }
 
@@ -47,7 +46,8 @@ namespace Sample.BlazorWasm
                    .MinimumLength(1)
                    .MaximumLength(20);
                 RuleFor(x => x.LastName)
-                   .NotEmpty()
+                   .No
+                        ()
                    .MinimumLength(1)
                    .MaximumLength(50);
             }
@@ -60,17 +60,16 @@ namespace Sample.BlazorWasm
             {
                 RuleFor(z => z.FullName).NotEmpty();
             }
-        }
 
-        [UsedImplicitly]
-        private class Handler : IRequestHandler<Request, Response>
-        {
-            public Task<Response> Handle(Request request, CancellationToken cancellationToken)
+            [UsedImplicitly]
+            private class Handler : IRequestHandler<Request, Response>
             {
-                return Task.FromResult(
-                    new Response(request.FirstName + " " + request.LastName)
-                );
+                public Task<Response> Handle(Request request, CancellationToken cancellationToken)
+                {
+                    return Task.FromResult(
+                        new Response(request.FirstName + " " + request.LastName)
+                    );
+                }
             }
         }
     }
-}

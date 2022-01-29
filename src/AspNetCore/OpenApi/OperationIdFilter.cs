@@ -1,44 +1,45 @@
-﻿using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Globalization;
-using System.Text.RegularExpressions;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
+namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
+
+internal class OperationIdFilter : IOperationFilter
 {
-    class OperationIdFilter : IOperationFilter
+    /// <summary>
+    ///     By default, pascalize converts strings to UpperCamelCase also removing underscores
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    private static string Pascalize(string input)
     {
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            if (string.IsNullOrWhiteSpace(operation.OperationId) &&
-                context.ApiDescription.ActionDescriptor is ControllerActionDescriptor cad)
-            {
-                operation.OperationId = cad.ActionName;
-            }
+        return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
+    }
 
-            foreach (var parameter in operation.Parameters)
-            {
-                parameter.Name = Camelize(parameter.Name);
-            }
+    /// <summary>
+    ///     Same as Pascalize except that the first character is lower case
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    private static string Camelize(string input)
+    {
+        var word = Pascalize(input);
+        return word.Length > 0 ? word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + word.Substring(1) : word;
+    }
+
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    {
+        if (string.IsNullOrWhiteSpace(operation.OperationId) &&
+            context.ApiDescription.ActionDescriptor is ControllerActionDescriptor cad)
+        {
+            operation.OperationId = cad.ActionName;
         }
 
-
-        /// <summary>
-        /// By default, pascalize converts strings to UpperCamelCase also removing underscores
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private static string Pascalize(string input) => Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
-
-        /// <summary>
-        /// Same as Pascalize except that the first character is lower case
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private static string Camelize(string input)
+        foreach (var parameter in operation.Parameters)
         {
-            var word = Pascalize(input);
-            return word.Length > 0 ? word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + word.Substring(1) : word;
+            parameter.Name = Camelize(parameter.Name);
         }
     }
 }

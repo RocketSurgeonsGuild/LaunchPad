@@ -1,59 +1,62 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Rocket.Surgery.LaunchPad.Foundation;
-using System.Threading.Tasks;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters;
+
+/// <summary>
+///     Not found exception that catches not found messages that might have been thrown by calling code.
+/// </summary>
+internal class NotFoundExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
 {
+    private readonly ProblemDetailsFactory _problemDetailsFactory;
+
     /// <summary>
-    /// Not found exception that catches not found messages that might have been thrown by calling code.
+    ///     Create a new NotFoundExceptionFilter
     /// </summary>
-    class NotFoundExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
+    /// <param name="problemDetailsFactory"></param>
+    public NotFoundExceptionFilter(ProblemDetailsFactory problemDetailsFactory)
     {
-        private readonly ProblemDetailsFactory _problemDetailsFactory;
+        _problemDetailsFactory = problemDetailsFactory;
+    }
 
-        /// <summary>
-        /// Create a new NotFoundExceptionFilter
-        /// </summary>
-        /// <param name="problemDetailsFactory"></param>
-        public NotFoundExceptionFilter(ProblemDetailsFactory problemDetailsFactory) => _problemDetailsFactory = problemDetailsFactory;
+    /// <inheritdoc />
+    public Task OnExceptionAsync(ExceptionContext context)
+    {
+        OnException(context);
+        return Task.CompletedTask;
+    }
 
-        /// <inheritdoc />
-        public void OnException(ExceptionContext context)
+    /// <inheritdoc />
+    public void OnException(ExceptionContext context)
+    {
+        if (context.Exception is NotFoundException exception)
         {
-            if (context.Exception is NotFoundException exception)
+            context.ExceptionHandled = true;
+            var problemDetails = _problemDetailsFactory.CreateProblemDetails(
+                context.HttpContext,
+                StatusCodes.Status404NotFound,
+                detail: exception.Message,
+                title: exception.Title,
+                type: exception.Link,
+                instance: exception.Instance
+            );
+
+            foreach (var item in exception.Properties)
             {
-                context.ExceptionHandled = true;
-                var problemDetails = _problemDetailsFactory.CreateProblemDetails(
-                    context.HttpContext,
-                    StatusCodes.Status404NotFound,
-                    detail: exception.Message,
-                    title: exception.Title,
-                    type: exception.Link,
-                    instance: exception.Instance
-                );
-
-                foreach (var item in exception.Properties)
-                {
-                    if (problemDetails.Extensions.ContainsKey(item.Key)) continue;
-                    problemDetails.Extensions.Add(item);
-                }
-
-                context.Result = new ObjectResult(problemDetails) {
-                    StatusCode = StatusCodes.Status404NotFound
-                };
+                if (problemDetails.Extensions.ContainsKey(item.Key)) continue;
+                problemDetails.Extensions.Add(item);
             }
-        }
 
-        /// <inheritdoc />
-        public Task OnExceptionAsync(ExceptionContext context)
-        {
-            OnException(context);
-            return Task.CompletedTask;
+            context.Result = new ObjectResult(problemDetails)
+            {
+                StatusCode = StatusCodes.Status404NotFound
+            };
         }
     }
 }

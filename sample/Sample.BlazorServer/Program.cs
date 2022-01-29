@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyModel;
-using Microsoft.Extensions.Hosting;
+
+ing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 
@@ -14,8 +14,11 @@ namespace Sample.BlazorServer
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-           .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
-           .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                       .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
+                       .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+        }
     }
 }

@@ -3,17 +3,16 @@
 
 using System.Collections.Generic;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation;
+
+/// <summary>
+///     Provides rules for schema generation.
+/// </summary>
+public interface IFluentValidationRuleProvider
 {
     /// <summary>
-    /// Provides rules for schema generation.
+    ///     Gets rules for schema generation.
     /// </summary>
-    public interface IFluentValidationRuleProvider
-    {
-        /// <summary>
-        /// Gets rules for schema generation.
-        /// </summary>
-        /// <returns>Enumeration of <see cref="FluentValidationRule"/>.</returns>
-        IEnumerable<FluentValidationRule> GetRules();
-    }
+    /// <returns>Enumeration of <see cref="FluentValidationRule" />.</returns>
+    IEnumerable<FluentValidationRule> GetRules();
 }

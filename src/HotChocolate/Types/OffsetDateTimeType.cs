@@ -1,35 +1,38 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using NodaTime;
 using NodaTime.Text;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
+
+/// <summary>
+///     Represents a <see cref="OffsetDateTime" /> in Hot Chocolate
+/// </summary>
+public class OffsetDateTimeType : StringToStructBaseType<OffsetDateTime>
 {
     /// <summary>
-    /// Represents a <see cref="OffsetDateTime"/> in Hot Chocolate
+    ///     The constructor
     /// </summary>
-    public class OffsetDateTimeType : StringToStructBaseType<OffsetDateTime>
+    public OffsetDateTimeType() : base("OffsetDateTime")
     {
-        /// <summary>
-        /// The constructor
-        /// </summary>
-        public OffsetDateTimeType() : base("OffsetDateTime")
-        {
-            Description = "A local date and time in a particular calendar system, combined with an offset from UTC.";
-        }
+        Description = "A local date and time in a particular calendar system, combined with an offset from UTC.";
+    }
 
-        /// <inheritdoc />
-        protected override string Serialize(OffsetDateTime baseValue)
-            => OffsetDateTimePattern.GeneralIso
-                .WithCulture(CultureInfo.InvariantCulture)
-                .Format(baseValue);
+    /// <inheritdoc />
+    protected override string Serialize(OffsetDateTime baseValue)
+    {
+        return OffsetDateTimePattern.GeneralIso
+                                    .WithCulture(CultureInfo.InvariantCulture)
+                                    .Format(baseValue);
+    }
 
-        /// <inheritdoc />
-        protected override bool TryDeserialize(string str, [NotNullWhen(true)] out OffsetDateTime? output)
-            => OffsetDateTimePattern.ExtendedIso
-                .WithCulture(CultureInfo.InvariantCulture)
-                .TryParse(str, out output);
+    /// <inheritdoc />
+    protected override bool TryDeserialize(string str, [NotNullWhen(true)] out OffsetDateTime? output)
+    {
+        return OffsetDateTimePattern.ExtendedIso
+                                    .WithCulture(CultureInfo.InvariantCulture)
+                                    .TryParse(str, out output);
     }
 }

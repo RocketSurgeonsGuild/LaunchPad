@@ -3,16 +3,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.BlazorWasm.Tests
-{
-    public class FoundationTests : HandleTestHostBase
-    {
-        public FoundationTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
+namespace Sample.BlazorWasm.Tests;
 
-        [Fact]
-        public void AutoMapper() => ServiceProvider.GetRequiredService<IMapper>()
-           .ConfigurationProvider.AssertConfigurationIsValid();
+public class FoundationTests : HandleTestHostBase
+{
+    [Fact]
+    public void AutoMapper()
+    {
+        ServiceProvider.GetRequiredService<IMapper>()
+                       .ConfigurationProvider.AssertConfigurationIsValid();
+    }
+
+    public FoundationTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
     }
 }

@@ -1,51 +1,53 @@
-using JetBrains.Annotations;
+using System;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Hosting.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Events;
-using System;
 
 [assembly: Convention(typeof(SerilogDebugLoggingConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Hosting.Conventions
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
+
+/// <summary>
+///     SerilogDebugLoggingConvention.
+///     Implements the <see cref="ISerilogConvention" />
+/// </summary>
+/// <seealso cref="ISerilogConvention" />
+public sealed class SerilogDebugLoggingConvention : ISerilogConvention
 {
+    private readonly LaunchPadLoggingOptions _options;
+
     /// <summary>
-    /// SerilogDebugLoggingConvention.
-    /// Implements the <see cref="ISerilogConvention" />
+    ///     Initializes a new instance of the <see cref="SerilogDebugLoggingConvention" /> class.
     /// </summary>
-    /// <seealso cref="ISerilogConvention" />
-    public sealed class SerilogDebugLoggingConvention : ISerilogConvention
+    /// <param name="options">The options.</param>
+    public SerilogDebugLoggingConvention(LaunchPadLoggingOptions? options = null)
     {
-        private readonly LaunchPadLoggingOptions _options;
+        _options = options ?? new LaunchPadLoggingOptions();
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SerilogDebugLoggingConvention" /> class.
-        /// </summary>
-        /// <param name="options">The options.</param>
-        public SerilogDebugLoggingConvention(LaunchPadLoggingOptions? options = null)
-            => _options = options ?? new LaunchPadLoggingOptions();
-
-        /// <inheritdoc />
-        public void Register(
-            IConventionContext context,
-            IServiceProvider services,
-            IConfiguration configuration,
-            LoggerConfiguration loggerConfiguration
-        )
+    /// <inheritdoc />
+    public void Register(
+        IConventionContext context,
+        IServiceProvider services,
+        IConfiguration configuration,
+        LoggerConfiguration loggerConfiguration
+    )
+    {
+        if (configuration == null)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            throw new ArgumentNullException(nameof(configuration));
+        }
 
-            if (!_options.EnableDebugLogging) return;
+        if (!_options.EnableDebugLogging) return;
 
-            loggerConfiguration.WriteTo.Async(c => c.Debug(
+        loggerConfiguration.WriteTo.Async(
+            c => c.Debug(
                 LogEventLevel.Verbose,
                 _options.DebugMessageTemplate
-            ));
-        }
+            )
+        );
     }
 }

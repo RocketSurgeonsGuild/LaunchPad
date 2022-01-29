@@ -2,40 +2,40 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-#if NET
-using Microsoft.Extensions.DependencyInjection.Extensions;
-#endif
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
+#if NET
+using Microsoft.Extensions.DependencyInjection.Extensions;
+#endif
 
 [assembly: Convention(typeof(DataConvention))]
 
-namespace Sample.Core
+namespace Sample.Core;
+
+internal class DataConvention : IServiceConvention
 {
-    class DataConvention : IServiceConvention
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-        {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-            services
+        var connection = new SqliteConnection("DataSource=:memory:");
+        connection.Open();
+        services
 #if NETSTANDARD
-               .AddDbContextPool<RocketDbContext>(
+           .AddDbContextPool<RocketDbContext>(
 #else
-               .AddPooledDbContextFactory<RocketDbContext>(
+           .AddPooledDbContextFactory<RocketDbContext>(
 #endif
-                    x => x
+                x => SqliteDbContextOptionsBuilderExtensions.UseSqlite(
+                    x
                        .EnableDetailedErrors()
                        .EnableSensitiveDataLogging()
-                       .EnableServiceProviderCaching()
-                       .UseSqlite(connection)
-                );
+                       .EnableServiceProviderCaching(), connection
+                )
+            );
 #if NET
-            // temp?
-            services.TryAddScoped(_ => _.GetRequiredService<IDbContextFactory<RocketDbContext>>().CreateDbContext());
+        // temp?
+        services.TryAddScoped(_ => _.GetRequiredService<IDbContextFactory<RocketDbContext>>().CreateDbContext());
 #endif
-        }
     }
 }

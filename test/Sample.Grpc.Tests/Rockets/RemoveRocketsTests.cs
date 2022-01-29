@@ -1,42 +1,40 @@
-﻿using Bogus;
-using FluentAssertions;
-using Rocket.Surgery.DependencyInjection;
+﻿using System.Threading.Tasks;
+using Bogus;
 using Sample.Core;
 using Sample.Core.Domain;
-using Sample.Grpc.Tests.Validation;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 using R = Sample.Grpc.Rockets;
 
-namespace Sample.Grpc.Tests.Rockets
+namespace Sample.Grpc.Tests.Rockets;
+
+public class RemoveRocketsTests : HandleGrpcHostBase
 {
-    public class RemoveRocketsTests : HandleGrpcHostBase
+    [Fact]
+    public async Task Should_Remove_Rocket()
     {
-        private static readonly Faker Faker = new Faker();
+        var client = new R.RocketsClient(Factory.CreateGrpcChannel());
+        var id = await ServiceProvider.WithScoped<RocketDbContext>()
+                                      .Invoke(
+                                           async z =>
+                                           {
+                                               var faker = new RocketFaker();
+                                               var rocket = faker.Generate();
+                                               z.Add(rocket);
 
-        public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+                                               await z.SaveChangesAsync().ConfigureAwait(false);
+                                               return rocket.Id;
+                                           }
+                                       );
 
-        [Fact]
-        public async Task Should_Remove_Rocket()
-        {
-            var client = new R.RocketsClient(Factory.CreateGrpcChannel());
-            var id = await ServiceProvider.WithScoped<RocketDbContext>()
-               .Invoke(
-                    async z =>
-                    {
-                        var faker = new RocketFaker();
-                        var rocket = faker.Generate();
-                        z.Add(rocket);
+        await client.DeleteRocketAsync(new DeleteRocketRequest { Id = id.ToString() });
 
-                        await z.SaveChangesAsync().ConfigureAwait(false);
-                        return rocket.Id;
-                    }
-                );
-
-            await client.DeleteRocketAsync(new DeleteRocketRequest { Id = id.ToString() });
-
-            ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
-        }
+        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
     }
+
+    public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
+    private static readonly Faker Faker = new Faker();
 }

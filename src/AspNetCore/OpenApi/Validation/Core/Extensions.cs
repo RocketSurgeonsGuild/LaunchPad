@@ -6,42 +6,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core
+namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
+
+/// <summary>
+///     Extensions for some swagger specific work.
+/// </summary>
+public static class Extensions
 {
     /// <summary>
-    /// Extensions for some swagger specific work.
+    ///     Is supported swagger numeric type.
     /// </summary>
-    public static class Extensions
+    internal static bool IsNumeric(this object value)
     {
-        /// <summary>
-        /// Is supported swagger numeric type.
-        /// </summary>
-        internal static bool IsNumeric(this object value) => value is int || value is long || value is float || value is double || value is decimal;
+        return value is int || value is long || value is float || value is double || value is decimal;
+    }
 
-        /// <summary>
-        /// Convert numeric to double.
-        /// </summary>
-        internal static decimal NumericToDecimal(this object value) => Convert.ToDecimal(value);
+    /// <summary>
+    ///     Convert numeric to double.
+    /// </summary>
+    internal static decimal NumericToDecimal(this object value)
+    {
+        return Convert.ToDecimal(value);
+    }
 
-        internal static Type? GetMemberType(this MemberInfo memberInfo) => memberInfo switch
+    internal static Type? GetMemberType(this MemberInfo memberInfo)
+    {
+        return memberInfo switch
         {
             PropertyInfo pi => pi.PropertyType,
             FieldInfo fi    => fi.FieldType,
             _               => null
         };
+    }
 
-        /// <summary>
-        /// Returns not null enumeration.
-        /// </summary>
-        internal static IEnumerable<TValue> NotNull<TValue>(this IEnumerable<TValue>? collection) => collection ?? Array.Empty<TValue>();
+    /// <summary>
+    ///     Returns not null enumeration.
+    /// </summary>
+    internal static IEnumerable<TValue> NotNull<TValue>(this IEnumerable<TValue>? collection)
+    {
+        return collection ?? Array.Empty<TValue>();
+    }
 
-        internal static IEnumerable<TValue> ToArrayDebug<TValue>(this IEnumerable<TValue>? collection)
-        {
+    internal static IEnumerable<TValue> ToArrayDebug<TValue>(this IEnumerable<TValue>? collection)
+    {
 #if DEBUG
-            return collection?.ToArray() ?? Array.Empty<TValue>();
+        return collection?.ToArray() ?? Array.Empty<TValue>();
 #else
             return collection;
 #endif
-        }
     }
 }

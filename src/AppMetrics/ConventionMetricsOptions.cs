@@ -1,13 +1,12 @@
-namespace Rocket.Surgery.LaunchPad.AppMetrics
+namespace Rocket.Surgery.LaunchPad.AppMetrics;
+
+/// <summary>
+///     Options for configuration Metrics
+/// </summary>
+public class ConventionMetricsOptions
 {
     /// <summary>
-    /// Options for configuration Metrics
+    ///     Use the default metrics configuration from App.Metrics
     /// </summary>
-    public class ConventionMetricsOptions
-    {
-        /// <summary>
-        /// Use the default metrics configuration from App.Metrics
-        /// </summary>
-        public bool UseDefaults { get; set; } = true;
-    }
+    public bool UseDefaults { get; set; } = true;
 }

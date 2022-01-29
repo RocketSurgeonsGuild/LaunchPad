@@ -9,7 +9,6 @@
         <ProjectReference Include="..\..\src\Mapping.NewtonsoftJson\Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj" />
         <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
         <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
-        <ProjectReference Include="..\..\src\Workers\Rocket.Surgery.LaunchPad.Workers.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Mapping" />
