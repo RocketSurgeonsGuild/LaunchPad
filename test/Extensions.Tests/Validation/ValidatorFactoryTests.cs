@@ -1,4 +1,5 @@
 using FakeItEasy;
+using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Extensions.Testing;

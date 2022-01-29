@@ -18,7 +18,7 @@ internal class HotChocolateContextDataConfigureOptions : IConfigureNamedOptions<
                 (provider, builder) =>
                 {
                     builder
-                       .TryAddTypeInterceptor<NestedTypeNameTypeInterceptor>();
+                       .TryAddTypeInterceptor(typeof(NestedTypeNameTypeInterceptor));
                 }
             )
         );

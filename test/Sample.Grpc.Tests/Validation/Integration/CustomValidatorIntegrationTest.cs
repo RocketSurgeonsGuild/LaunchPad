@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Grpc.Core;
+using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;

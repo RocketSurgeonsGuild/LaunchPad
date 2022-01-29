@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using AutoMapper;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Xunit;

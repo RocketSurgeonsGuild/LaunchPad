@@ -3,6 +3,7 @@ using FluentAssertions;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
+using Sample.Grpc.Tests.Validation;
 using Xunit;
 using Xunit.Abstractions;
 using LR = Sample.Grpc.LaunchRecords;

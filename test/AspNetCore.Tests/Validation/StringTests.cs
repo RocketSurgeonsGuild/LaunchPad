@@ -1,3 +1,5 @@
+using FluentAssertions;
+using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
 using Xunit;
 
 namespace AspNetCore.Tests.Validation;

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Grpc.Core;
+using Sample.Grpc.Tests.Validation;
 using Xunit;
 using Xunit.Abstractions;
 using R = Sample.Grpc.Rockets;
