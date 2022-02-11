@@ -14,7 +14,7 @@ public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntime
     ///     Create the base type
     /// </summary>
     /// <param name="name"></param>
-    public StringToStructBaseType(string name) : base(name, BindingBehavior.Implicit)
+    protected StringToStructBaseType(string name) : base(name, BindingBehavior.Implicit)
     {
     }
 
@@ -34,9 +34,9 @@ public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntime
     protected abstract bool TryDeserialize(string str, [NotNullWhen(true)] out TRuntimeType? output);
 
     /// <inheritdoc />
-    protected override TRuntimeType ParseLiteral(StringValueNode literal)
+    protected override TRuntimeType ParseLiteral(StringValueNode valueSyntax)
     {
-        if (TryDeserialize(literal.Value, out var value))
+        if (TryDeserialize(valueSyntax.Value, out var value))
         {
             return value.Value;
         }
@@ -48,9 +48,9 @@ public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntime
     }
 
     /// <inheritdoc />
-    protected override StringValueNode ParseValue(TRuntimeType value)
+    protected override StringValueNode ParseValue(TRuntimeType runtimeValue)
     {
-        return new(Serialize(value));
+        return new(Serialize(runtimeValue));
     }
 
     /// <inheritdoc />

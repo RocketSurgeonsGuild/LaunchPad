@@ -34,9 +34,9 @@ public abstract class StringToClassBaseType<TRuntimeType> : ScalarType<TRuntimeT
     protected abstract bool TryDeserialize(string str, [NotNullWhen(true)] out TRuntimeType? output);
 
     /// <inheritdoc />
-    protected override TRuntimeType ParseLiteral(StringValueNode literal)
+    protected override TRuntimeType ParseLiteral(StringValueNode valueSyntax)
     {
-        if (TryDeserialize(literal.Value, out var value))
+        if (TryDeserialize(valueSyntax.Value, out var value))
         {
             return value;
         }
@@ -48,9 +48,9 @@ public abstract class StringToClassBaseType<TRuntimeType> : ScalarType<TRuntimeT
     }
 
     /// <inheritdoc />
-    protected override StringValueNode ParseValue(TRuntimeType value)
+    protected override StringValueNode ParseValue(TRuntimeType runtimeValue)
     {
-        return new(Serialize(value));
+        return new(Serialize(runtimeValue));
     }
 
     /// <inheritdoc />

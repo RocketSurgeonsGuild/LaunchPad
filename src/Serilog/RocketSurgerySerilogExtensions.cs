@@ -16,6 +16,7 @@ public static class RocketSurgerySerilogExtensions
     /// </summary>
     /// <param name="configurationBuilder"></param>
     /// <param name="conventionContext"></param>
+    /// <param name="services"></param>
     /// <returns></returns>
     public static LoggerConfiguration ApplyConventions(
         this LoggerConfiguration configurationBuilder, IConventionContext conventionContext, IServiceProvider services

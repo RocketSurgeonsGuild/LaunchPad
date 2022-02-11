@@ -29,7 +29,7 @@ public class NestedTypeNameTypeInterceptor : TypeInterceptor
             {
                 iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.Name}";
 
-                if (iotd.Name.Value.EndsWith("Input") && iotd.RuntimeType.Name == "Request")
+                if (iotd.Name.Value.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && iotd.RuntimeType.Name == "Request")
                 {
                     iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.RuntimeType.Name}";
                 }

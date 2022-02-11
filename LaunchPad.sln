@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{5D11C1
 		sample\Directory.Packages.props = sample\Directory.Packages.props
 		sample\Directory.Build.props = sample\Directory.Build.props
 		sample\Directory.Build.targets = sample\Directory.Build.targets
+		sample\.editorconfig = sample\.editorconfig
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Command", "sample\Sample.Command\Sample.Command.csproj", "{9C03CA0E-4A3B-48F3-9DDD-DE1B325936A9}"

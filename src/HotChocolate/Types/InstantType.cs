@@ -9,10 +9,11 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
 /// <summary>
 ///     Represents an <see cref="Instant" /> in Hot Chocolate
 /// </summary>
+[UsedImplicitly]
 public class InstantType : StringToStructBaseType<Instant>
 {
     /// <summary>
-    ///     The constrcutor
+    ///     The constructor
     /// </summary>
     public InstantType() : base("Instant")
     {

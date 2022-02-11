@@ -9,7 +9,7 @@ using Spectre.Console.Cli;
 
 await Rocket.Surgery.Conventions.CommandLine.App.Create<Default>(
                  builder => builder
-                           .WithConventionsFrom(Imports.GetConventions)
+                           .WithConventionsFrom(Sample.Command.Conventions.Imports.GetConventions)
                            .ConfigureLogging(z => z.AddConsole())
                            .UseDryIoc()
                            .ConfigureDryIoc(
@@ -28,6 +28,7 @@ public class InstanceThing
     public string From = "DryIoc";
 }
 
+
 public class Dump : Command<AppSettings>
 {
     private readonly IConfiguration _configuration;
@@ -41,7 +42,7 @@ public class Dump : Command<AppSettings>
         _instanceThing = instanceThing;
     }
 
-    public override int Execute(CommandContext context, AppSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
     {
         _logger.LogInformation(_instanceThing.From);
         foreach (var item in _configuration.AsEnumerable().Reverse())

@@ -284,6 +284,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         );
     }
 
+    /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var values = context.SyntaxProvider
@@ -446,7 +447,7 @@ internal static class SyntaxExtensions
 
     public static bool ContainsAttribute(this TypeDeclarationSyntax syntax, string attributePrefixes) // string is comma separated
     {
-    return syntax.AttributeLists.ContainsAttribute(attributePrefixes);
+        return syntax.AttributeLists.ContainsAttribute(attributePrefixes);
     }
 
     public static bool ContainsAttribute(this AttributeListSyntax list, string attributePrefixes) // string is comma separated

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.Metadata;
@@ -27,7 +28,7 @@ internal static class PrefixExtensions
                 var value = provider.GetValue(prefix + property.Name).FirstOrDefault();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    property.SetValue(instance, Convert.ChangeType(value, property.PropertyType));
+                    property.SetValue(instance, Convert.ChangeType(value, property.PropertyType, CultureInfo.InvariantCulture));
                 }
             }
         }

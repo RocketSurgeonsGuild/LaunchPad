@@ -15,7 +15,8 @@ public static class NetTopologySuiteSerializationExtensions
     ///     Configure System.Text.Json with defaults for launchpad
     /// </summary>
     /// <param name="options"></param>
-    /// <param name="dateTimeZoneProvider"></param>
+    /// <param name="factory"></param>
+    /// <param name="dimension"></param>
     /// <returns></returns>
     public static JsonSerializer ConfigureNetTopologySuiteForLaunchPad(this JsonSerializer options, GeometryFactory? factory, int dimension = 2)
     {

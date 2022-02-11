@@ -6,7 +6,7 @@ namespace Rocket.Surgery.LaunchPad.Metadata;
 /// </summary>
 /// <seealso cref="System.Attribute" />
 [AttributeUsage(AttributeTargets.Property)]
-internal class PrefixAttribute : Attribute
+internal sealed class PrefixAttribute : Attribute
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="PrefixAttribute" /> class.

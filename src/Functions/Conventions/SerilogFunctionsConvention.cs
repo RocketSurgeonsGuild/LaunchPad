@@ -55,7 +55,9 @@ public class SerilogFunctionsConvention : IServiceConvention
         LoggerProviderCollection? loggerProviders = null;
         if (_options.WriteToProviders)
         {
+#pragma warning disable CA2000
             loggerProviders = new LoggerProviderCollection();
+#pragma warning restore CA2000
         }
 
         services.AddSingleton<ILoggerFactory>(

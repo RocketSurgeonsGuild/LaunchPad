@@ -67,6 +67,15 @@ public class FluentValidationProblemDetail
     [JsonPropertyName("errorCode")]
     public string ErrorCode { get; set; }
 
+    /// <summary>
+    ///     Convert the problem details into a dictionary of information in graphql
+    /// </summary>
+    /// <returns></returns>
+    public ReadOnlyDictionary<string, object?> ToReadOnlyDictionary()
+    {
+        return this;
+    }
+
     internal class Validator : AbstractValidator<FluentValidationProblemDetail>
     {
         public Validator()

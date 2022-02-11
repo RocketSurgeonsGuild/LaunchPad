@@ -7,7 +7,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
 [Conditional("CodeGeneration")]
-public class MutableAttribute : Attribute
+public sealed class MutableAttribute : Attribute
 {
     /// <summary>
     ///     Create the given mutable object

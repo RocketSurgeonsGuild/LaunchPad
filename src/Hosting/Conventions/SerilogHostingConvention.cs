@@ -45,7 +45,7 @@ public class SerilogHostingConvention : IHostingConvention
                 // removes default console loggers and such
                 foreach (var item in services
                                     .Where(
-                                         x => x.ImplementationType?.FullName.StartsWith("Microsoft.Extensions.Logging", StringComparison.Ordinal) == true
+                                         x => x.ImplementationType?.FullName?.StartsWith("Microsoft.Extensions.Logging", StringComparison.Ordinal) == true
                                            && x.ImplementationType?.FullName.EndsWith("Provider", StringComparison.Ordinal) == true
                                      )
                                     .ToArray()
@@ -70,7 +70,7 @@ public class SerilogHostingConvention : IHostingConvention
 
             if (context.Get<ILoggerFactory>() != null)
             {
-                builder.ConfigureServices((_, services) => services.AddSingleton(context.Get<ILoggerFactory>()));
+                builder.ConfigureServices((_, services) => services.AddSingleton(context.Get<ILoggerFactory>()!));
             }
         }
     }

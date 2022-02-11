@@ -39,19 +39,17 @@ public class MediatRConvention : IServiceConvention
         services.AddMediatR(
             c =>
             {
-                switch (_options.MediatorLifetime)
+                switch (_options)
                 {
-                    case ServiceLifetime.Singleton:
+                    case { MediatorLifetime: ServiceLifetime.Singleton }:
                         c.AsSingleton();
                         break;
-                    case ServiceLifetime.Scoped:
+                    case { MediatorLifetime: ServiceLifetime.Scoped }:
                         c.AsScoped();
                         break;
-                    case ServiceLifetime.Transient:
+                    case { MediatorLifetime: ServiceLifetime.Transient }:
                         c.AsTransient();
                         break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
                 }
             },
             context.AssemblyCandidateFinder

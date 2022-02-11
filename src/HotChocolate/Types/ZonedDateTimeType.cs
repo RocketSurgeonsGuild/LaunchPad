@@ -10,7 +10,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
 /// </summary>
 public class ZonedDateTimeType : StringToStructBaseType<ZonedDateTime>
 {
-    private static readonly string formatString = "uuuu'-'MM'-'dd'T'HH':'mm':'ss' 'z' 'o<g>";
+    private const string FormatString = "uuuu'-'MM'-'dd'T'HH':'mm':'ss' 'z' 'o<g>";
 
     /// <summary>
     ///     The constructor
@@ -28,7 +28,7 @@ public class ZonedDateTimeType : StringToStructBaseType<ZonedDateTime>
     protected override string Serialize(ZonedDateTime baseValue)
     {
         return ZonedDateTimePattern
-              .CreateWithInvariantCulture(formatString, DateTimeZoneProviders.Tzdb)
+              .CreateWithInvariantCulture(FormatString, DateTimeZoneProviders.Tzdb)
               .Format(baseValue);
     }
 
@@ -36,7 +36,7 @@ public class ZonedDateTimeType : StringToStructBaseType<ZonedDateTime>
     protected override bool TryDeserialize(string str, [NotNullWhen(true)] out ZonedDateTime? output)
     {
         return ZonedDateTimePattern
-              .CreateWithInvariantCulture(formatString, DateTimeZoneProviders.Tzdb)
+              .CreateWithInvariantCulture(FormatString, DateTimeZoneProviders.Tzdb)
               .TryParse(str, out output);
     }
 }

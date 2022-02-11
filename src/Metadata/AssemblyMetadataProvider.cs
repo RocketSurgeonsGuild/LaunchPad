@@ -40,14 +40,14 @@ public class AssemblyMetadataProvider
     /// <summary>
     ///     The raw metadata results for the assembly
     /// </summary>
-    public ILookup<string, string> Data { get; }
+    public ILookup<string, string?> Data { get; }
 
     /// <summary>
     ///     Gets the value.
     /// </summary>
     /// <param name="key">The key.</param>
     /// <returns>System.String[].</returns>
-    public IEnumerable<string> GetValue(string key)
+    public IEnumerable<string?> GetValue(string key)
     {
         return Data.Contains(key) ? Data[key] : Array.Empty<string>();
     }

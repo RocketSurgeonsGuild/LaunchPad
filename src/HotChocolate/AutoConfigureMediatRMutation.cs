@@ -15,7 +15,7 @@ public class AutoConfigureMediatRMutation : ObjectTypeExtension
         where TRequest : IRequest<TResponse>
     {
         var d = descriptor
-           .Resolver(
+           .Resolve(
                 (context, ct) => context.Services.GetRequiredService<IMediator>().Send(
                     context.ArgumentValue<TRequest?>("request") ?? Activator.CreateInstance<TRequest>(),
                     ct

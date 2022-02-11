@@ -6,7 +6,10 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
-        <ProjectReference Include="..\Sample.Core\Sample.Core.csproj"/>
-        <PackageReference Include="Rocket.Surgery.Conventions.DryIoc"/>
+        <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+        <PackageReference Include="Rocket.Surgery.Conventions.DryIoc" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="JetBrains.Annotations" />
     </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
 [Conditional("CodeGeneration")]
-public class InheritFromAttribute : Attribute
+public sealed class InheritFromAttribute : Attribute
 {
     /// <summary>
     ///     Create  the inherit from attribute

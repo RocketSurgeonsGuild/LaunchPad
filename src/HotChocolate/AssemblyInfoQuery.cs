@@ -19,7 +19,9 @@ public class AssemblyInfoQuery
     /// <param name="context"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
+#pragma warning disable CA1822
     public AssemblyInfo Version(IResolverContext context, CancellationToken cancellationToken)
+#pragma warning restore CA1822
     {
         return new(
             context.Services.GetService<FoundationOptions>()?.EntryAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()

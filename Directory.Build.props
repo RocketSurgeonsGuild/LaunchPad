@@ -35,5 +35,6 @@
     <ItemGroup>
         <Using Include="JetBrains.Annotations" />
         <Using Include="System.Diagnostics.CodeAnalysis" />
+        <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute" />
     </ItemGroup>
 </Project>

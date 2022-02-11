@@ -6,6 +6,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
 /// <summary>
 ///     Represents a <see cref="DateTimeZone" /> in Hot Chocolate
 /// </summary>
+[UsedImplicitly]
 public class DateTimeZoneType : StringToClassBaseType<DateTimeZone>
 {
     /// <summary>
