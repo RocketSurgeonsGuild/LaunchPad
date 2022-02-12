@@ -8,11 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
-using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-
-[assembly: Convention(typeof(AspNetCoreConvention))]
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -20,6 +16,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 ///     Class MvcConvention.
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 public class AspNetCoreConvention : IServiceConvention
 {
     internal static void PopulateDefaultParts(
@@ -113,7 +111,9 @@ public class AspNetCoreConvention : IServiceConvention
             throw new ArgumentNullException(nameof(context));
         }
 
-        services.AddMvcCore().AddApiExplorer();
+        services
+           .AddMvcCore()
+           .AddApiExplorer();
         PopulateDefaultParts(
             GetServiceFromCollection<ApplicationPartManager>(services)!,
             context.AssemblyCandidateFinder
@@ -130,7 +130,5 @@ public class AspNetCoreConvention : IServiceConvention
                 options.Filters.Add<SerilogLoggingPageFilter>(0);
             }
         );
-
-        services.AddFluentValidationExtensions(_validatorConfiguration, _validationMvcConfiguration);
     }
 }

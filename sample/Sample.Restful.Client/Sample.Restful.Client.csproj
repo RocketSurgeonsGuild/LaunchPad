@@ -29,8 +29,8 @@
     </ItemGroup>
 
     <!-- Hack to fix multi-targeting -->
-        <ItemGroup Condition="Exists('$(OpenApiCodeDirectory)\$(MSBuildProjectName).$(TargetFramework).cs') AND '$(OpenApiGenerateCodeOnBuild)'=='false'">
-        </ItemGroup>
+    <ItemGroup Condition="Exists('$(OpenApiCodeDirectory)\$(MSBuildProjectName).$(TargetFramework).cs') AND '$(OpenApiGenerateCodeOnBuild)'=='false'">
+    </ItemGroup>
         <Target
         Name="_TieInGenerateOpenApiCodeHack"
         BeforeTargets="BeforeCompile"

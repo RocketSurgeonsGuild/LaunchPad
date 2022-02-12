@@ -1,25 +1,16 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 using FluentValidation;
-using FluentValidation.Validators;
-using MicroElements.Swashbuckle.FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Extensions;
-using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
-using Rocket.Surgery.LaunchPad.Foundation.Validation;
 using Swashbuckle.AspNetCore.SwaggerGen;
-
-[assembly: Convention(typeof(SwashbuckleConvention))]
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -30,6 +21,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
+[ExportConvention]
 [AfterConvention(typeof(AspNetCoreConvention))]
 public partial class SwashbuckleConvention : IServiceConvention
 {
@@ -39,80 +31,6 @@ public partial class SwashbuckleConvention : IServiceConvention
         Message = "Error adding XML comments from {XmlFile}"
     )]
     internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
-
-    private static void AddFluentValidationRules(IServiceCollection services)
-    {
-        services.AddSingleton(
-            new FluentValidationRule("NotEmpty")
-               .WithCondition(propertyValidator => propertyValidator is INotEmptyValidator)
-               .WithApply(
-                    context =>
-                    {
-                        var propertyType = context.ReflectionContext.PropertyInfo?.DeclaringType ?? context.ReflectionContext.ParameterInfo?.ParameterType;
-                        if (propertyType == typeof(string))
-                        {
-                            context.Schema.Properties[context.PropertyKey].MinLength = 1;
-                        }
-                    }
-                )
-        );
-
-        services.AddSingleton(
-            new FluentValidationRule("ValueTypeOrEnum")
-               .WithApply(
-                    context =>
-                    {
-                        var propertyType = context.ReflectionContext.PropertyInfo?.DeclaringType ?? context.ReflectionContext.ParameterInfo?.ParameterType;
-                        if (propertyType != null &&
-                            ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) ||
-                              propertyType.IsEnum ))
-                        {
-                            context.Schema.Required.Add(context.PropertyKey);
-                            context.Schema.Properties[context.PropertyKey].Nullable = false;
-                        }
-                    }
-                )
-        );
-
-        services.AddSingleton(
-            new FluentValidationRule("Nullable")
-               .WithApply(
-                    context =>
-                    {
-                        context.Schema.Properties[context.PropertyKey].Nullable =
-                            context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
-                         || ( context.ReflectionContext.ParameterInfo is { } pai && getNullableValue(pai.GetNullability(), pai.ParameterType) )
-                         || ( context.ReflectionContext.PropertyInfo is PropertyInfo pi && getNullableValue(pi.GetNullability(), pi.PropertyType) )
-                         || ( context.ReflectionContext.PropertyInfo is FieldInfo fi && getNullableValue(fi.GetNullability(), fi.FieldType) )
-                            ;
-
-                        static bool getNullableValue(Nullability nullability, Type propertyType)
-                        {
-                            return nullability switch
-                            {
-                                Nullability.Nullable    => true,
-                                Nullability.NonNullable => false,
-                                Nullability.NotDefined  => !propertyType.IsValueType || Nullable.GetUnderlyingType(propertyType) is not null,
-                                _                       => false
-                            };
-                        }
-                    }
-                )
-        );
-
-        services.AddSingleton(
-            new FluentValidationRule("IsOneOf")
-               .WithCondition(propertyValidator => propertyValidator is IStringInValidator)
-               .WithApply(
-                    context =>
-                    {
-                        var validator = context.PropertyValidator as IStringInValidator;
-                        context.Schema.Properties[context.PropertyKey].Enum =
-                            validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
-                    }
-                )
-        );
-    }
 
     /// <summary>
     ///     Registers the specified context.
@@ -129,12 +47,15 @@ public partial class SwashbuckleConvention : IServiceConvention
 
         services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
 
+        services.AddFluentValidationRulesToSwagger(
+            options => options.SetNotNullableIfMinLengthGreaterThenZero = true,
+            options => options.ServiceLifetime = ServiceLifetime.Singleton
+        );
+
         services.AddOptions<SwaggerGenOptions>()
                 .Configure<IOptions<JsonOptions>>(
-                     (options, mvcOptions) => { options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions); }
+                     (options, mvcOptions) => options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions)
                  );
-
-        services.AddFluentValidationRulesToSwagger();
         services.AddSwaggerGen(
             options =>
             {
@@ -165,9 +86,7 @@ public partial class SwashbuckleConvention : IServiceConvention
                     {
                         if (!apiDesc.TryGetMethodInfo(out var methodInfo))
                             return false;
-                        return methodInfo.DeclaringType?.GetCustomAttributes(true).OfType<ApiControllerAttribute>()
-                                         .Any() ==
-                               true;
+                        return methodInfo.DeclaringType?.GetCustomAttributes(true).OfType<ApiControllerAttribute>().Any() == true;
                     }
                 );
 
@@ -196,7 +115,5 @@ public partial class SwashbuckleConvention : IServiceConvention
                 }
             }
         );
-
-        AddFluentValidationRules(services);
     }
 }

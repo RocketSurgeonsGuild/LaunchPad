@@ -4,10 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
-
-[assembly: Convention(typeof(SystemJsonTextConvention))]
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -18,6 +15,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
+[ExportConvention]
 [AfterConvention(typeof(AspNetCoreConvention))]
 public class SystemJsonTextConvention : IServiceConvention
 {

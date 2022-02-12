@@ -10,6 +10,24 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 [PublicAPI]
 public class FluentValidationProblemDetails : ValidationProblemDetails
 {
+    internal static FluentValidationProblemDetails From(ValidationProblemDetails validationProblemDetails, ValidationResult validationResult)
+    {
+        var result = new FluentValidationProblemDetails(validationResult)
+        {
+            Detail = validationProblemDetails.Detail,
+            Instance = validationProblemDetails.Instance,
+            Status = validationProblemDetails.Status,
+            Title = validationProblemDetails.Title,
+            Type = validationProblemDetails.Type,
+        };
+        foreach (var ext in validationProblemDetails.Extensions)
+        {
+            result.Extensions.TryAdd(ext.Key, ext.Value);
+        }
+
+        return result;
+    }
+
     /// <summary>
     ///     Construct the Fluent Validation Problem Details
     /// </summary>
