@@ -18,7 +18,9 @@ internal class DataConvention : IServiceConvention
 {
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
+#pragma warning disable CA2000
         var connection = new SqliteConnection("DataSource=:memory:");
+#pragma warning restore CA2000
         connection.Open();
         services
 #if NETSTANDARD
@@ -26,12 +28,12 @@ internal class DataConvention : IServiceConvention
 #else
            .AddPooledDbContextFactory<RocketDbContext>(
 #endif
-                x => SqliteDbContextOptionsBuilderExtensions.UseSqlite(
-                    x
-                       .EnableDetailedErrors()
-                       .EnableSensitiveDataLogging()
-                       .EnableServiceProviderCaching(), connection
-                )
+                x => x
+                    .EnableDetailedErrors()
+                    .EnableSensitiveDataLogging()
+                    .EnableServiceProviderCaching().UseSqlite(
+                         connection
+                     )
             );
 #if NET
         // temp?

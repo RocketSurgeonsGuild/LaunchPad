@@ -52,7 +52,7 @@ public class UpdateRocketTests : HandleWebHostBase
     {
     }
 
-    private static readonly Faker Faker = new Faker();
+    private static readonly Faker Faker = new();
 
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]

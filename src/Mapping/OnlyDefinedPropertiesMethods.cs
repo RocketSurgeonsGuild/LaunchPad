@@ -31,7 +31,7 @@ internal static class OnlyDefinedPropertiesMethods
     public static void StringCondition(PropertyMap map, IMemberConfigurationExpression expression)
     {
         expression.Condition(
-            (source, destination, sourceValue, sourceDestination, context) =>
+            (_, _, sourceValue, _, _) =>
             {
                 if (!string.IsNullOrWhiteSpace((string)sourceValue))
                 {
@@ -74,7 +74,7 @@ internal static class OnlyDefinedPropertiesMethods
     {
         var defaultValue = Activator.CreateInstance(map.SourceType);
         expression.Condition(
-            (source, destination, sourceValue, sourceDestination, context) =>
+            (_, _, sourceValue, _, _) =>
             {
                 if (!Equals(defaultValue, sourceValue))
                 {
@@ -121,7 +121,7 @@ internal static class OnlyDefinedPropertiesMethods
     public static void NullableValueTypeCondition(PropertyMap map, IMemberConfigurationExpression expression)
     {
         expression.Condition(
-            (source, destination, sourceValue, sourceDestination, context) =>
+            (_, _, sourceValue, _, _) =>
             {
                 if (sourceValue != null)
                 {

@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Sample.Restful.Tests;
 
-public class ApiDescriptionData<T> : TheoryData<string, ApiDescription>
+public class ApiDescriptionData<T> : TheoryData<ApiDescription>
     where T : WebApplicationFactory<Startup>, new()
 {
     public ApiDescriptionData()
@@ -15,7 +14,7 @@ public class ApiDescriptionData<T> : TheoryData<string, ApiDescription>
         var provider = host.Services.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
         foreach (var item in provider.ApiDescriptionGroups.Items.SelectMany(z => z.Items))
         {
-            Add(item.ActionDescriptor.DisplayName, item);
+            Add(item);
         }
     }
 }

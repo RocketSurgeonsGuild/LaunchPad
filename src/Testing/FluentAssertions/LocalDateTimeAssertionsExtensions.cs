@@ -29,7 +29,6 @@ public static class LocalDateTimeAssertionsExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static LocalDateTimeAssertions Should(this LocalDateTime value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
         return new LocalDateTimeAssertions(value);
     }
 }

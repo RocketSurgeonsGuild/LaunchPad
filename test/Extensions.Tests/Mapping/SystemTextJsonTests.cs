@@ -308,7 +308,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         };
         var result = Mapper.Map<JsonElementA>(item);
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().Be(kind);
+        result.Bar!.Value.ValueKind.Should().Be(kind);
     }
 
     public class ShouldMap_From_JToken_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
@@ -380,7 +380,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         };
         var result = Mapper.Map<JsonElementA>(item);
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().Be(kind);
+        result.Bar!.Value.ValueKind.Should().Be(kind);
     }
 
     public class ShouldMap_From_JArray_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
@@ -446,7 +446,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         };
         var result = Mapper.Map<JsonElementA>(item);
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().Be(kind);
+        result.Bar!.Value.ValueKind.Should().Be(kind);
     }
 
     public class ShouldMap_From_JObject_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>

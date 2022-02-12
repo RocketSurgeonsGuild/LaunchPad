@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Analyzers.Tests.Helpers;
+using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;

@@ -2,6 +2,8 @@
 using System.Text.Json;
 using FluentValidation;
 using FluentValidation.Validators;
+using MicroElements.Swashbuckle.FluentValidation;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,11 +16,7 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Extensions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 [assembly: Convention(typeof(SwashbuckleConvention))]
@@ -33,8 +31,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [AfterConvention(typeof(AspNetCoreConvention))]
-public class SwashbuckleConvention : IServiceConvention
+public partial class SwashbuckleConvention : IServiceConvention
 {
+    [LoggerMessage(
+        EventId = 0,
+        Level = LogLevel.Debug,
+        Message = "Error adding XML comments from {XmlFile}"
+    )]
+    internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
+
     private static void AddFluentValidationRules(IServiceCollection services)
     {
         services.AddSingleton(
@@ -43,7 +48,7 @@ public class SwashbuckleConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
-                        var propertyType = context.MemberInfo.GetMemberType();
+                        var propertyType = context.ReflectionContext.PropertyInfo?.DeclaringType ?? context.ReflectionContext.ParameterInfo?.ParameterType;
                         if (propertyType == typeof(string))
                         {
                             context.Schema.Properties[context.PropertyKey].MinLength = 1;
@@ -57,7 +62,7 @@ public class SwashbuckleConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
-                        var propertyType = context.MemberInfo.GetMemberType();
+                        var propertyType = context.ReflectionContext.PropertyInfo?.DeclaringType ?? context.ReflectionContext.ParameterInfo?.ParameterType;
                         if (propertyType != null &&
                             ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) ||
                               propertyType.IsEnum ))
@@ -76,13 +81,21 @@ public class SwashbuckleConvention : IServiceConvention
                     {
                         context.Schema.Properties[context.PropertyKey].Nullable =
                             context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
-                         || ( context.MemberInfo is PropertyInfo pi && pi.GetNullability() switch
+                         || ( context.ReflectionContext.ParameterInfo is { } pai && getNullableValue(pai.GetNullability(), pai.ParameterType) )
+                         || ( context.ReflectionContext.PropertyInfo is PropertyInfo pi && getNullableValue(pi.GetNullability(), pi.PropertyType) )
+                         || ( context.ReflectionContext.PropertyInfo is FieldInfo fi && getNullableValue(fi.GetNullability(), fi.FieldType) )
+                            ;
+
+                        static bool getNullableValue(Nullability nullability, Type propertyType)
+                        {
+                            return nullability switch
                             {
                                 Nullability.Nullable    => true,
                                 Nullability.NonNullable => false,
-                                Nullability.NotDefined  => !pi.PropertyType.IsValueType || Nullable.GetUnderlyingType(pi.PropertyType) is not null,
+                                Nullability.NotDefined  => !propertyType.IsValueType || Nullable.GetUnderlyingType(propertyType) is not null,
                                 _                       => false
-                            } );
+                            };
+                        }
                     }
                 )
         );
@@ -120,6 +133,8 @@ public class SwashbuckleConvention : IServiceConvention
                 .Configure<IOptions<JsonOptions>>(
                      (options, mvcOptions) => { options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions); }
                  );
+
+        services.AddFluentValidationRulesToSwagger();
         services.AddSwaggerGen(
             options =>
             {
@@ -128,7 +143,6 @@ public class SwashbuckleConvention : IServiceConvention
                 options.OperationFilter<StatusCode201Filter>();
                 options.OperationFilter<OperationMediaTypesFilter>();
                 options.OperationFilter<AuthorizeFilter>();
-                options.AddFluentValidationRules();
 
                 options.MapType<JsonElement>(
                     () => new OpenApiSchema
@@ -173,9 +187,11 @@ public class SwashbuckleConvention : IServiceConvention
                     {
                         options.IncludeXmlComments(item);
                     }
+#pragma warning disable CA1031
                     catch (Exception e)
+#pragma warning restore CA1031
                     {
-                        context.Logger.LogDebug(e, "Error adding XML comments from {XmlFile}", item);
+                        ErrorAddingXMLComments(context.Logger, e, item);
                     }
                 }
             }

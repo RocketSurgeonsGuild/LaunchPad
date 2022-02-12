@@ -68,7 +68,7 @@ internal sealed class FluentValidationProblemDetailsFactory : ProblemDetailsFact
         if (httpContext.Items[typeof(ValidationResult)] is ValidationResult result)
         {
             statusCode = 422;
-            problemDetails = new FluentValidationProblemDetails(result!)
+            problemDetails = new FluentValidationProblemDetails(result)
             {
                 Status = 422,
                 Type = type,

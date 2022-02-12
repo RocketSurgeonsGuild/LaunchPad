@@ -23,7 +23,7 @@ public class UpdateLaunchRecordTests : HandleGrpcHostBase
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
-                                               async (context, clock) =>
+                                               async (context, clk) =>
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
@@ -39,7 +39,7 @@ public class UpdateLaunchRecordTests : HandleGrpcHostBase
                                                        Payload = "geo-fence-ftl",
                                                        RocketId = rocket.Id,
                                                        Rocket = rocket,
-                                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                                                       ScheduledLaunchDate = clk.GetCurrentInstant().ToDateTimeOffset(),
                                                        PayloadWeightKg = 100,
                                                    };
                                                    context.Add(record);
@@ -71,5 +71,5 @@ public class UpdateLaunchRecordTests : HandleGrpcHostBase
     {
     }
 
-    private static readonly Faker Faker = new Faker();
+    private static readonly Faker Faker = new();
 }

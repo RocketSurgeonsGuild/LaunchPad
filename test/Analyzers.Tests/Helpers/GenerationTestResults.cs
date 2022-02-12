@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
-namespace Analyzers.Tests;
+namespace Analyzers.Tests.Helpers;
 
 public record GenerationTestResults(
     CSharpCompilation InputCompilation,

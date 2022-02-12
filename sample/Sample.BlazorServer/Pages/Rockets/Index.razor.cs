@@ -7,9 +7,9 @@ namespace Sample.BlazorServer.Pages.Rockets;
 
 public partial class Index : ComponentBase
 {
-    public IEnumerable<RocketModel> Rockets { get; set; }
+    public IEnumerable<RocketModel> Rockets { get; set; } = null!;
 
-    [Inject] private IMediator Mediator { get; set; }
+    [Inject] private IMediator Mediator { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

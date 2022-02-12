@@ -5,7 +5,7 @@ using Rocket.Surgery.Hosting;
 namespace Sample.Restful;
 
 [ImportConventions]
-public partial class Program
+public static partial class Program
 {
     public static void Main(string[] args)
     {
@@ -15,7 +15,7 @@ public partial class Program
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
         return Host.CreateDefaultBuilder(args)
-                   .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+                   .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
                    .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions));
     }
 }

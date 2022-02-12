@@ -26,7 +26,9 @@ internal class OperationIdFilter : IOperationFilter
     private static string Camelize(string input)
     {
         var word = Pascalize(input);
-        return word.Length > 0 ? word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + word.Substring(1) : word;
+#pragma warning disable CA1308
+        return word.Length > 0 ? string.Concat(word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture), word.AsSpan(1)) : word;
+#pragma warning restore CA1308
     }
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)

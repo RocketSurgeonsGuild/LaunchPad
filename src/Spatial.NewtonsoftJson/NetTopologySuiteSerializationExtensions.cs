@@ -21,7 +21,6 @@ public static class NetTopologySuiteSerializationExtensions
     public static JsonSerializer ConfigureNetTopologySuiteForLaunchPad(this JsonSerializer options, GeometryFactory? factory, int dimension = 2)
     {
         factory ??= NtsGeometryServices.Instance.CreateGeometryFactory(4326);
-        var converters = options.Converters;
         ApplyConverters(factory, dimension, options.Converters);
         return options;
     }

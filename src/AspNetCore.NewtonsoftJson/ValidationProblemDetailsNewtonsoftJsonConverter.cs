@@ -18,8 +18,7 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         Type objectType,
         FluentValidationProblemDetails? existingValue,
         bool hasExistingValue,
-        [System.Diagnostics.CodeAnalysis.NotNull]
-        JsonSerializer serializer
+        [NotNull] JsonSerializer serializer
     )
     {
         if (serializer == null)
@@ -40,11 +39,9 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
 
     /// <inheritdoc />
     public override void WriteJson(
-        [System.Diagnostics.CodeAnalysis.NotNull]
-        JsonWriter writer,
+        [NotNull] JsonWriter writer,
         FluentValidationProblemDetails? value,
-        [System.Diagnostics.CodeAnalysis.NotNull]
-        JsonSerializer serializer
+        [NotNull] JsonSerializer serializer
     )
     {
         if (writer == null)
@@ -100,24 +97,24 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         }
 
         [JsonProperty(PropertyName = "type", NullValueHandling = NullValueHandling.Ignore)]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         [JsonProperty(PropertyName = "title", NullValueHandling = NullValueHandling.Ignore)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [JsonProperty(PropertyName = "status", NullValueHandling = NullValueHandling.Ignore)]
         public int? Status { get; set; }
 
         [JsonProperty(PropertyName = "detail", NullValueHandling = NullValueHandling.Ignore)]
-        public string Detail { get; set; }
+        public string? Detail { get; set; }
 
         [JsonProperty(PropertyName = "instance", NullValueHandling = NullValueHandling.Ignore)]
-        public string Instance { get; set; }
+        public string? Instance { get; set; }
 
         [JsonExtensionData]
         // ReSharper disable once MemberCanBePrivate.Global
-        public IDictionary<string, object> Extensions { get; } =
-            new Dictionary<string, object>(StringComparer.Ordinal);
+        public IDictionary<string, object?> Extensions { get; } =
+            new Dictionary<string, object?>(StringComparer.Ordinal);
 
         [JsonProperty(PropertyName = "errors")]
         public IDictionary<string, FluentValidationProblemDetail[]> Errors { get; } =

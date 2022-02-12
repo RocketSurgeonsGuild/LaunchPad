@@ -13,42 +13,42 @@ public static class AutoMapperProfile
 {
     private class ParentModel
     {
-        public int Integer { get; set; }
-        public int? NullableInteger { get; set; }
-        public string? String { get; set; }
-        public decimal Decimal { get; set; }
-        public decimal? NullableDecimal { get; set; }
-        public ChildModel? Child { get; set; }
+        [UsedImplicitly] public int Integer { get; set; }
+        [UsedImplicitly] public int? NullableInteger { get; set; }
+        [UsedImplicitly] public string? String { get; set; }
+        [UsedImplicitly] public decimal Decimal { get; set; }
+        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
+        [UsedImplicitly] public ChildModel? Child { get; set; }
     }
 
     private class ParentDto
     {
-        public int Integer { get; set; }
-        public int Version { get; set; }
-        public int? NullableInteger { get; set; }
-        public string? String { get; set; }
-        public decimal Decimal { get; set; }
-        public decimal? NullableDecimal { get; set; }
-        public ChildDto? Child { get; set; }
+        [UsedImplicitly] public int Integer { get; set; }
+        [UsedImplicitly] public int Version { get; set; }
+        [UsedImplicitly] public int? NullableInteger { get; set; }
+        [UsedImplicitly] public string? String { get; set; }
+        [UsedImplicitly] public decimal Decimal { get; set; }
+        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
+        [UsedImplicitly] public ChildDto? Child { get; set; }
     }
 
     private class ChildModel
     {
-        public int Integer { get; set; }
-        public int? NullableInteger { get; set; }
-        public string? String { get; set; }
-        public decimal Decimal { get; set; }
-        public decimal? NullableDecimal { get; set; }
+        [UsedImplicitly] public int Integer { get; set; }
+        [UsedImplicitly] public int? NullableInteger { get; set; }
+        [UsedImplicitly] public string? String { get; set; }
+        [UsedImplicitly] public decimal Decimal { get; set; }
+        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
     }
 
     private class ChildDto
     {
-        public int Integer { get; set; }
-        public int Version { get; set; }
-        public int? NullableInteger { get; set; }
-        public string? String { get; set; }
-        public decimal Decimal { get; set; }
-        public decimal? NullableDecimal { get; set; }
+        [UsedImplicitly] public int Integer { get; set; }
+        [UsedImplicitly] public int Version { get; set; }
+        [UsedImplicitly] public int? NullableInteger { get; set; }
+        [UsedImplicitly] public string? String { get; set; }
+        [UsedImplicitly] public decimal Decimal { get; set; }
+        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
     }
 
     public class OnlyDefinedPropertiesTests : AutoFakeTest
@@ -57,15 +57,16 @@ public static class AutoMapperProfile
         public void ConfigurationIsValid()
         {
             var mapper = new MapperConfiguration(
-                cfg =>
-                {
-                    cfg.CreateMap<ChildModel, ChildDto>()
-                       .ForMember(x => x.Version, x => x.Ignore());
-                    cfg.CreateMap<ParentModel, ParentDto>()
-                       .ForMember(x => x.Version, x => x.Ignore());
-                    cfg.OnlyDefinedProperties();
-                }
-            ).CreateMapper();
+                    cfg =>
+                    {
+                        cfg.CreateMap<ChildModel, ChildDto>()
+                           .ForMember(x => x.Version, x => x.Ignore());
+                        cfg.CreateMap<ParentModel, ParentDto>()
+                           .ForMember(x => x.Version, x => x.Ignore());
+                        cfg.OnlyDefinedProperties();
+                    }
+                )
+               .CreateMapper();
 
             mapper.ConfigurationProvider.AssertConfigurationIsValid();
         }
@@ -73,7 +74,7 @@ public static class AutoMapperProfile
         [Fact]
         public void ShouldMaintain_AllowNullDestinationValues()
         {
-            var mapper = new MapperConfiguration(
+            new MapperConfiguration(
                 cfg =>
                 {
                     cfg.AllowNullDestinationValues = false;
@@ -86,7 +87,7 @@ public static class AutoMapperProfile
         [Fact]
         public void ShouldMaintain_AllowNullCollections()
         {
-            var mapper = new MapperConfiguration(
+            new MapperConfiguration(
                 cfg =>
                 {
                     cfg.AllowNullCollections = false;

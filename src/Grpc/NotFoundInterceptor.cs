@@ -6,6 +6,33 @@ namespace Rocket.Surgery.LaunchPad.Grpc;
 
 internal class NotFoundInterceptor : Interceptor
 {
+    private static RpcException CreateException(NotFoundException exception)
+    {
+        return new RpcException(
+            new Status(StatusCode.NotFound, exception.Title, exception),
+            CreateMetadata(exception),
+            exception.Message
+        );
+    }
+
+    private static Metadata CreateMetadata(NotFoundException exception)
+    {
+        var metadata = new Metadata();
+        if (exception.Title is { })
+            metadata.Add("title", exception.Title);
+        if (exception.Instance is { })
+            metadata.Add("instance", exception.Instance);
+        if (exception.Link is { })
+            metadata.Add("link", exception.Link);
+        metadata.Add("message", exception.Message);
+        foreach (var item in exception.Properties)
+        {
+            metadata.Add(item.Key, item.Value?.ToString());
+        }
+
+        return metadata;
+    }
+
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
         TRequest request,
         ServerCallContext context,
@@ -52,32 +79,5 @@ internal class NotFoundInterceptor : Interceptor
         {
             throw CreateException(exception);
         }
-    }
-
-    private RpcException CreateException(NotFoundException exception)
-    {
-        return new(
-            new Status(StatusCode.NotFound, exception.Title, exception),
-            CreateMetadata(exception),
-            exception.Message
-        );
-    }
-
-    private Metadata CreateMetadata(NotFoundException exception)
-    {
-        var metadata = new Metadata();
-        if (exception.Title is { })
-            metadata.Add("title", exception.Title);
-        if (exception.Instance is { })
-            metadata.Add("instance", exception.Instance);
-        if (exception.Link is { })
-            metadata.Add("link", exception.Link);
-        metadata.Add("message", exception.Message);
-        foreach (var item in exception.Properties)
-        {
-            metadata.Add(item.Key, item.Value.ToString());
-        }
-
-        return metadata;
     }
 }

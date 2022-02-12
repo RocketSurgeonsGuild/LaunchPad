@@ -119,7 +119,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be("null");
+        Encoding.UTF8.GetString(result.Bar!).Should().Be("null");
     }
 
     [Fact]
@@ -168,7 +168,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<JsonElementB>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().Be(JsonValueKind.Null);
+        result.Bar!.Value.ValueKind.Should().Be(JsonValueKind.Null);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<JsonElementB>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().Be(JsonValueKind.Null);
+        result.Bar!.Value.ValueKind.Should().Be(JsonValueKind.Null);
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be("null");
+        Encoding.UTF8.GetString(result.Bar!).Should().Be("null");
     }
 
     [Fact]
@@ -456,7 +456,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be(value);
+        Encoding.UTF8.GetString(result.Bar!).Should().Be(value);
     }
 
 
@@ -474,7 +474,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<JsonElementB>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
+        result.Bar!.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
     }
 
     [Theory]
@@ -489,7 +489,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<JsonElementB>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
+        result.Bar!.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
     }
 
     [Theory]
@@ -521,7 +521,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<JsonElementB>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
+        result.Bar!.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
     }
 
     [Theory]
@@ -536,7 +536,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<JsonElementB>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
+        result.Bar!.Value.ValueKind.Should().NotBe(JsonValueKind.Undefined);
     }
 
     [Theory]
@@ -551,7 +551,7 @@ public class JsonElementConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be(value);
+        Encoding.UTF8.GetString(result.Bar!).Should().Be(value);
     }
 
     [Theory]

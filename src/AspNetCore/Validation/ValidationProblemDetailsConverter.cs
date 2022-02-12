@@ -13,7 +13,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentValidationProblemDetails?>
 {
     /// <inheritdoc />
-    public override FluentValidationProblemDetails? Read(
+    public override FluentValidationProblemDetails Read(
         ref Utf8JsonReader reader,
         Type typeToConvert,
         JsonSerializerOptions options
@@ -76,19 +76,19 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
             }
         }
 
-        [JsonPropertyName("type")] public string Type { get; set; }
+        [JsonPropertyName("type")] public string? Type { get; set; }
 
-        [JsonPropertyName("title")] public string Title { get; set; }
+        [JsonPropertyName("title")] public string? Title { get; set; }
 
         [JsonPropertyName("status")] public int? Status { get; set; }
 
-        [JsonPropertyName("detail")] public string Detail { get; set; }
+        [JsonPropertyName("detail")] public string? Detail { get; set; }
 
-        [JsonPropertyName("instance")] public string Instance { get; set; }
+        [JsonPropertyName("instance")] public string? Instance { get; set; }
 
         [JsonExtensionData]
-        public IDictionary<string, object> Extensions { get; } =
-            new Dictionary<string, object>(StringComparer.Ordinal);
+        public IDictionary<string, object?> Extensions { get; } =
+            new Dictionary<string, object?>(StringComparer.Ordinal);
 
         [JsonPropertyName("errors")]
         public IDictionary<string, FluentValidationProblemDetail[]> Errors { get; } =

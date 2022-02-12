@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
@@ -14,6 +13,7 @@ public static class DeleteLaunchRecord
         public Guid Id { get; init; }
     }
 
+    [UsedImplicitly]
     private class Validator : AbstractValidator<Request>
     {
         public Validator()
@@ -24,15 +24,14 @@ public static class DeleteLaunchRecord
         }
     }
 
+    [UsedImplicitly]
     private class Handler : IRequestHandler<Request>
     {
         private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
 
-        public Handler(RocketDbContext dbContext, IMapper mapper)
+        public Handler(RocketDbContext dbContext)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(Request request, CancellationToken cancellationToken)

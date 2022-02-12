@@ -36,9 +36,9 @@ public class ValidatorFactoryTests : AutoFakeTest
 
     private class AModel : IThing
     {
-        public string? Id { get; set; }
-        public string? Other { get; set; }
-        public string? Thing { get; set; }
+        [UsedImplicitly] public string? Id { get; set; }
+        [UsedImplicitly] public string? Other { get; set; }
+        [UsedImplicitly] public string? Thing { get; set; }
     }
 
     private class ThingValidator : AbstractValidator<IThing>

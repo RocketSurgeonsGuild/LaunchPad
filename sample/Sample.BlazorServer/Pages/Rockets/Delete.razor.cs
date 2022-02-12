@@ -9,11 +9,11 @@ public partial class Delete : ComponentBase
 {
     [Parameter] public Guid Id { get; set; }
 
-    public RocketModel Model { get; set; }
+    public RocketModel Model { get; set; } = null!;
 
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    [Inject] private IMediator Mediator { get; set; }
+    [Inject] private IMediator Mediator { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

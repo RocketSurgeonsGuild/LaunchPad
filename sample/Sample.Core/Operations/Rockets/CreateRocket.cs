@@ -59,14 +59,14 @@ public static class CreateRocket
 
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            var existingRocket = await _dbContext.Rockets
+            var existingRocket = await _dbContext.Rockets.AsQueryable()
                                                  .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
             if (existingRocket != null)
             {
                 throw new RequestFailedException("A Rocket already exists with that serial number!")
                 {
                     Title = "Rocket Creation Failed",
-                    Properties = new Dictionary<string, object>
+                    Properties = new Dictionary<string, object?>
                     {
                         ["data"] = new
                         {

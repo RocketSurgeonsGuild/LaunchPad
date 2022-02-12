@@ -57,5 +57,5 @@ public class GetLaunchRecordTests : HandleGrpcHostBase
     {
     }
 
-    private static readonly Faker Faker = new Faker();
+    private static readonly Faker Faker = new();
 }

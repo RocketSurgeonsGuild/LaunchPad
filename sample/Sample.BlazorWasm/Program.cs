@@ -7,7 +7,7 @@ using Rocket.Surgery.WebAssembly.Hosting;
 namespace Sample.BlazorWasm;
 
 [ImportConventions]
-public partial class Program
+public static partial class Program
 {
     public static async Task Main(string[] args)
     {
@@ -15,7 +15,7 @@ public partial class Program
                                             .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
             ;
         builder.RootComponents.Add<App>("app");
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
         await builder.Build().RunAsync();
     }
@@ -25,8 +25,8 @@ public static class TestHandler
 {
     public record Request : IRequest<Response>
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
     }
 
     public record Response(string FullName);

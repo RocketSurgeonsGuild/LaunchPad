@@ -12,9 +12,7 @@ namespace Sample.Core.Operations.LaunchRecords;
 public static class ListLaunchRecords
 {
     // TODO: Paging model!
-    public record Request : IRequest<IEnumerable<LaunchRecordModel>>
-    {
-    }
+    public record Request : IRequest<IEnumerable<LaunchRecordModel>>;
 
     private class Validator : AbstractValidator<Request>
     {

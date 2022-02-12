@@ -21,7 +21,7 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
-                                               async (context, clock) =>
+                                               async (context, clk) =>
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
@@ -35,7 +35,7 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
                                                        Partner = "partner",
                                                        Payload = "geo-fence-ftl",
                                                        RocketId = rocket.Id,
-                                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                                                       ScheduledLaunchDate = clk.GetCurrentInstant().ToDateTimeOffset(),
                                                        PayloadWeightKg = 100,
                                                    };
                                                    context.Add(rocket);
@@ -68,5 +68,5 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
     {
     }
 
-    private static readonly Faker Faker = new Faker();
+    private static readonly Faker Faker = new();
 }

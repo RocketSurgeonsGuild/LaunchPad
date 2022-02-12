@@ -56,7 +56,7 @@ public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
         };
     }
 
-
+    [UsedImplicitly]
     private class Mapper : Profile
     {
         public Mapper()
@@ -71,6 +71,7 @@ public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
         }
     }
 
+    [UsedImplicitly]
     private class CreateLaunchRecordRequestValidator : AbstractValidator<CreateLaunchRecordRequest>
     {
         public CreateLaunchRecordRequestValidator()
@@ -92,6 +93,7 @@ public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
         }
     }
 
+    [UsedImplicitly]
     private class UpdateLaunchRecordRequestValidator : AbstractValidator<UpdateLaunchRecordRequest>
     {
         public UpdateLaunchRecordRequestValidator()
@@ -116,6 +118,7 @@ public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
         }
     }
 
+    [UsedImplicitly]
     private class GetLaunchRecordRequestValidator : AbstractValidator<GetLaunchRecordRequest>
     {
         public GetLaunchRecordRequestValidator()
@@ -126,10 +129,12 @@ public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
         }
     }
 
+    [UsedImplicitly]
     private class ListLaunchRecordsRequestValidator : AbstractValidator<ListLaunchRecordsRequest>
     {
     }
 
+    [UsedImplicitly]
     private class DeleteLaunchRecordRequestValidator : AbstractValidator<DeleteLaunchRecordRequest>
     {
         public DeleteLaunchRecordRequestValidator()

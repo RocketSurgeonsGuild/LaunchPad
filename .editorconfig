@@ -258,6 +258,7 @@ dotnet_naming_style.begins_with_t.required_prefix = T
 dotnet_naming_style.begins_with_t.capitalization = pascal_case
 
 dotnet_diagnostic.ide0058.severity = none
+dotnet_diagnostic.cs0436.severity = none
 
 # CodeQuality
 # CA1000: Do not declare static members on generic types
@@ -315,7 +316,7 @@ dotnet_diagnostic.ide0058.severity = none
 # dotnet_diagnostic.CA1033.severity = none
 
 # CA1034: Nested types should not be visible
-# dotnet_diagnostic.CA1034.severity = warning
+dotnet_diagnostic.CA1034.severity = none
 
 # CA1036: Override methods on comparable types
 # dotnet_diagnostic.CA1036.severity = warning
@@ -450,7 +451,7 @@ dotnet_diagnostic.ca1062.severity = none
 # dotnet_diagnostic.CA1806.severity = warning
 
 # CA1812: Avoid uninstantiated internal classes
-# dotnet_diagnostic.CA1812.severity = none
+dotnet_diagnostic.CA1812.severity = none
 
 # CA1814: Prefer jagged arrays over multidimensional
 # dotnet_diagnostic.CA1814.severity = warning

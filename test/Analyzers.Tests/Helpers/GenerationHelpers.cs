@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Analyzers.Tests;
+namespace Analyzers.Tests.Helpers;
 
 public static class GenerationHelpers
 {

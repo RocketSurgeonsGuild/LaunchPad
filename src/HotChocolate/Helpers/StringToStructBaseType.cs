@@ -50,7 +50,7 @@ public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntime
     /// <inheritdoc />
     protected override StringValueNode ParseValue(TRuntimeType runtimeValue)
     {
-        return new(Serialize(runtimeValue));
+        return new StringValueNode(Serialize(runtimeValue));
     }
 
     /// <inheritdoc />

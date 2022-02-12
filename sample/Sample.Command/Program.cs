@@ -5,11 +5,11 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.CommandLine;
 using Spectre.Console.Cli;
 
-[assembly: ImportConventions]
+[assembly: ImportConventions(Namespace = "Sample.Command")]
 
-await Rocket.Surgery.Conventions.CommandLine.App.Create<Default>(
+await Rocket.Surgery.Conventions.CommandLine.App.Create<DefaultCommand>(
                  builder => builder
-                           .WithConventionsFrom(Sample.Command.Conventions.Imports.GetConventions)
+                           .WithConventionsFrom(Sample.Command.Imports.GetConventions)
                            .ConfigureLogging(z => z.AddConsole())
                            .UseDryIoc()
                            .ConfigureDryIoc(
@@ -19,13 +19,14 @@ await Rocket.Surgery.Conventions.CommandLine.App.Create<Default>(
                                     x.Register<Dump>(Reuse.Singleton);
                                 }
                             )
-                           .ConfigureCommandLine((context, app) => app.AddCommand<Dump>("dump"))
+                           .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
              )
             .RunAsync(args);
 
+
 public class InstanceThing
 {
-    public string From = "DryIoc";
+    public string From => "DryIoc";
 }
 
 
@@ -54,16 +55,16 @@ public class Dump : Command<AppSettings>
     }
 }
 
-public class Default : Command<AppSettings>
+public class DefaultCommand : Command<AppSettings>
 {
-    private readonly ILogger<Default> _logger;
+    private readonly ILogger<DefaultCommand> _logger;
 
-    public Default(ILogger<Default> logger)
+    public DefaultCommand(ILogger<DefaultCommand> logger)
     {
         _logger = logger;
     }
 
-    public override int Execute(CommandContext context, AppSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
     {
         Console.WriteLine("Hello World!");
         _logger.LogInformation("Test");

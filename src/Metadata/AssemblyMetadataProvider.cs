@@ -23,13 +23,14 @@ public class AssemblyMetadataProvider
     /// <param name="assembly">The assembly.</param>
     public AssemblyMetadataProvider(Assembly assembly)
     {
+        // ReSharper disable once RedundantSuppressNullableWarningExpression
         Data = assembly
               .GetCustomAttributes<AssemblyMetadataAttribute>()
               .ToLookup(
                    x => x.Key,
                    x => x.Value,
                    StringComparer.OrdinalIgnoreCase
-               );
+               )!;
     }
 
     /// <summary>

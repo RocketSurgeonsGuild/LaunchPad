@@ -29,7 +29,6 @@ public static class InstantAssertionsExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static InstantAssertions Should(this Instant value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
         return new InstantAssertions(value);
     }
 }

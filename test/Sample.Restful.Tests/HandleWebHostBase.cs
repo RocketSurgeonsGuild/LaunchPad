@@ -29,7 +29,7 @@ public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
         Factory = new TestWebHost()
                  .ConfigureHostBuilder(
                       b => b
-                          .ConfigureHosting((context, z) => z.ConfigureServices((c, s) => s.AddSingleton(context)))
+                          .ConfigureHosting((context, z) => z.ConfigureServices((_, s) => s.AddSingleton(context)))
                            // .WithConventionsFrom(GetConventions)
                           .EnableConventionAttributes()
                   )
@@ -42,7 +42,7 @@ public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
     public async Task InitializeAsync()
     {
         _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
+        await _connection.OpenAsync();
 
         Factory = Factory.ConfigureHostBuilder(
             x => x
@@ -50,7 +50,7 @@ public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
                     (_, services) =>
                     {
                         services.AddDbContextPool<RocketDbContext>(
-                            x => x
+                            z => z
                                 .EnableDetailedErrors()
                                 .EnableSensitiveDataLogging()
                                 .UseSqlite(_connection)

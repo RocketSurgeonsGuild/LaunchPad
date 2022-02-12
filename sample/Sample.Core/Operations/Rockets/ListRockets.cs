@@ -12,9 +12,7 @@ namespace Sample.Core.Operations.Rockets;
 public static class ListRockets
 {
     // TODO: Paging model!
-    public record Request : IRequest<IEnumerable<RocketModel>>
-    {
-    }
+    public record Request : IRequest<IEnumerable<RocketModel>>;
 
     private class Validator : AbstractValidator<Request>
     {

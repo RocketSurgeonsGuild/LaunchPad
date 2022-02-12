@@ -21,9 +21,9 @@ public class DateTimeZoneType : StringToClassBaseType<DateTimeZone>
     }
 
     /// <inheritdoc />
-    protected override string Serialize(DateTimeZone val)
+    protected override string Serialize(DateTimeZone baseValue)
     {
-        return val.Id;
+        return baseValue.Id;
     }
 
     /// <inheritdoc />

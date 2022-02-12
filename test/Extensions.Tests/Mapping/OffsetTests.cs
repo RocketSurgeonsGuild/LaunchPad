@@ -46,14 +46,14 @@ public class OffsetTests : TypeConverterTest<OffsetTests.Converters>
     {
     }
 
-    protected override void Configure(IMapperConfigurationExpression x)
+    protected override void Configure(IMapperConfigurationExpression expression)
     {
-        if (x == null)
+        if (expression == null)
         {
-            throw new ArgumentNullException(nameof(x));
+            throw new ArgumentNullException(nameof(expression));
         }
 
-        x.CreateMap<Foo1, Foo3>().ReverseMap();
+        expression.CreateMap<Foo1, Foo3>().ReverseMap();
     }
 
     private class Foo1

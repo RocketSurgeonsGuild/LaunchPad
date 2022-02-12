@@ -21,7 +21,7 @@ public class TestWebHost : ConventionTestWebHost<Startup>
         _connection.Open();
         return base.CreateHostBuilder()
                    .ConfigureServices(
-                        (context, services) =>
+                        (_, services) =>
                         {
                             services.AddHostedService<SqliteConnectionService>();
                             services.AddDbContextPool<RocketDbContext>(
@@ -32,7 +32,6 @@ public class TestWebHost : ConventionTestWebHost<Startup>
                             );
                         }
                     );
-        ;
     }
 
     protected override void Dispose(bool disposing)

@@ -49,7 +49,7 @@ public class LocalDateTests : TypeConverterTest<LocalDateTests.Converters>
 
     [Theory]
     [ClassData(typeof(TypeConverterData<Converters>))]
-    public void AutomatedTests(Type source, Type destination, object sourceValue)
+    public void AutomatedTests(Type source, Type destination, object? sourceValue)
     {
         var method = typeof(IMapperBase).GetMethods(BindingFlags.Public | BindingFlags.Instance)
                                         .First(
@@ -69,14 +69,14 @@ public class LocalDateTests : TypeConverterTest<LocalDateTests.Converters>
         }
     }
 
-    protected override void Configure(IMapperConfigurationExpression x)
+    protected override void Configure(IMapperConfigurationExpression expression)
     {
-        if (x == null)
+        if (expression == null)
         {
-            throw new ArgumentNullException(nameof(x));
+            throw new ArgumentNullException(nameof(expression));
         }
 
-        x.CreateMap<Foo1, Foo3>().ReverseMap();
+        expression.CreateMap<Foo1, Foo3>().ReverseMap();
     }
 
     private class Foo1

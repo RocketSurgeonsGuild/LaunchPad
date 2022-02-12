@@ -19,7 +19,7 @@ public class NamedSchemaTests : LoggerTest, IAsyncLifetime
                                     .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
                                     .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)))
                                     .ConfigureServices(
-                                         (context, collection) =>
+                                         (_, collection) =>
                                          {
                                              collection.AddGraphQL();
                                              collection.AddGraphQL("Named");

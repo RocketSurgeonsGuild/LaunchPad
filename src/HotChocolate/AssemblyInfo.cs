@@ -32,7 +32,7 @@ public class AssemblyInfo
     public Task<string?> Version(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult<string?>(
                     _rootAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                  ?? _rootAssembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version
@@ -52,7 +52,7 @@ public class AssemblyInfo
     public Task<Instant?> Created(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, Instant?>(
-            (key, ct) =>
+            (_, _) =>
             {
                 var location = _rootAssembly.Location;
                 return Task.FromResult<Instant?>(!string.IsNullOrWhiteSpace(location) ? File.GetCreationTimeUtc(location).ToInstant() : null);
@@ -70,7 +70,7 @@ public class AssemblyInfo
     public Task<Instant?> Updated(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, Instant?>(
-            (key, ct) =>
+            (_, _) =>
             {
                 var location = _rootAssembly.Location;
                 return Task.FromResult<Instant?>(!string.IsNullOrWhiteSpace(location) ? File.GetLastWriteTimeUtc(location).ToInstant() : null);
@@ -89,7 +89,7 @@ public class AssemblyInfo
     public Task<string?> Company(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company
                 ),
@@ -106,7 +106,7 @@ public class AssemblyInfo
     public Task<string?> Configuration(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration
                 ),
@@ -123,7 +123,7 @@ public class AssemblyInfo
     public Task<string?> Copyright(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright
                 ),
@@ -140,7 +140,7 @@ public class AssemblyInfo
     public Task<string?> Description(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description
                 ),
@@ -157,7 +157,7 @@ public class AssemblyInfo
     public Task<string?> Product(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product
                 ),
@@ -174,7 +174,7 @@ public class AssemblyInfo
     public Task<string?> Title(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title
                 ),
@@ -191,7 +191,7 @@ public class AssemblyInfo
     public Task<string?> Trademark(IResolverContext context, CancellationToken cancellationToken)
     {
         return context.CacheDataLoader<string, string?>(
-            (key, ct) =>
+            (_, _) =>
                 Task.FromResult(
                     _rootAssembly.GetCustomAttribute<AssemblyTrademarkAttribute>()?.Trademark
                 ),
@@ -209,9 +209,11 @@ public class AssemblyInfo
     {
         return context
               .CacheDataLoader<string, IDictionary<string, string?>>(
-                   (key, ct) =>
+                   (_, _) =>
                        Task.FromResult<IDictionary<string, string?>>(
+#pragma warning disable CS8620
                            _rootAssembly.GetCustomAttributes<AssemblyMetadataAttribute>().ToDictionary(z => z.Key, z => z.Value)
+#pragma warning restore CS8620
                        ),
                    nameof(Metadata)
                ).LoadAsync(nameof(Metadata), cancellationToken);

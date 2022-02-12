@@ -221,7 +221,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<JTokenA>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Type.Should().Be(JTokenType.Null);
+        result.Bar!.Type.Should().Be(JTokenType.Null);
     }
 
     [Fact]
@@ -309,7 +309,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be("{}");
+        Encoding.UTF8.GetString(result.Bar!).Should().Be("{}");
     }
 
     [Fact]
@@ -322,7 +322,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be("{\"a\":\"123\"}");
+        Encoding.UTF8.GetString(result.Bar!).Should().Be("{\"a\":\"123\"}");
     }
 
     [Fact]
@@ -423,7 +423,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be("[]");
+        Encoding.UTF8.GetString(result.Bar!).Should().Be("[]");
     }
 
     [Fact]
@@ -436,7 +436,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be("[1234,5678]");
+        Encoding.UTF8.GetString(result.Bar!).Should().Be("[1234,5678]");
     }
 
     [Fact]
@@ -511,7 +511,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<JTokenA>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Type.Should().Be(JTokenType.Null);
+        result.Bar!.Type.Should().Be(JTokenType.Null);
     }
 
     [Fact]
@@ -524,7 +524,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be("null");
+        Encoding.UTF8.GetString(result.Bar!).Should().Be("null");
     }
 
     [Fact]
@@ -549,7 +549,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<JTokenA>(item);
 
         result.Bar.Should().NotBeNull();
-        result.Bar.Type.Should().Be(JTokenType.Null);
+        result.Bar!.Type.Should().Be(JTokenType.Null);
     }
 
     public JTokenConverterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
@@ -742,7 +742,7 @@ public class JTokenConverterTests : TypeConverterTest
         var result = Mapper.Map<ByteArray>(item);
 
         result.Bar.Should().NotBeNull();
-        Encoding.UTF8.GetString(result.Bar).Should().Be(value);
+        Encoding.UTF8.GetString(result.Bar!).Should().Be(value);
     }
 
     [Theory]

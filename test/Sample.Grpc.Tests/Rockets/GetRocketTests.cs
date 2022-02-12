@@ -41,5 +41,5 @@ public class GetRocketTests : HandleGrpcHostBase
     {
     }
 
-    private static readonly Faker Faker = new Faker();
+    private static readonly Faker Faker = new();
 }

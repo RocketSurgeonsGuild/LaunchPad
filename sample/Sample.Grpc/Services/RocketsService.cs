@@ -51,6 +51,7 @@ public class RocketsService : Rockets.RocketsBase
         };
     }
 
+    [UsedImplicitly]
     private class Mapper : Profile
     {
         public Mapper()
@@ -65,6 +66,7 @@ public class RocketsService : Rockets.RocketsBase
         }
     }
 
+    [UsedImplicitly]
     private class CreateRocketRequestValidator : AbstractValidator<CreateRocketRequest>
     {
         public CreateRocketRequestValidator()
@@ -79,6 +81,7 @@ public class RocketsService : Rockets.RocketsBase
         }
     }
 
+    [UsedImplicitly]
     private class GetRocketRequestValidator : AbstractValidator<GetRocketRequest>
     {
         public GetRocketRequestValidator()
@@ -89,6 +92,7 @@ public class RocketsService : Rockets.RocketsBase
         }
     }
 
+    [UsedImplicitly]
     private class UpdateRocketRequestValidator : AbstractValidator<UpdateRocketRequest>
     {
         public UpdateRocketRequestValidator()
@@ -108,10 +112,12 @@ public class RocketsService : Rockets.RocketsBase
         }
     }
 
+    [UsedImplicitly]
     private class ListRocketsRequestValidator : AbstractValidator<ListRocketsRequest>
     {
     }
 
+    [UsedImplicitly]
     private class DeleteRocketRequestValidator : AbstractValidator<DeleteRocketRequest>
     {
         public DeleteRocketRequestValidator()

@@ -63,17 +63,17 @@ public class SerilogFunctionsConvention : IServiceConvention
         services.AddSingleton<ILoggerFactory>(
             _ =>
             {
-                var logger = _.GetRequiredService<ILogger>();
+                var log = _.GetRequiredService<ILogger>();
                 ILogger? registeredLogger = null;
                 if (_options.PreserveStaticLogger)
                 {
-                    registeredLogger = logger;
+                    registeredLogger = log;
                 }
                 else
                 {
                     // Passing a `null` logger to `SerilogLoggerFactory` results in disposal via
                     // `Log.CloseAndFlush()`, which additionally replaces the static logger with a no-op.
-                    Log.Logger = logger;
+                    Log.Logger = log;
                 }
 
                 var factory = new SerilogLoggerFactory(registeredLogger, true, loggerProviders);

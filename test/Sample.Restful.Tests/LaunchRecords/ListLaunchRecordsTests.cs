@@ -37,5 +37,5 @@ public class ListLaunchRecordsTests : HandleWebHostBase
     {
     }
 
-    private static readonly Faker Faker = new Faker();
+    private static readonly Faker Faker = new();
 }

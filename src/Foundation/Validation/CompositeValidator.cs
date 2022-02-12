@@ -4,11 +4,14 @@ using FluentValidation.Results;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 
-internal class CompositeValidator<T> : IValidator<T>
+internal class CompositeValidator
 {
-    private static readonly PropertyInfo RuleSetsExecutedProperty = typeof(ValidationResult)
+    protected static readonly PropertyInfo RuleSetsExecutedProperty = typeof(ValidationResult)
        .GetProperty(nameof(ValidationResult.RuleSetsExecuted), BindingFlags.Instance | BindingFlags.Public)!;
+}
 
+internal class CompositeValidator<T> : CompositeValidator, IValidator<T>
+{
     private readonly IEnumerable<IValidator> _validators;
 
     public CompositeValidator(IEnumerable<IValidator> validators)
@@ -23,7 +26,7 @@ internal class CompositeValidator<T> : IValidator<T>
         return Validate(new ValidationContext<T>(instance));
     }
 
-    public Task<ValidationResult> ValidateAsync(T instance, CancellationToken cancellation = new CancellationToken())
+    public Task<ValidationResult> ValidateAsync(T instance, CancellationToken cancellation = new())
     {
         return ValidateAsync(new ValidationContext<T>(instance), cancellation);
     }

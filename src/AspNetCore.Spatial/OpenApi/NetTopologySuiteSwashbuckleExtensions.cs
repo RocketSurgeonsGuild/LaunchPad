@@ -19,7 +19,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#geometry-objects"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#geometry-objects"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -34,7 +34,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Required = new HashSet<string> { "type" },
                 Properties = new Dictionary<string, OpenApiSchema>
                 {
-                    ["type"] = new OpenApiSchema
+                    ["type"] = new()
                     {
                         Type = "string",
                         Enum = new List<IOpenApiAny>
@@ -57,7 +57,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#id2"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#id2"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -67,7 +67,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Description = "GeoJSon geometry",
                 AllOf = new List<OpenApiSchema>
                 {
-                    new OpenApiSchema
+                    new()
                     {
                         Reference = new OpenApiReference
                         {
@@ -75,11 +75,11 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                             Id = "Geometry",
                         }
                     },
-                    new OpenApiSchema
+                    new()
                     {
                         Properties = new Dictionary<string, OpenApiSchema>
                         {
-                            ["coordinates"] = new OpenApiSchema
+                            ["coordinates"] = new()
                             {
                                 Reference = new OpenApiReference
                                 {
@@ -97,7 +97,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#id3"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#id3"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -107,7 +107,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Description = "GeoJSon geometry",
                 AllOf = new List<OpenApiSchema>
                 {
-                    new OpenApiSchema
+                    new()
                     {
                         Reference = new OpenApiReference
                         {
@@ -115,11 +115,11 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                             Id = "Geometry",
                         }
                     },
-                    new OpenApiSchema
+                    new()
                     {
                         Properties = new Dictionary<string, OpenApiSchema>
                         {
-                            ["coordinates"] = new OpenApiSchema
+                            ["coordinates"] = new()
                             {
                                 Type = "array",
                                 Items = new OpenApiSchema
@@ -141,7 +141,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#id4"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#id4"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -151,7 +151,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Description = "GeoJSon geometry",
                 AllOf = new List<OpenApiSchema>
                 {
-                    new OpenApiSchema
+                    new()
                     {
                         Reference = new OpenApiReference
                         {
@@ -159,11 +159,11 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                             Id = "Geometry",
                         }
                     },
-                    new OpenApiSchema
+                    new()
                     {
                         Properties = new Dictionary<string, OpenApiSchema>
                         {
-                            ["coordinates"] = new OpenApiSchema
+                            ["coordinates"] = new()
                             {
                                 Type = "array",
                                 Items = new OpenApiSchema
@@ -189,7 +189,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#id4"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#id4"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -199,7 +199,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Description = "GeoJSon geometry",
                 AllOf = new List<OpenApiSchema>
                 {
-                    new OpenApiSchema
+                    new()
                     {
                         Reference = new OpenApiReference
                         {
@@ -207,11 +207,11 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                             Id = "Geometry",
                         }
                     },
-                    new OpenApiSchema
+                    new()
                     {
                         Properties = new Dictionary<string, OpenApiSchema>
                         {
-                            ["coordinates"] = new OpenApiSchema
+                            ["coordinates"] = new()
                             {
                                 Type = "array",
                                 Items = new OpenApiSchema
@@ -233,7 +233,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#id5"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#id5"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -243,7 +243,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Description = "GeoJSon geometry",
                 AllOf = new List<OpenApiSchema>
                 {
-                    new OpenApiSchema
+                    new()
                     {
                         Reference = new OpenApiReference
                         {
@@ -251,11 +251,11 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                             Id = "Geometry",
                         }
                     },
-                    new OpenApiSchema
+                    new()
                     {
                         Properties = new Dictionary<string, OpenApiSchema>
                         {
-                            ["coordinates"] = new OpenApiSchema
+                            ["coordinates"] = new()
                             {
                                 Type = "array",
                                 Items = new OpenApiSchema
@@ -281,7 +281,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#id6"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#id6"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -291,7 +291,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Description = "GeoJSon geometry",
                 AllOf = new List<OpenApiSchema>
                 {
-                    new OpenApiSchema
+                    new()
                     {
                         Reference = new OpenApiReference
                         {
@@ -299,11 +299,11 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                             Id = "Geometry",
                         }
                     },
-                    new OpenApiSchema
+                    new()
                     {
                         Properties = new Dictionary<string, OpenApiSchema>
                         {
-                            ["coordinates"] = new OpenApiSchema
+                            ["coordinates"] = new()
                             {
                                 Type = "array",
                                 Items = new OpenApiSchema
@@ -333,7 +333,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
             {
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("http://geojson.org/geojson-spec.html#geometrycollection"),
+                    Url = new Uri("http://geojson.org/geojson-spec.html#geometrycollection"),
                 },
                 Type = "object",
                 Extensions = new Dictionary<string, IOpenApiExtension>
@@ -344,12 +344,12 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Description = "GeoJSon geometry collection",
                 Properties = new Dictionary<string, OpenApiSchema>
                 {
-                    ["type"] = new OpenApiSchema
+                    ["type"] = new()
                     {
                         Type = "string",
                         Enum = new List<IOpenApiAny> { new OpenApiString("GeometryCollection") },
                     },
-                    ["geometries"] = new OpenApiSchema
+                    ["geometries"] = new()
                     {
                         Type = "array",
                         Items = new OpenApiSchema
@@ -373,20 +373,20 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Required = new HashSet<string> { "type", "id", "geometry" },
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("https://tools.ietf.org/html/rfc7946#section-3.2")
+                    Url = new Uri("https://tools.ietf.org/html/rfc7946#section-3.2")
                 },
                 Properties = new Dictionary<string, OpenApiSchema>
                 {
-                    ["type"] = new OpenApiSchema
+                    ["type"] = new()
                     {
                         Type = "string",
                         Enum = new List<IOpenApiAny> { new OpenApiString("Feature") }
                     },
-                    ["id"] = new OpenApiSchema
+                    ["id"] = new()
                     {
                         Type = "integer",
                     },
-                    ["geometry"] = new OpenApiSchema
+                    ["geometry"] = new()
                     {
                         Reference = new OpenApiReference
                         {
@@ -394,7 +394,7 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                             Id = "GeometryCollection",
                         }
                     },
-                    ["properties"] = new OpenApiSchema
+                    ["properties"] = new()
                     {
                         Type = "object"
                     }
@@ -410,16 +410,16 @@ internal static class NetTopologySuiteSwashbuckleExtensions
                 Required = new HashSet<string> { "type", "features" },
                 ExternalDocs = new OpenApiExternalDocs
                 {
-                    Url = new("https://tools.ietf.org/html/rfc7946#section-3.2")
+                    Url = new Uri("https://tools.ietf.org/html/rfc7946#section-3.2")
                 },
                 Properties = new Dictionary<string, OpenApiSchema>
                 {
-                    ["type"] = new OpenApiSchema
+                    ["type"] = new()
                     {
                         Type = "string",
                         Enum = new List<IOpenApiAny> { new OpenApiString("FeatureCollection") }
                     },
-                    ["features"] = new OpenApiSchema
+                    ["features"] = new()
                     {
                         Type = "array",
                         Items = new OpenApiSchema

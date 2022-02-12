@@ -75,9 +75,10 @@ public class StringInValidatorTests : ConventionFakeTest
 
     private class Target
     {
-        public string Type { get; set; }
-        public string TypeIgnoreCase { get; set; }
+        [UsedImplicitly] public string Type { get; set; } = null!;
+        [UsedImplicitly] public string TypeIgnoreCase { get; set; } = null!;
 
+        [UsedImplicitly]
         private class Validator : AbstractValidator<Target>
         {
             public Validator()

@@ -16,6 +16,6 @@ public partial class Program
     {
         return Host.CreateDefaultBuilder(args)
                    .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
-                   .ConfigureServices((hostContext, services) => { services.AddHostedService<Worker>(); });
+                   .ConfigureServices((_, services) => { services.AddHostedService<Worker>(); });
     }
 }

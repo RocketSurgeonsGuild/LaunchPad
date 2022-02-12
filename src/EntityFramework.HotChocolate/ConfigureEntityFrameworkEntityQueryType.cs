@@ -8,6 +8,7 @@ namespace Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate;
 ///     Configure the GraphQl values for a given Entity Framework type.
 /// </summary>
 /// <typeparam name="TEntity"></typeparam>
+[PublicAPI]
 public class ConfigureEntityFrameworkEntityQueryType<TEntity> : ObjectTypeExtension, IConfigureEntityFrameworkEntityQueryType
     where TEntity : class
 {
@@ -38,10 +39,12 @@ public class ConfigureEntityFrameworkEntityQueryType<TEntity> : ObjectTypeExtens
     {
         if (_action == null)
             throw new NotImplementedException("Action was not implemented!");
-        _action?.Invoke(fieldDescriptor);
+        _action.Invoke(fieldDescriptor);
     }
 
+#pragma warning disable CA1033
     bool IConfigureEntityFrameworkEntityQueryType.Match(PropertyInfo propertyInfo)
+#pragma warning restore CA1033
     {
         return propertyInfo.PropertyType == typeof(DbSet<TEntity>);
     }

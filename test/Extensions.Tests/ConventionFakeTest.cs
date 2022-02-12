@@ -9,7 +9,7 @@ namespace Extensions.Tests;
 
 public abstract class ConventionFakeTest : AutoFakeTest
 {
-    public ConventionFakeTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    protected ConventionFakeTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
     }
 

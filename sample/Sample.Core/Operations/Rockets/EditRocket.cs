@@ -12,8 +12,11 @@ public static partial class EditRocket
 {
     public record Model
     {
-        public string SerialNumber { get; set; } // TODO: Make generator that can be used to create a writable view model
-        public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
+        // TODO: Make generator that can be used to create a writable view model
+        public string SerialNumber { get; set; } = null!;
+
+        // TODO: Make generator that can be used to create a writable view model
+        public RocketType Type { get; set; }
     }
 
     [InheritFrom(typeof(Model))]

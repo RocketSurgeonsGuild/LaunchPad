@@ -60,7 +60,7 @@ public class PeriodAssertions : ReferenceTypeAssertions<Period, PeriodAssertions
     //     throw new NotImplementedException();
 
     private AndConstraint<PeriodAssertions> ExecuteAssertion(
-        bool condition, string description, Period expected, string because = null, params object[] becauseArgs
+        bool condition, string description, Period expected, string? because = null, params object[] becauseArgs
     )
     {
         Execute.Assertion

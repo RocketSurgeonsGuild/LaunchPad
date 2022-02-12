@@ -9,7 +9,7 @@ using Rocket.Surgery.Extensions.Testing;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Analyzers.Tests;
+namespace Analyzers.Tests.Helpers;
 
 public abstract class GeneratorTest : LoggerTest
 {
@@ -99,7 +99,7 @@ public abstract class GeneratorTest : LoggerTest
         Logger.LogInformation("Starting Generation for {SourceCount}", sources.Length);
         if (Logger.IsEnabled(LogLevel.Trace))
         {
-            Logger.LogTrace("--- References ---", sources.Length);
+            Logger.LogTrace("--- References {Count} ---", sources.Length);
             foreach (var reference in _metadataReferences)
                 Logger.LogTrace("    Reference: {Name}", reference.Display);
         }
@@ -115,7 +115,7 @@ public abstract class GeneratorTest : LoggerTest
         var diagnostics = compilation.GetDiagnostics();
         if (Logger.IsEnabled(LogLevel.Trace) && diagnostics is { Length: > 0 })
         {
-            Logger.LogTrace("--- Input Diagnostics ---", sources.Length);
+            Logger.LogTrace("--- Input Diagnostics {Count} ---", sources.Length);
             foreach (var d in diagnostics)
                 Logger.LogTrace("    Reference: {Name}", d.ToString());
         }
@@ -134,13 +134,11 @@ public abstract class GeneratorTest : LoggerTest
         {
             Logger.LogInformation("--- {Generator} ---", generatorType.FullName);
             var generator = ( Activator.CreateInstance(generatorType) as IIncrementalGenerator )!;
-            var driver = CSharpGeneratorDriver.Create(generator);
-
-            driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out diagnostics);
+            var _ = CSharpGeneratorDriver.Create(generator).RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out diagnostics);
 
             if (Logger.IsEnabled(LogLevel.Trace) && diagnostics is { Length: > 0 })
             {
-                Logger.LogTrace("--- Diagnostics ---", sources.Length);
+                Logger.LogTrace("--- Diagnostics {Count} ---", sources.Length);
                 foreach (var d in diagnostics)
                     Logger.LogTrace("    Reference: {Name}", d.ToString());
             }
@@ -148,7 +146,7 @@ public abstract class GeneratorTest : LoggerTest
             var trees = outputCompilation.SyntaxTrees.Except(compilation.SyntaxTrees).ToImmutableArray();
             if (Logger.IsEnabled(LogLevel.Trace) && trees is { Length: > 0 })
             {
-                Logger.LogTrace("--- Syntax Trees ---", sources.Length);
+                Logger.LogTrace("--- Syntax Trees {Count} ---", sources.Length);
                 foreach (var t in trees)
                 {
                     Logger.LogTrace("    FilePath: {Name}", t.FilePath);

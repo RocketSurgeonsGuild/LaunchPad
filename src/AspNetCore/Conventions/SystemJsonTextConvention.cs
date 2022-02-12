@@ -29,7 +29,7 @@ public class SystemJsonTextConvention : IServiceConvention
     /// <param name="options"></param>
     public SystemJsonTextConvention(FoundationOptions? options = null)
     {
-        _options = options ?? new();
+        _options = options ?? new FoundationOptions();
     }
 
     /// <summary>

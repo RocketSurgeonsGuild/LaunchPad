@@ -28,7 +28,7 @@ public class NewtonsoftJsonConvention : IServiceConvention
     /// <param name="options"></param>
     public NewtonsoftJsonConvention(FoundationOptions? options = null)
     {
-        _options = options ?? new();
+        _options = options ?? new FoundationOptions();
     }
 
     /// <summary>

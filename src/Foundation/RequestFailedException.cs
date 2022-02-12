@@ -7,6 +7,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 ///     This data can then be used to surface information to the user through something like problem details.
 /// </remarks>
 /// <seealso cref="System.Exception" />
+[PublicAPI]
 public class RequestFailedException : Exception, IProblemDetailsData
 {
     /// <summary>
@@ -39,7 +40,7 @@ public class RequestFailedException : Exception, IProblemDetailsData
     /// <summary>
     ///     Additional properties
     /// </summary>
-    public IDictionary<string, object> Properties { get; init; } = new Dictionary<string, object>(StringComparer.Ordinal);
+    public IDictionary<string, object?> Properties { get; init; } = new Dictionary<string, object?>(StringComparer.Ordinal);
 
     /// <summary>
     ///     Request title

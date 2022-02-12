@@ -37,7 +37,7 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T> : NodaConvert
     /// <inheritdoc />
     protected override T ReadJsonImpl(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
-        var text = reader!.GetString()!;
+        var text = reader.GetString()!;
 
         ParseResult<T> result = null!;
         foreach (var patter in _patterns)

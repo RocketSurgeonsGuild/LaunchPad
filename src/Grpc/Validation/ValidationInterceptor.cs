@@ -7,6 +7,15 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Validation;
 
 internal class ValidationInterceptor : Interceptor
 {
+    private static RpcException CreateException(ValidationResult results, string? message)
+    {
+        var validationMetadata = results.Errors.ToValidationMetadata();
+        validationMetadata.Add("title", "Unprocessable Entity");
+        validationMetadata.Add("link", "https://tools.ietf.org/html/rfc4918#section-11.2");
+        if (message is { }) validationMetadata.Add("message", message);
+        throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata, message);
+    }
+
     private readonly IValidatorFactory _factory;
     private readonly IValidatorErrorMessageHandler _handler;
     private readonly IServiceProvider _serviceProvider;
@@ -85,14 +94,5 @@ internal class ValidationInterceptor : Interceptor
         }
 
         return continuation(request, context);
-    }
-
-    private RpcException CreateException(ValidationResult results, string? message)
-    {
-        var validationMetadata = results.Errors.ToValidationMetadata();
-        validationMetadata.Add("title", "Unprocessable Entity");
-        validationMetadata.Add("link", "https://tools.ietf.org/html/rfc4918#section-11.2");
-        if (message is { }) validationMetadata.Add("message", message);
-        throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata, message);
     }
 }

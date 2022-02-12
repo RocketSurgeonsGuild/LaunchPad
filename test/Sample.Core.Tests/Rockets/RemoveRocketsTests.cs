@@ -39,5 +39,5 @@ public class RemoveRocketsTests : HandleTestHostBase
     {
     }
 
-    private static readonly Faker Faker = new Faker();
+    private static readonly Faker Faker = new();
 }

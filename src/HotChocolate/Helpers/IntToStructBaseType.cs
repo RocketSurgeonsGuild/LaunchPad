@@ -35,9 +35,9 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     protected abstract bool TryDeserialize(int val, [NotNullWhen(true)] out TRuntimeType? output);
 
     /// <inheritdoc />
-    protected override TRuntimeType ParseLiteral(IntValueNode literal)
+    protected override TRuntimeType ParseLiteral(IntValueNode valueSyntax)
     {
-        if (TryDeserialize(literal.ToInt32(), out var value))
+        if (TryDeserialize(valueSyntax.ToInt32(), out var value))
         {
             return value.Value;
         }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
 
@@ -18,12 +17,12 @@ public class MutableGenerator : ISourceGenerator
     /// <inheritdoc />
     public void Execute(GeneratorExecutionContext context)
     {
-        if (!( context.SyntaxReceiver is SyntaxReceiver syntaxReceiver ))
+        if (context.SyntaxReceiver is not SyntaxReceiver)
         {
-            return;
+//            return;
         }
 
-        var compliation = ( context.Compilation as CSharpCompilation )!;
+//        var compliation = ( context.Compilation as CSharpCompilation )!;
     }
 
     private class SyntaxReceiver : ISyntaxReceiver

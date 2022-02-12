@@ -7,9 +7,11 @@ namespace Sample.Pages.Pages.Rockets;
 
 public class RocketViewModel : MediatorPageModel
 {
-    [BindProperty(SupportsGet = true)] public Guid Id { get; set; }
+    [UsedImplicitly]
+    [BindProperty(SupportsGet = true)]
+    public Guid Id { get; set; }
 
-    public RocketModel Rocket { get; set; }
+    public RocketModel Rocket { get; set; } = null!;
 
     public virtual async Task OnGet()
     {

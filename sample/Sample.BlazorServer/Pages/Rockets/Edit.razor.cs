@@ -9,13 +9,13 @@ public partial class Edit : ComponentBase
 {
     [Parameter] public Guid Id { get; set; }
 
-    public EditRocket.Request Model { get; set; } = new EditRocket.Request();
+    public EditRocket.Request Model { get; set; } = new();
 
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    [Inject] private IMediator Mediator { get; set; }
+    [Inject] private IMediator Mediator { get; set; } = null!;
 
-    [Inject] private IMapper Mapper { get; set; }
+    [Inject] private IMapper Mapper { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
-        <PackageDescription></PackageDescription>
+        <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
     </PropertyGroup>
@@ -21,5 +21,6 @@
         <PackageReference Include="Hellang.Middleware.ProblemDetails" />
         <PackageReference Include="Rocket.Surgery.Extensions" />
         <PackageReference Include="Rocket.Surgery.Hosting" />
+        <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />
     </ItemGroup>
 </Project>

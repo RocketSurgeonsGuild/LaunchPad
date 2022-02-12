@@ -16,7 +16,7 @@ public class RocketIndexModel : PageModel
 
     // [BindProperty]
     // public Movie Movie { get; set; }
-    public IEnumerable<RocketModel> Rockets { get; set; }
+    [UsedImplicitly] public IEnumerable<RocketModel> Rockets { get; set; } = null!;
 
     public async Task OnGet()
     {

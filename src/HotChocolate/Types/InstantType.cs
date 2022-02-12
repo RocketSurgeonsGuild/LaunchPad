@@ -21,11 +21,11 @@ public class InstantType : StringToStructBaseType<Instant>
     }
 
     /// <inheritdoc />
-    protected override string Serialize(Instant val)
+    protected override string Serialize(Instant baseValue)
     {
         return InstantPattern.ExtendedIso
                              .WithCulture(CultureInfo.InvariantCulture)
-                             .Format(val);
+                             .Format(baseValue);
     }
 
     /// <inheritdoc />

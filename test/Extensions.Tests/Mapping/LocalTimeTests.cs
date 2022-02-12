@@ -77,7 +77,7 @@ public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
 
     [Theory]
     [ClassData(typeof(TypeConverterData<Converters>))]
-    public void AutomatedTests(Type source, Type destination, object sourceValue)
+    public void AutomatedTests(Type source, Type destination, object? sourceValue)
     {
         var method = typeof(IMapperBase).GetMethods(BindingFlags.Public | BindingFlags.Instance)
                                         .First(
@@ -97,15 +97,15 @@ public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
         }
     }
 
-    protected override void Configure(IMapperConfigurationExpression x)
+    protected override void Configure(IMapperConfigurationExpression expression)
     {
-        if (x == null)
+        if (expression == null)
         {
-            throw new ArgumentNullException(nameof(x));
+            throw new ArgumentNullException(nameof(expression));
         }
 
-        x.CreateMap<Foo1, Foo3>().ReverseMap();
-        x.CreateMap<Foo1, Foo5>().ReverseMap();
+        expression.CreateMap<Foo1, Foo3>().ReverseMap();
+        expression.CreateMap<Foo1, Foo5>().ReverseMap();
     }
 
     private class Foo1

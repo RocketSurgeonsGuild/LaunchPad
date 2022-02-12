@@ -5,7 +5,7 @@ using Rocket.Surgery.Hosting;
 namespace Sample.Pages;
 
 [ImportConventions]
-public partial class Program
+public static partial class Program
 {
     public static void Main(string[] args)
     {

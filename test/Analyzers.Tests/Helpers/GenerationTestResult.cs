@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Sdk;
 
-namespace Analyzers.Tests;
+namespace Analyzers.Tests.Helpers;
 
 public record GenerationTestResult(
     CSharpCompilation Compilation,
@@ -17,7 +17,7 @@ public record GenerationTestResult(
 {
     public static string NormalizeToLf(string input)
     {
-        return input.Replace(GenerationHelpers.CrLf, GenerationHelpers.Lf);
+        return input.Replace(GenerationHelpers.CrLf, GenerationHelpers.Lf, StringComparison.Ordinal);
     }
 
     public void EnsureDiagnostics(DiagnosticSeverity severity = DiagnosticSeverity.Warning)
@@ -49,7 +49,9 @@ public record GenerationTestResult(
                 {
                     Logger.LogCritical(e2.Message);
                 }
+#pragma warning disable CA1031
                 catch
+#pragma warning restore CA1031
                 {
                     // ignore
                 }

@@ -6,11 +6,11 @@ namespace Sample.BlazorServer.Pages.Rockets;
 
 public partial class Create : ComponentBase
 {
-    public CreateRocket.Request Model { get; set; } = new CreateRocket.Request();
+    public CreateRocket.Request Model { get; set; } = new();
 
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    [Inject] private IMediator Mediator { get; set; }
+    [Inject] private IMediator Mediator { get; set; } = null!;
 
     public async Task Save()
     {

@@ -40,7 +40,7 @@ public class SerilogHostingConvention : IHostingConvention
         }
 
         builder.ConfigureServices(
-            (context, services) =>
+            (_, services) =>
             {
                 // removes default console loggers and such
                 foreach (var item in services
@@ -63,7 +63,7 @@ public class SerilogHostingConvention : IHostingConvention
         else
         {
             builder.UseSerilog(
-                (ctx, services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, services),
+                (_, services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, services),
                 _options.PreserveStaticLogger,
                 _options.WriteToProviders
             );

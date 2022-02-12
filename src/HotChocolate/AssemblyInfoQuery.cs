@@ -23,7 +23,7 @@ public class AssemblyInfoQuery
     public AssemblyInfo Version(IResolverContext context, CancellationToken cancellationToken)
 #pragma warning restore CA1822
     {
-        return new(
+        return new AssemblyInfo(
             context.Services.GetService<FoundationOptions>()?.EntryAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()
         );
     }

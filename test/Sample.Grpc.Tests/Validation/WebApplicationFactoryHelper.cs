@@ -9,7 +9,7 @@ public static class WebApplicationFactoryHelper
     {
         var client = factory.CreateDefaultClient(new ResponseVersionHandler());
         return GrpcChannel.ForAddress(
-            client.BaseAddress, new GrpcChannelOptions
+            client.BaseAddress!, new GrpcChannelOptions
             {
                 HttpClient = client
             }

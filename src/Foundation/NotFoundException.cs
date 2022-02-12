@@ -4,6 +4,7 @@
 ///     NotFoundException.
 /// </summary>
 /// <seealso cref="System.Exception" />
+[PublicAPI]
 public class NotFoundException : Exception, IProblemDetailsData
 {
     /// <summary>
@@ -36,7 +37,7 @@ public class NotFoundException : Exception, IProblemDetailsData
     /// <summary>
     ///     Additional properties
     /// </summary>
-    public IDictionary<string, object> Properties { get; init; } = new Dictionary<string, object>(StringComparer.Ordinal);
+    public IDictionary<string, object?> Properties { get; init; } = new Dictionary<string, object?>(StringComparer.Ordinal);
 
     /// <summary>
     ///     Request title

@@ -16,7 +16,7 @@ namespace Sample.Core.Tests;
 public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
 {
     private readonly ConventionContextBuilder _context;
-    private SqliteConnection _connection;
+    private SqliteConnection? _connection;
 
     protected HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : base(
         outputHelper,
@@ -34,18 +34,18 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     public async Task InitializeAsync()
     {
         _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
+        await _connection.OpenAsync();
 
         _context
            .ConfigureServices(
-                (context, services) =>
+                (_, services) =>
                 {
                     services.AddDbContextPool<RocketDbContext>(
-                        x => SqliteDbContextOptionsBuilderExtensions.UseSqlite(
-                            x
-                               .EnableDetailedErrors()
-                               .EnableSensitiveDataLogging(), _connection
-                        )
+                        z => z
+                            .EnableDetailedErrors()
+                            .EnableSensitiveDataLogging().UseSqlite(
+                                 _connection
+                             )
                     );
                 }
             );
@@ -57,6 +57,6 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _connection.DisposeAsync();
+        await _connection!.DisposeAsync();
     }
 }

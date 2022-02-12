@@ -8,7 +8,7 @@ public interface IProblemDetailsData
     /// <summary>
     ///     Additional properties
     /// </summary>
-    IDictionary<string, object> Properties { get; }
+    IDictionary<string, object?> Properties { get; }
 
     /// <summary>
     ///     Request title

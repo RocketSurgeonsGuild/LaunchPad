@@ -346,15 +346,17 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     public override int GetHashCode()
     {
         var hashCode = -1073977946;
+        // ReSharper disable NonReadonlyMemberInGetHashCode
         hashCode = ( hashCode * -1521134295 ) + Major.GetHashCode();
         hashCode = ( hashCode * -1521134295 ) + Minor.GetHashCode();
         hashCode = ( hashCode * -1521134295 ) + Patch.GetHashCode();
-        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(PreReleaseTag!);
-        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(PreReleaseTagWithDash!);
-        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(InformationalVersion!);
-        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(BranchName!);
-        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(Sha!);
-        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(CommitDate!);
+        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(PreReleaseTag ?? string.Empty);
+        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(PreReleaseTagWithDash ?? string.Empty);
+        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(InformationalVersion ?? string.Empty);
+        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(BranchName ?? string.Empty);
+        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(Sha ?? string.Empty);
+        hashCode = ( hashCode * -1521134295 ) + EqualityComparer<string>.Default.GetHashCode(CommitDate ?? string.Empty);
+        // ReSharper enable NonReadonlyMemberInGetHashCode
         return hashCode;
     }
 

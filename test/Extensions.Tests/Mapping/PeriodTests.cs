@@ -40,21 +40,21 @@ public class PeriodTests : TypeConverterTest<PeriodTests.Converters>
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
-        result.Should().Be(PeriodPattern.Roundtrip.Parse(foo.Bar).Value);
+        result!.Should().Be(PeriodPattern.Roundtrip.Parse(foo.Bar).Value);
     }
 
     public PeriodTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
     }
 
-    protected override void Configure(IMapperConfigurationExpression x)
+    protected override void Configure(IMapperConfigurationExpression expression)
     {
-        if (x == null)
+        if (expression == null)
         {
-            throw new ArgumentNullException(nameof(x));
+            throw new ArgumentNullException(nameof(expression));
         }
 
-        x.CreateMap<Foo1, Foo3>().ReverseMap();
+        expression.CreateMap<Foo1, Foo3>().ReverseMap();
     }
 
     private class Foo1

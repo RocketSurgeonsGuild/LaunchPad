@@ -21,7 +21,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 public class ConventionTestWebHost<TEntryPoint> : WebApplicationFactory<TEntryPoint>
     where TEntryPoint : class
 {
-    private readonly List<Action<ConventionContextBuilder>> _hostBuilderActions = new List<Action<ConventionContextBuilder>>();
+    private readonly List<Action<ConventionContextBuilder>> _hostBuilderActions = new();
 
     /// <inheritdoc />
     protected override IHostBuilder CreateHostBuilder()

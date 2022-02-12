@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Collections.ObjectModel;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
@@ -12,7 +13,7 @@ public class RestfulApiOptions
     /// <summary>
     ///     The cache of default status codes for a given method type.
     /// </summary>
-    public IDictionary<RestfulApiMethod, int> MethodStatusCodeMap = new Dictionary<RestfulApiMethod, int>
+    public IDictionary<RestfulApiMethod, int> MethodStatusCodeMap { get; } = new Dictionary<RestfulApiMethod, int>
     {
         [RestfulApiMethod.List] = StatusCodes.Status200OK,
         [RestfulApiMethod.Read] = StatusCodes.Status200OK,
@@ -24,7 +25,7 @@ public class RestfulApiOptions
     /// <summary>
     ///     The related method builders that are used to identify methods by name, prefix, type, etc.
     /// </summary>
-    public List<RestfulApiMethodBuilder> Builders { get; } = new List<RestfulApiMethodBuilder>
+    public Collection<RestfulApiMethodBuilder> Builders { get; } = new()
     {
         new RestfulApiMethodBuilder(RestfulApiMethod.List)
            .MatchPrefix("List", "Search")

@@ -236,9 +236,9 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     {
         var nameMatch = _nameMatchBehavior switch
         {
-            ApiConventionNameMatchBehavior.Exact  => _names.Any(name => actionModel.ActionName!.Equals(name, StringComparison.OrdinalIgnoreCase)),
-            ApiConventionNameMatchBehavior.Prefix => _names.Any(name => actionModel.ActionName!.StartsWith(name!, StringComparison.OrdinalIgnoreCase)),
-            ApiConventionNameMatchBehavior.Suffix => _names.Any(name => actionModel.ActionName!.EndsWith(name!, StringComparison.OrdinalIgnoreCase)),
+            ApiConventionNameMatchBehavior.Exact  => _names.Any(name => actionModel.ActionName.Equals(name, StringComparison.OrdinalIgnoreCase)),
+            ApiConventionNameMatchBehavior.Prefix => _names.Any(name => actionModel.ActionName.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
+            ApiConventionNameMatchBehavior.Suffix => _names.Any(name => actionModel.ActionName.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
             _                                     => true
         };
 

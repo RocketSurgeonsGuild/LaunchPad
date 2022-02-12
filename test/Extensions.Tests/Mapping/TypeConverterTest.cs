@@ -140,19 +140,19 @@ internal abstract class TypeConverterData : TheoryData<Type, Type, object?>
 
         static object CreateValue(Type type, object value)
         {
-            return typeof(Foo).GetMethod(nameof(Foo.Create))!?.MakeGenericMethod(type).Invoke(null, new[] { value })!;
+            return typeof(Foo).GetMethod(nameof(Foo.Create))!.MakeGenericMethod(type).Invoke(null, new[] { value })!;
         }
 
-        foreach (var (source, sourceClass, destination, destinationClass) in GetValueTypePairs(typeConverterFactory())
-                                                                            .SelectMany(
-                                                                                 item => new[]
-                                                                                 {
-                                                                                     item,
-                                                                                     ( typeof(Nullable<>).MakeGenericType(item.source),
-                                                                                       typeof(Nullable<>).MakeGenericType(item.destination) ),
-                                                                                     ( item.source, typeof(Nullable<>).MakeGenericType(item.destination) )
-                                                                                 }
-                                                                             ).Select(GetWrappedClasses))
+        foreach (var (source, sourceClass, _, destinationClass) in GetValueTypePairs(typeConverterFactory())
+                                                                  .SelectMany(
+                                                                       item => new[]
+                                                                       {
+                                                                           item,
+                                                                           ( typeof(Nullable<>).MakeGenericType(item.source),
+                                                                             typeof(Nullable<>).MakeGenericType(item.destination) ),
+                                                                           ( item.source, typeof(Nullable<>).MakeGenericType(item.destination) )
+                                                                       }
+                                                                   ).Select(GetWrappedClasses))
         {
             var sourceValue = CreateValue(source, GetRandomValue(source));
             Add(sourceClass, destinationClass, sourceValue);
@@ -185,7 +185,7 @@ public abstract class TypeConverterTest : AutoFakeTest
     }
 
     protected IMapper Mapper { get; }
-    protected AutoMapperOptions Options { get; } = new AutoMapperOptions();
+    protected AutoMapperOptions Options { get; } = new();
     protected MapperConfiguration Config { get; }
     protected abstract void Configure(IMapperConfigurationExpression expression);
 }
@@ -220,7 +220,7 @@ public abstract class TypeConverterTest<T> : AutoFakeTest
     }
 
     protected IMapper Mapper { get; }
-    protected AutoMapperOptions Options { get; } = new AutoMapperOptions();
+    protected AutoMapperOptions Options { get; } = new();
     protected MapperConfiguration Config { get; }
 
     protected abstract void Configure(IMapperConfigurationExpression expression);

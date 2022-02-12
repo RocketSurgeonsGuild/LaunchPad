@@ -5,7 +5,7 @@ using Rocket.Surgery.Hosting;
 namespace Sample.Graphql;
 
 [ImportConventions]
-public partial class Program
+public static partial class Program
 {
     public static void Main(string[] args)
     {

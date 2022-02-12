@@ -9,8 +9,8 @@ public partial class View : ComponentBase
 {
     [Parameter] public Guid Id { get; set; }
 
-    public RocketModel Model { get; set; }
-    [Inject] private IMediator Mediator { get; set; }
+    public RocketModel Model { get; set; } = null!;
+    [Inject] private IMediator Mediator { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

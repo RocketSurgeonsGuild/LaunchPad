@@ -1,3 +1,10 @@
 ﻿[*]
 #### .NET Coding Conventions ####
 dotnet_diagnostic.CA1019.severity = none
+dotnet_diagnostic.CA1050.severity = none
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA2254.severity = none
+dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.CA5394.severity = none
+dotnet_diagnostic.CA1707.severity = none
+resharper_virtual_member_call_in_constructor_highlighting = none
