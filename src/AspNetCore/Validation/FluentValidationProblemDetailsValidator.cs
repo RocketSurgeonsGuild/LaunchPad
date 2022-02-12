@@ -1,16 +1,14 @@
 ﻿using FluentValidation;
-using JetBrains.Annotations;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
+
+[UsedImplicitly]
+internal class FluentValidationProblemDetailsValidator : AbstractValidator<FluentValidationProblemDetails>
 {
-    [UsedImplicitly]
-    internal class FluentValidationProblemDetailsValidator : AbstractValidator<FluentValidationProblemDetails>
+    public FluentValidationProblemDetailsValidator()
     {
-        public FluentValidationProblemDetailsValidator()
-        {
-            Include(new ProblemDetailsValidator());
-            RuleFor(x => x.Rules).NotNull();
-            RuleFor(x => x.Errors).NotNull();
-        }
+        Include(new ProblemDetailsValidator());
+        RuleFor(x => x.Rules).NotNull();
+        RuleFor(x => x.Errors).NotNull();
     }
 }

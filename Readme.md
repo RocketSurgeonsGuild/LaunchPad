@@ -25,7 +25,6 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.AspNetCore | [![nuget-version-xwppntv3oyxg-badge]![nuget-downloads-xwppntv3oyxg-badge]][nuget-xwppntv3oyxg] |
 | Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics | [![nuget-version-nk9lkazybjxa-badge]![nuget-downloads-nk9lkazybjxa-badge]][nuget-nk9lkazybjxa] |
 | Rocket.Surgery.LaunchPad.AspNetCore.Blazor | [![nuget-version-trxsi+csbl6q-badge]![nuget-downloads-trxsi+csbl6q-badge]][nuget-trxsi+csbl6q] |
-| Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly | [![nuget-version-mujr0plht1xq-badge]![nuget-downloads-mujr0plht1xq-badge]][nuget-mujr0plht1xq] |
 | Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson | [![nuget-version-90qhcztnoaxa-badge]![nuget-downloads-90qhcztnoaxa-badge]][nuget-90qhcztnoaxa] |
 | Rocket.Surgery.LaunchPad.AspNetCore.Spatial | [![nuget-version-hf0rber6kqsw-badge]![nuget-downloads-hf0rber6kqsw-badge]][nuget-hf0rber6kqsw] |
 | Rocket.Surgery.LaunchPad.AspNetCore.Testing | [![nuget-version-vmr7vthhrumq-badge]![nuget-downloads-vmr7vthhrumq-badge]][nuget-vmr7vthhrumq] |
@@ -45,7 +44,6 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.Spatial | [![nuget-version-ze4kfhfg7xqg-badge]![nuget-downloads-ze4kfhfg7xqg-badge]][nuget-ze4kfhfg7xqg] |
 | Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson | [![nuget-version-qmfh1x0xpofq-badge]![nuget-downloads-qmfh1x0xpofq-badge]][nuget-qmfh1x0xpofq] |
 | Rocket.Surgery.LaunchPad.Testing | [![nuget-version-bhdja8ikzcgq-badge]![nuget-downloads-bhdja8ikzcgq-badge]][nuget-bhdja8ikzcgq] |
-| Rocket.Surgery.LaunchPad.WebAssembly.Hosting | [![nuget-version-yamaca3l39wa-badge]![nuget-downloads-yamaca3l39wa-badge]][nuget-yamaca3l39wa] |
 <!-- nuget packages -->
 
 # Whats next?
@@ -77,9 +75,6 @@ TBD
 [nuget-trxsi+csbl6q]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.Blazor/
 [nuget-version-trxsi+csbl6q-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-trxsi+csbl6q-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-mujr0plht1xq]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly/
-[nuget-version-mujr0plht1xq-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-mujr0plht1xq-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.WebAssembly.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-90qhcztnoaxa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson/
 [nuget-version-90qhcztnoaxa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-90qhcztnoaxa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
@@ -137,9 +132,6 @@ TBD
 [nuget-bhdja8ikzcgq]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Testing/
 [nuget-version-bhdja8ikzcgq-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Testing.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-bhdja8ikzcgq-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Testing.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-yamaca3l39wa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.WebAssembly.Hosting/
-[nuget-version-yamaca3l39wa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-yamaca3l39wa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 <!-- generated references -->
 
 <!-- nuke-data

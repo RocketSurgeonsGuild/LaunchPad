@@ -1,13 +1,15 @@
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-namespace Extensions.Tests.Mapping
-{
-    public static class Foo
-    {
-        public static Foo<T> Create<T>(T value) => new Foo<T> { Value = value };
-    }
+namespace Extensions.Tests.Mapping;
 
-    public class Foo<T>
+public static class Foo
+{
+    public static Foo<T> Create<T>(T value)
     {
-        public T Value { get; set; }
+        return new Foo<T> { Value = value };
     }
+}
+
+public class Foo<T>
+{
+    public T Value { get; set; }
 }

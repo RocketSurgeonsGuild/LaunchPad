@@ -11,7 +11,7 @@
             <div class="input-group">
                 <div class="input-group-prepend">
                     <label class="input-group-text"
-                           asp-for="Model.Type"/>
+                           asp-for="Model.Type"></label>
                 </div>
                 <select asp-for="Model.Type"
                         asp-items="Enum.GetValues(typeof(RocketType)).OfType<RocketType>().Select(z => new SelectListItem { Text = z.ToString(), Value = z.ToString(), Selected = z == Model.Model.Type })">
@@ -21,7 +21,7 @@
             <div class="input-group">
                 <div class="input-group-prepend">
                     <label class="input-group-text"
-                           asp-for="Model.SerialNumber"/>
+                           asp-for="Model.SerialNumber"></label>
                 </div>
                 <input asp-for="Model.SerialNumber"/>
                 <span asp-validation-for="Model.SerialNumber"></span>

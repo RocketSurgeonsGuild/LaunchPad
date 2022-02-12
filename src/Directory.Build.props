@@ -13,7 +13,6 @@
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Commands" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Restful" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Pages" />
-        <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Workers" />
         <InternalsVisibleTo Include="AspNetCore.Tests" />
         <InternalsVisibleTo Include="Extensions.Tests" />
     </ItemGroup>

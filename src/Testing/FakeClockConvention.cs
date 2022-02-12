@@ -10,33 +10,32 @@ using Rocket.Surgery.LaunchPad.Testing;
 
 [assembly: Convention(typeof(FakeClockConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Testing
+namespace Rocket.Surgery.LaunchPad.Testing;
+
+/// <summary>
+///     A fake clock convention used during unit testing
+/// </summary>
+[UnitTestConvention]
+[BeforeConvention(typeof(NodaTimeConvention))]
+public class FakeClockConvention : IServiceConvention
 {
+    private readonly int _unixTimeSeconds;
+    private readonly Duration _advanceBy;
+
     /// <summary>
-    /// A fake clock convention used during unit testing
+    ///     The constructor
     /// </summary>
-    [UnitTestConvention]
-    [BeforeConvention(typeof(NodaTimeConvention))]
-    public class FakeClockConvention : IServiceConvention
+    /// <param name="unixTimeSeconds"></param>
+    /// <param name="advanceBy"></param>
+    public FakeClockConvention(int? unixTimeSeconds = null, Duration? advanceBy = null)
     {
-        private readonly int _unixTimeSeconds;
-        private readonly Duration _advanceBy;
+        _unixTimeSeconds = unixTimeSeconds ?? 1577836800;
+        _advanceBy = advanceBy ?? Duration.FromSeconds(1);
+    }
 
-        /// <summary>
-        /// The constructor
-        /// </summary>
-        /// <param name="unixTimeSeconds"></param>
-        /// <param name="advanceBy"></param>
-        public FakeClockConvention(int? unixTimeSeconds = null, Duration? advanceBy = null)
-        {
-            _unixTimeSeconds = unixTimeSeconds ?? 1577836800;
-            _advanceBy = advanceBy ?? Duration.FromSeconds(1);
-        }
-
-        /// <inheritdoc />
-        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-        {
-            services.TryAddSingleton<IClock>(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
-        }
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    {
+        services.TryAddSingleton<IClock>(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
     }
 }

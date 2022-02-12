@@ -1,57 +1,55 @@
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
-using System;
 
 [assembly: Convention(typeof(ConfigureOptionsLoggingConvention))]
 
-namespace Rocket.Surgery.LaunchPad.Serilog.Conventions
+namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
+
+/// <summary>
+///     ConfigureOptionsLoggingConvention.
+///     Implements the <see cref="ISerilogConvention" />
+/// </summary>
+/// <seealso cref="ISerilogConvention" />
+public class ConfigureOptionsLoggingConvention : ISerilogConvention
 {
     /// <summary>
-    /// ConfigureOptionsLoggingConvention.
-    /// Implements the <see cref="ISerilogConvention" />
+    ///     Registers the specified context.
     /// </summary>
-    /// <seealso cref="ISerilogConvention" />
-    public class ConfigureOptionsLoggingConvention : ISerilogConvention
+    /// <param name="context">The context.</param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="loggerConfiguration"></param>
+    public void Register(
+        IConventionContext context,
+        IServiceProvider services,
+        IConfiguration configuration,
+        LoggerConfiguration loggerConfiguration
+    )
     {
-        /// <summary>
-        /// Registers the specified context.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <param name="loggerConfiguration"></param>
-        public void Register(
-            IConventionContext context,
-            IServiceProvider services,
-            IConfiguration configuration,
-            LoggerConfiguration loggerConfiguration
-        )
+        if (context == null)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            throw new ArgumentNullException(nameof(context));
+        }
 
-            foreach ( var setup in services.GetServices<IConfigureOptions<LoggerConfiguration>>())
+        foreach (var setup in services.GetServices<IConfigureOptions<LoggerConfiguration>>())
+        {
+            if (setup is IConfigureNamedOptions<LoggerConfiguration> namedSetup)
             {
-                if (setup is IConfigureNamedOptions<LoggerConfiguration> namedSetup)
-                {
-                    namedSetup.Configure(Options.DefaultName, loggerConfiguration);
-                }
-                else
-                {
-                    setup.Configure(loggerConfiguration);
-                }
+                namedSetup.Configure(Options.DefaultName, loggerConfiguration);
             }
-            foreach (var post in services.GetServices<IPostConfigureOptions<LoggerConfiguration>>())
+            else
             {
-                post.PostConfigure(Options.DefaultName, loggerConfiguration);
+                setup.Configure(loggerConfiguration);
             }
+        }
+
+        foreach (var post in services.GetServices<IPostConfigureOptions<LoggerConfiguration>>())
+        {
+            post.PostConfigure(Options.DefaultName, loggerConfiguration);
         }
     }
 }

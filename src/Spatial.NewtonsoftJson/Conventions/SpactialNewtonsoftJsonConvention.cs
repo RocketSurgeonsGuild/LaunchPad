@@ -9,22 +9,22 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Spatial.Conventions;
 
 [assembly: Convention(typeof(SpatialNewtonsoftJsonConvention))]
-namespace Rocket.Surgery.LaunchPad.Spatial.Conventions
+
+namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
+
+/// <summary>
+///     Adds support for spatial types into Newtonsoft Json
+/// </summary>
+public class SpatialNewtonsoftJsonConvention : IServiceConvention
 {
-    /// <summary>
-    /// Adds support for spatial types into Newtonsoft Json
-    /// </summary>
-    public class SpatialNewtonsoftJsonConvention : IServiceConvention
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        /// <inheritdoc />
-        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-        {
-            services.TryAddSingleton(_ => NtsGeometryServices.Instance.CreateGeometryFactory(4326));
-            services
-               .AddOptions<JsonSerializerSettings>(null)
-               .Configure<GeometryFactory>(
-                    (options, factory) => options.ConfigureNetTopologySuiteForLaunchPad(factory)
-                );
-        }
+        services.TryAddSingleton(_ => NtsGeometryServices.Instance.CreateGeometryFactory(4326));
+        services
+           .AddOptions<JsonSerializerSettings>(null)
+           .Configure<GeometryFactory>(
+                (options, factory) => options.ConfigureNetTopologySuiteForLaunchPad(factory)
+            );
     }
 }

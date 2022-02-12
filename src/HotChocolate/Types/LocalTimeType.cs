@@ -1,35 +1,37 @@
+using System.Globalization;
 using NodaTime;
 using NodaTime.Text;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
+
+/// <summary>
+///     Represents a <see cref="LocalTime" /> in Hot Chocolate
+/// </summary>
+public class LocalTimeType : StringToStructBaseType<LocalTime>
 {
     /// <summary>
-    /// Represents a <see cref="LocalTime"/> in Hot Chocolate
+    ///     The constructor
     /// </summary>
-    public class LocalTimeType : StringToStructBaseType<LocalTime>
+    public LocalTimeType() : base("LocalTime")
     {
-        /// <summary>
-        /// The constructor
-        /// </summary>
-        public LocalTimeType() : base("LocalTime")
-        {
-            Description = "LocalTime is an immutable struct representing a time of day, with no reference to a particular calendar, time zone or date.";
-        }
+        Description = "LocalTime is an immutable struct representing a time of day, with no reference to a particular calendar, time zone or date.";
+    }
 
-        /// <inheritdoc />
-        protected override string Serialize(LocalTime baseValue)
-            => LocalTimePattern.ExtendedIso
-                .WithCulture(CultureInfo.InvariantCulture)
-                .Format(baseValue);
+    /// <inheritdoc />
+    protected override string Serialize(LocalTime baseValue)
+    {
+        return LocalTimePattern.ExtendedIso
+                               .WithCulture(CultureInfo.InvariantCulture)
+                               .Format(baseValue);
+    }
 
-        /// <inheritdoc />
-        protected override bool TryDeserialize(string str, [NotNullWhen(true)] out LocalTime? output)
-            => LocalTimePattern.ExtendedIso
-                .WithCulture(CultureInfo.InvariantCulture)
-                .TryParse(str, out output);
+    /// <inheritdoc />
+    protected override bool TryDeserialize(string str, [NotNullWhen(true)] out LocalTime? output)
+    {
+        return LocalTimePattern.ExtendedIso
+                               .WithCulture(CultureInfo.InvariantCulture)
+                               .TryParse(str, out output);
     }
 }

@@ -1,37 +1,46 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace Sample.Restful.Controllers
+namespace Sample.Restful.Controllers;
+
+[Route("[controller]")]
+public class RocketController : RestfulApiController
 {
-    [Route("[controller]")]
-    public class RocketController : RestfulApiController
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<ActionResult<IEnumerable<RocketModel>>> ListRockets()
     {
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public Task<ActionResult<IEnumerable<RocketModel>>> ListRockets() => Send(new ListRockets.Request(), x => Ok(x));
+        return Send(new ListRockets.Request(), x => Ok(x));
+    }
 
-        [HttpGet("{id:guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public Task<ActionResult<RocketModel>> GetRocket([BindRequired, FromRoute] GetRocket.Request request) => Send(request, x => Ok(x));
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request)
+    {
+        return Send(request, x => Ok(x));
+    }
 
-        [HttpPost]
-        public Task<ActionResult<CreateRocket.Response>> CreateRocket([BindRequired, FromBody] CreateRocket.Request request) => Send(
+    [HttpPost]
+    public Task<ActionResult<CreateRocket.Response>> CreateRocket([BindRequired] [FromBody] CreateRocket.Request request)
+    {
+        return Send(
             request,
             x => CreatedAtAction(nameof(GetRocket), new { id = x.Id }, x)
         );
+    }
 
-        [HttpPut("{id:guid}")]
-        public Task<ActionResult> UpdateRocket([BindRequired] Guid id, [BindRequired, FromBody] EditRocket.Model model)
-            => Send(new EditRocket.Request { Id = id }.With(model), NoContent);
+    [HttpPut("{id:guid}")]
+    public Task<ActionResult> UpdateRocket([BindRequired] Guid id, [BindRequired] [FromBody] EditRocket.Model model)
+    {
+        return Send(new EditRocket.Request { Id = id }.With(model), NoContent);
+    }
 
-        [HttpDelete("{id:guid}")]
-        public Task<ActionResult> RemoveRocket([BindRequired, FromRoute] DeleteRocket.Request request) => Send(request);
+    [HttpDelete("{id:guid}")]
+    public Task<ActionResult> RemoveRocket([BindRequired] [FromRoute] DeleteRocket.Request request)
+    {
+        return Send(request);
     }
 }

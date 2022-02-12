@@ -1,38 +1,35 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Core.Operations.Rockets;
-using System.Threading.Tasks;
 
-namespace Sample.Pages.Pages.Rockets
+namespace Sample.Pages.Pages.Rockets;
+
+public class RocketEditModel : RocketViewModel
 {
-    public class RocketEditModel : RocketViewModel
+    private readonly IMapper _mapper;
+
+    public RocketEditModel(IMapper mapper)
     {
-        private readonly IMapper _mapper;
+        _mapper = mapper;
+    }
 
-        public RocketEditModel(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
+    [BindProperty] public EditRocket.Request Model { get; set; } = new();
 
-        [BindProperty]
-        public EditRocket.Request Model { get; set; } = new();
+    public override async Task OnGet()
+    {
+        await base.OnGet();
+        Model = _mapper.Map<EditRocket.Request>(Rocket);
+    }
 
-        public override async Task OnGet()
+    public async Task<ActionResult> OnPost()
+    {
+        if (!ModelState.IsValid)
         {
             await base.OnGet();
-            Model = _mapper.Map<EditRocket.Request>(Rocket);
+            return Page();
         }
 
-        public async Task<ActionResult> OnPost()
-        {
-            if (!ModelState.IsValid)
-            {
-                await base.OnGet();
-                return Page();
-            }
-
-            await Send(Model with {Id = Id});
-            return RedirectToPage("Index");
-        }
+        await Send(Model with { Id = Id });
+        return RedirectToPage("Index");
     }
 }

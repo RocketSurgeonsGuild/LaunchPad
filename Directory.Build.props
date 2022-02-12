@@ -8,13 +8,15 @@
         <PackageIcon>images/packageicon.png</PackageIcon>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageTags />
-        <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
-        <NoWarn>NU5105;CS0579;CS0436;$(NoWarn)</NoWarn>
+        <LangVersion>preview</LangVersion>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <Features>strict</Features>
+        <Nullable>enable</Nullable>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <NukeTelemetryVersion>1</NukeTelemetryVersion>
+        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
     <ItemGroup>
         <None
@@ -29,5 +31,10 @@
     <ItemGroup>
         <ProjectCapability Include="DynamicDependentFile" />
         <ProjectCapability Include="DynamicFileNesting" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Include="JetBrains.Annotations" />
+        <Using Include="System.Diagnostics.CodeAnalysis" />
+        <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute" />
     </ItemGroup>
 </Project>

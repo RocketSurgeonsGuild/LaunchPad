@@ -1,39 +1,37 @@
 ﻿using HotChocolate.Configuration;
 using HotChocolate.Types.Descriptors.Definitions;
-using System.Collections.Generic;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate
+namespace Rocket.Surgery.LaunchPad.HotChocolate;
+
+/// <summary>
+///     Adds a type interceptor to be aware of nested types and ensure that they get named with the outer type and the inner type combined
+/// </summary>
+public class NestedTypeNameTypeInterceptor : TypeInterceptor
 {
-    /// <summary>
-    /// Adds a type interceptor to be aware of nested types and ensure that they get named with the outer type and the inner type combined
-    /// </summary>
-    public class NestedTypeNameTypeInterceptor : TypeInterceptor
+    /// <inheritdoc />
+    public override void OnBeforeCompleteName(
+        ITypeCompletionContext completionContext,
+        DefinitionBase? definition,
+        IDictionary<string, object?> contextData
+    )
     {
-        /// <inheritdoc />
-        public override void OnBeforeCompleteName(
-            ITypeCompletionContext completionContext,
-            DefinitionBase? definition,
-            IDictionary<string, object?> contextData
-        )
+        if (definition is ObjectTypeDefinition ot)
         {
-            if (definition is ObjectTypeDefinition ot)
+            if (ot.RuntimeType is { IsNested: true, DeclaringType: { } })
             {
-                if (ot.RuntimeType is { IsNested: true, DeclaringType: { } })
-                {
-                    ot.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.Name}";
-                }
+                ot.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.Name}";
             }
+        }
 
-            if (definition is InputObjectTypeDefinition iotd)
+        if (definition is InputObjectTypeDefinition iotd)
+        {
+            if (iotd.RuntimeType is { IsNested: true, DeclaringType: { } })
             {
-                if (iotd.RuntimeType is { IsNested: true, DeclaringType: { } })
-                {
-                    iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.Name}";
+                iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.Name}";
 
-                    if (iotd.Name.Value.EndsWith("Input") && iotd.RuntimeType.Name == "Request")
-                    {
-                        iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.RuntimeType.Name}";
-                    }
+                if (iotd.Name.Value.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && iotd.RuntimeType.Name == "Request")
+                {
+                    iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.RuntimeType.Name}";
                 }
             }
         }

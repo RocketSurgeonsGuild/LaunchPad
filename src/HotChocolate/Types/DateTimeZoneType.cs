@@ -1,41 +1,42 @@
 using NodaTime;
 using Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
-using System.Diagnostics.CodeAnalysis;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
+
+/// <summary>
+///     Represents a <see cref="DateTimeZone" /> in Hot Chocolate
+/// </summary>
+[UsedImplicitly]
+public class DateTimeZoneType : StringToClassBaseType<DateTimeZone>
 {
     /// <summary>
-    /// Represents a <see cref="DateTimeZone"/> in Hot Chocolate
+    ///     The constuctor
     /// </summary>
-    public class DateTimeZoneType : StringToClassBaseType<DateTimeZone>
+    public DateTimeZoneType() : base("DateTimeZone")
     {
-        /// <summary>
-        /// The constuctor
-        /// </summary>
-        public DateTimeZoneType() : base("DateTimeZone")
+        Description =
+            "Represents a time zone - a mapping between UTC and local time.\n" +
+            "A time zone maps UTC instants to local times - or, equivalently, " +
+            "to the offset from UTC at any particular instant.";
+    }
+
+    /// <inheritdoc />
+    protected override string Serialize(DateTimeZone baseValue)
+    {
+        return baseValue.Id;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryDeserialize(string str, [NotNullWhen(true)] out DateTimeZone? output)
+    {
+        var result = DateTimeZoneProviders.Tzdb.GetZoneOrNull(str);
+        if (result == null)
         {
-            Description =
-                "Represents a time zone - a mapping between UTC and local time.\n" +
-                "A time zone maps UTC instants to local times - or, equivalently, " +
-                    "to the offset from UTC at any particular instant.";
+            output = null;
+            return false;
         }
 
-        /// <inheritdoc />
-        protected override string Serialize(DateTimeZone val)
-            => val.Id;
-
-        /// <inheritdoc />
-        protected override bool TryDeserialize(string str, [NotNullWhen(true)] out DateTimeZone? output)
-        {
-            var result = DateTimeZoneProviders.Tzdb.GetZoneOrNull(str);
-            if (result == null)
-            {
-                output = null;
-                return false;
-            }
-
-            output = result;
-            return true;
-        }
+        output = result;
+        return true;
     }
 }

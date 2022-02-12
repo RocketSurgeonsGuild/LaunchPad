@@ -1,21 +1,15 @@
 ﻿using DryIoc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyModel;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Hosting;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Rocket.Surgery.Conventions.CommandLine;
-using Sample.Command.Conventions;
+using Spectre.Console.Cli;
 
-[assembly: ImportConventions]
+[assembly: ImportConventions(Namespace = "Sample.Command")]
 
-await Rocket.Surgery.Conventions.CommandLine.App.Create<Default>(
+await Rocket.Surgery.Conventions.CommandLine.App.Create<DefaultCommand>(
                  builder => builder
-                           .WithConventionsFrom(Imports.GetConventions)
+                           .WithConventionsFrom(Sample.Command.Imports.GetConventions)
                            .ConfigureLogging(z => z.AddConsole())
                            .UseDryIoc()
                            .ConfigureDryIoc(
@@ -25,16 +19,18 @@ await Rocket.Surgery.Conventions.CommandLine.App.Create<Default>(
                                     x.Register<Dump>(Reuse.Singleton);
                                 }
                             )
-                           .ConfigureCommandLine((context, app) => app.AddCommand<Dump>("dump"))
+                           .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
              )
             .RunAsync(args);
 
+
 public class InstanceThing
 {
-    public string From = "DryIoc";
+    public string From => "DryIoc";
 }
 
-public class Dump : Spectre.Console.Cli.Command<AppSettings>
+
+public class Dump : Command<AppSettings>
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<Dump> _logger;
@@ -47,7 +43,7 @@ public class Dump : Spectre.Console.Cli.Command<AppSettings>
         _instanceThing = instanceThing;
     }
 
-    public override int Execute(Spectre.Console.Cli.CommandContext context, AppSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
     {
         _logger.LogInformation(_instanceThing.From);
         foreach (var item in _configuration.AsEnumerable().Reverse())
@@ -59,16 +55,16 @@ public class Dump : Spectre.Console.Cli.Command<AppSettings>
     }
 }
 
-public class Default : Spectre.Console.Cli.Command<AppSettings>
+public class DefaultCommand : Command<AppSettings>
 {
-    private readonly ILogger<Default> _logger;
+    private readonly ILogger<DefaultCommand> _logger;
 
-    public Default(ILogger<Default> logger)
+    public DefaultCommand(ILogger<DefaultCommand> logger)
     {
         _logger = logger;
     }
 
-    public override int Execute(Spectre.Console.Cli.CommandContext context, AppSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
     {
         Console.WriteLine("Hello World!");
         _logger.LogInformation("Test");

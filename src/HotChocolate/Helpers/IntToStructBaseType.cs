@@ -1,126 +1,126 @@
 using HotChocolate.Language;
 using HotChocolate.Types;
-using System.Diagnostics.CodeAnalysis;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
+
+/// <summary>
+///     Additional struct types
+/// </summary>
+/// <typeparam name="TRuntimeType"></typeparam>
+public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeType, IntValueNode>
+    where TRuntimeType : struct
 {
     /// <summary>
-    /// Additional struct types
+    ///     Create the base type
     /// </summary>
-    /// <typeparam name="TRuntimeType"></typeparam>
-    public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeType, IntValueNode>
-        where TRuntimeType : struct
+    /// <param name="name"></param>
+    protected IntToStructBaseType(string name) : base(name, BindingBehavior.Implicit)
     {
-        /// <summary>
-        /// Create the base type
-        /// </summary>
-        /// <param name="name"></param>
-        public IntToStructBaseType(string name) : base(name, bind: BindingBehavior.Implicit) { }
+    }
 
-        /// <summary>
-        /// Method to try and serialize
-        /// </summary>
-        /// <param name="baseValue"></param>
-        /// <param name="output"></param>
-        /// <returns></returns>
-        protected abstract bool TrySerialize(TRuntimeType baseValue, [NotNullWhen(true)] out int? output);
+    /// <summary>
+    ///     Method to try and serialize
+    /// </summary>
+    /// <param name="baseValue"></param>
+    /// <param name="output"></param>
+    /// <returns></returns>
+    protected abstract bool TrySerialize(TRuntimeType baseValue, [NotNullWhen(true)] out int? output);
 
-        /// <summary>
-        /// Method to try and deserialize
-        /// </summary>
-        /// <param name="val"></param>
-        /// <param name="output"></param>
-        /// <returns></returns>
-        protected abstract bool TryDeserialize(int val, [NotNullWhen(true)] out TRuntimeType? output);
+    /// <summary>
+    ///     Method to try and deserialize
+    /// </summary>
+    /// <param name="val"></param>
+    /// <param name="output"></param>
+    /// <returns></returns>
+    protected abstract bool TryDeserialize(int val, [NotNullWhen(true)] out TRuntimeType? output);
 
-        /// <inheritdoc />
-        protected override TRuntimeType ParseLiteral(IntValueNode literal)
+    /// <inheritdoc />
+    protected override TRuntimeType ParseLiteral(IntValueNode valueSyntax)
+    {
+        if (TryDeserialize(valueSyntax.ToInt32(), out var value))
         {
-            if (TryDeserialize(literal.ToInt32(), out TRuntimeType? value))
-            {
-                return value.Value;
-            }
-
-            throw new SerializationException(
-                $"Unable to deserialize integer to {Name}",
-                this
-            );
+            return value.Value;
         }
 
-        /// <inheritdoc />
-        protected override IntValueNode ParseValue(TRuntimeType value)
-        {
-            if (TrySerialize(value, out int? val))
-            {
-                return new IntValueNode(val.Value);
-            }
+        throw new SerializationException(
+            $"Unable to deserialize integer to {Name}",
+            this
+        );
+    }
 
-            throw new SerializationException(
-                $"Unable to deserialize integer to {Name}",
-                this
-            );
+    /// <inheritdoc />
+    protected override IntValueNode ParseValue(TRuntimeType runtimeValue)
+    {
+        if (TrySerialize(runtimeValue, out var val))
+        {
+            return new IntValueNode(val.Value);
         }
 
-        /// <inheritdoc />
-        public override IValueNode ParseResult(object? resultValue)
+        throw new SerializationException(
+            $"Unable to deserialize integer to {Name}",
+            this
+        );
+    }
+
+    /// <inheritdoc />
+    public override IValueNode ParseResult(object? resultValue)
+    {
+        if (resultValue is null)
         {
-            if (resultValue is null)
-            {
-                return NullValueNode.Default;
-            }
-
-            if (resultValue is int s)
-            {
-                return new IntValueNode(s);
-            }
-
-            if (resultValue is TRuntimeType v)
-            {
-                return ParseValue(v);
-            }
-
-            throw new SerializationException(
-                $"Unable to deserialize integer to {Name}",
-                this
-            );
+            return NullValueNode.Default;
         }
 
-        /// <inheritdoc />
-        public override bool TrySerialize(object? runtimeValue, out object? resultValue)
+        if (resultValue is int s)
         {
-            if (runtimeValue is null)
-            {
-                resultValue = null;
-                return true;
-            }
+            return new IntValueNode(s);
+        }
 
-            if (runtimeValue is TRuntimeType dt && TrySerialize(dt, out int? val))
-            {
-                resultValue = val.Value;
-                return true;
-            }
+        if (resultValue is TRuntimeType v)
+        {
+            return ParseValue(v);
+        }
 
+        throw new SerializationException(
+            $"Unable to deserialize integer to {Name}",
+            this
+        );
+    }
+
+    /// <inheritdoc />
+    public override bool TrySerialize(object? runtimeValue, out object? resultValue)
+    {
+        if (runtimeValue is null)
+        {
             resultValue = null;
-            return false;
+            return true;
         }
 
-        /// <inheritdoc />
-        public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
+        if (runtimeValue is TRuntimeType dt && TrySerialize(dt, out var val))
         {
-            if (resultValue is null)
-            {
-                runtimeValue = null;
-                return true;
-            }
-
-            if (resultValue is int str && TryDeserialize(str, out TRuntimeType? val))
-            {
-                runtimeValue = val;
-                return true;
-            }
-
-            runtimeValue = null;
-            return false;
+            resultValue = val.Value;
+            return true;
         }
+
+        resultValue = null;
+        return false;
+    }
+
+    /// <inheritdoc />
+    public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
+    {
+        if (resultValue is null)
+        {
+            runtimeValue = null;
+            return true;
+        }
+
+        if (resultValue is int str && TryDeserialize(str, out var val))
+        {
+            runtimeValue = val;
+            return true;
+        }
+
+        runtimeValue = null;
+        return false;
     }
 }

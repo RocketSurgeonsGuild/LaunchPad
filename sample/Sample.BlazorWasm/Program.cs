@@ -1,71 +1,67 @@
 using FluentValidation;
-using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.WebAssembly.Hosting;
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Sample.BlazorWasm
+namespace Sample.BlazorWasm;
+
+[ImportConventions]
+public static partial class Program
 {
-    [ImportConventions]
-    public partial class Program
+    public static async Task Main(string[] args)
     {
-        public static async Task Main(string[] args)
-        {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args)
-                .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
-                ;
-            builder.RootComponents.Add<App>("app");
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        var builder = WebAssemblyHostBuilder.CreateDefault(args)
+                                            .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
+            ;
+        builder.RootComponents.Add<App>("app");
+        builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            await builder.Build().RunAsync();
+        await builder.Build().RunAsync();
+    }
+}
+
+public static class TestHandler
+{
+    public record Request : IRequest<Response>
+    {
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+    }
+
+    public record Response(string FullName);
+
+    [UsedImplicitly]
+    private class RequestValidator : AbstractValidator<Request>
+    {
+        public RequestValidator()
+        {
+            RuleFor(x => x.FirstName)
+               .NotEmpty()
+               .MinimumLength(1)
+               .MaximumLength(20);
+            RuleFor(x => x.LastName)
+               .NotEmpty()
+               .MinimumLength(1)
+               .MaximumLength(50);
         }
     }
 
-    public static class TestHandler
+    [UsedImplicitly]
+    private class ResponseValidator : AbstractValidator<Response>
     {
-        public record Request : IRequest<Response>
+        public ResponseValidator()
         {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
+            RuleFor(z => z.FullName).NotEmpty();
         }
+    }
 
-        public record Response(string FullName);
-
-        [UsedImplicitly]
-        class RequestValidator : AbstractValidator<Request>
+    [UsedImplicitly]
+    private class Handler : IRequestHandler<Request, Response>
+    {
+        public Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            public RequestValidator()
-            {
-                RuleFor(x => x.FirstName)
-                   .NotEmpty()
-                   .MinimumLength(1)
-                   .MaximumLength(20);
-                RuleFor(x => x.LastName)
-                   .NotEmpty()
-                   .MinimumLength(1)
-                   .MaximumLength(50);
-            }
-        }
-
-        [UsedImplicitly]
-        class ResponseValidator : AbstractValidator<Response>
-        {
-            public ResponseValidator()
-            {
-                RuleFor(z => z.FullName).NotEmpty();
-            }
-        }
-
-        [UsedImplicitly]
-        class Handler : IRequestHandler<Request, Response>
-        {
-            public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
+            return Task.FromResult(
                 new Response(request.FirstName + " " + request.LastName)
             );
         }

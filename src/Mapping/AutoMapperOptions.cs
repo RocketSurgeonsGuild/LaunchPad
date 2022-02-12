@@ -1,16 +1,15 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Rocket.Surgery.LaunchPad.Mapping
+namespace Rocket.Surgery.LaunchPad.Mapping;
+
+/// <summary>
+///     Class AutoMapperOptions.
+/// </summary>
+public class AutoMapperOptions
 {
     /// <summary>
-    /// Class AutoMapperOptions.
+    ///     Gets or sets the service lifetime.
     /// </summary>
-    public class AutoMapperOptions
-    {
-        /// <summary>
-        /// Gets or sets the service lifetime.
-        /// </summary>
-        /// <value>The service lifetime.</value>
-        public ServiceLifetime ServiceLifetime { get; set; } = ServiceLifetime.Transient;
-    }
+    /// <value>The service lifetime.</value>
+    public ServiceLifetime ServiceLifetime { get; set; } = ServiceLifetime.Transient;
 }

@@ -4,36 +4,36 @@ using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Restful.Client;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Restful.Tests.Rockets
+namespace Sample.Restful.Tests.Rockets;
+
+public class ListRocketsTests : HandleWebHostBase
 {
-    public class ListRocketsTests : HandleWebHostBase
+    [Fact]
+    public async Task Should_List_Rockets()
     {
-        private static readonly Faker Faker = new Faker();
+        var client = new RocketClient(Factory.CreateClient());
+        await ServiceProvider.WithScoped<RocketDbContext>()
+                             .Invoke(
+                                  async z =>
+                                  {
+                                      var faker = new RocketFaker();
+                                      z.AddRange(faker.Generate(10));
 
-        public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+                                      await z.SaveChangesAsync();
+                                  }
+                              );
 
-        [Fact]
-        public async Task Should_List_Rockets()
-        {
-            var client = new RocketClient(Factory.CreateClient());
-            await ServiceProvider.WithScoped<RocketDbContext>()
-               .Invoke(
-                    async z =>
-                    {
-                        var faker = new RocketFaker();
-                        z.AddRange(faker.Generate(10));
+        var response = await client.ListRocketsAsync();
 
-                        await z.SaveChangesAsync();
-                    }
-                );
-
-            var response = await client.ListRocketsAsync();
-
-            response.Result.Should().HaveCount(10);
-        }
+        response.Result.Should().HaveCount(10);
     }
+
+    public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }

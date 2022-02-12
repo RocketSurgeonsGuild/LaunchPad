@@ -1,191 +1,119 @@
-﻿using FluentValidation;
-using FluentValidation.Validators;
-using JetBrains.Annotations;
+﻿using System.Text.Json;
+using FluentValidation;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Extensions;
-using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.Core;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi.Validation.FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation.Validation;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.Json;
 
-[assembly: Convention(typeof(SwashbuckleConvention))]
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions
+/// <summary>
+///     ValidationConvention.
+///     Implements the <see cref="IServiceConvention" />
+/// </summary>
+/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
+[AfterConvention(typeof(AspNetCoreConvention))]
+public partial class SwashbuckleConvention : IServiceConvention
 {
+    [LoggerMessage(
+        EventId = 0,
+        Level = LogLevel.Debug,
+        Message = "Error adding XML comments from {XmlFile}"
+    )]
+    internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
+
     /// <summary>
-    /// ValidationConvention.
-    /// Implements the <see cref="IServiceConvention" />
+    ///     Registers the specified context.
     /// </summary>
-    /// <seealso cref="IServiceConvention" />
-    /// <seealso cref="IServiceConvention" />
-    [PublicAPI]
-    [AfterConvention(typeof(AspNetCoreConvention))]
-    public class SwashbuckleConvention : IServiceConvention
+    /// <param name="context">The context.</param>
+    /// <param name="configuration"></param>
+    /// <param name="services"></param>
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        /// <summary>
-        /// Registers the specified context.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="configuration"></param>
-        /// <param name="services"></param>
-        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+        if (context is null)
         {
-            if (context is null)
+            throw new ArgumentNullException(nameof(context));
+        }
+
+        services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
+
+        services.AddFluentValidationRulesToSwagger(
+            options => options.SetNotNullableIfMinLengthGreaterThenZero = true,
+            options => options.ServiceLifetime = ServiceLifetime.Singleton
+        );
+
+        services.AddOptions<SwaggerGenOptions>()
+                .Configure<IOptions<JsonOptions>>(
+                     (options, mvcOptions) => options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions)
+                 );
+        services.AddSwaggerGen(
+            options =>
             {
-                throw new ArgumentNullException(nameof(context));
-            }
+                options.SchemaFilter<ProblemDetailsSchemaFilter>();
+                options.OperationFilter<OperationIdFilter>();
+                options.OperationFilter<StatusCode201Filter>();
+                options.OperationFilter<OperationMediaTypesFilter>();
+                options.OperationFilter<AuthorizeFilter>();
 
-            services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
-
-            services.AddOptions<SwaggerGenOptions>()
-               .Configure<IOptions<JsonOptions>>(
-                    (options, mvcOptions) => { options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions); }
-                );
-            services.AddSwaggerGen(
-                options =>
-                {
-                    options.SchemaFilter<ProblemDetailsSchemaFilter>();
-                    options.OperationFilter<OperationIdFilter>();
-                    options.OperationFilter<StatusCode201Filter>();
-                    options.OperationFilter<OperationMediaTypesFilter>();
-                    options.OperationFilter<AuthorizeFilter>();
-                    options.AddFluentValidationRules();
-
-                    options.MapType<JsonElement>(
-                        () => new OpenApiSchema
-                        {
-                            Type = "object",
-                            AdditionalPropertiesAllowed = true,
-                        }
-                    );
-                    options.MapType<JsonElement?>(
-                        () => new OpenApiSchema
-                        {
-                            Type = "object",
-                            AdditionalPropertiesAllowed = true,
-                            Nullable = true,
-                        }
-                    );
-
-                    options.DocInclusionPredicate(
-                        (_, apiDesc) =>
-                        {
-                            if (!apiDesc.TryGetMethodInfo(out var methodInfo))
-                                return false;
-                            return methodInfo.DeclaringType?.GetCustomAttributes(true).OfType<ApiControllerAttribute>()
-                                   .Any() ==
-                                true;
-                        }
-                    );
-
-                    options.CustomSchemaIds(
-                        type =>
-                        {
-                            if (type == typeof(Severity))
-                                return $"Validation{nameof(Severity)}";
-                            return type.IsNested ? type.DeclaringType?.Name + type.Name : type.Name;
-                        }
-                    );
-
-                    foreach (var item in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml")
-                       .Where(x => File.Exists(Path.ChangeExtension(x, "dll"))))
+                options.MapType<JsonElement>(
+                    () => new OpenApiSchema
                     {
-                        try
-                        {
-                            options.IncludeXmlComments(item);
-                        }
-                        catch (Exception e)
-                        {
-                            context.Logger.LogDebug(e, "Error adding XML comments from {XmlFile}", item);
-                        }
+                        Type = "object",
+                        AdditionalPropertiesAllowed = true,
+                    }
+                );
+                options.MapType<JsonElement?>(
+                    () => new OpenApiSchema
+                    {
+                        Type = "object",
+                        AdditionalPropertiesAllowed = true,
+                        Nullable = true,
+                    }
+                );
+
+                options.DocInclusionPredicate(
+                    (_, apiDesc) =>
+                    {
+                        if (!apiDesc.TryGetMethodInfo(out var methodInfo))
+                            return false;
+                        return methodInfo.DeclaringType?.GetCustomAttributes(true).OfType<ApiControllerAttribute>().Any() == true;
+                    }
+                );
+
+                options.CustomSchemaIds(
+                    type =>
+                    {
+                        if (type == typeof(Severity))
+                            return $"Validation{nameof(Severity)}";
+                        return type.IsNested ? type.DeclaringType?.Name + type.Name : type.Name;
+                    }
+                );
+
+                foreach (var item in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml")
+                                              .Where(x => File.Exists(Path.ChangeExtension(x, "dll"))))
+                {
+                    try
+                    {
+                        options.IncludeXmlComments(item);
+                    }
+#pragma warning disable CA1031
+                    catch (Exception e)
+#pragma warning restore CA1031
+                    {
+                        ErrorAddingXMLComments(context.Logger, e, item);
                     }
                 }
-            );
-
-            AddFluentValidationRules(services);
-        }
-
-        private static void AddFluentValidationRules(IServiceCollection services)
-        {
-            services.AddSingleton(
-                new FluentValidationRule("NotEmpty")
-                   .WithCondition(propertyValidator => propertyValidator is INotEmptyValidator)
-                   .WithApply(
-                        context =>
-                        {
-                            var propertyType = context.MemberInfo.GetMemberType();
-                            if (propertyType == typeof(string))
-                            {
-                                context.Schema.Properties[context.PropertyKey].MinLength = 1;
-                            }
-                        }
-                    )
-            );
-
-            services.AddSingleton(
-                new FluentValidationRule("ValueTypeOrEnum")
-                   .WithApply(
-                        context =>
-                        {
-                            var propertyType = context.MemberInfo.GetMemberType();
-                            if (propertyType != null &&
-                                ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) ||
-                                    propertyType.IsEnum ))
-                            {
-                                context.Schema.Required.Add(context.PropertyKey);
-                                context.Schema.Properties[context.PropertyKey].Nullable = false;
-                            }
-                        }
-                    )
-            );
-
-            services.AddSingleton(
-                new FluentValidationRule("Nullable")
-                   .WithApply(
-                        context =>
-                        {
-                            context.Schema.Properties[context.PropertyKey].Nullable =
-                                context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
-                             || ( context.MemberInfo is PropertyInfo pi && pi.GetNullability() switch
-                                {
-                                    Nullability.Nullable    => true,
-                                    Nullability.NonNullable => false,
-                                    Nullability.NotDefined  => !pi.PropertyType.IsValueType || Nullable.GetUnderlyingType(pi.PropertyType) is not null,
-                                    _                       => false
-                                } );
-                        }
-                    )
-            );
-
-            services.AddSingleton(
-                new FluentValidationRule("IsOneOf")
-                   .WithCondition(propertyValidator => propertyValidator is IStringInValidator)
-                   .WithApply(
-                        context =>
-                        {
-                            var validator = context.PropertyValidator as IStringInValidator;
-                            context.Schema.Properties[context.PropertyKey].Enum =
-                                validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
-                        }
-                    )
-            );
-        }
+            }
+        );
     }
 }

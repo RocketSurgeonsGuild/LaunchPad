@@ -5,107 +5,102 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
+
+internal class RestfulApiActionModelConvention : IActionModelConvention
 {
-    class RestfulApiActionModelConvention : IActionModelConvention
+    private static string? GetHttpMethod(ActionModel action)
     {
-        private readonly ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> _matchers;
-        private readonly RestfulApiOptions _options;
-
-
-        public RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options)
+        var httpMethods = action.Attributes
+                                .OfType<IActionHttpMethodProvider>()
+                                .SelectMany(a => a.HttpMethods)
+                                .Distinct(StringComparer.OrdinalIgnoreCase)
+                                .ToArray();
+        // Not valid for actions with more than one verb
+        if (httpMethods.Length > 1)
         {
-            _matchers = options.Value.GetMatchers();
-            _options = options.Value;
+            return null;
         }
 
-        public void Apply(ActionModel action)
+        return httpMethods[0];
+    }
+
+    private readonly ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> _matchers;
+    private readonly RestfulApiOptions _options;
+
+
+    public RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options)
+    {
+        _matchers = options.Value.GetMatchers();
+        _options = options.Value;
+    }
+
+    private void UpdateProviders(
+        ActionModel actionModel
+    )
+    {
+        var providerLookup = actionModel.Filters.OfType<IApiResponseMetadataProvider>()
+                                        .ToLookup(x => x.StatusCode);
+
+        var hasSuccess = providerLookup.Any(z => z.Key >= 200 && z.Key < 300);
+        var match = _matchers
+                   .SelectMany(z => z)
+                   .FirstOrDefault(x => x.IsMatch(actionModel));
+        var hasDefault = providerLookup
+                        .SelectMany(z => z)
+                        .Any(z => z is IApiDefaultResponseMetadataProvider);
+
+        if (!hasDefault)
         {
-            if (!typeof(RestfulApiController).IsAssignableFrom(action.Controller.ControllerType))
-            {
-                return;
-            }
-
-            var httpMethod = GetHttpMethod(action);
-            if (string.IsNullOrWhiteSpace(httpMethod))
-                return;
-
-            UpdateProviders(action);
+            actionModel.Filters.Add(new ProducesDefaultResponseTypeAttribute());
         }
 
-        private void UpdateProviders(
-            ActionModel actionModel
-        )
+        if (!hasSuccess)
         {
-            var providerLookup = actionModel.Filters.OfType<IApiResponseMetadataProvider>()
-               .ToLookup(x => x.StatusCode);
-
-            var hasSuccess = providerLookup.Any(z => z.Key >= 200 && z.Key < 300);
-            var match = _matchers
-               .SelectMany(z => z)
-               .FirstOrDefault(x => x.IsMatch(actionModel));
-            var hasDefault = providerLookup
-               .SelectMany(z => z)
-               .Any(z => z is IApiDefaultResponseMetadataProvider);
-
-            if (!hasDefault)
+            if (actionModel.ActionMethod.ReturnType == typeof(Task<ActionResult>))
             {
-                actionModel.Filters.Add(new ProducesDefaultResponseTypeAttribute());
+                actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent));
             }
-
-            if (!hasSuccess)
+            else if (match != null)
             {
-                if (actionModel.ActionMethod.ReturnType == typeof(Task<ActionResult>))
-                {
-                    actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent));
-                }
-                else if (match != null)
-                {
-                    actionModel.Filters.Add(new ProducesResponseTypeAttribute(_options.MethodStatusCodeMap[match.Method]));
-                }
-                else
-                {
-                    actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status200OK));
-                }
+                actionModel.Filters.Add(new ProducesResponseTypeAttribute(_options.MethodStatusCodeMap[match.Method]));
             }
-
-            if (!providerLookup[StatusCodes.Status404NotFound].Any() && match?.Method != RestfulApiMethod.List)
+            else
             {
-                actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
-            }
-
-            if (!providerLookup[StatusCodes.Status400BadRequest].Any())
-            {
-                actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
-            }
-
-            if (!providerLookup[_options.ValidationActionResultFactory.StatusCode].Any())
-            {
-                actionModel.Filters.Add(
-                    new ProducesResponseTypeAttribute(typeof(FluentValidationProblemDetails), _options.ValidationActionResultFactory.StatusCode)
-                );
+                actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status200OK));
             }
         }
 
-
-        private static string? GetHttpMethod(ActionModel action)
+        if (!providerLookup[StatusCodes.Status404NotFound].Any() && match?.Method != RestfulApiMethod.List)
         {
-            var httpMethods = action.Attributes
-               .OfType<IActionHttpMethodProvider>()
-               .SelectMany(a => a.HttpMethods)
-               .Distinct(StringComparer.OrdinalIgnoreCase)
-               .ToArray();
-            // Not valid for actions with more than one verb
-            if (httpMethods.Length > 1)
-            {
-                return null;
-            }
-
-            return httpMethods[0];
+            actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
         }
+
+        if (!providerLookup[StatusCodes.Status400BadRequest].Any())
+        {
+            actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
+        }
+
+        if (!providerLookup[_options.ValidationActionResultFactory.StatusCode].Any())
+        {
+            actionModel.Filters.Add(
+                new ProducesResponseTypeAttribute(typeof(FluentValidationProblemDetails), _options.ValidationActionResultFactory.StatusCode)
+            );
+        }
+    }
+
+    public void Apply(ActionModel action)
+    {
+        if (!typeof(RestfulApiController).IsAssignableFrom(action.Controller.ControllerType))
+        {
+            return;
+        }
+
+        var httpMethod = GetHttpMethod(action);
+        if (string.IsNullOrWhiteSpace(httpMethod))
+            return;
+
+        UpdateProviders(action);
     }
 }

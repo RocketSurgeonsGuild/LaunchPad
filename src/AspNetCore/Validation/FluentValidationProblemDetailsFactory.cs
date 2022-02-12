@@ -1,125 +1,126 @@
-﻿using FluentValidation;
+﻿using System.Diagnostics;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
-using System;
-using System.Diagnostics;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
+
+internal sealed class FluentValidationProblemDetailsFactory : ProblemDetailsFactory
 {
-    internal sealed class FluentValidationProblemDetailsFactory : ProblemDetailsFactory
+    private readonly ApiBehaviorOptions _apiBehaviorOptions;
+
+    public FluentValidationProblemDetailsFactory(IOptions<ApiBehaviorOptions> apiBehavior)
     {
-        private readonly ApiBehaviorOptions _apiBehaviorOptions;
-
-        public FluentValidationProblemDetailsFactory(IOptions<ApiBehaviorOptions> apiBehavior) => _apiBehaviorOptions =
+        _apiBehaviorOptions =
             apiBehavior.Value ?? throw new ArgumentNullException(nameof(apiBehavior));
+    }
 
-        /// <inheritdoc />
-        public override ProblemDetails CreateProblemDetails(
-            HttpContext httpContext,
-            int? statusCode = null,
-            string? title = null,
-            string? type = null,
-            string? detail = null,
-            string? instance = null
-        )
+    /// <inheritdoc />
+    public override ProblemDetails CreateProblemDetails(
+        HttpContext httpContext,
+        int? statusCode = null,
+        string? title = null,
+        string? type = null,
+        string? detail = null,
+        string? instance = null
+    )
+    {
+        statusCode ??= 500;
+
+        var problemDetails = new ProblemDetails
         {
-            statusCode ??= 500;
+            Status = statusCode,
+            Title = title,
+            Type = type,
+            Detail = detail,
+            Instance = instance
+        };
 
-            var problemDetails = new ProblemDetails
+        ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
+
+        return problemDetails;
+    }
+
+    /// <inheritdoc />
+    public override ValidationProblemDetails CreateValidationProblemDetails(
+        HttpContext httpContext,
+        ModelStateDictionary modelStateDictionary,
+        int? statusCode = null,
+        string? title = null,
+        string? type = null,
+        string? detail = null,
+        string? instance = null
+    )
+    {
+        if (modelStateDictionary == null)
+        {
+            throw new ArgumentNullException(nameof(modelStateDictionary));
+        }
+
+        statusCode ??= 400;
+
+        ValidationProblemDetails? problemDetails = null;
+
+        if (httpContext.Items[typeof(ValidationResult)] is ValidationResult result)
+        {
+            statusCode = 422;
+            problemDetails = new FluentValidationProblemDetails(result)
             {
-                Status = statusCode,
-                Title = title,
+                Status = 422,
                 Type = type,
                 Detail = detail,
                 Instance = instance
             };
-
-            ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
-
-            return problemDetails;
         }
-
-        /// <inheritdoc />
-        public override ValidationProblemDetails CreateValidationProblemDetails(
-            HttpContext httpContext,
-            ModelStateDictionary modelStateDictionary,
-            int? statusCode = null,
-            string? title = null,
-            string? type = null,
-            string? detail = null,
-            string? instance = null
-        )
+        else if (httpContext.Items[typeof(ValidationException)] is ValidationException failures)
         {
-            if (modelStateDictionary == null)
+            statusCode = 422;
+            problemDetails = new FluentValidationProblemDetails(failures.Errors)
             {
-                throw new ArgumentNullException(nameof(modelStateDictionary));
-            }
-
-            statusCode ??= 400;
-
-            ValidationProblemDetails? problemDetails = null;
-
-            if (httpContext.Items[typeof(ValidationResult)] is ValidationResult result)
-            {
-                statusCode = 422;
-                problemDetails = new FluentValidationProblemDetails(result!)
-                {
-                    Status = 422,
-                    Type = type,
-                    Detail = detail,
-                    Instance = instance
-                };
-            }
-            else if (httpContext.Items[typeof(ValidationException)] is ValidationException failures)
-            {
-                statusCode = 422;
-                problemDetails = new FluentValidationProblemDetails(failures.Errors)
-                {
-                    Status = 422,
-                    Type = type,
-                    Detail = detail,
-                    Instance = instance
-                };
-            }
-
-            if (problemDetails == null)
-            {
-                problemDetails = new ValidationProblemDetails(modelStateDictionary)
-                {
-                    Status = statusCode,
-                    Type = type,
-                    Detail = detail,
-                    Instance = instance
-                };
-            }
-
-            if (title != null)
-            {
-                // For validation problem details, don't overwrite the default title with null.
-                problemDetails.Title = title;
-            }
-
-            ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
-
-            return problemDetails;
+                Status = 422,
+                Type = type,
+                Detail = detail,
+                Instance = instance
+            };
         }
 
-        private void ApplyProblemDetailsDefaults(HttpContext httpContext, ProblemDetails problemDetails, int statusCode)
+        if (problemDetails == null)
         {
-            problemDetails.Status ??= statusCode;
-
-            if (_apiBehaviorOptions.ClientErrorMapping.TryGetValue(statusCode, out var clientErrorData))
+            problemDetails = new ValidationProblemDetails(modelStateDictionary)
             {
-                problemDetails.Title ??= clientErrorData.Title;
-                problemDetails.Type ??= clientErrorData.Link;
-            }
-
-            var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
-            problemDetails.Extensions["traceId"] = traceId;
+                Status = statusCode,
+                Type = type,
+                Detail = detail,
+                Instance = instance
+            };
         }
+
+        if (title != null)
+        {
+            // For validation problem details, don't overwrite the default title with null.
+            problemDetails.Title = title;
+        }
+
+        ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
+
+        return problemDetails;
+    }
+
+    private void ApplyProblemDetailsDefaults(HttpContext httpContext, ProblemDetails problemDetails, int statusCode)
+    {
+        problemDetails.Status ??= statusCode;
+
+        if (_apiBehaviorOptions.ClientErrorMapping.TryGetValue(statusCode, out var clientErrorData))
+        {
+            problemDetails.Title ??= clientErrorData.Title;
+            problemDetails.Type ??= clientErrorData.Link;
+        }
+
+        var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
+        problemDetails.Extensions["traceId"] = traceId;
     }
 }

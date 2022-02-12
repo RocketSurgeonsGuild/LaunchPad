@@ -6,52 +6,52 @@ using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Core.Tests.LaunchRecords
+namespace Sample.Core.Tests.LaunchRecords;
+
+public class CreateLaunchRecordTests : HandleTestHostBase
 {
-    public class CreateLaunchRecordTests : HandleTestHostBase
+    [Fact]
+    public async Task Should_Create_A_LaunchRecord()
     {
-        private static readonly Faker Faker = new Faker();
+        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
+                                          .Invoke(
+                                               async (context, ct) =>
+                                               {
+                                                   var rocket = new ReadyRocket
+                                                   {
+                                                       Type = RocketType.Falcon9,
+                                                       SerialNumber = "12345678901234"
+                                                   };
+                                                   context.Add(rocket);
 
-        public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+                                                   await context.SaveChangesAsync(ct);
+                                                   return rocket;
+                                               }
+                                           );
 
-        [Fact]
-        public async Task Should_Create_A_LaunchRecord()
-        {
-            var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-               .Invoke(
-                    async (context, ct) =>
-                    {
-                        var rocket = new ReadyRocket
-                        {
-                            Type = RocketType.Falcon9,
-                            SerialNumber = "12345678901234"
-                        };
-                        context.Add(rocket);
+        var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
+            async (mediator, clock, ct) => await mediator.Send(
+                new CreateLaunchRecord.Request
+                {
+                    Partner = "partner",
+                    Payload = "geo-fence-ftl",
+                    RocketId = rocket.Id,
+                    ScheduledLaunchDate = clock.GetCurrentInstant(),
+                    PayloadWeightKg = 100,
+                },
+                ct
+            )
+        );
 
-                        await context.SaveChangesAsync(ct);
-                        return rocket;
-                    }
-                );
-
-            var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
-                async (mediator, clock, ct) => await mediator.Send(
-                    new CreateLaunchRecord.Request
-                    {
-                        Partner = "partner",
-                        Payload = "geo-fence-ftl",
-                        RocketId = rocket.Id,
-                        ScheduledLaunchDate = clock.GetCurrentInstant(),
-                        PayloadWeightKg = 100,
-                    },
-                    ct
-                )
-            );
-
-            response.Id.Should().NotBeEmpty();
-        }
+        response.Id.Should().NotBeEmpty();
     }
+
+    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }

@@ -2,38 +2,40 @@ using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-using System;
 
 // ReSharper disable once CheckNamespace
-namespace App.Metrics
+namespace App.Metrics;
+
+/// <summary>
+///     Extension method to apply configuration conventions
+/// </summary>
+public static class RocketSurgerySerilogExtensions
 {
     /// <summary>
-    /// Extension method to apply configuration conventions
+    ///     Apply configuration conventions
     /// </summary>
-    public static class RocketSurgerySerilogExtensions
+    /// <param name="configurationBuilder"></param>
+    /// <param name="conventionContext"></param>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static LoggerConfiguration ApplyConventions(
+        this LoggerConfiguration configurationBuilder, IConventionContext conventionContext, IServiceProvider services
+    )
     {
-        /// <summary>
-        /// Apply configuration conventions
-        /// </summary>
-        /// <param name="configurationBuilder"></param>
-        /// <param name="conventionContext"></param>
-        /// <returns></returns>
-        public static LoggerConfiguration ApplyConventions(this LoggerConfiguration configurationBuilder, IConventionContext conventionContext, IServiceProvider services)
+        var configuration = conventionContext.Get<IConfiguration>()
+                         ?? throw new ArgumentException("Configuration was not found in context", nameof(conventionContext));
+        foreach (var item in conventionContext.Conventions.Get<ISerilogConvention, SerilogConvention>())
         {
-            var configuration = conventionContext.Get<IConfiguration>() ?? throw new ArgumentException("Configuration was not found in context", nameof(conventionContext));
-            foreach (var item in conventionContext.Conventions.Get<ISerilogConvention, SerilogConvention>())
+            if (item is ISerilogConvention convention)
             {
-                if (item is ISerilogConvention convention)
-                {
-                    convention.Register(conventionContext, services, configuration, configurationBuilder);
-                }
-                else if (item is SerilogConvention @delegate)
-                {
-                    @delegate(conventionContext, services, configuration, configurationBuilder);
-                }
+                convention.Register(conventionContext, services, configuration, configurationBuilder);
             }
-
-            return configurationBuilder;
+            else if (item is SerilogConvention @delegate)
+            {
+                @delegate(conventionContext, services, configuration, configurationBuilder);
+            }
         }
+
+        return configurationBuilder;
     }
 }

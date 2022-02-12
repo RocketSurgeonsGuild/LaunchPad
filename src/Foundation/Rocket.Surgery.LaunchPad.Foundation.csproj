@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-        <PackageDescription></PackageDescription>
+        <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
@@ -19,10 +19,21 @@
         <PackageReference Include="Rocket.Surgery.DependencyInjection.Extensions" />
         <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Json" />
         <PackageReference Include="Rocket.Surgery.Extensions.Configuration.Yaml" />
+        <PackageReference Include="System.Collections.Immutable" />
+        <PackageReference Include="System.Interactive" />
+        <PackageReference Include="System.Interactive.Async" />
+        <PackageReference Include="System.Reactive" />
+        <PackageReference Include="System.Reactive.Observable.Aliases" />
         <PackageReference Include="System.Text.Json" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
-        <ProjectReference Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" IncludeAssets="analyzers" ExcludeAssets="compile;runtime;native" PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive" OutputItemType="Analyzer" />
+        <ProjectReference
+            Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj"
+            IncludeAssets="analyzers"
+            ExcludeAssets="compile;runtime;native"
+            PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"
+            OutputItemType="Analyzer"
+        />
     </ItemGroup>
 </Project>

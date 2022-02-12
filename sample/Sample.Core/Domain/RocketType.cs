@@ -1,9 +1,8 @@
-﻿namespace Sample.Core.Domain
+﻿namespace Sample.Core.Domain;
+
+public enum RocketType
 {
-    public enum RocketType
-    {
-        Falcon9,
-        FalconHeavy,
-        AtlasV
-    }
+    Falcon9,
+    FalconHeavy,
+    AtlasV
 }

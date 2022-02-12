@@ -1,37 +1,39 @@
+using System.Globalization;
 using NodaTime;
 using NodaTime.Text;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Types
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
+
+/// <summary>
+///     Represents a <see cref="OffsetDate" /> in Hot Chocolate
+/// </summary>
+public class OffsetDateType : StringToStructBaseType<OffsetDate>
 {
     /// <summary>
-    /// Represents a <see cref="OffsetDate"/> in Hot Chocolate
+    ///     The constructor
     /// </summary>
-    public class OffsetDateType : StringToStructBaseType<OffsetDate>
+    public OffsetDateType() : base("OffsetDate")
     {
-        /// <summary>
-        /// The constructor
-        /// </summary>
-        public OffsetDateType() : base("OffsetDate")
-        {
-            Description =
-                "A combination of a LocalDate and an Offset, to represent a date " +
-                    "at a specific offset from UTC but without any time-of-day information.";
-        }
+        Description =
+            "A combination of a LocalDate and an Offset, to represent a date " +
+            "at a specific offset from UTC but without any time-of-day information.";
+    }
 
-        /// <inheritdoc />
-        protected override string Serialize(OffsetDate baseValue)
-            => OffsetDatePattern.GeneralIso
-                .WithCulture(CultureInfo.InvariantCulture)
-                .Format(baseValue);
+    /// <inheritdoc />
+    protected override string Serialize(OffsetDate baseValue)
+    {
+        return OffsetDatePattern.GeneralIso
+                                .WithCulture(CultureInfo.InvariantCulture)
+                                .Format(baseValue);
+    }
 
-        /// <inheritdoc />
-        protected override bool TryDeserialize(string str, [NotNullWhen(true)] out OffsetDate? output)
-            => OffsetDatePattern.GeneralIso
-                .WithCulture(CultureInfo.InvariantCulture)
-                .TryParse(str, out output);
+    /// <inheritdoc />
+    protected override bool TryDeserialize(string str, [NotNullWhen(true)] out OffsetDate? output)
+    {
+        return OffsetDatePattern.GeneralIso
+                                .WithCulture(CultureInfo.InvariantCulture)
+                                .TryParse(str, out output);
     }
 }

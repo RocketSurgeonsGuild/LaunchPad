@@ -6,13 +6,12 @@ using Sample_Function;
 
 [assembly: Convention(typeof(LocalServices))]
 
-namespace Sample_Function
+namespace Sample_Function;
+
+public class LocalServices : IServiceConvention
 {
-    public class LocalServices : IServiceConvention
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-        {
-            services.AddSingleton(new Service());
-        }
+        services.AddSingleton(new Service());
     }
 }

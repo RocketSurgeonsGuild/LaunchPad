@@ -1,42 +1,42 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
+
+internal class RestfulApiApplicationModelProvider : IApplicationModelProvider
 {
-    class RestfulApiApplicationModelProvider : IApplicationModelProvider
+    public RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> options)
     {
-        public RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> options)
+        ActionModelConventions = new List<IActionModelConvention>
         {
-            ActionModelConventions = new List<IActionModelConvention>
-            {
-                new RestfulApiActionModelConvention(options)
-            };
-        }
+            new RestfulApiActionModelConvention(options)
+        };
+    }
 
-        public List<IActionModelConvention> ActionModelConventions { get; }
+    public List<IActionModelConvention> ActionModelConventions { get; }
 
-        public void OnProvidersExecuted(ApplicationModelProviderContext context)
+    public void OnProvidersExecuted(ApplicationModelProviderContext context)
+    {
+        foreach (var controller in context.Result.Controllers)
         {
-            foreach (var controller in context.Result.Controllers)
+            if (!typeof(RestfulApiController).IsAssignableFrom(controller.ControllerType))
             {
-                if (!typeof(RestfulApiController).IsAssignableFrom(controller.ControllerType))
-                {
-                    return;
-                }
+                return;
+            }
 
-                foreach (var action in controller.Actions)
+            foreach (var action in controller.Actions)
+            {
+                foreach (var convention in ActionModelConventions)
                 {
-                    foreach (var convention in ActionModelConventions)
-                    {
-                        convention.Apply(action);
-                    }
+                    convention.Apply(action);
                 }
             }
         }
-
-        public void OnProvidersExecuting(ApplicationModelProviderContext context) { }
-
-        public int Order => -1000;
     }
+
+    public void OnProvidersExecuting(ApplicationModelProviderContext context)
+    {
+    }
+
+    public int Order => -1000;
 }

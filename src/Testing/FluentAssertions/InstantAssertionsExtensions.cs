@@ -1,37 +1,34 @@
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime;
-using System;
 
 // ReSharper disable once CheckNamespace
-namespace FluentAssertions
+namespace FluentAssertions;
+
+/// <summary>
+///     <see cref="Instant" /> fluent assertion extenisons
+/// </summary>
+public static class InstantAssertionsExtensions
 {
     /// <summary>
-    /// <see cref="Instant"/> fluent assertion extenisons
+    ///     Match nullable <see cref="Instant" />
     /// </summary>
-    public static class InstantAssertionsExtensions
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static InstantAssertions Should(this Instant? value)
     {
-        /// <summary>
-        /// Match nullable <see cref="Instant"/>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static InstantAssertions Should(this Instant? value)
-        {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-            return new InstantAssertions(value);
-        }
+        if (value == null) throw new ArgumentNullException(nameof(value));
+        return new InstantAssertions(value);
+    }
 
-        /// <summary>
-        /// Match <see cref="Instant"/>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static InstantAssertions Should(this Instant value)
-        {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-            return new InstantAssertions(value);
-        }
+    /// <summary>
+    ///     Match <see cref="Instant" />
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static InstantAssertions Should(this Instant value)
+    {
+        return new InstantAssertions(value);
     }
 }

@@ -4,35 +4,34 @@ using HotChocolate.Types.Pagination;
 using Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate;
 using Sample.Core.Domain;
 
-namespace Sample.Graphql
-{
-    public class ConfigureReadyRocketType : ConfigureEntityFrameworkEntityQueryType<ReadyRocket>
-    {
-        public override void Configure(IObjectFieldDescriptor fieldDescriptor)
-        {
-            fieldDescriptor
-               .UsePaging(
-                    typeof(ObjectType<ReadyRocket>),
-                    options: new PagingOptions
-                    {
-                        DefaultPageSize = 10,
-                        IncludeTotalCount = true,
-                        MaxPageSize = 20
-                    }
-                )
-               .UseProjection()
-               .UseFiltering()
-               .UseSorting<RocketSort>();
-        }
+namespace Sample.Graphql;
 
-        class RocketSort : SortInputType<ReadyRocket>
+public class ConfigureReadyRocketType : ConfigureEntityFrameworkEntityQueryType<ReadyRocket>
+{
+    public override void Configure(IObjectFieldDescriptor fieldDescriptor)
+    {
+        fieldDescriptor
+           .UsePaging(
+                typeof(ObjectType<ReadyRocket>),
+                options: new PagingOptions
+                {
+                    DefaultPageSize = 10,
+                    IncludeTotalCount = true,
+                    MaxPageSize = 20
+                }
+            )
+           .UseProjection()
+           .UseFiltering()
+           .UseSorting<RocketSort>();
+    }
+
+    private class RocketSort : SortInputType<ReadyRocket>
+    {
+        protected override void Configure(ISortInputTypeDescriptor<ReadyRocket> descriptor)
         {
-            protected override void Configure(ISortInputTypeDescriptor<ReadyRocket> descriptor)
-            {
-                descriptor.BindFieldsExplicitly();
-                descriptor.Field(z => z.Type);
-                descriptor.Field(z => z.SerialNumber);
-            }
+            descriptor.BindFieldsExplicitly();
+            descriptor.Field(z => z.Type);
+            descriptor.Field(z => z.SerialNumber);
         }
     }
 }

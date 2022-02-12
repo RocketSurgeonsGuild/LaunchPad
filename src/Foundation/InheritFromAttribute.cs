@@ -1,30 +1,28 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace Rocket.Surgery.LaunchPad.Foundation
+namespace Rocket.Surgery.LaunchPad.Foundation;
+
+/// <summary>
+///     Allows you copy the properties of the another class or interface, and include a helper method to copy content to the given record.
+/// </summary>
+/// <remarks>
+///     This attribute works on record classes only.
+/// </remarks>
+[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+[Conditional("CodeGeneration")]
+public sealed class InheritFromAttribute : Attribute
 {
     /// <summary>
-    /// Allows you copy the properties of the another class or interface, and include a helper method to copy content to the given record.
+    ///     Create  the inherit from attribute
     /// </summary>
-    /// <remarks>
-    /// This attribute works on record classes only.
-    /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    [Conditional("CodeGeneration")]
-    public class InheritFromAttribute : Attribute
+    /// <param name="classToCopy"></param>
+    public InheritFromAttribute(Type classToCopy)
     {
-        /// <summary>
-        /// The class that is being copied from
-        /// </summary>
-        public Type ClassToCopy { get; }
-
-        /// <summary>
-        /// Create  the inherit from attribute
-        /// </summary>
-        /// <param name="classToCopy"></param>
-        public InheritFromAttribute(Type classToCopy)
-        {
-            ClassToCopy = classToCopy;
-        }
+        ClassToCopy = classToCopy;
     }
+
+    /// <summary>
+    ///     The class that is being copied from
+    /// </summary>
+    public Type ClassToCopy { get; }
 }

@@ -1,24 +1,20 @@
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Sample.Core.Operations.Rockets;
-using System.Threading.Tasks;
 
-namespace Sample.BlazorServer.Pages.Rockets
+namespace Sample.BlazorServer.Pages.Rockets;
+
+public partial class Create : ComponentBase
 {
-    public partial class Create : ComponentBase
+    public CreateRocket.Request Model { get; set; } = new();
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+
+    [Inject] private IMediator Mediator { get; set; } = null!;
+
+    public async Task Save()
     {
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private IMediator Mediator { get; set; }
-
-        public CreateRocket.Request Model { get; set; } = new CreateRocket.Request();
-
-        public async Task Save()
-        {
-            await Mediator.Send(Model);
-            NavigationManager.NavigateTo("/rockets");
-        }
+        await Mediator.Send(Model);
+        NavigationManager.NavigateTo("/rockets");
     }
 }

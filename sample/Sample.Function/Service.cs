@@ -1,7 +1,6 @@
-namespace Sample_Function
+namespace Sample_Function;
+
+public class Service
 {
-    public class Service
-    {
-        public string Value { get; } = "A Thing!";
-    }
+    public string Value { get; } = "A Thing!";
 }

@@ -5,39 +5,39 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sample.Core.Tests.Rockets
+namespace Sample.Core.Tests.Rockets;
+
+public class ListRocketsTests : HandleTestHostBase
 {
-    public class ListRocketsTests : HandleTestHostBase
+    [Fact]
+    public async Task Should_List_Rockets()
     {
-        private static readonly Faker Faker = new Faker();
+        await ServiceProvider.WithScoped<RocketDbContext>()
+                             .Invoke(
+                                  async z =>
+                                  {
+                                      var faker = new RocketFaker();
+                                      z.AddRange(faker.Generate(10));
 
-        public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace) { }
+                                      await z.SaveChangesAsync();
+                                  }
+                              );
 
-        [Fact]
-        public async Task Should_List_Rockets()
-        {
-            await ServiceProvider.WithScoped<RocketDbContext>()
-               .Invoke(
-                    async z =>
-                    {
-                        var faker = new RocketFaker();
-                        z.AddRange(faker.Generate(10));
+        var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
+            mediator => mediator.Send(
+                new ListRockets.Request()
+            )
+        );
 
-                        await z.SaveChangesAsync();
-                    }
-                );
-
-            var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-                mediator => mediator.Send(
-                    new ListRockets.Request()
-                )
-            );
-
-            response.Should().HaveCount(10);
-        }
+        response.Should().HaveCount(10);
     }
+
+    public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }

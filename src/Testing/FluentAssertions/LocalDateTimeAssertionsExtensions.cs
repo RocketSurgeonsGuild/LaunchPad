@@ -1,37 +1,34 @@
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Testing.FluentAssertions.NodaTime;
-using System;
 
 // ReSharper disable once CheckNamespace
-namespace FluentAssertions
+namespace FluentAssertions;
+
+/// <summary>
+///     <see cref="LocalDateTime" /> fluent assertion extensions
+/// </summary>
+public static class LocalDateTimeAssertionsExtensions
 {
     /// <summary>
-    /// <see cref="LocalDateTime"/> fluent assertion extensions
+    ///     Match nullable <see cref="LocalDateTime" />
     /// </summary>
-    public static class LocalDateTimeAssertionsExtensions
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static LocalDateTimeAssertions Should(this LocalDateTime? value)
     {
-        /// <summary>
-        /// Match nullable <see cref="LocalDateTime"/>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static LocalDateTimeAssertions Should(this LocalDateTime? value)
-        {
-            if(value == null) throw new ArgumentNullException(nameof(value));
-            return new LocalDateTimeAssertions(value);
-        }
+        if (value == null) throw new ArgumentNullException(nameof(value));
+        return new LocalDateTimeAssertions(value);
+    }
 
-        /// <summary>
-        /// Match <see cref="LocalDateTime"/>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static LocalDateTimeAssertions Should(this LocalDateTime value)
-        {
-            if(value == null) throw new ArgumentNullException(nameof(value));
-            return new LocalDateTimeAssertions(value);
-        }
+    /// <summary>
+    ///     Match <see cref="LocalDateTime" />
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static LocalDateTimeAssertions Should(this LocalDateTime value)
+    {
+        return new LocalDateTimeAssertions(value);
     }
 }
