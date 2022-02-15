@@ -37,5 +37,6 @@ public class ValidationExceptionFilter : IExceptionFilter, IActionFilter, IOrder
         context.Result = new UnprocessableEntityObjectResult(new FluentValidationProblemDetails(validationException.Errors));
     }
 
+    /// <inheritdoc />
     public int Order { get; } = -2000;
 }
