@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-        <PackageDescription></PackageDescription>
+        <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.Spatial</RootNamespace>
+        <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" />

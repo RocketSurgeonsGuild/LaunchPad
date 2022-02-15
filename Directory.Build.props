@@ -17,6 +17,7 @@
         <NukeTelemetryVersion>1</NukeTelemetryVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <ImplicitUsings>enable</ImplicitUsings>
+        <NoWarn>$(NoWarn);0436;CA1014;CA1062</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <None

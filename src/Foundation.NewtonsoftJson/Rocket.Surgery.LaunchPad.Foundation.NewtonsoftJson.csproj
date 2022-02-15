@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-        <PackageDescription></PackageDescription>
+        <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.Foundation</RootNamespace>
+        <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
