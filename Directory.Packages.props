@@ -88,7 +88,7 @@
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.2.3" />
-    <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.1.1-beta.2" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.1.1" />
     <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.1.1-beta.2" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="12.1.1-beta.2" />
     <PackageVersion Include="Scrutor" Version="4.0.0" />
