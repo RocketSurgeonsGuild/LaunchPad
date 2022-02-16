@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
@@ -77,19 +77,19 @@
     <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
     <PackageVersion Include="NodaTime.Testing" Version="3.0.9" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-    <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.1.1-beta.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="12.1.1-beta.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="12.1.1-beta.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.1.1-beta.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="12.1.1-beta.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.1.1-beta.2" />
+    <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.1.1" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="12.1.1" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="12.1.1" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.1.1" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="12.1.1" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.1.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.2.3" />
-    <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.1.1-beta.2" />
-    <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.1.1-beta.2" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.1.1" />
+    <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.1.1" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="12.1.1" />
     <PackageVersion Include="Scrutor" Version="4.0.0" />
     <PackageVersion Include="Serilog" Version="2.10.0" />
@@ -134,8 +134,5 @@
     <PackageVersion Include="xunit.analyzers" Version="0.10.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
-  <Import
-        Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
-        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
-    />
+  <Import Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props" Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')" />
 </Project>
