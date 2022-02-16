@@ -77,7 +77,7 @@
     <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
     <PackageVersion Include="NodaTime.Testing" Version="3.0.9" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-    <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.1.1-beta.2" />
+    <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.1.1" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="12.1.1-beta.2" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="12.1.1-beta.2" />
     <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.1.1-beta.2" />
