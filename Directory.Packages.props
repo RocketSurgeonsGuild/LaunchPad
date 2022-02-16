@@ -82,7 +82,7 @@
     <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="12.1.1-beta.2" />
     <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.1.1-beta.2" />
     <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="12.1.1-beta.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.1.1-beta.2" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.1.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.2.3" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.2.3" />
