@@ -2,7 +2,7 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": ["local>RocketSurgeonsGuild/.github:renovate-config"],
     "prHourlyLimit": 10,
-    "reviewers": ["david-driscoll"],
+    "assignees": ["david-driscoll"],
     "hostRules": [
         {
             "concurrentRequestLimit": 999
