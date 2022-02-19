@@ -1,32 +1,11 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": ["local>RocketSurgeonsGuild/.github:renovate-config"],
-    "prHourlyLimit": 10,
     "assignees": ["david-driscoll"],
-    "hostRules": [
-        {
-            "concurrentRequestLimit": 999
-        }
-    ],
-    "platformAutomerge": true,
-    "automergeType": "pr",
-    "automergeStrategy": "rebase",
-    "rebaseWhen": "auto",
-    "labels": [":package: dependencies"],
-    "rebaseLabel": ":trident: rebase",
-    "stopUpdatingLabel": ":vertical_traffic_light: stop updating",
-    "github-actions": {
-        "fileMatch": ["(^workflow-templates|\\.github\\/workflows)\\/[^/]+\\.ya?ml$", "(^|\\/)action\\.ya?ml$"],
-        "automerge": true,
-        "groupName": "github actions",
-        "labels": [":truck: private-dependencies"]
-    },
     "js": {
         "automerge": true,
-        "groupName": "github actions",
         "labels": [":truck: private-dependencies"]
     },
-    "dotnet": {},
     "packageRules": [
         {
             "description": "dotnet monorepo",
@@ -37,100 +16,6 @@
                 "https://github.com/dotnet/extensions",
                 "https://github.com/dotnet/runtime"
             ]
-        },
-        {
-            "matchManagers": ["nuget"],
-            "groupName": "build dependencies",
-            "matchPackagePatterns": ["^Nuke.Common", "^Microsoft\\.NET\\.Test\\.Sdk$", "^Rocket\\.Surgery\\.MSBuild$", "^Rocket\\.Surgery\\.Nuke$"],
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^Roslynator"],
-            "groupName": "roslynator",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^FluentAssertions"],
-            "groupName": "fluentassertions",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^NSubstitute"],
-            "groupName": "nsubstitute",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^Moq"],
-            "groupName": "moq",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^FakeItEasy"],
-            "groupName": "fakeiteasy",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^coverlet"],
-            "groupName": "coverlet",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^Bogus"],
-            "groupName": "bogus",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^ReportGenerator", "^reportgenerator", "^dotnet-reportgenerator"],
-            "groupName": "reportgenerator",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^JetBrains", "^jetbrains"],
-            "groupName": "jetbrains",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^GitVersion", "^gitversion"],
-            "groupName": "gitversion",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchPackagePatterns": ["^xunit"],
-            "groupName": "xunit",
-            "labels": [":truck: private-dependencies"],
-            "automerge": true
-        },
-        {
-            "matchManagers": ["nuget"],
-            "matchPackagePatterns": ["^System\\.Collections\\.Immutable", "^System\\.Interactive", "^System\\.Reactive", "^Humanizer"],
-            "labels": [":package: dependencies"],
-            "automerge": true
-        },
-        {
-            "matchSourceUrlPrefixes": ["https://github.com/RocketSurgeonsGuild/Conventions"],
-            "labels": [":package: dependencies"],
-            "groupName": "Rocket Surgery Conventions (deps)"
-        },
-        {
-            "matchSourceUrlPrefixes": ["https://github.com/RocketSurgeonsGuild/Testing"],
-            "labels": [":truck: private-dependencies"],
-            "groupName": "Rocket Surgery Testing (deps)"
-        },
-        {
-            "matchSourceUrlPrefixes": ["https://github.com/RocketSurgeonsGuild"],
-            "labels": [":package: dependencies"],
-            "groupName": "Rocket Surgery Other (deps)"
         }
     ]
 }
