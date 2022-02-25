@@ -3,6 +3,7 @@
         <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
         <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
         <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore.AppMetrics\Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.csproj" />

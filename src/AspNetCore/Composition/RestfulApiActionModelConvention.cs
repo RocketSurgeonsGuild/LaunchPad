@@ -1,14 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Concurrent;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
-internal class RestfulApiActionModelConvention : IActionModelConvention
+internal class RestfulApiActionModelConvention : IActionModelConvention, ISchemaFilter
 {
     private static string? GetHttpMethod(ActionModel action)
     {
@@ -25,6 +30,70 @@ internal class RestfulApiActionModelConvention : IActionModelConvention
 
         return httpMethods[0];
     }
+
+    private static void ExtractParameterDetails(ActionModel action)
+    {
+        var requestParameter = action.Parameters.FirstOrDefault(
+                z => z.ParameterInfo?.ParameterType.GetInterfaces().Any(
+                    i => i.IsGenericType &&
+                         ( typeof(IRequest<>) == i.GetGenericTypeDefinition()
+                        || typeof(IStreamRequest<>) == i.GetGenericTypeDefinition() )
+                ) == true
+            )
+            ;
+        if (requestParameter is null) return;
+
+        // Likely hit the generator, no point running from here
+        if (requestParameter.Attributes.Count(z => z is BindAttribute or CustomizeValidatorAttribute) == 2)
+        {
+            _propertiesToHideFromOpenApi.TryAdd(
+                requestParameter.ParameterType,
+                requestParameter.ParameterType.GetProperties().Select(z => z.Name).Except(
+                    requestParameter.Attributes.OfType<BindAttribute>().SelectMany(z => z.Include)
+                ).ToArray()
+            );
+            return;
+        }
+
+        var index = action.Parameters.IndexOf(requestParameter);
+        var newAttributes = requestParameter.Attributes.ToList();
+        var otherParams = action.Parameters
+                                .Except(new[] { requestParameter })
+                                .Select(z => z.ParameterName)
+                                .ToArray();
+
+        var propertyAndFieldNames = requestParameter.ParameterType
+                                                    .GetProperties()
+                                                    .Select(z => z.Name)
+                                                    .ToArray();
+        var bindNames = propertyAndFieldNames
+                       .Except(otherParams, StringComparer.OrdinalIgnoreCase)
+                       .ToArray();
+
+        if (propertyAndFieldNames.Length != bindNames.Length)
+        {
+            var ignoreBindings = propertyAndFieldNames.Except(bindNames, StringComparer.OrdinalIgnoreCase).ToArray();
+            newAttributes.Add(new BindAttribute(bindNames));
+            action.Properties.Add(
+                typeof(CustomizeValidatorAttribute),
+                bindNames
+            );
+            _propertiesToHideFromOpenApi.TryAdd(requestParameter.ParameterType, ignoreBindings);
+
+            var model = action.Parameters[index] = new ParameterModel(requestParameter.ParameterInfo, newAttributes)
+            {
+                Action = requestParameter.Action,
+                BindingInfo = requestParameter.BindingInfo,
+                ParameterName = requestParameter.ParameterName
+            };
+            foreach (var item in requestParameter.Properties)
+            {
+                model.Properties.Add(item);
+            }
+        }
+    }
+
+    private static readonly ConcurrentDictionary<Type, string[]> _propertiesToHideFromOpenApi = new();
 
     private readonly ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> _matchers;
     private readonly RestfulApiOptions _options;
@@ -43,7 +112,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention
         var providerLookup = actionModel.Filters.OfType<IApiResponseMetadataProvider>()
                                         .ToLookup(x => x.StatusCode);
 
-        var hasSuccess = providerLookup.Any(z => z.Key >= 200 && z.Key < 300);
+        var hasSuccess = providerLookup.Any(z => z.Key is >= 200 and < 300);
         var match = _matchers
                    .SelectMany(z => z)
                    .FirstOrDefault(x => x.IsMatch(actionModel));
@@ -82,10 +151,10 @@ internal class RestfulApiActionModelConvention : IActionModelConvention
             actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
         }
 
-        if (!providerLookup[_options.ValidationActionResultFactory.StatusCode].Any())
+        if (!providerLookup[_options.ValidationStatusCode].Any())
         {
             actionModel.Filters.Add(
-                new ProducesResponseTypeAttribute(typeof(FluentValidationProblemDetails), _options.ValidationActionResultFactory.StatusCode)
+                new ProducesResponseTypeAttribute(typeof(FluentValidationProblemDetails), _options.ValidationStatusCode)
             );
         }
     }
@@ -102,5 +171,19 @@ internal class RestfulApiActionModelConvention : IActionModelConvention
             return;
 
         UpdateProviders(action);
+        ExtractParameterDetails(action);
+    }
+
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    {
+        if (_propertiesToHideFromOpenApi.TryGetValue(context.Type, out var propertiesToRemove))
+        {
+            foreach (var property in propertiesToRemove
+                                    .Join(schema.Properties, z => z, z => z.Key, (a, b) => b.Key, StringComparer.OrdinalIgnoreCase)
+                                    .ToArray())
+            {
+                schema.Properties.Remove(property);
+            }
+        }
     }
 }

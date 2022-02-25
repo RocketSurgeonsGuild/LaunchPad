@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -59,6 +60,7 @@ public partial class SwashbuckleConvention : IServiceConvention
         services.AddSwaggerGen(
             options =>
             {
+                options.SchemaFilter<RestfulApiActionModelConvention>();
                 options.SchemaFilter<ProblemDetailsSchemaFilter>();
                 options.OperationFilter<OperationIdFilter>();
                 options.OperationFilter<StatusCode201Filter>();

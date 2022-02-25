@@ -32,10 +32,10 @@ public class CustomValidatorIntegrationTest : LoggerTest, IClassFixture<TestWebH
         var client = new Grpc.Rockets.RocketsClient(_factory.CreateGrpcChannel());
 
         // When
-        var response = await client.ListRocketsAsync(new ListRocketsRequest());
+        var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
 
         // Then nothing happen.
-        response.Results.Should().HaveCountGreaterThan(0);
+        response.Should().HaveCountGreaterThan(0);
     }
 
     [Fact]

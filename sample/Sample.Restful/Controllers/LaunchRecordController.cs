@@ -7,40 +7,21 @@ using Sample.Core.Operations.LaunchRecords;
 namespace Sample.Restful.Controllers;
 
 [Route("[controller]")]
-public class LaunchRecordController : RestfulApiController
+public partial class LaunchRecordController : RestfulApiController
 {
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<ActionResult<IEnumerable<LaunchRecordModel>>> ListLaunchRecords()
-    {
-        return Send(new ListLaunchRecords.Request(), x => Ok(x));
-    }
+    public partial Task<ActionResult<IEnumerable<LaunchRecordModel>>> ListLaunchRecords(ListLaunchRecords.Request request);
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<ActionResult<LaunchRecordModel>> GetLaunchRecord([BindRequired] [FromRoute] GetLaunchRecord.Request request)
-    {
-        return Send(request, x => Ok(x));
-    }
+    public partial Task<ActionResult<LaunchRecordModel>> GetLaunchRecord(GetLaunchRecord.Request request);
 
     [HttpPost]
-    public Task<ActionResult<CreateLaunchRecord.Response>> CreateLaunchRecord([BindRequired] [FromBody] CreateLaunchRecord.Request request)
-    {
-        return Send(
-            request,
-            x => CreatedAtAction(nameof(GetLaunchRecord), new { id = x.Id }, x)
-        );
-    }
+    [Created(nameof(GetLaunchRecord))]
+    public partial Task<ActionResult<CreateLaunchRecord.Response>> CreateLaunchRecord(CreateLaunchRecord.Request request);
 
     [HttpPut("{id:guid}")]
-    public Task<ActionResult> UpdateLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromBody] EditLaunchRecord.Model model)
-    {
-        return Send(new EditLaunchRecord.Request { Id = id }.With(model), NoContent);
-    }
+    public partial Task<ActionResult> EditLaunchRecord([BindRequired] [FromRoute] Guid id, EditLaunchRecord.Request model);
 
     [HttpDelete("{id:guid}")]
-    public Task<ActionResult> RemoveLaunchRecord([BindRequired] [FromRoute] DeleteLaunchRecord.Request request)
-    {
-        return Send(request);
-    }
+    public partial Task<ActionResult> DeleteLaunchRecord(DeleteLaunchRecord.Request request);
 }

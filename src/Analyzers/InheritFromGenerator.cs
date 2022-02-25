@@ -109,8 +109,10 @@ public class InheritFromGenerator : IIncrementalGenerator
                      List(declaration.SyntaxTree.GetCompilationUnitRoot().Usings),
                      List<AttributeListSyntax>(),
                      SingletonList<MemberDeclarationSyntax>(
-                         NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                            .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                         symbol.ContainingNamespace.IsGlobalNamespace
+                             ? classToInherit.ReparentDeclaration(context, declaration)
+                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                                .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
                      )
                  )
                 .WithLeadingTrivia()

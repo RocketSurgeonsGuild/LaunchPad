@@ -68,30 +68,6 @@ public abstract class RestfulApiController : ControllerBase
     }
 
     /// <summary>
-    ///     Send an request and allow for async <see cref="ActionResult" />
-    /// </summary>
-    /// <param name="request">The request model</param>
-    /// <param name="success">The method to call when the request succeeds</param>
-    protected async Task<ActionResult> Send<TResponse>(
-        IRequest<TResponse> request,
-        Func<Task<ActionResult>> success
-    )
-    {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
-
-        if (success is null)
-        {
-            throw new ArgumentNullException(nameof(success));
-        }
-
-        await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
-        return await success().ConfigureAwait(false);
-    }
-
-    /// <summary>
     ///     Send an request and allow for sync <see cref="ActionResult" />
     /// </summary>
     /// <param name="request">The request model</param>

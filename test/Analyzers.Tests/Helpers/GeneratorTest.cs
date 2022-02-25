@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace Analyzers.Tests.Helpers;
@@ -15,6 +14,7 @@ public abstract class GeneratorTest : LoggerTest
 {
     private readonly HashSet<MetadataReference> _metadataReferences = new(ReferenceEqualityComparer.Instance);
     private readonly HashSet<Type> _generators = new();
+    private readonly List<string> _sources = new();
 
     protected GeneratorTest(ITestOutputHelper testOutputHelper, LogLevel minLevel) : base(testOutputHelper, minLevel)
     {
@@ -93,18 +93,23 @@ public abstract class GeneratorTest : LoggerTest
         return this;
     }
 
+    protected GeneratorTest AddSources(params string[] sources)
+    {
+        _sources.AddRange(sources);
+        return this;
+    }
 
     public async Task<GenerationTestResults> GenerateAsync(params string[] sources)
     {
         Logger.LogInformation("Starting Generation for {SourceCount}", sources.Length);
         if (Logger.IsEnabled(LogLevel.Trace))
         {
-            Logger.LogTrace("--- References {Count} ---", sources.Length);
+            Logger.LogTrace("--- References {Count} ---", _metadataReferences.Count);
             foreach (var reference in _metadataReferences)
                 Logger.LogTrace("    Reference: {Name}", reference.Display);
         }
 
-        var project = GenerationHelpers.CreateProject(_metadataReferences, sources.ToArray());
+        var project = GenerationHelpers.CreateProject(_metadataReferences, _sources.Concat(sources).ToArray());
 
         var compilation = (CSharpCompilation?)await project.GetCompilationAsync().ConfigureAwait(false);
         if (compilation is null)
@@ -115,7 +120,7 @@ public abstract class GeneratorTest : LoggerTest
         var diagnostics = compilation.GetDiagnostics();
         if (Logger.IsEnabled(LogLevel.Trace) && diagnostics is { Length: > 0 })
         {
-            Logger.LogTrace("--- Input Diagnostics {Count} ---", sources.Length);
+            Logger.LogTrace("--- Input Diagnostics {Count} ---", diagnostics.Length);
             foreach (var d in diagnostics)
                 Logger.LogTrace("    Reference: {Name}", d.ToString());
         }
@@ -124,7 +129,8 @@ public abstract class GeneratorTest : LoggerTest
             compilation,
             diagnostics,
             compilation.SyntaxTrees,
-            ImmutableDictionary<Type, GenerationTestResult>.Empty
+            ImmutableDictionary<Type, GenerationTestResult>.Empty,
+            ImmutableArray<Diagnostic>.Empty
         );
 
         var builder = ImmutableDictionary<Type, GenerationTestResult>.Empty.ToBuilder();
@@ -138,6 +144,7 @@ public abstract class GeneratorTest : LoggerTest
 
             if (Logger.IsEnabled(LogLevel.Trace) && diagnostics is { Length: > 0 })
             {
+                results = results with { ResultDiagnostics = results.ResultDiagnostics.AddRange(diagnostics) };
                 Logger.LogTrace("--- Diagnostics {Count} ---", sources.Length);
                 foreach (var d in diagnostics)
                     Logger.LogTrace("    Reference: {Name}", d.ToString());

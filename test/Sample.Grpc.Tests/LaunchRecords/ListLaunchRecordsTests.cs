@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using FluentAssertions;
+using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
@@ -29,9 +30,9 @@ public class ListLaunchRecordsTests : HandleGrpcHostBase
                                   }
                               );
 
-        var response = await client.ListLaunchRecordsAsync(new ListLaunchRecordsRequest());
+        var response = await client.ListLaunchRecords(new ListLaunchRecordsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
 
-        response.Results.Should().HaveCount(10);
+        response.Should().HaveCount(10);
     }
 
     public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)

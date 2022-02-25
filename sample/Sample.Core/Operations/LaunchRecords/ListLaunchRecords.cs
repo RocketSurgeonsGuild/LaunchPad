@@ -12,13 +12,13 @@ namespace Sample.Core.Operations.LaunchRecords;
 public static class ListLaunchRecords
 {
     // TODO: Paging model!
-    public record Request : IRequest<IEnumerable<LaunchRecordModel>>;
+    public record Request(RocketType? RocketType) : IStreamRequest<LaunchRecordModel>;
 
     private class Validator : AbstractValidator<Request>
     {
     }
 
-    private class Handler : IRequestHandler<Request, IEnumerable<LaunchRecordModel>>
+    private class Handler : IStreamRequestHandler<Request, LaunchRecordModel>
     {
         private readonly RocketDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -29,15 +29,19 @@ public static class ListLaunchRecords
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<LaunchRecordModel>> Handle(Request request, CancellationToken cancellationToken)
+        public IAsyncEnumerable<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            return (
-                    await _dbContext.LaunchRecords
-                                    .Include(x => x.Rocket)
-                                    .ProjectTo<LaunchRecordModel>(_mapper.ConfigurationProvider)
-                                    .ToListAsync(cancellationToken)
-                )
-               .ToArray();
+            var query = _dbContext.LaunchRecords
+                                  .Include(x => x.Rocket)
+                                  .AsQueryable();
+            if (request.RocketType.HasValue)
+            {
+                query = query.Where(z => z.Rocket.Type == request.RocketType);
+            }
+
+            return query
+                  .ProjectTo<LaunchRecordModel>(_mapper.ConfigurationProvider)
+                  .ToAsyncEnumerable();
         }
     }
 }

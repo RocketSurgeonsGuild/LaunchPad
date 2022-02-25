@@ -42,13 +42,13 @@ public class RocketsService : Rockets.RocketsBase
         return _mapper.Map<RocketModel>(response);
     }
 
-    public override async Task<ListRocketsResponse> ListRockets(ListRocketsRequest request, ServerCallContext context)
+    public override async Task ListRockets(ListRocketsRequest request, IServerStreamWriter<RocketModel> responseStream, ServerCallContext context)
     {
-        var response = await _mediator.Send(_mapper.Map<ListRockets.Request>(request), context.CancellationToken);
-        return new ListRocketsResponse
+        var mRequest = _mapper.Map<ListRockets.Request>(request);
+        await foreach (var item in _mediator.CreateStream(mRequest, context.CancellationToken))
         {
-            Results = { response.Select(_mapper.Map<RocketModel>) }
-        };
+            await responseStream.WriteAsync(_mapper.Map<RocketModel>(item));
+        }
     }
 
     [UsedImplicitly]

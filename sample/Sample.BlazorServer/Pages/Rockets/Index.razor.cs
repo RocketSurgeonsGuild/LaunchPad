@@ -13,6 +13,6 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Rockets = await Mediator.Send(new ListRockets.Request());
+        Rockets = await Mediator.CreateStream(new ListRockets.Request(null)).ToListAsync();
     }
 }

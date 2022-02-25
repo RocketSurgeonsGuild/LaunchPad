@@ -120,7 +120,7 @@ package greet;
 service LaunchRecords {
   // Sends a greeting
   rpc GetLaunchRecords (GetLaunchRecordRequest) returns (LaunchRecordModel);
-  rpc ListLaunchRecords (ListLaunchRecordsRequest) returns (ListLaunchRecordsResponse);
+  rpc ListLaunchRecords (ListLaunchRecordsRequest) returns (stream LaunchRecordModel);
   rpc CreateLaunchRecord (CreateLaunchRecordRequest) returns (CreateLaunchRecordResponse);
   rpc EditLaunchRecord (UpdateLaunchRecordRequest) returns (LaunchRecordModel);
   rpc DeleteLaunchRecord (DeleteLaunchRecordRequest) returns (google.protobuf.Empty);
@@ -129,7 +129,7 @@ service LaunchRecords {
 // The greeting service definition.
 service Rockets {
   rpc GetRockets (GetRocketRequest) returns (RocketModel);
-  rpc ListRockets (ListRocketsRequest) returns (ListRocketsResponse);
+  rpc ListRockets (ListRocketsRequest) returns (stream RocketModel);
   rpc CreateRocket (CreateRocketRequest) returns (CreateRocketResponse);
   rpc EditRocket (UpdateRocketRequest) returns (RocketModel);
   rpc DeleteRocket(DeleteRocketRequest) returns (google.protobuf.Empty);
