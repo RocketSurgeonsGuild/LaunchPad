@@ -10,9 +10,15 @@ namespace Sample.Core.Operations.Rockets;
 [PublicAPI]
 public static class GetRocket
 {
+    /// <summary>
+    ///     Request to fetch information about a rocket
+    /// </summary>
     public record Request : IRequest<RocketModel>
     {
-        public Guid Id { get; set; }
+        /// <summary>
+        ///     The rocket id
+        /// </summary>
+        public RocketId Id { get; set; }
     }
 
     private class Validator : AbstractValidator<Request>

@@ -12,15 +12,45 @@ namespace Sample.Core.Operations.LaunchRecords;
 [PublicAPI]
 public static partial class EditLaunchRecord
 {
+    /// <summary>
+    ///     The launch record update request
+    /// </summary>
     public partial record Request : IRequest<LaunchRecordModel>
     {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The launch record to update
+        /// </summary>
+        public LaunchRecordId Id { get; init; }
+
+        /// <summary>
+        ///     The updated launch partner
+        /// </summary>
         public string Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The updated launch payload
+        /// </summary>
         public string Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The updated payload weight
+        /// </summary>
         public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The updated actual launch date
+        /// </summary>
         public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The scheduled launch date
+        /// </summary>
         public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
-        public Guid RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The update rocket id
+        /// </summary>
+        public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
     private class Mapper : Profile

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
@@ -29,6 +30,7 @@ internal class DataConvention : IServiceConvention
            .AddPooledDbContextFactory<RocketDbContext>(
 #endif
                 x => x
+                    .ReplaceService<IValueConverterSelector, StronglyTypedIdValueConverterSelector>()
                     .EnableDetailedErrors()
                     .EnableSensitiveDataLogging()
                     .EnableServiceProviderCaching().UseSqlite(

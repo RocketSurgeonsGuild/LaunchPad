@@ -32,9 +32,9 @@ public class UpdateRocketTests : HandleWebHostBase
                                                }
                                            );
 
-        var u = await client.UpdateRocketAsync(
-            rocket.Id,
-            new EditRocketModel
+        var u = await client.EditRocketAsync(
+            rocket.Id.Value,
+            new EditRocketRequest
             {
                 Type = Client.RocketType.FalconHeavy,
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
@@ -56,10 +56,10 @@ public class UpdateRocketTests : HandleWebHostBase
 
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
-    public async Task Should_Validate_Required_Fields(EditRocketModel request, string propertyName)
+    public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
     {
         var client = new RocketClient(Factory.CreateClient());
-        Func<Task> a = () => client.UpdateRocketAsync(Guid.NewGuid(), request);
+        Func<Task> a = () => client.EditRocketAsync(Guid.NewGuid(), request);
         ( await a.Should().ThrowAsync<ApiException<FluentValidationProblemDetails>>() )
            .And
            .Result.Errors.Values
@@ -69,21 +69,21 @@ public class UpdateRocketTests : HandleWebHostBase
            .Contain(propertyName);
     }
 
-    private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketModel, string>
+    private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>
     {
         public ShouldValidateUsersRequiredFieldData()
         {
             Add(
-                new EditRocketModel(),
-                nameof(EditRocketModel.SerialNumber)
+                new EditRocketRequest(),
+                nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new EditRocketModel { SerialNumber = Faker.Random.String2(0, 9) },
-                nameof(EditRocketModel.SerialNumber)
+                new EditRocketRequest { SerialNumber = Faker.Random.String2(0, 9) },
+                nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new EditRocketModel { SerialNumber = Faker.Random.String2(600, 800) },
-                nameof(EditRocketModel.SerialNumber)
+                new EditRocketRequest { SerialNumber = Faker.Random.String2(600, 800) },
+                nameof(EditRocketRequest.SerialNumber)
             );
         }
     }

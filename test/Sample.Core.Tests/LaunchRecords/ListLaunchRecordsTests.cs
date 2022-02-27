@@ -29,8 +29,8 @@ public class ListLaunchRecordsTests : HandleTestHostBase
                               );
 
         var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.CreateStream(new ListLaunchRecords.Request(null))
-        ).ToListAsync();
+            mediator => mediator.CreateStream(new ListLaunchRecords.Request(null)).ToListAsync()
+        );
 
         response.Should().HaveCount(10);
     }

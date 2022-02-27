@@ -4,25 +4,58 @@ using MediatR;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
 [PublicAPI]
 public static class CreateLaunchRecord
 {
+    /// <summary>
+    ///     Create a launch record
+    /// </summary>
     public record Request : IRequest<Response>
     {
+        /// <summary>
+        ///     The rocket to use
+        /// </summary>
+        public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The launch partner
+        /// </summary>
         public string? Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The launch partners payload
+        /// </summary>
         public string? Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The payload weight
+        /// </summary>
         public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The actual launch date
+        /// </summary>
         public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The intended launch date
+        /// </summary>
         public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
-        public Guid RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
+    /// <summary>
+    ///     The launch record creation response
+    /// </summary>
     public record Response
     {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The id of the new launch record
+        /// </summary>
+        public LaunchRecordId Id { get; init; }
     }
 
     private class Mapper : Profile

@@ -32,7 +32,7 @@ public class GetRocketTests : HandleWebHostBase
                                                }
                                            );
 
-        var response = await client.GetRocketAsync(rocket);
+        var response = await client.GetRocketAsync(rocket.Value);
 
         response.Result.Type.Should().Be(HttpRocketType.Falcon9);
         response.Result.Sn.Should().Be("12345678901234");

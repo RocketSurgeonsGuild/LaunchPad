@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Xunit;
 
 namespace Sample.Restful.Tests;
@@ -9,29 +9,31 @@ public class RestfulConventionTests
 {
     [Theory]
     [ClassData(typeof(ApiDescriptionData<TestWebHost>))]
-    public void Should_Have_Success_Response_Types(ApiDescription description)
+    public void Should_Have_Success_Response_Types(ApiDescriptionData description)
     {
-        description.SupportedResponseTypes.Should().Contain(z => z.StatusCode >= 200 && z.StatusCode < 300);
+        description.Description.SupportedResponseTypes.Should().Contain(z => z.StatusCode >= 200 && z.StatusCode < 300);
     }
 
     [Theory]
     [ClassData(typeof(ApiDescriptionData<TestWebHost>))]
-    public void Should_Have_Not_Found_Responses(ApiDescription description)
+    public void Should_Have_Not_Found_Responses(ApiDescriptionData description)
     {
-        description.SupportedResponseTypes.Should().Contain(z => z.StatusCode == StatusCodes.Status404NotFound);
+        var method = ( description.Description.ActionDescriptor as ControllerActionDescriptor )!.MethodInfo!;
+        if (method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>)) return;
+        description.Description.SupportedResponseTypes.Should().Contain(z => z.StatusCode == StatusCodes.Status404NotFound);
     }
 
     [Theory]
     [ClassData(typeof(ApiDescriptionData<TestWebHost>))]
-    public void Should_Have_Validation_Responses(ApiDescription description)
+    public void Should_Have_Validation_Responses(ApiDescriptionData description)
     {
-        description.SupportedResponseTypes.Should().Contain(z => z.StatusCode == StatusCodes.Status422UnprocessableEntity);
+        description.Description.SupportedResponseTypes.Should().Contain(z => z.StatusCode == StatusCodes.Status422UnprocessableEntity);
     }
 
     [Theory]
     [ClassData(typeof(ApiDescriptionData<TestWebHost>))]
-    public void Should_Have_Bad_Request_Responses(ApiDescription description)
+    public void Should_Have_Bad_Request_Responses(ApiDescriptionData description)
     {
-        description.SupportedResponseTypes.Should().Contain(z => z.IsDefaultResponse);
+        description.Description.SupportedResponseTypes.Should().Contain(z => z.IsDefaultResponse);
     }
 }

@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-        <PackageDescription></PackageDescription>
+        <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="HotChocolate" />
+        <PackageReference Include="HotChocolate.Data" />
+        <PackageReference Include="HotChocolate.Types.NodaTime" />
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="NodaTime" />
 <!--        <PackageReference Include="Scrutor" />-->

@@ -9,7 +9,7 @@ public class RocketViewModel : MediatorPageModel
 {
     [UsedImplicitly]
     [BindProperty(SupportsGet = true)]
-    public Guid Id { get; set; }
+    public RocketId Id { get; set; }
 
     public RocketModel Rocket { get; set; } = null!;
 

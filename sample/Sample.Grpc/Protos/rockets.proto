@@ -34,7 +34,7 @@ message GetLaunchRecordRequest
 }
 
 message ListLaunchRecordsRequest {
-
+  NullableRocketType RocketType = 1;
 }
 
 message ListLaunchRecordsResponse {
@@ -72,6 +72,12 @@ enum RocketType {
     FalconHeavy = 1;
     AtlasV = 2;
 }
+message NullableRocketType {
+    oneof kind {
+      google.protobuf.NullValue null = 1;
+      RocketType data = 2;
+  }
+}
 
 message CreateRocketRequest {
   string SerialNumber = 1;
@@ -107,6 +113,7 @@ message RocketModel {
 
 message ListRocketsRequest
 {
+  NullableRocketType RocketType = 1;
 }
 
 message ListRocketsResponse

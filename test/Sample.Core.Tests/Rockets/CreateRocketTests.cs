@@ -28,7 +28,7 @@ public class CreateRocketTests : HandleTestHostBase
             )
         );
 
-        response.Id.Should().NotBeEmpty();
+        response.Id.Value.Should().NotBeEmpty();
     }
 
     [Fact]

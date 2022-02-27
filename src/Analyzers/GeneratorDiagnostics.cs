@@ -21,4 +21,22 @@ internal static class GeneratorDiagnostics
         DiagnosticSeverity.Error,
         true
     );
+
+    public static DiagnosticDescriptor ParameterMustBeAPropertyOfTheRequest { get; } = new(
+        "LPAD0003",
+        "The parameter must map to a property of the request object",
+        "The parameter {0} map to a property of the request {1} object",
+        "LaunchPad",
+        DiagnosticSeverity.Error,
+        true
+    );
+
+    public static DiagnosticDescriptor ParameterMustBeSameTypeAsTheRelatedProperty { get; } = new(
+        "LPAD0003",
+        "The parameter type and property type must match",
+        "The parameter {0} type {1} must match the property {2} type {3}",
+        "LaunchPad",
+        DiagnosticSeverity.Error,
+        true
+    );
 }

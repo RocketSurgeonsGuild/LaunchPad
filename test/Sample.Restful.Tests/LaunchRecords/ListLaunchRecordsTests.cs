@@ -1,14 +1,6 @@
-﻿using Bogus;
-using FluentAssertions;
-using Rocket.Surgery.DependencyInjection;
-using Sample.Core;
-using Sample.Core.Domain;
-using Sample.Restful.Client;
-using Xunit;
-using Xunit.Abstractions;
+﻿namespace Sample.Restful.Tests.LaunchRecords;
 
-namespace Sample.Restful.Tests.LaunchRecords;
-
+#if NET6_0_OR_GREATER
 public class ListLaunchRecordsTests : HandleWebHostBase
 {
     [Fact]
@@ -39,3 +31,4 @@ public class ListLaunchRecordsTests : HandleWebHostBase
 
     private static readonly Faker Faker = new();
 }
+#endif

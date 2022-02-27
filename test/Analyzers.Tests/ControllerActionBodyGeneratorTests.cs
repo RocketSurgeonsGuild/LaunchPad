@@ -328,6 +328,193 @@ public partial class RocketController : RestfulApiController
 }"
                 }
             );
+            Add(
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static class GetRocketLaunchRecords
+{
+    public record Request : IStreamRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+    }
+}
+
+public static class GetRocketLaunchRecord
+{
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+        
+        public Guid LaunchRecordId { get; init; }
+    }
+}",
+                    @"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    /// <summary>
+    /// Get the launch records for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet(""{id:guid}/launch-records"")]
+    public partial Task<ActionResult> GetRocketLaunchRecords([BindRequired] [FromRoute] Guid id, GetRocketLaunchRecords.Request request);
+
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
+    public partial Task<ActionResult> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
+}"
+                }
+            );
+            Add(
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static class GetRocketLaunchRecord
+{
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+        
+        public Guid LaunchId { get; init; }
+    }
+}",
+                    @"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
+    public partial Task<ActionResult> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
+}"
+                }
+            );
+            Add(
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static class GetRocketLaunchRecord
+{
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+        
+        public Guid LaunchRecordId { get; init; }
+    }
+}",
+                    @"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
+    public partial Task<ActionResult> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchId, GetRocketLaunchRecord.Request request);
+}"
+                }
+            );
+            Add(
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static class GetRocketLaunchRecord
+{
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+        
+        public Guid LaunchRecordId { get; init; }
+    }
+}",
+                    @"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
+    public partial Task<ActionResult> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] string launchRecordId, GetRocketLaunchRecord.Request request);
+}"
+                }
+            );
         }
     }
 }

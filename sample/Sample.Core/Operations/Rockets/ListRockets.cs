@@ -12,6 +12,10 @@ namespace Sample.Core.Operations.Rockets;
 public static class ListRockets
 {
     // TODO: Paging model!
+    /// <summary>
+    ///     The request to search for different rockets
+    /// </summary>
+    /// <param name="RocketType">The type of the rocket</param>
     public record Request(RocketType? RocketType) : IStreamRequest<RocketModel>;
 
     private class Validator : AbstractValidator<Request>

@@ -27,10 +27,8 @@ public class ListRocketsTests : HandleTestHostBase
                               );
 
         var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.CreateStream(
-                new ListRockets.Request(null)
-            )
-        ).ToListAsync();
+            mediator => mediator.CreateStream(new ListRockets.Request(null)).ToListAsync()
+        );
 
         response.Should().HaveCount(10);
     }

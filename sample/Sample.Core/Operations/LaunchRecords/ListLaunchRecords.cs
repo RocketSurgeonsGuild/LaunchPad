@@ -11,6 +11,10 @@ namespace Sample.Core.Operations.LaunchRecords;
 [PublicAPI]
 public static class ListLaunchRecords
 {
+    /// <summary>
+    ///     The launch record search
+    /// </summary>
+    /// <param name="RocketType">The rocket type</param>
     // TODO: Paging model!
     public record Request(RocketType? RocketType) : IStreamRequest<LaunchRecordModel>;
 

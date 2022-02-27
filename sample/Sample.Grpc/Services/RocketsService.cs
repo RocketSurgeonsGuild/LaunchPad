@@ -3,6 +3,7 @@ using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Grpc.Services;
@@ -63,6 +64,21 @@ public class RocketsService : Rockets.RocketsBase
             CreateMap<ListRocketsRequest, ListRockets.Request>();
             CreateMap<DeleteRocketRequest, DeleteRocket.Request>();
             CreateMap<Core.Models.RocketModel, RocketModel>();
+            CreateMap<RocketId, string>().ConvertUsing(x => x.Value.ToString());
+            CreateMap<string, RocketId>().ConvertUsing(x => new RocketId(Guid.Parse(x)));
+            CreateMap<LaunchRecordId, string>().ConvertUsing(x => x.Value.ToString());
+            CreateMap<string, LaunchRecordId>().ConvertUsing(x => new LaunchRecordId(Guid.Parse(x)));
+
+            CreateMap<NullableRocketType?, Core.Domain.RocketType>().ConvertUsing(
+                static ts =>
+                    ts != null && ts.KindCase == NullableRocketType.KindOneofCase.Data
+                        ? (Core.Domain.RocketType)ts.Data
+                        : default
+            );
+            CreateMap<Core.Domain.RocketType, NullableRocketType>().ConvertUsing(
+                static ts =>
+                    new NullableRocketType { Data = (RocketType)ts }
+            );
         }
     }
 

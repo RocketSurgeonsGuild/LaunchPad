@@ -53,6 +53,8 @@ public partial class SwashbuckleConvention : IServiceConvention
             options => options.ServiceLifetime = ServiceLifetime.Singleton
         );
 
+//        services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, StronglyTypedIdApiDescriptionProvider>());
+
         services.AddOptions<SwaggerGenOptions>()
                 .Configure<IOptions<JsonOptions>>(
                      (options, mvcOptions) => options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions)
@@ -62,6 +64,7 @@ public partial class SwashbuckleConvention : IServiceConvention
             {
                 options.SchemaFilter<RestfulApiActionModelConvention>();
                 options.SchemaFilter<ProblemDetailsSchemaFilter>();
+                options.SchemaFilter<StronglyTypedIdSchemaFilter>();
                 options.OperationFilter<OperationIdFilter>();
                 options.OperationFilter<StatusCode201Filter>();
                 options.OperationFilter<OperationMediaTypesFilter>();
@@ -106,7 +109,7 @@ public partial class SwashbuckleConvention : IServiceConvention
                 {
                     try
                     {
-                        options.IncludeXmlComments(item);
+                        options.IncludeXmlComments(item, true);
                     }
 #pragma warning disable CA1031
                     catch (Exception e)

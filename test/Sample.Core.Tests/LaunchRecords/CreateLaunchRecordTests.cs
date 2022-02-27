@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -46,7 +45,7 @@ public class CreateLaunchRecordTests : HandleTestHostBase
             )
         );
 
-        response.Id.Should().NotBeEmpty();
+        response.Id.Value.Should().NotBeEmpty();
     }
 
     public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)

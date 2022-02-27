@@ -80,9 +80,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         {
             if (request != null)
             {
-                newClass = newClass.AddMembers(
-                    GenerateMethod(context, matcher, MatcherDefaults.MethodStatusCodeMap, method, methodSymbol, request, members)
-                );
+                var methodBody = GenerateMethod(context, matcher, MatcherDefaults.MethodStatusCodeMap, method, methodSymbol, request, members);
+                if (methodBody is null) continue;
+                newClass = newClass.AddMembers(methodBody);
             }
         }
 
@@ -119,7 +119,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         context.AddSource($"{newClass.Identifier.Text}_Methods.cs", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
     }
 
-    private MethodDeclarationSyntax GenerateMethod(
+    private MethodDeclarationSyntax? GenerateMethod(
         SourceProductionContext context,
         IRestfulApiMethodMatcher? matcher,
         IReadOnlyDictionary<RestfulApiMethod, int> statusCodeMap,
@@ -164,6 +164,48 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                         StringComparer.OrdinalIgnoreCase
                                                     )
                                                    .ToArray();
+
+            var mapping = parameterType.MemberNames.ToLookup(z => z, StringComparer.OrdinalIgnoreCase);
+            var failed = false;
+            foreach (var param in otherParams)
+            {
+                if (!mapping[param.Name].Any())
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            GeneratorDiagnostics.ParameterMustBeAPropertyOfTheRequest,
+                            param.Locations.First(),
+                            param.Locations.Skip(1),
+                            param.Name,
+                            parameterType.Name
+                        )
+                    );
+                    failed = true;
+                }
+                else if (parameterType.GetMembers(mapping[param.Name].First()).First() is IPropertySymbol property)
+                {
+                    if (!SymbolEqualityComparer.IncludeNullability.Equals(property.Type, param.Type))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                GeneratorDiagnostics.ParameterMustBeSameTypeAsTheRelatedProperty,
+                                param.Locations.First(),
+                                param.Locations.Skip(1),
+                                param.Name,
+                                param.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                parameterType.Name,
+                                property.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                            )
+                        );
+                        failed = true;
+                    }
+                }
+            }
+
+            if (failed)
+            {
+                return null;
+            }
 
             var bindingMembers = parameterType.GetMembers()
                                               .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false } ps && ps.Name != "EqualityContract")
@@ -435,16 +477,17 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                 z => z,
                 z => z,
                 (right, left) => AnonymousObjectMemberDeclarator(
-                    MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName(resultName),
-                        IdentifierName(left)
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            IdentifierName(resultName),
+                            IdentifierName(left)
+                        )
                     )
-                ).WithNameEquals(
-                    NameEquals(
-                        IdentifierName(right)
-                    )
-                ),
+                   .WithNameEquals(
+                        NameEquals(
+                            IdentifierName(right)
+                        )
+                    ),
                 StringComparer.OrdinalIgnoreCase
             );
             return AnonymousObjectCreationExpression(SeparatedList(routeValues));

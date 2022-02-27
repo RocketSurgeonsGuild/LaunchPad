@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using FluentValidation;
 using MediatR;
 
@@ -30,5 +31,35 @@ internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where 
         }
 
         return await next().ConfigureAwait(false);
+    }
+}
+
+internal class ValidationStreamPipelineBehavior<T, R> : IStreamPipelineBehavior<T, R> where T : IStreamRequest<R>
+{
+    private readonly IValidatorFactory _validatorFactory;
+    private readonly IServiceProvider _serviceProvider;
+
+    public ValidationStreamPipelineBehavior(IValidatorFactory validatorFactory, IServiceProvider serviceProvider)
+    {
+        _validatorFactory = validatorFactory;
+        _serviceProvider = serviceProvider;
+    }
+
+    public async IAsyncEnumerable<R> Handle(T request, [EnumeratorCancellation] CancellationToken cancellationToken, StreamHandlerDelegate<R> next)
+    {
+        var validator = _validatorFactory.GetValidator<T>();
+        if (validator != null)
+        {
+            var context = new ValidationContext<T>(request);
+            context.SetServiceProvider(_serviceProvider);
+
+            var response = await validator.ValidateAsync(context, cancellationToken).ConfigureAwait(false);
+            if (!response.IsValid)
+            {
+                throw new ValidationException(response.Errors);
+            }
+        }
+
+        await foreach (var item in next().WithCancellation(cancellationToken)) yield return item;
     }
 }

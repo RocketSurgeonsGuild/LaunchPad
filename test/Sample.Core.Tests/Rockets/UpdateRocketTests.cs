@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
 using Xunit;
 using Xunit.Abstractions;
@@ -73,13 +74,13 @@ public class UpdateRocketTests : HandleTestHostBase
             Add(
                 new EditRocket.Request
                 {
-                    Id = Guid.NewGuid()
+                    Id = RocketId.New()
                 }, nameof(EditRocket.Request.SerialNumber)
             );
             Add(
                 new EditRocket.Request
                 {
-                    Id = Guid.NewGuid(),
+                    Id = RocketId.New(),
                     SerialNumber = Faker.Random.String2(0, 9)
                 },
                 nameof(EditRocket.Request.SerialNumber)
@@ -87,7 +88,7 @@ public class UpdateRocketTests : HandleTestHostBase
             Add(
                 new EditRocket.Request
                 {
-                    Id = Guid.NewGuid(),
+                    Id = RocketId.New(),
                     SerialNumber = Faker.Random.String2(600, 800)
                 },
                 nameof(EditRocket.Request.SerialNumber)

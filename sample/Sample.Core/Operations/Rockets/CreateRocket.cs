@@ -4,21 +4,38 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
 [PublicAPI]
 public static class CreateRocket
 {
+    /// <summary>
+    ///     The operation to create a new rocket record
+    /// </summary>
     public record Request : IRequest<Response>
     {
+        /// <summary>
+        ///     The serial number of the rocket
+        /// </summary>
         public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The type of rocket
+        /// </summary>
         public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
+    /// <summary>
+    ///     The identifier of the rocket that was created
+    /// </summary>
     public record Response
     {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The rocket id
+        /// </summary>
+        public RocketId Id { get; init; }
     }
 
     private class Mapper : Profile

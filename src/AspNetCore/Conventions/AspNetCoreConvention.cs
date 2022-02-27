@@ -112,6 +112,9 @@ public class AspNetCoreConvention : IServiceConvention
         }
 
         services
+#if NET6_0_OR_GREATER
+           .AddEndpointsApiExplorer()
+#endif
            .AddMvcCore()
            .AddApiExplorer();
         PopulateDefaultParts(

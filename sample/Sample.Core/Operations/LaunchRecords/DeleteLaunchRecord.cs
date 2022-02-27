@@ -2,15 +2,22 @@
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
 [PublicAPI]
 public static class DeleteLaunchRecord
 {
+    /// <summary>
+    ///     The request to delete a launch record
+    /// </summary>
     public record Request : IRequest
     {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The launch record to delete
+        /// </summary>
+        public LaunchRecordId Id { get; init; }
     }
 
     [UsedImplicitly]

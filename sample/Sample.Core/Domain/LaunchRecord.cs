@@ -1,18 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Rocket.Surgery.LaunchPad.EntityFramework;
+using Sample.Core.Models;
 
 namespace Sample.Core.Domain;
 
-public class LaunchRecord
+public class LaunchRecord // : ILaunchRecord
 {
-    public Guid Id { get; set; }
+    public LaunchRecordId Id { get; set; }
     public string? Partner { get; set; } = null!;
     public string? Payload { get; set; } = null!;
     public long PayloadWeightKg { get; set; }
     public DateTimeOffset? ActualLaunchDate { get; set; }
     public DateTimeOffset ScheduledLaunchDate { get; set; }
 
-    public Guid RocketId { get; set; }
+    public RocketId RocketId { get; set; }
     public ReadyRocket Rocket { get; set; } = null!;
 
     private class EntityConfiguration : IEntityTypeConfiguration<LaunchRecord>
@@ -20,6 +22,19 @@ public class LaunchRecord
         public void Configure(EntityTypeBuilder<LaunchRecord> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.Property(z => z.Id)
+                   .ValueGeneratedOnAdd()
+                   .HasValueGenerator(StronglyTypedIdValueGenerator.Create(LaunchRecordId.New));
         }
     }
+}
+
+public interface ILaunchRecord
+{
+    LaunchRecordId Id { get; set; }
+    string? Partner { get; set; }
+    string? Payload { get; set; }
+    long PayloadWeightKg { get; set; }
+    DateTimeOffset? ActualLaunchDate { get; set; }
+    DateTimeOffset ScheduledLaunchDate { get; set; }
 }

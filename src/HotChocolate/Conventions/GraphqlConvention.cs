@@ -46,7 +46,8 @@ public class GraphqlConvention : IServiceConvention
         var types = context.AssemblyCandidateFinder.GetCandidateAssemblies("MediatR")
                            .SelectMany(z => z.GetTypes())
                            .Where(typeof(IBaseRequest).IsAssignableFrom)
-                           .Where(z => z is { IsNested: true, DeclaringType: { } }) // TODO: Configurable?
+                           .Where(z => z is { IsAbstract: false })
+                           .Where(_rocketChocolateOptions.RequestPredicate)
                            .ToArray();
 
         services.TryAdd(

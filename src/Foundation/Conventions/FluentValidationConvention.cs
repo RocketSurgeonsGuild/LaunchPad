@@ -61,5 +61,8 @@ public class FluentValidationConvention : IServiceConvention
 
         services.TryAdd(ServiceDescriptor.Describe(typeof(IValidatorFactory), typeof(ValidatorFactory), ServiceLifetime.Singleton));
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
+        services.TryAddEnumerable(
+            ServiceDescriptor.Describe(typeof(IStreamPipelineBehavior<,>), typeof(ValidationStreamPipelineBehavior<,>), _options.MediatorLifetime)
+        );
     }
 }

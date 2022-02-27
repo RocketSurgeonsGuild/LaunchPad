@@ -1,5 +1,7 @@
 using HotChocolate;
-using Rocket.Surgery.LaunchPad.HotChocolate.Types;
+using HotChocolate.Data.Filters;
+using HotChocolate.Types.NodaTime;
+using NodaTime;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 
@@ -15,7 +17,29 @@ public static class ISchemaBuilderExtensions
     /// <returns></returns>
     public static ISchemaBuilder AddNodaTime(this ISchemaBuilder schemaBuilder)
     {
+        schemaBuilder
+           .AddFiltering()
+           .AddConvention<IFilterConvention>(
+                new FilterConventionExtension(
+                    descriptor => descriptor
+                                 .BindRuntimeType<Duration, ComparableOperationFilterInputType<Duration>>()
+                                 .BindRuntimeType<DateTimeZone, ComparableOperationFilterInputType<DateTimeZone>>()
+                                 .BindRuntimeType<Duration, ComparableOperationFilterInputType<Duration>>()
+                                 .BindRuntimeType<Instant, ComparableOperationFilterInputType<Instant>>()
+                                 .BindRuntimeType<IsoDayOfWeek, ComparableOperationFilterInputType<IsoDayOfWeek>>()
+                                 .BindRuntimeType<LocalDateTime, ComparableOperationFilterInputType<LocalDateTime>>()
+                                 .BindRuntimeType<LocalDate, ComparableOperationFilterInputType<LocalDate>>()
+                                 .BindRuntimeType<LocalTime, ComparableOperationFilterInputType<LocalTime>>()
+                                 .BindRuntimeType<OffsetDateTime, ComparableOperationFilterInputType<OffsetDateTime>>()
+                                 .BindRuntimeType<OffsetDate, ComparableOperationFilterInputType<OffsetDate>>()
+                                 .BindRuntimeType<OffsetTime, ComparableOperationFilterInputType<OffsetTime>>()
+                                 .BindRuntimeType<Offset, ComparableOperationFilterInputType<Offset>>()
+                                 .BindRuntimeType<Period, ComparableOperationFilterInputType<Period>>()
+                                 .BindRuntimeType<ZonedDateTime, ComparableOperationFilterInputType<ZonedDateTime>>()
+                )
+            );
         return schemaBuilder
+              .AddType<DurationType>()
               .AddType<DateTimeZoneType>()
               .AddType<DurationType>()
               .AddType<InstantType>()

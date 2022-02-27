@@ -10,15 +10,25 @@ namespace Sample.Core.Operations.Rockets;
 [PublicAPI]
 public static partial class EditRocket
 {
+    /// <summary>
+    ///     The edit operation to update a rocket
+    /// </summary>
     public record Request : IRequest<RocketModel>
     {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The rocket id
+        /// </summary>
+        public RocketId Id { get; init; }
 
-        // TODO: Make generator that can be used to create a writable view model
-        public string SerialNumber { get; set; } = null!;
+        /// <summary>
+        ///     The serial number of the rocket
+        /// </summary>
+        public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
 
-        // TODO: Make generator that can be used to create a writable view model
-        public RocketType Type { get; set; }
+        /// <summary>
+        ///     The type of the rocket
+        /// </summary>
+        public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
     private class Mapper : Profile
