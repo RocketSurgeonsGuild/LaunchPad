@@ -1,9 +1,8 @@
-﻿using Bogus;
+﻿using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
-using Xunit;
-using Xunit.Abstractions;
+using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
@@ -20,7 +19,7 @@ public class UpdateRocketTests : HandleWebHostBase
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
-                                                       Type = RocketType.Falcon9,
+                                                       Type = CoreRocketType.Falcon9,
                                                        SerialNumber = "12345678901234"
                                                    };
                                                    z.Add(rocket);
@@ -55,7 +54,8 @@ public class UpdateRocketTests : HandleWebHostBase
         request = request with { Id = Guid.NewGuid() };
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
-        response.Errors[0].Extensions!["field"].As<string>().Split('.').Last().Pascalize().Should().Be(propertyName);
+        response.Errors[0].Extensions!["field"].As<string>().Split('.').Last()
+                .Pascalize().Should().Be(propertyName);
     }
 
     private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>

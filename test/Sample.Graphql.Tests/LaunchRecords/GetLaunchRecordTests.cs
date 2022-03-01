@@ -1,11 +1,9 @@
-﻿using Bogus;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Xunit;
-using Xunit.Abstractions;
+using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
@@ -22,7 +20,7 @@ public class GetLaunchRecordTests : HandleWebHostBase
                                                    var rocket = new ReadyRocket
                                                    {
                                                        Id = RocketId.New(),
-                                                       Type = RocketType.Falcon9,
+                                                       Type = CoreRocketType.Falcon9,
                                                        SerialNumber = "12345678901234"
                                                    };
 

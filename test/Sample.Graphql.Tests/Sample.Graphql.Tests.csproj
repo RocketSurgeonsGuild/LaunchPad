@@ -14,5 +14,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
       <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+        <Using Include="StrawberryShake" />
     </ItemGroup>
 </Project>
