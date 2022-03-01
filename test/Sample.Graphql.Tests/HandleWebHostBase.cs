@@ -1,6 +1,8 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Microsoft.AspNetCore.Mvc.Testing.Handlers;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.DependencyInjection;
@@ -13,11 +15,11 @@ using Xunit.Abstractions;
 namespace Sample.Graphql.Tests;
 
 [ImportConventions]
-public abstract partial class HandleGrpcHostBase : LoggerTest, IAsyncLifetime
+public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
 {
     private SqliteConnection _connection = null!;
 
-    protected HandleGrpcHostBase(
+    protected HandleWebHostBase(
         ITestOutputHelper outputHelper,
         LogLevel logLevel = LogLevel.Trace
     ) : base(
@@ -29,7 +31,43 @@ public abstract partial class HandleGrpcHostBase : LoggerTest, IAsyncLifetime
         Factory = new TestWebHost()
                  .ConfigureHostBuilder(
                       b => b
-                          .ConfigureHosting((context, z) => z.ConfigureServices((_, s) => s.AddSingleton(context)))
+                          .ConfigureHosting(
+                               (context, z) => z.ConfigureServices(
+                                   (_, s) =>
+                                   {
+                                       s.AddSingleton(context);
+                                       s.AddHttpClient();
+                                       var clientBuilder = s.AddRocketClient();
+
+
+                                       s.Configure<HttpClientFactoryOptions>(
+                                           clientBuilder.ClientName, options =>
+                                           {
+                                               options.HttpMessageHandlerBuilderActions.Add(
+                                                   builder =>
+                                                   {
+                                                       if (Factory.ClientOptions.AllowAutoRedirect)
+                                                       {
+                                                           builder.AdditionalHandlers.Add(new RedirectHandler(Factory.ClientOptions.MaxAutomaticRedirections));
+                                                       }
+
+                                                       if (Factory.ClientOptions.HandleCookies)
+                                                       {
+                                                           builder.AdditionalHandlers.Add(new CookieContainerHandler());
+                                                       }
+
+                                                       builder.PrimaryHandler = Factory.Server.CreateHandler();
+                                                   }
+                                               );
+
+                                               options.HttpClientActions.Add(
+                                                   client => client.BaseAddress = new Uri(Factory.ClientOptions.BaseAddress + "graphql/")
+                                               );
+                                           }
+                                       );
+                                   }
+                               )
+                           )
                           .EnableConventionAttributes()
                   )
                  .ConfigureLoggerFactory(LoggerFactory);

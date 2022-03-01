@@ -42,7 +42,6 @@ public class SystemTextJsonNodaTimeTests : LoggerTest
     [InlineData("2020-01-01T12:12:12")]
     [InlineData("2020-01-01T12:12:12.000000000")]
     [InlineData("2020-01-01T12:12:12.0000000")]
-    [InlineData("2020-01-01T12:12:12.000000000 (ISO)")]
     public void LocalDateTime_Tests(string value)
     {
         JsonSerializer.Deserialize<LocalDateTime>("\"" + value + "\"", _settings)

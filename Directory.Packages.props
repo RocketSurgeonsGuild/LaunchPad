@@ -45,8 +45,10 @@
     <PackageVersion Include="HotChocolate.AspNetCore" Version="12.6.0" />
     <PackageVersion Include="HotChocolate.Data" Version="12.6.0" />
     <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="12.6.0" />
-      <PackageVersion Include="HotChocolate.Types.NodaTime" Version="12.6.0" />
+    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="12.6.0" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="12.6.0" />
+    <PackageVersion Include="StrawberryShake.Transport.Http" Version="12.6.0" />
+    <PackageVersion Include="StrawberryShake.CodeGeneration.CSharp.Analyzers" Version="12.6.0" />
     <PackageVersion Include="MediatR" Version="10.0.1" />
     <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />

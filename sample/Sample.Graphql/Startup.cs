@@ -18,7 +18,7 @@ public class Startup
     {
         services
            .AddGraphQLServer()
-           .AddDefaultTransactionScopeHandler()
+//           .AddDefaultTransactionScopeHandler()
            .AddQueryType()
            .AddMutationType()
            .ModifyRequestOptions(
@@ -75,8 +75,7 @@ public class QueryType : ObjectTypeExtension<Query>
     {
         descriptor
            .Field(t => t.GetLaunchRecords(default))
-           .UsePaging(
-                typeof(ObjectType<LaunchRecord>),
+           .UsePaging<NonNullType<ObjectType<LaunchRecord>>>(
                 options: new PagingOptions
                 {
                     DefaultPageSize = 10,
@@ -84,8 +83,7 @@ public class QueryType : ObjectTypeExtension<Query>
                     MaxPageSize = 20
                 }
             )
-           .UseOffsetPaging(
-                typeof(ObjectType<LaunchRecord>),
+           .UseOffsetPaging<NonNullType<ObjectType<LaunchRecord>>>(
                 options: new PagingOptions
                 {
                     DefaultPageSize = 10,
@@ -98,8 +96,7 @@ public class QueryType : ObjectTypeExtension<Query>
            .UseSorting<LaunchRecordSort>();
         descriptor
            .Field(t => t.GetRockets(default))
-           .UsePaging(
-                typeof(ObjectType<ReadyRocket>),
+           .UsePaging<NonNullType<ObjectType<ReadyRocket>>>(
                 options: new PagingOptions
                 {
                     DefaultPageSize = 10,
@@ -107,8 +104,7 @@ public class QueryType : ObjectTypeExtension<Query>
                     MaxPageSize = 20
                 }
             )
-           .UseOffsetPaging(
-                typeof(ObjectType<ReadyRocket>),
+           .UseOffsetPaging<NonNullType<ObjectType<ReadyRocket>>>(
                 options: new PagingOptions
                 {
                     DefaultPageSize = 10,
@@ -196,7 +192,7 @@ public class ReadyRocketType : ObjectType<ReadyRocket>
     {
 //        descriptor.Implements<InterfaceType<IReadyRocket>>();
         descriptor.Field(z => z.LaunchRecords)
-                  .Type<ListType<LaunchRecordBase>>()
+                  .Type<NonNullType<ListType<NonNullType<LaunchRecordBase>>>>()
                   .UseFiltering()
                   .UseSorting();
 //        descriptor.Ignore(z => z.LaunchRecords);
@@ -221,7 +217,8 @@ public class LaunchRecordType : ObjectType<LaunchRecord>
     {
 //        descriptor.Implements<InterfaceType<ILaunchRecord>>();
         descriptor.Field(z => z.Rocket)
-                  .Type<ReadyRocketBase>();
+                  .Type<NonNullType<ReadyRocketBase>>();
+        descriptor.Field(z => z.RocketId).Ignore();
 //        descriptor.Ignore(z => z.LaunchRecords);
     }
 }

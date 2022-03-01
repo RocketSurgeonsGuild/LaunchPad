@@ -1,0 +1,89 @@
+﻿query GetLaunchRecords {
+    launchRecords {
+        items {
+            id
+            rocket {
+                id
+                type
+                serialNumber
+            }
+            payload
+            payloadWeightKg
+            actualLaunchDate
+            scheduledLaunchDate
+        }
+    }
+}
+
+query GetFilteredLaunchRecords($rocketType: RocketType!) {
+    launchRecords(where: { rocket: { type: { eq: $rocketType } } }) {
+        items {
+            id
+            rocket {
+                id
+                type
+                serialNumber
+            }
+            payload
+            payloadWeightKg
+            actualLaunchDate
+            scheduledLaunchDate
+        }
+    }
+}
+query GetLaunchRecord($id: UUID) {
+    launchRecords(where: { id: { eq: $id } }) {
+        items {
+            id
+            rocket {
+                id
+                type
+                serialNumber
+            }
+            partner
+            payload
+            payloadWeightKg
+            actualLaunchDate
+            scheduledLaunchDate
+        }
+    }
+}
+
+query GetRockets {
+    rockets {
+        items {
+            id
+            serialNumber
+            type
+            launchRecords {
+                partner
+            }
+        }
+    }
+}
+
+query GetFilteredRockets($rocketType: RocketType) {
+    rockets(where: {type: { eq: $rocketType } }) {
+        items {
+            id
+            serialNumber
+            type
+            launchRecords {
+                partner
+            }
+        }
+    }
+}
+
+query GetRocket($id: UUID) {
+    rockets(where: { id: { eq: $id } }) {
+        items {
+            id
+            serialNumber
+            type
+            launchRecords {
+                partner
+            }
+        }
+    }
+}

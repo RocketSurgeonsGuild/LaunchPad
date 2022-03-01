@@ -1,22 +1,19 @@
-﻿#if NET6_0_OR_GREATER
-using Bogus;
-using FluentAssertions;
+﻿using Bogus;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
-using Sample.Restful.Client;
 using Xunit;
 using Xunit.Abstractions;
-using RocketType = Sample.Restful.Client.RocketType;
 
-namespace Sample.Restful.Tests.LaunchRecords;
+namespace Sample.Graphql.Tests.LaunchRecords;
 
 public class ListLaunchRecordsTests : HandleWebHostBase
 {
     [Fact]
     public async Task Should_List_LaunchRecords()
     {
-        var client = new LaunchRecordClient(Factory.CreateClient());
+        var client = Factory.Services.GetRequiredService<IRocketClient>();
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
@@ -30,15 +27,17 @@ public class ListLaunchRecordsTests : HandleWebHostBase
                                   }
                               );
 
-        var response = await client.ListLaunchRecordsAsync();
+        var response = await client.GetLaunchRecords.ExecuteAsync();
+        response.EnsureNoErrors();
 
-        response.Result.Should().HaveCount(10);
+        response.Data.LaunchRecords.Items.Should().HaveCount(10);
     }
+
 
     [Fact]
     public async Task Should_List_Specific_Kinds_Of_LaunchRecords()
     {
-        var client = new LaunchRecordClient(Factory.CreateClient());
+        var client = Factory.Services.GetRequiredService<IRocketClient>();
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
@@ -52,8 +51,10 @@ public class ListLaunchRecordsTests : HandleWebHostBase
                                   }
                               );
 
-        var response = await client.ListLaunchRecordsAsync(RocketType.FalconHeavy);
-        response.Result.Should().HaveCount(3);
+        var response = await client.GetFilteredLaunchRecords.ExecuteAsync(RocketType.FalconHeavy);
+        response.EnsureNoErrors();
+
+        response.Data.LaunchRecords.Items.Should().HaveCount(3);
     }
 
     public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
@@ -62,4 +63,3 @@ public class ListLaunchRecordsTests : HandleWebHostBase
 
     private static readonly Faker Faker = new();
 }
-#endif

@@ -1,22 +1,19 @@
-﻿#if NET6_0_OR_GREATER
-using Bogus;
-using FluentAssertions;
+﻿using Bogus;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
-using Sample.Restful.Client;
 using Xunit;
 using Xunit.Abstractions;
-using RocketType = Sample.Restful.Client.RocketType;
 
-namespace Sample.Restful.Tests.Rockets;
+namespace Sample.Graphql.Tests.Rockets;
 
 public class ListRocketsTests : HandleWebHostBase
 {
     [Fact]
     public async Task Should_List_Rockets()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = Factory.Services.GetRequiredService<IRocketClient>();
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
@@ -28,15 +25,16 @@ public class ListRocketsTests : HandleWebHostBase
                                   }
                               );
 
-        var response = await client.ListRocketsAsync();
+        var response = await client.GetRockets.ExecuteAsync();
+        response.EnsureNoErrors();
 
-        response.Result.Should().HaveCount(10);
+        response.Data.Rockets.Items.Should().HaveCount(10);
     }
 
     [Fact]
     public async Task Should_List_Specific_Kinds_Of_Rockets()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = Factory.Services.GetRequiredService<IRocketClient>();
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
@@ -48,9 +46,10 @@ public class ListRocketsTests : HandleWebHostBase
                                   }
                               );
 
-        var response = await client.ListRocketsAsync(RocketType.AtlasV);
+        var response = await client.GetFilteredRockets.ExecuteAsync(RocketType.AtlasV);
+        response.EnsureNoErrors();
 
-        response.Result.Should().HaveCount(5);
+        response.Data.Rockets.Items.Should().HaveCount(5);
     }
 
     public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
@@ -59,4 +58,3 @@ public class ListRocketsTests : HandleWebHostBase
 
     private static readonly Faker Faker = new();
 }
-#endif

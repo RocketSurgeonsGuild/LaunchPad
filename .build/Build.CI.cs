@@ -70,7 +70,7 @@ internal class LocalConstants
 [PrintCIEnvironment]
 [UploadLogs]
 [TitleEvents]
-public partial class Solution
+public partial class BuildSolution
 {
     public static RocketSurgeonGitHubActionsConfiguration CiIgnoreMiddleware(
         RocketSurgeonGitHubActionsConfiguration configuration

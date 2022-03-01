@@ -43,7 +43,6 @@ public class NewtonsoftJsonNodaTimeTests : LoggerTest
     [InlineData("2020-01-01T12:12:12")]
     [InlineData("2020-01-01T12:12:12.000000000")]
     [InlineData("2020-01-01T12:12:12.0000000")]
-    [InlineData("2020-01-01T12:12:12.000000000 (ISO)")]
     public void LocalDateTime_Tests(string value)
     {
         JsonConvert.DeserializeObject<LocalDateTime>("\"" + value + "\"", _settings)

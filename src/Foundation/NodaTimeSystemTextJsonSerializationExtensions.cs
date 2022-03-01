@@ -26,7 +26,7 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
             new SystemTextJsonCompositeNodaPatternConverter<Instant>(
                 InstantPattern.General,
                 InstantPattern.ExtendedIso,
-                new SystemTextJsonDateTimeOffsetPattern()
+                new InstantDateTimeOffsetPattern()
             )
         );
         ReplaceConverter(
@@ -41,17 +41,14 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
             new SystemTextJsonCompositeNodaPatternConverter<LocalDateTime>(
                 LocalDateTimePattern.GeneralIso,
                 LocalDateTimePattern.ExtendedIso,
-                LocalDateTimePattern.BclRoundtrip,
-                LocalDateTimePattern.FullRoundtrip,
-                LocalDateTimePattern.FullRoundtripWithoutCalendar
+                LocalDateTimePattern.BclRoundtrip
             )
         );
         ReplaceConverter(
             options.Converters,
             new SystemTextJsonCompositeNodaPatternConverter<LocalTime>(
                 LocalTimePattern.ExtendedIso,
-                LocalTimePattern.GeneralIso,
-                LocalTimePattern.LongExtendedIso
+                LocalTimePattern.GeneralIso
             )
         );
         ReplaceConverter(
