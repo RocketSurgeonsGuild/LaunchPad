@@ -159,7 +159,7 @@ public partial class BuildSolution : NukeBuild,
                 }
                 else
                 {
-                    ProcessTasks.StartProcess($"kill -s TERM {process!.Id}");
+                    ProcessTasks.StartProcess("kill", $"-s TERM {process!.Id}");
                 }
 
                 process1.WaitForExit();
