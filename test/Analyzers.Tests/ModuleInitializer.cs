@@ -30,7 +30,7 @@ public static class ModuleInitializer
 
     private static Target Selector(SyntaxTree source)
     {
-        var data = $@"//HintName: {source.FilePath}
+        var data = $@"//HintName: {source.FilePath.Replace("\\", "/", StringComparison.OrdinalIgnoreCase)}
 {source.GetText()}";
         return new("cs.txt", data.Replace("\r", string.Empty, StringComparison.OrdinalIgnoreCase));
     }

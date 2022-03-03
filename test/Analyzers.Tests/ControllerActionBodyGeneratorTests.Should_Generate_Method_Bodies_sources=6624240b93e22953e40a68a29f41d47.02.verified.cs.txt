@@ -1,4 +1,4 @@
-﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers\Rocket.Surgery.LaunchPad.Analyzers.ControllerActionBodyGenerator\RocketController_Methods.cs
+﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.ControllerActionBodyGenerator/RocketController_Methods.cs
 #nullable enable
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
