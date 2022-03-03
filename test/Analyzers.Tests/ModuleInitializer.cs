@@ -32,7 +32,7 @@ public static class ModuleInitializer
     {
         var data = $@"//HintName: {source.FilePath}
 {source.GetText()}";
-        return new("cs.txt", data);
+        return new("cs.txt", data.Replace("\r", string.Empty, StringComparison.OrdinalIgnoreCase));
     }
 
     private static ConversionResult Convert(GenerationTestResult target, IReadOnlyDictionary<string, object> context)
