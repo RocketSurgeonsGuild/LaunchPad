@@ -15,7 +15,7 @@
       <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
       <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
         <Using Include="StrawberryShake" />
-        <AdditionalFiles Remove="**/bin/*" />
-        <GraphQLConfig Remove="**/bin/*" />
+        <AdditionalFiles Remove="**/Sample.Graphql" />
+        <GraphQLConfig Remove="**/Sample.Graphql" />
     </ItemGroup>
 </Project>
