@@ -140,6 +140,11 @@ public partial class BuildSolution : NukeBuild,
             {
                 process1.Kill();
             }
+
+            if (!IsLocalBuild)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
         }
     );
 
