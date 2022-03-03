@@ -93,7 +93,7 @@ global using System.Threading.Tasks;
 
     private string GetSourcesKey(IEnumerable<string> sources)
     {
-        var a = sources.ToList();
+        var a = sources.Select(z => z.ToLowerInvariant()).ToList();
         if (a.Count > 1)
         {
             var hashes = a.Select(x => MD5.HashData(Encoding.Default.GetBytes(x)))
@@ -105,7 +105,7 @@ global using System.Threading.Tasks;
         return string.Join(
             "", sources.Select(x => MD5.HashData(Encoding.Default.GetBytes(x)))
                        .Select(z => string.Join("", z.Select(x => x.ToString("X"))))
-        );
+        ).ToLowerInvariant();
     }
 
     private class MethodBodyData : TheoryData<string[]>
