@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.Execution;
@@ -10,6 +12,7 @@ using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.MSBuild;
 using Rocket.Surgery.Nuke.DotNetCore;
+using Serilog;
 using NukeSolution = Nuke.Common.ProjectModel.Solution;
 
 [PublicAPI]
@@ -113,11 +116,21 @@ public partial class BuildSolution : NukeBuild,
                 "run --no-launch-profile",
                 logOutput: true,
                 logInvocation: true,
+                timeout: Convert.ToInt32(TimeSpan.FromMinutes(1).TotalSeconds),
                 customLogger: (type, s) =>
                 {
                     if (s.Contains("Application started."))
                     {
                         tcs.TrySetResult();
+                    }
+
+                    if (type == OutputType.Std)
+                    {
+                        Log.Logger.Debug(s);
+                    }
+                    else
+                    {
+                        Log.Logger.Error(s);
                     }
                 },
                 environmentVariables: new Dictionary<string, string>(EnvironmentInfo.Variables)
@@ -127,6 +140,8 @@ public partial class BuildSolution : NukeBuild,
                 },
                 workingDirectory: this.As<IComprehendSamples>().SampleDirectory / "Sample.Graphql"
             );
+
+            var process = (Process)typeof(Process2).GetField("_process", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(process1)!;
 
             try
             {
@@ -138,7 +153,16 @@ public partial class BuildSolution : NukeBuild,
             }
             finally
             {
-                process1.Kill();
+                if (OperatingSystem.IsWindows())
+                {
+                    process1.Kill();
+                }
+                else
+                {
+                    ProcessTasks.StartProcess($"kill -s TERM {process!.Id}");
+                }
+
+                process1.WaitForExit();
             }
 
             if (!IsLocalBuild)
