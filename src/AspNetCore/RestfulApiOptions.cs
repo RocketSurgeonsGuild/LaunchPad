@@ -30,16 +30,29 @@ public class RestfulApiOptions
         new RestfulApiMethodBuilder(RestfulApiMethod.List)
            .MatchPrefix("List", "Search")
            .MatchParameterType(^1, typeof(IBaseRequest)),
+        new RestfulApiMethodBuilder(RestfulApiMethod.List)
+           .MatchPrefix("List", "Search")
+           .MatchParameterType(^1, typeof(IStreamRequest<>)),
         new RestfulApiMethodBuilder(RestfulApiMethod.Read)
            .MatchPrefix("Get", "Find", "Fetch", "Read")
            .MatchParameterType(^1, typeof(IBaseRequest)),
+        new RestfulApiMethodBuilder(RestfulApiMethod.Read)
+           .MatchPrefix("Get", "Find", "Fetch", "Read")
+           .MatchParameterType(^1, typeof(IStreamRequest<>)),
         new RestfulApiMethodBuilder(RestfulApiMethod.Create)
            .MatchPrefix("Post", "Create", "Add")
            .MatchParameterType(^1, typeof(IBaseRequest)),
+        new RestfulApiMethodBuilder(RestfulApiMethod.Create)
+           .MatchPrefix("Post", "Create", "Add")
+           .MatchParameterType(^1, typeof(IStreamRequest<>)),
         new RestfulApiMethodBuilder(RestfulApiMethod.Update)
            .MatchPrefix("Put", "Edit", "Update")
            .MatchParameterSuffix(^2, "id")
            .MatchParameterType(^1, typeof(IBaseRequest)),
+        new RestfulApiMethodBuilder(RestfulApiMethod.Update)
+           .MatchPrefix("Put", "Edit", "Update")
+           .MatchParameterSuffix(^2, "id")
+           .MatchParameterType(^1, typeof(IStreamRequest<>)),
         new RestfulApiMethodBuilder(RestfulApiMethod.Update)
            .MatchPrefix("Put", "Edit", "Update")
            .MatchParameterSuffix(^2, "id")
@@ -49,13 +62,16 @@ public class RestfulApiOptions
            .MatchParameterType(^1, typeof(IBaseRequest)),
         new RestfulApiMethodBuilder(RestfulApiMethod.Delete)
            .MatchPrefix("Delete", "Remove")
+           .MatchParameterType(^1, typeof(IStreamRequest<>)),
+        new RestfulApiMethodBuilder(RestfulApiMethod.Delete)
+           .MatchPrefix("Delete", "Remove")
            .MatchParameterSuffix(^1, "id"),
     };
 
     /// <summary>
     ///     The factory to use for Validation results
     /// </summary>
-    public IValidationActionResultFactory ValidationActionResultFactory { get; set; } = new UnprocessableEntityActionResultFactory();
+    public int ValidationStatusCode { get; set; } = StatusCodes.Status422UnprocessableEntity;
 
     internal ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> GetMatchers()
     {

@@ -12,26 +12,45 @@ namespace Sample.Core.Operations.LaunchRecords;
 [PublicAPI]
 public static partial class EditLaunchRecord
 {
-    // TODO: Make generator that can be used to map this directly
-    public static Request CreateRequest(Guid id, Model model, IMapper mapper)
+    /// <summary>
+    ///     The launch record update request
+    /// </summary>
+    public partial record Request : IRequest<LaunchRecordModel>
     {
-        return mapper.Map(model, new Request { Id = id });
-    }
+        /// <summary>
+        ///     The launch record to update
+        /// </summary>
+        public LaunchRecordId Id { get; init; }
 
-    public record Model
-    {
+        /// <summary>
+        ///     The updated launch partner
+        /// </summary>
         public string Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
-        public string Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
-        public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
-        public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
-        public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
-        public Guid RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
-    }
 
-    [InheritFrom(typeof(Model))]
-    public partial record Request : Model, IRequest<LaunchRecordModel>
-    {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The updated launch payload
+        /// </summary>
+        public string Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The updated payload weight
+        /// </summary>
+        public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The updated actual launch date
+        /// </summary>
+        public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The scheduled launch date
+        /// </summary>
+        public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        /// <summary>
+        ///     The update rocket id
+        /// </summary>
+        public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
     private class Mapper : Profile
@@ -42,29 +61,6 @@ public static partial class EditLaunchRecord
                .ForMember(x => x.Rocket, x => x.Ignore())
                .ForMember(x => x.Id, x => x.Ignore())
                 ;
-            CreateMap<Model, Request>()
-               .ForMember(z => z.Id, z => z.Ignore());
-        }
-    }
-
-    private class ModelValidator : AbstractValidator<Model>
-    {
-        public ModelValidator()
-        {
-            RuleFor(x => x.Partner)
-               .NotEmpty()
-               .NotNull();
-            RuleFor(x => x.RocketId)
-               .NotEmpty()
-               .NotNull();
-            RuleFor(x => x.Payload)
-               .NotEmpty()
-               .NotNull();
-            RuleFor(x => x.ActualLaunchDate);
-            RuleFor(x => x.ScheduledLaunchDate)
-               .NotNull();
-            RuleFor(x => x.PayloadWeightKg)
-               .GreaterThanOrEqualTo(0d);
         }
     }
 
@@ -72,10 +68,29 @@ public static partial class EditLaunchRecord
     {
         public Validator()
         {
-            Include(new ModelValidator());
             RuleFor(z => z.Id)
                .NotEmpty()
                .NotNull();
+
+            RuleFor(x => x.Partner)
+               .NotEmpty()
+               .NotNull();
+
+            RuleFor(x => x.RocketId)
+               .NotEmpty()
+               .NotNull();
+
+            RuleFor(x => x.Payload)
+               .NotEmpty()
+               .NotNull();
+
+            RuleFor(x => x.ActualLaunchDate);
+
+            RuleFor(x => x.ScheduledLaunchDate)
+               .NotNull();
+
+            RuleFor(x => x.PayloadWeightKg)
+               .GreaterThanOrEqualTo(0d);
         }
     }
 

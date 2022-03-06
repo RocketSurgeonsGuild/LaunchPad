@@ -7,40 +7,48 @@ using Sample.Core.Operations.LaunchRecords;
 namespace Sample.Restful.Controllers;
 
 [Route("[controller]")]
-public class LaunchRecordController : RestfulApiController
+public partial class LaunchRecordController : RestfulApiController
 {
+    /// <summary>
+    ///     Search for launch records
+    /// </summary>
+    /// <param name="request">The search context</param>
+    /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<ActionResult<IEnumerable<LaunchRecordModel>>> ListLaunchRecords()
-    {
-        return Send(new ListLaunchRecords.Request(), x => Ok(x));
-    }
+    public partial IAsyncEnumerable<LaunchRecordModel> ListLaunchRecords(ListLaunchRecords.Request request);
 
+    /// <summary>
+    ///     Load details of a specific launch record
+    /// </summary>
+    /// <param name="request">The request context</param>
+    /// <returns></returns>
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<ActionResult<LaunchRecordModel>> GetLaunchRecord([BindRequired] [FromRoute] GetLaunchRecord.Request request)
-    {
-        return Send(request, x => Ok(x));
-    }
+    public partial Task<ActionResult<LaunchRecordModel>> GetLaunchRecord(GetLaunchRecord.Request request);
 
+    /// <summary>
+    ///     Create a new launch record
+    /// </summary>
+    /// <param name="request">The launch record details</param>
+    /// <returns></returns>
     [HttpPost]
-    public Task<ActionResult<CreateLaunchRecord.Response>> CreateLaunchRecord([BindRequired] [FromBody] CreateLaunchRecord.Request request)
-    {
-        return Send(
-            request,
-            x => CreatedAtAction(nameof(GetLaunchRecord), new { id = x.Id }, x)
-        );
-    }
+    [Created(nameof(GetLaunchRecord))]
+    public partial Task<ActionResult<CreateLaunchRecord.Response>> CreateLaunchRecord(CreateLaunchRecord.Request request);
 
+    /// <summary>
+    ///     Update a given launch record
+    /// </summary>
+    /// <param name="id">The id of the launch record</param>
+    /// <param name="model">The request details</param>
+    /// <returns></returns>
     [HttpPut("{id:guid}")]
-    public Task<ActionResult> UpdateLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromBody] EditLaunchRecord.Model model)
-    {
-        return Send(new EditLaunchRecord.Request { Id = id }.With(model), NoContent);
-    }
+    // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
+    public partial Task<ActionResult> EditLaunchRecord([BindRequired] [FromRoute] LaunchRecordId id, EditLaunchRecord.Request model);
 
+    /// <summary>
+    ///     Remove a launch record
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpDelete("{id:guid}")]
-    public Task<ActionResult> RemoveLaunchRecord([BindRequired] [FromRoute] DeleteLaunchRecord.Request request)
-    {
-        return Send(request);
-    }
+    public partial Task<ActionResult> DeleteLaunchRecord(DeleteLaunchRecord.Request request);
 }

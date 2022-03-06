@@ -1,13 +1,14 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Components;
+using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.BlazorServer.Pages.Rockets;
 
 public partial class Edit : ComponentBase
 {
-    [Parameter] public Guid Id { get; set; }
+    [Parameter] public RocketId Id { get; set; }
 
     public EditRocket.Request Model { get; set; } = new();
 

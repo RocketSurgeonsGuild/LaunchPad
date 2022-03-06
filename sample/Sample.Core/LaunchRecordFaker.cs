@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 
 namespace Sample.Core;
 
@@ -7,7 +8,7 @@ public class LaunchRecordFaker : Faker<LaunchRecord>
 {
     public LaunchRecordFaker(IReadOnlyCollection<ReadyRocket> rockets)
     {
-        RuleFor(x => x.Id, x => x.Random.Guid());
+        RuleFor(x => x.Id, x => new LaunchRecordId(x.Random.Guid()));
         RuleFor(x => x.Partner, x => x.Company.CompanyName());
         RuleFor(x => x.Rocket, x => x.PickRandom(rockets.AsEnumerable()));
         RuleFor(x => x.RocketId, (_, v) => v.Rocket.Id);

@@ -2,15 +2,22 @@
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
 [PublicAPI]
 public static class DeleteRocket
 {
+    /// <summary>
+    ///     The request to remove a rocket from the system
+    /// </summary>
     public record Request : IRequest
     {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The rocket id
+        /// </summary>
+        public RocketId Id { get; init; }
     }
 
     private class Validator : AbstractValidator<Request>

@@ -30,7 +30,7 @@ public class RemoveLaunchRecordsTests : HandleWebHostBase
                                            }
                                        );
 
-        await client.RemoveLaunchRecordAsync(id);
+        await client.DeleteLaunchRecordAsync(id.Value);
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
     }

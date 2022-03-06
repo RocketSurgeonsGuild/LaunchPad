@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using FluentAssertions;
+using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
@@ -29,9 +30,39 @@ public class ListLaunchRecordsTests : HandleGrpcHostBase
                                   }
                               );
 
-        var response = await client.ListLaunchRecordsAsync(new ListLaunchRecordsRequest());
+        var response = await client.ListLaunchRecords(new ListLaunchRecordsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
 
-        response.Results.Should().HaveCount(10);
+        response.Should().HaveCount(10);
+    }
+
+    [Fact]
+    public async Task Should_List_Specific_Kinds_Of_LaunchRecords()
+    {
+        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        await ServiceProvider.WithScoped<RocketDbContext>()
+                             .Invoke(
+                                  async z =>
+                                  {
+                                      var faker = new RocketFaker();
+                                      var rockets = faker.UseSeed(100).Generate(3);
+                                      var records = new LaunchRecordFaker(rockets).UseSeed(100).Generate(10);
+                                      z.AddRange(rockets);
+                                      z.AddRange(records);
+                                      await z.SaveChangesAsync();
+                                  }
+                              );
+
+        var response = await client.ListLaunchRecords(
+            new()
+            {
+                RocketType = new NullableRocketType
+                {
+                    Data = RocketType.FalconHeavy
+                }
+            }
+        ).ResponseStream.ReadAllAsync().ToListAsync();
+
+        response.Should().HaveCount(3);
     }
 
     public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)

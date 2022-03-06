@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -52,6 +53,8 @@ public partial class SwashbuckleConvention : IServiceConvention
             options => options.ServiceLifetime = ServiceLifetime.Singleton
         );
 
+//        services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, StronglyTypedIdApiDescriptionProvider>());
+
         services.AddOptions<SwaggerGenOptions>()
                 .Configure<IOptions<JsonOptions>>(
                      (options, mvcOptions) => options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions)
@@ -59,7 +62,9 @@ public partial class SwashbuckleConvention : IServiceConvention
         services.AddSwaggerGen(
             options =>
             {
+                options.SchemaFilter<RestfulApiActionModelConvention>();
                 options.SchemaFilter<ProblemDetailsSchemaFilter>();
+                options.SchemaFilter<StronglyTypedIdSchemaFilter>();
                 options.OperationFilter<OperationIdFilter>();
                 options.OperationFilter<StatusCode201Filter>();
                 options.OperationFilter<OperationMediaTypesFilter>();
@@ -104,7 +109,7 @@ public partial class SwashbuckleConvention : IServiceConvention
                 {
                     try
                     {
-                        options.IncludeXmlComments(item);
+                        options.IncludeXmlComments(item, true);
                     }
 #pragma warning disable CA1031
                     catch (Exception e)

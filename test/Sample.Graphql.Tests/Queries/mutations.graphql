@@ -1,0 +1,33 @@
+mutation CreateRocket($req: CreateRocketRequest) {
+    CreateRocket(request: $req) {
+        id
+    }
+}
+mutation UpdateRocket($req: EditRocketRequest) {
+    EditRocket(request: $req) {
+        id
+        type
+        serialNumber: sn 
+    }
+}
+mutation DeleteRocket($req: DeleteRocketRequest) {
+    DeleteRocket(request: $req)
+}
+mutation CreateLaunchRecord($req: CreateLaunchRecordRequest) {
+    CreateLaunchRecord(request: $req) {
+        id
+    }
+}
+mutation UpdateLaunchRecord($req: EditLaunchRecordRequest) {
+    EditLaunchRecord(request: $req) {
+        id
+        partner
+        scheduledLaunchDate
+        actualLaunchDate
+        rocketSerialNumber
+        rocketType
+    }
+}
+mutation DeleteLaunchRecord($req: DeleteLaunchRecordRequest) {
+    DeleteLaunchRecord(request: $req)
+}

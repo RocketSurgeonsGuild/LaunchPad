@@ -7,7 +7,7 @@ namespace Sample.BlazorServer.Pages.Rockets;
 
 public partial class View : ComponentBase
 {
-    [Parameter] public Guid Id { get; set; }
+    [Parameter] public RocketId Id { get; set; }
 
     public RocketModel Model { get; set; } = null!;
     [Inject] private IMediator Mediator { get; set; } = null!;

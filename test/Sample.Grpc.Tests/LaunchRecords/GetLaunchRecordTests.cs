@@ -4,6 +4,7 @@ using Google.Protobuf.WellKnownTypes;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 using Sample.Grpc.Tests.Validation;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,7 +24,7 @@ public class GetLaunchRecordTests : HandleGrpcHostBase
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
-                                                       Id = Guid.NewGuid(),
+                                                       Id = RocketId.New(),
                                                        Type = Core.Domain.RocketType.Falcon9,
                                                        SerialNumber = "12345678901234"
                                                    };

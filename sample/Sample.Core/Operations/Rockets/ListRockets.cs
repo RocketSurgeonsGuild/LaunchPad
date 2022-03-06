@@ -12,13 +12,17 @@ namespace Sample.Core.Operations.Rockets;
 public static class ListRockets
 {
     // TODO: Paging model!
-    public record Request : IRequest<IEnumerable<RocketModel>>;
+    /// <summary>
+    ///     The request to search for different rockets
+    /// </summary>
+    /// <param name="RocketType">The type of the rocket</param>
+    public record Request(RocketType? RocketType) : IStreamRequest<RocketModel>;
 
     private class Validator : AbstractValidator<Request>
     {
     }
 
-    private class Handler : IRequestHandler<Request, IEnumerable<RocketModel>>
+    private class Handler : IStreamRequestHandler<Request, RocketModel>
     {
         private readonly RocketDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -29,12 +33,15 @@ public static class ListRockets
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<RocketModel>> Handle(Request request, CancellationToken cancellationToken)
+        public IAsyncEnumerable<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            return await _dbContext.Rockets
-                                   .ProjectTo<RocketModel>(_mapper.ConfigurationProvider)
-                                   .ToListAsync(cancellationToken)
-                                   .ConfigureAwait(false);
+            var query = _dbContext.Rockets.AsQueryable();
+            if (request.RocketType.HasValue)
+            {
+                query = query.Where(z => z.Type == request.RocketType);
+            }
+
+            return query.ProjectTo<RocketModel>(_mapper.ConfigurationProvider).AsAsyncEnumerable();
         }
     }
 }

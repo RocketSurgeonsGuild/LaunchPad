@@ -3,6 +3,7 @@ using HotChocolate.Types;
 using HotChocolate.Types.Pagination;
 using Rocket.Surgery.LaunchPad.EntityFramework.HotChocolate;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 
 namespace Sample.Graphql;
 
@@ -12,7 +13,7 @@ public class ConfigureLaunchRecordType : ConfigureEntityFrameworkEntityQueryType
     {
         fieldDescriptor
            .UsePaging(
-                typeof(ObjectType<ReadyRocket>),
+                typeof(ObjectType<LaunchRecordModel>),
                 options: new PagingOptions
                 {
                     DefaultPageSize = 10,
@@ -21,7 +22,7 @@ public class ConfigureLaunchRecordType : ConfigureEntityFrameworkEntityQueryType
                 }
             )
            .UseOffsetPaging(
-                typeof(ObjectType<LaunchRecord>),
+                typeof(ObjectType<LaunchRecordModel>),
                 options: new PagingOptions
                 {
                     DefaultPageSize = 10,
@@ -29,14 +30,14 @@ public class ConfigureLaunchRecordType : ConfigureEntityFrameworkEntityQueryType
                     MaxPageSize = 20
                 }
             )
-           .UseProjection()
-           .UseFiltering()
+//           .UseProjection()
+           .UseFiltering<LaunchRecordModel>(x => x.Ignore(x => x.ActualLaunchDate))
            .UseSorting<LaunchRecordSort>();
     }
 
-    private class LaunchRecordSort : SortInputType<LaunchRecord>
+    private class LaunchRecordSort : SortInputType<LaunchRecordModel>
     {
-        protected override void Configure(ISortInputTypeDescriptor<LaunchRecord> descriptor)
+        protected override void Configure(ISortInputTypeDescriptor<LaunchRecordModel> descriptor)
         {
             descriptor.BindFieldsExplicitly();
             descriptor.Field(z => z.Partner);

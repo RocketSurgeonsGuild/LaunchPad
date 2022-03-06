@@ -20,6 +20,6 @@ public class RocketIndexModel : PageModel
 
     public async Task OnGet()
     {
-        Rockets = await _mediator.Send(new ListRockets.Request());
+        Rockets = await _mediator.CreateStream(new ListRockets.Request(null)).ToListAsync(HttpContext.RequestAborted);
     }
 }

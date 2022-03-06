@@ -49,7 +49,7 @@ public static class NodaTimeSerializationExtensions
             new NewtonsoftJsonCompositeNodaPatternConverter<Instant>(
                 InstantPattern.ExtendedIso,
                 InstantPattern.General,
-                new NewtonsoftJsonDateTimeOffsetPattern()
+                new InstantDateTimeOffsetPattern()
             )
         );
         ReplaceConverter(
@@ -64,17 +64,14 @@ public static class NodaTimeSerializationExtensions
             new NewtonsoftJsonCompositeNodaPatternConverter<LocalDateTime>(
                 LocalDateTimePattern.ExtendedIso,
                 LocalDateTimePattern.GeneralIso,
-                LocalDateTimePattern.BclRoundtrip,
-                LocalDateTimePattern.FullRoundtrip,
-                LocalDateTimePattern.FullRoundtripWithoutCalendar
+                LocalDateTimePattern.BclRoundtrip
             )
         );
         ReplaceConverter(
             converters,
             new NewtonsoftJsonCompositeNodaPatternConverter<LocalTime>(
                 LocalTimePattern.ExtendedIso,
-                LocalTimePattern.GeneralIso,
-                LocalTimePattern.LongExtendedIso
+                LocalTimePattern.GeneralIso
             )
         );
         ReplaceConverter(

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,7 +23,7 @@ public class GetLaunchRecordTests : HandleTestHostBase
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
-                                                       Id = Guid.NewGuid(),
+                                                       Id = RocketId.New(),
                                                        Type = RocketType.Falcon9,
                                                        SerialNumber = "12345678901234"
                                                    };

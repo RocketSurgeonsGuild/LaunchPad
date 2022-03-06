@@ -11,9 +11,15 @@ namespace Sample.Core.Operations.LaunchRecords;
 [PublicAPI]
 public static class GetLaunchRecord
 {
+    /// <summary>
+    ///     The request to get a launch record
+    /// </summary>
     public record Request : IRequest<LaunchRecordModel>
     {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The launch record to find
+        /// </summary>
+        public LaunchRecordId Id { get; init; }
     }
 
     private class Validator : AbstractValidator<Request>

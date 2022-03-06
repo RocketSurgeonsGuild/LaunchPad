@@ -1,0 +1,34 @@
+﻿{
+  ResultDiagnostics: [
+    {
+      Id: LPAD0003,
+      Title: The parameter must map to a property of the request object,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Test3.cs: (16,128)-(16,136),
+      Description: ,
+      HelpLink: ,
+      MessageFormat: The parameter {0} map to a property of the request {1} object,
+      Message: The parameter launchId map to a property of the request Request object,
+      Category: LaunchPad,
+      CustomTags: []
+    }
+  ],
+  Results: {
+    Rocket.Surgery.LaunchPad.Analyzers.ControllerActionBodyGenerator: [
+      {
+        Id: LPAD0003,
+        Title: The parameter must map to a property of the request object,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Test3.cs: (16,128)-(16,136),
+        Description: ,
+        HelpLink: ,
+        MessageFormat: The parameter {0} map to a property of the request {1} object,
+        Message: The parameter launchId map to a property of the request Request object,
+        Category: LaunchPad,
+        CustomTags: []
+      }
+    ]
+  }
+}

@@ -46,14 +46,15 @@ public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
         return _mapper.Map<LaunchRecordModel>(response);
     }
 
-    public override async Task<ListLaunchRecordsResponse> ListLaunchRecords(ListLaunchRecordsRequest request, ServerCallContext context)
+    public override async Task ListLaunchRecords(
+        ListLaunchRecordsRequest request, IServerStreamWriter<LaunchRecordModel> responseStream, ServerCallContext context
+    )
     {
         var mRequest = _mapper.Map<ListLaunchRecords.Request>(request);
-        var response = await _mediator.Send(mRequest, context.CancellationToken);
-        return new ListLaunchRecordsResponse
+        await foreach (var item in _mediator.CreateStream(mRequest, context.CancellationToken))
         {
-            Results = { response.Select(_mapper.Map<LaunchRecordModel>) }
-        };
+            await responseStream.WriteAsync(_mapper.Map<LaunchRecordModel>(item));
+        }
     }
 
     [UsedImplicitly]

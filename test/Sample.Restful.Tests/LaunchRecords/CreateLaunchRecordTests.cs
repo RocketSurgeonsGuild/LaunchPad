@@ -40,7 +40,7 @@ public class CreateLaunchRecordTests : HandleWebHostBase
             {
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
-                RocketId = rocket.Id,
+                RocketId = rocket.Id.Value,
                 ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
                 PayloadWeightKg = 100,
             }

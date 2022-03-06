@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Xunit;
 
 namespace Analyzers.Tests.Helpers;
 
@@ -9,7 +8,8 @@ public record GenerationTestResults(
     CSharpCompilation InputCompilation,
     ImmutableArray<Diagnostic> InputDiagnostics,
     ImmutableArray<SyntaxTree> InputSyntaxTrees,
-    ImmutableDictionary<Type, GenerationTestResult> Results
+    ImmutableDictionary<Type, GenerationTestResult> Results,
+    ImmutableArray<Diagnostic> ResultDiagnostics
 )
 {
     public bool TryGetResult(Type type, [NotNullWhen(true)] out GenerationTestResult? result)

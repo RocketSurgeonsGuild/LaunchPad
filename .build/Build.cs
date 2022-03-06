@@ -1,11 +1,19 @@
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
+using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.MSBuild;
 using Rocket.Surgery.Nuke.DotNetCore;
+using Serilog;
+using NukeSolution = Nuke.Common.ProjectModel.Solution;
 
 [PublicAPI]
 [CheckBuildProjectConfigurations]
@@ -17,18 +25,19 @@ using Rocket.Surgery.Nuke.DotNetCore;
 [MSBuildVerbosityMapping]
 [NuGetVerbosityMapping]
 [ShutdownDotNetAfterServerBuild]
-public partial class Solution : NukeBuild,
-                                ICanRestoreWithDotNetCore,
-                                ICanBuildWithDotNetCore,
-                                ICanTestWithDotNetCore,
-                                IHaveNuGetPackages,
-                                IHaveDataCollector,
-                                ICanClean,
-                                ICanUpdateReadme,
-                                IGenerateCodeCoverageReport,
-                                IGenerateCodeCoverageSummary,
-                                IGenerateCodeCoverageBadges,
-                                IHaveConfiguration<Configuration>
+public partial class BuildSolution : NukeBuild,
+                                     ICanRestoreWithDotNetCore,
+                                     ICanBuildWithDotNetCore,
+                                     ICanTestWithDotNetCore,
+                                     IComprehendSamples,
+                                     IHaveNuGetPackages,
+                                     IHaveDataCollector,
+                                     ICanClean,
+                                     ICanUpdateReadme,
+                                     IGenerateCodeCoverageReport,
+                                     IGenerateCodeCoverageSummary,
+                                     IGenerateCodeCoverageBadges,
+                                     IHaveConfiguration<Configuration>
 {
     /// <summary>
     ///     Support plugins are available for:
@@ -39,7 +48,26 @@ public partial class Solution : NukeBuild,
     /// </summary>
     public static int Main()
     {
-        return Execute<Solution>(x => x.Default);
+        return Execute<BuildSolution>(x => x.Default);
+    }
+
+    public static int FindFreePort()
+    {
+        var port = 0;
+        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        try
+        {
+            var localEP = new IPEndPoint(IPAddress.Any, 0);
+            socket.Bind(localEP);
+            localEP = (IPEndPoint)socket.LocalEndPoint;
+            port = localEP.Port;
+        }
+        finally
+        {
+            socket.Close();
+        }
+
+        return port;
     }
 
     [OptionalGitRepository] public GitRepository? GitRepository { get; }
@@ -74,6 +102,78 @@ public partial class Solution : NukeBuild,
                                         .Before(Default)
                                         .Before(Clean);
 
+    public Target UpdateGraphQl => _ => _.DependentFor(Test).After(Build).Executes(
+        async () =>
+        {
+            var port = FindFreePort();
+            var tcs = new TaskCompletionSource();
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromMinutes(1));
+            cts.Token.Register(() => tcs.TrySetCanceled());
+            var url = $"http://localhost:{port}";
+            var process1 = ProcessTasks.StartProcess(
+                "dotnet",
+                "run --no-launch-profile",
+                logOutput: true,
+                logInvocation: true,
+                timeout: Convert.ToInt32(TimeSpan.FromMinutes(1).TotalSeconds),
+                customLogger: (type, s) =>
+                {
+                    if (s.Contains("Application started."))
+                    {
+                        tcs.TrySetResult();
+                    }
+
+                    if (type == OutputType.Std)
+                    {
+                        Log.Logger.Debug(s);
+                    }
+                    else
+                    {
+                        Log.Logger.Error(s);
+                    }
+                },
+                environmentVariables: new Dictionary<string, string>(EnvironmentInfo.Variables)
+                {
+                    ["ASPNETCORE_URLS"] = url,
+                    ["ASPNETCORE_ENVIRONMENT"] = "Development",
+                },
+                workingDirectory: this.As<IComprehendSamples>().SampleDirectory / "Sample.Graphql"
+            );
+
+            var process = (Process)typeof(Process2).GetField("_process", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(process1)!;
+
+            try
+            {
+                await tcs.Task;
+                DotNetTasks.DotNet(
+                    $"graphql update -u {url}/graphql/",
+                    this.As<IComprehendTests>().TestsDirectory / "Sample.Graphql.Tests"
+                );
+            }
+            finally
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    process1.Kill();
+                }
+                else
+                {
+                    ProcessTasks.StartProcess("kill", $"-s TERM {process!.Id}");
+                }
+
+                process1.WaitForExit();
+            }
+
+            if (!IsLocalBuild)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
+        }
+    );
+
+    [Solution(GenerateProjects = true)] private NukeSolution Solution { get; } = null!;
+
     private Target Default => _ => _
                                   .DependsOn(Restore)
                                   .DependsOn(Build)
@@ -81,6 +181,7 @@ public partial class Solution : NukeBuild,
                                   .DependsOn(Pack);
 
     public Target Build => _ => _.Inherit<ICanBuildWithDotNetCore>(x => x.CoreBuild);
+    NukeSolution IHaveSolution.Solution => Solution;
 
     [ComputedGitVersion] public GitVersion GitVersion { get; } = null!;
 
@@ -89,4 +190,12 @@ public partial class Solution : NukeBuild,
     public Target Test => _ => _.Inherit<ICanTestWithDotNetCore>(x => x.CoreTest);
 
     [Parameter("Configuration to build")] public Configuration Configuration { get; } = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+}
+
+public static class Extensions
+{
+    public static T As<T>(this T value)
+    {
+        return value;
+    }
 }

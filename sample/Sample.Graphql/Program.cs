@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
+using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Sample.Graphql;
 
@@ -17,7 +18,23 @@ public static partial class Program
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
         return Host.CreateDefaultBuilder(args)
-                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
+                   .LaunchWith(
+                        RocketBooster.ForDependencyContext(DependencyContext.Default),
+                        z => z
+                            .WithConventionsFrom(GetConventions)
+                            .Set(
+                                 new RocketChocolateOptions
+                                 {
+                                     RequestPredicate = type =>
+                                         type is { IsNested: true, DeclaringType: { } }
+                                      && !( type.Name.StartsWith("Get", StringComparison.Ordinal)
+                                         || type.Name.StartsWith(
+                                                "List", StringComparison.Ordinal
+                                            ) ),
+                                     IncludeAssemblyInfoQuery = true
+                                 }
+                             )
+                    )
                    .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

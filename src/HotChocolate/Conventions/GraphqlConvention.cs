@@ -1,5 +1,4 @@
-﻿using FairyBread;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -21,7 +20,6 @@ public class GraphqlConvention : IServiceConvention
 {
     private readonly FoundationOptions _foundationOptions;
     private readonly RocketChocolateOptions _rocketChocolateOptions;
-    private readonly IFairyBreadOptions _options;
 
     /// <summary>
     ///     The graphql convention
@@ -30,14 +28,12 @@ public class GraphqlConvention : IServiceConvention
     /// <param name="rocketChocolateOptions"></param>
     /// <param name="foundationOptions"></param>
     public GraphqlConvention(
-        IFairyBreadOptions? options = null,
         RocketChocolateOptions? rocketChocolateOptions = null,
         FoundationOptions? foundationOptions = null
     )
     {
         _foundationOptions = foundationOptions ?? new FoundationOptions();
         _rocketChocolateOptions = rocketChocolateOptions ?? new RocketChocolateOptions();
-        _options = options ?? new DefaultFairyBreadOptions();
     }
 
     /// <inheritdoc />
@@ -46,23 +42,13 @@ public class GraphqlConvention : IServiceConvention
         var types = context.AssemblyCandidateFinder.GetCandidateAssemblies("MediatR")
                            .SelectMany(z => z.GetTypes())
                            .Where(typeof(IBaseRequest).IsAssignableFrom)
-                           .Where(z => z is { IsNested: true, DeclaringType: { } }) // TODO: Configurable?
+                           .Where(z => z is { IsAbstract: false })
+                           .Where(_rocketChocolateOptions.RequestPredicate)
                            .ToArray();
-
-        services.TryAdd(
-            ServiceDescriptor.Describe(
-                typeof(IValidatorProvider),
-                typeof(FairyBreadValidatorProvider),
-                ServiceLifetime.Singleton
-            )
-        );
-        services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
-        services.TryAddSingleton(_options);
 
         var sb = services
                 .AddGraphQL()
-                .AddErrorFilter<GraphqlErrorFilter>()
-            ;
+                .AddErrorFilter<GraphqlErrorFilter>();
 
         sb.ConfigureSchema(c => c.AddType(new AutoConfigureMediatRMutation(types)));
         if (!_rocketChocolateOptions.IncludeAssemblyInfoQuery)

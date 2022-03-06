@@ -3,6 +3,7 @@ using FluentAssertions;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 using Sample.Restful.Client;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,7 +24,7 @@ public class GetLaunchRecordTests : HandleWebHostBase
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
-                                                       Id = Guid.NewGuid(),
+                                                       Id = RocketId.New(),
                                                        Type = RocketType.Falcon9,
                                                        SerialNumber = "12345678901234"
                                                    };
@@ -44,7 +45,7 @@ public class GetLaunchRecordTests : HandleWebHostBase
                                                }
                                            );
 
-        var response = ( await client.GetLaunchRecordAsync(record.Id) ).Result;
+        var response = ( await client.GetLaunchRecordAsync(record.Id.Value) ).Result;
 
         response.Partner.Should().Be("partner");
         response.Payload.Should().Be("geo-fence-ftl");

@@ -3,6 +3,7 @@ using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Grpc.Services;
@@ -42,13 +43,13 @@ public class RocketsService : Rockets.RocketsBase
         return _mapper.Map<RocketModel>(response);
     }
 
-    public override async Task<ListRocketsResponse> ListRockets(ListRocketsRequest request, ServerCallContext context)
+    public override async Task ListRockets(ListRocketsRequest request, IServerStreamWriter<RocketModel> responseStream, ServerCallContext context)
     {
-        var response = await _mediator.Send(_mapper.Map<ListRockets.Request>(request), context.CancellationToken);
-        return new ListRocketsResponse
+        var mRequest = _mapper.Map<ListRockets.Request>(request);
+        await foreach (var item in _mediator.CreateStream(mRequest, context.CancellationToken))
         {
-            Results = { response.Select(_mapper.Map<RocketModel>) }
-        };
+            await responseStream.WriteAsync(_mapper.Map<RocketModel>(item));
+        }
     }
 
     [UsedImplicitly]
@@ -63,6 +64,21 @@ public class RocketsService : Rockets.RocketsBase
             CreateMap<ListRocketsRequest, ListRockets.Request>();
             CreateMap<DeleteRocketRequest, DeleteRocket.Request>();
             CreateMap<Core.Models.RocketModel, RocketModel>();
+            CreateMap<RocketId, string>().ConvertUsing(x => x.Value.ToString());
+            CreateMap<string, RocketId>().ConvertUsing(x => new RocketId(Guid.Parse(x)));
+            CreateMap<LaunchRecordId, string>().ConvertUsing(x => x.Value.ToString());
+            CreateMap<string, LaunchRecordId>().ConvertUsing(x => new LaunchRecordId(Guid.Parse(x)));
+
+            CreateMap<NullableRocketType?, Core.Domain.RocketType>().ConvertUsing(
+                static ts =>
+                    ts != null && ts.KindCase == NullableRocketType.KindOneofCase.Data
+                        ? (Core.Domain.RocketType)ts.Data
+                        : default
+            );
+            CreateMap<Core.Domain.RocketType, NullableRocketType>().ConvertUsing(
+                static ts =>
+                    new NullableRocketType { Data = (RocketType)ts }
+            );
         }
     }
 

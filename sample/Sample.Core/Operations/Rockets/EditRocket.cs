@@ -10,19 +10,25 @@ namespace Sample.Core.Operations.Rockets;
 [PublicAPI]
 public static partial class EditRocket
 {
-    public record Model
+    /// <summary>
+    ///     The edit operation to update a rocket
+    /// </summary>
+    public record Request : IRequest<RocketModel>
     {
-        // TODO: Make generator that can be used to create a writable view model
-        public string SerialNumber { get; set; } = null!;
+        /// <summary>
+        ///     The rocket id
+        /// </summary>
+        public RocketId Id { get; init; }
 
-        // TODO: Make generator that can be used to create a writable view model
-        public RocketType Type { get; set; }
-    }
+        /// <summary>
+        ///     The serial number of the rocket
+        /// </summary>
+        public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
 
-    [InheritFrom(typeof(Model))]
-    public partial record Request : Model, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
+        /// <summary>
+        ///     The type of the rocket
+        /// </summary>
+        public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
     private class Mapper : Profile
@@ -39,10 +45,14 @@ public static partial class EditRocket
         }
     }
 
-    private class ModelValidator : AbstractValidator<Model>
+    private class RequestValidator : AbstractValidator<Request>
     {
-        public ModelValidator()
+        public RequestValidator()
         {
+            RuleFor(x => x.Id)
+               .NotEmpty()
+               .NotNull();
+
             RuleFor(x => x.Type)
                .NotNull()
                .IsInEnum();
@@ -51,17 +61,6 @@ public static partial class EditRocket
                .NotNull()
                .MinimumLength(10)
                .MaximumLength(30);
-        }
-    }
-
-    private class RequestValidator : AbstractValidator<Request>
-    {
-        public RequestValidator()
-        {
-            Include(new ModelValidator());
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
         }
     }
 

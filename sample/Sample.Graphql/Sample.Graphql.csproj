@@ -2,6 +2,7 @@
 
   <PropertyGroup>
       <TargetFramework>net6.0</TargetFramework>
+      <AssemblyName>Sample.Graphql.Executable</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,12 @@
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+    <PackageReference Include="HotChocolate.Data.AutoMapper" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties" />
   </ItemGroup>
 
 </Project>
