@@ -86,29 +86,12 @@ global using System.Threading.Tasks;
 
     [Theory]
     [ClassData(typeof(MethodBodyData))]
-    public async Task Should_Generate_Method_Bodies(string[] sources)
+    public async Task Should_Generate_Method_Bodies(string key, string[] sources)
     {
-        await Verify(await GenerateAsync(sources)).UseParameters(GetSourcesKey(sources.Skip(1)));
+        await Verify(await GenerateAsync(sources)).UseParameters(key, "");
     }
 
-    private string GetSourcesKey(IEnumerable<string> sources)
-    {
-        var a = sources.Select(z => z.ToLowerInvariant()).ToList();
-        if (a.Count > 1)
-        {
-            var hashes = a.Select(x => MD5.HashData(Encoding.Default.GetBytes(x)))
-                          .Select(z => string.Join("", z.Select(x => x.ToString("X"))))
-                          .ToList();
-            sources = new[] { hashes.Aggregate("", (a, b) => a + b) };
-        }
-
-        return string.Join(
-            "", sources.Select(x => MD5.HashData(Encoding.Default.GetBytes(x)))
-                       .Select(z => string.Join("", z.Select(x => x.ToString("X"))))
-        ).ToLowerInvariant();
-    }
-
-    private class MethodBodyData : TheoryData<string[]>
+    private class MethodBodyData : TheoryData<string, string[]>
     {
         private const string defaultString = @"
 namespace TestNamespace;
@@ -122,6 +105,7 @@ public record RocketModel
         public MethodBodyData()
         {
             Add(
+                "GenerateBodyForRequest",
                 new[]
                 {
                     defaultString,
@@ -150,6 +134,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodyWithIdParameterAndAddBindRequired",
                 new[]
                 {
                     defaultString,
@@ -178,6 +163,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodyWithIdParameter",
                 new[]
                 {
                     defaultString,
@@ -207,6 +193,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodyForListAction",
                 new[]
                 {
                     defaultString,
@@ -234,6 +221,7 @@ public partial class RocketController : RestfulApiController
             );
 
             Add(
+                "GenerateBodiesWithCreatedReturn",
                 new[]
                 {
                     defaultString,
@@ -281,6 +269,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodiesWithAcceptReturnType",
                 new[]
                 {
                     defaultString,
@@ -329,6 +318,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodiesWithMultipleParameters",
                 new[]
                 {
                     defaultString,
@@ -387,6 +377,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodiesWithMultipleParameters2",
                 new[]
                 {
                     defaultString,
@@ -430,6 +421,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodiesWithMultipleParameters3",
                 new[]
                 {
                     defaultString,
@@ -473,6 +465,7 @@ public partial class RocketController : RestfulApiController
                 }
             );
             Add(
+                "GenerateBodiesWithMultipleParameters4",
                 new[]
                 {
                     defaultString,

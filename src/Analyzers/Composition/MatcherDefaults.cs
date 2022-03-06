@@ -24,8 +24,8 @@ internal static class MatcherDefaults
 
     private static IEnumerable<RestfulApiMethodBuilder> DefaultMatchers(Compilation compilation)
     {
-        var IBaseRequest = compilation.GetTypeByMetadataName("MediatR.IBaseRequest");
-        var IStreamRequest = compilation.GetTypeByMetadataName("MediatR.IStreamRequest`1");
+        var IBaseRequest = compilation.GetTypeByMetadataName("MediatR.IBaseRequest")!;
+        var IStreamRequest = compilation.GetTypeByMetadataName("MediatR.IStreamRequest`1")!;
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.List)
                     .MatchPrefix("List", "Search")
                     .MatchParameterType(^1, IBaseRequest);

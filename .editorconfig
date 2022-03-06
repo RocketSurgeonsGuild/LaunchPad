@@ -259,6 +259,7 @@ dotnet_naming_style.begins_with_t.capitalization = pascal_case
 
 dotnet_diagnostic.ide0058.severity = none
 dotnet_diagnostic.cs0436.severity = none
+dotnet_diagnostic.RCS1008.severity = none
 
 # CodeQuality
 # CA1000: Do not declare static members on generic types

@@ -32,7 +32,7 @@ internal static class GeneratorDiagnostics
     );
 
     public static DiagnosticDescriptor ParameterMustBeSameTypeAsTheRelatedProperty { get; } = new(
-        "LPAD0003",
+        "LPAD0004",
         "The parameter type and property type must match",
         "The parameter {0} type {1} must match the property {2} type {3}",
         "LaunchPad",

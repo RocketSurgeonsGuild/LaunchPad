@@ -3,7 +3,7 @@
 namespace Rocket.Surgery.LaunchPad.Analyzers.Composition;
 
 /// <summary>
-///     This class allows you to define methods default conventions when using the <see cref="RestfulApiController" />
+///     This class allows you to define methods default conventions when using the RestfulApiController
 ///     This allows the response codes to be automatically inferred based on the rules defined.
 /// </summary>
 internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher

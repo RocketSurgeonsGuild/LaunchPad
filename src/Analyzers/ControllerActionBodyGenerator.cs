@@ -39,87 +39,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
     }
 
-    private void GenerateMethods(
-        SourceProductionContext context,
-        ((ClassDeclarationSyntax syntax, INamedTypeSymbol? symbol, SemanticModel semanticModel) Left, Compilation Right) valueTuple
-    )
-    {
-        var (syntax, symbol, semanticModel) = valueTuple.Left;
-        var compilation = valueTuple.Right;
-        var matchers = MatcherDefaults.GetMatchers(compilation);
-        var members = syntax.Members
-                            .OfType<MethodDeclarationSyntax>()
-                            .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
-                            .Select(
-                                 method =>
-                                 {
-                                     var methodSymbol = semanticModel.GetDeclaredSymbol(method);
-                                     // ReSharper disable once UseNullPropagationWhenPossible
-                                     if (methodSymbol is null) return default;
-
-                                     var actionModel = new ActionModel(compilation, methodSymbol.Name, methodSymbol);
-                                     var matcher = matchers.FirstOrDefault(z => z.IsMatch(actionModel));
-                                     var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"));
-                                     var streamRequest = methodSymbol.Parameters.FirstOrDefault(
-                                         p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
-                                     );
-                                     return ( method, symbol: methodSymbol!, matcher, request: request ?? streamRequest );
-                                 }
-                             )
-                            .Where(z => z is { symbol: { }, method: { } })
-                            .ToImmutableArray();
-
-        var newClass = syntax.WithMembers(List<MemberDeclarationSyntax>())
-                             .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                             .WithAttributeLists(List<AttributeListSyntax>())
-                             .WithBaseList(null)
-            ;
-
-
-        foreach (var (method, methodSymbol, matcher, request) in members)
-        {
-            if (request != null)
-            {
-                var methodBody = GenerateMethod(context, matcher, MatcherDefaults.MethodStatusCodeMap, method, methodSymbol, request, members);
-                if (methodBody is null) continue;
-                newClass = newClass.AddMembers(methodBody);
-            }
-        }
-
-        var additionalUsings = new[]
-        {
-            "Microsoft.AspNetCore.Mvc",
-            "FluentValidation.AspNetCore",
-            "Rocket.Surgery.LaunchPad.AspNetCore.Validation"
-        };
-
-        var usings = syntax.SyntaxTree.GetCompilationUnitRoot().Usings;
-        foreach (var additionalUsing in additionalUsings)
-        {
-            if (usings.Any(z => z.Name.ToString() == additionalUsing)) continue;
-            usings = usings.Add(UsingDirective(ParseName(additionalUsing)));
-        }
-
-        var cu = CompilationUnit(
-                     List<ExternAliasDirectiveSyntax>(),
-                     List(usings),
-                     List<AttributeListSyntax>(),
-                     SingletonList<MemberDeclarationSyntax>(
-                         symbol.ContainingNamespace.IsGlobalNamespace
-                             ? newClass.ReparentDeclaration(context, syntax)
-                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                                .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
-                     )
-                 )
-                .WithLeadingTrivia()
-                .WithTrailingTrivia()
-                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
-                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
-
-        context.AddSource($"{newClass.Identifier.Text}_Methods.cs", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
-    }
-
-    private MethodDeclarationSyntax? GenerateMethod(
+    private static MethodDeclarationSyntax? GenerateMethod(
         SourceProductionContext context,
         IRestfulApiMethodMatcher? matcher,
         IReadOnlyDictionary<RestfulApiMethod, int> statusCodeMap,
@@ -682,6 +602,86 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         }
     }
 
+    private void GenerateMethods(
+        SourceProductionContext context,
+        ((ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel) Left, Compilation Right) valueTuple
+    )
+    {
+        var (syntax, symbol, semanticModel) = valueTuple.Left;
+        var compilation = valueTuple.Right;
+        var matchers = MatcherDefaults.GetMatchers(compilation);
+        var members = syntax.Members
+                            .OfType<MethodDeclarationSyntax>()
+                            .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                            .Select(
+                                 method =>
+                                 {
+                                     var methodSymbol = semanticModel.GetDeclaredSymbol(method);
+                                     // ReSharper disable once UseNullPropagationWhenPossible
+                                     if (methodSymbol is null) return default;
+
+                                     var actionModel = new ActionModel(compilation, methodSymbol.Name, methodSymbol);
+                                     var matcher = matchers.FirstOrDefault(z => z.IsMatch(actionModel));
+                                     var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"));
+                                     var streamRequest = methodSymbol.Parameters.FirstOrDefault(
+                                         p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
+                                     );
+                                     return ( method, symbol: methodSymbol!, matcher, request: request ?? streamRequest );
+                                 }
+                             )
+                            .Where(z => z is { symbol: { }, method: { } })
+                            .ToImmutableArray();
+
+        var newClass = syntax.WithMembers(List<MemberDeclarationSyntax>())
+                             .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
+                             .WithAttributeLists(List<AttributeListSyntax>())
+                             .WithBaseList(null)
+            ;
+
+
+        foreach (var (method, methodSymbol, matcher, request) in members)
+        {
+            if (request != null)
+            {
+                var methodBody = GenerateMethod(context, matcher, MatcherDefaults.MethodStatusCodeMap, method, methodSymbol, request, members);
+                if (methodBody is null) continue;
+                newClass = newClass.AddMembers(methodBody);
+            }
+        }
+
+        var additionalUsings = new[]
+        {
+            "Microsoft.AspNetCore.Mvc",
+            "FluentValidation.AspNetCore",
+            "Rocket.Surgery.LaunchPad.AspNetCore.Validation"
+        };
+
+        var usings = syntax.SyntaxTree.GetCompilationUnitRoot().Usings;
+        foreach (var additionalUsing in additionalUsings)
+        {
+            if (usings.Any(z => z.Name.ToString() == additionalUsing)) continue;
+            usings = usings.Add(UsingDirective(ParseName(additionalUsing)));
+        }
+
+        var cu = CompilationUnit(
+                     List<ExternAliasDirectiveSyntax>(),
+                     List(usings),
+                     List<AttributeListSyntax>(),
+                     SingletonList<MemberDeclarationSyntax>(
+                         symbol.ContainingNamespace.IsGlobalNamespace
+                             ? newClass.ReparentDeclaration(context, syntax)
+                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                                .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
+                     )
+                 )
+                .WithLeadingTrivia()
+                .WithTrailingTrivia()
+                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
+                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
+
+        context.AddSource($"{newClass.Identifier.Text}_Methods.cs", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+    }
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -732,7 +732,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
     }
 }
 
-public static class SymbolExtensions
+internal static class SymbolExtensions
 {
     public static AttributeData? GetAttribute(this ISymbol symbol, string attributeClassName)
     {
