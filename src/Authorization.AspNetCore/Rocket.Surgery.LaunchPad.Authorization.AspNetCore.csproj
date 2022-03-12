@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <ProjectReference Include="..\Authorization\Rocket.Surgery.LaunchPad.Authorization.csproj" />
+        <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+        <ProjectReference
+            Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj"
+            IncludeAssets="analyzers"
+            ExcludeAssets="compile;runtime;native"
+            PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"
+            OutputItemType="Analyzer"
+        />
+    </ItemGroup>
+</Project>
