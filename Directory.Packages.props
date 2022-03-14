@@ -44,7 +44,7 @@
     <PackageVersion Include="HotChocolate.Abstractions" Version="12.6.2" />
     <PackageVersion Include="HotChocolate.AspNetCore" Version="12.6.2" />
     <PackageVersion Include="HotChocolate.Data" Version="12.6.2" />
-    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="12.6.2" />
+    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="12.7.0" />
     <PackageVersion Include="HotChocolate.Types.NodaTime" Version="12.6.2" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="12.6.2" />
     <PackageVersion Include="StrawberryShake.Transport.Http" Version="12.6.2" />
