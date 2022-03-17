@@ -49,6 +49,12 @@ public static class DeleteLaunchRecord
                 throw new NotFoundException();
             }
 
+            // contrived for testing
+            if (rocket.Id == new LaunchRecordId(new Guid("bad361de-a6d5-425a-9cf6-f9b2dd236be6")))
+            {
+                throw new NotAuthorizedException("Unable to operate on given record");
+            }
+
             _dbContext.Remove(rocket);
             await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Grpc.Conventions;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
@@ -27,6 +28,7 @@ public class GrpcConvention : IServiceConvention
                 options =>
                 {
                     options.EnableMessageValidation();
+                    options.Interceptors.Add<NotAuthorizedInterceptor>();
                     options.Interceptors.Add<NotFoundInterceptor>();
                     options.Interceptors.Add<RequestFailedInterceptor>();
                 }

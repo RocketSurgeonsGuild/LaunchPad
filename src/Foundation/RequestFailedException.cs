@@ -8,7 +8,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 /// </remarks>
 /// <seealso cref="System.Exception" />
 [PublicAPI]
-public class RequestFailedException : Exception, IProblemDetailsData
+public class RequestFailedException : ProblemDetailsException, IProblemDetailsData
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="RequestFailedException" /> class.
@@ -36,24 +36,4 @@ public class RequestFailedException : Exception, IProblemDetailsData
     public RequestFailedException() : this(string.Empty)
     {
     }
-
-    /// <summary>
-    ///     Additional properties
-    /// </summary>
-    public IDictionary<string, object?> Properties { get; init; } = new Dictionary<string, object?>(StringComparer.Ordinal);
-
-    /// <summary>
-    ///     Request title
-    /// </summary>
-    public string? Title { get; init; }
-
-    /// <summary>
-    ///     Request Type
-    /// </summary>
-    public string? Link { get; init; }
-
-    /// <summary>
-    ///     The instance for the request
-    /// </summary>
-    public string? Instance { get; init; }
 }

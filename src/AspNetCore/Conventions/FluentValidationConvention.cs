@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Net;
+using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
@@ -16,7 +17,9 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Extensions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
+using ProblemDetailsException = Rocket.Surgery.LaunchPad.Foundation.ProblemDetailsException;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -125,39 +128,5 @@ public partial class FluentValidationConvention : IServiceConvention
            .Configure<JsonOptions>(options => options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()));
 
         AddFluentValidationRules(services);
-
-        services.AddOptions<ProblemDetailsOptions>()
-                .Configure<IOptions<ApiBehaviorOptions>>(
-                     (builder, apiBehaviorOptions) =>
-                     {
-                         builder.OnBeforeWriteDetails = (_, problemDetails) =>
-                         {
-                             if (
-                                 !problemDetails.Status.HasValue
-                              || !apiBehaviorOptions.Value.ClientErrorMapping.TryGetValue(problemDetails.Status.Value, out var clientErrorData)
-                             ) return;
-
-                             problemDetails.Title ??= clientErrorData.Title ?? string.Empty;
-                             problemDetails.Type ??= clientErrorData.Link;
-                         };
-                         builder.Map<ValidationException>(
-                             exception => new FluentValidationProblemDetails(exception.Errors)
-                             {
-                                 Status = StatusCodes.Status422UnprocessableEntity
-                             }
-                         );
-                         builder.Map<Exception>(
-                             (context, _) => context.Items[typeof(ValidationResult)] is ValidationResult,
-                             (context, _) =>
-                             {
-                                 var result = context.Items[typeof(ValidationResult)] as ValidationResult;
-                                 return new FluentValidationProblemDetails(result!.Errors)
-                                 {
-                                     Status = StatusCodes.Status422UnprocessableEntity
-                                 };
-                             }
-                         );
-                     }
-                 );
     }
 }

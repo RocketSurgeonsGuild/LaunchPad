@@ -14,16 +14,18 @@ internal class ValidatorInterceptor : IValidatorInterceptor
 
     public ValidationResult AfterAspNetValidation(ActionContext actionContext, IValidationContext validationContext, ValidationResult result)
     {
-        actionContext.HttpContext.Items[typeof(ValidationResult)] = result;
         if (actionContext.ActionDescriptor.Properties.TryGetValue(typeof(CustomizeValidatorAttribute), out var value)
          && value is string[] includeProperties)
         {
-            return new ValidationResult(
+            result = new ValidationResult(
                 result.Errors
                       .Join(includeProperties, z => z.PropertyName, z => z, (a, b) => a, StringComparer.OrdinalIgnoreCase)
             );
         }
 
+        if (result.IsValid) return result;
+
+        actionContext.HttpContext.Items[typeof(ValidationResult)] = result;
         return result;
     }
 }
