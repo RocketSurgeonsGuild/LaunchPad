@@ -44,6 +44,11 @@ internal class GraphqlErrorFilter : IErrorFilter
                 builder.SetCode("NOTFOUND");
             }
 
+            if (error.Exception is NotAuthorizedException)
+            {
+                builder.SetCode("NOTAUTHORIZED");
+            }
+
             if (error.Exception is RequestFailedException)
             {
                 builder.SetCode("FAILED");

@@ -128,6 +128,7 @@ public class AspNetCoreConvention : IServiceConvention
             options =>
             {
                 options.Filters.Add<NotFoundExceptionFilter>();
+                options.Filters.Add<NotAuthorizedExceptionFilter>();
                 options.Filters.Add<RequestFailedExceptionFilter>();
                 options.Filters.Add<SerilogLoggingActionFilter>(0);
                 options.Filters.Add<SerilogLoggingPageFilter>(0);

@@ -54,6 +54,18 @@ public class GetLaunchRecordTests : HandleWebHostBase
         response.ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate);
     }
 
+    [Fact]
+    public async Task Should_Not_Get_A_Missing_Launch_Record()
+    {
+        var client = new LaunchRecordClient(Factory.CreateClient());
+
+        Func<Task> action = () => client.GetLaunchRecordAsync(Guid.NewGuid());
+        await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
+                    .Where(
+                         z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found" && z.Result.Type == "https://httpstatuses.com/404"
+                     );
+    }
+
     public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
     {
     }

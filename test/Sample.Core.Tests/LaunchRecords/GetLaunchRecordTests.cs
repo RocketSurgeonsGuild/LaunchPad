@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
@@ -53,6 +54,16 @@ public class GetLaunchRecordTests : HandleTestHostBase
         response.RocketType.Should().Be(RocketType.Falcon9);
         response.RocketSerialNumber.Should().Be("12345678901234");
         response.ScheduledLaunchDate.Should().Be(Instant.FromDateTimeOffset(record.ScheduledLaunchDate));
+    }
+
+    [Fact]
+    public async Task Should_Not_Get_A_Missing_Launch_Record()
+    {
+        Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
+            mediator => mediator.Send(new GetLaunchRecord.Request { Id = LaunchRecordId.New() })
+        );
+
+        await action.Should().ThrowAsync<NotFoundException>();
     }
 
     public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)

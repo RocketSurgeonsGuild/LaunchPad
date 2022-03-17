@@ -38,6 +38,18 @@ public class GetRocketTests : HandleWebHostBase
         response.Result.Sn.Should().Be("12345678901234");
     }
 
+    [Fact]
+    public async Task Should_Not_Get_A_Missing_Rocket()
+    {
+        var client = new RocketClient(Factory.CreateClient());
+
+        Func<Task> action = () => client.GetRocketAsync(Guid.NewGuid());
+        await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
+                    .Where(
+                         z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found" && z.Result.Type == "https://httpstatuses.com/404"
+                     );
+    }
+
     public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper)
     {
     }

@@ -1,17 +1,17 @@
-﻿namespace Rocket.Surgery.LaunchPad.Foundation;
+namespace Rocket.Surgery.LaunchPad.Foundation;
 
 /// <summary>
 ///     NotFoundException.
 /// </summary>
 /// <seealso cref="System.Exception" />
 [PublicAPI]
-public class NotFoundException : ProblemDetailsException
+public abstract class ProblemDetailsException : Exception, IProblemDetailsData
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
-    public NotFoundException(string message) : base(message)
+    protected ProblemDetailsException(string message) : base(message)
     {
     }
 
@@ -23,14 +23,27 @@ public class NotFoundException : ProblemDetailsException
     ///     The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is
     ///     specified.
     /// </param>
-    public NotFoundException(string message, Exception innerException) : base(message, innerException)
+    protected ProblemDetailsException(string message, Exception innerException) : base(message, innerException)
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
+    ///     Additional properties
     /// </summary>
-    public NotFoundException() : base("Not Found")
-    {
-    }
+    public IDictionary<string, object?> Properties { get; init; } = new Dictionary<string, object?>(StringComparer.Ordinal);
+
+    /// <summary>
+    ///     Request title
+    /// </summary>
+    public string? Title { get; init; }
+
+    /// <summary>
+    ///     Request Type
+    /// </summary>
+    public string? Link { get; init; }
+
+    /// <summary>
+    ///     The instance for the request
+    /// </summary>
+    public string? Instance { get; init; }
 }
