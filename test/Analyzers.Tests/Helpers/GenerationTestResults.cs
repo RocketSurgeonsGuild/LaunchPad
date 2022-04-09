@@ -1,6 +1,9 @@
 ﻿using System.Collections.Immutable;
+using System.Reflection;
+using System.Runtime.Loader;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace Analyzers.Tests.Helpers;
 
@@ -12,6 +15,11 @@ public record GenerationTestResults(
     ImmutableArray<Diagnostic> ResultDiagnostics
 )
 {
+    public static implicit operator CSharpCompilation(GenerationTestResults results)
+    {
+        return results.ToFinalCompilation();
+    }
+
     public bool TryGetResult(Type type, [NotNullWhen(true)] out GenerationTestResult? result)
     {
         return Results.TryGetValue(type, out result);
@@ -42,5 +50,33 @@ public record GenerationTestResults(
         }
 
         result.AssertGeneratedAsExpected(expectedValue);
+    }
+
+    public void AssertCompilationWasSuccessful()
+    {
+        Assert.Empty(
+            InputDiagnostics
+               .Where(z => !z.GetMessage().Contains("does not contain a definition for"))
+               .Where(z => !z.GetMessage().Contains("Assuming assembly reference"))
+               .Where(x => x.Severity >= DiagnosticSeverity.Warning)
+        );
+        foreach (var result in Results.Values)
+        {
+            result.EnsureDiagnosticSeverity();
+        }
+    }
+
+    public void AssertGenerationWasSuccessful()
+    {
+        foreach (var item in Results.Values)
+        {
+            Assert.NotNull(item.Compilation);
+            item.EnsureDiagnosticSeverity();
+        }
+    }
+
+    public CSharpCompilation ToFinalCompilation()
+    {
+        return Results.Values.Aggregate(InputCompilation, (current, item) => current.AddSyntaxTrees(item.SyntaxTrees));
     }
 }

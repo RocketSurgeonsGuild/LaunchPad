@@ -1,25 +1,32 @@
-mutation CreateRocket($req: CreateRocketRequest) {
-    CreateRocket(request: $req) {
+mutation CreateRocket($req: CreateRocketRequest!) {
+    createRocket(request: $req) {
         id
     }
 }
-mutation UpdateRocket($req: EditRocketRequest) {
-    EditRocket(request: $req) {
+mutation UpdateRocket($req: EditRocketRequest!) {
+    editRocket(request: $req) {
         id
         type
-        serialNumber: sn 
+        serialNumber: sn
     }
 }
-mutation DeleteRocket($req: DeleteRocketRequest) {
-    DeleteRocket(request: $req)
+mutation PatchRocket($req: EditRocketPatchRequestInput!) {
+    patchRocket(request: $req) {
+        id
+        type
+        serialNumber: sn
+    }
 }
-mutation CreateLaunchRecord($req: CreateLaunchRecordRequest) {
-    CreateLaunchRecord(request: $req) {
+mutation DeleteRocket($req: DeleteRocketRequest!) {
+    deleteRocket(request: $req)
+}
+mutation CreateLaunchRecord($req: CreateLaunchRecordRequest!) {
+    createLaunchRecord(request: $req) {
         id
     }
 }
-mutation UpdateLaunchRecord($req: EditLaunchRecordRequest) {
-    EditLaunchRecord(request: $req) {
+mutation UpdateLaunchRecord($req: EditLaunchRecordRequest!) {
+    editLaunchRecord(request: $req) {
         id
         partner
         scheduledLaunchDate
@@ -28,6 +35,6 @@ mutation UpdateLaunchRecord($req: EditLaunchRecordRequest) {
         rocketType
     }
 }
-mutation DeleteLaunchRecord($req: DeleteLaunchRecordRequest) {
-    DeleteLaunchRecord(request: $req)
+mutation DeleteLaunchRecord($req: DeleteLaunchRecordRequest!) {
+    deleteLaunchRecord(request: $req)
 }

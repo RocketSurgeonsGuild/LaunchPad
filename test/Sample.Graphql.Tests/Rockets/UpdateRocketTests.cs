@@ -40,6 +40,106 @@ public class UpdateRocketTests : HandleWebHostBase
         u.IsSuccessResult().Should().Be(true);
     }
 
+    [Fact]
+    public async Task Should_Patch_A_Rocket_SerialNumber()
+    {
+        var client = Factory.Services.GetRequiredService<IRocketClient>();
+
+        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
+                                          .Invoke(
+                                               async z =>
+                                               {
+                                                   var rocket = new ReadyRocket
+                                                   {
+                                                       Type = CoreRocketType.AtlasV,
+                                                       SerialNumber = "12345678901234"
+                                                   };
+                                                   z.Add(rocket);
+
+                                                   await z.SaveChangesAsync();
+                                                   return rocket;
+                                               }
+                                           );
+
+        var u = await client.PatchRocket.ExecuteAsync(
+            new EditRocketPatchRequestInput
+            {
+                Id = rocket.Id.Value,
+                SerialNumber = new() { Value = "123456789012345" }
+            }
+        );
+        u.EnsureNoErrors();
+
+        u.Data!.PatchRocket.Type.Should().Be(RocketType.AtlasV);
+        u.Data!.PatchRocket.SerialNumber.Should().Be("123456789012345");
+    }
+
+    [Fact]
+    public async Task Should_Fail_To_Patch_A_Null_Rocket_SerialNumber()
+    {
+        var client = Factory.Services.GetRequiredService<IRocketClient>();
+
+        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
+                                          .Invoke(
+                                               async z =>
+                                               {
+                                                   var rocket = new ReadyRocket
+                                                   {
+                                                       Type = CoreRocketType.AtlasV,
+                                                       SerialNumber = "12345678901234"
+                                                   };
+                                                   z.Add(rocket);
+
+                                                   await z.SaveChangesAsync();
+                                                   return rocket;
+                                               }
+                                           );
+
+
+        Func<Task<IOperationResult<IPatchRocketResult>>> u = () => client.PatchRocket.ExecuteAsync(
+            new EditRocketPatchRequestInput
+            {
+                Id = rocket.Id.Value,
+                SerialNumber = new() { Value = null }
+            }
+        );
+        await u.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Fact]
+    public async Task Should_Patch_A_Rocket_Type()
+    {
+        var client = Factory.Services.GetRequiredService<IRocketClient>();
+
+        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
+                                          .Invoke(
+                                               async z =>
+                                               {
+                                                   var rocket = new ReadyRocket
+                                                   {
+                                                       Type = CoreRocketType.AtlasV,
+                                                       SerialNumber = "12345678901234"
+                                                   };
+                                                   z.Add(rocket);
+
+                                                   await z.SaveChangesAsync();
+                                                   return rocket;
+                                               }
+                                           );
+
+        var u = await client.PatchRocket.ExecuteAsync(
+            new EditRocketPatchRequestInput
+            {
+                Id = rocket.Id.Value,
+                Type = new() { Value = RocketType.FalconHeavy }
+            }
+        );
+        u.EnsureNoErrors();
+
+        u.Data!.PatchRocket.Type.Should().Be(RocketType.FalconHeavy);
+        u.Data!.PatchRocket.SerialNumber.Should().Be("12345678901234");
+    }
+
     public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
     }

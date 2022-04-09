@@ -1,5 +1,12 @@
-namespace JetBrains.Annotations;
+using Newtonsoft.Json;
 
-public class Test1
+namespace Sample.Restful.Client;
+
+public partial class RocketClient
 {
+    partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
+    {
+        // This is required for patching to work as expected
+//        settings.NullValueHandling = NullValueHandling.Ignore;
+    }
 }

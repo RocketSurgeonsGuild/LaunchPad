@@ -32,6 +32,8 @@ public class ProblemDetailsConvention : IServiceConvention
            .AddProblemDetails()
            .AddProblemDetailsConventions();
 
+        services.AddOptions<ApiBehaviorOptions>()
+                .Configure(options => options.SuppressModelStateInvalidFilter = true);
         services.AddOptions<ProblemDetailsOptions>()
                 .Configure<IOptions<ApiBehaviorOptions>>(
                      (builder, apiBehaviorOptions) =>

@@ -12,7 +12,3 @@ internal class ValidationProblemDetailsValidator : AbstractValidator<ValidationP
         RuleFor(x => x.Errors).NotNull();
     }
 }
-
-// metrics
-// health checks
-// versioning

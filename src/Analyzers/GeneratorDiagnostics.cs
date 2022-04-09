@@ -39,4 +39,13 @@ internal static class GeneratorDiagnostics
         DiagnosticSeverity.Error,
         true
     );
+
+    public static DiagnosticDescriptor ParameterMustBeSameTypeOfObject { get; } = new(
+        "LPAD0005",
+        "The given declaration must match",
+        "The declaration {0} must be a {1}.",
+        "LaunchPad",
+        DiagnosticSeverity.Error,
+        true
+    );
 }

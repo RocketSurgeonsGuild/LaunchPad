@@ -45,6 +45,16 @@ public partial class RocketController : RestfulApiController
     public partial Task<ActionResult<RocketModel>> EditRocket([BindRequired] [FromRoute] RocketId id, [BindRequired] [FromBody] EditRocket.Request model);
 
     /// <summary>
+    ///     Update a given rocket
+    /// </summary>
+    /// <param name="id">The id of the rocket</param>
+    /// <param name="model">The request details</param>
+    /// <returns></returns>
+    [HttpPatch("{id:guid}")]
+    // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
+    public partial Task<ActionResult<RocketModel>> PatchRocket([BindRequired] [FromRoute] RocketId id, [BindRequired] [FromBody] EditRocket.PatchRequest model);
+
+    /// <summary>
     ///     Remove a rocket
     /// </summary>
     /// <param name="request"></param>

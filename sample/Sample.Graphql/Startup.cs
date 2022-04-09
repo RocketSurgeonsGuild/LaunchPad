@@ -3,9 +3,12 @@ using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
 using HotChocolate.Types.Pagination;
+using MediatR;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using Sample.Core.Operations.LaunchRecords;
+using Sample.Core.Operations.Rockets;
 using Serilog;
 
 namespace Sample.Graphql;
@@ -21,9 +24,7 @@ public class Startup
 //           .AddDefaultTransactionScopeHandler()
            .AddQueryType()
            .AddMutationType()
-           .ModifyRequestOptions(
-                options => { options.IncludeExceptionDetails = true; }
-            )
+           .ModifyRequestOptions(options => options.IncludeExceptionDetails = true)
            .AddTypeConverter<RocketId, Guid>(source => source.Value)
            .AddTypeConverter<Guid, RocketId>(source => new RocketId(source))
            .AddTypeConverter<LaunchRecordId, Guid>(source => source.Value)
@@ -32,6 +33,8 @@ public class Startup
                 s =>
                 {
                     s.AddType<QueryType>();
+                    s.AddType<RocketMutation>();
+                    s.AddType<LaunchRecordMutation>();
                     s.AddType<ReadyRocketType>();
                     s.AddType<LaunchRecordType>();
 
@@ -62,9 +65,67 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseEndpoints(
-            endpoints => { endpoints.MapGraphQL(); }
-        );
+        app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+    }
+}
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public class RocketMutation
+{
+    [UseServiceScope]
+    public Task<CreateRocket.Response> CreateRocket([Service] IMediator mediator, CancellationToken cancellationToken, CreateRocket.Request request)
+    {
+        return mediator.Send(request, cancellationToken);
+    }
+
+    [UseServiceScope]
+    public Task<RocketModel> EditRocket([Service] IMediator mediator, CancellationToken cancellationToken, EditRocket.Request request)
+    {
+        return mediator.Send(request, cancellationToken);
+    }
+
+    [UseServiceScope]
+    public Task<RocketModel> PatchRocket([Service] IMediator mediator, CancellationToken cancellationToken, EditRocket.PatchRequest request)
+    {
+        return mediator.Send(request, cancellationToken);
+    }
+
+    [UseServiceScope]
+    public Task<Unit> DeleteRocket([Service] IMediator mediator, CancellationToken cancellationToken, DeleteRocket.Request request)
+    {
+        return mediator.Send(request, cancellationToken);
+    }
+}
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public class LaunchRecordMutation
+{
+    [UseServiceScope]
+    public Task<CreateLaunchRecord.Response> CreateLaunchRecord(
+        [Service] IMediator mediator, CancellationToken cancellationToken, CreateLaunchRecord.Request request
+    )
+    {
+        return mediator.Send(request, cancellationToken);
+    }
+
+    [UseServiceScope]
+    public Task<LaunchRecordModel> EditLaunchRecord([Service] IMediator mediator, CancellationToken cancellationToken, EditLaunchRecord.Request request)
+    {
+        return mediator.Send(request, cancellationToken);
+    }
+
+    [UseServiceScope]
+    public Task<Unit> DeleteLaunchRecord([Service] IMediator mediator, CancellationToken cancellationToken, DeleteLaunchRecord.Request request)
+    {
+        return mediator.Send(request, cancellationToken);
+    }
+}
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public class MutationType : ObjectTypeExtension<RocketMutation>
+{
+    protected override void Configure(IObjectTypeDescriptor<RocketMutation> descriptor)
+    {
     }
 }
 
