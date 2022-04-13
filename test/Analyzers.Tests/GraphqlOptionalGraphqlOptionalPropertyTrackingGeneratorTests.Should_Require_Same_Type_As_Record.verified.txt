@@ -1,0 +1,34 @@
+﻿{
+  ResultDiagnostics: [
+    {
+      Id: LPAD0005,
+      Title: The given declaration must match,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Test1.cs: (10,19)-(10,24),
+      Description: ,
+      HelpLink: ,
+      MessageFormat: The declaration {0} must be a {1}.,
+      Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.,
+      Category: LaunchPad,
+      CustomTags: []
+    }
+  ],
+  Results: {
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [
+      {
+        Id: LPAD0005,
+        Title: The given declaration must match,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Test1.cs: (10,19)-(10,24),
+        Description: ,
+        HelpLink: ,
+        MessageFormat: The declaration {0} must be a {1}.,
+        Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.,
+        Category: LaunchPad,
+        CustomTags: []
+      }
+    ]
+  }
+}

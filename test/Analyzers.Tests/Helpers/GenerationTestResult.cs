@@ -60,4 +60,9 @@ public record GenerationTestResult(
             }
         }
     }
+
+    public void EnsureDiagnosticSeverity(DiagnosticSeverity severity = DiagnosticSeverity.Warning)
+    {
+        Diagnostics.Where(x => x.Severity >= severity).Should().HaveCount(0);
+    }
 }

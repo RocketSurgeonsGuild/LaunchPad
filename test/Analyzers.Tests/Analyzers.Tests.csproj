@@ -12,5 +12,6 @@
         <PackageReference Include="Verify.Xunit" />
         <PackageReference Include="Verify.SourceGenerators" />
         <PackageReference Include="Verify.NodaTime" />
+        <ProjectReference Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace Analyzers.Tests;
 
+[UsesVerify]
 public class InheritFromGeneratorTests : GeneratorTest
 {
     [Fact]
@@ -42,6 +43,8 @@ namespace Sample.Core.Operations.Rockets
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.");
+
+        await Verify(result);
     }
 
     [Fact]
@@ -76,6 +79,8 @@ namespace Sample.Core.Operations.Rockets
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket must be made partial.");
+
+        await Verify(result);
     }
 
     [Fact]
@@ -130,6 +135,8 @@ namespace Sample.Core.Operations.Rockets
         var result = await GenerateAsync(source);
         result.EnsureDiagnosticSeverity();
         result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
+
+        await Verify(result);
     }
 
     [Fact]
@@ -193,6 +200,8 @@ namespace Sample.Core.Operations.Rockets
         var result = await GenerateAsync(source);
         result.EnsureDiagnosticSeverity();
         result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
+
+        await Verify(result);
     }
 
     [Fact]
@@ -245,6 +254,8 @@ namespace Sample.Core.Operations.Rockets
         var result = await GenerateAsync(source);
         result.EnsureDiagnosticSeverity();
         result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
+
+        await Verify(result);
     }
 
     [Fact]
@@ -299,6 +310,8 @@ namespace Sample.Core.Operations.Rockets
         var result = await GenerateAsync(source);
         result.EnsureDiagnosticSeverity();
         result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
+
+        await Verify(result);
     }
 
     public InheritFromGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)

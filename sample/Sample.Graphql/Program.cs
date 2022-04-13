@@ -21,19 +21,7 @@ public static partial class Program
                    .LaunchWith(
                         RocketBooster.ForDependencyContext(DependencyContext.Default),
                         z => z
-                            .WithConventionsFrom(GetConventions)
-                            .Set(
-                                 new RocketChocolateOptions
-                                 {
-                                     RequestPredicate = type =>
-                                         type is { IsNested: true, DeclaringType: { } }
-                                      && !( type.Name.StartsWith("Get", StringComparison.Ordinal)
-                                         || type.Name.StartsWith(
-                                                "List", StringComparison.Ordinal
-                                            ) ),
-                                     IncludeAssemblyInfoQuery = true
-                                 }
-                             )
+                           .WithConventionsFrom(GetConventions)
                     )
                    .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }

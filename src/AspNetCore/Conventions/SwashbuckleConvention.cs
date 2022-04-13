@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
@@ -95,14 +96,30 @@ public partial class SwashbuckleConvention : IServiceConvention
                     }
                 );
 
-                options.CustomSchemaIds(
-                    type =>
+                string nestedTypeName(Type type)
+                {
+                    return type.IsNested ? schemaIdSelector(type.DeclaringType!) + type.Name : type.Name;
+                }
+
+                string schemaIdSelector(Type type)
+                {
+                    if (type == typeof(Severity)) return $"Validation{nameof(Severity)}";
+                    if (type.IsGenericType)
                     {
-                        if (type == typeof(Severity))
-                            return $"Validation{nameof(Severity)}";
-                        return type.IsNested ? type.DeclaringType?.Name + type.Name : type.Name;
+                        var sb = new StringBuilder();
+                        var name = nestedTypeName(type);
+                        name = name[..name.IndexOf('`', StringComparison.Ordinal)];
+                        sb.Append(name);
+                        foreach (var gt in type.GetGenericArguments())
+                            sb.Append('_').Append(schemaIdSelector(gt));
+
+                        return sb.ToString();
                     }
-                );
+
+                    return nestedTypeName(type);
+                }
+
+                options.CustomSchemaIds(schemaIdSelector);
 
                 foreach (var item in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml")
                                               .Where(x => File.Exists(Path.ChangeExtension(x, "dll"))))

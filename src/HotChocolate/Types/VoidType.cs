@@ -27,32 +27,32 @@ public class VoidType : ScalarType
     /// <inheritdoc />
     public override object? ParseLiteral(IValueNode valueSyntax)
     {
-        return null;
+        return new object();
     }
 
     /// <inheritdoc />
     public override IValueNode ParseValue(object? runtimeValue)
     {
-        return new NullValueNode(null);
+        return new ObjectValueNode();
     }
 
     /// <inheritdoc />
     public override IValueNode ParseResult(object? resultValue)
     {
-        return new NullValueNode(null);
+        return new ObjectValueNode();
     }
 
     /// <inheritdoc />
     public override bool TrySerialize(object? runtimeValue, out object? resultValue)
     {
-        resultValue = null;
+        resultValue = new object();
         return true;
     }
 
     /// <inheritdoc />
     public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
     {
-        runtimeValue = null;
+        runtimeValue = new object();
         return true;
     }
 }

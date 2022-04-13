@@ -45,6 +45,16 @@ public partial class LaunchRecordController : RestfulApiController
     public partial Task<ActionResult> EditLaunchRecord([BindRequired] [FromRoute] LaunchRecordId id, EditLaunchRecord.Request model);
 
     /// <summary>
+    ///     Update a given launch record
+    /// </summary>
+    /// <param name="id">The id of the launch record</param>
+    /// <param name="model">The request details</param>
+    /// <returns></returns>
+    [HttpPatch("{id:guid}")]
+    // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
+    public partial Task<ActionResult> PatchLaunchRecord([BindRequired] [FromRoute] LaunchRecordId id, EditLaunchRecord.PatchRequest model);
+
+    /// <summary>
     ///     Remove a launch record
     /// </summary>
     /// <param name="request"></param>

@@ -11,6 +11,7 @@
         <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="ChangeTracking" />
       <Folder Include="Mapping" />
     </ItemGroup>
     <ItemGroup>

@@ -3,6 +3,8 @@
   mutation: Mutation
 }
 
+scalar Void
+
 scalar UUID
 
 "Represents a time zone - a mapping between UTC and local time.\nA time zone maps UTC instants to local times - or, equivalently, to the offset from UTC at any particular instant."
@@ -44,25 +46,22 @@ scalar Period
 "A LocalDateTime in a specific time zone and with a particular offset to distinguish between otherwise-ambiguous instants.\nA ZonedDateTime is global, in that it maps to a single Instant."
 scalar ZonedDateTime
 
-"Returns assembly information for the given application"
+"GraphQL operations are hierarchical and composed, describing a tree of information.\nWhile Scalar types describe the leaf values of these hierarchical operations,\nObjects describe the intermediate levels.\n            \nGraphQL Objects represent a list of named fields, each of which yield a value of a\nspecific type. Object values should be serialized as ordered maps, where the selected\nfield names (or aliases) are the keys and the result of evaluating the field is the value,\nordered by the order in which they appear in the selection set.\n            \nAll fields defined within an Object type must not have a name which begins\nwith \"__\" (two underscores), as this is used exclusively by\nGraphQL’s introspection system."
 type Query {
   launchRecords(skip: Int take: Int "Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): LaunchRecordCollectionSegment
   rockets(skip: Int take: Int "Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput order: [ReadyRocketSortInput!]): ReadyRocketCollectionSegment
-  "Get the assembly version information"
-  version: AssemblyInfo!
 }
 
 "GraphQL operations are hierarchical and composed, describing a tree of information.\nWhile Scalar types describe the leaf values of these hierarchical operations,\nObjects describe the intermediate levels.\n            \nGraphQL Objects represent a list of named fields, each of which yield a value of a\nspecific type. Object values should be serialized as ordered maps, where the selected\nfield names (or aliases) are the keys and the result of evaluating the field is the value,\nordered by the order in which they appear in the selection set.\n            \nAll fields defined within an Object type must not have a name which begins\nwith \"__\" (two underscores), as this is used exclusively by\nGraphQL’s introspection system."
 type Mutation {
-  CreateRocket(request: CreateRocketRequest): CreateRocketResponse
-  DeleteRocket(request: DeleteRocketRequest): Void
-  EditRocket(request: EditRocketRequest): RocketModel
-  GetRocket(request: GetRocketRequest): RocketModel
-  GetRocketLaunchRecord(request: GetRocketLaunchRecordRequest): LaunchRecordModel
-  CreateLaunchRecord(request: CreateLaunchRecordRequest): CreateLaunchRecordResponse
-  DeleteLaunchRecord(request: DeleteLaunchRecordRequest): Void
-  EditLaunchRecord(request: EditLaunchRecordRequest): LaunchRecordModel
-  GetLaunchRecord(request: GetLaunchRecordRequest): LaunchRecordModel
+  createRocket(request: CreateRocketRequest!): CreateRocketResponse!
+  editRocket(request: EditRocketRequest!): RocketModel!
+  patchRocket(request: EditRocketPatchRequestInput!): RocketModel!
+  deleteRocket(request: DeleteRocketRequest!): Void!
+  createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse!
+  editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel!
+  patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel!
+  deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void!
 }
 
 "A rocket in inventory"
@@ -83,18 +82,16 @@ type LaunchRecord {
   scheduledLaunchDate: DateTime!
 }
 
-scalar Void
-
 input LaunchRecordFilterInput {
   and: [LaunchRecordFilterInput!]
   or: [LaunchRecordFilterInput!]
-  id: StronglyTypedIdOperationFilterInput
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
   partner: StringOperationFilterInput
   payload: StringOperationFilterInput
   payloadWeightKg: ComparableInt64OperationFilterInput
   actualLaunchDate: ComparableNullableOfDateTimeOffsetOperationFilterInput
   scheduledLaunchDate: ComparableDateTimeOffsetOperationFilterInput
-  rocketId: StronglyTypedIdOperationFilterInput
+  rocketId: StronglyTypedIdFilterOfUuidTypeFilterInput
   rocket: ReadyRocketFilterInput
 }
 
@@ -110,7 +107,7 @@ input LaunchRecordSortInput {
 input ReadyRocketFilterInput {
   and: [ReadyRocketFilterInput!]
   or: [ReadyRocketFilterInput!]
-  id: StronglyTypedIdOperationFilterInput
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
   serialNumber: StringOperationFilterInput
   type: RocketTypeOperationFilterInput
   launchRecords: ListFilterInputTypeOfLaunchRecordFilterInput
@@ -156,7 +153,7 @@ type ReadyRocketBase {
   type: RocketType!
 }
 
-input StronglyTypedIdOperationFilterInput {
+input StronglyTypedIdFilterOfUuidTypeFilterInput {
   eq: UUID
   neq: UUID
   in: [UUID]
@@ -250,18 +247,42 @@ type CollectionSegmentInfo {
   hasPreviousPage: Boolean!
 }
 
-"The identifier of the rocket that was created"
-type CreateRocketResponse {
-  "The rocket id"
-  id: UUID!
+"The available rocket types"
+enum RocketType {
+  "Your best bet"
+  FALCON9
+  "For those huge payloads"
+  FALCON_HEAVY
+  "We stole our competitors rocket platform!"
+  ATLAS_V
 }
 
-"The operation to create a new rocket record"
-input CreateRocketRequest {
-  "The serial number of the rocket"
-  serialNumber: String!
-  "The type of rocket"
-  type: RocketType!
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime
+
+"Create a launch record"
+input CreateLaunchRecordRequest {
+  "The rocket to use"
+  rocketId: UUID!
+  "The launch partner"
+  partner: String
+  "The launch partners payload"
+  payload: String
+  "The payload weight"
+  payloadWeightKg: Float!
+  "The actual launch date"
+  actualLaunchDate: Instant
+  "The intended launch date"
+  scheduledLaunchDate: Instant!
+}
+
+"The launch record creation response"
+type CreateLaunchRecordResponse {
+  "The id of the new launch record"
+  id: UUID!
 }
 
 "The request to remove a rocket from the system"
@@ -270,13 +291,9 @@ input DeleteRocketRequest {
   id: UUID!
 }
 
-"The details of a given rocket"
-type RocketModel {
-  "The unique rocket identifier"
+input EditRocketPatchRequestInput {
   id: UUID!
-  "The serial number of the rocket"
-  sn: String!
-  "The type of the rocket"
+  serialNumber: String
   type: RocketType!
 }
 
@@ -290,8 +307,26 @@ input EditRocketRequest {
   type: RocketType!
 }
 
-"Request to fetch information about a rocket"
-input GetRocketRequest {
+"The details of a given rocket"
+type RocketModel {
+  "The unique rocket identifier"
+  id: UUID!
+  "The serial number of the rocket"
+  sn: String!
+  "The type of the rocket"
+  type: RocketType!
+}
+
+"The operation to create a new rocket record"
+input CreateRocketRequest {
+  "The serial number of the rocket"
+  serialNumber: String!
+  "The type of rocket"
+  type: RocketType!
+}
+
+"The identifier of the rocket that was created"
+type CreateRocketResponse {
   "The rocket id"
   id: UUID!
 }
@@ -316,41 +351,6 @@ type LaunchRecordModel {
   rocketType: RocketType!
 }
 
-input GetRocketLaunchRecordRequest {
-  "The rocket id"
-  id: UUID!
-  "The launch record id"
-  launchRecordId: UUID!
-}
-
-"The launch record creation response"
-type CreateLaunchRecordResponse {
-  "The id of the new launch record"
-  id: UUID!
-}
-
-"Create a launch record"
-input CreateLaunchRecordRequest {
-  "The rocket to use"
-  rocketId: UUID!
-  "The launch partner"
-  partner: String
-  "The launch partners payload"
-  payload: String
-  "The payload weight"
-  payloadWeightKg: Float!
-  "The actual launch date"
-  actualLaunchDate: Instant
-  "The intended launch date"
-  scheduledLaunchDate: Instant!
-}
-
-"The request to delete a launch record"
-input DeleteLaunchRecordRequest {
-  "The launch record to delete"
-  id: UUID!
-}
-
 "The launch record update request"
 input EditLaunchRecordRequest {
   "The launch record to update"
@@ -369,55 +369,18 @@ input EditLaunchRecordRequest {
   rocketId: UUID!
 }
 
-"The request to get a launch record"
-input GetLaunchRecordRequest {
-  "The launch record to find"
+input EditLaunchRecordPatchRequestInput {
   id: UUID!
+  partner: String
+  payload: String
+  payloadWeightKg: Float
+  actualLaunchDate: Instant
+  scheduledLaunchDate: Instant
+  rocketId: UUID
 }
 
-"The available rocket types"
-enum RocketType {
-  "Your best bet"
-  FALCON9
-  "For those huge payloads"
-  FALCON_HEAVY
-  "We stole our competitors rocket platform!"
-  ATLAS_V
-}
-
-"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
-scalar Long
-
-"The `DateTime` scalar represents an ISO-8601 compliant date time type."
-scalar DateTime
-
-"The assembly info object"
-type AssemblyInfo {
-  "The assembly version"
-  version: String
-  "The assembly created date"
-  created: Instant
-  "The assembly updated date"
-  updated: Instant
-  "The assembly company"
-  company: String
-  "The configuration the assembly was built with"
-  configuration: String
-  "The assembly copyright"
-  copyright: String
-  "The assembly description"
-  description: String
-  "The assembly product"
-  product: String
-  "The assembly title"
-  title: String
-  "The assembly trademark"
-  trademark: String
-  "The assembly metadata"
-  metadata: [KeyValuePairOfStringAndString!]!
-}
-
-type KeyValuePairOfStringAndString {
-  key: String!
-  value: String!
+"The request to delete a launch record"
+input DeleteLaunchRecordRequest {
+  "The launch record to delete"
+  id: UUID!
 }

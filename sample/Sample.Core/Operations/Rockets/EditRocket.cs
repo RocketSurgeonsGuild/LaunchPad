@@ -31,6 +31,14 @@ public static partial class EditRocket
         public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
+    public partial record PatchRequest : IRequest<RocketModel>, IPropertyTracking<Request>
+    {
+        /// <summary>
+        ///     The rocket id
+        /// </summary>
+        public RocketId Id { get; init; }
+    }
+
     private class Mapper : Profile
     {
         public Mapper()
@@ -64,24 +72,38 @@ public static partial class EditRocket
         }
     }
 
-    private class Handler : IRequestHandler<Request, RocketModel>
+    private class RequestHandler : PatchRequestHandler<Request, PatchRequest, RocketModel>, IRequestHandler<Request, RocketModel>
     {
         private readonly RocketDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public Handler(RocketDbContext dbContext, IMapper mapper)
+        public RequestHandler(RocketDbContext dbContext, IMapper mapper, IMediator mediator) : base(mediator)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
 
-        public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
+        private async Task<ReadyRocket?> GetRocket(RocketId id, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
+            var rocket = await _dbContext.Rockets.FindAsync(new object[] { id }, cancellationToken)
+                                         .ConfigureAwait(false);
             if (rocket == null)
             {
                 throw new NotFoundException();
             }
+
+            return rocket;
+        }
+
+        protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
+        {
+            var rocket = await GetRocket(patchRequest.Id, cancellationToken);
+            return _mapper.Map<Request>(_mapper.Map<RocketModel>(rocket));
+        }
+
+        public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
+        {
+            var rocket = await GetRocket(request.Id, cancellationToken);
 
             _mapper.Map(request, rocket);
             _dbContext.Update(rocket);
