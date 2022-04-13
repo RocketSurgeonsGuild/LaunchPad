@@ -164,6 +164,12 @@ public abstract class GeneratorTest : LoggerTest
         return this;
     }
 
+    protected GeneratorTest RemoveReference(Predicate<MetadataReference> predicate)
+    {
+        _metadataReferences.RemoveWhere(predicate);
+        return this;
+    }
+
     protected GeneratorTest AddSources(params string[] sources)
     {
         _sources.AddRange(sources);

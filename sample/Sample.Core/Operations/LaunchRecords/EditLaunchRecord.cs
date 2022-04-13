@@ -6,6 +6,7 @@ using NodaTime;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using Sample.Core.Operations.Rockets;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -53,6 +54,14 @@ public static partial class EditLaunchRecord
         public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
+    public partial record PatchRequest : IRequest<LaunchRecordModel>, IPropertyTracking<Request>
+    {
+        /// <summary>
+        ///     The rocket id
+        /// </summary>
+        public LaunchRecordId Id { get; init; }
+    }
+
     private class Mapper : Profile
     {
         public Mapper()
@@ -94,28 +103,40 @@ public static partial class EditLaunchRecord
         }
     }
 
-    private class Handler : IRequestHandler<Request, LaunchRecordModel>
+    private class Handler : PatchRequestHandler<Request, PatchRequest, LaunchRecordModel>, IRequestHandler<Request, LaunchRecordModel>
     {
         private readonly RocketDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public Handler(RocketDbContext dbContext, IMapper mapper)
+        public Handler(RocketDbContext dbContext, IMapper mapper, IMediator mediator) : base(mediator)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
 
-        public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
+        private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken)
         {
-            var rocket
-                = await _dbContext.LaunchRecords
-                                  .Include(z => z.Rocket)
-                                  .FirstOrDefaultAsync(z => z.Id == request.Id, cancellationToken)
-                                  .ConfigureAwait(false);
+            var rocket = await _dbContext.LaunchRecords
+                                         .Include(z => z.Rocket)
+                                         .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
+                                         .ConfigureAwait(false);
             if (rocket == null)
             {
                 throw new NotFoundException();
             }
+
+            return rocket;
+        }
+
+        protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
+        {
+            var rocket = await GetLaunchRecord(patchRequest.Id, cancellationToken);
+            return _mapper.Map<Request>(_mapper.Map<LaunchRecordModel>(rocket));
+        }
+
+        public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
+        {
+            var rocket = await GetLaunchRecord(request.Id, cancellationToken);
 
             _mapper.Map(request, rocket);
             _dbContext.Update(rocket);

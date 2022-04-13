@@ -1,0 +1,34 @@
+﻿{
+  ResultDiagnostics: [
+    {
+      Id: LPAD0005,
+      Title: The given declaration must match,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Test1.cs: (9,19)-(9,25),
+      Description: ,
+      HelpLink: ,
+      MessageFormat: The declaration {0} must be a {1}.,
+      Message: The declaration Sample.Core.Operations.Rockets.PatchRocket must be a class.,
+      Category: LaunchPad,
+      CustomTags: []
+    }
+  ],
+  Results: {
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: [
+      {
+        Id: LPAD0005,
+        Title: The given declaration must match,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Test1.cs: (9,19)-(9,25),
+        Description: ,
+        HelpLink: ,
+        MessageFormat: The declaration {0} must be a {1}.,
+        Message: The declaration Sample.Core.Operations.Rockets.PatchRocket must be a class.,
+        Category: LaunchPad,
+        CustomTags: []
+      }
+    ]
+  }
+}

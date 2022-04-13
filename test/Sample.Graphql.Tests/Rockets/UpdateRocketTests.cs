@@ -1,4 +1,5 @@
-﻿using Humanizer;
+﻿using HotChocolate;
+using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
@@ -62,10 +63,10 @@ public class UpdateRocketTests : HandleWebHostBase
                                            );
 
         var u = await client.PatchRocket.ExecuteAsync(
-            new EditRocketPatchRequestInput
+            new()
             {
                 Id = rocket.Id.Value,
-                SerialNumber = new() { Value = "123456789012345" }
+                SerialNumber = "123456789012345"
             }
         );
         u.EnsureNoErrors();
@@ -96,14 +97,16 @@ public class UpdateRocketTests : HandleWebHostBase
                                            );
 
 
-        Func<Task<IOperationResult<IPatchRocketResult>>> u = () => client.PatchRocket.ExecuteAsync(
-            new EditRocketPatchRequestInput
+        var u = await client.PatchRocket.ExecuteAsync(
+            new()
             {
                 Id = rocket.Id.Value,
-                SerialNumber = new() { Value = null }
+                SerialNumber = null
             }
         );
-        await u.Should().ThrowAsync<ArgumentNullException>();
+
+        u.IsErrorResult().Should().BeTrue();
+        u.Errors[0].Message.Should().Be("'Serial Number' must not be empty.");
     }
 
     [Fact]
@@ -128,13 +131,12 @@ public class UpdateRocketTests : HandleWebHostBase
                                            );
 
         var u = await client.PatchRocket.ExecuteAsync(
-            new EditRocketPatchRequestInput
+            new()
             {
                 Id = rocket.Id.Value,
-                Type = new() { Value = RocketType.FalconHeavy }
+                Type = RocketType.FalconHeavy
             }
         );
-        u.EnsureNoErrors();
 
         u.Data!.PatchRocket.Type.Should().Be(RocketType.FalconHeavy);
         u.Data!.PatchRocket.SerialNumber.Should().Be("12345678901234");

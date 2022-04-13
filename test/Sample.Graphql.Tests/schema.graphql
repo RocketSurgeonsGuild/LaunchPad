@@ -60,6 +60,7 @@ type Mutation {
   deleteRocket(request: DeleteRocketRequest!): Void!
   createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse!
   editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel!
+  patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel!
   deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void!
 }
 
@@ -84,13 +85,13 @@ type LaunchRecord {
 input LaunchRecordFilterInput {
   and: [LaunchRecordFilterInput!]
   or: [LaunchRecordFilterInput!]
-  id: StronglyTypedIdOperationFilterInput
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
   partner: StringOperationFilterInput
   payload: StringOperationFilterInput
   payloadWeightKg: ComparableInt64OperationFilterInput
   actualLaunchDate: ComparableNullableOfDateTimeOffsetOperationFilterInput
   scheduledLaunchDate: ComparableDateTimeOffsetOperationFilterInput
-  rocketId: StronglyTypedIdOperationFilterInput
+  rocketId: StronglyTypedIdFilterOfUuidTypeFilterInput
   rocket: ReadyRocketFilterInput
 }
 
@@ -106,7 +107,7 @@ input LaunchRecordSortInput {
 input ReadyRocketFilterInput {
   and: [ReadyRocketFilterInput!]
   or: [ReadyRocketFilterInput!]
-  id: StronglyTypedIdOperationFilterInput
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
   serialNumber: StringOperationFilterInput
   type: RocketTypeOperationFilterInput
   launchRecords: ListFilterInputTypeOfLaunchRecordFilterInput
@@ -152,7 +153,7 @@ type ReadyRocketBase {
   type: RocketType!
 }
 
-input StronglyTypedIdOperationFilterInput {
+input StronglyTypedIdFilterOfUuidTypeFilterInput {
   eq: UUID
   neq: UUID
   in: [UUID]
@@ -291,10 +292,9 @@ input DeleteRocketRequest {
 }
 
 input EditRocketPatchRequestInput {
-  "The rocket id"
   id: UUID!
-  serialNumber: AssignedOfStringInput!
-  type: AssignedOfRocketTypeInput!
+  serialNumber: String
+  type: RocketType!
 }
 
 "The edit operation to update a rocket"
@@ -369,16 +369,18 @@ input EditLaunchRecordRequest {
   rocketId: UUID!
 }
 
+input EditLaunchRecordPatchRequestInput {
+  id: UUID!
+  partner: String
+  payload: String
+  payloadWeightKg: Float
+  actualLaunchDate: Instant
+  scheduledLaunchDate: Instant
+  rocketId: UUID
+}
+
 "The request to delete a launch record"
 input DeleteLaunchRecordRequest {
   "The launch record to delete"
   id: UUID!
-}
-
-input AssignedOfRocketTypeInput {
-  value: RocketType!
-}
-
-input AssignedOfStringInput {
-  value: String!
 }

@@ -8,9 +8,10 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 
 internal static class SyntaxExtensions
 {
-    public static TypeSyntax EnsureNullable(this TypeSyntax typeSyntax)
+    public static TypeSyntax EnsureNullable(this TypeSyntax typeSyntax, NullableAnnotation? annotation = null)
     {
-        return typeSyntax is NullableTypeSyntax nts ? nts : SyntaxFactory.NullableType(typeSyntax);
+        if (annotation.HasValue && annotation == NullableAnnotation.Annotated) return typeSyntax;
+        return typeSyntax as NullableTypeSyntax ?? SyntaxFactory.NullableType(typeSyntax);
     }
 
     public static TypeSyntax EnsureNotNullable(this TypeSyntax typeSyntax)

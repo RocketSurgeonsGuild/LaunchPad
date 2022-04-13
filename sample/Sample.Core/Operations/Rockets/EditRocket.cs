@@ -72,12 +72,12 @@ public static partial class EditRocket
         }
     }
 
-    private class Handler : PatchHandlerBase<Request, PatchRequest, RocketModel>, IRequestHandler<Request, RocketModel>
+    private class RequestHandler : PatchRequestHandler<Request, PatchRequest, RocketModel>, IRequestHandler<Request, RocketModel>
     {
         private readonly RocketDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public Handler(RocketDbContext dbContext, IMapper mapper, IMediator mediator) : base(mediator)
+        public RequestHandler(RocketDbContext dbContext, IMapper mapper, IMediator mediator) : base(mediator)
         {
             _dbContext = dbContext;
             _mapper = mapper;

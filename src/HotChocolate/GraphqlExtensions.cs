@@ -1,4 +1,13 @@
-﻿using HotChocolate;
+﻿using System.Linq.Expressions;
+using System.Reflection;
+using HotChocolate;
+using HotChocolate.Data.Filters;
+using HotChocolate.Data.Sorting;
+using HotChocolate.Execution.Configuration;
+using HotChocolate.Types;
+using HotChocolate.Types.Descriptors;
+using HotChocolate.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
@@ -32,5 +41,97 @@ public static class GraphqlExtensions
         }
 
         return error;
+    }
+
+
+    /// <summary>
+    ///     Configures a generated strongly typed id type with the given graphql schema type
+    /// </summary>
+    /// <remarks>
+    ///     Adds converters, binding and filters.
+    /// </remarks>
+    /// <param name="builder"></param>
+    /// <typeparam name="TStrongType"></typeparam>
+    /// <typeparam name="TSchemaType"></typeparam>
+    /// <returns></returns>
+    public static IRequestExecutorBuilder ConfigureStronglyTypedId<TStrongType, TSchemaType>(this IRequestExecutorBuilder builder)
+        where TSchemaType : INamedType
+    {
+        AddTypeConversion<TStrongType>(builder);
+        builder.BindRuntimeType<TStrongType, TSchemaType>();
+        builder.AddConvention<IFilterConvention, StronglyTypedIdFilterConventionExtension<TStrongType, TSchemaType>>();
+        return builder;
+    }
+
+
+    private static readonly MethodInfo AddTypeConverterMethod = typeof(RequestExecutorBuilderExtensions)
+                                                               .GetMethods()
+                                                               .Single(
+                                                                    z => z.Name == "AddTypeConverter"
+                                                                      && z.ReturnType == typeof(IRequestExecutorBuilder)
+                                                                      && z.IsGenericMethod
+                                                                      && z.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                                                                      && z.GetParameters().Length == 2
+                                                                );
+
+    private static void AddTypeConversion<TStrongType>(IRequestExecutorBuilder builder)
+    {
+        var underlyingType = typeof(TStrongType).GetProperty("Value")!.PropertyType;
+
+        {
+            var value = Expression.Parameter(typeof(TStrongType), "value");
+            var delegateType = typeof(ChangeType<,>).MakeGenericType(typeof(TStrongType), underlyingType);
+
+            AddTypeConverterMethod.MakeGenericMethod(typeof(TStrongType), underlyingType)
+                                  .Invoke(
+                                       null,
+                                       new object[] { builder, Expression.Lambda(delegateType, Expression.Property(value, "Value"), false, value).Compile() }
+                                   );
+        }
+
+        {
+            var value = Expression.Parameter(underlyingType, "value");
+            var delegateType = typeof(ChangeType<,>).MakeGenericType(underlyingType, typeof(TStrongType));
+
+            var constructor = typeof(TStrongType).GetConstructor(new[] { underlyingType })!;
+            AddTypeConverterMethod.MakeGenericMethod(underlyingType, typeof(TStrongType))
+                                  .Invoke(
+                                       null,
+                                       new object[] { builder, Expression.Lambda(delegateType, Expression.New(constructor, value), false, value).Compile() }
+                                   );
+        }
+    }
+
+    private class StronglyTypedIdFilterConventionExtension<TStrongType, TSchemaType> : FilterConventionExtension
+        where TSchemaType : INamedType
+    {
+        protected override void Configure(IFilterConventionDescriptor descriptor)
+        {
+            base.Configure(descriptor);
+
+            descriptor
+               .BindRuntimeType<TStrongType, StronglyTypedIdFilter<TSchemaType>>();
+        }
+    }
+
+    private class StronglyTypedIdFilter<TSchemaType> : FilterInputType, IComparableOperationFilterInputType
+        where TSchemaType : INamedType
+    {
+        protected override void Configure(IFilterInputTypeDescriptor descriptor)
+        {
+            descriptor.Operation(DefaultFilterOperations.Equals)
+                      .Type(typeof(TSchemaType));
+
+            descriptor.Operation(DefaultFilterOperations.NotEquals)
+                      .Type(typeof(TSchemaType));
+
+            descriptor.Operation(DefaultFilterOperations.In)
+                      .Type(typeof(ListType<TSchemaType>));
+
+            descriptor.Operation(DefaultFilterOperations.NotIn)
+                      .Type(typeof(ListType<TSchemaType>));
+
+            descriptor.AllowAnd(false).AllowOr(false);
+        }
     }
 }

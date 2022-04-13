@@ -1,10 +1,20 @@
-﻿using HotChocolate;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Reflection;
+using HotChocolate;
+using HotChocolate.Configuration;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
+using HotChocolate.Types.Descriptors;
+using HotChocolate.Types.Descriptors.Definitions;
 using HotChocolate.Types.Pagination;
+using HotChocolate.Utilities;
 using MediatR;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
@@ -21,14 +31,12 @@ public class Startup
     {
         services
            .AddGraphQLServer()
+           .ConfigureStronglyTypedId<RocketId, UuidType>()
+           .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
 //           .AddDefaultTransactionScopeHandler()
            .AddQueryType()
            .AddMutationType()
            .ModifyRequestOptions(options => options.IncludeExceptionDetails = true)
-           .AddTypeConverter<RocketId, Guid>(source => source.Value)
-           .AddTypeConverter<Guid, RocketId>(source => new RocketId(source))
-           .AddTypeConverter<LaunchRecordId, Guid>(source => source.Value)
-           .AddTypeConverter<Guid, LaunchRecordId>(source => new LaunchRecordId(source))
            .ConfigureSchema(
                 s =>
                 {
@@ -37,17 +45,11 @@ public class Startup
                     s.AddType<LaunchRecordMutation>();
                     s.AddType<ReadyRocketType>();
                     s.AddType<LaunchRecordType>();
-
-                    s.BindClrType<RocketId, UuidType>();
-                    s.BindClrType<LaunchRecordId, UuidType>();
-                    s.BindRuntimeType<RocketId>(ScalarNames.UUID);
-                    s.BindRuntimeType<LaunchRecordId>(ScalarNames.UUID);
                 }
             )
            .AddSorting()
            .AddFiltering()
-           .AddProjections()
-           .AddConvention<IFilterConvention, CustomFilterConventionExtension>();
+           .AddProjections();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +71,62 @@ public class Startup
     }
 }
 
+internal class StronglyTypedIdChangeTypeProvider : IChangeTypeProvider
+{
+    private readonly Dictionary<(Type, Type), ChangeType> _typeMap = new();
+
+    public void AddTypeConversion(Type strongIdType)
+    {
+        var underlyingType = strongIdType.GetProperty("Value")!.PropertyType;
+        var value = Expression.Parameter(typeof(object), "value");
+        //            .AddTypeConverter<LaunchRecordId, Guid>(source => source.Value)
+
+        if (!_typeMap.ContainsKey(( strongIdType, underlyingType )))
+        {
+            _typeMap.Add(
+                ( strongIdType, underlyingType ),
+                Expression.Lambda<ChangeType>(
+                    Expression.Convert(Expression.Property(Expression.Convert(value, strongIdType), "Value"), typeof(object)), false, value
+                ).Compile()
+            );
+        }
+
+        if (!_typeMap.ContainsKey(( underlyingType, strongIdType )))
+        {
+            _typeMap.Add(
+                ( underlyingType, strongIdType ),
+                Expression.Lambda<ChangeType>(
+                    Expression.Convert(
+                        Expression.New(strongIdType.GetConstructor(new[] { underlyingType })!, Expression.Convert(value, underlyingType)), typeof(object)
+                    ), false, value
+                ).Compile()
+            );
+        }
+    }
+
+    public bool TryCreateConverter(Type source, Type target, ChangeTypeProvider root, [NotNullWhen(true)] out ChangeType? converter)
+    {
+        if (_typeMap.TryGetValue(( source, target ), out var @delegate))
+        {
+            converter = input => input is null ? default : @delegate(input);
+            return true;
+        }
+
+        converter = null;
+        return false;
+    }
+}
+
+public partial record EditRocketPatchRequest : IOptionalTracking<EditRocket.PatchRequest>
+{
+    public RocketId Id { get; init; }
+}
+
+public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunchRecord.PatchRequest>
+{
+    public LaunchRecordId Id { get; init; }
+}
+
 [ExtendObjectType(OperationTypeNames.Mutation)]
 public class RocketMutation
 {
@@ -85,9 +143,9 @@ public class RocketMutation
     }
 
     [UseServiceScope]
-    public Task<RocketModel> PatchRocket([Service] IMediator mediator, CancellationToken cancellationToken, EditRocket.PatchRequest request)
+    public Task<RocketModel> PatchRocket([Service] IMediator mediator, CancellationToken cancellationToken, EditRocketPatchRequest request)
     {
-        return mediator.Send(request, cancellationToken);
+        return mediator.Send(request.Create(), cancellationToken);
     }
 
     [UseServiceScope]
@@ -115,17 +173,15 @@ public class LaunchRecordMutation
     }
 
     [UseServiceScope]
+    public Task<LaunchRecordModel> PatchLaunchRecord([Service] IMediator mediator, CancellationToken cancellationToken, EditLaunchRecordPatchRequest request)
+    {
+        return mediator.Send(request.Create(), cancellationToken);
+    }
+
+    [UseServiceScope]
     public Task<Unit> DeleteLaunchRecord([Service] IMediator mediator, CancellationToken cancellationToken, DeleteLaunchRecord.Request request)
     {
         return mediator.Send(request, cancellationToken);
-    }
-}
-
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public class MutationType : ObjectTypeExtension<RocketMutation>
-{
-    protected override void Configure(IObjectTypeDescriptor<RocketMutation> descriptor)
-    {
     }
 }
 
