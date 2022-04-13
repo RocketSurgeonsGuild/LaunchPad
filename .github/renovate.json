@@ -9,7 +9,7 @@
     "packageRules": [
         {
             "description": "dotnet monorepo",
-            "enabled": false,
+            "enabled": true,
             "matchSourceUrlPrefixes": [
                 "https://github.com/dotnet/aspnetcore",
                 "https://github.com/dotnet/efcore",
