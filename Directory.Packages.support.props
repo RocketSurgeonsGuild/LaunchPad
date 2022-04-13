@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.1'">
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="3.1.24" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.24" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="3.1.24" />
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.24" />
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.24" />
-    <PackageVersion Update="System.Net.Http.Json" Version="3.2.1" />
-    <PackageVersion Update="Microsoft.Extensions.Hosting" Version="3.1.24" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="6.0.4" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+    <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.4" />
+    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.4" />
+    <PackageVersion Update="System.Net.Http.Json" Version="6.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting" Version="6.0.1" />
   </ItemGroup>
 </Project>
