@@ -1,5 +1,5 @@
 using Analyzers.Tests.Helpers;
-using ImTools;
+using DryIoc.ImTools;
 using MediatR;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;

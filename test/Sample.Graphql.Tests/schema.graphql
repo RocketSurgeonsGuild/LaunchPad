@@ -294,7 +294,7 @@ input DeleteRocketRequest {
 input EditRocketPatchRequestInput {
   id: UUID!
   serialNumber: String
-  type: RocketType!
+  type: RocketType
 }
 
 "The edit operation to update a rocket"
