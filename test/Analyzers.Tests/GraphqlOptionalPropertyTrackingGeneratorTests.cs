@@ -1,6 +1,6 @@
 using Analyzers.Tests.Helpers;
 using HotChocolate;
-using ImTools;
+using DryIoc.ImTools;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NodaTime;
