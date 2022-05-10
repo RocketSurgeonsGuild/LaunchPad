@@ -46,7 +46,7 @@ public class GetRocketTests : HandleWebHostBase
         Func<Task> action = () => client.GetRocketAsync(Guid.NewGuid());
         await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
                     .Where(
-                         z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found" && z.Result.Type == "https://httpstatuses.com/404"
+                         z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );
     }
 
