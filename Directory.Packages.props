@@ -51,15 +51,15 @@
     <PackageVersion Include="StrawberryShake.CodeGeneration.CSharp.Analyzers" Version="12.8.2" />
     <PackageVersion Include="MediatR" Version="10.0.1" />
     <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="6.0.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.5" />
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.1.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
@@ -118,11 +118,11 @@
     <PackageVersion Include="System.Interactive.Async" Version="6.0.1" />
     <PackageVersion Include="System.Reactive" Version="5.0.0" />
     <PackageVersion Include="System.Reactive.Observable.Aliases" Version="5.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="6.0.3" />
+    <PackageVersion Include="System.Text.Json" Version="6.0.4" />
     <PackageVersion Include="System.Net.Http.Json" Version="6.0.0" />
     <PackageVersion Include="NSwag.ApiDescription.Client" Version="13.15.10" />
-    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="6.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="6.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="6.0.5" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Bogus" Version="34.0.2" />
