@@ -144,6 +144,9 @@ public partial class BuildSolution
             new UsingStep("Publish Coverage")
             {
                 Uses = "codecov/codecov-action@v1",
+                If = new(
+                    "github.event_name != 'pull_request' && github.event_name != 'pull_request_target') || ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.pull_request.user.login != 'renovate[bot]' && github.event.pull_request.user.login != 'dependabot[bot]'"
+                ),
                 With = new Dictionary<string, string>
                 {
                     ["name"] = "actions-${{ matrix.os }}",
