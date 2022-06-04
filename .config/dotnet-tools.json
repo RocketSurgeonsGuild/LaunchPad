@@ -7,11 +7,11 @@
             "commands": ["dotnet-outdated"]
         },
         "gitversion.tool": {
-            "version": "5.10.1",
+            "version": "5.10.3",
             "commands": ["dotnet-gitversion"]
         },
         "dotnet-reportgenerator-globaltool": {
-            "version": "5.1.6",
+            "version": "5.1.9",
             "commands": ["reportgenerator"]
         },
         "nuke.globaltool": {
@@ -23,7 +23,7 @@
             "commands": ["codecov"]
         },
         "jetbrains.resharper.globaltools": {
-            "version": "2022.1.1",
+            "version": "2022.1.2",
             "commands": ["jb"]
         },
         "dotnet-format": {
@@ -35,7 +35,7 @@
             "commands": ["nukeeper"]
         },
         "strawberryshake.tools": {
-            "version": "12.9.0",
+            "version": "12.10.0",
             "commands": ["dotnet-graphql"]
         }
     }
