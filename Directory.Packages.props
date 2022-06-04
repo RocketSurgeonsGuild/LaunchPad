@@ -14,7 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="GitVersion.Tool" Version="5.10.3" />
-    <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2022.1.1" />
+    <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2022.1.2" />
     <PackageVersion Include="Nuke.Common" Version="6.0.3" />
     <PackageVersion Include="ReportGenerator" Version="5.1.9" />
     <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.17.11" />
@@ -133,14 +133,13 @@
     <PackageVersion Include="FluentAssertions" Version="6.7.0" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.17.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="7.0.2" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="7.0.2" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="7.1.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="7.1.0" />
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.analyzers" Version="0.10.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageVersion Include="Verify.Xunit" Version="17.1.0" />
-    <PackageVersion Include="Verify.SourceGenerators" Version="1.4.0" />
-    <PackageVersion Include="Verify.NodaTime" Version="1.1.0" />
+    <PackageVersion Include="Verify.SourceGenerators" Version="1.5.0" />
   </ItemGroup>
   <Import
         Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"

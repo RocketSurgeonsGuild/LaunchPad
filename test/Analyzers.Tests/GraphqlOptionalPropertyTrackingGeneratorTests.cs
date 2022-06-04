@@ -11,7 +11,7 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 namespace Analyzers.Tests;
 
 [UsesVerify]
-public class GraphqlOptionalGraphqlOptionalPropertyTrackingGeneratorTests : GeneratorTest
+public class GraphqlOptionalPropertyTrackingGeneratorTests : GeneratorTest
 {
     [Fact]
     public async Task Should_Require_Partial_Type_Declaration()
@@ -229,7 +229,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    public GraphqlOptionalGraphqlOptionalPropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
+    public GraphqlOptionalPropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
     {
         WithGenerator<GraphqlOptionalPropertyTrackingGenerator>();
         AddReferences(typeof(IOptionalTracking<>), typeof(Optional<>), typeof(Instant), typeof(IPropertyTracking<>), typeof(IMediator), typeof(IBaseRequest));

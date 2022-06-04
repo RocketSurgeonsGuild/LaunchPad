@@ -9,11 +9,19 @@ public static class ModuleInitializer
     public static void Init()
     {
         VerifySourceGenerators.Enable();
-        VerifyNodaTime.Enable();
 
         DiffRunner.Disabled = true;
         VerifierSettings.RegisterFileConverter<GenerationTestResult>(Convert);
         VerifierSettings.RegisterFileConverter<GenerationTestResults>(Convert);
+        VerifierSettings.DerivePathInfo(
+            (sourceFile, projectDirectory, type, method) =>
+            {
+                static string GetTypeName(Type type) => type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
+
+                var typeName = GetTypeName(type);
+
+                return new(Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots"), typeName, method.Name);
+            });
     }
 
     private static ConversionResult Convert(GenerationTestResults target, IReadOnlyDictionary<string, object> context)
