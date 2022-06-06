@@ -3,19 +3,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.CommandLine;
+using Sample.Command;
 using Spectre.Console.Cli;
 
 [assembly: ImportConventions(Namespace = "Sample.Command")]
 
 await Rocket.Surgery.Conventions.CommandLine.App.Create<DefaultCommand>(
                  builder => builder
-                           .WithConventionsFrom(Sample.Command.Imports.GetConventions)
+                           .WithConventionsFrom(Imports.GetConventions)
                            .ConfigureLogging(z => z.AddConsole())
                            .UseDryIoc()
                            .ConfigureDryIoc(
                                 x =>
                                 {
-                                    x.UseInstance(new InstanceThing());
+                                    x.Use(new InstanceThing());
                                     x.Register<Dump>(Reuse.Singleton);
                                 }
                             )
