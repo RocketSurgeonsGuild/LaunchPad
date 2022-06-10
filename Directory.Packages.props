@@ -33,7 +33,7 @@
     <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.3.0" />
     <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.3.0" />
     <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.3.0" />
-    <PackageVersion Include="FairyBread" Version="8.0.0" />
+    <PackageVersion Include="FairyBread" Version="9.0.0" />
     <PackageVersion Include="FluentValidation" Version="11.0.2" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.0.2" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.0.2" />
