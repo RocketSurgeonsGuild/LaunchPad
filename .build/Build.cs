@@ -13,7 +13,6 @@ using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.MSBuild;
 using Rocket.Surgery.Nuke.DotNetCore;
 using Serilog;
-using NukeSolution = Nuke.Common.ProjectModel.Solution;
 
 [PublicAPI]
 [CheckBuildProjectConfigurations]
@@ -25,19 +24,19 @@ using NukeSolution = Nuke.Common.ProjectModel.Solution;
 [MSBuildVerbosityMapping]
 [NuGetVerbosityMapping]
 [ShutdownDotNetAfterServerBuild]
-public partial class BuildSolution : NukeBuild,
-                                     ICanRestoreWithDotNetCore,
-                                     ICanBuildWithDotNetCore,
-                                     ICanTestWithDotNetCore,
-                                     IComprehendSamples,
-                                     IHaveNuGetPackages,
-                                     IHaveDataCollector,
-                                     ICanClean,
-                                     ICanUpdateReadme,
-                                     IGenerateCodeCoverageReport,
-                                     IGenerateCodeCoverageSummary,
-                                     IGenerateCodeCoverageBadges,
-                                     IHaveConfiguration<Configuration>
+public partial class Pipeline : NukeBuild,
+                                ICanRestoreWithDotNetCore,
+                                ICanBuildWithDotNetCore,
+                                ICanTestWithDotNetCore,
+                                IComprehendSamples,
+                                IHaveNuGetPackages,
+                                IHaveDataCollector,
+                                ICanClean,
+                                ICanUpdateReadme,
+                                IGenerateCodeCoverageReport,
+                                IGenerateCodeCoverageSummary,
+                                IGenerateCodeCoverageBadges,
+                                IHaveConfiguration<Configuration>
 {
     /// <summary>
     ///     Support plugins are available for:
@@ -48,7 +47,7 @@ public partial class BuildSolution : NukeBuild,
     /// </summary>
     public static int Main()
     {
-        return Execute<BuildSolution>(x => x.Default);
+        return Execute<Pipeline>(x => x.Default);
     }
 
     public static int FindFreePort()
@@ -69,9 +68,6 @@ public partial class BuildSolution : NukeBuild,
 
         return port;
     }
-
-    [OptionalGitRepository] public GitRepository? GitRepository { get; }
-
     // public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
     //    .DependsOn(Clean);
 
@@ -172,7 +168,7 @@ public partial class BuildSolution : NukeBuild,
         }
     );
 
-    [Solution(GenerateProjects = true)] private NukeSolution Solution { get; } = null!;
+    [OptionalGitRepository] public GitRepository? GitRepository { get; }
 
     private Target Default => _ => _
                                   .DependsOn(Restore)
@@ -180,22 +176,14 @@ public partial class BuildSolution : NukeBuild,
                                   .DependsOn(Test)
                                   .DependsOn(Pack);
 
-    public Target Build => _ => _.Inherit<ICanBuildWithDotNetCore>(x => x.CoreBuild);
-    NukeSolution IHaveSolution.Solution => Solution;
+    [Solution(GenerateProjects = true)] private Solution Solution { get; } = null!;
 
-    [ComputedGitVersion] public GitVersion GitVersion { get; } = null!;
+    public Target Build => _ => _.Inherit<ICanBuildWithDotNetCore>(x => x.CoreBuild);
 
     public Target Clean => _ => _.Inherit<ICanClean>(x => x.Clean);
     public Target Restore => _ => _.Inherit<ICanRestoreWithDotNetCore>(x => x.CoreRestore);
+    Nuke.Common.ProjectModel.Solution IHaveSolution.Solution => Solution;
+    [ComputedGitVersion] public GitVersion GitVersion { get; } = null!;
     public Target Test => _ => _.Inherit<ICanTestWithDotNetCore>(x => x.CoreTest);
-
     [Parameter("Configuration to build")] public Configuration Configuration { get; } = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-}
-
-public static class Extensions
-{
-    public static T As<T>(this T value)
-    {
-        return value;
-    }
 }
