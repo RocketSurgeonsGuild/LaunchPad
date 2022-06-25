@@ -11,6 +11,7 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.MSBuild;
+using Polly;
 using Rocket.Surgery.Nuke.DotNetCore;
 using Serilog;
 
@@ -101,65 +102,84 @@ public partial class Pipeline : NukeBuild,
     public Target UpdateGraphQl => _ => _.DependentFor(Test).After(Build).Executes(
         async () =>
         {
-            var port = FindFreePort();
-            var tcs = new TaskCompletionSource();
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromMinutes(1));
-            cts.Token.Register(() => tcs.TrySetCanceled());
-            var url = $"http://localhost:{port}";
-            var process1 = ProcessTasks.StartProcess(
-                "dotnet",
-                "run --no-launch-profile",
-                logOutput: true,
-                logInvocation: true,
-                timeout: Convert.ToInt32(TimeSpan.FromMinutes(1).TotalSeconds),
-                customLogger: (type, s) =>
-                {
-                    if (s.Contains("Application started."))
-                    {
-                        tcs.TrySetResult();
-                    }
+            await Policy
+                 .Handle<OperationCanceledException>()
+                 .WaitAndRetryAsync(
+                      5,
+                      i => TimeSpan.FromSeconds(i * 10),
+                      (exception, span, count, context) => context["Count"] = count
+                  )
+                 .ExecuteAsync(
+                      async ctx =>
+                      {
+                          if (!ctx.TryGetValue("Count", out var count))
+                          {
+                              count = 0;
+                          }
 
-                    if (type == OutputType.Std)
-                    {
-                        Log.Logger.Debug(s);
-                    }
-                    else
-                    {
-                        Log.Logger.Error(s);
-                    }
-                },
-                environmentVariables: new Dictionary<string, string>(EnvironmentInfo.Variables)
-                {
-                    ["ASPNETCORE_URLS"] = url,
-                    ["ASPNETCORE_ENVIRONMENT"] = "Development",
-                },
-                workingDirectory: this.As<IComprehendSamples>().SampleDirectory / "Sample.Graphql"
-            );
+                          var port = FindFreePort();
+                          var tcs = new TaskCompletionSource();
+                          var cts = new CancellationTokenSource();
+                          var timeout = 60 + ( (int)count * 10 );
+                          cts.CancelAfter(TimeSpan.FromSeconds(timeout));
+                          cts.Token.Register(() => tcs.TrySetCanceled());
+                          var url = $"http://localhost:{port}";
+                          var process1 = ProcessTasks.StartProcess(
+                              "dotnet",
+                              "run --no-launch-profile",
+                              logOutput: true,
+                              logInvocation: true,
+                              timeout: Convert.ToInt32(timeout),
+                              customLogger: (type, s) =>
+                              {
+                                  if (s.Contains("Application started."))
+                                  {
+                                      tcs.TrySetResult();
+                                  }
 
-            var process = (Process)typeof(Process2).GetField("_process", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(process1)!;
+                                  if (type == OutputType.Std)
+                                  {
+                                      Log.Logger.Debug(s);
+                                  }
+                                  else
+                                  {
+                                      Log.Logger.Error(s);
+                                  }
+                              },
+                              environmentVariables: new Dictionary<string, string>(EnvironmentInfo.Variables)
+                              {
+                                  ["ASPNETCORE_URLS"] = url,
+                                  ["ASPNETCORE_ENVIRONMENT"] = "Development",
+                              },
+                              workingDirectory: this.As<IComprehendSamples>().SampleDirectory / "Sample.Graphql"
+                          );
 
-            try
-            {
-                await tcs.Task;
-                DotNetTasks.DotNet(
-                    $"graphql update -u {url}/graphql/",
-                    this.As<IComprehendTests>().TestsDirectory / "Sample.Graphql.Tests"
-                );
-            }
-            finally
-            {
-                if (OperatingSystem.IsWindows())
-                {
-                    process1.Kill();
-                }
-                else
-                {
-                    ProcessTasks.StartProcess("kill", $"-s TERM {process!.Id}");
-                }
+                          var process = (Process)typeof(Process2).GetField("_process", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(process1)!;
 
-                process1.WaitForExit();
-            }
+                          try
+                          {
+                              await tcs.Task;
+                              DotNetTasks.DotNet(
+                                  $"graphql update -u {url}/graphql/",
+                                  this.As<IComprehendTests>().TestsDirectory / "Sample.Graphql.Tests"
+                              );
+                          }
+                          finally
+                          {
+                              if (OperatingSystem.IsWindows())
+                              {
+                                  process1.Kill();
+                              }
+                              else
+                              {
+                                  ProcessTasks.StartProcess("kill", $"-s TERM {process!.Id}");
+                              }
+
+                              process1.WaitForExit();
+                          }
+                      },
+                      new Context()
+                  );
 
             if (!IsLocalBuild)
             {
