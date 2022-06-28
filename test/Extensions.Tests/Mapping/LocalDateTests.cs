@@ -97,6 +97,12 @@ public class LocalDateTests : TypeConverterTest<LocalDateTests.Converters>
             yield return typeof(ITypeConverter<LocalDate?, DateTime?>);
             yield return typeof(ITypeConverter<DateTime, LocalDate>);
             yield return typeof(ITypeConverter<DateTime?, LocalDate?>);
+#if NET6_0_OR_GREATER
+            yield return typeof(ITypeConverter<LocalDate, DateOnly>);
+            yield return typeof(ITypeConverter<LocalDate?, DateOnly?>);
+            yield return typeof(ITypeConverter<DateOnly, LocalDate>);
+            yield return typeof(ITypeConverter<DateOnly?, LocalDate?>);
+#endif
         }
     }
 }

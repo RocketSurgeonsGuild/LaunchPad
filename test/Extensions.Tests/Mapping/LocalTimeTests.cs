@@ -2,6 +2,7 @@ using System.Reflection;
 using AutoMapper;
 using FluentAssertions;
 using NodaTime;
+using NodaTime.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -43,34 +44,6 @@ public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
         result.Should().Be(new LocalTime(502 / 60, 502 % 60));
     }
 
-    [Fact]
-    public void MapsFrom_DateTimeOffset()
-    {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo1
-        {
-            Bar = LocalTime.FromTicksSinceMidnight(10000)
-        };
-
-        var result = mapper.Map<Foo5>(foo).Bar;
-        result.Should().Be(foo.Bar.On(new LocalDate(1, 1, 1)).ToDateTimeUnspecified());
-    }
-
-    [Fact]
-    public void MapsTo_DateTimeOffset()
-    {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo5
-        {
-            Bar = DateTime.Now
-        };
-
-        var result = mapper.Map<Foo1>(foo).Bar;
-        result.Should().Be(LocalDateTime.FromDateTime(foo.Bar).TimeOfDay);
-    }
-
     public LocalTimeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
     }
@@ -105,7 +78,9 @@ public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
         }
 
         expression.CreateMap<Foo1, Foo3>().ReverseMap();
+#if NET6_0_OR_GREATER
         expression.CreateMap<Foo1, Foo5>().ReverseMap();
+#endif
     }
 
     private class Foo1
@@ -118,10 +93,12 @@ public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
         public TimeSpan Bar { get; set; }
     }
 
+#if NET6_0_OR_GREATER
     private class Foo5
     {
-        public DateTime Bar { get; set; }
+        public TimeOnly Bar { get; set; }
     }
+#endif
 
     public class Converters : TypeConverterFactory
     {
@@ -131,10 +108,42 @@ public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
             yield return typeof(ITypeConverter<LocalTime?, TimeSpan?>);
             yield return typeof(ITypeConverter<TimeSpan, LocalTime>);
             yield return typeof(ITypeConverter<TimeSpan?, LocalTime?>);
-            yield return typeof(ITypeConverter<LocalTime, DateTime>);
-            yield return typeof(ITypeConverter<LocalTime?, DateTime?>);
-            yield return typeof(ITypeConverter<DateTime, LocalTime>);
-            yield return typeof(ITypeConverter<DateTime?, LocalTime?>);
+#if NET6_0_OR_GREATER
+            yield return typeof(ITypeConverter<LocalTime, TimeOnly>);
+            yield return typeof(ITypeConverter<LocalTime?, TimeOnly?>);
+            yield return typeof(ITypeConverter<TimeOnly, LocalTime>);
+            yield return typeof(ITypeConverter<TimeOnly?, LocalTime?>);
+#endif
         }
     }
+
+#if NET6_0_OR_GREATER
+    [Fact]
+    public void MapsFrom_DateTimeOffset()
+    {
+        var mapper = Config.CreateMapper();
+
+        var foo = new Foo1
+        {
+            Bar = LocalTime.FromTicksSinceMidnight(10000)
+        };
+
+        var result = mapper.Map<Foo5>(foo).Bar;
+        result.Should().Be(foo.Bar.ToTimeOnly());
+    }
+
+    [Fact]
+    public void MapsTo_DateTimeOffset()
+    {
+        var mapper = Config.CreateMapper();
+
+        var foo = new Foo5
+        {
+            Bar = TimeOnly.FromDateTime(DateTime.Now)
+        };
+
+        var result = mapper.Map<Foo1>(foo).Bar;
+        result.Should().Be(foo.Bar.ToLocalTime());
+    }
+#endif
 }
