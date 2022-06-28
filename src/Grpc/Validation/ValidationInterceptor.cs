@@ -16,13 +16,11 @@ internal class ValidationInterceptor : Interceptor
         throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata, message);
     }
 
-    private readonly IValidatorFactory _factory;
     private readonly IValidatorErrorMessageHandler _handler;
     private readonly IServiceProvider _serviceProvider;
 
-    public ValidationInterceptor(IValidatorFactory factory, IValidatorErrorMessageHandler handler, IServiceProvider serviceProvider)
+    public ValidationInterceptor(IValidatorErrorMessageHandler handler, IServiceProvider serviceProvider)
     {
-        _factory = factory;
         _handler = handler;
         _serviceProvider = serviceProvider;
     }
@@ -33,12 +31,9 @@ internal class ValidationInterceptor : Interceptor
         UnaryServerMethod<TRequest, TResponse> continuation
     )
     {
-        if (_factory.GetValidator<TRequest>() is { } validator)
+        if (_serviceProvider.GetValidator<TRequest>() is { } validator)
         {
-            var validationContext = new ValidationContext<TRequest>(request);
-            validationContext.SetServiceProvider(_serviceProvider);
-
-            var results = await validator.ValidateAsync(validationContext, context.CancellationToken).ConfigureAwait(false);
+            var results = await validator.ValidateAsync(request, context.CancellationToken).ConfigureAwait(false);
 
             if (results.IsValid || !results.Errors.Any())
             {
@@ -58,7 +53,7 @@ internal class ValidationInterceptor : Interceptor
         AsyncUnaryCallContinuation<TRequest, TResponse> continuation
     )
     {
-        if (_factory.GetValidator<TRequest>() is { } validator)
+        if (_serviceProvider.GetValidator<TRequest>() is { } validator)
         {
             var results = validator.Validate(request);
 
@@ -80,7 +75,7 @@ internal class ValidationInterceptor : Interceptor
         BlockingUnaryCallContinuation<TRequest, TResponse> continuation
     )
     {
-        if (_factory.GetValidator<TRequest>() is { } validator)
+        if (_serviceProvider.GetValidator<TRequest>() is { } validator)
         {
             var results = validator.Validate(request);
 

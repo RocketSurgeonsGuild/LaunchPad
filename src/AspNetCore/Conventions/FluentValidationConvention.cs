@@ -117,11 +117,7 @@ public partial class FluentValidationConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services.WithMvcCore()
-                .AddFluentValidation(
-                     config => config.ValidatorFactoryType ??= typeof(ValidatorFactory)
-                 );
-        services.RemoveAll<IValidatorFactory>();
-        services.AddSingleton<IValidatorFactory, ValidatorFactory>();
+                .AddFluentValidation();
         services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
         services
            .Configure<MvcOptions>(mvcOptions => mvcOptions.Filters.Insert(0, new ValidationExceptionFilter()))

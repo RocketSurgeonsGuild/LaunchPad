@@ -11,19 +11,19 @@ namespace Extensions.Tests.Validation;
 
 public class ValidatorFactoryTests : AutoFakeTest
 {
-    [Fact]
-    public void Should_Aggregate_Validators()
-    {
-        var sp = A.Fake<IServiceProvider>();
-        A.CallTo(() => sp.GetService(typeof(IEnumerable<IValidator<AModel>>)))
-         .Returns(new IValidator[] { new ValidatorAb(), new ValidatorAa() });
-        AutoFake.Provide(sp);
-
-        var factory = AutoFake.Resolve<ValidatorFactory>();
-        var validator = factory.GetValidator<AModel>();
-        var result = validator.Validate(new AModel());
-        result.Errors.Should().HaveCount(2);
-    }
+//    [Fact]
+//    public void Should_Aggregate_Validators()
+//    {
+//        var sp = A.Fake<IServiceProvider>();
+//        A.CallTo(() => sp.GetService(typeof(IEnumerable<IValidator<AModel>>)))
+//         .Returns(new IValidator[] { new ValidatorAb(), new ValidatorAa() });
+//        AutoFake.Provide(sp);
+//
+//        var factory = AutoFake.Resolve<ValidatorFactory>();
+//        var validator = factory.GetValidator<AModel>();
+//        var result = validator.Validate(new AModel());
+//        result.Errors.Should().HaveCount(2);
+//    }
 
     public ValidatorFactoryTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Information)
     {

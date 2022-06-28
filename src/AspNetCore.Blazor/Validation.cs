@@ -11,7 +11,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
 /// </summary>
 public class FluentValidator : ComponentBase
 {
-    private static readonly char[] separators = { '.', '[' };
+    private static readonly char[] _separators = { '.', '[' };
 
     private static FieldIdentifier ToFieldIdentifier(EditContext editContext, string propertyPath)
     {
@@ -27,7 +27,7 @@ public class FluentValidator : ComponentBase
 
         while (true)
         {
-            var nextTokenEnd = propertyPath.IndexOfAny(separators);
+            var nextTokenEnd = propertyPath.IndexOfAny(_separators);
             if (nextTokenEnd < 0)
             {
                 return new FieldIdentifier(obj, propertyPath);
@@ -73,9 +73,10 @@ public class FluentValidator : ComponentBase
     ///     The validator to validate against
     /// </summary>
     [Parameter]
-    public IValidator Validator { get; set; } = null!;
+    [DisallowNull]
+    public IValidator? Validator { get; set; } = null!;
 
-    [Inject] private IValidatorFactory ValidatorFactory { get; set; } = null!;
+    [Inject] private IServiceProvider Services { get; set; } = null!;
 
     [CascadingParameter] private EditContext CurrentEditContext { get; set; } = null!;
 
@@ -99,10 +100,10 @@ public class FluentValidator : ComponentBase
         var messages = new ValidationMessageStore(CurrentEditContext);
 
         CurrentEditContext.OnValidationRequested +=
-            (_, _) => ValidateModel(messages, validator);
+            (_, _) => ValidateModel(messages, Validator);
 
         CurrentEditContext.OnFieldChanged +=
-            (_, eventArgs) => ValidateField(messages, eventArgs.FieldIdentifier, validator);
+            (_, eventArgs) => ValidateField(messages, eventArgs.FieldIdentifier, Validator);
     }
 
     private async void ValidateModel(ValidationMessageStore messages, IValidator? validator = null)
@@ -113,7 +114,7 @@ public class FluentValidator : ComponentBase
         {
             var context = new ValidationContext<object>(CurrentEditContext.Model);
 
-            var validationResults = await validator.ValidateAsync(context);
+            var validationResults = await Validator.ValidateAsync(context);
 
             messages.Clear();
             foreach (var validationResult in validationResults.Errors)
@@ -139,7 +140,7 @@ public class FluentValidator : ComponentBase
 
         if (validator != null)
         {
-            var validationResults = await validator.ValidateAsync(context);
+            var validationResults = await Validator.ValidateAsync(context);
 
             messages.Clear(fieldIdentifier);
             messages.Add(fieldIdentifier, validationResults.Errors.Select(error => error.ErrorMessage));
@@ -150,6 +151,6 @@ public class FluentValidator : ComponentBase
 
     private IValidator? GetValidatorForModel(object? model)
     {
-        return model == null ? null : ValidatorFactory.GetValidator(model.GetType());
+        return Validator = Validator ?? ( model is null ? null : Services.GetValidator(model.GetType()) )!;
     }
 }

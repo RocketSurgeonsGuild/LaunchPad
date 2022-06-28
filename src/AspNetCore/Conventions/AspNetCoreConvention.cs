@@ -80,23 +80,6 @@ public class AspNetCoreConvention : IServiceConvention
         }
     }
 
-    private readonly ValidatorConfiguration? _validatorConfiguration;
-    private readonly FluentValidationMvcConfiguration? _validationMvcConfiguration;
-
-    /// <summary>
-    ///     Configure aspnet with some logical defaults
-    /// </summary>
-    /// <param name="validatorConfiguration"></param>
-    /// <param name="validationMvcConfiguration"></param>
-    public AspNetCoreConvention(
-        ValidatorConfiguration? validatorConfiguration = null,
-        FluentValidationMvcConfiguration? validationMvcConfiguration = null
-    )
-    {
-        _validatorConfiguration = validatorConfiguration;
-        _validationMvcConfiguration = validationMvcConfiguration;
-    }
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
