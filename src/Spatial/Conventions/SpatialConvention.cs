@@ -6,7 +6,9 @@ using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Serilog;
 using Rocket.Surgery.LaunchPad.Spatial.Conventions;
+using Serilog;
 
 [assembly: Convention(typeof(SpatialConvention))]
 
@@ -15,8 +17,14 @@ namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
 /// <summary>
 ///     Adds support for spatial types into STJ
 /// </summary>
-public class SpatialConvention : IServiceConvention
+public class SpatialConvention : IServiceConvention, ISerilogConvention
 {
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IServiceProvider services, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
+    {
+        loggerConfiguration.Destructure.NetTopologySuiteTypes();
+    }
+
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {

@@ -7,6 +7,8 @@ using NodaTime;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
+using Rocket.Surgery.LaunchPad.Serilog;
+using Serilog;
 
 [assembly: Convention(typeof(SystemTextJsonConvention))]
 
@@ -17,14 +19,15 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
-public class SystemTextJsonConvention : IServiceConvention
+public class SystemTextJsonConvention : IServiceConvention, ISerilogConvention
 {
-    /// <summary>
-    ///     Registers the specified context.
-    /// </summary>
-    /// <param name="context">The context.</param>
-    /// <param name="configuration"></param>
-    /// <param name="services"></param>
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IServiceProvider services, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
+    {
+        loggerConfiguration.Destructure.SystemTextJsonTypes();
+    }
+
+    /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services.AddTransient<IConfigureOptions<JsonSerializerOptions>>(
