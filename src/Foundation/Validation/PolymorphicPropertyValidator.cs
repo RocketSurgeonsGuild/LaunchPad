@@ -20,7 +20,7 @@ public class PolymorphicPropertyValidator<T, TProperty> : AsyncPropertyValidator
         // bail out if the property is null
         if (value is not { }) return true;
 
-        var factory = context.GetServiceProvider().GetRequiredService<IValidatorFactory>();
+        var factory = context.GetServiceProvider().GetService<IValidatorFactory>();
         var validator = factory.GetValidator(value.GetType());
         return validator is null || ( await validator.ValidateAsync(context, cancellation).ConfigureAwait(false) ).IsValid;
     }

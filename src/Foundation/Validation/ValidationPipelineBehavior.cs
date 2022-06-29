@@ -6,24 +6,20 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where T : IRequest<R>
 {
-    private readonly IValidatorFactory _validatorFactory;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IValidator<T>? _validator;
 
-    public ValidationPipelineBehavior(IValidatorFactory validatorFactory, IServiceProvider serviceProvider)
+    public ValidationPipelineBehavior(IValidator<T>? validator = null)
     {
-        _validatorFactory = validatorFactory;
-        _serviceProvider = serviceProvider;
+        _validator = validator;
     }
 
     public async Task<R> Handle(T request, CancellationToken cancellationToken, RequestHandlerDelegate<R> next)
     {
-        var validator = _validatorFactory.GetValidator<T>();
-        if (validator != null)
+        if (_validator is not null)
         {
             var context = new ValidationContext<T>(request);
-            context.SetServiceProvider(_serviceProvider);
 
-            var response = await validator.ValidateAsync(context, cancellationToken).ConfigureAwait(false);
+            var response = await _validator.ValidateAsync(context, cancellationToken).ConfigureAwait(false);
             if (!response.IsValid)
             {
                 throw new ValidationException(response.Errors);
@@ -36,24 +32,20 @@ internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where 
 
 internal class ValidationStreamPipelineBehavior<T, R> : IStreamPipelineBehavior<T, R> where T : IStreamRequest<R>
 {
-    private readonly IValidatorFactory _validatorFactory;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IValidator<T>? _validator;
 
-    public ValidationStreamPipelineBehavior(IValidatorFactory validatorFactory, IServiceProvider serviceProvider)
+    public ValidationStreamPipelineBehavior(IValidator<T>? validator = null)
     {
-        _validatorFactory = validatorFactory;
-        _serviceProvider = serviceProvider;
+        _validator = validator;
     }
 
     public async IAsyncEnumerable<R> Handle(T request, [EnumeratorCancellation] CancellationToken cancellationToken, StreamHandlerDelegate<R> next)
     {
-        var validator = _validatorFactory.GetValidator<T>();
-        if (validator != null)
+        if (_validator is not null)
         {
             var context = new ValidationContext<T>(request);
-            context.SetServiceProvider(_serviceProvider);
 
-            var response = await validator.ValidateAsync(context, cancellationToken).ConfigureAwait(false);
+            var response = await _validator.ValidateAsync(context, cancellationToken).ConfigureAwait(false);
             if (!response.IsValid)
             {
                 throw new ValidationException(response.Errors);

@@ -11,7 +11,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
 /// </summary>
 public class FluentValidator : ComponentBase
 {
-    private static readonly char[] separators = { '.', '[' };
+    private static readonly char[] _separators = { '.', '[' };
 
     private static FieldIdentifier ToFieldIdentifier(EditContext editContext, string propertyPath)
     {
@@ -27,7 +27,7 @@ public class FluentValidator : ComponentBase
 
         while (true)
         {
-            var nextTokenEnd = propertyPath.IndexOfAny(separators);
+            var nextTokenEnd = propertyPath.IndexOfAny(_separators);
             if (nextTokenEnd < 0)
             {
                 return new FieldIdentifier(obj, propertyPath);
@@ -69,13 +69,68 @@ public class FluentValidator : ComponentBase
         }
     }
 
+    private static void AddFluentValidation(IValidator? validator, EditContext editContext, IServiceProvider services)
+    {
+        var messages = new ValidationMessageStore(editContext);
+
+        editContext.OnValidationRequested +=
+            (_, _) => ValidateModel(messages, editContext, validator ?? services.GetValidator(editContext.Model.GetType()));
+
+        editContext.OnFieldChanged +=
+            (_, eventArgs) => ValidateField(messages, editContext, eventArgs.FieldIdentifier, validator ?? services.GetValidator(editContext.Model.GetType()));
+    }
+
+    private static async void ValidateModel(
+        ValidationMessageStore messages,
+        EditContext editContext,
+        IValidator? validator = null
+    )
+    {
+        if (validator != null)
+        {
+            var context = new ValidationContext<object>(editContext.Model);
+
+            var validationResults = await validator.ValidateAsync(context);
+
+            messages.Clear();
+            foreach (var validationResult in validationResults.Errors)
+            {
+                var fieldIdentifier = ToFieldIdentifier(editContext, validationResult.PropertyName);
+                messages.Add(fieldIdentifier, validationResult.ErrorMessage);
+            }
+
+            editContext.NotifyValidationStateChanged();
+        }
+    }
+
+    private static async void ValidateField(
+        ValidationMessageStore messages,
+        EditContext editContext,
+        FieldIdentifier fieldIdentifier,
+        IValidator? validator = null
+    )
+    {
+        if (validator != null)
+        {
+            var properties = new[] { fieldIdentifier.FieldName };
+            var context = new ValidationContext<object>(fieldIdentifier.Model, new PropertyChain(), new MemberNameValidatorSelector(properties));
+            var validationResults = await validator.ValidateAsync(context);
+
+            messages.Clear(fieldIdentifier);
+            messages.Add(fieldIdentifier, validationResults.Errors.Select(error => error.ErrorMessage));
+
+            editContext.NotifyValidationStateChanged();
+        }
+    }
+
     /// <summary>
     ///     The validator to validate against
     /// </summary>
     [Parameter]
-    public IValidator Validator { get; set; } = null!;
+    [DisallowNull]
+    public IValidator? Validator { get; set; } = null!;
 
-    [Inject] private IValidatorFactory ValidatorFactory { get; set; } = null!;
+    [Inject] private IServiceProvider Services { get; set; } = null!;
 
     [CascadingParameter] private EditContext CurrentEditContext { get; set; } = null!;
 
@@ -91,65 +146,6 @@ public class FluentValidator : ComponentBase
             );
         }
 
-        AddFluentValidation(Validator);
-    }
-
-    private void AddFluentValidation(IValidator validator)
-    {
-        var messages = new ValidationMessageStore(CurrentEditContext);
-
-        CurrentEditContext.OnValidationRequested +=
-            (_, _) => ValidateModel(messages, validator);
-
-        CurrentEditContext.OnFieldChanged +=
-            (_, eventArgs) => ValidateField(messages, eventArgs.FieldIdentifier, validator);
-    }
-
-    private async void ValidateModel(ValidationMessageStore messages, IValidator? validator = null)
-    {
-        validator ??= GetValidatorForModel(CurrentEditContext.Model);
-
-        if (validator != null)
-        {
-            var context = new ValidationContext<object>(CurrentEditContext.Model);
-
-            var validationResults = await validator.ValidateAsync(context);
-
-            messages.Clear();
-            foreach (var validationResult in validationResults.Errors)
-            {
-                var fieldIdentifier = ToFieldIdentifier(CurrentEditContext, validationResult.PropertyName);
-                messages.Add(fieldIdentifier, validationResult.ErrorMessage);
-            }
-
-            CurrentEditContext.NotifyValidationStateChanged();
-        }
-    }
-
-    private async void ValidateField(
-        ValidationMessageStore messages,
-        FieldIdentifier fieldIdentifier,
-        IValidator? validator = null
-    )
-    {
-        var properties = new[] { fieldIdentifier.FieldName };
-        var context = new ValidationContext<object>(fieldIdentifier.Model, new PropertyChain(), new MemberNameValidatorSelector(properties));
-
-        validator ??= GetValidatorForModel(fieldIdentifier.Model);
-
-        if (validator != null)
-        {
-            var validationResults = await validator.ValidateAsync(context);
-
-            messages.Clear(fieldIdentifier);
-            messages.Add(fieldIdentifier, validationResults.Errors.Select(error => error.ErrorMessage));
-
-            CurrentEditContext.NotifyValidationStateChanged();
-        }
-    }
-
-    private IValidator? GetValidatorForModel(object? model)
-    {
-        return model == null ? null : ValidatorFactory.GetValidator(model.GetType());
+        AddFluentValidation(Validator, CurrentEditContext, Services);
     }
 }
