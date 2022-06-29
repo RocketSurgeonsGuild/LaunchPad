@@ -8,6 +8,6 @@
     <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.26" />
     <PackageVersion Update="System.Net.Http.Json" Version="3.2.1" />
     <PackageVersion Update="Microsoft.Extensions.Hosting" Version="3.1.26" />
-    <PackageVersion Update="System.ComponentModel.Annotations" Version="4.7.0" />
+    <PackageVersion Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
 </Project>
