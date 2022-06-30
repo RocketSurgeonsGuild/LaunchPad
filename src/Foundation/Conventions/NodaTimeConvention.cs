@@ -6,6 +6,8 @@ using NodaTime.TimeZones;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
+using Rocket.Surgery.LaunchPad.Serilog;
+using Serilog;
 
 [assembly: Convention(typeof(NodaTimeConvention))]
 
@@ -16,7 +18,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// </summary>
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
-public class NodaTimeConvention : IServiceConvention
+public class NodaTimeConvention : IServiceConvention, ISerilogConvention
 {
     private readonly FoundationOptions _options;
 
@@ -27,6 +29,12 @@ public class NodaTimeConvention : IServiceConvention
     public NodaTimeConvention(FoundationOptions? options = null)
     {
         _options = options ?? new FoundationOptions();
+    }
+
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IServiceProvider services, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
+    {
+        loggerConfiguration.Destructure.NodaTimeTypes(services.GetRequiredService<IDateTimeZoneProvider>());
     }
 
     /// <summary>
@@ -43,7 +51,6 @@ public class NodaTimeConvention : IServiceConvention
         }
 
         services.TryAddSingleton<IClock>(SystemClock.Instance);
-        services.TryAddSingleton<IDateTimeZoneProvider, DateTimeZoneCache>();
-        services.TryAddSingleton(_options.DateTimeZoneSource);
+        services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
     }
 }
