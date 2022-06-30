@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rocket.Surgery.LaunchPad.EntityFramework;
+using Sample.Core.Models;
 
 namespace Sample.Core.Domain;
 
@@ -13,6 +14,18 @@ public class RocketDbContext : LpContext<RocketDbContext>
 
     public DbSet<ReadyRocket> Rockets { get; set; } = null!;
     public DbSet<LaunchRecord> LaunchRecords { get; set; } = null!;
+
+#if NET6_0_OR_GREATER
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder
+           .Properties<LaunchRecordId>()
+           .HaveConversion<LaunchRecordId.EfCoreValueConverter>();
+        configurationBuilder
+           .Properties<RocketId>()
+           .HaveConversion<RocketId.EfCoreValueConverter>();
+    }
+#endif
 }
 
 public class StronglyTypedIdValueConverterSelector : ValueConverterSelector

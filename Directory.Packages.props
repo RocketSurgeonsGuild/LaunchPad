@@ -96,6 +96,7 @@
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.4.1" />
     <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.2.3" />
     <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.2.3" />
+    <PackageVersion Include="Rocket.Surgery.Web.Hosting" Version="12.2.3" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="12.2.3" />
     <PackageVersion Include="Scrutor" Version="4.2.0" />
     <PackageVersion Include="Serilog" Version="2.11.0" />

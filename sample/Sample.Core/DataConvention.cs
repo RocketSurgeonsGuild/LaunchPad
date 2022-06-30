@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Sample.Core;
 
+[LiveConvention]
 internal class DataConvention : IServiceConvention
 {
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
@@ -24,11 +25,7 @@ internal class DataConvention : IServiceConvention
 #pragma warning restore CA2000
         connection.Open();
         services
-#if NETSTANDARD
            .AddDbContextPool<RocketDbContext>(
-#else
-           .AddPooledDbContextFactory<RocketDbContext>(
-#endif
                 x => x
                     .ReplaceService<IValueConverterSelector, StronglyTypedIdValueConverterSelector>()
                     .EnableDetailedErrors()
