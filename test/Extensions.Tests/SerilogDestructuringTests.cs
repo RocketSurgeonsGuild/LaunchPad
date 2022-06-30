@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json.Linq;
+using NodaTime;
+using NodaTime.Testing;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Spatial;
@@ -89,19 +91,139 @@ public class SerilogDestructuringTests : LoggerTest
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
+    [Fact]
+    public async Task Should_Destructure_NodaTime_Instant()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", _clock.GetCurrentInstant());
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_LocalDateTime()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", LocalDateTime.FromDateTime(_clock.GetCurrentInstant().ToDateTimeUtc()));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_LocalDate()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", LocalDate.FromDateTime(_clock.GetCurrentInstant().ToDateTimeUtc()));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_LocalTime()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", LocalTime.FromHoursSinceMidnight(4));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_OffsetDateTime()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_OffsetDate()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()).ToOffsetDate());
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_OffsetTime()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()).ToOffsetTime());
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_ZonedDateTime()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", ZonedDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_DateTimeZone()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", DateTimeZoneProviders.Tzdb["America/New_York"]);
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_Duration()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", Duration.FromDays(1));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_Period()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", Period.FromDays(1));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Should_Destructure_NodaTime_Interval()
+    {
+        var faker = new Faker { Random = new Randomizer(17) };
+
+        using var _ = CaptureLogs(out var logs);
+        Logger.LogInformation("This is just a test {@Data}", new Interval(_clock.GetCurrentInstant(), _clock.GetCurrentInstant()));
+        await Verify(logs.Select(z => z.RenderMessage()));
+    }
+
     public SerilogDestructuringTests(ITestOutputHelper outputHelper) : base(
         outputHelper, LogLevel.Information, configureLogger: configuration => configuration
                                                                              .Destructure.NewtonsoftJsonTypes()
                                                                              .Destructure.SystemTextJsonTypes()
                                                                              .Destructure.NetTopologySuiteTypes()
+                                                                             .Destructure.NodaTimeTypes(DateTimeZoneProviders.Tzdb)
     )
     {
-        _outputHelper = outputHelper;
-
         LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
+        _clock = new FakeClock(Instant.FromUtc(2022, 1, 1, 4, 4, 4));
     }
 
-    private readonly ITestOutputHelper _outputHelper;
+    private readonly FakeClock _clock;
 
     [Theory]
     [InlineData(OgcGeometryType.Point, 5, false)]

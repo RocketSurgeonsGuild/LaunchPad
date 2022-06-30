@@ -23,7 +23,7 @@ public static class NodaTimeSerializationExtensions
     {
         options.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
         options.ConfigureForNodaTime(dateTimeZoneProvider);
-        ReplaceConverters(options.Converters);
+        ReplaceConverters(options.Converters, dateTimeZoneProvider);
         return options;
     }
 
@@ -37,12 +37,12 @@ public static class NodaTimeSerializationExtensions
     {
         options.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
         options.ConfigureForNodaTime(dateTimeZoneProvider);
-        ReplaceConverters(options.Converters);
+        ReplaceConverters(options.Converters, dateTimeZoneProvider);
 
         return options;
     }
 
-    private static void ReplaceConverters(IList<JsonConverter> converters)
+    private static void ReplaceConverters(IList<JsonConverter> converters, IDateTimeZoneProvider dateTimeZoneProvider)
     {
         ReplaceConverter(
             converters,
@@ -127,7 +127,7 @@ public static class NodaTimeSerializationExtensions
         ReplaceConverter(
             converters,
             new NewtonsoftJsonCompositeNodaPatternConverter<ZonedDateTime>(
-                ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", DateTimeZoneProviders.Tzdb)
+                ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)
             )
         );
     }
