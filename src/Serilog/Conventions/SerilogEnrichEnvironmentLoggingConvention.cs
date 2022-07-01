@@ -3,8 +3,6 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
 
-[assembly: Convention(typeof(SerilogEnrichLoggingConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 
 /// <summary>
@@ -12,6 +10,8 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 ///     Implements the <see cref="ISerilogConvention" />
 /// </summary>
 /// <seealso cref="ISerilogConvention" />
+[PublicAPI]
+[ExportConvention]
 public class SerilogEnrichEnvironmentLoggingConvention : ISerilogConvention
 {
     /// <summary>

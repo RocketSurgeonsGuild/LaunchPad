@@ -4,8 +4,6 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Mapping;
 
-[assembly: Convention(typeof(AutoMapperNewtonsoftJsonConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Mapping;
 
 /// <summary>
@@ -13,6 +11,8 @@ namespace Rocket.Surgery.LaunchPad.Mapping;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 [DependsOnConvention(typeof(AutoMapperConvention))]
 public class AutoMapperNewtonsoftJsonConvention : IServiceConvention
 {

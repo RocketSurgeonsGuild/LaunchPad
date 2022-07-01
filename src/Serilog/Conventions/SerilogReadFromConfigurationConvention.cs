@@ -6,8 +6,6 @@ using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
 using Serilog.Extensions.Logging;
 
-[assembly: Convention(typeof(SerilogReadFromConfigurationConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 
 /// <summary>
@@ -15,25 +13,11 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 ///     Implements the <see cref="ISerilogConvention" />
 /// </summary>
 /// <seealso cref="ISerilogConvention" />
+[PublicAPI]
 [LiveConvention]
+[ExportConvention]
 public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
 {
-    /// <inheritdoc />
-    public void Register(
-        IConventionContext context,
-        IServiceProvider services,
-        IConfiguration configuration,
-        LoggerConfiguration loggerConfiguration
-    )
-    {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        loggerConfiguration.ReadFrom.Configuration(configuration);
-    }
-
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
     {
@@ -55,5 +39,21 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
                 }
             );
         }
+    }
+
+    /// <inheritdoc />
+    public void Register(
+        IConventionContext context,
+        IServiceProvider services,
+        IConfiguration configuration,
+        LoggerConfiguration loggerConfiguration
+    )
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+
+        loggerConfiguration.ReadFrom.Configuration(configuration);
     }
 }

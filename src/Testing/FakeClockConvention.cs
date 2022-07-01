@@ -8,14 +8,14 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Testing;
 
-[assembly: Convention(typeof(FakeClockConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Testing;
 
 /// <summary>
 ///     A fake clock convention used during unit testing
 /// </summary>
+[PublicAPI]
 [UnitTestConvention]
+[ExportConvention]
 [BeforeConvention(typeof(NodaTimeConvention))]
 public class FakeClockConvention : IServiceConvention
 {

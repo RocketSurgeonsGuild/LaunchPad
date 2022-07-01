@@ -8,13 +8,13 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Spatial.Conventions;
 
-[assembly: Convention(typeof(SpatialNewtonsoftJsonConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
 
 /// <summary>
 ///     Adds support for spatial types into Newtonsoft Json
 /// </summary>
+[PublicAPI]
+[ExportConvention]
 public class SpatialNewtonsoftJsonConvention : IServiceConvention
 {
     /// <inheritdoc />

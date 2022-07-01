@@ -6,13 +6,13 @@ using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-[assembly: Convention(typeof(AspNetCoreSpatialConvention))]
-
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
 /// <summary>
 ///     Convention to register spatial types
 /// </summary>
+[PublicAPI]
+[ExportConvention]
 public class AspNetCoreSpatialConvention : IServiceConvention
 {
     /// <inheritdoc />

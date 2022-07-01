@@ -9,8 +9,6 @@ using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
-[assembly: Convention(typeof(FluentValidationConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
@@ -19,6 +17,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// </summary>
 /// <seealso cref="IServiceConvention" />
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 [AfterConvention(typeof(MediatRConvention))]
 public class FluentValidationConvention : IServiceConvention
 {

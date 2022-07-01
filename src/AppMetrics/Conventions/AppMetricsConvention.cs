@@ -6,13 +6,13 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 
-[assembly: Convention(typeof(AppMetricsConvention))]
-
 namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 
 /// <summary>
 ///     Convention for activating app metrics
 /// </summary>
+[PublicAPI]
+[ExportConvention]
 public class AppMetricsConvention : IHostingConvention
 {
     /// <inheritdoc />

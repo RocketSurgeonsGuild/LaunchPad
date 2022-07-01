@@ -9,8 +9,6 @@ using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using ILogger = Serilog.ILogger;
 
-[assembly: Convention(typeof(SerilogHostingConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 /// <summary>
@@ -18,6 +16,8 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 ///     Implements the <see cref="IHostingConvention" />
 /// </summary>
 /// <seealso cref="IHostingConvention" />
+[PublicAPI]
+[ExportConvention]
 public class SerilogHostingConvention : IHostingConvention
 {
     private readonly LaunchPadLoggingOptions _options;

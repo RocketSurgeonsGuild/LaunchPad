@@ -10,13 +10,13 @@ using Rocket.Surgery.LaunchPad.Serilog;
 using Rocket.Surgery.LaunchPad.Spatial.Conventions;
 using Serilog;
 
-[assembly: Convention(typeof(SpatialConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
 
 /// <summary>
 ///     Adds support for spatial types into STJ
 /// </summary>
+[PublicAPI]
+[ExportConvention]
 public class SpatialConvention : IServiceConvention, ISerilogConvention
 {
     /// <inheritdoc />

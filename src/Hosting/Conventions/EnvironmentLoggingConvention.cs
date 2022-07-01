@@ -5,8 +5,6 @@ using Rocket.Surgery.LaunchPad.Hosting.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 
-[assembly: Convention(typeof(EnvironmentLoggingConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 /// <summary>
@@ -14,6 +12,8 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 ///     Implements the <see cref="ISerilogConvention" />
 /// </summary>
 /// <seealso cref="ISerilogConvention" />
+[PublicAPI]
+[ExportConvention]
 public class EnvironmentLoggingConvention : ISerilogConvention
 {
     /// <summary>

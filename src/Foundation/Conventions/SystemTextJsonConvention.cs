@@ -10,8 +10,6 @@ using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 
-[assembly: Convention(typeof(SystemTextJsonConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
@@ -19,6 +17,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 public class SystemTextJsonConvention : IServiceConvention, ISerilogConvention
 {
     /// <inheritdoc />

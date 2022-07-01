@@ -10,13 +10,13 @@ using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Types;
 
-[assembly: Convention(typeof(GraphqlConvention))]
-
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 
 /// <summary>
 ///     The graph ql convention
 /// </summary>
+[PublicAPI]
+[ExportConvention]
 [BeforeConvention(typeof(HotChocolateConvention))]
 public class GraphqlConvention : IServiceConvention
 {

@@ -6,8 +6,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Grpc.Conventions;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
-[assembly: Convention(typeof(GrpcConvention))]
-
 namespace Rocket.Surgery.LaunchPad.Grpc.Conventions;
 
 /// <summary>
@@ -17,6 +15,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Conventions;
 /// <seealso cref="IServiceConvention" />
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
+[ExportConvention]
 public class GrpcConvention : IServiceConvention
 {
     /// <inheritdoc />

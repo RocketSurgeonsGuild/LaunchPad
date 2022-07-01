@@ -11,11 +11,10 @@ using Sample.Core.Domain;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 #endif
 
-[assembly: Convention(typeof(DataConvention))]
-
 namespace Sample.Core;
 
 [LiveConvention]
+[ExportConvention]
 internal class DataConvention : IServiceConvention
 {
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)

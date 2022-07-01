@@ -8,11 +8,10 @@ using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 
-[assembly: Convention(typeof(DataGenerationConvention))]
-
 namespace Sample.Core;
 
 [LiveConvention]
+[ExportConvention]
 public class DataGenerationConvention : IServiceConvention
 {
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
