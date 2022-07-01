@@ -15,8 +15,6 @@ namespace Sample.Restful.Tests;
 [ImportConventions]
 public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
 {
-    private SqliteConnection _connection = null!;
-
     protected HandleWebHostBase(
         ITestOutputHelper outputHelper,
         LogLevel logLevel = LogLevel.Trace
@@ -27,44 +25,20 @@ public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
     )
     {
         Factory = new TestWebHost()
-                 .ConfigureHostBuilder(
-                      b => b
-                          .ConfigureHosting((context, z) => z.ConfigureServices((_, s) => s.AddSingleton(context)))
-                           // .WithConventionsFrom(GetConventions)
-                          .EnableConventionAttributes()
-                  )
-                 .ConfigureLoggerFactory(LoggerFactory);
+           .ConfigureLoggerFactory(LoggerFactory);
     }
 
-    protected ConventionTestWebHost<Startup> Factory { get; private set; }
+    protected ConventionTestWebHost<Program> Factory { get; private set; }
     protected IServiceProvider ServiceProvider => Factory.Services;
 
     public async Task InitializeAsync()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
-        await _connection.OpenAsync();
-
-        Factory = Factory.ConfigureHostBuilder(
-            x => x
-               .ConfigureServices(
-                    (_, services) =>
-                    {
-                        services.AddDbContextPool<RocketDbContext>(
-                            z => z
-                                .EnableDetailedErrors()
-                                .EnableSensitiveDataLogging()
-                                .UseSqlite(_connection)
-                        );
-                    }
-                )
-        );
-
-        await ServiceProvider.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
+        await Task.Yield();
+        await ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureDeletedAsync();
     }
 
     public async Task DisposeAsync()
     {
-        Factory.Dispose();
-        await _connection.DisposeAsync();
+        await Factory.DisposeAsync();
     }
 }

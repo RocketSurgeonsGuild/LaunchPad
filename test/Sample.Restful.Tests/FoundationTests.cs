@@ -33,7 +33,7 @@ public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
         _factory = factory.ConfigureLoggerFactory(LoggerFactory);
     }
 
-    private readonly ConventionTestWebHost<Startup> _factory;
+    private readonly ConventionTestWebHost<Program> _factory;
 
     [Theory]
     [ClassData(typeof(OpenApiDocuments))]

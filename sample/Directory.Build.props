@@ -5,4 +5,9 @@
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
+    <ItemGroup>        
+        <InternalsVisibleTo Include="Sample.Graphql.Tests" />
+        <InternalsVisibleTo Include="Sample.Pages.Tests" />
+        <InternalsVisibleTo Include="Sample.Restful.Tests" />
+    </ItemGroup>
 </Project>

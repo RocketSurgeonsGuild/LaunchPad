@@ -5,8 +5,8 @@ using Xunit;
 
 namespace Sample.Restful.Tests;
 
-public class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
-    where T : WebApplicationFactory<Startup>, new()
+internal class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
+    where T : WebApplicationFactory<Program>, new()
 {
     public ApiDescriptionData()
     {

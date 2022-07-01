@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+        <TargetFrameworks>net6.0</TargetFrameworks>
         <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
         <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
@@ -8,8 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore.AppMetrics\Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.csproj" />
         <ProjectReference Include="..\..\src\AppMetrics\Rocket.Surgery.LaunchPad.AppMetrics.csproj" />
-        <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
-        <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
+        <ProjectReference Include="..\..\src\Web.Hosting\Rocket.Surgery.LaunchPad.Web.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <PackageReference
             Include="Microsoft.Extensions.ApiDescription.Server"
