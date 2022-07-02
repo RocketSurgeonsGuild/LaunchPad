@@ -1,6 +1,5 @@
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.BlazorServer.Data;
-using Serilog;
 
 namespace Sample.BlazorServer;
 
@@ -39,14 +38,7 @@ public class Startup
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
-        // Should this move into an extension method?
-        app.UseSerilogRequestLogging(
-            x =>
-            {
-                x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
-                x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
-            }
-        );
+        app.UseLaunchPadRequestLogging();
         app.UseMetricsAllMiddleware();
 
         app.UseRouting();

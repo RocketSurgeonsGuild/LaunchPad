@@ -8,8 +8,6 @@ using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Sample.Core.Domain;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Core.Tests;
 

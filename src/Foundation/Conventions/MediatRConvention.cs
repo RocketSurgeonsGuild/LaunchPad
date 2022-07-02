@@ -4,9 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
-
-[assembly: Convention(typeof(MediatRConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -15,6 +12,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 public class MediatRConvention : IServiceConvention
 {
     private readonly FoundationOptions _options;

@@ -1,20 +1,19 @@
-﻿using Bogus;
-using FluentAssertions;
-using MediatR;
-using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
+﻿using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Core.Operations.LaunchRecords;
 using Sample.Restful.Client;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests : HandleWebHostBase
+public class RemoveLaunchRecordsTests : HandleWebHostBase<Program>
 {
+    private static readonly Faker Faker = new();
+
+    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
+    {
+    }
+
     [Fact]
     public async Task Should_Remove_LaunchRecord()
     {
@@ -65,10 +64,4 @@ public class RemoveLaunchRecordsTests : HandleWebHostBase
         await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
                     .Where(z => z.StatusCode == 403 && z.Result.Status == 403 && z.Result.Title == "Forbidden");
     }
-
-    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

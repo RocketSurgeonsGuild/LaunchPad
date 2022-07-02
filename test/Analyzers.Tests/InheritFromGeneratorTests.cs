@@ -1,10 +1,8 @@
 using Analyzers.Tests.Helpers;
-using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Xunit.Abstractions;
 
 namespace Analyzers.Tests;
 
@@ -111,31 +109,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
 
-        var expected = @"
-#nullable enable
-using System;
-using MediatR;
-using Rocket.Surgery.LaunchPad.Foundation;
-
-namespace Sample.Core.Operations.Rockets
-{
-    public static partial class CreateRocket
-    {
-        public partial record Request
-        {
-            public string SerialNumber { get; set; }
-
-            public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
-        }
-    }
-}
-#nullable restore
-";
-
         var result = await GenerateAsync(source);
-        result.EnsureDiagnosticSeverity();
-        result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
-
         await Verify(result);
     }
 
@@ -173,33 +147,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
 
-        var expected = @"
-#nullable enable
-using System;
-using MediatR;
-using Rocket.Surgery.LaunchPad.Foundation;
-
-namespace Sample.Core.Operations.Rockets
-{
-    public static partial class CreateRocket
-    {
-        public partial record Request
-        {
-            public string SerialNumber { get; set; }
-
-            public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
-            public string OtherNumber { get; set; }
-
-            public Request With(Other value) => this with {OtherNumber = value.OtherNumber};
-        }
-    }
-}
-#nullable restore
-";
-
         var result = await GenerateAsync(source);
-        result.EnsureDiagnosticSeverity();
-        result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
 
         await Verify(result);
     }
@@ -232,28 +180,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
 
-        var expected = @"
-#nullable enable
-using System;
-using MediatR;
-using Rocket.Surgery.LaunchPad.Foundation;
-
-namespace Sample.Core.Operations.Rockets
-{
-    public static partial class CreateRocket
-    {
-        public partial record Request
-        {
-            public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
-        }
-    }
-}
-#nullable restore
-";
-
         var result = await GenerateAsync(source);
-        result.EnsureDiagnosticSeverity();
-        result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
 
         await Verify(result);
     }
@@ -286,30 +213,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
 
-        var expected = @"
-#nullable enable
-using System;
-using MediatR;
-using Rocket.Surgery.LaunchPad.Foundation;
-
-namespace Sample.Core.Operations.Rockets
-{
-    public static partial class CreateRocket
-    {
-        public partial class Request
-        {
-            public string SerialNumber { get; set; }
-
-            public Request With(Model value) => new Request{Id = this.Id, SerialNumber = value.SerialNumber};
-        }
-    }
-}
-#nullable restore
-";
-
         var result = await GenerateAsync(source);
-        result.EnsureDiagnosticSeverity();
-        result.AssertGeneratedAsExpected<InheritFromGenerator>(expected);
 
         await Verify(result);
     }

@@ -1,14 +1,10 @@
-﻿using Bogus;
-using FluentAssertions;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Core.Tests.Rockets;
 

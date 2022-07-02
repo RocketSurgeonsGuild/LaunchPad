@@ -6,11 +6,8 @@ using Microsoft.Extensions.Options;
 using NodaTime;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-
-[assembly: Convention(typeof(SystemTextJsonConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -19,6 +16,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 public class SystemTextJsonConvention : IServiceConvention, ISerilogConvention
 {
     /// <inheritdoc />

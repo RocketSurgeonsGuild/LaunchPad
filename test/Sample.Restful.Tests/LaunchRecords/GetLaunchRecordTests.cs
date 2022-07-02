@@ -1,19 +1,21 @@
-﻿using Bogus;
-using FluentAssertions;
-using NodaTime;
+﻿using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Restful.Client;
-using Xunit;
-using Xunit.Abstractions;
 using HttpRocketType = Sample.Restful.Client.RocketType;
 using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : HandleWebHostBase
+public class GetLaunchRecordTests : HandleWebHostBase<Program>
 {
+    private static readonly Faker Faker = new();
+
+    public GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
+    {
+    }
+
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
     {
@@ -65,10 +67,4 @@ public class GetLaunchRecordTests : HandleWebHostBase
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );
     }
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

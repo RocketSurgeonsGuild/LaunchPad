@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore;
 
@@ -26,6 +28,22 @@ public static class RocketSurgeryMvcCoreExtensions
     public static IMvcCoreBuilder WithMvcCore(this IServiceCollection services)
     {
         return new ImmutableMvcBuilder(services, true);
+    }
+
+    /// <summary>
+    ///     Default request logging for serilog with launchpad
+    /// </summary>
+    /// <param name="app"></param>
+    /// <returns></returns>
+    public static IApplicationBuilder UseLaunchPadRequestLogging(this IApplicationBuilder app)
+    {
+        return app.UseSerilogRequestLogging(
+            x =>
+            {
+                x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
+                x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
+            }
+        );
     }
 
     /// <summary>

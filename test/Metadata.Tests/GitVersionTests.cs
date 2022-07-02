@@ -1,9 +1,6 @@
 using System.Reflection;
-using FluentAssertions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Metadata;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Metadata.Tests;
 

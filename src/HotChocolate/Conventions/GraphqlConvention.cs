@@ -1,22 +1,19 @@
-﻿using HotChocolate.Types;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Types;
-
-[assembly: Convention(typeof(GraphqlConvention))]
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 
 /// <summary>
 ///     The graph ql convention
 /// </summary>
+[PublicAPI]
+[ExportConvention]
 [BeforeConvention(typeof(HotChocolateConvention))]
 public class GraphqlConvention : IServiceConvention
 {

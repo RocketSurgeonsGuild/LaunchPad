@@ -2,10 +2,8 @@
 using System.Reflection;
 using HotChocolate;
 using HotChocolate.Data.Filters;
-using HotChocolate.Data.Sorting;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types;
-using HotChocolate.Types.Descriptors;
 using HotChocolate.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;

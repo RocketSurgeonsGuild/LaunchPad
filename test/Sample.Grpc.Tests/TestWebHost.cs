@@ -19,7 +19,9 @@ public class TestWebHost : ConventionTestWebHost<Startup>
     protected override IHostBuilder CreateHostBuilder()
     {
         _connection.Open();
+#pragma warning disable CS8602
         return base.CreateHostBuilder()
+#pragma warning restore CS8602
                    .ConfigureServices(
                         (_, services) =>
                         {

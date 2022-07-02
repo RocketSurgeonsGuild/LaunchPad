@@ -2,11 +2,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Configuration;
-using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
 using Serilog.Extensions.Logging;
-
-[assembly: Convention(typeof(SerilogReadFromConfigurationConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 
@@ -15,7 +12,9 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 ///     Implements the <see cref="ISerilogConvention" />
 /// </summary>
 /// <seealso cref="ISerilogConvention" />
+[PublicAPI]
 [LiveConvention]
+[ExportConvention]
 public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
 {
     /// <inheritdoc />

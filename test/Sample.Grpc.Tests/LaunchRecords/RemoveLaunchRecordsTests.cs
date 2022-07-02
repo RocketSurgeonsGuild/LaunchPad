@@ -1,17 +1,19 @@
-﻿using Bogus;
-using FluentAssertions;
-using Rocket.Surgery.DependencyInjection;
+﻿using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
 public class RemoveLaunchRecordsTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Remove_LaunchRecord()
     {
@@ -35,10 +37,4 @@ public class RemoveLaunchRecordsTests : HandleGrpcHostBase
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
     }
-
-    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

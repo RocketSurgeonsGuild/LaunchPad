@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.Extensions.Testing;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Graphql.Tests;
 

@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 
+[System.Runtime.CompilerServices.CompilerGenerated]
 public partial class PatchRocket
 {
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> SerialNumber { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);

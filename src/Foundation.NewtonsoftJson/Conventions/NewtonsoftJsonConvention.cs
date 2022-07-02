@@ -7,17 +7,16 @@ using Newtonsoft.Json.Serialization;
 using NodaTime;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-
-[assembly: Convention(typeof(NewtonsoftJsonConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
 ///     Convention for working with Newtonsoft Json
 /// </summary>
+[PublicAPI]
+[ExportConvention]
 public class NewtonsoftJsonConvention : IServiceConvention, ISerilogConvention
 {
     /// <inheritdoc />

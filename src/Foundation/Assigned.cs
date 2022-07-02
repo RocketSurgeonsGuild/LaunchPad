@@ -1,4 +1,5 @@
 namespace Rocket.Surgery.LaunchPad.Foundation;
+#pragma warning disable CA2225
 
 /// <summary>
 ///     The Assigned type is used to differentiate between not set and set input values.
@@ -55,7 +56,9 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     ///     Creates an empty Assigned that provides a default value.
     /// </summary>
     /// <param name="defaultValue">The default value.</param>
+#pragma warning disable CA1000
     public static Assigned<T> Empty(T? defaultValue = default)
+#pragma warning restore CA1000
     {
         return new(defaultValue, false);
     }
@@ -142,8 +145,13 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     /// <returns>
     ///     <c>true</c> if both <see cref="Assigned{T}" /> values are equal.
     /// </returns>
-    public bool Equals(Assigned<T> other)
+    public bool Equals(Assigned<T>? other)
     {
+        if (other is null)
+        {
+            return !_hasValue;
+        }
+
         if (!_hasValue && !other._hasValue)
         {
             return true;

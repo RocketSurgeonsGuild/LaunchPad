@@ -1,12 +1,9 @@
-using System.Security.Cryptography;
-using System.Text;
 using Analyzers.Tests.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Xunit.Abstractions;
 
 namespace Analyzers.Tests;
 

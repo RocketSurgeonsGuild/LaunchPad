@@ -1,8 +1,5 @@
-using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests;
 
@@ -18,7 +15,7 @@ public class StringInValidatorTests : ConventionFakeTest
             TypeIgnoreCase = "nottruck"
         };
 
-        var validator = ServiceProvider.GetRequiredService<IValidatorFactory>().GetValidator<Target>();
+        var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
         var result2 = validator.Validate(data);
@@ -39,7 +36,7 @@ public class StringInValidatorTests : ConventionFakeTest
             TypeIgnoreCase = "truck"
         };
 
-        var validator = ServiceProvider.GetRequiredService<IValidatorFactory>().GetValidator<Target>();
+        var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
         var result2 = validator.Validate(data);
@@ -59,7 +56,7 @@ public class StringInValidatorTests : ConventionFakeTest
             TypeIgnoreCase = "nottruck"
         };
 
-        var validator = ServiceProvider.GetRequiredService<IValidatorFactory>().GetValidator<Target>();
+        var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
         var result2 = validator.Validate(data);

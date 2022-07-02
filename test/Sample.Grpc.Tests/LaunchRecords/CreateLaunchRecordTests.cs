@@ -1,19 +1,21 @@
-﻿using Bogus;
-using FluentAssertions;
-using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
 public class CreateLaunchRecordTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Create_A_LaunchRecord()
     {
@@ -49,10 +51,4 @@ public class CreateLaunchRecordTests : HandleGrpcHostBase
 
         response.Id.Should().NotBeEmpty();
     }
-
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

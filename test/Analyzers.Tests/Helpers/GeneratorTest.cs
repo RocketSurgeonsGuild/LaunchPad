@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
-using Xunit.Abstractions;
 
 namespace Analyzers.Tests.Helpers;
 

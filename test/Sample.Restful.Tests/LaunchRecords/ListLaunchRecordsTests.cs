@@ -1,18 +1,20 @@
 ﻿#if NET6_0_OR_GREATER
-using Bogus;
-using FluentAssertions;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Restful.Client;
-using Xunit;
-using Xunit.Abstractions;
 using RocketType = Sample.Restful.Client.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class ListLaunchRecordsTests : HandleWebHostBase
+public class ListLaunchRecordsTests : HandleWebHostBase<Program>
 {
+    private static readonly Faker Faker = new();
+
+    public ListLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
+    {
+    }
+
     [Fact]
     public async Task Should_List_LaunchRecords()
     {
@@ -55,11 +57,5 @@ public class ListLaunchRecordsTests : HandleWebHostBase
         var response = await client.ListLaunchRecordsAsync(RocketType.FalconHeavy);
         response.Result.Should().HaveCount(3);
     }
-
-    public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }
 #endif

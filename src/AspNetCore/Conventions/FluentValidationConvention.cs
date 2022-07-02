@@ -1,25 +1,16 @@
-﻿using System.Net;
-using System.Reflection;
-using FluentValidation;
+﻿using System.Reflection;
 using FluentValidation.AspNetCore;
-using FluentValidation.Results;
 using FluentValidation.Validators;
-using Hellang.Middleware.ProblemDetails;
 using MicroElements.Swashbuckle.FluentValidation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Extensions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
-using ProblemDetailsException = Rocket.Surgery.LaunchPad.Foundation.ProblemDetailsException;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 

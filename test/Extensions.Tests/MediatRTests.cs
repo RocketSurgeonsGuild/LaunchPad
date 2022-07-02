@@ -1,6 +1,5 @@
 using System.Reflection;
 using FakeItEasy;
-using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +8,6 @@ using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests;
 

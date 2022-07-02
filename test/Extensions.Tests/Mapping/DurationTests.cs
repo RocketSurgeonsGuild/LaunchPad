@@ -1,9 +1,6 @@
 using System.Reflection;
 using AutoMapper;
-using FluentAssertions;
 using NodaTime;
-using Xunit;
-using Xunit.Abstractions;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 
@@ -11,6 +8,10 @@ namespace Extensions.Tests.Mapping;
 
 public class DurationTests : TypeConverterTest<DurationTests.Converters>
 {
+    public DurationTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -175,10 +176,6 @@ public class DurationTests : TypeConverterTest<DurationTests.Converters>
 
         var result = mapper.Map<Foo1>(foo).Bar;
         result.Should().Be(Duration.FromTicks((double)foo.Bar * NodaConstants.TicksPerMillisecond));
-    }
-
-    public DurationTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     [Theory]

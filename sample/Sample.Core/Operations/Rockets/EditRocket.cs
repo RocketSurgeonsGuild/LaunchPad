@@ -104,6 +104,10 @@ public static partial class EditRocket
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await GetRocket(request.Id, cancellationToken);
+            if (rocket == null)
+            {
+                throw new NotFoundException();
+            }
 
             _mapper.Map(request, rocket);
             _dbContext.Update(rocket);

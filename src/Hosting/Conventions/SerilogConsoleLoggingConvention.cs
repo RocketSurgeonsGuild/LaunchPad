@@ -1,12 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Hosting.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
-
-[assembly: Convention(typeof(SerilogConsoleLoggingConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
@@ -15,6 +12,8 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 ///     Implements the <see cref="ISerilogConvention" />
 /// </summary>
 /// <seealso cref="ISerilogConvention" />
+[PublicAPI]
+[ExportConvention]
 public sealed class SerilogConsoleLoggingConvention : ISerilogConvention
 {
     private readonly LaunchPadLoggingOptions _options;

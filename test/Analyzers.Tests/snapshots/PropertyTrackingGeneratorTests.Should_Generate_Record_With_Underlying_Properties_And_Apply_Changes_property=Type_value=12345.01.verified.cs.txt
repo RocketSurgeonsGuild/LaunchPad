@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 
+[System.Runtime.CompilerServices.CompilerGenerated]
 public partial record PatchRocket
 {
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<Guid> Id { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<Guid>.Empty(default);

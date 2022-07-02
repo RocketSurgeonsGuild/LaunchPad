@@ -1,14 +1,15 @@
 using AutoMapper;
-using FluentAssertions;
 using NodaTime;
 using NodaTime.Text;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests.Mapping;
 
 public class PeriodTests : TypeConverterTest<PeriodTests.Converters>
 {
+    public PeriodTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -41,10 +42,6 @@ public class PeriodTests : TypeConverterTest<PeriodTests.Converters>
 
         var result = mapper.Map<Foo1>(foo).Bar;
         result!.Should().Be(PeriodPattern.Roundtrip.Parse(foo.Bar).Value);
-    }
-
-    public PeriodTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     protected override void Configure(IMapperConfigurationExpression expression)

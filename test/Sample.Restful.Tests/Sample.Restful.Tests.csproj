@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\sample\Sample.Restful.Client\Sample.Restful.Client.csproj" />
       <ProjectReference Include="..\..\sample\Sample.Restful\Sample.Restful.csproj" />
+      <ProjectReference Include="..\..\sample\Sample.Classic.Restful\Sample.Classic.Restful.csproj" />
       <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
     </ItemGroup>
 </Project>

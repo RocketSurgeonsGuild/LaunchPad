@@ -1,18 +1,20 @@
-﻿using Bogus;
-using FluentAssertions;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
 public class ListLaunchRecordsTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_List_LaunchRecords()
     {
@@ -64,10 +66,4 @@ public class ListLaunchRecordsTests : HandleGrpcHostBase
 
         response.Should().HaveCount(3);
     }
-
-    public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

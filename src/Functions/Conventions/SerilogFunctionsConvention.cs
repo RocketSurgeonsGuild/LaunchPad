@@ -4,13 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Functions.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Extensions.Logging;
 using ILogger = Serilog.ILogger;
-
-[assembly: Convention(typeof(SerilogFunctionsConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Functions.Conventions;
 
@@ -19,6 +16,8 @@ namespace Rocket.Surgery.LaunchPad.Functions.Conventions;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 public class SerilogFunctionsConvention : IServiceConvention
 {
     private readonly LaunchPadLoggingOptions _options;
@@ -108,9 +107,9 @@ public class SerilogFunctionsConvention : IServiceConvention
                 }
             );
 
-            if (context.Get<ILoggerFactory>() != null)
+            if (context.Get<ILoggerFactory>() is { } loggerFactory)
             {
-                services.AddSingleton(context.Get<ILoggerFactory>());
+                services.AddSingleton(loggerFactory);
             }
         }
     }

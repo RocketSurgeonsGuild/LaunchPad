@@ -1,44 +1,33 @@
-﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Restful.Tests;
 
-[ImportConventions]
-public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
+public abstract partial class HandleWebHostBase<TProgramOrStartup> : LoggerTest, IAsyncLifetime, IClassFixture<TestWebHost<TProgramOrStartup>>
+    where TProgramOrStartup : class
 {
     protected HandleWebHostBase(
         ITestOutputHelper outputHelper,
+        TestWebHost<TProgramOrStartup> host,
         LogLevel logLevel = LogLevel.Trace
-    ) : base(
-        outputHelper,
-        logLevel,
-        "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
-    )
+    ) : base(outputHelper, logLevel)
     {
-        Factory = new TestWebHost()
-           .ConfigureLoggerFactory(LoggerFactory);
+        Factory = host;
     }
 
-    protected ConventionTestWebHost<Program> Factory { get; private set; }
+    protected TestWebHost<TProgramOrStartup> Factory { get; private set; }
     protected IServiceProvider ServiceProvider => Factory.Services;
 
     public async Task InitializeAsync()
     {
-        await Task.Yield();
-        await ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureDeletedAsync();
+        await ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureCreatedAsync();
     }
 
     public async Task DisposeAsync()
     {
-        await Factory.DisposeAsync();
+        await ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureDeletedAsync();
+        Factory.Reset();
     }
 }

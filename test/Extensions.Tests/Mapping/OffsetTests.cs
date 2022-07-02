@@ -1,13 +1,14 @@
 using AutoMapper;
-using FluentAssertions;
 using NodaTime;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests.Mapping;
 
 public class OffsetTests : TypeConverterTest<OffsetTests.Converters>
 {
+    public OffsetTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -40,10 +41,6 @@ public class OffsetTests : TypeConverterTest<OffsetTests.Converters>
 
         var result = mapper.Map<Foo1>(foo).Bar;
         result.Should().Be(Offset.FromTimeSpan(foo.Bar));
-    }
-
-    public OffsetTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     protected override void Configure(IMapperConfigurationExpression expression)

@@ -8,7 +8,14 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 public abstract class ProblemDetailsException : Exception, IProblemDetailsData
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
+    ///     Initializes a new instance of the <see cref="ProblemDetailsException" /> class.
+    /// </summary>
+    private ProblemDetailsException() : this("An problem occurred.")
+    {
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ProblemDetailsException" /> class.
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
     protected ProblemDetailsException(string message) : base(message)
@@ -16,7 +23,7 @@ public abstract class ProblemDetailsException : Exception, IProblemDetailsData
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
+    ///     Initializes a new instance of the <see cref="ProblemDetailsException" /> class.
     /// </summary>
     /// <param name="message">The error message that explains the reason for the exception.</param>
     /// <param name="innerException">

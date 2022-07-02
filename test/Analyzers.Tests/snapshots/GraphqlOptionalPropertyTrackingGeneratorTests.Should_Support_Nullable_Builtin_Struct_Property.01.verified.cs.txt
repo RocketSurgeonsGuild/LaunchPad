@@ -5,6 +5,7 @@ using NodaTime;
 
 namespace Sample.Core.Operations.Rockets
 {
+    [System.Runtime.CompilerServices.CompilerGenerated]
     public partial record PatchRocket
     {
         public HotChocolate.Optional<string?> SerialNumber { get; set; }

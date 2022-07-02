@@ -34,11 +34,11 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
     private static void ExtractParameterDetails(ActionModel action)
     {
         var requestParameter = action.Parameters.FirstOrDefault(
-                z => z.ParameterInfo?.ParameterType.GetInterfaces().Any(
+                z => z.ParameterInfo.ParameterType.GetInterfaces().Any(
                     i => i.IsGenericType &&
                          ( typeof(IRequest<>) == i.GetGenericTypeDefinition()
                         || typeof(IStreamRequest<>) == i.GetGenericTypeDefinition() )
-                ) == true
+                )
             )
             ;
         if (requestParameter is null) return;
@@ -179,7 +179,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
         if (_propertiesToHideFromOpenApi.TryGetValue(context.Type, out var propertiesToRemove))
         {
             foreach (var property in propertiesToRemove
-                                    .Join(schema.Properties, z => z, z => z.Key, (a, b) => b.Key, StringComparer.OrdinalIgnoreCase)
+                                    .Join(schema.Properties, z => z, z => z.Key, (_, b) => b.Key, StringComparer.OrdinalIgnoreCase)
                                     .ToArray())
             {
                 schema.Properties.Remove(property);

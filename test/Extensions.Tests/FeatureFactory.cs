@@ -63,42 +63,21 @@ internal class FeatureFactory
     public IAttributesTable CreateRandomAttributes(params (string, TypeCode)[] properties)
     {
         var res = new AttributesTable();
-        foreach (( var name, var type ) in properties)
+        foreach (var (name, type) in properties)
         {
-            object value = null;
-            switch (type)
+            var value = type switch
             {
-                case TypeCode.Boolean:
-                    value = _random.NextDouble() > 0.5d;
-                    break;
-                case TypeCode.Double:
-                    value = (decimal)( 500d * _random.NextDouble() );
-                    break;
-                case TypeCode.Single:
-                    value = 500f * (float)_random.NextDouble();
-                    break;
-                case TypeCode.Empty:
-                    value = null;
-                    break;
-                case TypeCode.Int16:
-                    value = (short)_random.Next(short.MinValue, short.MaxValue);
-                    break;
-                case TypeCode.Int32:
-                    value = _random.Next(int.MinValue, int.MaxValue);
-                    break;
-                case TypeCode.Int64:
-                    value = 5L * _random.Next(int.MinValue, int.MaxValue);
-                    break;
-                case TypeCode.String:
-                    value = RandomString();
-                    break;
-                case TypeCode.Object:
-                    value = Guid.NewGuid();
-                    break;
-                default:
-                    value = _random.NextDouble() > 0.5d ? RandomString() : null;
-                    break;
-            }
+                TypeCode.Boolean => _random.NextDouble() > 0.5d,
+                TypeCode.Double  => 500d * _random.NextDouble(),
+                TypeCode.Single  => 500f * (float)_random.NextDouble(),
+                TypeCode.Empty   => null,
+                TypeCode.Int16   => _random.Next(short.MinValue, short.MaxValue),
+                TypeCode.Int32   => _random.Next(int.MinValue, int.MaxValue),
+                TypeCode.Int64   => 5L * _random.Next(int.MinValue, int.MaxValue),
+                TypeCode.String  => RandomString(),
+                TypeCode.Object  => Guid.NewGuid(),
+                _                => _random.NextDouble() > 0.5d ? RandomString() : null
+            };
 
             res.Add(name, value);
         }
@@ -164,7 +143,7 @@ internal class FeatureFactory
         var ls = new LineSegment(start, end);
         var dz = ( end.Z - start.Z ) / ls.Length;
 
-        var cs = GF.CoordinateSequenceFactory.Create(pointsAt.Length + 2, threeD ? 3 : 2);
+        var cs = GF.CoordinateSequenceFactory.Create(pointsAt.Length + 2, threeD ? 3 : 2, 0);
         var j = 0;
         SetCoordinate(cs, j++, start);
         for (var i = 0; i < pointsAt.Length; i++)
@@ -197,7 +176,7 @@ internal class FeatureFactory
 
         var numHoles = _random.Next(1, 3);
         radius *= 0.3;
-        Geometry hole = null;
+        Geometry? hole = null;
         for (var i = 0; i < numHoles; i++)
         {
             centre = Move(centre, 2 * Math.PI * _random.NextDouble(), _random.NextDouble() * 1.5 * radius);

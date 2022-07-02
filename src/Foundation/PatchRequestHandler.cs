@@ -24,7 +24,7 @@ public abstract class PatchRequestHandler<TRequest, TPatch, TResponse> : IReques
     }
 
     /// <summary>
-    ///     Method used to get <see cref="TRequest" />, database calls, etc.
+    ///     Method used to get request database calls, etc.
     /// </summary>
     /// <param name="patchRequest"></param>
     /// <param name="cancellationToken"></param>

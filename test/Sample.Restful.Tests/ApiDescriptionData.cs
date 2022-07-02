@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Sample.Restful.Tests;
 
-internal class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
-    where T : WebApplicationFactory<Program>, new()
+internal class ApiDescriptionData<T, TProgramOrStartup> : TheoryData<ApiDescriptionData>
+    where TProgramOrStartup : class
+    where T : WebApplicationFactory<TProgramOrStartup>, new()
 {
     public ApiDescriptionData()
     {

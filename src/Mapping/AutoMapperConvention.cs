@@ -3,9 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.LaunchPad.Mapping;
-
-[assembly: Convention(typeof(AutoMapperConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Mapping;
 
@@ -14,6 +11,8 @@ namespace Rocket.Surgery.LaunchPad.Mapping;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 public class AutoMapperConvention : IServiceConvention
 {
     private readonly AutoMapperOptions _options;

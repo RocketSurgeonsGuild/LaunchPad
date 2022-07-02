@@ -5,11 +5,8 @@ using NodaTime;
 using NodaTime.TimeZones;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
-
-[assembly: Convention(typeof(NodaTimeConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -18,6 +15,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// </summary>
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
+[ExportConvention]
 public class NodaTimeConvention : IServiceConvention, ISerilogConvention
 {
     private readonly FoundationOptions _options;

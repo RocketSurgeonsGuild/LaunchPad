@@ -9,7 +9,6 @@ using NodaTime.Testing;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Spatial;
-using Serilog;
 using Serilog.Context;
 
 namespace Extensions.Tests;
@@ -94,8 +93,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_Instant()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", _clock.GetCurrentInstant());
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -104,8 +101,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_LocalDateTime()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", LocalDateTime.FromDateTime(_clock.GetCurrentInstant().ToDateTimeUtc()));
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -114,8 +109,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_LocalDate()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", LocalDate.FromDateTime(_clock.GetCurrentInstant().ToDateTimeUtc()));
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -124,8 +117,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_LocalTime()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", LocalTime.FromHoursSinceMidnight(4));
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -134,8 +125,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_OffsetDateTime()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()));
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -144,8 +133,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_OffsetDate()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()).ToOffsetDate());
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -154,8 +141,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_OffsetTime()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()).ToOffsetTime());
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -164,8 +149,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_ZonedDateTime()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", ZonedDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()));
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -174,8 +157,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_DateTimeZone()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", DateTimeZoneProviders.Tzdb["America/New_York"]);
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -184,8 +165,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_Duration()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", Duration.FromDays(1));
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -194,8 +173,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_Period()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", Period.FromDays(1));
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -204,8 +181,6 @@ public class SerilogDestructuringTests : LoggerTest
     [Fact]
     public async Task Should_Destructure_NodaTime_Interval()
     {
-        var faker = new Faker { Random = new Randomizer(17) };
-
         using var _ = CaptureLogs(out var logs);
         Logger.LogInformation("This is just a test {@Data}", new Interval(_clock.GetCurrentInstant(), _clock.GetCurrentInstant()));
         await Verify(logs.Select(z => z.RenderMessage()));

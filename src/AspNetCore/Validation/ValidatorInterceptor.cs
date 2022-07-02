@@ -19,7 +19,7 @@ internal class ValidatorInterceptor : IValidatorInterceptor
         {
             result = new ValidationResult(
                 result.Errors
-                      .Join(includeProperties, z => z.PropertyName, z => z, (a, b) => a, StringComparer.OrdinalIgnoreCase)
+                      .Join(includeProperties, z => z.PropertyName, z => z, (a, _) => a, StringComparer.OrdinalIgnoreCase)
             );
         }
 

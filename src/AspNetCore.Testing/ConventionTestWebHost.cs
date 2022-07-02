@@ -1,17 +1,13 @@
 using System.Diagnostics;
 using System.Reactive.Disposables;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.Hosting;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -19,39 +15,17 @@ using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
-[ExportConvention]
-public class HostingConvention : IHostingConvention, IServiceConvention
-{
-    public void Register(IConventionContext context, IHostBuilder builder)
-    {
-    }
-
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-    {
-    }
-}
-
 internal sealed class HostingListener : IObserver<DiagnosticListener>, IObserver<KeyValuePair<string, object?>>, IDisposable
 {
     private static readonly AsyncLocal<HostingListener> _currentListener = new();
-    private readonly List<Action<ConventionContextBuilder>> _hostBuilderActions = new();
     private readonly CompositeDisposable _disposable = new();
+    private ConventionTestHostOptions _options = new();
 
-    public void Attach()
+    public void Attach(ConventionTestHostOptions? options)
     {
+        _options = options ?? _options;
         _currentListener.Value = this;
         _disposable.Add(DiagnosticListener.AllListeners.Subscribe(this));
-    }
-
-    /// <summary>
-    ///     Add additional configuration to the Host
-    /// </summary>
-    /// <param name="action"></param>
-    /// <returns></returns>
-    public HostingListener ConfigureHostBuilder(Action<ConventionContextBuilder> action)
-    {
-        _hostBuilderActions.Add(action);
-        return this;
     }
 
     public void Dispose()
@@ -92,19 +66,39 @@ internal sealed class HostingListener : IObserver<DiagnosticListener>, IObserver
 
         if (value.Key == "HostBuilding")
         {
-            var builder = (IHostBuilder)value.Value!;
-            builder.ConfigureRocketSurgery(
-                z =>
-                {
-                    z.Set(HostType.UnitTest);
-                    z.IncludeConvention(typeof(HostingListener).Assembly);
-                    foreach (var item in _hostBuilderActions)
-                    {
-                        item(z);
-                    }
-                }
-            );
+            _options.SetupHostBuilder((IHostBuilder)value.Value!);
         }
+    }
+}
+
+internal class ConventionTestHostOptions
+{
+    private readonly List<Action<ConventionContextBuilder>> _hostBuilderActions = new();
+
+    public void SetupHostBuilder(IHostBuilder hostBuilder)
+    {
+        hostBuilder.ConfigureRocketSurgery(
+            z =>
+            {
+                z.Set(HostType.UnitTest);
+                z.IncludeConvention(typeof(HostingListener).Assembly);
+                foreach (var item in _hostBuilderActions)
+                {
+                    item(z);
+                }
+            }
+        );
+    }
+
+    /// <summary>
+    ///     Add additional configuration to the Host
+    /// </summary>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public ConventionTestHostOptions ConfigureHostBuilder(Action<ConventionContextBuilder> action)
+    {
+        _hostBuilderActions.Add(action);
+        return this;
     }
 }
 
@@ -116,17 +110,32 @@ internal sealed class HostingListener : IObserver<DiagnosticListener>, IObserver
 public class ConventionTestWebHost<TEntryPoint> : WebApplicationFactory<TEntryPoint>
     where TEntryPoint : class
 {
-    private HostingListener _listener = new HostingListener();
+    private readonly ConventionTestHostOptions _options = new();
+    private HostingListener _listener = new();
 
+    /// <inheritdoc />
     public ConventionTestWebHost()
     {
         ConfigureClock();
     }
 
+    /// <inheritdoc />
     protected override IHost CreateHost(IHostBuilder builder)
     {
-        _listener.Attach();
+        _listener.Attach(_options);
         return base.CreateHost(builder);
+    }
+
+    /// <inheritdoc />
+    protected override IHostBuilder? CreateHostBuilder()
+    {
+        var hostBuilder = base.CreateHostBuilder();
+        if (hostBuilder is { })
+        {
+            _options.SetupHostBuilder(hostBuilder);
+        }
+
+        return hostBuilder;
     }
 
     /// <summary>
@@ -204,7 +213,7 @@ public class ConventionTestWebHost<TEntryPoint> : WebApplicationFactory<TEntryPo
     /// <returns></returns>
     public ConventionTestWebHost<TEntryPoint> ConfigureHostBuilder(Action<ConventionContextBuilder> action)
     {
-        _listener.ConfigureHostBuilder(action);
+        _options.ConfigureHostBuilder(action);
         return this;
     }
 }

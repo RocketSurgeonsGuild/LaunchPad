@@ -2,9 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
-
-[assembly: Convention(typeof(DefaultConvention))]
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -13,6 +10,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 ///     Implements the <see cref="IServiceConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+[PublicAPI]
+[ExportConvention]
 public class DefaultConvention : IServiceConvention
 {
     /// <summary>

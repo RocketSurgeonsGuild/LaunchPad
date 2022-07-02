@@ -3,6 +3,7 @@
 using System;
 using NodaTime;
 
+[System.Runtime.CompilerServices.CompilerGenerated]
 public partial record PatchGraphRocket
 {
     public HotChocolate.Optional<Guid?> Id { get; set; }

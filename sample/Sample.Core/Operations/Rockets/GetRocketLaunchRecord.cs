@@ -55,7 +55,7 @@ public static class GetRocketLaunchRecord
                 throw new NotFoundException();
             }
 
-            var launchRecord = _dbContext.LaunchRecords.FindAsync(new object[] { request.LaunchRecordId }, cancellationToken);
+            var launchRecord = await _dbContext.LaunchRecords.FindAsync(new object[] { request.LaunchRecordId }, cancellationToken);
             if (launchRecord == null)
             {
                 throw new NotFoundException();

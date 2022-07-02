@@ -1,10 +1,7 @@
-using FluentAssertions;
 using Newtonsoft.Json;
 using NodaTime;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests;
 

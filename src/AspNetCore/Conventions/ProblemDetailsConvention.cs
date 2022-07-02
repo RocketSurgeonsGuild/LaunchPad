@@ -33,10 +33,10 @@ public class ProblemDetailsConvention : IServiceConvention
            .AddProblemDetailsConventions();
 
         services.AddOptions<ApiBehaviorOptions>()
-                .Configure(options => options.SuppressModelStateInvalidFilter = true);
+                .Configure(static options => options.SuppressModelStateInvalidFilter = true);
         services.AddOptions<ProblemDetailsOptions>()
                 .Configure<IOptions<ApiBehaviorOptions>>(
-                     (builder, apiBehaviorOptions) =>
+                     static (builder, apiBehaviorOptions) =>
                      {
                          var currentIncludeExceptionDetails = builder.IncludeExceptionDetails;
                          builder.IncludeExceptionDetails = (httpContext, exception) =>
@@ -58,16 +58,16 @@ public class ProblemDetailsConvention : IServiceConvention
 //                         builder.MapToProblemDetailsDataException<RequestFailedException>(StatusCodes.Status400BadRequest);
 //                         builder.MapToProblemDetailsDataException<NotAuthorizedException>(StatusCodes.Status403Forbidden);
                          builder.Map<ValidationException>(
-                             exception => new FluentValidationProblemDetails(exception.Errors)
+                             static exception => new FluentValidationProblemDetails(exception.Errors)
                              {
                                  Status = StatusCodes.Status422UnprocessableEntity
                              }
                          );
                          builder.Map<Exception>(
-                             (context, ex) => ex is not IProblemDetailsData && context.Items[typeof(ValidationResult)] is ValidationResult,
-                             (context, _) =>
+                             static (ctx, ex) => ex is not IProblemDetailsData && ctx.Items[typeof(ValidationResult)] is ValidationResult,
+                             static (ctx, _) =>
                              {
-                                 var result = context.Items[typeof(ValidationResult)] as ValidationResult;
+                                 var result = ctx.Items[typeof(ValidationResult)] as ValidationResult;
                                  return new FluentValidationProblemDetails(result!.Errors)
                                  {
                                      Status = StatusCodes.Status422UnprocessableEntity

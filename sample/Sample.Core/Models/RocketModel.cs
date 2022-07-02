@@ -7,6 +7,7 @@ namespace Sample.Core.Models;
 /// <summary>
 ///     Unique Id of a rocket
 /// </summary>
+#pragma warning disable CA1036
 [StronglyTypedId(
     StronglyTypedIdBackingType.Guid,
     StronglyTypedIdConverter.SystemTextJson | StronglyTypedIdConverter.EfCoreValueConverter | StronglyTypedIdConverter.TypeConverter
@@ -14,6 +15,7 @@ namespace Sample.Core.Models;
 public partial struct RocketId
 {
 }
+#pragma warning restore CA1036
 
 /// <summary>
 ///     The details of a given rocket

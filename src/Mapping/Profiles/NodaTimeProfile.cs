@@ -1,6 +1,5 @@
 using AutoMapper;
 using NodaTime;
-using NodaTime.Extensions;
 using NodaTime.Text;
 
 namespace Rocket.Surgery.LaunchPad.Mapping.Profiles;

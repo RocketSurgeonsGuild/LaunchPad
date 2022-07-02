@@ -1,25 +1,15 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Reflection;
-using HotChocolate;
-using HotChocolate.Configuration;
+﻿using System.Linq.Expressions;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
-using HotChocolate.Types;
-using HotChocolate.Types.Descriptors;
-using HotChocolate.Types.Descriptors.Definitions;
 using HotChocolate.Types.Pagination;
 using HotChocolate.Utilities;
 using MediatR;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
 using Sample.Core.Operations.Rockets;
-using Serilog;
 
 namespace Sample.Graphql;
 
@@ -55,14 +45,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // Should this move into an extension method?
-        app.UseSerilogRequestLogging(
-            x =>
-            {
-                x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
-                x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
-            }
-        );
+        app.UseLaunchPadRequestLogging();
         app.UseMetricsAllMiddleware();
 
         app.UseRouting();
@@ -131,25 +114,41 @@ public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunc
 public class RocketMutation
 {
     [UseServiceScope]
-    public Task<CreateRocket.Response> CreateRocket([Service] IMediator mediator, CancellationToken cancellationToken, CreateRocket.Request request)
+    public Task<CreateRocket.Response> CreateRocket(
+        [Service] IMediator mediator,
+        CreateRocket.Request request,
+        CancellationToken cancellationToken
+    )
     {
         return mediator.Send(request, cancellationToken);
     }
 
     [UseServiceScope]
-    public Task<RocketModel> EditRocket([Service] IMediator mediator, CancellationToken cancellationToken, EditRocket.Request request)
+    public Task<RocketModel> EditRocket(
+        [Service] IMediator mediator,
+        EditRocket.Request request,
+        CancellationToken cancellationToken
+    )
     {
         return mediator.Send(request, cancellationToken);
     }
 
     [UseServiceScope]
-    public Task<RocketModel> PatchRocket([Service] IMediator mediator, CancellationToken cancellationToken, EditRocketPatchRequest request)
+    public Task<RocketModel> PatchRocket(
+        [Service] IMediator mediator,
+        EditRocketPatchRequest request,
+        CancellationToken cancellationToken
+    )
     {
         return mediator.Send(request.Create(), cancellationToken);
     }
 
     [UseServiceScope]
-    public Task<Unit> DeleteRocket([Service] IMediator mediator, CancellationToken cancellationToken, DeleteRocket.Request request)
+    public Task<Unit> DeleteRocket(
+        [Service] IMediator mediator,
+        DeleteRocket.Request request,
+        CancellationToken cancellationToken
+    )
     {
         return mediator.Send(request, cancellationToken);
     }
@@ -160,26 +159,40 @@ public class LaunchRecordMutation
 {
     [UseServiceScope]
     public Task<CreateLaunchRecord.Response> CreateLaunchRecord(
-        [Service] IMediator mediator, CancellationToken cancellationToken, CreateLaunchRecord.Request request
+        [Service] IMediator mediator,
+        CreateLaunchRecord.Request request,
+        CancellationToken cancellationToken
     )
     {
         return mediator.Send(request, cancellationToken);
     }
 
     [UseServiceScope]
-    public Task<LaunchRecordModel> EditLaunchRecord([Service] IMediator mediator, CancellationToken cancellationToken, EditLaunchRecord.Request request)
+    public Task<LaunchRecordModel> EditLaunchRecord(
+        [Service] IMediator mediator,
+        EditLaunchRecord.Request request,
+        CancellationToken cancellationToken
+    )
     {
         return mediator.Send(request, cancellationToken);
     }
 
     [UseServiceScope]
-    public Task<LaunchRecordModel> PatchLaunchRecord([Service] IMediator mediator, CancellationToken cancellationToken, EditLaunchRecordPatchRequest request)
+    public Task<LaunchRecordModel> PatchLaunchRecord(
+        [Service] IMediator mediator,
+        EditLaunchRecordPatchRequest request,
+        CancellationToken cancellationToken
+    )
     {
         return mediator.Send(request.Create(), cancellationToken);
     }
 
     [UseServiceScope]
-    public Task<Unit> DeleteLaunchRecord([Service] IMediator mediator, CancellationToken cancellationToken, DeleteLaunchRecord.Request request)
+    public Task<Unit> DeleteLaunchRecord(
+        [Service] IMediator mediator,
+        DeleteLaunchRecord.Request request,
+        CancellationToken cancellationToken
+    )
     {
         return mediator.Send(request, cancellationToken);
     }
@@ -191,7 +204,7 @@ public class QueryType : ObjectTypeExtension<Query>
     protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
     {
         descriptor
-           .Field(t => t.GetLaunchRecords(default))
+           .Field(t => t.GetLaunchRecords(default!))
            .UsePaging<NonNullType<ObjectType<LaunchRecord>>>(
                 options: new PagingOptions
                 {
@@ -212,7 +225,7 @@ public class QueryType : ObjectTypeExtension<Query>
            .UseFiltering()
            .UseSorting<LaunchRecordSort>();
         descriptor
-           .Field(t => t.GetRockets(default))
+           .Field(t => t.GetRockets(default!))
            .UsePaging<NonNullType<ObjectType<ReadyRocket>>>(
                 options: new PagingOptions
                 {

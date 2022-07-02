@@ -53,7 +53,6 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         var parameterType = (INamedTypeSymbol)parameter.Type;
         var isUnit = parameterType.AllInterfaces.Any(z => z.MetadataName == "IRequest");
         var isUnitResult = symbol.ReturnType is INamedTypeSymbol { Arity: 1 } nts && nts.TypeArguments[0].MetadataName == "ActionResult";
-        var isRecord = parameterType.IsRecord;
         var isStream = symbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
 
         var newSyntax = syntax
@@ -80,7 +79,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             var declaredParam = newSyntax.ParameterList.Parameters.Single(z => z.Identifier.Text == parameter.Name);
             var parameterProperties = parameterType.MemberNames
                                                    .Join(
-                                                        otherParams, z => z, z => z.Name, (memberName, symbol) => ( memberName, symbol ),
+                                                        otherParams, z => z, z => z.Name, (memberName, s) => ( memberName, symbol: s ),
                                                         StringComparer.OrdinalIgnoreCase
                                                     )
                                                    .ToArray();
@@ -243,10 +242,10 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                                              Key: "StatusCode", Value: { Kind: TypedConstantKind.Primitive, Value: int }
                                                                          }
                                                                      )
-                                                                    .Select(z => (int)z.Value.Value!);
+                                                                    .Select(c => (int)c.Value.Value!);
                                               var constructorArguments = z
-                                                                        .ConstructorArguments.Where(z => z is { Kind: TypedConstantKind.Primitive, Value: int })
-                                                                        .Select(z => (int)z.Value!);
+                                                                        .ConstructorArguments.Where(c => c is { Kind: TypedConstantKind.Primitive, Value: int })
+                                                                        .Select(c => (int)c.Value!);
 
                                               return namedArguments.Concat(constructorArguments);
                                           }
@@ -373,7 +372,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             (MethodDeclarationSyntax method, IMethodSymbol symbol, IRestfulApiMethodMatcher? matcher, IParameterSymbol? request) relatedMember
         )
         {
-            var parameterNames = relatedMember.symbol.Parameters.Remove(relatedMember.request).Select(z => z.Name);
+            var parameterNames = relatedMember.symbol.Parameters.Remove(relatedMember.request!).Select(z => z.Name);
             parameterNames = parameterNames.Concat(
                 relatedMember.request?.Type.GetMembers()
                              .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false } ps && ps.Name != "EqualityContract")
@@ -626,7 +625,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                      var streamRequest = methodSymbol.Parameters.FirstOrDefault(
                                          p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
                                      );
-                                     return ( method, symbol: methodSymbol!, matcher, request: request ?? streamRequest );
+                                     return ( method, symbol: methodSymbol, matcher, request: request ?? streamRequest );
                                  }
                              )
                             .Where(z => z is { symbol: { }, method: { } })
@@ -713,15 +712,20 @@ using System;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
+    [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
-    class CreatedAttribute : Attribute
+    sealed class CreatedAttribute : Attribute
     {
-        public CreatedAttribute(string methodName){}
+        public CreatedAttribute(string methodName){ MethodName = methodName; }
+        public string MethodName { get; }
     }
+
+    [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
-    class AcceptedAttribute : Attribute
+    sealed class AcceptedAttribute : Attribute
     {
-        public AcceptedAttribute(string methodName){}
+        public AcceptedAttribute(string methodName){ MethodName = methodName; }
+        public string MethodName { get; }
     }
 }"
                 );

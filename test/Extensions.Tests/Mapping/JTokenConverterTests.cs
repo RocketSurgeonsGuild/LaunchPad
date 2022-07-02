@@ -1,15 +1,16 @@
 ﻿using System.Text;
 using AutoMapper;
-using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests.Mapping;
 
 public class JTokenConverterTests : TypeConverterTest
 {
+    public JTokenConverterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ShouldMap_StringValue_To_JObject()
     {
@@ -552,10 +553,6 @@ public class JTokenConverterTests : TypeConverterTest
         result.Bar!.Type.Should().Be(JTokenType.Null);
     }
 
-    public JTokenConverterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Theory]
     [ClassData(typeof(ShouldNotMap_StringValue_To_JObject_Data))]
     public void ShouldNotMap_StringValue_To_JObject(string value)
@@ -568,17 +565,6 @@ public class JTokenConverterTests : TypeConverterTest
         a.Should().Throw<AutoMapperMappingException>();
     }
 
-    private class ShouldNotMap_StringValue_To_JObject_Data : TheoryData<string>
-    {
-        public ShouldNotMap_StringValue_To_JObject_Data()
-        {
-            Add("[]");
-            Add("[1234]");
-            Add("1234");
-            Add("\"1234\"");
-        }
-    }
-
     [Theory]
     [ClassData(typeof(ShouldNotMap_StringValue_To_JArray_Data))]
     public void ShouldNotMap_StringValue_To_JArray(string value)
@@ -589,17 +575,6 @@ public class JTokenConverterTests : TypeConverterTest
         };
         Action a = () => Mapper.Map<JArrayA>(item);
         a.Should().Throw<AutoMapperMappingException>();
-    }
-
-    private class ShouldNotMap_StringValue_To_JArray_Data : TheoryData<string>
-    {
-        public ShouldNotMap_StringValue_To_JArray_Data()
-        {
-            Add("{}");
-            Add("{\"a\":1234}");
-            Add("1234");
-            Add("\"1234\"");
-        }
     }
 
 
@@ -663,17 +638,6 @@ public class JTokenConverterTests : TypeConverterTest
         a.Should().Throw<AutoMapperMappingException>();
     }
 
-    private class ShouldNotMap_ByteArray_To_JObject_Data : TheoryData<byte[]>
-    {
-        public ShouldNotMap_ByteArray_To_JObject_Data()
-        {
-            Add(Encoding.UTF8.GetBytes("[]"));
-            Add(Encoding.UTF8.GetBytes("[1234]"));
-            Add(Encoding.UTF8.GetBytes("1234"));
-            Add(Encoding.UTF8.GetBytes("\"1234\""));
-        }
-    }
-
     [Theory]
     [ClassData(typeof(ShouldNotMap_ByteArray_To_JArray_Data))]
     public void ShouldNotMap_ByteArray_To_JArray(byte[] value)
@@ -684,17 +648,6 @@ public class JTokenConverterTests : TypeConverterTest
         };
         Action a = () => Mapper.Map<JArrayA>(item);
         a.Should().Throw<AutoMapperMappingException>();
-    }
-
-    private class ShouldNotMap_ByteArray_To_JArray_Data : TheoryData<byte[]>
-    {
-        public ShouldNotMap_ByteArray_To_JArray_Data()
-        {
-            Add(Encoding.UTF8.GetBytes("{}"));
-            Add(Encoding.UTF8.GetBytes("{\"a\":1234}"));
-            Add(Encoding.UTF8.GetBytes("1234"));
-            Add(Encoding.UTF8.GetBytes("\"1234\""));
-        }
     }
 
     [Theory]
@@ -788,6 +741,50 @@ public class JTokenConverterTests : TypeConverterTest
         expression.CreateMap<ByteArray, JObjectA>().ReverseMap();
         expression.CreateMap<StringValue, JArrayA>().ReverseMap();
         expression.CreateMap<ByteArray, JArrayA>().ReverseMap();
+    }
+
+    private class ShouldNotMap_StringValue_To_JObject_Data : TheoryData<string>
+    {
+        public ShouldNotMap_StringValue_To_JObject_Data()
+        {
+            Add("[]");
+            Add("[1234]");
+            Add("1234");
+            Add("\"1234\"");
+        }
+    }
+
+    private class ShouldNotMap_StringValue_To_JArray_Data : TheoryData<string>
+    {
+        public ShouldNotMap_StringValue_To_JArray_Data()
+        {
+            Add("{}");
+            Add("{\"a\":1234}");
+            Add("1234");
+            Add("\"1234\"");
+        }
+    }
+
+    private class ShouldNotMap_ByteArray_To_JObject_Data : TheoryData<byte[]>
+    {
+        public ShouldNotMap_ByteArray_To_JObject_Data()
+        {
+            Add(Encoding.UTF8.GetBytes("[]"));
+            Add(Encoding.UTF8.GetBytes("[1234]"));
+            Add(Encoding.UTF8.GetBytes("1234"));
+            Add(Encoding.UTF8.GetBytes("\"1234\""));
+        }
+    }
+
+    private class ShouldNotMap_ByteArray_To_JArray_Data : TheoryData<byte[]>
+    {
+        public ShouldNotMap_ByteArray_To_JArray_Data()
+        {
+            Add(Encoding.UTF8.GetBytes("{}"));
+            Add(Encoding.UTF8.GetBytes("{\"a\":1234}"));
+            Add(Encoding.UTF8.GetBytes("1234"));
+            Add(Encoding.UTF8.GetBytes("\"1234\""));
+        }
     }
 
     private class ByteArray

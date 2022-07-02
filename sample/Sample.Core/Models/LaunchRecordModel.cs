@@ -8,6 +8,7 @@ namespace Sample.Core.Models;
 /// <summary>
 ///     Unique Id of a launch record
 /// </summary>
+#pragma warning disable CA1036
 [StronglyTypedId(
     StronglyTypedIdBackingType.Guid,
     StronglyTypedIdConverter.SystemTextJson | StronglyTypedIdConverter.EfCoreValueConverter | StronglyTypedIdConverter.TypeConverter
@@ -15,6 +16,7 @@ namespace Sample.Core.Models;
 public partial struct LaunchRecordId
 {
 }
+#pragma warning restore CA1036
 
 /// <summary>
 ///     The launch record details

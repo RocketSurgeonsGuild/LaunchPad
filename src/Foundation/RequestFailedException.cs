@@ -8,7 +8,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 /// </remarks>
 /// <seealso cref="System.Exception" />
 [PublicAPI]
-public class RequestFailedException : ProblemDetailsException, IProblemDetailsData
+public class RequestFailedException : ProblemDetailsException
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="RequestFailedException" /> class.

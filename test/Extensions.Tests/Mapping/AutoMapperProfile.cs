@@ -1,9 +1,6 @@
 using AutoMapper;
-using FluentAssertions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Mapping;
-using Xunit;
-using Xunit.Abstractions;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 
@@ -53,6 +50,10 @@ public static class AutoMapperProfile
 
     public class OnlyDefinedPropertiesTests : AutoFakeTest
     {
+        public OnlyDefinedPropertiesTests(ITestOutputHelper outputHelper) : base(outputHelper)
+        {
+        }
+
         [Fact]
         public void ConfigurationIsValid()
         {
@@ -189,10 +190,6 @@ public static class AutoMapperProfile
             destination.Child.Decimal.Should().Be(13.37M);
             destination.Child.NullableDecimal.Should().Be(2.2M);
             destination.Child.String.Should().Be("123");
-        }
-
-        public OnlyDefinedPropertiesTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
         }
 
         private class MyProfile : Profile
