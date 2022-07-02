@@ -25,9 +25,9 @@ public abstract partial class HandleWebHostBase<TProgramOrStartup> : LoggerTest,
         await ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureCreatedAsync();
     }
 
-    public Task DisposeAsync()
+    public async Task DisposeAsync()
     {
+        await ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureDeletedAsync();
         Factory.Reset();
-        return Task.CompletedTask;
     }
 }
