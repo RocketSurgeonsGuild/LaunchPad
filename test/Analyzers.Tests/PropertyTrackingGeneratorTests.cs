@@ -1,7 +1,6 @@
 using Analyzers.Tests.Helpers;
 using DryIoc.ImTools;
 using MediatR;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -238,7 +237,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
         var result = await GenerateAsync(source);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        result.TryGetResult<PropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -262,7 +261,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
         var result = await GenerateAsync(source);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        result.TryGetResult<PropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }

@@ -30,7 +30,8 @@ public class RocketDbContext : LpContext<RocketDbContext>
 
 public class StronglyTypedIdValueConverterSelector : ValueConverterSelector
 {
-    private static Type UnwrapNullableType(Type type)
+    [return: NotNullIfNotNull("type")]
+    private static Type? UnwrapNullableType(Type? type)
     {
         if (type is null)
         {
@@ -48,7 +49,7 @@ public class StronglyTypedIdValueConverterSelector : ValueConverterSelector
     {
     }
 
-    public override IEnumerable<ValueConverterInfo> Select(Type modelClrType, Type providerClrType = null)
+    public override IEnumerable<ValueConverterInfo> Select(Type modelClrType, Type? providerClrType = null)
     {
         var baseConverters = base.Select(modelClrType, providerClrType);
         foreach (var converter in baseConverters)
@@ -63,18 +64,18 @@ public class StronglyTypedIdValueConverterSelector : ValueConverterSelector
         // 'null' means 'get any value converters for the modelClrType'
         if (underlyingProviderType is null || underlyingProviderType == typeof(Guid))
         {
-            // Try and get a nested class with the expected name. 
+            // Try and get a nested class with the expected name.
             var converterType = underlyingModelType.GetNestedType("EfCoreValueConverter");
 
             if (converterType != null)
             {
                 yield return _converters.GetOrAdd(
                     ( underlyingModelType, typeof(Guid) ),
-                    k =>
+                    _ =>
                     {
                         // Create an instance of the converter whenever it's requested.
                         Func<ValueConverterInfo, ValueConverter> factory =
-                            info => (ValueConverter)Activator.CreateInstance(converterType, info.MappingHints);
+                            info => (ValueConverter)Activator.CreateInstance(converterType, info.MappingHints)!;
 
                         // Build the info for our strongly-typed ID => Guid converter
                         return new ValueConverterInfo(modelClrType, typeof(Guid), factory);

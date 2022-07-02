@@ -1,17 +1,19 @@
-﻿using Bogus;
-using FluentAssertions;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
 public class UpdateRocketTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Update_A_Rocket()
     {
@@ -48,12 +50,6 @@ public class UpdateRocketTests : HandleGrpcHostBase
         // response.Type.Should().Be(RocketType.FalconHeavy);
         // response.Sn.Should().Be("43210987654321");
     }
-
-    public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]

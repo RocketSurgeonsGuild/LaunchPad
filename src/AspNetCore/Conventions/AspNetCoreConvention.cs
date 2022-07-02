@@ -1,6 +1,4 @@
 using System.Reflection;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
@@ -80,6 +78,17 @@ public class AspNetCoreConvention : IServiceConvention
         }
     }
 
+    private readonly AspNetCoreOptions _options;
+
+    /// <summary>
+    ///     Builds the aspnet core convention
+    /// </summary>
+    /// <param name="options"></param>
+    public AspNetCoreConvention(AspNetCoreOptions? options = null)
+    {
+        _options = options ?? new AspNetCoreOptions();
+    }
+
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -104,6 +113,7 @@ public class AspNetCoreConvention : IServiceConvention
             GetServiceFromCollection<ApplicationPartManager>(services)!,
             context.AssemblyCandidateFinder
                    .GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore")
+                   .Where(_options.AssemblyPartFilter)
                    .SelectMany(GetApplicationPartAssemblies)
         );
 

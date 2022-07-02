@@ -1,11 +1,8 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Testing;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests;
 

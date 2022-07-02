@@ -1,9 +1,6 @@
 using System.Reflection;
 using AutoMapper;
-using FluentAssertions;
 using NodaTime;
-using Xunit;
-using Xunit.Abstractions;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 
@@ -11,6 +8,10 @@ namespace Extensions.Tests.Mapping;
 
 public class LocalDateTimeTests : TypeConverterTest<LocalDateTimeTests.Converters>
 {
+    public LocalDateTimeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -43,10 +44,6 @@ public class LocalDateTimeTests : TypeConverterTest<LocalDateTimeTests.Converter
 
         var result = mapper.Map<Foo1>(foo).Bar;
         result.Should().Be(LocalDateTime.FromDateTime(foo.Bar));
-    }
-
-    public LocalDateTimeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     [Theory]

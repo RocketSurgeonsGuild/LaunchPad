@@ -1,15 +1,16 @@
 ﻿using System.Text;
 using System.Text.Json;
 using AutoMapper;
-using FluentAssertions;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests.Mapping;
 
 public class JsonElementConverterTests : TypeConverterTest
 {
+    public JsonElementConverterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ShouldMap_StringValue_To_JsonElement_From_Null()
     {
@@ -358,10 +359,6 @@ public class JsonElementConverterTests : TypeConverterTest
 
         result.Bar.Should().NotBeNull();
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
-    }
-
-    public JsonElementConverterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     [Theory]

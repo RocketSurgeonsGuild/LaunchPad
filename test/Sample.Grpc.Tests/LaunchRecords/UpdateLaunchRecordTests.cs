@@ -1,6 +1,4 @@
-﻿using Bogus;
-using FluentAssertions;
-using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Extensions;
@@ -8,8 +6,6 @@ using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using Duration = NodaTime.Duration;
 using LR = Sample.Grpc.LaunchRecords;
 
@@ -17,6 +13,12 @@ namespace Sample.Grpc.Tests.LaunchRecords;
 
 public class UpdateLaunchRecordTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
@@ -67,10 +69,4 @@ public class UpdateLaunchRecordTests : HandleGrpcHostBase
         response.ScheduledLaunchDate.Should().Be(( record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1) ).ToDateTimeOffset().ToTimestamp());
         response.PayloadWeightKg.Should().Be(200);
     }
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

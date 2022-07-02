@@ -5,13 +5,22 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
 public class CustomMessageHandlerIntegrationTest : LoggerTest, IClassFixture<TestWebHost>
 {
+    private readonly ConventionTestWebHost<Startup> _factory;
+
+    public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+    {
+        _factory = factory
+                  .ConfigureLoggerFactory(LoggerFactory)
+                  .ConfigureHostBuilder(
+                       options => options.ConfigureServices(services => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
+                   );
+    }
+
     [Fact]
     public async Task Should_ThrowInvalidArgument_When_NameOfMessageIsEmpty()
     {
@@ -34,17 +43,6 @@ public class CustomMessageHandlerIntegrationTest : LoggerTest, IClassFixture<Tes
         Assert.Equal(StatusCode.InvalidArgument, rpcException.Status.StatusCode);
         Assert.Equal("Validation Error!", rpcException.Status.Detail);
     }
-
-    public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
-    {
-        _factory = factory
-                  .ConfigureLoggerFactory(LoggerFactory)
-                  .ConfigureHostBuilder(
-                       options => options.ConfigureServices(services => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
-                   );
-    }
-
-    private readonly ConventionTestWebHost<Startup> _factory;
 
     private class CustomMessageHandler : IValidatorErrorMessageHandler
     {

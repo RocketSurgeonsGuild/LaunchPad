@@ -1,18 +1,20 @@
-﻿using Bogus;
-using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Restful.Client;
-using Xunit;
-using Xunit.Abstractions;
 using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests : HandleWebHostBase
+public class CreateLaunchRecordTests : HandleWebHostBase<Program>
 {
+    private static readonly Faker Faker = new();
+
+    public CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
+    {
+    }
+
     [Fact]
     public async Task Should_Create_A_LaunchRecord()
     {
@@ -48,10 +50,4 @@ public class CreateLaunchRecordTests : HandleWebHostBase
 
         response.Result.Id.Should().NotBeEmpty();
     }
-
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

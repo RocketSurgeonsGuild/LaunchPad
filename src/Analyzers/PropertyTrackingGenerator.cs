@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -347,7 +346,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                  )
                              )
                             .Select(
-                                 (tuple, token) =>
+                                 (tuple, _) =>
                                  {
                                      var interfaceSymbol = tuple.symbol
                                                                 .Interfaces.FirstOrDefault(

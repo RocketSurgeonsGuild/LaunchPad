@@ -6,7 +6,6 @@ using NodaTime;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Core.Operations.Rockets;
 
 namespace Sample.Core.Operations.LaunchRecords;
 

@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;

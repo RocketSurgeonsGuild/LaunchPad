@@ -1,15 +1,16 @@
 ﻿using System.Text.Json;
 using AutoMapper;
-using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests.Mapping;
 
 public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
 {
+    public SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -280,10 +281,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
     }
 
-    public SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Theory]
     [InlineData("{}", typeof(JObject))]
     [InlineData("[]", typeof(JArray))]
@@ -309,16 +306,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         var result = Mapper.Map<JsonElementA>(item);
         result.Bar.Should().NotBeNull();
         result.Bar!.Value.ValueKind.Should().Be(kind);
-    }
-
-    public class ShouldMap_From_JToken_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
-    {
-        public ShouldMap_From_JToken_To_Nullable_JsonElement_Data()
-        {
-            Add("{}", JsonValueKind.Object);
-            Add("[]", JsonValueKind.Array);
-            Add("null", JsonValueKind.Null);
-        }
     }
 
     [Theory]
@@ -347,16 +334,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         result.Bar.ValueKind.Should().Be(kind);
     }
 
-    public class ShouldMap_From_JToken_To_JsonElement_Data : TheoryData<string, JsonValueKind>
-    {
-        public ShouldMap_From_JToken_To_JsonElement_Data()
-        {
-            Add("{}", JsonValueKind.Object);
-            Add("[]", JsonValueKind.Array);
-            Add("null", JsonValueKind.Null);
-        }
-    }
-
 
     [Theory]
     [InlineData("[]", typeof(JArray))]
@@ -383,14 +360,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         result.Bar!.Value.ValueKind.Should().Be(kind);
     }
 
-    public class ShouldMap_From_JArray_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
-    {
-        public ShouldMap_From_JArray_To_Nullable_JsonElement_Data()
-        {
-            Add("[]", JsonValueKind.Array);
-        }
-    }
-
     [Theory]
     [InlineData("[]", typeof(JArray))]
     public void ShouldMap_From_JsonElement_To_JArray(string json, Type type)
@@ -413,14 +382,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         };
         var result = Mapper.Map<JsonElementB>(item);
         result.Bar.ValueKind.Should().Be(kind);
-    }
-
-    public class ShouldMap_From_JArray_To_JsonElement_Data : TheoryData<string, JsonValueKind>
-    {
-        public ShouldMap_From_JArray_To_JsonElement_Data()
-        {
-            Add("[]", JsonValueKind.Array);
-        }
     }
 
 
@@ -449,14 +410,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         result.Bar!.Value.ValueKind.Should().Be(kind);
     }
 
-    public class ShouldMap_From_JObject_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
-    {
-        public ShouldMap_From_JObject_To_Nullable_JsonElement_Data()
-        {
-            Add("{}", JsonValueKind.Object);
-        }
-    }
-
     [Theory]
     [InlineData("{}", typeof(JObject))]
     public void ShouldMap_From_JsonElement_To_JObject(string json, Type type)
@@ -481,14 +434,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         result.Bar.ValueKind.Should().Be(kind);
     }
 
-    public class ShouldMap_From_JObject_To_JsonElement_Data : TheoryData<string, JsonValueKind>
-    {
-        public ShouldMap_From_JObject_To_JsonElement_Data()
-        {
-            Add("{}", JsonValueKind.Object);
-        }
-    }
-
     [Theory]
     [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data))]
     public void ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element(JsonElement? element)
@@ -499,17 +444,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         };
         Action a = () => Mapper.Map<JObjectA>(item);
         a.Should().Throw<AutoMapperMappingException>();
-    }
-
-    private class ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement?>
-    {
-        public ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data()
-        {
-            Add(JsonDocument.Parse("[1234]").RootElement);
-            Add(JsonDocument.Parse("null").RootElement);
-            Add(JsonDocument.Parse("1234").RootElement);
-            Add(JsonDocument.Parse("\"1234\"").RootElement);
-        }
     }
 
     [Theory]
@@ -524,17 +458,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         a.Should().Throw<AutoMapperMappingException>();
     }
 
-    private class ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement>
-    {
-        public ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data()
-        {
-            Add(JsonDocument.Parse("[1234]").RootElement);
-            Add(JsonDocument.Parse("null").RootElement);
-            Add(JsonDocument.Parse("1234").RootElement);
-            Add(JsonDocument.Parse("\"1234\"").RootElement);
-        }
-    }
-
     [Theory]
     [ClassData(typeof(ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data))]
     public void ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element(JsonElement? element)
@@ -545,17 +468,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         };
         Action a = () => Mapper.Map<JArrayA>(item);
         a.Should().Throw<AutoMapperMappingException>();
-    }
-
-    private class ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement?>
-    {
-        public ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data()
-        {
-            Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
-            Add(JsonDocument.Parse("null").RootElement);
-            Add(JsonDocument.Parse("1234").RootElement);
-            Add(JsonDocument.Parse("\"1234\"").RootElement);
-        }
     }
 
     [Theory]
@@ -570,17 +482,6 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         a.Should().Throw<AutoMapperMappingException>();
     }
 
-    private class ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement>
-    {
-        public ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data()
-        {
-            Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
-            Add(JsonDocument.Parse("null").RootElement);
-            Add(JsonDocument.Parse("1234").RootElement);
-            Add(JsonDocument.Parse("\"1234\"").RootElement);
-        }
-    }
-
     protected override void Configure(IMapperConfigurationExpression expression)
     {
         expression.AddProfile(new NewtonsoftJsonProfile());
@@ -591,6 +492,102 @@ public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
         expression.CreateMap<JsonElementB, JObjectA>().ReverseMap();
         expression.CreateMap<JsonElementA, JArrayA>().ReverseMap();
         expression.CreateMap<JsonElementB, JArrayA>().ReverseMap();
+    }
+
+    public class ShouldMap_From_JToken_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JToken_To_Nullable_JsonElement_Data()
+        {
+            Add("{}", JsonValueKind.Object);
+            Add("[]", JsonValueKind.Array);
+            Add("null", JsonValueKind.Null);
+        }
+    }
+
+    public class ShouldMap_From_JToken_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JToken_To_JsonElement_Data()
+        {
+            Add("{}", JsonValueKind.Object);
+            Add("[]", JsonValueKind.Array);
+            Add("null", JsonValueKind.Null);
+        }
+    }
+
+    public class ShouldMap_From_JArray_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JArray_To_Nullable_JsonElement_Data()
+        {
+            Add("[]", JsonValueKind.Array);
+        }
+    }
+
+    public class ShouldMap_From_JArray_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JArray_To_JsonElement_Data()
+        {
+            Add("[]", JsonValueKind.Array);
+        }
+    }
+
+    public class ShouldMap_From_JObject_To_Nullable_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JObject_To_Nullable_JsonElement_Data()
+        {
+            Add("{}", JsonValueKind.Object);
+        }
+    }
+
+    public class ShouldMap_From_JObject_To_JsonElement_Data : TheoryData<string, JsonValueKind>
+    {
+        public ShouldMap_From_JObject_To_JsonElement_Data()
+        {
+            Add("{}", JsonValueKind.Object);
+        }
+    }
+
+    private class ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement?>
+    {
+        public ShouldNotMap_From_Nullable_JsonElement_To_JObject_Given_Invalid_Element_Data()
+        {
+            Add(JsonDocument.Parse("[1234]").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
+        }
+    }
+
+    private class ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data : TheoryData<JsonElement>
+    {
+        public ShouldNotMap_From_JsonElement_To_JObject_Given_Invalid_Element_Data()
+        {
+            Add(JsonDocument.Parse("[1234]").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
+        }
+    }
+
+    private class ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement?>
+    {
+        public ShouldNotMap_From_Nullable_JsonElement_To_JArray_Given_Invalid_Element_Data()
+        {
+            Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
+        }
+    }
+
+    private class ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data : TheoryData<JsonElement>
+    {
+        public ShouldNotMap_From_JsonElement_To_JArray_Given_Invalid_Element_Data()
+        {
+            Add(JsonDocument.Parse("{\"a\": \"123\"}").RootElement);
+            Add(JsonDocument.Parse("null").RootElement);
+            Add(JsonDocument.Parse("1234").RootElement);
+            Add(JsonDocument.Parse("\"1234\"").RootElement);
+        }
     }
 
     private class JsonElementA

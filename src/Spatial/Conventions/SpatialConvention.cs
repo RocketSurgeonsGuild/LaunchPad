@@ -7,7 +7,6 @@ using NetTopologySuite.Geometries;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Serilog;
-using Rocket.Surgery.LaunchPad.Spatial.Conventions;
 using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;

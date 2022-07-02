@@ -1,7 +1,5 @@
 using System.Reflection;
 using Hellang.Middleware.ProblemDetails;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics;

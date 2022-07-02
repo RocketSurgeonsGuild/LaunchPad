@@ -44,25 +44,6 @@ public static class FluentValidationExtensions
     }
 
     /// <summary>
-    ///     Uses the polymorphic validator.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TProperty">The type of the t property.</typeparam>
-    /// <param name="builder">The builder.</param>
-    /// <returns>IRuleBuilderOptions{T, TProperty}.</returns>
-    public static IRuleBuilderOptions<T, TProperty> UsePolymorphicValidator<T, TProperty>(
-        this IRuleBuilder<T, TProperty> builder
-    )
-    {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        return builder.SetAsyncValidator(new PolymorphicPropertyValidator<T, TProperty>());
-    }
-
-    /// <summary>
     ///     Get a fluent validation validator if defined.
     /// </summary>
     /// <param name="serviceProvider"></param>

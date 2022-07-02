@@ -1,18 +1,15 @@
 ﻿using System.Net;
 using AutoMapper;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Restful.Tests;
 
-public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
+public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost<Program>>
 {
     [Fact]
     public void AutoMapper()
@@ -28,7 +25,7 @@ public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost<Program> factory) : base(testOutputHelper)
     {
         _factory = factory.ConfigureLoggerFactory(LoggerFactory);
     }
@@ -47,7 +44,7 @@ public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
     {
         public OpenApiDocuments()
         {
-            using var host = new TestWebHost();
+            using var host = new TestWebHost<Program>();
             foreach (var item in host.Services.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value.SwaggerDocs.Keys)
             {
                 Add(item);

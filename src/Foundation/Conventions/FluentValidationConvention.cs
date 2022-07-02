@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;

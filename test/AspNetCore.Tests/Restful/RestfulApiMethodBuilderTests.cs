@@ -1,27 +1,24 @@
 ﻿using System.Reflection;
-using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace AspNetCore.Tests.Restful;
 
 public class RestfulApiMethodBuilderTests : LoggerTest
 {
+    public RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void Should_Have_Method()
     {
         IRestfulApiMethodMatcher builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.Method.Should().Be(RestfulApiMethod.List);
-    }
-
-    public RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     [Theory]

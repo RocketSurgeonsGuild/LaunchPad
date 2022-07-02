@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 

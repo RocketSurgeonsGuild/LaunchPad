@@ -10,11 +10,16 @@ namespace Sample.Graphql.Tests.LaunchRecords;
 
 public class UpdateLaunchRecordTests : HandleWebHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
         var client = Factory.Services.GetRequiredService<IRocketClient>();
-        var clock = ServiceProvider.GetRequiredService<IClock>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
                                                async (context, clk) =>
@@ -57,14 +62,8 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
         var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
         response.EnsureNoErrors();
 
-        response.Data.LaunchRecords.Items[0].ScheduledLaunchDate.Should()
+        response.Data!.LaunchRecords!.Items![0].ScheduledLaunchDate.Should()
                 .Be(( record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1) ).ToDateTimeOffset());
         response.Data.LaunchRecords.Items[0].PayloadWeightKg.Should().Be(200);
     }
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

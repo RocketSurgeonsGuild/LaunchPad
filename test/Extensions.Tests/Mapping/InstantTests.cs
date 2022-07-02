@@ -1,14 +1,15 @@
 using System.Reflection;
 using AutoMapper;
-using FluentAssertions;
 using NodaTime;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests.Mapping;
 
 public class InstantTests : TypeConverterTest<InstantTests.Converters>
 {
+    public InstantTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -69,10 +70,6 @@ public class InstantTests : TypeConverterTest<InstantTests.Converters>
 
         var result = mapper.Map<Foo1>(foo).Bar;
         result.Should().Be(Instant.FromDateTimeOffset(foo.Bar));
-    }
-
-    public InstantTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     [Theory]

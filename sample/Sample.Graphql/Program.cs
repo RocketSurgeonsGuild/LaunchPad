@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Sample.Graphql;
 

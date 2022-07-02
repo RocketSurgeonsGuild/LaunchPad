@@ -1,5 +1,4 @@
-﻿using HotChocolate;
-using Humanizer;
+﻿using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
@@ -9,6 +8,12 @@ namespace Sample.Graphql.Tests.Rockets;
 
 public class UpdateRocketTests : HandleWebHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Update_A_Rocket()
     {
@@ -141,12 +146,6 @@ public class UpdateRocketTests : HandleWebHostBase
         u.Data!.PatchRocket.Type.Should().Be(RocketType.FalconHeavy);
         u.Data!.PatchRocket.SerialNumber.Should().Be("12345678901234");
     }
-
-    public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]

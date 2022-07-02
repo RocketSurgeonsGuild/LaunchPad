@@ -1,15 +1,18 @@
-﻿using Bogus;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
 public class ListLaunchRecordsTests : HandleWebHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_List_LaunchRecords()
     {
@@ -30,7 +33,7 @@ public class ListLaunchRecordsTests : HandleWebHostBase
         var response = await client.GetLaunchRecords.ExecuteAsync();
         response.EnsureNoErrors();
 
-        response.Data.LaunchRecords.Items.Should().HaveCount(10);
+        response.Data!.LaunchRecords!.Items.Should().HaveCount(10);
     }
 
 
@@ -54,12 +57,6 @@ public class ListLaunchRecordsTests : HandleWebHostBase
         var response = await client.GetFilteredLaunchRecords.ExecuteAsync(RocketType.FalconHeavy);
         response.EnsureNoErrors();
 
-        response.Data.LaunchRecords.Items.Should().HaveCount(3);
+        response.Data!.LaunchRecords!.Items.Should().HaveCount(3);
     }
-
-    public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

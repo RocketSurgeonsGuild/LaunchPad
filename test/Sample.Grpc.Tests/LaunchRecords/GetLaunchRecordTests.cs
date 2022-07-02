@@ -1,19 +1,21 @@
-﻿using Bogus;
-using FluentAssertions;
-using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.WellKnownTypes;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
 public class GetLaunchRecordTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
     {
@@ -53,10 +55,4 @@ public class GetLaunchRecordTests : HandleGrpcHostBase
         response.RocketSerialNumber.Should().Be("12345678901234");
         response.ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate.ToTimestamp());
     }
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

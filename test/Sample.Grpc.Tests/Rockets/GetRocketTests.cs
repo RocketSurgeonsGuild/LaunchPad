@@ -1,16 +1,18 @@
-﻿using Bogus;
-using FluentAssertions;
-using Rocket.Surgery.DependencyInjection;
+﻿using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
 public class GetRocketTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Get_A_Rocket()
     {
@@ -36,10 +38,4 @@ public class GetRocketTests : HandleGrpcHostBase
         response.Type.Should().Be(RocketType.Falcon9);
         response.Sn.Should().Be("12345678901234");
     }
-
-    public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

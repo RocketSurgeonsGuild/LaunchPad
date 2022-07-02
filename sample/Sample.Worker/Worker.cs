@@ -19,7 +19,8 @@ public class Worker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var items = await _mediator.Invoke(m => m.CreateStream(new ListRockets.Request(null), stoppingToken)).ToListAsync();
+            var items = await _mediator.Invoke(m => m.CreateStream(new ListRockets.Request(null), stoppingToken))
+                                       .ToListAsync(stoppingToken);
             _logger.LogInformation("Items: {@Items}", items);
             await Task.Delay(1000, stoppingToken).ConfigureAwait(false);
         }

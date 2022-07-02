@@ -8,6 +8,12 @@ namespace Sample.Graphql.Tests.LaunchRecords;
 
 public class CreateLaunchRecordTests : HandleWebHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Create_A_LaunchRecord()
     {
@@ -42,12 +48,6 @@ public class CreateLaunchRecordTests : HandleWebHostBase
         );
         response.EnsureNoErrors();
 
-        response.Data.CreateLaunchRecord.Id.Should().NotBeEmpty();
+        response.Data!.CreateLaunchRecord.Id.Should().NotBeEmpty();
     }
-
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

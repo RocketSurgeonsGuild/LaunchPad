@@ -13,7 +13,7 @@ internal class ValidationInterceptor : Interceptor
         validationMetadata.Add("title", "Unprocessable Entity");
         validationMetadata.Add("link", "https://tools.ietf.org/html/rfc4918#section-11.2");
         if (message is { }) validationMetadata.Add("message", message);
-        throw new RpcException(new Status(StatusCode.InvalidArgument, message), validationMetadata, message);
+        throw new RpcException(new Status(StatusCode.InvalidArgument, message ?? ""), validationMetadata, message ?? "");
     }
 
     private readonly IValidatorErrorMessageHandler _handler;

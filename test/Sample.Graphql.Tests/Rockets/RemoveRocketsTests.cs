@@ -1,16 +1,18 @@
-﻿using Bogus;
-using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Graphql.Tests.Rockets;
 
 public class RemoveRocketsTests : HandleWebHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Remove_Rocket()
     {
@@ -32,10 +34,4 @@ public class RemoveRocketsTests : HandleWebHostBase
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
     }
-
-    public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

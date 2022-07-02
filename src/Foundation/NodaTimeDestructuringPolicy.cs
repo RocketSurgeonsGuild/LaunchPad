@@ -1,4 +1,3 @@
-using System.Text.Json;
 using NodaTime;
 using NodaTime.Text;
 using Serilog.Core;
@@ -17,7 +16,6 @@ internal class NodaTimeDestructuringPolicy : IDestructuringPolicy
 
     public bool TryDestructure(object value, ILogEventPropertyValueFactory _, out LogEventPropertyValue? result)
     {
-        ScalarValue a;
         if (value is Instant instant1)
         {
             result = new ScalarValue(InstantPattern.ExtendedIso.Format(instant1));

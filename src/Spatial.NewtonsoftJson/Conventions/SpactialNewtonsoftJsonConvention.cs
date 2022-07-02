@@ -6,7 +6,6 @@ using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Spatial.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
 

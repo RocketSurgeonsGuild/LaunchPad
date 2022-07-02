@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -259,7 +258,6 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
     {
         var type = GenericName(Identifier("HotChocolate.Optional"))
            .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(typeSyntax)));
-        var fieldName = $"_{propertySymbol.Name}";
         return new MemberDeclarationSyntax[]
         {
             PropertyDeclaration(type, Identifier(propertySymbol.Name))
@@ -300,7 +298,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                  )
                              )
                             .Select(
-                                 (tuple, token) =>
+                                 (tuple, _) =>
                                  {
                                      var interfaceSymbol = tuple.symbol
                                                                 .Interfaces.FirstOrDefault(

@@ -1,14 +1,15 @@
 using System.Reflection;
 using AutoMapper;
-using FluentAssertions;
 using NodaTime;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests.Mapping;
 
 public class LocalDateTests : TypeConverterTest<LocalDateTests.Converters>
 {
+    public LocalDateTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -41,10 +42,6 @@ public class LocalDateTests : TypeConverterTest<LocalDateTests.Converters>
 
         var result = mapper.Map<Foo1>(foo).Bar;
         result.Should().Be(LocalDate.FromDateTime(foo.Bar));
-    }
-
-    public LocalDateTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     [Theory]

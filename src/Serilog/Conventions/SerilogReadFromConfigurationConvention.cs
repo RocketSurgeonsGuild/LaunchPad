@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Configuration;
-using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -18,6 +17,22 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 [ExportConvention]
 public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
 {
+    /// <inheritdoc />
+    public void Register(
+        IConventionContext context,
+        IServiceProvider services,
+        IConfiguration configuration,
+        LoggerConfiguration loggerConfiguration
+    )
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+
+        loggerConfiguration.ReadFrom.Configuration(configuration);
+    }
+
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
     {
@@ -39,21 +54,5 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
                 }
             );
         }
-    }
-
-    /// <inheritdoc />
-    public void Register(
-        IConventionContext context,
-        IServiceProvider services,
-        IConfiguration configuration,
-        LoggerConfiguration loggerConfiguration
-    )
-    {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        loggerConfiguration.ReadFrom.Configuration(configuration);
     }
 }

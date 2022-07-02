@@ -2,6 +2,8 @@
 using System.Runtime.CompilerServices;
 using DiffEngine;
 
+namespace Extensions.Tests;
+
 public static class ModuleInitializer
 {
     [ModuleInitializer]
@@ -9,7 +11,7 @@ public static class ModuleInitializer
     {
         DiffRunner.Disabled = true;
         VerifierSettings.DerivePathInfo(
-            (sourceFile, projectDirectory, type, method) =>
+            (sourceFile, _, type, method) =>
             {
                 static string GetTypeName(Type type)
                 {

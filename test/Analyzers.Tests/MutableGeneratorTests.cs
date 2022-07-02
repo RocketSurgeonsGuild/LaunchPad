@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Xunit.Abstractions;
 
 namespace Analyzers.Tests;
 

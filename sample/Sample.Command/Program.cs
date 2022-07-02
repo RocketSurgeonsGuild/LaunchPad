@@ -46,6 +46,7 @@ public class Dump : Command<AppSettings>
 
     public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
     {
+        // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
         _logger.LogInformation(_instanceThing.From);
         foreach (var item in _configuration.AsEnumerable().Reverse())
         {

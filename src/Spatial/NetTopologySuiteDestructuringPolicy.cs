@@ -1,4 +1,3 @@
-using NetTopologySuite;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
@@ -12,7 +11,7 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
     public const string defaultIdPropertyName = "_NetTopologySuite_id";
 
 
-    internal static LogEventProperty WriteBBox(Envelope value, Geometry? geometry)
+    internal static LogEventProperty? WriteBBox(Envelope? value, Geometry? geometry)
     {
         // if we don't want to write "null" bounding boxes, bail out.
         if (value == null || value.IsNull)
@@ -21,10 +20,6 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
         // Don't clutter export with bounding box if geometry is a point!
         if (geometry is Point)
             return null;
-
-        // if value == null, try to get it from geometry
-        if (value == null)
-            value = geometry?.EnvelopeInternal ?? new Envelope();
 
         return new LogEventProperty(
             "bbox",

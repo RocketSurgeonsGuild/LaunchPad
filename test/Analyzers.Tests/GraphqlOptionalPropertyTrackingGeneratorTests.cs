@@ -148,7 +148,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
         var result = await GenerateAsync(source);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -173,7 +173,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
         var result = await GenerateAsync(source);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -198,7 +198,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
         var result = await GenerateAsync(source);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -224,7 +224,7 @@ namespace Sample.Core.Operations.Rockets
 }
 ";
         var result = await GenerateAsync(source);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }

@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-internal class StronglyTypedIdHelpers
+internal static class StronglyTypedIdHelpers
 {
     public static bool IsStronglyTypedId(Type? type)
     {

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Hosting.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Events;

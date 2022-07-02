@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.Extensions.Testing;
-using Xunit.Abstractions;
 
 namespace Sample.BlazorWasm.Tests;
 

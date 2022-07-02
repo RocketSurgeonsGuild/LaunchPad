@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Functions.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -108,9 +107,9 @@ public class SerilogFunctionsConvention : IServiceConvention
                 }
             );
 
-            if (context.Get<ILoggerFactory>() != null)
+            if (context.Get<ILoggerFactory>() is { } loggerFactory)
             {
-                services.AddSingleton(context.Get<ILoggerFactory>());
+                services.AddSingleton(loggerFactory);
             }
         }
     }

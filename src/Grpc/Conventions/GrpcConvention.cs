@@ -2,8 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Grpc.Conventions;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Conventions;

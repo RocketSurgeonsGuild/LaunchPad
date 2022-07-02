@@ -1,15 +1,18 @@
 using System.Reflection;
 using AutoMapper;
-using FluentAssertions;
 using NodaTime;
+#if NET6_0_OR_GREATER
 using NodaTime.Extensions;
-using Xunit;
-using Xunit.Abstractions;
+#endif
 
 namespace Extensions.Tests.Mapping;
 
 public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
 {
+    public LocalTimeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void ValidateMapping()
     {
@@ -42,10 +45,6 @@ public class LocalTimeTests : TypeConverterTest<LocalTimeTests.Converters>
 
         var result = mapper.Map<Foo1>(foo).Bar;
         result.Should().Be(new LocalTime(502 / 60, 502 % 60));
-    }
-
-    public LocalTimeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     [Theory]

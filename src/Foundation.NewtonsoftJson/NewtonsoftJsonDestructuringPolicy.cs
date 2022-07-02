@@ -19,7 +19,7 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
 
     private static LogEventPropertyValue Destructure(JObject jo, ILogEventPropertyValueFactory propertyValueFactory)
     {
-        string typeTag = null;
+        string? typeTag = null;
         var props = new List<LogEventProperty>(jo.Count);
 
         foreach (var prop in jo.Properties())
@@ -55,7 +55,7 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
         return new DictionaryValue(elements);
     }
 
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue? result)
     {
         switch (value)
         {

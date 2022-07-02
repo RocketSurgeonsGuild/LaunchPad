@@ -1,20 +1,22 @@
-﻿using Bogus;
-using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Extensions;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Restful.Client;
-using Xunit;
-using Xunit.Abstractions;
 using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests : HandleWebHostBase
+public class UpdateLaunchRecordTests : HandleWebHostBase<Program>
 {
+    private static readonly Faker Faker = new();
+
+    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
+    {
+    }
+
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
@@ -64,10 +66,4 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
         response.Result.ScheduledLaunchDate.Should().Be(( record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1) ).ToDateTimeOffset());
         response.Result.PayloadWeightKg.Should().Be(200);
     }
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

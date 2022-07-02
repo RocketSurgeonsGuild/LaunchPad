@@ -3,6 +3,8 @@ using Analyzers.Tests.Helpers;
 using DiffEngine;
 using Microsoft.CodeAnalysis;
 
+namespace Analyzers.Tests;
+
 public static class ModuleInitializer
 {
     [ModuleInitializer]
@@ -14,14 +16,18 @@ public static class ModuleInitializer
         VerifierSettings.RegisterFileConverter<GenerationTestResult>(Convert);
         VerifierSettings.RegisterFileConverter<GenerationTestResults>(Convert);
         VerifierSettings.DerivePathInfo(
-            (sourceFile, projectDirectory, type, method) =>
+            (sourceFile, _, type, method) =>
             {
-                static string GetTypeName(Type type) => type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
+                static string GetTypeName(Type type)
+                {
+                    return type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
+                }
 
                 var typeName = GetTypeName(type);
 
                 return new(Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots"), typeName, method.Name);
-            });
+            }
+        );
     }
 
     private static ConversionResult Convert(GenerationTestResults target, IReadOnlyDictionary<string, object> context)

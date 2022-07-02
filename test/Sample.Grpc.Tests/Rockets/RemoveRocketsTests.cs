@@ -1,17 +1,19 @@
-﻿using Bogus;
-using FluentAssertions;
-using Rocket.Surgery.DependencyInjection;
+﻿using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
 public class RemoveRocketsTests : HandleGrpcHostBase
 {
+    private static readonly Faker Faker = new();
+
+    public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Remove_Rocket()
     {
@@ -33,10 +35,4 @@ public class RemoveRocketsTests : HandleGrpcHostBase
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
     }
-
-    public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
-    private static readonly Faker Faker = new();
 }

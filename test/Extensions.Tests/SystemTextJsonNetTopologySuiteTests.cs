@@ -1,11 +1,8 @@
 using System.Text.Json;
-using FluentAssertions;
 using FluentAssertions.Primitives;
 using NetTopologySuite.Geometries;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Spatial;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Extensions.Tests;
 

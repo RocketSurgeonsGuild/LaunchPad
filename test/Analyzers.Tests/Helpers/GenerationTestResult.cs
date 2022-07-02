@@ -1,9 +1,7 @@
 ﻿using System.Collections.Immutable;
-using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Logging;
-using Xunit;
 using Xunit.Sdk;
 
 namespace Analyzers.Tests.Helpers;

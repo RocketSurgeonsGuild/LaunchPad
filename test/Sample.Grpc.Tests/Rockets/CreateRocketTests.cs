@@ -1,14 +1,15 @@
-﻿using FluentAssertions;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Sample.Grpc.Tests.Validation;
-using Xunit;
-using Xunit.Abstractions;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
 public class CreateRocketTests : HandleGrpcHostBase
 {
+    public CreateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public async Task Should_Create_A_Rocket()
     {
@@ -47,9 +48,5 @@ public class CreateRocketTests : HandleGrpcHostBase
         var r = ( await action.Should().ThrowAsync<RpcException>() )
            .And;
         r.Message.Should().Contain("Rocket Creation Failed");
-    }
-
-    public CreateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 }

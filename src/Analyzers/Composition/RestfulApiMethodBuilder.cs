@@ -269,6 +269,4 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     }
 }
 
-internal record ActionModel(Compilation Compilation, string ActionName, IMethodSymbol ActionMethod)
-{
-}
+internal record ActionModel(Compilation Compilation, string ActionName, IMethodSymbol ActionMethod);

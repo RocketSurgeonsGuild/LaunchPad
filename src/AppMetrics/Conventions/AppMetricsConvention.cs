@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.AppMetrics.Conventions;
 

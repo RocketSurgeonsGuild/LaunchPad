@@ -9,8 +9,6 @@ using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Graphql.Tests;
 
@@ -46,7 +44,7 @@ public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
                                                options.HttpMessageHandlerBuilderActions.Add(
                                                    builder =>
                                                    {
-                                                       if (Factory.ClientOptions.AllowAutoRedirect)
+                                                       if (Factory!.ClientOptions.AllowAutoRedirect)
                                                        {
                                                            builder.AdditionalHandlers.Add(new RedirectHandler(Factory.ClientOptions.MaxAutomaticRedirections));
                                                        }
@@ -61,7 +59,7 @@ public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
                                                );
 
                                                options.HttpClientActions.Add(
-                                                   client => client.BaseAddress = new Uri(Factory.ClientOptions.BaseAddress + "graphql/")
+                                                   client => client.BaseAddress = new Uri(Factory!.ClientOptions.BaseAddress + "graphql/")
                                                );
                                            }
                                        );

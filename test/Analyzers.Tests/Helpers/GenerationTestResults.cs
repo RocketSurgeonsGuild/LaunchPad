@@ -1,9 +1,6 @@
 ﻿using System.Collections.Immutable;
-using System.Reflection;
-using System.Runtime.Loader;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
 
 namespace Analyzers.Tests.Helpers;
 
@@ -56,8 +53,8 @@ public record GenerationTestResults(
     {
         Assert.Empty(
             InputDiagnostics
-               .Where(z => !z.GetMessage().Contains("does not contain a definition for"))
-               .Where(z => !z.GetMessage().Contains("Assuming assembly reference"))
+               .Where(z => !z.GetMessage().Contains("does not contain a definition for", StringComparison.Ordinal))
+               .Where(z => !z.GetMessage().Contains("Assuming assembly reference", StringComparison.Ordinal))
                .Where(x => x.Severity >= DiagnosticSeverity.Warning)
         );
         foreach (var result in Results.Values)

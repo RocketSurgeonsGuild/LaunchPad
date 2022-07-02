@@ -1,6 +1,5 @@
 ﻿using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Grpc.Services;
-using Serilog;
 
 namespace Sample.Grpc;
 
@@ -15,14 +14,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // Should this move into an extension method?
-        app.UseSerilogRequestLogging(
-            x =>
-            {
-                x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
-                x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
-            }
-        );
+        app.UseLaunchPadRequestLogging();
         app.UseMetricsAllMiddleware();
 
         app.UseRouting();

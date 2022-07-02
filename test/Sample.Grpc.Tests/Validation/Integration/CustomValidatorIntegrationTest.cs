@@ -1,17 +1,21 @@
-using FluentAssertions;
 using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;
 using Sample.Core.Domain;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
 public class CustomValidatorIntegrationTest : LoggerTest, IClassFixture<TestWebHost>
 {
+    private readonly ConventionTestWebHost<Startup> _factory;
+
+    public CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+    {
+        _factory = factory.ConfigureLoggerFactory(LoggerFactory);
+    }
+
     [Fact]
     public async Task Should_ResponseMessage_When_MessageIsValid()
     {
@@ -54,11 +58,4 @@ public class CustomValidatorIntegrationTest : LoggerTest, IClassFixture<TestWebH
         var rpcException = await Assert.ThrowsAsync<RpcException>(Action);
         Assert.Equal(StatusCode.InvalidArgument, rpcException.Status.StatusCode);
     }
-
-    public CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
-    {
-        _factory = factory.ConfigureLoggerFactory(LoggerFactory);
-    }
-
-    private readonly ConventionTestWebHost<Startup> _factory;
 }

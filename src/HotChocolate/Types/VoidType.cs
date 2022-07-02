@@ -27,7 +27,7 @@ public class VoidType : ScalarType
     /// <inheritdoc />
     public override object? ParseLiteral(IValueNode valueSyntax)
     {
-        return new object();
+        return (object?)new object();
     }
 
     /// <inheritdoc />

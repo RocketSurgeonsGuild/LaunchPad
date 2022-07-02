@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
-using Sample.Core;
 using Sample.Core.Domain;
 
 namespace Sample.Core;
