@@ -6,15 +6,17 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
     [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
-    class CreatedAttribute : Attribute
+    sealed class CreatedAttribute : Attribute
     {
-        public CreatedAttribute(string methodName){}
+        public CreatedAttribute(string methodName){ MethodName = methodName; }
+        public string MethodName { get; }
     }
 
     [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
-    class AcceptedAttribute : Attribute
+    sealed class AcceptedAttribute : Attribute
     {
-        public AcceptedAttribute(string methodName){}
+        public AcceptedAttribute(string methodName){ MethodName = methodName; }
+        public string MethodName { get; }
     }
 }
