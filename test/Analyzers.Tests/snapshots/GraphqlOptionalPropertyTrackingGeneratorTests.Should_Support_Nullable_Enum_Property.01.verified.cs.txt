@@ -6,6 +6,7 @@ using NodaTime;
 
 namespace Sample.Core.Operations.Rockets
 {
+    [System.Runtime.CompilerServices.CompilerGenerated]
     public partial record PatchRocketUnderTest
     {
         public HotChocolate.Optional<RocketId?> Id { get; set; }

@@ -7,6 +7,7 @@ namespace Sample.Core.Operations.Rockets
 {
     public static class PublicClass
     {
+        [System.Runtime.CompilerServices.CompilerGenerated]
         public partial record PatchGraphRocket
         {
             public HotChocolate.Optional<string?> SerialNumber { get; set; }

@@ -4,6 +4,7 @@ using System;
 
 namespace Sample.Core.Operations.Rockets
 {
+    [System.Runtime.CompilerServices.CompilerGenerated]
     public partial record PatchRocket
     {
         public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> SerialNumber { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);

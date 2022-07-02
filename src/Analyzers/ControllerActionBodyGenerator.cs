@@ -712,11 +712,14 @@ using System;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
+    [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
     class CreatedAttribute : Attribute
     {
         public CreatedAttribute(string methodName){}
     }
+
+    [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
     class AcceptedAttribute : Attribute
     {

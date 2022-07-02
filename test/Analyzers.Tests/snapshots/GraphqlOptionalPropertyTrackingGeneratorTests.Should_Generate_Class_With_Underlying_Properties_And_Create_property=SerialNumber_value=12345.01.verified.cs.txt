@@ -3,6 +3,7 @@
 using System;
 using NodaTime;
 
+[System.Runtime.CompilerServices.CompilerGenerated]
 public partial class PatchGraphRocket
 {
     public HotChocolate.Optional<string?> SerialNumber { get; set; }

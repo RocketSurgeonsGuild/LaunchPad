@@ -32,7 +32,14 @@ public class InheritFromGenerator : IIncrementalGenerator
                             .WithMembers(List<MemberDeclarationSyntax>())
                             .WithAttributeLists(List<AttributeListSyntax>())
                             .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                            .WithBaseList(null);
+                            .WithBaseList(null)
+                            .WithAttributeLists(
+                                 SingletonList(
+                                     AttributeList(
+                                         SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
+                                     )
+                                 )
+                             );
 
         foreach (var attribute in attributes)
         {

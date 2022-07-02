@@ -44,7 +44,14 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             .WithMembers(List<MemberDeclarationSyntax>())
                             .WithAttributeLists(List<AttributeListSyntax>())
                             .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                            .WithBaseList(null);
+                            .WithBaseList(null)
+                            .WithAttributeLists(
+                                 SingletonList(
+                                     AttributeList(
+                                         SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
+                                     )
+                                 )
+                             );
 
         var writeableProperties =
             targetSymbol.GetMembers()
