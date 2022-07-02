@@ -8,6 +8,7 @@ namespace Sample.Core.Operations.Rockets
 {
     public static partial class CreateRocket
     {
+        [System.Runtime.CompilerServices.CompilerGenerated]
         public partial record Request
         {
             public Request With(Model value) => this with {SerialNumber = value.SerialNumber};

@@ -8,6 +8,7 @@ namespace Sample.Core.Operations.Rockets
 {
     public static partial class CreateRocket
     {
+        [System.Runtime.CompilerServices.CompilerGenerated]
         public partial class Request
         {
             public string SerialNumber { get; set; }
