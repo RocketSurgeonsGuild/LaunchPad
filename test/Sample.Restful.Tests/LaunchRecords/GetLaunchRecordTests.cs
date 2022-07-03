@@ -8,14 +8,8 @@ using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : HandleWebHostBase<Program>
+public class GetLaunchRecordTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
     {
@@ -67,4 +61,10 @@ public class GetLaunchRecordTests : HandleWebHostBase<Program>
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );
     }
+
+    public GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }

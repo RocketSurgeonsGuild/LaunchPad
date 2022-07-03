@@ -7,14 +7,8 @@ using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests : HandleWebHostBase<Program>
+public class CreateLaunchRecordTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_Create_A_LaunchRecord()
     {
@@ -50,4 +44,10 @@ public class CreateLaunchRecordTests : HandleWebHostBase<Program>
 
         response.Result.Id.Should().NotBeEmpty();
     }
+
+    public CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }
