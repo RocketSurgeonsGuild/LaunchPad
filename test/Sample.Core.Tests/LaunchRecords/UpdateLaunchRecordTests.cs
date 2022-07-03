@@ -41,6 +41,7 @@ public class UpdateLaunchRecordTests : HandleTestHostBase
                                                }
                                            );
 
+        var launchDate = record.ScheduledLaunchDate.ToInstant().Plus(Duration.FromSeconds(1));
         var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
             (mediator, clock) => mediator.Send(
                 new EditLaunchRecord.Request
@@ -49,13 +50,13 @@ public class UpdateLaunchRecordTests : HandleTestHostBase
                     Partner = "partner",
                     Payload = "geo-fence-ftl",
                     RocketId = record.RocketId,
-                    ScheduledLaunchDate = clock.GetCurrentInstant(),
+                    ScheduledLaunchDate = launchDate,
                     PayloadWeightKg = 200,
                 }
             )
         );
 
-        response.ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1));
+        response.ScheduledLaunchDate.Should().Be(launchDate);
         response.PayloadWeightKg.Should().Be(200);
     }
 

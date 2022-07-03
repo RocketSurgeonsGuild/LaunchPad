@@ -10,12 +10,6 @@ namespace Sample.Graphql.Tests.LaunchRecords;
 
 public class UpdateLaunchRecordTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
@@ -47,6 +41,7 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
                                                }
                                            );
 
+        var launchDate = record.ScheduledLaunchDate.AddSeconds(1).ToString("O");
         await client.UpdateLaunchRecord.ExecuteAsync(
             new EditLaunchRecordRequest
             {
@@ -54,7 +49,7 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
                 RocketId = record.RocketId.Value,
-                ScheduledLaunchDate = record.ScheduledLaunchDate.AddSeconds(1).ToString("O"),
+                ScheduledLaunchDate = launchDate,
                 PayloadWeightKg = 200,
             }
         );
@@ -62,8 +57,13 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
         var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Items![0].ScheduledLaunchDate.Should()
-                .Be(( record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1) ).ToDateTimeOffset());
+        response.Data!.LaunchRecords!.Items![0].ScheduledLaunchDate.Should().Be(launchDate);
         response.Data.LaunchRecords.Items[0].PayloadWeightKg.Should().Be(200);
     }
+
+    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }
