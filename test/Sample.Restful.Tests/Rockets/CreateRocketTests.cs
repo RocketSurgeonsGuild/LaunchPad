@@ -2,12 +2,8 @@
 
 namespace Sample.Restful.Tests.Rockets;
 
-public class CreateRocketTests : HandleWebHostBase<Program>
+public class CreateRocketTests : HandleWebHostBase
 {
-    public CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebHost<Program> host) : base(testOutputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_Create_A_Rocket()
     {
@@ -46,5 +42,9 @@ public class CreateRocketTests : HandleWebHostBase<Program>
         var r = ( await action.Should().ThrowAsync<ApiException<ProblemDetails>>() )
                .And.Result;
         r.Title.Should().Be("Rocket Creation Failed");
+    }
+
+    public CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebHost host) : base(testOutputHelper, host)
+    {
     }
 }

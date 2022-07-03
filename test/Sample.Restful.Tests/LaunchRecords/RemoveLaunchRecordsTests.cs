@@ -6,14 +6,8 @@ using Sample.Restful.Client;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests : HandleWebHostBase<Program>
+public class RemoveLaunchRecordsTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_Remove_LaunchRecord()
     {
@@ -64,4 +58,10 @@ public class RemoveLaunchRecordsTests : HandleWebHostBase<Program>
         await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
                     .Where(z => z.StatusCode == 403 && z.Result.Status == 403 && z.Result.Title == "Forbidden");
     }
+
+    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }

@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Sample.Restful.Tests;
 
-public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost<Program>>
+public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
 {
     [Fact]
     public void AutoMapper()
@@ -25,7 +25,7 @@ public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost<Program>>
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost<Program> factory) : base(testOutputHelper)
+    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
     {
         _factory = factory.ConfigureLoggerFactory(LoggerFactory);
     }
@@ -44,7 +44,7 @@ public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost<Program>>
     {
         public OpenApiDocuments()
         {
-            using var host = new TestWebHost<Program>();
+            using var host = new TestWebHost();
             foreach (var item in host.Services.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value.SwaggerDocs.Keys)
             {
                 Add(item);

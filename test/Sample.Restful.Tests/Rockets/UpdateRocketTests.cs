@@ -6,14 +6,8 @@ using ClientRocketType = Sample.Restful.Client.RocketType;
 
 namespace Sample.Restful.Tests.Rockets;
 
-public class UpdateRocketTests : HandleWebHostBase<Program>
+public class UpdateRocketTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public UpdateRocketTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_Update_A_Rocket()
     {
@@ -154,6 +148,12 @@ public class UpdateRocketTests : HandleWebHostBase<Program>
         response.Result.Type.Should().Be(ClientRocketType.FalconHeavy);
         response.Result.Sn.Should().Be("12345678901234");
     }
+
+    public UpdateRocketTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]

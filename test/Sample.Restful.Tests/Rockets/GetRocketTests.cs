@@ -6,14 +6,8 @@ using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.Rockets;
 
-public class GetRocketTests : HandleWebHostBase<Program>
+public class GetRocketTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public GetRocketTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_Get_A_Rocket()
     {
@@ -51,4 +45,10 @@ public class GetRocketTests : HandleWebHostBase<Program>
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );
     }
+
+    public GetRocketTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }

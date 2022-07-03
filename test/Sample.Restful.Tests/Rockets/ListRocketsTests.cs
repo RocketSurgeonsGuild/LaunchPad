@@ -7,14 +7,8 @@ using RocketType = Sample.Restful.Client.RocketType;
 
 namespace Sample.Restful.Tests.Rockets;
 
-public class ListRocketsTests : HandleWebHostBase<Program>
+public class ListRocketsTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public ListRocketsTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_List_Rockets()
     {
@@ -54,5 +48,11 @@ public class ListRocketsTests : HandleWebHostBase<Program>
 
         response.Result.Should().HaveCount(5);
     }
+
+    public ListRocketsTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }
 #endif

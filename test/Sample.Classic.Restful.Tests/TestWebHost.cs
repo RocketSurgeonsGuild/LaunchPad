@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Classic.Restful.Tests;
 
-public class TestWebHost : ConventionTestWebHost<Program>, IAsyncLifetime
+public class TestWebHost : ConventionTestWebHost<Startup>, IAsyncLifetime
 {
     private SqliteConnection _connection;
 

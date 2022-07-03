@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Extensions.Testing;
 using Sample.Core.Domain;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Classic.Restful.Tests;
 
 public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime, IClassFixture<TestWebHost>
 {

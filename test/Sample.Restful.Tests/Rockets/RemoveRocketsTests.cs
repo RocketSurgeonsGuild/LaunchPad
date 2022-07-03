@@ -5,14 +5,8 @@ using Sample.Restful.Client;
 
 namespace Sample.Restful.Tests.Rockets;
 
-public class RemoveRocketsTests : HandleWebHostBase<Program>
+public class RemoveRocketsTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public RemoveRocketsTests(ITestOutputHelper outputHelper, TestWebHost<Program> host) : base(outputHelper, host)
-    {
-    }
-
     [Fact]
     public async Task Should_Remove_Rocket()
     {
@@ -34,4 +28,10 @@ public class RemoveRocketsTests : HandleWebHostBase<Program>
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
     }
+
+    public RemoveRocketsTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }
