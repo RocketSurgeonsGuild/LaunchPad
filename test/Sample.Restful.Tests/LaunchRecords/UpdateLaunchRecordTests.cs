@@ -43,6 +43,7 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
                                                }
                                            );
 
+        var launchDate = record.ScheduledLaunchDate.AddSeconds(1);
         await client.EditLaunchRecordAsync(
             record.Id.Value,
             new EditLaunchRecordRequest
@@ -50,14 +51,14 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
                 RocketId = record.RocketId.Value,
-                ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                ScheduledLaunchDate = launchDate,
                 PayloadWeightKg = 200,
             }
         );
 
         var response = await client.GetLaunchRecordAsync(record.Id.Value);
 
-        response.Result.ScheduledLaunchDate.Should().Be(( record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1) ).ToDateTimeOffset());
+        response.Result.ScheduledLaunchDate.Should().Be(launchDate);
         response.Result.PayloadWeightKg.Should().Be(200);
     }
 

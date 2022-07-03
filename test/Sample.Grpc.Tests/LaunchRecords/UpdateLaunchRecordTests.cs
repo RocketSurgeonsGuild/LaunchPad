@@ -13,12 +13,6 @@ namespace Sample.Grpc.Tests.LaunchRecords;
 
 public class UpdateLaunchRecordTests : HandleGrpcHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
@@ -52,6 +46,7 @@ public class UpdateLaunchRecordTests : HandleGrpcHostBase
                                                }
                                            );
 
+        var launchDate = record.ScheduledLaunchDate.AddSeconds(1).ToTimestamp();
         await client.EditLaunchRecordAsync(
             new UpdateLaunchRecordRequest
             {
@@ -59,14 +54,20 @@ public class UpdateLaunchRecordTests : HandleGrpcHostBase
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
                 RocketId = record.RocketId.ToString(),
-                ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset().ToTimestamp(),
+                ScheduledLaunchDate = launchDate,
                 PayloadWeightKg = 200,
             }
         );
 
         var response = await client.GetLaunchRecordsAsync(new GetLaunchRecordRequest { Id = record.Id.ToString() });
 
-        response.ScheduledLaunchDate.Should().Be(( record.ScheduledLaunchDate.ToInstant() + Duration.FromSeconds(1) ).ToDateTimeOffset().ToTimestamp());
+        response.ScheduledLaunchDate.Should().Be(launchDate);
         response.PayloadWeightKg.Should().Be(200);
     }
+
+    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }
