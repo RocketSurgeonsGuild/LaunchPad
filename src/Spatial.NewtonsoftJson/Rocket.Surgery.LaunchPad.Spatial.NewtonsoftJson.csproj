@@ -12,4 +12,7 @@
         <PackageReference Include="NetTopologySuite.IO.GeoJSON" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
+    </ItemGroup>
 </Project>
