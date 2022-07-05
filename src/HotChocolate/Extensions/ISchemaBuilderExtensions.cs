@@ -24,20 +24,30 @@ public static class ISchemaBuilderExtensions
            .AddConvention<IFilterConvention>(
                 new FilterConventionExtension(
                     descriptor => descriptor
-                                 .BindRuntimeType<Duration, ComparableOperationFilterInputType<Duration>>()
                                  .BindRuntimeType<DateTimeZone, ComparableOperationFilterInputType<DateTimeZone>>()
                                  .BindRuntimeType<Duration, ComparableOperationFilterInputType<Duration>>()
+                                 .BindRuntimeType<Duration?, ComparableOperationFilterInputType<Duration>>()
                                  .BindRuntimeType<Instant, ComparableOperationFilterInputType<Instant>>()
+                                 .BindRuntimeType<Instant?, ComparableOperationFilterInputType<Instant>>()
                                  .BindRuntimeType<IsoDayOfWeek, ComparableOperationFilterInputType<IsoDayOfWeek>>()
+                                 .BindRuntimeType<IsoDayOfWeek?, ComparableOperationFilterInputType<IsoDayOfWeek>>()
                                  .BindRuntimeType<LocalDateTime, ComparableOperationFilterInputType<LocalDateTime>>()
+                                 .BindRuntimeType<LocalDateTime?, ComparableOperationFilterInputType<LocalDateTime>>()
                                  .BindRuntimeType<LocalDate, ComparableOperationFilterInputType<LocalDate>>()
+                                 .BindRuntimeType<LocalDate?, ComparableOperationFilterInputType<LocalDate>>()
                                  .BindRuntimeType<LocalTime, ComparableOperationFilterInputType<LocalTime>>()
+                                 .BindRuntimeType<LocalTime?, ComparableOperationFilterInputType<LocalTime>>()
                                  .BindRuntimeType<OffsetDateTime, ComparableOperationFilterInputType<OffsetDateTime>>()
+                                 .BindRuntimeType<OffsetDateTime?, ComparableOperationFilterInputType<OffsetDateTime>>()
                                  .BindRuntimeType<OffsetDate, ComparableOperationFilterInputType<OffsetDate>>()
+                                 .BindRuntimeType<OffsetDate?, ComparableOperationFilterInputType<OffsetDate>>()
                                  .BindRuntimeType<OffsetTime, ComparableOperationFilterInputType<OffsetTime>>()
+                                 .BindRuntimeType<OffsetTime?, ComparableOperationFilterInputType<OffsetTime>>()
                                  .BindRuntimeType<Offset, ComparableOperationFilterInputType<Offset>>()
+                                 .BindRuntimeType<Offset?, ComparableOperationFilterInputType<Offset>>()
                                  .BindRuntimeType<Period, ComparableOperationFilterInputType<Period>>()
                                  .BindRuntimeType<ZonedDateTime, ComparableOperationFilterInputType<ZonedDateTime>>()
+                                 .BindRuntimeType<ZonedDateTime?, ComparableOperationFilterInputType<ZonedDateTime>>()
                 )
             );
 
