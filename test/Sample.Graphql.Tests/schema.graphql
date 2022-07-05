@@ -37,7 +37,7 @@ scalar OffsetDate
 "A combination of a LocalTime and an Offset, to represent a time-of-day at a specific offset from UTC but without any date information."
 scalar OffsetTime
 
-"An offset from UTC in seconds. A positive value means that the local time is ahead of UTC (e.g. for Europe); a negative value means that the local time is behind UTC (e.g. for America)."
+"An offset from UTC in seconds.\n A positive value means that the local time is ahead of UTC (e.g. for Europe); a negative value means that the local time is behind UTC (e.g. for America)."
 scalar Offset
 
 "Represents a period of time expressed in human chronological terms: hours, days, weeks, months and so on."
