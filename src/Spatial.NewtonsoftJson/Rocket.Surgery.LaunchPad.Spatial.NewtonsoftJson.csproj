@@ -13,6 +13,6 @@
         <PackageReference Include="Rocket.Surgery.Conventions" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\AspNetCore.Spatial\Rocket.Surgery.LaunchPad.AspNetCore.Spatial.csproj" />
+      <ProjectReference Include="..\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
     </ItemGroup>
 </Project>
