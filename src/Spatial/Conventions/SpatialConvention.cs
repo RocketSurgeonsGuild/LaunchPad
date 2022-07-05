@@ -27,11 +27,12 @@ public class SpatialConvention : IServiceConvention, ISerilogConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.TryAddSingleton(_ => NtsGeometryServices.Instance.CreateGeometryFactory(4326));
+        services.TryAddSingleton(NtsGeometryServices.Instance);
+        services.TryAddSingleton(_ => _.GetRequiredService<NtsGeometryServices>().CreateGeometryFactory(4326));
         services
            .AddOptions<JsonSerializerOptions>(null)
            .Configure<GeometryFactory>(
-                (options, factory) => options.ConfigureNetTopologySuiteForLaunchPad(factory)
+                (options, factory) => options.ConfigureGeoJsonForLaunchPad(factory)
             );
     }
 }

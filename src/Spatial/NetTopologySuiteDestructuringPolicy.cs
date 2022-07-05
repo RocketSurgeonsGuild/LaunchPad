@@ -10,8 +10,7 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
 {
     public const string defaultIdPropertyName = "_NetTopologySuite_id";
 
-
-    internal static LogEventProperty? WriteBBox(Envelope? value, Geometry? geometry)
+    private static LogEventProperty? WriteBBox(Envelope? value, Geometry? geometry)
     {
         // if we don't want to write "null" bounding boxes, bail out.
         if (value == null || value.IsNull)
@@ -167,39 +166,7 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
 
     public LogEventPropertyValue WriteGeometry(ILogEventPropertyValueFactory propertyValueFactory, Geometry value)
     {
-        var props = new List<LogEventProperty> { new("type", propertyValueFactory.CreatePropertyValue(value.OgcGeometryType)) };
-        if (value.OgcGeometryType == OgcGeometryType.GeometryCollection)
-        {
-            var values = new LogEventPropertyValue[value.NumGeometries];
-            for (var i = 0; i < value.NumGeometries; i++)
-                values[i] = propertyValueFactory.CreatePropertyValue(value.GetGeometryN(i), true);
-            props.Add(new LogEventProperty("geometries", new SequenceValue(values)));
-        }
-        else if (value.IsEmpty)
-        {
-            props.Add(new LogEventProperty("coordinates", new SequenceValue(Array.Empty<LogEventPropertyValue>())));
-        }
-        else
-        {
-            var coordinates = value.OgcGeometryType switch
-            {
-                OgcGeometryType.Point           => WriteCoordinateSequence(( (Point)value ).CoordinateSequence, false),
-                OgcGeometryType.LineString      => WriteCoordinateSequence(( (LineString)value ).CoordinateSequence, true),
-                OgcGeometryType.Polygon         => WritePolygon((Polygon)value),
-                OgcGeometryType.MultiPoint      => WriteGeometrySequence(value),
-                OgcGeometryType.MultiLineString => WriteGeometrySequence(value),
-                OgcGeometryType.MultiPolygon    => WriteGeometrySequence(value),
-                _                               => null
-            };
-            props.Add(new LogEventProperty("coordinates", coordinates));
-        }
-
-        if (_writeGeometryBBox && WriteBBox(value.EnvelopeInternal, value) is { } bBox)
-        {
-            props.Add(bBox);
-        }
-
-        return new StructureValue(props);
+        return new ScalarValue(value.AsText());
     }
 
     private LogEventPropertyValue WriteFeature(ILogEventPropertyValueFactory propertyValueFactory, IFeature value)

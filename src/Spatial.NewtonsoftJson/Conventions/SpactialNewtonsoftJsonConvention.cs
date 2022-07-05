@@ -23,7 +23,7 @@ public class SpatialNewtonsoftJsonConvention : IServiceConvention
         services
            .AddOptions<JsonSerializerSettings>(null)
            .Configure<GeometryFactory>(
-                (options, factory) => options.ConfigureNetTopologySuiteForLaunchPad(factory)
+                (options, factory) => options.ConfigureGeoJsonForLaunchPad(factory)
             );
     }
 }
