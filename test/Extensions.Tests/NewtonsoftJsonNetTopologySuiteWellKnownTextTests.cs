@@ -13,6 +13,11 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests : LoggerTest
         return JsonConvert.DeserializeObject<ValueOf<T>>("{\"value\":\"" + geom + "\"}", settings)!.Value;
     }
 
+    private static string SerializeObject<T>(T geom, JsonSerializerSettings settings)
+    {
+        return JsonConvert.SerializeObject(geom, settings).Trim('"');
+    }
+
     private readonly JsonSerializerSettings _settings;
 
     public NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : base(outputHelper)
@@ -26,96 +31,100 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests : LoggerTest
     // typeof(MultiPolygon),
     // typeof(GeometryCollection)
     [Theory]
-    [InlineData("POINT(30 10)")]
+    [InlineData("POINT (30 10)")]
     public void Geometry_Tests(string geom)
     {
-        DeserializeObject<Point>(geom, _settings)
-           .Should()
-           .Be(new Point(30, 10));
+        var value = DeserializeObject<Point>(geom, _settings)
+                   .Should()
+                   .Be(new Point(30, 10))
+                   .And.Subject;
+        SerializeObject(value, _settings).Should().Be(geom);
     }
 
     [Theory]
-    [InlineData("LINESTRING(30 10, 10 30, 40 40)")]
+    [InlineData("LINESTRING (30 10, 10 30, 40 40)")]
     public void LineString_Tests(string geom)
     {
-        DeserializeObject<LineString>(geom, _settings)
-           .Should()
-           .Be(
-                new LineString(
-                    new[]
-                    {
-                        new Coordinate(30, 10),
-                        new Coordinate(10, 30),
-                        new Coordinate(40, 40),
-                    }
-                )
-            );
+        var value = DeserializeObject<LineString>(geom, _settings)
+                   .Should()
+                   .Be(
+                        new LineString(
+                            new[]
+                            {
+                                new Coordinate(30, 10),
+                                new Coordinate(10, 30),
+                                new Coordinate(40, 40),
+                            }
+                        )
+                    ).And.Subject;
+        SerializeObject(value, _settings).Should().Be(geom);
     }
 
     [Theory]
-    [InlineData("POLYGON((30 10, 40 40, 20 40, 10 20, 30 10))")]
+    [InlineData("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")]
     public void Polygon_Tests(string geom)
     {
-        DeserializeObject<Polygon>(geom, _settings)
-           .Should()
-           .Be(
-                new Polygon(
-                    new LinearRing(
-                        new[]
-                        {
-                            new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
-                        }
-                    )
-                )
-            );
+        var value = DeserializeObject<Polygon>(geom, _settings)
+                   .Should()
+                   .Be(
+                        new Polygon(
+                            new LinearRing(
+                                new[]
+                                {
+                                    new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
+                                }
+                            )
+                        )
+                    ).And.Subject;
+        SerializeObject(value, _settings).Should().Be(geom);
     }
 
     [Theory]
-    [InlineData("MULTIPOINT(10 40, 40 30, 20 20, 30 10)")]
+    [InlineData("MULTIPOINT ((10 40), (40 30), (20 20), (30 10))")]
     public void MultiPoint_Tests(string geom)
     {
-        new ObjectAssertions(DeserializeObject<MultiPoint>(geom, _settings))
-           .Be(
-                new MultiPoint(
-                    new[]
-                    {
-                        new Point(10, 40),
-                        new Point(40, 30),
-                        new Point(20, 20),
-                        new Point(30, 10)
-                    }
-                )
-            );
+        var value = new ObjectAssertions(DeserializeObject<MultiPoint>(geom, _settings))
+                   .Be(
+                        new MultiPoint(
+                            new[]
+                            {
+                                new Point(10, 40),
+                                new Point(40, 30),
+                                new Point(20, 20),
+                                new Point(30, 10)
+                            }
+                        )
+                    ).And.Subject;
+        SerializeObject(value, _settings).Should().Be(geom);
     }
 
     [Theory]
-    [InlineData("MULTILINESTRING((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))")]
+    [InlineData("MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))")]
     public void MultiLineString_Tests(string geom)
     {
-        new ObjectAssertions(
-                DeserializeObject<MultiLineString>(geom, _settings)
-            )
-           .BeOfType<MultiLineString>();
+        var value = new ObjectAssertions(
+                        DeserializeObject<MultiLineString>(geom, _settings)
+                    )
+                   .BeOfType<MultiLineString>().Subject;
+        SerializeObject(value, _settings).Should().Be(geom);
     }
 
     [Theory]
-    [InlineData("MULTIPOLYGON(((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35)), ((30 20, 20 15, 20 25, 30 20)))")]
+    [InlineData("MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35)), ((30 20, 20 15, 20 25, 30 20)))")]
     public void MultiPolygon_Tests(string geom)
     {
-        new ObjectAssertions(
-                DeserializeObject<MultiPolygon>(geom, _settings)
-            )
-           .BeOfType<MultiPolygon>();
+        var value = new ObjectAssertions(DeserializeObject<MultiPolygon>(geom, _settings))
+                   .BeOfType<MultiPolygon>().Subject;
+        SerializeObject(value, _settings).Should().Be(geom);
     }
 
     [Theory]
-    [InlineData("GEOMETRYCOLLECTION(POINT(40 10), LINESTRING(10 10, 20 20, 10 40), POLYGON((40 40, 20 45, 45 30, 40 40)))")]
+    [InlineData("GEOMETRYCOLLECTION (POINT (40 10), LINESTRING (10 10, 20 20, 10 40), POLYGON ((40 40, 20 45, 45 30, 40 40)))")]
     public void GeometryCollection_Tests(string geom)
     {
-        new ObjectAssertions(
-                DeserializeObject<GeometryCollection>(geom, _settings)
-            )
-           .BeOfType<GeometryCollection>();
+        var value = new ObjectAssertions(DeserializeObject<GeometryCollection>(geom, _settings))
+                   .BeOfType<GeometryCollection>().Subject;
+        SerializeObject(value, _settings).Should().Be(geom);
     }
 
     public class ValueOf<T>
