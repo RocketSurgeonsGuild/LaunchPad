@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
@@ -52,6 +53,8 @@ public class FluentValidationConvention : IServiceConvention
         {
             services.TryAddEnumerable(ServiceDescriptor.Describe(item.InterfaceType, item.ValidatorType, ServiceLifetime.Singleton));
         }
+
+        services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
 
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
         services.TryAddEnumerable(

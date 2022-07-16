@@ -24,19 +24,10 @@ public class Startup
            .ConfigureStronglyTypedId<RocketId, UuidType>()
            .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
 //           .AddDefaultTransactionScopeHandler()
+           .AddExecutableTypes()
            .AddQueryType()
            .AddMutationType()
            .ModifyRequestOptions(options => options.IncludeExceptionDetails = true)
-           .ConfigureSchema(
-                s =>
-                {
-                    s.AddType<QueryType>();
-                    s.AddType<RocketMutation>();
-                    s.AddType<LaunchRecordMutation>();
-                    s.AddType<ReadyRocketType>();
-                    s.AddType<LaunchRecordType>();
-                }
-            )
            .AddSorting()
            .AddFiltering()
            .AddProjections();
