@@ -7,12 +7,6 @@ namespace Sample.Graphql.Tests.Rockets;
 
 public class ListRocketsTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
     [Fact]
     public async Task Should_List_Rockets()
     {
@@ -31,7 +25,7 @@ public class ListRocketsTests : HandleWebHostBase
         var response = await client.GetRockets.ExecuteAsync();
         response.EnsureNoErrors();
 
-        response.Data!.Rockets!.Items.Should().HaveCount(10);
+        response.Data!.Rockets!.Nodes!.Should().HaveCount(10);
     }
 
     [Fact]
@@ -52,6 +46,12 @@ public class ListRocketsTests : HandleWebHostBase
         var response = await client.GetFilteredRockets.ExecuteAsync(RocketType.AtlasV);
         response.EnsureNoErrors();
 
-        response.Data!.Rockets!.Items.Should().HaveCount(5);
+        response.Data!.Rockets!.Nodes!.Should().HaveCount(5);
     }
+
+    public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }

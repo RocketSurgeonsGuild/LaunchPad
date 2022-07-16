@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Types.Pagination;
@@ -24,19 +25,10 @@ public class Startup
            .ConfigureStronglyTypedId<RocketId, UuidType>()
            .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
 //           .AddDefaultTransactionScopeHandler()
+           .AddExecutableTypes()
            .AddQueryType()
            .AddMutationType()
            .ModifyRequestOptions(options => options.IncludeExceptionDetails = true)
-           .ConfigureSchema(
-                s =>
-                {
-                    s.AddType<QueryType>();
-                    s.AddType<RocketMutation>();
-                    s.AddType<LaunchRecordMutation>();
-                    s.AddType<ReadyRocketType>();
-                    s.AddType<LaunchRecordType>();
-                }
-            )
            .AddSorting()
            .AddFiltering()
            .AddProjections();
@@ -199,52 +191,24 @@ public class LaunchRecordMutation
 }
 
 [ExtendObjectType(OperationTypeNames.Query)]
-public class QueryType : ObjectTypeExtension<Query>
+public class QueryType
 {
-    protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
+    [UsePaging]
+    [UseProjection]
+    [UseFiltering]
+    [UseSorting(typeof(LaunchRecordSort))]
+    public IQueryable<LaunchRecord> LaunchRecords([Service] RocketDbContext context)
     {
-        descriptor
-           .Field(t => t.GetLaunchRecords(default!))
-           .UsePaging<NonNullType<ObjectType<LaunchRecord>>>(
-                options: new PagingOptions
-                {
-                    DefaultPageSize = 10,
-                    IncludeTotalCount = true,
-                    MaxPageSize = 20
-                }
-            )
-           .UseOffsetPaging<NonNullType<ObjectType<LaunchRecord>>>(
-                options: new PagingOptions
-                {
-                    DefaultPageSize = 10,
-                    IncludeTotalCount = true,
-                    MaxPageSize = 20
-                }
-            )
-           .UseProjection()
-           .UseFiltering()
-           .UseSorting<LaunchRecordSort>();
-        descriptor
-           .Field(t => t.GetRockets(default!))
-           .UsePaging<NonNullType<ObjectType<ReadyRocket>>>(
-                options: new PagingOptions
-                {
-                    DefaultPageSize = 10,
-                    IncludeTotalCount = true,
-                    MaxPageSize = 20
-                }
-            )
-           .UseOffsetPaging<NonNullType<ObjectType<ReadyRocket>>>(
-                options: new PagingOptions
-                {
-                    DefaultPageSize = 10,
-                    IncludeTotalCount = true,
-                    MaxPageSize = 20
-                }
-            )
-           .UseProjection()
-           .UseFiltering()
-           .UseSorting<RocketSort>();
+        return context.LaunchRecords;
+    }
+
+    [UsePaging]
+    [UseProjection]
+    [UseFiltering]
+    [UseSorting(typeof(RocketSort))]
+    public IQueryable<ReadyRocket> Rockets([Service] RocketDbContext context)
+    {
+        return context.Rockets;
     }
 }
 
@@ -271,20 +235,6 @@ internal class RocketSort : SortInputType<ReadyRocket>
     }
 }
 
-[ExtendObjectType(OperationTypeNames.Query)]
-public class Query
-{
-    public IQueryable<LaunchRecord> GetLaunchRecords([Service] RocketDbContext dbContext)
-    {
-        return dbContext.LaunchRecords;
-    }
-
-    public IQueryable<ReadyRocket> GetRockets([Service] RocketDbContext dbContext)
-    {
-        return dbContext.Rockets;
-    }
-}
-
 public class CustomFilterConventionExtension : FilterConventionExtension
 {
     protected override void Configure(IFilterConventionDescriptor descriptor)
@@ -297,47 +247,16 @@ public class CustomFilterConventionExtension : FilterConventionExtension
     }
 }
 
-public class LaunchRecordBase : ObjectType<LaunchRecord>
-{
-    protected override void Configure(IObjectTypeDescriptor<LaunchRecord> descriptor)
-    {
-        descriptor.Name(nameof(LaunchRecordBase));
-        descriptor.Field(z => z.Rocket).Ignore();
-        descriptor.Field(z => z.RocketId).Ignore();
-    }
-}
-
-public class ReadyRocketBase : ObjectType<ReadyRocket>
-{
-    protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor)
-    {
-        descriptor.Name(nameof(ReadyRocketBase));
-        descriptor.Field(z => z.LaunchRecords).Ignore();
-    }
-}
-
 public class ReadyRocketType : ObjectType<ReadyRocket>
 {
     protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor)
     {
 //        descriptor.Implements<InterfaceType<IReadyRocket>>();
         descriptor.Field(z => z.LaunchRecords)
-                  .Type<NonNullType<ListType<NonNullType<LaunchRecordBase>>>>()
+                  .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
                   .UseFiltering()
                   .UseSorting();
 //        descriptor.Ignore(z => z.LaunchRecords);
-    }
-}
-
-internal class LaunchRecordSortBase : SortInputType
-{
-    protected override void Configure(ISortInputTypeDescriptor descriptor)
-    {
-        descriptor.Field(nameof(LaunchRecord.Partner));
-        descriptor.Field(nameof(LaunchRecord.Payload));
-        descriptor.Field(nameof(LaunchRecord.PayloadWeightKg));
-        descriptor.Field(nameof(LaunchRecord.ActualLaunchDate));
-        descriptor.Field(nameof(LaunchRecord.ScheduledLaunchDate));
     }
 }
 
@@ -347,7 +266,7 @@ public class LaunchRecordType : ObjectType<LaunchRecord>
     {
 //        descriptor.Implements<InterfaceType<ILaunchRecord>>();
         descriptor.Field(z => z.Rocket)
-                  .Type<NonNullType<ReadyRocketBase>>();
+                  .Type<NonNullType<ObjectType<ReadyRocket>>>();
         descriptor.Field(z => z.RocketId).Ignore();
 //        descriptor.Ignore(z => z.LaunchRecords);
     }

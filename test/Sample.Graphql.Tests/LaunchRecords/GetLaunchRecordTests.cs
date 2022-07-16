@@ -9,12 +9,6 @@ namespace Sample.Graphql.Tests.LaunchRecords;
 
 public class GetLaunchRecordTests : HandleWebHostBase
 {
-    private static readonly Faker Faker = new();
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
     {
@@ -49,10 +43,16 @@ public class GetLaunchRecordTests : HandleWebHostBase
         var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Items![0].Partner.Should().Be("partner");
-        response.Data.LaunchRecords.Items[0].Payload.Should().Be("geo-fence-ftl");
-        response.Data.LaunchRecords.Items[0].Rocket.Type.Should().Be(RocketType.Falcon9);
-        response.Data.LaunchRecords.Items[0].Rocket.SerialNumber.Should().Be("12345678901234");
-        response.Data.LaunchRecords.Items[0].ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate);
+        response.Data!.LaunchRecords!.Nodes![0].Partner.Should().Be("partner");
+        response.Data.LaunchRecords!.Nodes[0].Payload.Should().Be("geo-fence-ftl");
+        response.Data.LaunchRecords!.Nodes[0].Rocket.Type.Should().Be(RocketType.Falcon9);
+        response.Data.LaunchRecords!.Nodes[0].Rocket.SerialNumber.Should().Be("12345678901234");
+        response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate);
     }
+
+    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    {
+    }
+
+    private static readonly Faker Faker = new();
 }
