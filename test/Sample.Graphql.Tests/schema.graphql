@@ -46,10 +46,49 @@ scalar Period
 "A LocalDateTime in a specific time zone and with a particular offset to distinguish between otherwise-ambiguous instants.\nA ZonedDateTime is global, in that it maps to a single Instant."
 scalar ZonedDateTime
 
+input LaunchRecordSortInput {
+  partner: SortEnumType
+  payload: SortEnumType
+  payloadWeightKg: SortEnumType
+  actualLaunchDate: SortEnumType
+  scheduledLaunchDate: SortEnumType
+}
+
+"A rocket in inventory"
+input ReadyRocketSortInput {
+  type: SortEnumType
+  serialNumber: SortEnumType
+}
+
+"A rocket in inventory"
+type ReadyRocket {
+  launchRecords(where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): [LaunchRecord!]!
+  id: UUID!
+  serialNumber: String!
+  type: RocketType!
+}
+
+type LaunchRecord {
+  rocket: ReadyRocket!
+  id: UUID!
+  partner: String
+  payload: String
+  payloadWeightKg: Long!
+  actualLaunchDate: DateTime
+  scheduledLaunchDate: DateTime!
+}
+
+input StronglyTypedIdOperationFilterInput {
+  eq: UUID
+  neq: UUID
+  in: [UUID]
+  nin: [UUID]
+}
+
 "GraphQL operations are hierarchical and composed, describing a tree of information.\nWhile Scalar types describe the leaf values of these hierarchical operations,\nObjects describe the intermediate levels.\n            \nGraphQL Objects represent a list of named fields, each of which yield a value of a\nspecific type. Object values should be serialized as ordered maps, where the selected\nfield names (or aliases) are the keys and the result of evaluating the field is the value,\nordered by the order in which they appear in the selection set.\n            \nAll fields defined within an Object type must not have a name which begins\nwith \"__\" (two underscores), as this is used exclusively by\nGraphQL’s introspection system."
 type Query {
-  launchRecords(skip: Int take: Int "Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): LaunchRecordCollectionSegment
-  rockets(skip: Int take: Int "Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput order: [ReadyRocketSortInput!]): ReadyRocketCollectionSegment
+  launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): LaunchRecordsConnection
+  rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput order: [ReadyRocketSortInput!]): RocketsConnection
 }
 
 "GraphQL operations are hierarchical and composed, describing a tree of information.\nWhile Scalar types describe the leaf values of these hierarchical operations,\nObjects describe the intermediate levels.\n            \nGraphQL Objects represent a list of named fields, each of which yield a value of a\nspecific type. Object values should be serialized as ordered maps, where the selected\nfield names (or aliases) are the keys and the result of evaluating the field is the value,\nordered by the order in which they appear in the selection set.\n            \nAll fields defined within an Object type must not have a name which begins\nwith \"__\" (two underscores), as this is used exclusively by\nGraphQL’s introspection system."
@@ -64,22 +103,9 @@ type Mutation {
   deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void!
 }
 
-"A rocket in inventory"
-type ReadyRocket {
-  launchRecords(where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): [LaunchRecordBase!]!
-  id: UUID!
-  serialNumber: String!
-  type: RocketType!
-}
-
-type LaunchRecord {
-  rocket: ReadyRocketBase!
-  id: UUID!
-  partner: String
-  payload: String
-  payloadWeightKg: Long!
-  actualLaunchDate: DateTime
-  scheduledLaunchDate: DateTime!
+enum SortEnumType {
+  ASC
+  DESC
 }
 
 input LaunchRecordFilterInput {
@@ -93,64 +119,6 @@ input LaunchRecordFilterInput {
   scheduledLaunchDate: ComparableDateTimeOffsetOperationFilterInput
   rocketId: StronglyTypedIdFilterOfUuidTypeFilterInput
   rocket: ReadyRocketFilterInput
-}
-
-input LaunchRecordSortInput {
-  partner: SortEnumType
-  payload: SortEnumType
-  payloadWeightKg: SortEnumType
-  actualLaunchDate: SortEnumType
-  scheduledLaunchDate: SortEnumType
-}
-
-"A rocket in inventory"
-input ReadyRocketFilterInput {
-  and: [ReadyRocketFilterInput!]
-  or: [ReadyRocketFilterInput!]
-  id: StronglyTypedIdFilterOfUuidTypeFilterInput
-  serialNumber: StringOperationFilterInput
-  type: RocketTypeOperationFilterInput
-  launchRecords: ListFilterInputTypeOfLaunchRecordFilterInput
-}
-
-"A rocket in inventory"
-input ReadyRocketSortInput {
-  type: SortEnumType
-  serialNumber: SortEnumType
-}
-
-"The collection segment represents one page of a pageable dataset \/ collection."
-type LaunchRecordCollectionSegment {
-  "The items that belong to this page."
-  items: [LaunchRecord!]
-  "Information to aid in pagination."
-  pageInfo: CollectionSegmentInfo!
-  totalCount: Int!
-}
-
-"The collection segment represents one page of a pageable dataset \/ collection."
-type ReadyRocketCollectionSegment {
-  "The items that belong to this page."
-  items: [ReadyRocket!]
-  "Information to aid in pagination."
-  pageInfo: CollectionSegmentInfo!
-  totalCount: Int!
-}
-
-type LaunchRecordBase {
-  id: UUID!
-  partner: String
-  payload: String
-  payloadWeightKg: Long!
-  actualLaunchDate: DateTime
-  scheduledLaunchDate: DateTime!
-}
-
-"A rocket in inventory"
-type ReadyRocketBase {
-  id: UUID!
-  serialNumber: String!
-  type: RocketType!
 }
 
 input StronglyTypedIdFilterOfUuidTypeFilterInput {
@@ -220,9 +188,14 @@ input ComparableDateTimeOffsetOperationFilterInput {
   nlte: DateTime
 }
 
-enum SortEnumType {
-  ASC
-  DESC
+"A rocket in inventory"
+input ReadyRocketFilterInput {
+  and: [ReadyRocketFilterInput!]
+  or: [ReadyRocketFilterInput!]
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
+  serialNumber: StringOperationFilterInput
+  type: RocketTypeOperationFilterInput
+  launchRecords: ListFilterInputTypeOfLaunchRecordFilterInput
 }
 
 input RocketTypeOperationFilterInput {
@@ -237,14 +210,6 @@ input ListFilterInputTypeOfLaunchRecordFilterInput {
   none: LaunchRecordFilterInput
   some: LaunchRecordFilterInput
   any: Boolean
-}
-
-"Information about the offset pagination."
-type CollectionSegmentInfo {
-  "Indicates whether more items exist following the set defined by the clients arguments."
-  hasNextPage: Boolean!
-  "Indicates whether more items exist prior the set defined by the clients arguments."
-  hasPreviousPage: Boolean!
 }
 
 "The available rocket types"
@@ -262,6 +227,74 @@ scalar Long
 
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
 scalar DateTime
+
+"A connection to a list of items."
+type LaunchRecordsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [LaunchRecordsEdge!]
+  "A flattened list of the nodes."
+  nodes: [LaunchRecord!]
+}
+
+"A connection to a list of items."
+type RocketsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [RocketsEdge!]
+  "A flattened list of the nodes."
+  nodes: [ReadyRocket!]
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+"An edge in a connection."
+type LaunchRecordsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: LaunchRecord!
+}
+
+"An edge in a connection."
+type RocketsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: ReadyRocket!
+}
+
+"The launch record details"
+type LaunchRecordModel {
+  "The launch record id"
+  id: UUID!
+  "The launch partner"
+  partner: String!
+  "The payload details"
+  payload: String!
+  "The payload weight in Kg"
+  payloadWeightKg: Long!
+  "The actual launch date"
+  actualLaunchDate: Instant
+  "The intended date for the launch"
+  scheduledLaunchDate: Instant!
+  "The serial number of the reusable rocket"
+  rocketSerialNumber: String!
+  "The kind of rocket that will be launching"
+  rocketType: RocketType!
+}
 
 "Create a launch record"
 input CreateLaunchRecordRequest {
@@ -329,26 +362,6 @@ input CreateRocketRequest {
 type CreateRocketResponse {
   "The rocket id"
   id: UUID!
-}
-
-"The launch record details"
-type LaunchRecordModel {
-  "The launch record id"
-  id: UUID!
-  "The launch partner"
-  partner: String!
-  "The payload details"
-  payload: String!
-  "The payload weight in Kg"
-  payloadWeightKg: Long!
-  "The actual launch date"
-  actualLaunchDate: Instant
-  "The intended date for the launch"
-  scheduledLaunchDate: Instant!
-  "The serial number of the reusable rocket"
-  rocketSerialNumber: String!
-  "The kind of rocket that will be launching"
-  rocketType: RocketType!
 }
 
 "The launch record update request"
