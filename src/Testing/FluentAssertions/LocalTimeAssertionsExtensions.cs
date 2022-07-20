@@ -17,7 +17,6 @@ public static class LocalTimeAssertionsExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static LocalTimeAssertions Should(this LocalTime? value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
         return new LocalTimeAssertions(value);
     }
 

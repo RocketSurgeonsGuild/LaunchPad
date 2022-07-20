@@ -17,7 +17,6 @@ public static class LocalDateAssertionsExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static LocalDateAssertions Should(this LocalDate? value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
         return new LocalDateAssertions(value);
     }
 

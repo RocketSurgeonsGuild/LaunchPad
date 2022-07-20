@@ -25,14 +25,6 @@
   <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="11.0.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageVersion Include="App.Metrics" Version="4.3.0" />
-    <PackageVersion Include="App.Metrics.AppNetCore" Version="4.3.0" />
-    <!--        <PackageVersion Include="App.Metrics.AspNetCore" Version="4.1.0"/>-->
-    <PackageVersion Include="App.Metrics.Extensions.HealthChecks" Version="4.3.0" />
-    <PackageVersion Include="App.Metrics" Version="4.3.0" />
-    <PackageVersion Include="App.Metrics.AspNetCore.Endpoints" Version="4.3.0" />
-    <PackageVersion Include="App.Metrics.AspNetCore.Tracking" Version="4.3.0" />
-    <PackageVersion Include="App.Metrics.Extensions.Hosting" Version="4.3.0" />
     <PackageVersion Include="FairyBread" Version="9.0.0" />
     <PackageVersion Include="FluentValidation" Version="11.1.0" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.1.2" />
@@ -117,6 +109,7 @@
     <PackageVersion Include="Serilog.Sinks.Console" Version="4.0.1" />
     <PackageVersion Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageVersion Include="Serilog.Sinks.Observable" Version="2.0.2" />
+    <PackageVersion Include="Serilog.Enrichers.Span" Version="2.3.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.3.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="6.3.2" />
     <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="6.0.1" />
@@ -130,6 +123,13 @@
     <PackageVersion Include="NSwag.ApiDescription.Client" Version="13.16.1" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="6.0.6" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="6.0.6" />
+    <PackageVersion Include="OpenTelemetry" Version="1.3.0" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.3.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.4" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.4" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.4" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.0.0-rc.2" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.EventCounters" Version="0.1.0-alpha.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Bogus" Version="34.0.2" />

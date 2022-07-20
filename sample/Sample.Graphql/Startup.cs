@@ -38,7 +38,6 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseLaunchPadRequestLogging();
-        app.UseMetricsAllMiddleware();
 
         app.UseRouting();
 

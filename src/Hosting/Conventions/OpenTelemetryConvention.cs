@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Serilog;
-using OpenTelemetry.Extensions.Hosting;
+using Rocket.Surgery.LaunchPad.Telemetry;
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
@@ -14,11 +14,14 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// <seealso cref="ISerilogConvention" />
 [PublicAPI]
 [ExportConvention]
-public class HealthChecksConvention : IServiceConvention
+public class OpenTelemetryConvention : IServiceConvention
 {
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.AddHealthChecks();
+        services
+           .AddOpenTelemetryTracing(builder => builder.ApplyConventions(context))
+           .AddOpenTelemetryMetrics(builder => builder.ApplyConventions(context))
+            ;
     }
 }

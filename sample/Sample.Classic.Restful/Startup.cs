@@ -2,7 +2,6 @@ using System.Reflection;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Sample.Classic.Restful;
@@ -44,7 +43,6 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseLaunchPadRequestLogging();
-        app.UseMetricsAllMiddleware();
 
         app.UseRouting();
 
@@ -60,7 +58,6 @@ public class Startup
                 endpoints.MapControllers();
 
                 endpoints.MapSwagger();
-                endpoints.MapAppMetrics();
             }
         );
     }

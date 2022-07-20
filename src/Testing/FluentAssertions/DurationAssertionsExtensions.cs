@@ -17,7 +17,6 @@ public static class DurationAssertionsExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static DurationAssertions Should(this Duration? value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
         return new DurationAssertions(value);
     }
 
