@@ -34,39 +34,3 @@ public class InstrumentationConvention : IOpenTelemetryMetricsConvention, IOpenT
         );
     }
 }
-
-/// <summary>
-///     InstrumentationConvention.
-///     Implements <see cref="IOpenTelemetryMetricsConvention" /> and <see cref="IOpenTelemetryTracingConvention" />
-/// </summary>
-/// <seealso cref="IServiceConvention" />
-[PublicAPI]
-[ExportConvention]
-[LiveConvention]
-public class EventCounterMetricsConvention : IOpenTelemetryMetricsConvention
-{
-    /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder)
-    {
-        builder.AddEventCounterMetrics(
-            options => options.RefreshIntervalSecs = configuration.GetValue("OpenTelemetry:Metrics:RefreshIntervalSecs", 30)
-        );
-    }
-}
-
-/// <summary>
-///     InstrumentationConvention.
-///     Implements <see cref="IOpenTelemetryMetricsConvention" /> and <see cref="IOpenTelemetryTracingConvention" />
-/// </summary>
-/// <seealso cref="IServiceConvention" />
-[PublicAPI]
-[ExportConvention]
-[LiveConvention]
-public class RuntimeMetricsConvention : IOpenTelemetryMetricsConvention
-{
-    /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder)
-    {
-        builder.AddRuntimeInstrumentation();
-    }
-}

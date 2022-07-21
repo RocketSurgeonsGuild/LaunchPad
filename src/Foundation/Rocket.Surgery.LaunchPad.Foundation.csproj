@@ -27,8 +27,6 @@
         <PackageReference Include="System.Reactive.Observable.Aliases" />
         <PackageReference Include="System.Text.Json" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.EventCounters" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
