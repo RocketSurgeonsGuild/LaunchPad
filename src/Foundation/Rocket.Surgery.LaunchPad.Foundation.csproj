@@ -5,6 +5,10 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
+        <None Include="build/*.*" Pack="true" PackagePath="build" />
+        <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="MediatR" />
