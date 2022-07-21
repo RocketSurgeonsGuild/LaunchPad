@@ -26,9 +26,11 @@
         <PackageReference Include="System.Reactive" />
         <PackageReference Include="System.Reactive.Observable.Aliases" />
         <PackageReference Include="System.Text.Json" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+        <ProjectReference Include="..\Telemetry\Rocket.Surgery.LaunchPad.Telemetry.csproj" />
         <ProjectReference
             Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj"
             IncludeAssets="analyzers"

@@ -2,7 +2,6 @@ using System.Reflection;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics;
 using Rocket.Surgery.Web.Hosting;
 using Sample.Restful;
 using Serilog;
@@ -37,7 +36,6 @@ app.UseSerilogRequestLogging(
         x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
     }
 );
-app.UseMetricsAllMiddleware();
 
 app.UseRouting();
 
@@ -54,7 +52,6 @@ app.UseEndpoints(
 
         // Should this move into an extension method?
         endpoints.MapSwagger();
-        endpoints.MapAppMetrics();
     }
 );
 app.Run();

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-        <PackageDescription></PackageDescription>
+        <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
@@ -12,6 +12,7 @@
 		<PackageReference Include="Serilog.Enrichers.Thread" />
 		<PackageReference Include="Serilog.Enrichers.Process" />
 		<PackageReference Include="Serilog.Enrichers.Demystify" />
+        <PackageReference Include="Serilog.Enrichers.Span" />
 		<PackageReference Include="Serilog.Extensions.Logging" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
     </ItemGroup>

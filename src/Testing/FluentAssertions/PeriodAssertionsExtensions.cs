@@ -17,7 +17,6 @@ public static class PeriodAssertionsExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static PeriodAssertions Should(this Period value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
         return new PeriodAssertions(value);
     }
 }

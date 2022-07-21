@@ -22,5 +22,6 @@
         <PackageReference Include="Rocket.Surgery.Extensions" />
         <PackageReference Include="Rocket.Surgery.Hosting" />
         <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
     </ItemGroup>
 </Project>

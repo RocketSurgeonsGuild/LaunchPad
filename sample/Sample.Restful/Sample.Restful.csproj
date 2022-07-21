@@ -6,8 +6,6 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\AspNetCore.AppMetrics\Rocket.Surgery.LaunchPad.AspNetCore.AppMetrics.csproj" />
-        <ProjectReference Include="..\..\src\AppMetrics\Rocket.Surgery.LaunchPad.AppMetrics.csproj" />
         <ProjectReference Include="..\..\src\Web.Hosting\Rocket.Surgery.LaunchPad.Web.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <PackageReference

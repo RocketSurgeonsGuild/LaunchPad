@@ -39,7 +39,6 @@ public class Startup
         app.UseStaticFiles();
 
         app.UseLaunchPadRequestLogging();
-        app.UseMetricsAllMiddleware();
 
         app.UseRouting();
 
