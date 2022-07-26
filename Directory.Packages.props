@@ -143,7 +143,7 @@
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.analyzers" Version="0.10.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
-    <PackageVersion Include="Verify.Xunit" Version="17.3.0" />
+    <PackageVersion Include="Verify.Xunit" Version="17.3.1" />
     <PackageVersion Include="Verify.SourceGenerators" Version="1.5.0" />
   </ItemGroup>
   <Import
