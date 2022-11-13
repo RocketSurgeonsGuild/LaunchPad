@@ -27,7 +27,7 @@ jobs:
           path: docs
 
       - name: Deploy to GitHub Pages
-        if: success()
+        if: github.event.workflow_run.conclusion == 'success'
         uses: crazy-max/ghaction-github-pages@v3.0.0
         with:
           target_branch: gh-pages
