@@ -20,9 +20,6 @@
     <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.17.19" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="11.0.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageVersion Include="FairyBread" Version="9.0.0" />
