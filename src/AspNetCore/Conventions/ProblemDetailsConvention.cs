@@ -11,6 +11,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using Rocket.Surgery.LaunchPad.Foundation;
+using ProblemDetailsOptions = Hellang.Middleware.ProblemDetails.ProblemDetailsOptions;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -28,9 +29,8 @@ public class ProblemDetailsConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services
-           .AddProblemDetails()
-           .AddProblemDetailsConventions();
+        services.AddProblemDetails()
+                .AddProblemDetailsConventions();
 
         services.AddOptions<ApiBehaviorOptions>()
                 .Configure(static options => options.SuppressModelStateInvalidFilter = true);

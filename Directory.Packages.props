@@ -20,8 +20,8 @@
     <PackageVersion Include="Rocket.Surgery.Nuke" Version="0.17.19" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="AutoMapper" Version="11.0.1" />
-    <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageVersion Include="AutoMapper" Version="12.0.0" />
+    <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageVersion Include="FairyBread" Version="9.0.0" />
     <PackageVersion Include="FluentValidation" Version="11.3.0" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.2.2" />
