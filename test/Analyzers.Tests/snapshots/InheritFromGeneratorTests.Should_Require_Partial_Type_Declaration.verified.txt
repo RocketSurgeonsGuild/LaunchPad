@@ -10,8 +10,7 @@
       HelpLink: ,
       MessageFormat: Type {0} must be made partial.,
       Message: Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.,
-      Category: LaunchPad,
-      CustomTags: []
+      Category: LaunchPad
     }
   ],
   Results: {
@@ -26,8 +25,7 @@
         HelpLink: ,
         MessageFormat: Type {0} must be made partial.,
         Message: Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.,
-        Category: LaunchPad,
-        CustomTags: []
+        Category: LaunchPad
       }
     ]
   }
