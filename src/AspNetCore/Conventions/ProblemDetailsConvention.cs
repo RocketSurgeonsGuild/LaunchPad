@@ -29,8 +29,8 @@ public class ProblemDetailsConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.AddProblemDetails()
-                .AddProblemDetailsConventions();
+        ProblemDetailsExtensions.AddProblemDetails(services)
+                                .AddProblemDetailsConventions();
 
         services.AddOptions<ApiBehaviorOptions>()
                 .Configure(static options => options.SuppressModelStateInvalidFilter = true);
