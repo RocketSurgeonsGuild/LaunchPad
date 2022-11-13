@@ -26,11 +26,7 @@ public class InstrumentationConvention : IOpenTelemetryMetricsConvention, IOpenT
     public void Register(IConventionContext conventionContext, IConfiguration configuration, TracerProviderBuilder builder)
     {
         builder.AddHttpClientInstrumentation(
-            options =>
-            {
-                options.RecordException = true;
-                options.SetHttpFlavor = true;
-            }
+            options => { options.RecordException = true; }
         );
     }
 }
