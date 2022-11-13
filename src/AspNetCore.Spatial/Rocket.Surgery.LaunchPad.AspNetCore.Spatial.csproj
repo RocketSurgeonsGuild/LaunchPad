@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
-        <PackageDescription></PackageDescription>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore</RootNamespace>
     </PropertyGroup>
