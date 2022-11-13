@@ -5,11 +5,11 @@
       Title: Type must be made partial,
       Severity: Error,
       WarningLevel: 0,
-      Location: Test1.cs: (9,17)-(9,28),
+      Location: Test1.cs: (9,24)-(9,35),
       Description: ,
       HelpLink: ,
       MessageFormat: Type {0} must be made partial.,
-      Message: Type Sample.Core.Operations.Rockets.PatchRocket must be made partial.,
+      Message: Type Sample.Core.Operations.Rockets.PublicClass must be made partial.,
       Category: LaunchPad
     }
   ],
@@ -20,11 +20,11 @@
         Title: Type must be made partial,
         Severity: Error,
         WarningLevel: 0,
-        Location: Test1.cs: (9,17)-(9,28),
+        Location: Test1.cs: (9,24)-(9,35),
         Description: ,
         HelpLink: ,
         MessageFormat: Type {0} must be made partial.,
-        Message: Type Sample.Core.Operations.Rockets.PatchRocket must be made partial.,
+        Message: Type Sample.Core.Operations.Rockets.PublicClass must be made partial.,
         Category: LaunchPad
       }
     ]

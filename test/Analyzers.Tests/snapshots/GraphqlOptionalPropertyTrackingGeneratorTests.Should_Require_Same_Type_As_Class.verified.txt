@@ -10,8 +10,7 @@
       HelpLink: ,
       MessageFormat: The declaration {0} must be a {1}.,
       Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.,
-      Category: LaunchPad,
-      CustomTags: []
+      Category: LaunchPad
     }
   ],
   Results: {
@@ -26,8 +25,7 @@
         HelpLink: ,
         MessageFormat: The declaration {0} must be a {1}.,
         Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.,
-        Category: LaunchPad,
-        CustomTags: []
+        Category: LaunchPad
       }
     ]
   }
