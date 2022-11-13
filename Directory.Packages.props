@@ -73,10 +73,10 @@
     <PackageVersion Include="NetTopologySuite.Features" Version="2.1.0" />
     <PackageVersion Include="NetTopologySuite.IO.GeoJSON4STJ" Version="2.1.1" />
     <PackageVersion Include="NetTopologySuite.IO.GeoJSON" Version="2.0.4" />
-    <PackageVersion Include="NodaTime" Version="3.1.0" />
-    <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
+    <PackageVersion Include="NodaTime" Version="3.1.5" />
+    <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.0.1" />
     <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
-    <PackageVersion Include="NodaTime.Testing" Version="3.1.0" />
+    <PackageVersion Include="NodaTime.Testing" Version="3.1.5" />
     <PackageVersion Include="Polly" Version="7.2.3" />
     <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta06" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
