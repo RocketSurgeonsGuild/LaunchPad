@@ -79,7 +79,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.1.0
         with:
           clean: 'false'
           fetch-depth: '0'
@@ -91,11 +91,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
       - name: 🔨 Use .NET Core 6.0 SDK
-        uses: actions/setup-dotnet@v2.1.0
+        uses: actions/setup-dotnet@v2.1.1
         with:
           dotnet-version: '6.0.x'
       - name: 🔨 Use .NET Core 7.0 SDK
-        uses: actions/setup-dotnet@v2.1.0
+        uses: actions/setup-dotnet@v2.1.1
         with:
           dotnet-version: '7.0.x'
       - name: 🎁 dotnet tool restore
@@ -118,30 +118,30 @@ jobs:
           dotnet nuke Pack --skip
       - name: 🏺 Publish coverage data
         if: always()
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v3.1.1
         with:
           name: 'coverage'
           path: 'coverage/'
       - name: 🐿 Publish Coverage
         if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_target') || ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.pull_request.user.login != 'renovate[bot]' && github.event.pull_request.user.login != 'dependabot[bot]')
-        uses: codecov/codecov-action@v3.1.0
+        uses: codecov/codecov-action@v3.1.1
         with:
           name: 'actions-${{ matrix.os }}'
       - name: 🏺 Publish logs
         if: always()
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v3.1.1
         with:
           name: 'logs'
           path: 'artifacts/logs/'
       - name: 🏺 Publish test data
         if: always()
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v3.1.1
         with:
           name: 'test data'
           path: 'artifacts/test/'
       - name: 🏺 Publish NuGet Packages
         if: always()
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v3.1.1
         with:
           name: 'nuget'
           path: 'artifacts/nuget/'
