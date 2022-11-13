@@ -33,7 +33,7 @@ public class MediatRTests : AutoFakeTest
 
         await mediator.Send(new Request()).ConfigureAwait(false);
 
-        A.CallTo(() => sub.Handle(A<Request>._, A<CancellationToken>._, A<RequestHandlerDelegate<Unit>>._))
+        A.CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
          .MustHaveHappenedOnceExactly();
     }
 
@@ -65,7 +65,7 @@ public class MediatRTests : AutoFakeTest
 
         await mediator.Send(new Request()).ConfigureAwait(false);
 
-        A.CallTo(() => sub.Handle(A<Request>._, A<CancellationToken>._, A<RequestHandlerDelegate<Unit>>._))
+        A.CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
          .MustHaveHappenedOnceExactly();
     }
 
