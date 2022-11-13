@@ -15,7 +15,7 @@ public static class ModuleInitializer
         DiffRunner.Disabled = true;
         VerifierSettings.RegisterFileConverter<GenerationTestResult>(Convert);
         VerifierSettings.RegisterFileConverter<GenerationTestResults>(Convert);
-        VerifierSettings.DerivePathInfo(
+        DerivePathInfo(
             (sourceFile, _, type, method) =>
             {
                 static string GetTypeName(Type type)

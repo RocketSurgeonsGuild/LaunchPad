@@ -1,5 +1,0 @@
-﻿{
-  Results: {
-    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
-  }
-}
