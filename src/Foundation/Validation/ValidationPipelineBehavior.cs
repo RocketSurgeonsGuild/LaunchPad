@@ -13,7 +13,7 @@ internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where 
         _validator = validator;
     }
 
-    public async Task<R> Handle(T request, CancellationToken cancellationToken, RequestHandlerDelegate<R> next)
+    public async Task<R> Handle(T request, RequestHandlerDelegate<R> next, CancellationToken cancellationToken)
     {
         if (_validator is not null)
         {
@@ -39,7 +39,7 @@ internal class ValidationStreamPipelineBehavior<T, R> : IStreamPipelineBehavior<
         _validator = validator;
     }
 
-    public async IAsyncEnumerable<R> Handle(T request, [EnumeratorCancellation] CancellationToken cancellationToken, StreamHandlerDelegate<R> next)
+    public async IAsyncEnumerable<R> Handle(T request, StreamHandlerDelegate<R> next, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         if (_validator is not null)
         {
