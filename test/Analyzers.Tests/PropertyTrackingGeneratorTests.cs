@@ -327,7 +327,7 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
         r.Should().Be(value);
         currentPropertyValues.Should().ContainInOrder(otherRequestProperties.Select(z => z.GetValue(request)).ToArray());
 
-        await Verify(result).UseParameters(property, value);
+        await Verify(result).UseParameters(property);
     }
 
     [Theory]
