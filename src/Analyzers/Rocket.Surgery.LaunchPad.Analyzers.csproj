@@ -8,8 +8,8 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         
-        <ProjectReference Include="Rocket.Surgery.LaunchPad.Analyzers.roslyn4.0.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
-        <ProjectReference Include="Rocket.Surgery.LaunchPad.Analyzers.roslyn4.4.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
+<!--        <ProjectReference Include="Rocket.Surgery.LaunchPad.Analyzers.roslyn4.0.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />-->
+<!--        <ProjectReference Include="Rocket.Surgery.LaunchPad.Analyzers.roslyn4.4.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />-->
     </ItemGroup>
     <ItemGroup>
         <None Include="$(OutputPath)\$(AssemblyName).roslyn4.0.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
