@@ -4,8 +4,6 @@
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Rocket.Surgery.LaunchPad.Analyzers.", ""))</_Analyzer_Roslyn_Version_>
         <DefineConstants>$(DefineConstants);$(_Analyzer_Roslyn_Version_.ToUpper().Replace(".", "_"))</DefineConstants>
-        <AssemblyName>$(MSBuildProjectName.Replace(".$(_Analyzer_Roslyn_Version_)", ""))</AssemblyName>
-        <TargetExt>.$(_Analyzer_Roslyn_Version_).dll</TargetExt>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
