@@ -8,13 +8,28 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         
-<!--        <ProjectReference Include="Rocket.Surgery.LaunchPad.Analyzers.roslyn4.0.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />-->
-<!--        <ProjectReference Include="Rocket.Surgery.LaunchPad.Analyzers.roslyn4.4.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />-->
+        <ProjectReference Include="../Analyzers.roslyn4.0/Analyzers.roslyn4.0.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="../Analyzers.roslyn4.4/Analyzers.roslyn4.4.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="$(OutputPath)\$(AssemblyName).roslyn4.0.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        <None Include="$(OutputPath)\$(AssemblyName).roslyn4.0.dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.0/cs" Visible="false" />
-        <None Include="$(OutputPath)\$(AssemblyName).roslyn4.4.dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
+        <None
+            Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.0\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
+            Pack="true"
+            PackagePath="analyzers/dotnet/cs"
+            Visible="false"
+        />
+        <None
+            Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.0\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
+            Pack="true"
+            PackagePath="analyzers/dotnet/roslyn4.0/cs"
+            Visible="false"
+        />
+        <None
+            Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.4\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
+            Pack="true"
+            PackagePath="analyzers/dotnet/roslyn4.4/cs"
+            Visible="false"
+        />
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />

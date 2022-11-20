@@ -5,6 +5,7 @@
         <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Rocket.Surgery.LaunchPad.Analyzers.", ""))</_Analyzer_Roslyn_Version_>
         <DefineConstants>$(DefineConstants);$(_Analyzer_Roslyn_Version_.ToUpper().Replace(".", "_"))</DefineConstants>
         <IsPackable>false</IsPackable>
+        <AssemblyName>Rocket.Surgery.LaunchPad.Analyzers</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
