@@ -12,6 +12,6 @@
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
-        <Compile Include="..\Rocket.Surgery.LaunchPad.Analyzers\**\*.cs" Exclude="..\Rocket.Surgery.LaunchPad.Analyzers\obj\**\*.cs" />
+        <Compile Include="..\Analyzers\**\*.cs" Exclude="..\Analyzers\obj\**\*.cs" />
     </ItemGroup>
 </Project>

@@ -42,6 +42,9 @@ public static class ModuleInitializer
                 var typeName = GetTypeName(type);
 
                 var path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots");
+#if !ROSLYN_CURRENT
+                path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "../Analyzers.Tests", "snapshots");
+#endif
                 return new(path, typeName, method.Name);
             }
         );
