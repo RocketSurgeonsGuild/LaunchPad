@@ -295,6 +295,25 @@ public class InheritFromGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+#if ROSLYN4_4
+        var values = context.SyntaxProvider.ForAttributeWithMetadataName(
+                                 "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute",
+                                 (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
+                                 (syntaxContext, _) => syntaxContext
+                             )
+                            .Combine(context.CompilationProvider)
+                            .Select(
+                                 static (tuple, _) => (
+                                     syntax: (TypeDeclarationSyntax)tuple.Left.TargetNode,
+                                     semanticModel: tuple.Left.SemanticModel,
+                                     symbol: (INamedTypeSymbol)tuple.Left.TargetSymbol,
+                                     compilation: tuple.Right,
+                                     attributes: tuple.Left.Attributes
+                                                      .Where(z => z.AttributeClass?.Name == "InheritFromAttribute")
+                                                      .ToArray()
+                                 )
+                             );
+#else
         var values = context.SyntaxProvider
                             .CreateSyntaxProvider(
                                  static (node, _) =>
@@ -327,6 +346,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                                  )
                              )
                             .Where(x => !( x.symbol is null || x.attributes is null or { Length: 0 } ));
+#endif
 
         context.RegisterSourceOutput(
             values,

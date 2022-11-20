@@ -1,18 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <DefineConstants>$(DefineConstants);ROSLYN_CURRENT;ROSLYN4_0;ROSLYN4_4</DefineConstants>
+        <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Analyzers.Tests.", ""))</_Analyzer_Roslyn_Version_>
+        <DefineConstants>$(DefineConstants);$(_Analyzer_Roslyn_Version_.ToUpper().Replace(".", "_"))</DefineConstants>        
+        <RootNamespace>Analyzers.Tests</RootNamespace>
+        <AssemblyName>Analyzers.Tests</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
-        <ProjectReference Include="..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
+        <ProjectReference Include="..\..\src\Analyzers.$(_Analyzer_Roslyn_Version_)\Rocket.Surgery.LaunchPad.Analyzers.$(_Analyzer_Roslyn_Version_).csproj" />
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />       
         <PackageReference Include="Verify.Xunit" />
         <PackageReference Include="Verify.SourceGenerators" />
         <ProjectReference Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
+        <Compile Include="..\Analyzers.Tests\**\*.cs" Exclude="..\Analyzers.Tests\obj\**\*.cs" />
     </ItemGroup>
-    
 </Project>
