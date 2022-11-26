@@ -3,7 +3,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Rocket.Surgery.LaunchPad.Analyzers.", ""))</_Analyzer_Roslyn_Version_>
-        <DefineConstants>$(DefineConstants);$(_Analyzer_Roslyn_Version_.ToUpper().Replace(".", "_"))</DefineConstants>
+        <DefineConstants>$(DefineConstants);ROSLYN4_0</DefineConstants>
         <IsPackable>false</IsPackable>
         <AssemblyName>Rocket.Surgery.LaunchPad.Analyzers</AssemblyName>
     </PropertyGroup>
