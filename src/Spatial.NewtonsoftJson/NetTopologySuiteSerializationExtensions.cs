@@ -99,7 +99,6 @@ public static class NetTopologySuiteSerializationExtensions
         converters.Add(new FeatureCollectionConverter());
         converters.Add(new FeatureConverter());
         converters.Add(new AttributesTableConverter());
-        converters.Add(new CoordinateConverter(factory.PrecisionModel, dimension));
         converters.Add(new EnvelopeConverter());
     }
 
@@ -108,11 +107,9 @@ public static class NetTopologySuiteSerializationExtensions
         var convertersToRemove = converters
                                 .OfType<GeometryConverter>()
                                 .Cast<JsonConverter>()
-                                .Concat(converters.OfType<GeometryArrayConverter>())
                                 .ToList();
         foreach (var converter in convertersToRemove) converters.Remove(converter);
         converters.Add(new GeometryConverter(factory, dimension));
-        converters.Add(new GeometryArrayConverter(factory, dimension));
         ApplyConverters(factory, dimension, converters);
     }
 
@@ -121,11 +118,9 @@ public static class NetTopologySuiteSerializationExtensions
         var convertersToRemove = converters
                                 .OfType<GeometryConverter>()
                                 .Cast<JsonConverter>()
-                                .Concat(converters.OfType<GeometryArrayConverter>())
                                 .ToList();
         foreach (var converter in convertersToRemove) converters.Remove(converter);
         converters.Add(new WktGeometryConverter(factory, dimension));
-        converters.Add(new WktGeometryArrayConverter(factory, dimension));
         ApplyConverters(factory, dimension, converters);
     }
 }
