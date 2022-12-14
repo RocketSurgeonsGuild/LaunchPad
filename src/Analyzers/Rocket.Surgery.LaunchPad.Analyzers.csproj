@@ -8,8 +8,16 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         
-        <ProjectReference Include="../Analyzers.roslyn4.0/Analyzers.roslyn4.0.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
-        <ProjectReference Include="../Analyzers.roslyn4.4/Analyzers.roslyn4.4.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" />
+        <ProjectReference
+            Include="../Analyzers.roslyn4.0/Rocket.Surgery.LaunchPad.Analyzers.roslyn4.0.csproj"
+            PrivateAssets="all"
+            ReferenceOutputAssembly="false"
+        />
+        <ProjectReference
+            Include="../Analyzers.roslyn4.4/Rocket.Surgery.LaunchPad.Analyzers.roslyn4.4.csproj"
+            PrivateAssets="all"
+            ReferenceOutputAssembly="false"
+        />
     </ItemGroup>
     <ItemGroup>
         <None

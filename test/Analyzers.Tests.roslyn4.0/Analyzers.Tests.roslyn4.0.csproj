@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Analyzers.Tests.", ""))</_Analyzer_Roslyn_Version_>
         <DefineConstants>$(DefineConstants);$(_Analyzer_Roslyn_Version_.ToUpper().Replace(".", "_"))</DefineConstants>        
         <RootNamespace>Analyzers.Tests</RootNamespace>
