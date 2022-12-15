@@ -1,14 +1,18 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NetTopologySuite;
+using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Converters;
 
 namespace Rocket.Surgery.LaunchPad.Spatial;
 
+/// <summary>
+///     A converter for
+/// </summary>
 public class WktConverterFactory : GeoJsonConverterFactory
 {
-    private static readonly HashSet<Type> GeometryTypes = new HashSet<Type>
+    private static readonly HashSet<Type> GeometryTypes = new()
     {
         typeof(Geometry),
         typeof(Point),
@@ -69,6 +73,7 @@ public class WktConverterFactory : GeoJsonConverterFactory
         _writeGeometryBBox = writeGeometryBBox;
     }
 
+    /// <inheritdoc />
     public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
         return GeometryTypes.Contains(typeToConvert)
@@ -76,3 +81,6 @@ public class WktConverterFactory : GeoJsonConverterFactory
             : base.CreateConverter(typeToConvert, options);
     }
 }
+
+
+

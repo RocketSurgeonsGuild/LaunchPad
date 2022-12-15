@@ -11,8 +11,8 @@ public static partial class Program
 {
     public static async Task Main(string[] args)
     {
-        var builder = WebAssemblyHostBuilder.CreateDefault(args)
-                                            .ConfigureRocketSurgery(AppDomain.CurrentDomain, z => z.WithConventionsFrom(GetConventions))
+        var builder = await WebAssemblyHostBuilder.CreateDefault(args)
+                                                  .ConfigureRocketSurgery(AppDomain.CurrentDomain, GetConventions)
             ;
         builder.RootComponents.Add<App>("app");
         builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
@@ -67,3 +67,5 @@ public static class TestHandler
         }
     }
 }
+
+
