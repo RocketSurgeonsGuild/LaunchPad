@@ -126,7 +126,7 @@ public partial class Pipeline : NukeBuild,
                           var url = $"http://localhost:{port}";
                           var process1 = ProcessTasks.StartProcess(
                               "dotnet",
-                              "run --no-launch-profile",
+                              "run --no-launch-profile --framework net6.0",
                               logOutput: true,
                               logInvocation: true,
                               timeout: Convert.ToInt32(timeout),
