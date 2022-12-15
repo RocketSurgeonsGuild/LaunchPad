@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 
 namespace Rocket.Surgery.LaunchPad.Spatial;
 
+/// <summary>
+///     WKT text converter
+/// </summary>
 public class WktGeometryConverter : GeometryConverter
 {
     /// <summary>
@@ -15,7 +18,6 @@ public class WktGeometryConverter : GeometryConverter
     private readonly GeometryFactory _geometryFactory;
     private readonly int _dimension;
     private readonly WKTReader _wktReader;
-
 
     /// <summary>
     ///     Creates an instance of this class using <see cref="GeoJsonSerializer.Wgs84Factory" /> to create geometries.
@@ -44,6 +46,7 @@ public class WktGeometryConverter : GeometryConverter
         _wktReader = new WKTReader(geometryFactory.GeometryServices);
     }
 
+    /// <inheritdoc />
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
@@ -51,6 +54,7 @@ public class WktGeometryConverter : GeometryConverter
         return _wktReader.Read(reader.Value!.ToString());
     }
 
+    /// <inheritdoc />
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
         if (value is not Geometry geom)
@@ -62,3 +66,6 @@ public class WktGeometryConverter : GeometryConverter
         writer.WriteValue(geom.AsText());
     }
 }
+
+
+

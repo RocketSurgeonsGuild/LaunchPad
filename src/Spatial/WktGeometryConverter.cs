@@ -5,7 +5,7 @@ using NetTopologySuite.IO;
 
 namespace Rocket.Surgery.LaunchPad.Spatial;
 
-internal partial class WktGeometryConverter : JsonConverter<Geometry>
+internal partial class WktGeometryConverter : JsonConverter<Geometry?>
 {
     /// <summary>
     ///     Gets the default geometry factory to use with this converter.
@@ -29,7 +29,7 @@ internal partial class WktGeometryConverter : JsonConverter<Geometry>
     }
 
 
-    public override Geometry Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override Geometry? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.Null)
         {
@@ -40,7 +40,7 @@ internal partial class WktGeometryConverter : JsonConverter<Geometry>
         return _wktReader.Read(reader.GetString());
     }
 
-    public override void Write(Utf8JsonWriter writer, Geometry value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, Geometry? value, JsonSerializerOptions options)
     {
         if (value == null)
         {
@@ -51,3 +51,6 @@ internal partial class WktGeometryConverter : JsonConverter<Geometry>
         writer.WriteStringValue(value.AsText());
     }
 }
+
+
+

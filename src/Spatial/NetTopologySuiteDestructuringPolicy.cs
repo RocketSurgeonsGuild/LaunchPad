@@ -10,6 +10,11 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
 {
     public const string defaultIdPropertyName = "_NetTopologySuite_id";
 
+    public static LogEventPropertyValue WriteGeometry(ILogEventPropertyValueFactory propertyValueFactory, Geometry value)
+    {
+        return new ScalarValue(value.AsText());
+    }
+
     private static LogEventProperty? WriteBBox(Envelope? value, Geometry? geometry)
     {
         // if we don't want to write "null" bounding boxes, bail out.
@@ -147,7 +152,6 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
     private readonly string _idPropertyName;
     private readonly bool _writeGeometryBBox;
 
-
     public NetTopologySuiteDestructuringPolicy()
         : this(false)
     {
@@ -162,11 +166,6 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
     {
         _writeGeometryBBox = writeGeometryBBox;
         _idPropertyName = idPropertyName ?? defaultIdPropertyName;
-    }
-
-    public LogEventPropertyValue WriteGeometry(ILogEventPropertyValueFactory propertyValueFactory, Geometry value)
-    {
-        return new ScalarValue(value.AsText());
     }
 
     private LogEventPropertyValue WriteFeature(ILogEventPropertyValueFactory propertyValueFactory, IFeature value)
@@ -244,3 +243,6 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
         return false;
     }
 }
+
+
+
