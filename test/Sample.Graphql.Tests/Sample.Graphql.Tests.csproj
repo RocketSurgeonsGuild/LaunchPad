@@ -9,7 +9,7 @@
         <PackageReference Include="System.Net.Http.Json" />
         
         <PackageReference Include="StrawberryShake.Transport.Http" />
-        <PackageReference Include="StrawberryShake.CodeGeneration.CSharp.Analyzers" />
+        <PackageReference Include="StrawberryShake" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
