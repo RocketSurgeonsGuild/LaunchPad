@@ -2,6 +2,7 @@
 using FluentValidation.AspNetCore;
 using FluentValidation.Validators;
 using MicroElements.Swashbuckle.FluentValidation;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -107,8 +108,8 @@ public partial class FluentValidationConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.WithMvcCore()
-                .AddFluentValidation();
+        services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
         services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
         services
            .Configure<MvcOptions>(mvcOptions => mvcOptions.Filters.Insert(0, new ValidationExceptionFilter()))
@@ -117,3 +118,5 @@ public partial class FluentValidationConvention : IServiceConvention
         AddFluentValidationRules(services);
     }
 }
+
+
