@@ -1,29 +1,31 @@
 ﻿using DryIoc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.CommandLine;
+using Rocket.Surgery.Hosting;
 using Sample.Command;
 using Spectre.Console.Cli;
 
 [assembly: ImportConventions(Namespace = "Sample.Command")]
 
-await Rocket.Surgery.Conventions.CommandLine.App.Create<DefaultCommand>(
-                 builder => builder
-                           .WithConventionsFrom(Imports.GetConventions)
-                           .ConfigureLogging(z => z.AddConsole())
-                           .UseDryIoc()
-                           .ConfigureDryIoc(
-                                x =>
-                                {
-                                    x.Use(new InstanceThing());
-                                    x.Register<Dump>(Reuse.Singleton);
-                                }
-                            )
-                           .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
-             )
-            .RunAsync(args);
-
+await Host.CreateDefaultBuilder(args)
+          .LaunchWith(
+               RocketBooster.For(Imports.GetConventions),
+               builder => builder.SetDefaultCommand<DefaultCommand>()
+                                 .ConfigureLogging(z => z.AddConsole())
+                                 .UseDryIoc()
+                                 .ConfigureDryIoc(
+                                      x =>
+                                      {
+                                          x.Use(new InstanceThing());
+                                          x.Register<Dump>(Reuse.Singleton);
+                                      }
+                                  )
+                                 .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
+           )
+          .RunAsync();
 
 public class InstanceThing
 {
