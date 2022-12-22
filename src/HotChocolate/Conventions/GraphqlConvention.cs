@@ -39,6 +39,7 @@ public class GraphqlConvention : IServiceConvention
     {
         var sb = services
                 .AddGraphQL()
+                .AddFairyBread()
                 .AddErrorFilter<GraphqlErrorFilter>()
                 .BindRuntimeType<Unit, VoidType>();
 

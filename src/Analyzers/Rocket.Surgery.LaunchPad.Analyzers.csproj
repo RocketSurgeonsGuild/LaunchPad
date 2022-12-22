@@ -23,12 +23,6 @@
         <None
             Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.0\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
             Pack="true"
-            PackagePath="analyzers/dotnet/cs"
-            Visible="false"
-        />
-        <None
-            Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.0\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
-            Pack="true"
             PackagePath="analyzers/dotnet/roslyn4.0/cs"
             Visible="false"
         />

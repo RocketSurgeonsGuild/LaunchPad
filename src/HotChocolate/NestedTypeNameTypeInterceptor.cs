@@ -11,8 +11,7 @@ public class NestedTypeNameTypeInterceptor : TypeInterceptor
     /// <inheritdoc />
     public override void OnBeforeCompleteName(
         ITypeCompletionContext completionContext,
-        DefinitionBase? definition,
-        IDictionary<string, object?> contextData
+        DefinitionBase? definition
     )
     {
         if (definition is ObjectTypeDefinition ot)
@@ -29,7 +28,7 @@ public class NestedTypeNameTypeInterceptor : TypeInterceptor
             {
                 iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.Name}";
 
-                if (iotd.Name.Value.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && iotd.RuntimeType.Name == "Request")
+                if (iotd.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && iotd.RuntimeType.Name == "Request")
                 {
                     iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.RuntimeType.Name}";
                 }
