@@ -1,0 +1,393 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+"The launch record creation response"
+type CreateLaunchRecordResponse {
+  "The id of the new launch record"
+  id: UUID!
+}
+
+"The identifier of the rocket that was created"
+type CreateRocketResponse {
+  "The rocket id"
+  id: UUID!
+}
+
+type LaunchRecord {
+  rocket: ReadyRocket!
+  id: UUID!
+  partner: String
+  payload: String
+  payloadWeightKg: Long!
+  actualLaunchDate: DateTime
+  scheduledLaunchDate: DateTime!
+}
+
+"The launch record details"
+type LaunchRecordModel {
+  "The launch record id"
+  id: UUID!
+  "The launch partner"
+  partner: String!
+  "The payload details"
+  payload: String!
+  "The payload weight in Kg"
+  payloadWeightKg: Long!
+  "The actual launch date"
+  actualLaunchDate: Instant
+  "The intended date for the launch"
+  scheduledLaunchDate: Instant!
+  "The serial number of the reusable rocket"
+  rocketSerialNumber: String!
+  "The kind of rocket that will be launching"
+  rocketType: RocketType!
+}
+
+"A connection to a list of items."
+type LaunchRecordsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [LaunchRecordsEdge!]
+  "A flattened list of the nodes."
+  nodes: [LaunchRecord!]
+}
+
+"An edge in a connection."
+type LaunchRecordsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: LaunchRecord!
+}
+
+"GraphQL operations are hierarchical and composed, describing a tree of information.\nWhile Scalar types describe the leaf values of these hierarchical operations,\nObjects describe the intermediate levels.\n            \nGraphQL Objects represent a list of named fields, each of which yield a value of a\nspecific type. Object values should be serialized as ordered maps, where the selected\nfield names (or aliases) are the keys and the result of evaluating the field is the value,\nordered by the order in which they appear in the selection set.\n            \nAll fields defined within an Object type must not have a name which begins\nwith \"__\" (two underscores), as this is used exclusively by\nGraphQL’s introspection system."
+type Mutation {
+  createRocket(request: CreateRocketRequest!): CreateRocketResponse!
+  editRocket(request: EditRocketRequest!): RocketModel!
+  patchRocket(request: EditRocketPatchRequestInput!): RocketModel!
+  deleteRocket(request: DeleteRocketRequest!): Void!
+  createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse!
+  editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel!
+  patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel!
+  deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+"GraphQL operations are hierarchical and composed, describing a tree of information.\nWhile Scalar types describe the leaf values of these hierarchical operations,\nObjects describe the intermediate levels.\n            \nGraphQL Objects represent a list of named fields, each of which yield a value of a\nspecific type. Object values should be serialized as ordered maps, where the selected\nfield names (or aliases) are the keys and the result of evaluating the field is the value,\nordered by the order in which they appear in the selection set.\n            \nAll fields defined within an Object type must not have a name which begins\nwith \"__\" (two underscores), as this is used exclusively by\nGraphQL’s introspection system."
+type Query {
+  launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): LaunchRecordsConnection
+  rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput order: [ReadyRocketSortInput!]): RocketsConnection
+}
+
+"A rocket in inventory"
+type ReadyRocket {
+  launchRecords(where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): [LaunchRecord!]!
+  id: UUID!
+  serialNumber: String!
+  type: RocketType!
+}
+
+"The details of a given rocket"
+type RocketModel {
+  "The unique rocket identifier"
+  id: UUID!
+  "The serial number of the rocket"
+  sn: String!
+  "The type of the rocket"
+  type: RocketType!
+}
+
+"A connection to a list of items."
+type RocketsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [RocketsEdge!]
+  "A flattened list of the nodes."
+  nodes: [ReadyRocket!]
+}
+
+"An edge in a connection."
+type RocketsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: ReadyRocket!
+}
+
+"Create a launch record"
+input CreateLaunchRecordRequest {
+  "The rocket to use"
+  rocketId: UUID!
+  "The launch partner"
+  partner: String
+  "The launch partners payload"
+  payload: String
+  "The payload weight"
+  payloadWeightKg: Float!
+  "The actual launch date"
+  actualLaunchDate: Instant
+  "The intended launch date"
+  scheduledLaunchDate: Instant!
+}
+
+"The operation to create a new rocket record"
+input CreateRocketRequest {
+  "The serial number of the rocket"
+  serialNumber: String!
+  "The type of rocket"
+  type: RocketType!
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime]
+  nin: [DateTime]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+"The request to delete a launch record"
+input DeleteLaunchRecordRequest {
+  "The launch record to delete"
+  id: UUID!
+}
+
+"The request to remove a rocket from the system"
+input DeleteRocketRequest {
+  "The rocket id"
+  id: UUID!
+}
+
+input EditLaunchRecordPatchRequestInput {
+  id: UUID!
+  partner: String
+  payload: String
+  payloadWeightKg: Float
+  actualLaunchDate: Instant
+  scheduledLaunchDate: Instant
+  rocketId: UUID
+}
+
+"The launch record update request"
+input EditLaunchRecordRequest {
+  "The launch record to update"
+  id: UUID!
+  "The updated launch partner"
+  partner: String!
+  "The updated launch payload"
+  payload: String!
+  "The updated payload weight"
+  payloadWeightKg: Float!
+  "The updated actual launch date"
+  actualLaunchDate: Instant
+  "The scheduled launch date"
+  scheduledLaunchDate: Instant!
+  "The update rocket id"
+  rocketId: UUID!
+}
+
+input EditRocketPatchRequestInput {
+  id: UUID!
+  serialNumber: String
+  type: RocketType
+}
+
+"The edit operation to update a rocket"
+input EditRocketRequest {
+  "The rocket id"
+  id: UUID!
+  "The serial number of the rocket"
+  serialNumber: String!
+  "The type of the rocket"
+  type: RocketType!
+}
+
+input LaunchRecordFilterInput {
+  and: [LaunchRecordFilterInput!]
+  or: [LaunchRecordFilterInput!]
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
+  partner: StringOperationFilterInput
+  payload: StringOperationFilterInput
+  payloadWeightKg: LongOperationFilterInput
+  actualLaunchDate: DateTimeOperationFilterInput
+  scheduledLaunchDate: DateTimeOperationFilterInput
+  rocketId: StronglyTypedIdFilterOfUuidTypeFilterInput
+  rocket: ReadyRocketFilterInput
+}
+
+input LaunchRecordSortInput {
+  partner: SortEnumType
+  payload: SortEnumType
+  payloadWeightKg: SortEnumType
+  actualLaunchDate: SortEnumType
+  scheduledLaunchDate: SortEnumType
+}
+
+input ListFilterInputTypeOfLaunchRecordFilterInput {
+  all: LaunchRecordFilterInput
+  none: LaunchRecordFilterInput
+  some: LaunchRecordFilterInput
+  any: Boolean
+}
+
+input LongOperationFilterInput {
+  eq: Long
+  neq: Long
+  in: [Long]
+  nin: [Long]
+  gt: Long
+  ngt: Long
+  gte: Long
+  ngte: Long
+  lt: Long
+  nlt: Long
+  lte: Long
+  nlte: Long
+}
+
+"A rocket in inventory"
+input ReadyRocketFilterInput {
+  and: [ReadyRocketFilterInput!]
+  or: [ReadyRocketFilterInput!]
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
+  serialNumber: StringOperationFilterInput
+  type: RocketTypeOperationFilterInput
+  launchRecords: ListFilterInputTypeOfLaunchRecordFilterInput
+}
+
+"A rocket in inventory"
+input ReadyRocketSortInput {
+  type: SortEnumType
+  serialNumber: SortEnumType
+}
+
+input RocketTypeOperationFilterInput {
+  eq: RocketType
+  neq: RocketType
+  in: [RocketType!]
+  nin: [RocketType!]
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input StronglyTypedIdFilterOfUuidTypeFilterInput {
+  eq: UUID
+  neq: UUID
+  in: [UUID]
+  nin: [UUID]
+}
+
+input StronglyTypedIdOperationFilterInput {
+  eq: UUID
+  neq: UUID
+  in: [UUID]
+  nin: [UUID]
+}
+
+"The available rocket types"
+enum RocketType {
+  "Your best bet"
+  FALCON9
+  "For those huge payloads"
+  FALCON_HEAVY
+  "We stole our competitors rocket platform!"
+  ATLAS_V
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"The `@defer` directive may be provided for fragment spreads and inline fragments to inform the executor to delay the execution of the current fragment to indicate deprioritization of the current fragment. A query with `@defer` directive will cause the request to potentially return multiple responses, where non-deferred data is delivered in the initial response and data deferred is delivered in a subsequent response. `@include` and `@skip` take precedence over `@defer`."
+directive @defer("If this argument label has a value other than null, it will be passed on to the result of this defer directive. This label is intended to give client applications a way to identify to which fragment a deferred result belongs to." label: String "Deferred when true." if: Boolean) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"The `@stream` directive may be provided for a field of `List` type so that the backend can leverage technology such as asynchronous iterators to provide a partial list in the initial response, and additional list items in subsequent responses. `@include` and `@skip` take precedence over `@stream`."
+directive @stream("If this argument label has a value other than null, it will be passed on to the result of this stream directive. This label is intended to give client applications a way to identify to which fragment a streamed result belongs to." label: String "The initial elements that shall be send down to the consumer." initialCount: Int! = 0 "Streamed when true." if: Boolean) on FIELD
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"Represents a time zone - a mapping between UTC and local time.\nA time zone maps UTC instants to local times - or, equivalently, to the offset from UTC at any particular instant."
+scalar DateTimeZone
+
+"Represents a fixed (and calendar-independent) length of time."
+scalar Duration
+
+"Represents an instant on the global timeline, with nanosecond resolution."
+scalar Instant
+
+"Equates the days of the week with their numerical value according to ISO-8601.\n Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5, Saturday = 6, Sunday = 7."
+scalar IsoDayOfWeek
+
+"LocalDate is an immutable struct representing a date within the calendar, with no reference to a particular time zone or time of day."
+scalar LocalDate
+
+"A date and time in a particular calendar system."
+scalar LocalDateTime
+
+"LocalTime is an immutable struct representing a time of day, with no reference to a particular calendar, time zone or date."
+scalar LocalTime
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+"An offset from UTC in seconds.\n A positive value means that the local time is ahead of UTC (e.g. for Europe); a negative value means that the local time is behind UTC (e.g. for America)."
+scalar Offset
+
+"A combination of a LocalDate and an Offset, to represent a date at a specific offset from UTC but without any time-of-day information."
+scalar OffsetDate
+
+"A local date and time in a particular calendar system, combined with an offset from UTC."
+scalar OffsetDateTime
+
+"A combination of a LocalTime and an Offset, to represent a time-of-day at a specific offset from UTC but without any date information."
+scalar OffsetTime
+
+"Represents a period of time expressed in human chronological terms: hours, days, weeks, months and so on."
+scalar Period
+
+scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
+
+scalar Void
+
+"A LocalDateTime in a specific time zone and with a particular offset to distinguish between otherwise-ambiguous instants.\nA ZonedDateTime is global, in that it maps to a single Instant."
+scalar ZonedDateTime
