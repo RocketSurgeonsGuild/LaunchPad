@@ -33,6 +33,14 @@ public class SerilogEnrichSpansConvention : ISerilogConvention
             throw new ArgumentNullException(nameof(context));
         }
 
-        loggerConfiguration.Enrich.WithSpan(new SpanOptions { IncludeBaggage = true, IncludeTags = true });
+        loggerConfiguration.Enrich.WithSpan(
+            new SpanOptions
+            {
+                IncludeBaggage = true,
+                IncludeTags = true,
+                IncludeOperationName = true,
+                IncludeTraceFlags = true,
+            }
+        );
     }
 }
