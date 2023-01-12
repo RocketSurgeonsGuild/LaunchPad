@@ -1,6 +1,6 @@
 {
-    "schema": "schema.graphql",
-    "documents": "**/*.graphql",
+    "schema": "snapshots/FoundationTests.GraphqlSchema.verified.graphql",
+    "documents": "**/[!snapshots]*.graphql",
     "extensions": {
         "strawberryShake": {
             "name": "RocketClient",

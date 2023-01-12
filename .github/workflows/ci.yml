@@ -107,9 +107,6 @@ jobs:
       - name: ⚙ Build
         run: |
           dotnet nuke Build --skip
-      - name: Update Graph Ql
-        run: |
-          dotnet nuke UpdateGraphQl --skip
       - name: 🚦 Test
         run: |
           dotnet nuke Test TriggerCodeCoverageReports GenerateCodeCoverageReportCobertura GenerateCodeCoverageBadges GenerateCodeCoverageSummary GenerateCodeCoverageReport --skip
