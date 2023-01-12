@@ -9,6 +9,7 @@ using IRequestExecutorResolver = HotChocolate.Execution.IRequestExecutorResolver
 
 namespace Sample.Graphql.Tests;
 
+[UsesVerify]
 public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
 {
     [Fact]
@@ -29,7 +30,7 @@ public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
     public async Task GraphqlSchema()
     {
         var exeuctor = await _factory.Services.WithScoped<IRequestExecutorResolver>().Invoke(z => z.GetRequestExecutorAsync());
-        Logger.LogInformation(exeuctor.Schema.Print());
+        await Verify(exeuctor.Schema.Print(), "graphql");
     }
 
     public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)

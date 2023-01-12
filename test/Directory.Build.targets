@@ -13,6 +13,7 @@
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.analyzers" />
         <PackageReference Include="xunit.runner.visualstudio" />
+        <PackageReference Include="Verify.Xunit" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />
