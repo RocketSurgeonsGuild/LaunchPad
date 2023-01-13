@@ -95,7 +95,7 @@ type Query {
 
 "A rocket in inventory"
 type ReadyRocket {
-  launchRecords(where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): [LaunchRecord!]!
+  launchRecords: [LaunchRecord!]!
   id: UUID!
   serialNumber: String!
   type: RocketType!

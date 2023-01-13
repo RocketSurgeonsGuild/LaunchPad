@@ -72,7 +72,7 @@ public abstract partial class HandleWebHostBase : LoggerTest, IAsyncLifetime
         ExcludeSourceContext("ConventionTestWebHost");
     }
 
-    protected ConventionTestWebHost<Startup> Factory { get; private set; }
+    protected ConventionTestWebHost<Program> Factory { get; private set; }
     protected IServiceProvider ServiceProvider => Factory.Services;
 
     public async Task InitializeAsync()

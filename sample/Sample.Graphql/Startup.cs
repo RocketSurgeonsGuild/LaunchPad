@@ -1,11 +1,7 @@
-﻿using System.Linq.Expressions;
-using HotChocolate.Data;
+﻿using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
-using HotChocolate.Types.Pagination;
-using HotChocolate.Utilities;
 using MediatR;
-using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Domain;
 using Sample.Core.Models;
@@ -13,83 +9,6 @@ using Sample.Core.Operations.LaunchRecords;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Graphql;
-
-public class Startup
-{
-    // This method gets called by the runtime. Use this method to add services to the container.
-    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services
-           .AddGraphQLServer()
-           .ConfigureStronglyTypedId<RocketId, UuidType>()
-           .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
-//           .AddDefaultTransactionScopeHandler()
-           .AddExecutableTypes()
-           .AddQueryType()
-           .AddMutationType()
-           .ModifyRequestOptions(options => options.IncludeExceptionDetails = true)
-           .AddSorting()
-           .AddFiltering()
-           .AddProjections();
-    }
-
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        app.UseLaunchPadRequestLogging();
-
-        app.UseRouting();
-
-        app.UseEndpoints(endpoints => endpoints.MapGraphQL());
-    }
-}
-
-internal class StronglyTypedIdChangeTypeProvider : IChangeTypeProvider
-{
-    private readonly Dictionary<(Type, Type), ChangeType> _typeMap = new();
-
-    public void AddTypeConversion(Type strongIdType)
-    {
-        var underlyingType = strongIdType.GetProperty("Value")!.PropertyType;
-        var value = Expression.Parameter(typeof(object), "value");
-        //            .AddTypeConverter<LaunchRecordId, Guid>(source => source.Value)
-
-        if (!_typeMap.ContainsKey(( strongIdType, underlyingType )))
-        {
-            _typeMap.Add(
-                ( strongIdType, underlyingType ),
-                Expression.Lambda<ChangeType>(
-                    Expression.Convert(Expression.Property(Expression.Convert(value, strongIdType), "Value"), typeof(object)), false, value
-                ).Compile()
-            );
-        }
-
-        if (!_typeMap.ContainsKey(( underlyingType, strongIdType )))
-        {
-            _typeMap.Add(
-                ( underlyingType, strongIdType ),
-                Expression.Lambda<ChangeType>(
-                    Expression.Convert(
-                        Expression.New(strongIdType.GetConstructor(new[] { underlyingType })!, Expression.Convert(value, underlyingType)), typeof(object)
-                    ), false, value
-                ).Compile()
-            );
-        }
-    }
-
-    public bool TryCreateConverter(Type source, Type target, ChangeTypeProvider root, [NotNullWhen(true)] out ChangeType? converter)
-    {
-        if (_typeMap.TryGetValue(( source, target ), out var @delegate))
-        {
-            converter = input => input is null ? default : @delegate(input);
-            return true;
-        }
-
-        converter = null;
-        return false;
-    }
-}
 
 public partial record EditRocketPatchRequest : IOptionalTracking<EditRocket.PatchRequest>
 {
@@ -253,8 +172,9 @@ public class ReadyRocketType : ObjectType<ReadyRocket>
 //        descriptor.Implements<InterfaceType<IReadyRocket>>();
         descriptor.Field(z => z.LaunchRecords)
                   .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
-                  .UseFiltering()
-                  .UseSorting();
+//                  .UseFiltering()
+//                  .UseSorting()
+            ;
 //        descriptor.Ignore(z => z.LaunchRecords);
     }
 }
