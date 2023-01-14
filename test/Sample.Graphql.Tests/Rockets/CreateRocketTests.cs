@@ -70,9 +70,10 @@ public class AppFixture : IAsyncLifetime
         _sqlExtension.Reset();
     }
 
-    public Task ResetAsync()
+    public async Task ResetAsync()
     {
-        return _sqlExtension.ResetAsync();
+        await _sqlExtension.ResetAsync();
+        await AlbaHost.Services.GetRequiredService<RocketDbContext>().Database.EnsureCreatedAsync();
     }
 
     public async Task InitializeAsync()
@@ -140,6 +141,7 @@ public class CreateRocketTests : LoggerTest, IClassFixture<AppFixture>, IAsyncLi
 
     public Task InitializeAsync()
     {
+        _appFixture.SetLoggerFactory(LoggerFactory);
         return _appFixture.ResetAsync();
     }
 

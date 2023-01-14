@@ -84,7 +84,7 @@ internal class RocketSurgeryExtension : IAlbaExtension
     {
         new TemporaryExtension().Configure(builder);
         builder.ConfigureRocketSurgery(
-            z => { z.ForTesting(DependencyContext.Load(typeof(RocketSurgeryExtension).Assembly)).Set(HostType.UnitTest); }
+            z => { z.ForTesting(DependencyContext.Load(typeof(RocketSurgeryExtension).Assembly), _loggerFactory).Set(HostType.UnitTest); }
         );
         builder.ConfigureLogging((context, loggingBuilder) => loggingBuilder.Services.AddSingleton(_loggerFactory));
         builder.ConfigureServices(s => s.AddSingleton<TestServer>(z => (TestServer)z.GetRequiredService<IServer>()));
@@ -150,16 +150,13 @@ internal class MyHttpResponseFormatter : DefaultHttpResponseFormatter
 
 internal class LocalExtension : IAlbaExtension
 {
-    private SqliteConnection? _connection;
-
     public void Dispose()
     {
-        _connection?.Dispose();
     }
 
     public ValueTask DisposeAsync()
     {
-        return _connection?.DisposeAsync() ?? ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
     public Task Start(IAlbaHost host)
@@ -169,26 +166,14 @@ internal class LocalExtension : IAlbaExtension
 
     public IHostBuilder Configure(IHostBuilder builder)
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
         builder.ConfigureServices(
-                    s =>
-                    {
-                        s.AddHttpClient();
-                        s.AddRocketClient();
-                        s.ConfigureOptions<CO>();
-                    }
-                )
-               .ConfigureServices(
-                    (_, services) =>
-                    {
-                        services.AddDbContextPool<RocketDbContext>(
-                            z => z
-                                .EnableDetailedErrors()
-                                .EnableSensitiveDataLogging()
-                                .UseSqlite(_connection)
-                        );
-                    }
-                );
+            s =>
+            {
+                s.AddHttpClient();
+                s.AddRocketClient();
+                s.ConfigureOptions<CO>();
+            }
+        );
 
         return builder;
     }
