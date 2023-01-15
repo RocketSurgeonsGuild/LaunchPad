@@ -1,25 +1,27 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using DryIoc;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests : HandleGrpcHostBase
+public class CreateLaunchRecordTests : WebAppFixtureTest<TestWebAppFixture>
 {
     private static readonly Faker Faker = new();
 
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture) : base(outputHelper, testWebAppFixture)
     {
     }
 
     [Fact]
     public async Task Should_Create_A_LaunchRecord()
     {
-        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(

@@ -1,27 +1,40 @@
 using Microsoft.Extensions.DependencyModel;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Hosting;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using Rocket.Surgery.LaunchPad.HotChocolate;
+using Sample.Core.Models;
+using Sample.Graphql;
+using Rocket.Surgery.Web.Hosting;
 
-namespace Sample.Graphql;
+var builder = WebApplication.CreateBuilder(args)
+                            .LaunchWith(
+                                 RocketBooster.ForDependencyContext(DependencyContext.Default),
+                                 z => z.WithConventionsFrom(Imports.GetConventions)
+                             );
 
-[ImportConventions]
-public static partial class Program
+builder.Services
+       .AddGraphQLServer()
+       .AddSorting()
+       .AddFiltering()
+       .AddProjections()
+       .ConfigureStronglyTypedId<RocketId, UuidType>()
+       .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
+//           .AddDefaultTransactionScopeHandler()
+       .AddExecutableTypes()
+       .AddQueryType()
+       .AddMutationType()
+       .ModifyRequestOptions(options => options.IncludeExceptionDetails = true);
+
+var app = builder.Build();
+
+app.UseHttpLogging();
+app.UseLaunchPadRequestLogging();
+
+app.UseRouting();
+
+app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+
+app.Run();
+
+public partial class Program
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
-
-    // Additional configuration is required to successfully run gRPC on macOS.
-    // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host.CreateDefaultBuilder(args)
-                   .LaunchWith(
-                        RocketBooster.ForDependencyContext(DependencyContext.Default),
-                        z => z
-                           .WithConventionsFrom(GetConventions)
-                    )
-                   .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-    }
 }

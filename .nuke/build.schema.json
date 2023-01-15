@@ -101,8 +101,7 @@
               "Restore",
               "Test",
               "Trigger_Code_Coverage_Reports",
-              "TriggerCodeCoverageReports",
-              "UpdateGraphQl"
+              "TriggerCodeCoverageReports"
             ]
           }
         },
@@ -137,8 +136,7 @@
               "Restore",
               "Test",
               "Trigger_Code_Coverage_Reports",
-              "TriggerCodeCoverageReports",
-              "UpdateGraphQl"
+              "TriggerCodeCoverageReports"
             ]
           }
         },

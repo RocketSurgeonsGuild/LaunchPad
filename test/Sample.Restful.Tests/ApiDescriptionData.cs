@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Restful.Tests;
 
 internal class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
-    where T : WebApplicationFactory<Program>, new()
+    where T : class, ILaunchPadWebAppFixture, IAsyncLifetime, new()
 {
     public ApiDescriptionData()
     {
-        using var host = new T();
-        var provider = host.Services.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
+        var host = new T();
+        host.InitializeAsync().GetAwaiter().GetResult();
+        var provider = host.AlbaHost.Services.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
         foreach (var item in provider.ApiDescriptionGroups.Items.SelectMany(z => z.Items))
         {
             Add(new ApiDescriptionData(item));

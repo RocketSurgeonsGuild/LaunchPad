@@ -8,6 +8,7 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.Reactive.Testing" />
         <PackageReference Include="NodaTime.Testing" />
+        <PackageReference Include="Alba" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />

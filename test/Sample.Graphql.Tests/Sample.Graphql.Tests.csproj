@@ -5,7 +5,6 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
         <PackageReference Include="System.Net.Http.Json" />
         
         <PackageReference Include="StrawberryShake.Transport.Http" />
@@ -15,5 +14,6 @@
       <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
       <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
         <Using Include="StrawberryShake" />
+        <Compile Include="obj\$(Configuration)\$(TargetFramework)\berry\*.cs" />
     </ItemGroup>
 </Project>

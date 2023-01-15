@@ -1,22 +1,24 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using DryIoc;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Extensions;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 using Duration = NodaTime.Duration;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests : HandleGrpcHostBase
+public class UpdateLaunchRecordTests : WebAppFixtureTest<TestWebAppFixture>
 {
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
-        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
@@ -65,7 +67,7 @@ public class UpdateLaunchRecordTests : HandleGrpcHostBase
         response.PayloadWeightKg.Should().Be(200);
     }
 
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : base(outputHelper, webAppFixture)
     {
     }
 

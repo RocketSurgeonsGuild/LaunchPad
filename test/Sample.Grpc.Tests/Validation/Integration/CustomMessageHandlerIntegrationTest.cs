@@ -1,31 +1,26 @@
 using FluentValidation.Results;
 using Grpc.Core;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
+using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
-public class CustomMessageHandlerIntegrationTest : LoggerTest, IClassFixture<TestWebHost>
+public class CustomMessageHandlerIntegrationTest : WebAppFixtureTest<TestWebAppFixture>
 {
-    private readonly ConventionTestWebHost<Startup> _factory;
-
-    public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+    public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory)
     {
-        _factory = factory
-                  .ConfigureLoggerFactory(LoggerFactory)
-                  .ConfigureHostBuilder(
-                       options => options.ConfigureServices(services => { services.AddSingleton<IValidatorErrorMessageHandler>(new CustomMessageHandler()); })
-                   );
     }
 
     [Fact]
     public async Task Should_ThrowInvalidArgument_When_NameOfMessageIsEmpty()
     {
         // Given
-        var client = new Grpc.Rockets.RocketsClient(_factory.CreateGrpcChannel());
+        var client = new Grpc.Rockets.RocketsClient(AlbaHost.Server.CreateGrpcChannel());
 
         // When
         async Task Action()
@@ -41,7 +36,7 @@ public class CustomMessageHandlerIntegrationTest : LoggerTest, IClassFixture<Tes
         // Then
         var rpcException = await Assert.ThrowsAsync<RpcException>(Action);
         Assert.Equal(StatusCode.InvalidArgument, rpcException.Status.StatusCode);
-        Assert.Equal("Validation Error!", rpcException.Status.Detail);
+        Assert.Equal("Property Id failed validation.", rpcException.Status.Detail);
     }
 
     private class CustomMessageHandler : IValidatorErrorMessageHandler

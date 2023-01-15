@@ -1,23 +1,26 @@
-﻿using Humanizer;
+﻿using DryIoc;
+using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
+using Sample.Graphql.Tests.Helpers;
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class UpdateRocketTests : HandleWebHostBase
+public class UpdateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
 {
     private static readonly Faker Faker = new();
 
-    public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(testOutputHelper, rocketSurgeryWebAppFixture)
     {
     }
 
     [Fact]
     public async Task Should_Update_A_Rocket()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
@@ -49,7 +52,7 @@ public class UpdateRocketTests : HandleWebHostBase
     [Fact]
     public async Task Should_Patch_A_Rocket_SerialNumber()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
@@ -83,7 +86,7 @@ public class UpdateRocketTests : HandleWebHostBase
     [Fact]
     public async Task Should_Fail_To_Patch_A_Null_Rocket_SerialNumber()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
@@ -117,7 +120,7 @@ public class UpdateRocketTests : HandleWebHostBase
     [Fact]
     public async Task Should_Patch_A_Rocket_Type()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
@@ -151,7 +154,7 @@ public class UpdateRocketTests : HandleWebHostBase
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
     public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
         request = request with { Id = Guid.NewGuid() };
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
