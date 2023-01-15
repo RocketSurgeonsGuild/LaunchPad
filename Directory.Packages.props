@@ -83,21 +83,21 @@
     <PackageVersion Include="Polly" Version="7.2.3" />
     <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta06" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-    <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.6.5" />
+    <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.6.6" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.4.2" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.4.2" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.4.2" />
     <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="11.4.2" />
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.4.2" />
-    <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.Web.Hosting" Version="12.6.5" />
-    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="12.6.5" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.Web.Hosting" Version="12.6.6" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="12.6.6" />
     <PackageVersion Include="Scrutor" Version="4.2.0" />
     <PackageVersion Include="Serilog" Version="2.12.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0" />
