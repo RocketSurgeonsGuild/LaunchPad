@@ -4,22 +4,17 @@ using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;
 using Sample.Core.Domain;
+using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
-public class CustomValidatorIntegrationTest : LoggerTest, IClassFixture<TestWebHost>
+public class CustomValidatorIntegrationTest : WebAppFixtureTest<TestWebAppFixture>
 {
-    private readonly ConventionTestWebHost<Startup> _factory;
-
-    public CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
-    {
-        _factory = factory.ConfigureLoggerFactory(LoggerFactory);
-    }
-
+    public CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory) { }
     [Fact]
     public async Task Should_ResponseMessage_When_MessageIsValid()
     {
-        await _factory.Services.WithScoped<RocketDbContext>()
+        await AlbaHost.Services.WithScoped<RocketDbContext>()
                       .Invoke(
                            async z =>
                            {
@@ -33,7 +28,7 @@ public class CustomValidatorIntegrationTest : LoggerTest, IClassFixture<TestWebH
                        );
 
         // Given
-        var client = new Grpc.Rockets.RocketsClient(_factory.CreateGrpcChannel());
+        var client = new Grpc.Rockets.RocketsClient(AlbaHost.CreateGrpcChannel());
 
         // When
         var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
@@ -46,7 +41,7 @@ public class CustomValidatorIntegrationTest : LoggerTest, IClassFixture<TestWebH
     public async Task Should_ThrowInvalidArgument_When_NameOfMessageIsEmpty()
     {
         // Given
-        var client = new Grpc.Rockets.RocketsClient(_factory.CreateGrpcChannel());
+        var client = new Grpc.Rockets.RocketsClient(AlbaHost.CreateGrpcChannel());
 
         // When
         async Task Action()

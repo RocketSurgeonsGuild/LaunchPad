@@ -6,7 +6,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.Net.Http.Json" />
-        <PackageReference Include="Alba" />
         
         <PackageReference Include="StrawberryShake.Transport.Http" />
         <PackageReference Include="StrawberryShake.Server" />

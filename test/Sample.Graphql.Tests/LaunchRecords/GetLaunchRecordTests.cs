@@ -1,18 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using Sample.Graphql.Tests.Helpers;
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : HandleWebHostBase
+public class GetLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
 {
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
                                                async (context, clock) =>
@@ -50,7 +53,7 @@ public class GetLaunchRecordTests : HandleWebHostBase
         response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate);
     }
 
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public GetLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
     {
     }
 

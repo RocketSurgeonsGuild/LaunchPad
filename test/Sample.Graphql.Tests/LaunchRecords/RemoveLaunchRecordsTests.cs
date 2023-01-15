@@ -1,22 +1,25 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;
 using Sample.Core.Domain;
+using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests : HandleWebHostBase
+public class RemoveLaunchRecordsTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
 {
     private static readonly Faker Faker = new();
 
-    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
     {
     }
 
     [Fact]
     public async Task Should_Remove_LaunchRecord()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var id = await ServiceProvider.WithScoped<RocketDbContext>()
                                       .Invoke(
                                            async z =>

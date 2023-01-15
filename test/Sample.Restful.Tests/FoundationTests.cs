@@ -4,39 +4,38 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
+using Sample.BlazorServer.Tests;
+using Sample.Restful.Tests.Helpers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Sample.Restful.Tests;
 
-public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
+public class FoundationTests : WebAppFixtureTest<TestWebAppFixture>
 {
     [Fact]
     public void AutoMapper()
     {
-        _factory.Services.GetRequiredService<IMapper>()
+        AlbaHost.Services.GetRequiredService<IMapper>()
                 .ConfigurationProvider.AssertConfigurationIsValid();
     }
 
     [Fact]
     public async Task Starts()
     {
-        var response = await _factory.CreateClient().GetAsync("/");
+        var response = await AlbaHost.Server.CreateClient().GetAsync("/");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory)
     {
-        _factory = factory.ConfigureLoggerFactory(LoggerFactory);
     }
-
-    private readonly ConventionTestWebHost<Program> _factory;
 
     [Theory]
     [ClassData(typeof(OpenApiDocuments))]
     public void OpenApiDocument(string document)
     {
-        _factory.Services.GetRequiredService<ISwaggerProvider>()
+        AlbaHost.Services.GetRequiredService<ISwaggerProvider>()
                 .GetSwagger(document).Should().NotBeNull();
     }
 
@@ -44,8 +43,9 @@ public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
     {
         public OpenApiDocuments()
         {
-            using var host = new TestWebHost();
-            foreach (var item in host.Services.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value.SwaggerDocs.Keys)
+            using var host = new TestWebAppFixture();
+            host.InitializeAsync().GetAwaiter().GetResult();
+            foreach (var item in host.AlbaHost.Services.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value.SwaggerDocs.Keys)
             {
                 Add(item);
             }

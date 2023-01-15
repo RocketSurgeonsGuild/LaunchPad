@@ -3,23 +3,24 @@ using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : HandleGrpcHostBase
+public class GetLaunchRecordTests : WebAppFixtureTest<TestWebAppFixture>
 {
     private static readonly Faker Faker = new();
 
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture) : base(outputHelper, testWebAppFixture)
     {
     }
 
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
     {
-        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
                                                async (context, clock) =>

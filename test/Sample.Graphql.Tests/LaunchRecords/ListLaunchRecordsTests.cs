@@ -1,16 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;
 using Sample.Core.Domain;
+using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class ListLaunchRecordsTests : HandleWebHostBase
+public class ListLaunchRecordsTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
 {
     [Fact]
     public async Task Should_List_LaunchRecords()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
@@ -34,7 +37,7 @@ public class ListLaunchRecordsTests : HandleWebHostBase
     [Fact]
     public async Task Should_List_Specific_Kinds_Of_LaunchRecords()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
@@ -54,7 +57,7 @@ public class ListLaunchRecordsTests : HandleWebHostBase
         response.Data!.LaunchRecords!.Nodes!.Should().HaveCount(3);
     }
 
-    public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public ListLaunchRecordsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
     {
     }
 

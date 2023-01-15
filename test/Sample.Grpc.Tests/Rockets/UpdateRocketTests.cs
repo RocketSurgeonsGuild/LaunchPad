@@ -1,23 +1,24 @@
 ﻿using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
+using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class UpdateRocketTests : HandleGrpcHostBase
+public class UpdateRocketTests : WebAppFixtureTest<TestWebAppFixture>
 {
     private static readonly Faker Faker = new();
 
-    public UpdateRocketTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public UpdateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFixture testWebAppFixture) : base(testOutputHelper, testWebAppFixture)
     {
     }
 
     [Fact]
     public async Task Should_Update_A_Rocket()
     {
-        var client = new R.RocketsClient(Factory.CreateGrpcChannel());
+        var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
 
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
@@ -55,7 +56,7 @@ public class UpdateRocketTests : HandleGrpcHostBase
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
     public async Task Should_Validate_Required_Fields(UpdateRocketRequest request, string propertyName)
     {
-        var client = new R.RocketsClient(Factory.CreateGrpcChannel());
+        var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
         Func<Task> a = async () => await client.EditRocketAsync(request);
         var e = ( await a.Should().ThrowAsync<RpcException>() ).And;
         e.Status.StatusCode.Should().Be(StatusCode.InvalidArgument);

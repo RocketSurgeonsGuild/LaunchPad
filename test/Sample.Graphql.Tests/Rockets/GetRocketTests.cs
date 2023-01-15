@@ -1,16 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
+using Sample.Graphql.Tests.Helpers;
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class GetRocketTests : HandleWebHostBase
+public class GetRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
 {
     [Fact]
     public async Task Should_Get_A_Rocket()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
                                                async z =>
@@ -34,7 +36,7 @@ public class GetRocketTests : HandleWebHostBase
         response.Data.Rockets!.Nodes[0].SerialNumber.Should().Be("12345678901234");
     }
 
-    public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public GetRocketTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
     {
     }
 

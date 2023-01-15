@@ -3,29 +3,27 @@ using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
+using Sample.BlazorServer.Tests.Helpers;
 
 namespace Sample.BlazorServer.Tests;
 
-public class FoundationTests : AutoFakeTest, IClassFixture<TestWebHost>
+public class FoundationTests : WebAppFixtureTest<TestWebAppFixture>
 {
     [Fact]
     public void AutoMapper()
     {
-        _factory.Services.GetRequiredService<IMapper>()
-                .ConfigurationProvider.AssertConfigurationIsValid();
+        AlbaHost.Services.GetRequiredService<IMapper>()
+            .ConfigurationProvider.AssertConfigurationIsValid();
     }
 
     [Fact]
     public async Task Starts()
     {
-        var response = await _factory.CreateClient().GetAsync("/");
+        var response = await AlbaHost.Server.CreateClient().GetAsync("/");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebHost factory) : base(testOutputHelper)
+    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory)
     {
-        _factory = factory.ConfigureLoggerFactory(LoggerFactory);
     }
-
-    private readonly ConventionTestWebHost<Startup> _factory;
 }

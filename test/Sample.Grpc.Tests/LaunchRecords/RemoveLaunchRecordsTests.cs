@@ -1,23 +1,24 @@
 ﻿using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
+using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests : HandleGrpcHostBase
+public class RemoveLaunchRecordsTests : WebAppFixtureTest<TestWebAppFixture>
 {
     private static readonly Faker Faker = new();
 
-    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : base(outputHelper, webAppFixture)
     {
     }
 
     [Fact]
     public async Task Should_Remove_LaunchRecord()
     {
-        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
         var id = await ServiceProvider.WithScoped<RocketDbContext>()
                                       .Invoke(
                                            async z =>

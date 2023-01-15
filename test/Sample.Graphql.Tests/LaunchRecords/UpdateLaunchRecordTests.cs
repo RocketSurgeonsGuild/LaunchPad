@@ -1,19 +1,22 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Extensions;
 using Rocket.Surgery.DependencyInjection;
+using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using Sample.Graphql.Tests.Helpers;
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests : HandleWebHostBase
+public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
 {
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
-        var client = Factory.Services.GetRequiredService<IRocketClient>();
+        var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
                                                async (context, clk) =>
@@ -61,7 +64,7 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
         response.Data.LaunchRecords!.Nodes[0].PayloadWeightKg.Should().Be(200);
     }
 
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
     {
     }
 

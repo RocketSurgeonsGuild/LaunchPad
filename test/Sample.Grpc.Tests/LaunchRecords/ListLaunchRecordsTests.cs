@@ -1,24 +1,26 @@
-﻿using Grpc.Core;
+﻿using DryIoc;
+using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
+using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class ListLaunchRecordsTests : HandleGrpcHostBase
+public class ListLaunchRecordsTests : WebAppFixtureTest<TestWebAppFixture>
 {
     private static readonly Faker Faker = new();
 
-    public ListLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public ListLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : base(outputHelper, webAppFixture)
     {
     }
 
     [Fact]
     public async Task Should_List_LaunchRecords()
     {
-        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
@@ -40,7 +42,7 @@ public class ListLaunchRecordsTests : HandleGrpcHostBase
     [Fact]
     public async Task Should_List_Specific_Kinds_Of_LaunchRecords()
     {
-        var client = new LR.LaunchRecordsClient(Factory.CreateGrpcChannel());
+        var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
                                   async z =>
