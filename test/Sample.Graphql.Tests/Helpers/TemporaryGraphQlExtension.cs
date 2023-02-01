@@ -29,7 +29,7 @@ internal class TemporaryGraphQlExtension : IAlbaExtension
         builder.ConfigureServices(z => z.AddHttpResponseFormatter<MyHttpResponseFormatter>());
         return builder;
     }
-    
+
     [Obsolete("Remove once https://github.com/ChilliCream/hotchocolate/issues/5684 is fixed!")]
     internal class MyHttpResponseFormatter : DefaultHttpResponseFormatter
     {
@@ -37,21 +37,15 @@ internal class TemporaryGraphQlExtension : IAlbaExtension
         {
         }
 
-        protected override HttpStatusCode GetStatusCode(
-            IResponseStream responseStream, FormatInfo format,
-            HttpStatusCode? proposedStatusCode
-        )
+        protected override HttpStatusCode OnDetermineStatusCode(IResponseStream responseStream, FormatInfo format, HttpStatusCode? proposedStatusCode)
         {
-            var code = base.GetStatusCode(responseStream, format, proposedStatusCode);
+            var code = base.OnDetermineStatusCode(responseStream, format, proposedStatusCode);
             return code == HttpStatusCode.InternalServerError ? HttpStatusCode.OK : code;
         }
 
-        protected override HttpStatusCode GetStatusCode(
-            IQueryResult result, FormatInfo format,
-            HttpStatusCode? proposedStatusCode
-        )
+        protected override HttpStatusCode OnDetermineStatusCode(IQueryResult result, FormatInfo format, HttpStatusCode? proposedStatusCode)
         {
-            var code = base.GetStatusCode(result, format, proposedStatusCode);
+            var code = base.OnDetermineStatusCode(result, format, proposedStatusCode);
             return code == HttpStatusCode.InternalServerError ? HttpStatusCode.OK : code;
         }
     }
