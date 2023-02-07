@@ -37,7 +37,7 @@
     <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="13.0.0-rc.4" />
     <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="13.0.0-rc.4" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="13.0.0" />
-    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="13.0.0-rc.4" />
+    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="13.0.0" />
     <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="13.0.0-rc.4" />
     <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="13.0.0-rc.4" />
     <PackageVersion Include="HotChocolate.Types.NodaTime" Version="13.0.0-rc.4" />
