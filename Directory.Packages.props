@@ -45,7 +45,7 @@
     <PackageVersion Include="StrawberryShake" Version="13.0.2" />
     <PackageVersion Include="StrawberryShake.Server" Version="13.0.0-rc.4" />
     <PackageVersion Include="StrawberryShake.Maui" Version="13.0.2" />
-    <PackageVersion Include="StrawberryShake.Blazor" Version="13.0.0" />
+    <PackageVersion Include="StrawberryShake.Blazor" Version="13.0.2" />
     <PackageVersion Include="StrawberryShake.Razor" Version="13.0.2" />
     <PackageVersion Include="MediatR" Version="11.1.0" />
     <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
