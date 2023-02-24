@@ -40,7 +40,7 @@
     <PackageVersion Include="HotChocolate.Types.Analyzers" Version="13.0.2" />
     <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="13.0.0" />
     <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="13.0.0" />
-    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="13.0.0-rc.4" />
+    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="13.0.5" />
     <PackageVersion Include="StrawberryShake.Transport.Http" Version="13.0.2" />
     <PackageVersion Include="StrawberryShake" Version="13.0.2" />
     <PackageVersion Include="StrawberryShake.Server" Version="13.0.2" />
