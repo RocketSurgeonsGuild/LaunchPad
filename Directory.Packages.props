@@ -32,7 +32,7 @@
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
     <PackageVersion Include="HotChocolate" Version="13.0.0-rc.4" />
     <PackageVersion Include="HotChocolate.Abstractions" Version="13.0.2" />
-    <PackageVersion Include="HotChocolate.AspNetCore" Version="13.0.0-rc.4" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Data" Version="13.0.0-rc.4" />
     <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="13.0.2" />
     <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="13.0.0-rc.4" />
