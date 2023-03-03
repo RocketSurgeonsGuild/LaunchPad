@@ -69,31 +69,9 @@ public partial class Pipeline : NukeBuild,
 
         return port;
     }
-    // public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
-    //    .DependsOn(Clean);
 
-    /// <summary>
-    ///     dotnet pack
-    /// </summary>
-    public Target Pack => _ => _
-                              .Description("Packs all the NuGet packages.")
-                              .DependsOn(Clean)
-                              .After(Test)
-                              .Executes(
-                                   () =>
-                                   {
-                                       IHaveSolution selfSolution = this;
-                                       IHaveNuGetPackages nuget = this;
-                                       IHaveOutputLogs logs = this;
-                                       return DotNetTasks.DotNetPack(
-                                           s => s.SetProject(selfSolution.Solution)
-                                                 .SetDefaultLoggers(logs.LogsDirectory / "pack.log")
-                                                 .SetGitVersionEnvironment(GitVersion)
-                                                 .SetConfiguration(Configuration)
-                                                 .SetOutputDirectory(nuget.NuGetPackageDirectory)
-                                       );
-                                   }
-                               );
+    public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
+                                .DependsOn(Clean);
 
     public Target BuildVersion => _ => _.Inherit<IHaveBuildVersion>(x => x.BuildVersion)
                                         .Before(Default)
