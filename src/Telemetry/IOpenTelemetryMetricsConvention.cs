@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using Rocket.Surgery.Conventions;
 
@@ -9,7 +10,7 @@ namespace Rocket.Surgery.LaunchPad.Telemetry;
 ///     Implements the <see cref="IConvention" />
 /// </summary>
 /// <seealso cref="IConvention" />
-public interface IOpenTelemetryMetricsConvention : IConvention
+public interface IOpenTelemetryConvention : IConvention
 {
     /// <summary>
     ///     Register metrics
@@ -17,5 +18,5 @@ public interface IOpenTelemetryMetricsConvention : IConvention
     /// <param name="conventionContext"></param>
     /// <param name="configuration"></param>
     /// <param name="builder"></param>
-    void Register(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder);
+    void Register(IConventionContext conventionContext, IConfiguration configuration, OpenTelemetryBuilder builder);
 }

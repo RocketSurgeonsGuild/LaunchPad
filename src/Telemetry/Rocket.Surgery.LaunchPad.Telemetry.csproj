@@ -6,6 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="OpenTelemetry" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
     </ItemGroup>
 </Project>
