@@ -256,7 +256,7 @@ public partial class RocketController : RestfulApiController
 namespace TestNamespace;
 public static class GetRocket
 {
-    public record Request : IRequest<RocketModel>
+    public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
     }
@@ -287,7 +287,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketController : RestfulApiController
 {
     [HttpGet(""{id:guid}"")]
-    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
+    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
 
     [HttpPost]
     [Created(nameof(GetRocket))]
@@ -335,12 +335,72 @@ namespace MyNamespace.Controllers;
 public partial class RocketController : RestfulApiController
 {
     [HttpGet(""{id:guid}"")]
-    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
+    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
 
     [HttpPost]
     [Accepted(nameof(GetRocket))]
     [ProducesResponseType(202)]
     public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
+}"
+                }
+            );
+            Add(
+                "GenerateBodiesWithVoidReturnType",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+public static class DeleteRocket
+{
+    public record Request : IRequest
+    {
+        public Guid Id { get; set; }
+    }
+}",
+                    @"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    [HttpGet(""{id:guid}"")]
+    public partial Task<ActionResult> DeleteRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] DeleteRocket.Request request);
+}"
+                }
+            );
+            Add(
+                "GenerateBodiesWithVoidReturnTypeOther",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+public static class DeleteLaunchRecord
+{
+    public record Request : IRequest
+    {
+        public Guid Id { get; set; }
+    }
+}",
+                    @"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    [HttpDelete(""{id:guid}"")]
+    public partial Task<ActionResult> DeleteLaunchRecord([BindRequired] [FromRoute] Guid id, DeleteLaunchRecord.Request request);
 }"
                 }
             );

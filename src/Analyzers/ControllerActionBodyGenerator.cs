@@ -617,7 +617,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                  {
                                      var methodSymbol = semanticModel.GetDeclaredSymbol(method);
                                      // ReSharper disable once UseNullPropagationWhenPossible
-                                     if (methodSymbol is null) return default;
+                                     if (methodSymbol is null)
+                                     {
+                                         context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation()));
+                                         return default;
+                                     }
 
                                      var actionModel = new ActionModel(compilation, methodSymbol.Name, methodSymbol);
                                      var matcher = matchers.FirstOrDefault(z => z.IsMatch(actionModel));

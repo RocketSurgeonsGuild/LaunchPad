@@ -57,6 +57,7 @@ public partial class RocketController : RestfulApiController
     /// <summary>
     ///     Remove a rocket
     /// </summary>
+    /// <param name="id"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpDelete("{id:guid}")]
@@ -68,7 +69,7 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet("{id:guid}/launch-records")]
     // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
-    public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(GetRocketLaunchRecords.Request request);
+    public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(RocketId id, GetRocketLaunchRecords.Request request);
 
     /// <summary>
     ///     Get a specific launch record for a given rocket
@@ -76,5 +77,7 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet("{id:guid}/launch-records/{launchRecordId:guid}")]
     // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
-    public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord(GetRocketLaunchRecord.Request request);
+    public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord(
+        RocketId id, LaunchRecordId launchRecordId, GetRocketLaunchRecord.Request request
+    );
 }

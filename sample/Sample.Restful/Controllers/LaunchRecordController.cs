@@ -23,7 +23,7 @@ public partial class LaunchRecordController : RestfulApiController
     /// <param name="request">The request context</param>
     /// <returns></returns>
     [HttpGet("{id:guid}")]
-    public partial Task<ActionResult<LaunchRecordModel>> GetLaunchRecord(GetLaunchRecord.Request request);
+    public partial Task<ActionResult<LaunchRecordModel>> GetLaunchRecord(LaunchRecordId id, GetLaunchRecord.Request request);
 
     /// <summary>
     ///     Create a new launch record
