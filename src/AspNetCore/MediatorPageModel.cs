@@ -27,4 +27,15 @@ public class MediatorPageModel : PageModel
     {
         return Mediator.Send(request, cancellationToken ?? HttpContext.RequestAborted);
     }
+
+    /// <summary>
+    ///     The mediator send method
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected Task Send(IRequest request, CancellationToken? cancellationToken = default)
+    {
+        return Mediator.Send(request, cancellationToken ?? HttpContext.RequestAborted);
+    }
 }

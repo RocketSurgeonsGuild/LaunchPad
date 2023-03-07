@@ -103,7 +103,7 @@ public class MediatRTests : AutoFakeTest
 
     private class TestHandler : IRequestHandler<Request>
     {
-        public Task<Unit> Handle(Request message, CancellationToken token)
+        public Task Handle(Request message, CancellationToken token)
         {
             return Task.FromResult(Unit.Value);
         }

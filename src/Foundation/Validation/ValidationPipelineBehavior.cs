@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 
-internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where T : IRequest<R>
+internal class ValidationPipelineBehavior<T, R> : IPipelineBehavior<T, R> where T : notnull
 {
     private readonly IValidator<T>? _validator;
 

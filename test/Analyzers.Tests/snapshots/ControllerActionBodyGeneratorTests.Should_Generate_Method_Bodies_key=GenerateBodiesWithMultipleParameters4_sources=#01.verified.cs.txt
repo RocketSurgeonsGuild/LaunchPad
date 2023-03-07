@@ -11,6 +11,17 @@ namespace MyNamespace.Controllers
 {
     public partial class RocketController
     {
+        [ProducesDefaultResponseType]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ProblemDetails), 404)]
+        [ProducesResponseType(typeof(ProblemDetails), 400)]
+        [ProducesResponseType(typeof(FluentValidationProblemDetails), 422)]
+        public partial async Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord(Guid id, string launchRecordId, [Bind(), CustomizeValidator(Properties = "")][BindRequired][FromRoute] GetRocketLaunchRecord.Request request)
+        {
+            var result = await Mediator.Send(request with {Id = id, LaunchRecordId = launchRecordId}, HttpContext.RequestAborted).ConfigureAwait(false);
+            return new ObjectResult(result)
+            {StatusCode = 200};
+        }
     }
 }
 #nullable restore

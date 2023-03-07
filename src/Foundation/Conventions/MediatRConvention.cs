@@ -38,22 +38,19 @@ public class MediatRConvention : IServiceConvention
         services.AddMediatR(
             c =>
             {
-                switch (_options)
+                c.RegisterServicesFromAssemblies(
+                    context.AssemblyCandidateFinder
+                           .GetCandidateAssemblies(nameof(MediatR))
+                           .ToArray()
+                );
+                c.Lifetime = _options switch
                 {
-                    case { MediatorLifetime: ServiceLifetime.Singleton }:
-                        c.AsSingleton();
-                        break;
-                    case { MediatorLifetime: ServiceLifetime.Scoped }:
-                        c.AsScoped();
-                        break;
-                    case { MediatorLifetime: ServiceLifetime.Transient }:
-                        c.AsTransient();
-                        break;
-                }
-            },
-            context.AssemblyCandidateFinder
-                   .GetCandidateAssemblies(nameof(MediatR))
-                   .ToArray()
+                    { MediatorLifetime: ServiceLifetime.Singleton } => ServiceLifetime.Singleton,
+                    { MediatorLifetime: ServiceLifetime.Scoped }    => ServiceLifetime.Scoped,
+                    { MediatorLifetime: ServiceLifetime.Transient } => ServiceLifetime.Transient,
+                    _                                               => c.Lifetime
+                };
+            }
         );
     }
 }
