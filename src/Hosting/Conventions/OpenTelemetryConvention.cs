@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Rocket.Surgery.Conventions;
@@ -22,8 +23,8 @@ public class OpenTelemetryConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services
-           .AddOpenTelemetryTracing(builder => builder.ApplyConventions(context))
-           .AddOpenTelemetryMetrics(builder => builder.ApplyConventions(context))
+           .AddOpenTelemetry()
+           .ApplyConventions(context)
             ;
     }
 }

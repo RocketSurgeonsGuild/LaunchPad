@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Rocket.Surgery.Conventions;
@@ -9,24 +10,18 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
 ///     InstrumentationConvention.
-///     Implements <see cref="IOpenTelemetryMetricsConvention" /> and <see cref="IOpenTelemetryTracingConvention" />
+///     Implements <see cref="IOpenTelemetryConvention" /> and <see cref="IOpenTelemetryConvention" />
 /// </summary>
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
-public class InstrumentationConvention : IOpenTelemetryMetricsConvention, IOpenTelemetryTracingConvention
+public class InstrumentationConvention : IOpenTelemetryConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder)
+    public void Register(IConventionContext conventionContext, IConfiguration configuration, OpenTelemetryBuilder builder)
     {
-        builder.AddHttpClientInstrumentation();
-    }
-
-    /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, TracerProviderBuilder builder)
-    {
-        builder.AddHttpClientInstrumentation(
-            options => { options.RecordException = true; }
-        );
+        builder
+           .WithMetrics(z => z.AddHttpClientInstrumentation())
+           .WithTracing(z => z.AddHttpClientInstrumentation(x => x.RecordException = true));
     }
 }
