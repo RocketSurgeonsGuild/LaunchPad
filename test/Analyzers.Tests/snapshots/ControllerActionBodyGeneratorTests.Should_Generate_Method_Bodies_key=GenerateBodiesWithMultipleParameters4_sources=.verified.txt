@@ -1,32 +1,4 @@
 ﻿{
-  ResultDiagnostics: [
-    {
-      Id: LPAD0004,
-      Title: The parameter type and property type must match,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Test3.cs: (16,130)-(16,144),
-      Description: ,
-      HelpLink: ,
-      MessageFormat: The parameter {0} type {1} must match the property {2} type {3},
-      Message: The parameter launchRecordId type string must match the property Request type Guid,
-      Category: LaunchPad
-    }
-  ],
-  Results: {
-    Rocket.Surgery.LaunchPad.Analyzers.ControllerActionBodyGenerator: [
-      {
-        Id: LPAD0004,
-        Title: The parameter type and property type must match,
-        Severity: Error,
-        WarningLevel: 0,
-        Location: Test3.cs: (16,130)-(16,144),
-        Description: ,
-        HelpLink: ,
-        MessageFormat: The parameter {0} type {1} must match the property {2} type {3},
-        Message: The parameter launchRecordId type string must match the property Request type Guid,
-        Category: LaunchPad
-      }
-    ]
-  }
+  ResultDiagnostics: null,
+  Results: {}
 }

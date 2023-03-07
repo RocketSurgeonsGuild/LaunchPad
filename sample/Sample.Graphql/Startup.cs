@@ -60,7 +60,7 @@ public class RocketMutation
         CancellationToken cancellationToken
     )
     {
-        return mediator.Send(request, cancellationToken);
+        return (Task<Unit>)mediator.Send(request, cancellationToken);
     }
 }
 
@@ -104,7 +104,7 @@ public class LaunchRecordMutation
         CancellationToken cancellationToken
     )
     {
-        return mediator.Send(request, cancellationToken);
+        return (Task<Unit>)mediator.Send(request, cancellationToken);
     }
 }
 

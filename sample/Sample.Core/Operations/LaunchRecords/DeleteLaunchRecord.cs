@@ -41,7 +41,7 @@ public static class DeleteLaunchRecord
             _dbContext = dbContext;
         }
 
-        public async Task<Unit> Handle(Request request, CancellationToken cancellationToken)
+        public async Task Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await _dbContext.LaunchRecords.FindAsync(new object[] { request.Id }, cancellationToken);
             if (rocket == null)
@@ -57,8 +57,6 @@ public static class DeleteLaunchRecord
 
             _dbContext.Remove(rocket);
             await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-            return Unit.Value;
         }
     }
 }

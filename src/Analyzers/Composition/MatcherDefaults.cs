@@ -17,53 +17,60 @@ internal static class MatcherDefaults
         [RestfulApiMethod.Delete] = StatusCodes.Status204NoContent,
     };
 
+
     public static ImmutableArray<IRestfulApiMethodMatcher> GetMatchers(Compilation compilation)
     {
         return DefaultMatchers(compilation).Where(z => z.IsValid()).OfType<IRestfulApiMethodMatcher>().ToImmutableArray();
     }
+
+    private static string[] PostMethodPrefixes { get; } = { "Post", "Create", "Add", "Insert", "New", "Post", "Make", "Construct" };
+    private static string[] DeleteMethodPrefixes { get; } = { "Delete", "Remove", "Destroy", "Erase", "Kill", "Cancel" };
+    private static string[] SearchMethodPrefixes { get; } = { "Search", "Find", "Query", "Lookup", "Fetch", "Retrieve" };
+    private static string[] GetMethodPrefixes { get; } = { "Get", "Fetch", "Retrieve", "Read", "Find" };
+    private static string[] UpdateMethodPrefixes { get; } = { "Put", "Update", "Edit", "Save", "Change", "Modify" };
 
     private static IEnumerable<RestfulApiMethodBuilder> DefaultMatchers(Compilation compilation)
     {
         var IBaseRequest = compilation.GetTypeByMetadataName("MediatR.IBaseRequest")!;
         var IStreamRequest = compilation.GetTypeByMetadataName("MediatR.IStreamRequest`1")!;
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.List)
-                    .MatchPrefix("List", "Search")
+                    .MatchPrefix("List", SearchMethodPrefixes)
                     .MatchParameterType(^1, IBaseRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.List)
-                    .MatchPrefix("List", "Search")
+                    .MatchPrefix("List", SearchMethodPrefixes)
                     .MatchParameterType(^1, IStreamRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Read)
-                    .MatchPrefix("Get", "Find", "Fetch", "Read")
+                    .MatchPrefix("Get", GetMethodPrefixes)
                     .MatchParameterType(^1, IBaseRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Read)
-                    .MatchPrefix("Get", "Find", "Fetch", "Read")
+                    .MatchPrefix("Get", GetMethodPrefixes)
                     .MatchParameterType(^1, IStreamRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Create)
-                    .MatchPrefix("Post", "Create", "Add")
+                    .MatchPrefix("Post", PostMethodPrefixes)
                     .MatchParameterType(^1, IBaseRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Create)
-                    .MatchPrefix("Post", "Create", "Add")
+                    .MatchPrefix("Post", PostMethodPrefixes)
                     .MatchParameterType(^1, IStreamRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Update)
-                    .MatchPrefix("Put", "Edit", "Update")
+                    .MatchPrefix("Put", UpdateMethodPrefixes)
                     .MatchParameterSuffix(^2, "id")
                     .MatchParameterType(^1, IBaseRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Update)
-                    .MatchPrefix("Put", "Edit", "Update")
+                    .MatchPrefix("Put", UpdateMethodPrefixes)
                     .MatchParameterSuffix(^2, "id")
                     .MatchParameterType(^1, IStreamRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Update)
-                    .MatchPrefix("Put", "Edit", "Update")
+                    .MatchPrefix("Put", UpdateMethodPrefixes)
                     .MatchParameterSuffix(^2, "id")
                     .MatchParameterSuffix(^1, "model", "request");
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Delete)
-                    .MatchPrefix("Delete", "Remove")
+                    .MatchPrefix("Delete", DeleteMethodPrefixes)
                     .MatchParameterType(^1, IBaseRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Delete)
-                    .MatchPrefix("Delete", "Remove")
+                    .MatchPrefix("Delete", DeleteMethodPrefixes)
                     .MatchParameterType(^1, IStreamRequest);
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.Delete)
-                    .MatchPrefix("Delete", "Remove")
+                    .MatchPrefix("Delete", DeleteMethodPrefixes)
                     .MatchParameterSuffix(^1, "id");
     }
 }

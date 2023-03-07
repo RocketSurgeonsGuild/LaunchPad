@@ -621,7 +621,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
 
                                      var actionModel = new ActionModel(compilation, methodSymbol.Name, methodSymbol);
                                      var matcher = matchers.FirstOrDefault(z => z.IsMatch(actionModel));
-                                     var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"));
+                                     var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"))
+                                                ?? methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest"));
                                      var streamRequest = methodSymbol.Parameters.FirstOrDefault(
                                          p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
                                      );
