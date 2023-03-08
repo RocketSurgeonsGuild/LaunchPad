@@ -1,5 +1,6 @@
 // ReSharper disable once CheckNamespace
 
+using Rocket.Surgery.LaunchPad.Hosting.Telemetry;
 using Rocket.Surgery.LaunchPad.Telemetry;
 
 // ReSharper disable once CheckNamespace
@@ -17,29 +18,7 @@ public static class OpenTelemetryHostBuilderExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetryMetrics(this ConventionContextBuilder container, OpenTelemetryMetricsConvention @delegate)
-    {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
-
-        if (@delegate == null)
-        {
-            throw new ArgumentNullException(nameof(@delegate));
-        }
-
-        container.AppendDelegate(@delegate);
-        return container;
-    }
-
-    /// <summary>
-    ///     Configure the serilog delegate to the convention scanner
-    /// </summary>
-    /// <param name="container">The container.</param>
-    /// <param name="delegate">The delegate.</param>
-    /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetryTracing(this ConventionContextBuilder container, OpenTelemetryTracingConvention @delegate)
+    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, OpenTelemetryConvention @delegate)
     {
         if (container == null)
         {

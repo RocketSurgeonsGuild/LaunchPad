@@ -21,6 +21,7 @@ public class HotChocolateConvention : IServiceConvention
            .ConfigureOptions<HotChocolateContextDataConfigureOptions>()
            .AddGraphQL()
            .ConfigureSchema(sb => sb.AddNodaTime())
+           .AddInstrumentation()
             ;
     }
 }

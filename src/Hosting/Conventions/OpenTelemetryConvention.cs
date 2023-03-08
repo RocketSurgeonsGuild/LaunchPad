@@ -5,6 +5,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Hosting.Telemetry;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Rocket.Surgery.LaunchPad.Telemetry;
 

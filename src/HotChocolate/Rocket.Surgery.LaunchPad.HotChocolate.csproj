@@ -7,6 +7,7 @@
     <ItemGroup>
         <PackageReference Include="HotChocolate" />
         <PackageReference Include="HotChocolate.Data" />
+        <PackageReference Include="HotChocolate.Diagnostics" />
         <PackageReference Include="HotChocolate.Execution.Abstractions" />
         <PackageReference Include="HotChocolate.Types.NodaTime" />
         <PackageReference Include="FluentValidation" />
