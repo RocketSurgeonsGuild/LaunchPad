@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using FairyBread;
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -6,6 +8,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate.Types;
+using Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 
@@ -39,9 +42,17 @@ public class GraphqlConvention : IServiceConvention
     {
         var sb = services
                 .AddGraphQL()
-                .AddFairyBread()
+                 // we have our own custom injector
+                 // .AddFairyBread()
+                 // Executor builder
+                .TryAddTypeInterceptor<CustomValidationMiddlewareInjector>()
                 .AddErrorFilter<GraphqlErrorFilter>()
                 .BindRuntimeType<Unit, VoidType>();
+
+        services.TryAddSingleton<IValidatorRegistry, CustomValidatorRegistry>();
+        services.TryAddSingleton<ICustomValidatorRegistry, CustomValidatorRegistry>();
+        services.TryAddSingleton<IValidatorProvider, DefaultValidatorProvider>();
+        services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
 
         if (!_rocketChocolateOptions.IncludeAssemblyInfoQuery)
         {

@@ -1,8 +1,13 @@
 using Alba;
+using HotChocolate;
+using HotChocolate.AspNetCore.Instrumentation;
+using HotChocolate.Execution.Instrumentation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Sample.Graphql.Tests.Helpers;
@@ -26,6 +31,16 @@ internal class GraphQlExtension : IAlbaExtension
     public IHostBuilder Configure(IHostBuilder builder)
     {
         new TemporaryGraphQlExtension().Configure(builder);
+        builder.ConfigureServices(
+            z => z
+                .AddW3CLogging(z => { })
+                .AddHttpLogging(z => { })
+                .AddGraphQLServer()
+                .AddDiagnosticEventListener<TestServerDiagnosticEventListener>()
+                .ModifyRequestOptions(
+                     opt => { opt.IncludeExceptionDetails = true; }
+                 )
+        );
         builder.ConfigureServices(
             s =>
             {
@@ -57,5 +72,25 @@ internal class GraphQlExtension : IAlbaExtension
                 client => client.BaseAddress = new Uri(_testServer.BaseAddress + "graphql/")
             );
         }
+    }
+}
+
+public class TestServerDiagnosticEventListener : ServerDiagnosticEventListener
+{
+    private readonly ILogger<TestServerDiagnosticEventListener> _logger;
+
+    public TestServerDiagnosticEventListener(ILogger<TestServerDiagnosticEventListener> logger)
+    {
+        _logger = logger;
+    }
+
+    public override void HttpRequestError(HttpContext context, Exception exception)
+    {
+        _logger.LogError(exception, "HttpRequestError");
+    }
+
+    public override void HttpRequestError(HttpContext context, IError error)
+    {
+        _logger.LogError(error.Exception, "HttpRequestError");
     }
 }

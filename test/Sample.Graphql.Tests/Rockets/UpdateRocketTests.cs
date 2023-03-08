@@ -11,12 +11,6 @@ namespace Sample.Graphql.Tests.Rockets;
 
 public class UpdateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
 {
-    private static readonly Faker Faker = new();
-
-    public UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(testOutputHelper, rocketSurgeryWebAppFixture)
-    {
-    }
-
     [Fact]
     public async Task Should_Update_A_Rocket()
     {
@@ -150,6 +144,14 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
         u.Data!.PatchRocket.SerialNumber.Should().Be("12345678901234");
     }
 
+    public UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(
+        testOutputHelper, rocketSurgeryWebAppFixture
+    )
+    {
+    }
+
+    private static readonly Faker Faker = new();
+
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
     public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
@@ -158,7 +160,11 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
         request = request with { Id = Guid.NewGuid() };
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
-        response.Errors[0].Extensions!["field"].As<string>().Split('.').Last()
+
+        var extensionKey = response.Errors[0].Extensions.ContainsKey("propertyName") ? "propertyName" : "field";
+
+        response.Errors[0].Extensions![extensionKey]
+                .As<string>().Split('.').Last()
                 .Pascalize().Should().Be(propertyName);
     }
 

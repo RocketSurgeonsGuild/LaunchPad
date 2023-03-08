@@ -21,17 +21,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(AspNetCoreConvention))]
-public class AspNetCoreConventionInstrumentationConvention : IOpenTelemetryConvention
+public class AspNetCoreConventionInstrumentationConvention : IOpenTelemetryMetricsConvention, IOpenTelemetryTracingConvention
 {
-    /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, OpenTelemetryBuilder builder)
+    public void Register(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder)
     {
-        builder
-           .WithMetrics(z => z.AddAspNetCoreInstrumentation())
-           .WithTracing(
-                z => z.AddAspNetCoreInstrumentation(
-                    options => options.RecordException = true
-                )
-            );
+        builder.AddAspNetCoreInstrumentation();
+    }
+
+    public void Register(IConventionContext conventionContext, IConfiguration configuration, TracerProviderBuilder builder)
+    {
+        builder.AddAspNetCoreInstrumentation(options => options.RecordException = true);
     }
 }

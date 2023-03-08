@@ -34,6 +34,7 @@
     <PackageVersion Include="HotChocolate.Abstractions" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.AspNetCore" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Data" Version="13.0.5" />
+    <PackageVersion Include="HotChocolate.Diagnostics" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="13.0.5" />

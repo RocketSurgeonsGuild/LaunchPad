@@ -15,17 +15,11 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
-public class InstrumentationConvention : IOpenTelemetryMetricsConvention, IOpenTelemetryTracingConvention
+public class InstrumentationConvention : IOpenTelemetryTracingConvention
 {
-    /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder)
-    {
-        builder.AddHttpClientInstrumentation();
-    }
-
     /// <inheritdoc />
     public void Register(IConventionContext conventionContext, IConfiguration configuration, TracerProviderBuilder builder)
     {
-        builder.AddHttpClientInstrumentation(x => x.RecordException = true);
+        builder.AddHotChocolateInstrumentation();
     }
 }
