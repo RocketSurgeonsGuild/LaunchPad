@@ -13,25 +13,25 @@
     <PackageVersion Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="6.0.14" />
+    <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="6.0.15" />
     <PackageVersion Update="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageVersion Update="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageVersion Update="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageVersion Update="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
     <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageVersion Update="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="6.0.14" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="6.0.15" />
     <PackageVersion Update="Microsoft.Extensions.Options" Version="6.0.0" />      
     <PackageVersion Update="System.Text.Json" Version="6.0.7" />
-    <PackageVersion Update="System.Net.Http.Json" Version="6.0.0" />
-    <PackageVersion Update="Microsoft.Extensions.ApiDescription.Client" Version="6.0.14" />
-    <PackageVersion Update="Microsoft.Extensions.ApiDescription.Server" Version="6.0.14" />
+    <PackageVersion Update="System.Net.Http.Json" Version="6.0.1" />
+    <PackageVersion Update="Microsoft.Extensions.ApiDescription.Client" Version="6.0.15" />
+    <PackageVersion Update="Microsoft.Extensions.ApiDescription.Server" Version="6.0.15" />
   </ItemGroup>
 </Project>
