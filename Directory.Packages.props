@@ -133,7 +133,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.14" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Alba" Version="7.3.0" />
+    <PackageVersion Include="Alba" Version="7.4.0" />
     <PackageVersion Include="Bogus" Version="34.0.2" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="coverlet.msbuild" Version="3.2.0" />
