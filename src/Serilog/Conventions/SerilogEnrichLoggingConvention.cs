@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 using Serilog;
+using Serilog.Exceptions;
 
 namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 
@@ -34,6 +35,6 @@ public class SerilogEnrichLoggingConvention : ISerilogConvention
 
         loggerConfiguration
            .Enrich.FromLogContext()
-           .Enrich.WithDemystifiedStackTraces();
+           .Enrich.WithExceptionDetails();
     }
 }
