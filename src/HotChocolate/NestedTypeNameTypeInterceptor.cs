@@ -1,4 +1,6 @@
 ﻿using HotChocolate.Configuration;
+using HotChocolate.Data.Filters;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types.Descriptors.Definitions;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
@@ -14,24 +16,20 @@ public class NestedTypeNameTypeInterceptor : TypeInterceptor
         DefinitionBase? definition
     )
     {
-        if (definition is ObjectTypeDefinition ot)
+        if (definition is IFilterInputTypeDefinition { EntityType: { IsNested: true, DeclaringType: { } } } ft)
         {
-            if (ot.RuntimeType is { IsNested: true, DeclaringType: { } })
-            {
-                ot.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.Name}";
-            }
+            definition.Name = $"{ft.EntityType.DeclaringType.Name}{definition.Name}";
         }
-
-        if (definition is InputObjectTypeDefinition iotd)
+        else if (definition is ISortInputTypeDefinition { EntityType: { IsNested: true, DeclaringType: { } } } st)
         {
-            if (iotd.RuntimeType is { IsNested: true, DeclaringType: { } })
+            definition.Name = $"{st.EntityType.DeclaringType.Name}{definition.Name}";
+        }
+        else if (definition is IComplexOutputTypeDefinition { RuntimeType: { IsNested: true, DeclaringType: { } } } ot)
+        {
+            definition.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.Name}";
+            if (definition.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && ot.RuntimeType.Name == "Request")
             {
-                iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.Name}";
-
-                if (iotd.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && iotd.RuntimeType.Name == "Request")
-                {
-                    iotd.Name = $"{iotd.RuntimeType.DeclaringType.Name}{iotd.RuntimeType.Name}";
-                }
+                definition.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.RuntimeType.Name}";
             }
         }
     }

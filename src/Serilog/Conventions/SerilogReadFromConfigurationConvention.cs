@@ -18,6 +18,29 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
 {
     /// <inheritdoc />
+    public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+
+        var applicationLogLevel = configuration.GetValue<LogLevel?>("ApplicationState:LogLevel");
+        if (applicationLogLevel.HasValue)
+        {
+            builder.AddInMemoryCollection(
+                new Dictionary<string, string?>
+                {
+                    {
+                        "Serilog:MinimumLevel:Default",
+                        LevelConvert.ToSerilogLevel(applicationLogLevel.Value).ToString()
+                    }
+                }
+            );
+        }
+    }
+
+    /// <inheritdoc />
     public void Register(
         IConventionContext context,
         IServiceProvider services,
@@ -31,28 +54,5 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
         }
 
         loggerConfiguration.ReadFrom.Configuration(configuration);
-    }
-
-    /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
-    {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        var applicationLogLevel = configuration.GetValue<LogLevel?>("ApplicationState:LogLevel");
-        if (applicationLogLevel.HasValue)
-        {
-            builder.AddInMemoryCollection(
-                new Dictionary<string, string>
-                {
-                    {
-                        "Serilog:MinimumLevel:Default",
-                        LevelConvert.ToSerilogLevel(applicationLogLevel.Value).ToString()
-                    }
-                }
-            );
-        }
     }
 }
