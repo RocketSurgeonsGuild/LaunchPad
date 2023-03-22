@@ -99,37 +99,4 @@ public static class GraphqlExtensions
                                    );
         }
     }
-
-    private class StronglyTypedIdFilterConventionExtension<TStrongType, TSchemaType> : FilterConventionExtension
-        where TSchemaType : INamedType
-    {
-        protected override void Configure(IFilterConventionDescriptor descriptor)
-        {
-            base.Configure(descriptor);
-
-            descriptor
-               .BindRuntimeType<TStrongType, StronglyTypedIdFilter<TSchemaType>>();
-        }
-    }
-
-    private class StronglyTypedIdFilter<TSchemaType> : FilterInputType, IComparableOperationFilterInputType
-        where TSchemaType : INamedType
-    {
-        protected override void Configure(IFilterInputTypeDescriptor descriptor)
-        {
-            descriptor.Operation(DefaultFilterOperations.Equals)
-                      .Type(typeof(TSchemaType));
-
-            descriptor.Operation(DefaultFilterOperations.NotEquals)
-                      .Type(typeof(TSchemaType));
-
-            descriptor.Operation(DefaultFilterOperations.In)
-                      .Type(typeof(ListType<TSchemaType>));
-
-            descriptor.Operation(DefaultFilterOperations.NotIn)
-                      .Type(typeof(ListType<TSchemaType>));
-
-            descriptor.AllowAnd(false).AllowOr(false);
-        }
-    }
 }
