@@ -21,7 +21,6 @@ public static class ISchemaBuilderExtensions
     public static ISchemaBuilder AddNodaTime(this ISchemaBuilder schemaBuilder)
     {
         schemaBuilder
-           .AddFiltering()
            .AddConvention<IFilterConvention>(
                 new FilterConventionExtension(
                     descriptor => descriptor
