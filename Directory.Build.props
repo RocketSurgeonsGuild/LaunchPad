@@ -17,6 +17,8 @@
         <NukeTelemetryVersion>1</NukeTelemetryVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <ImplicitUsings>enable</ImplicitUsings>
+        <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <NoWarn>$(NoWarn);0436;CA1014;CA1062</NoWarn>
     </PropertyGroup>
     <ItemGroup>

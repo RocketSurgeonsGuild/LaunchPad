@@ -6,6 +6,7 @@
         <DefineConstants>$(DefineConstants);ROSLYN4_0</DefineConstants>
         <IsPackable>false</IsPackable>
         <AssemblyName>Rocket.Surgery.LaunchPad.Analyzers</AssemblyName>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
