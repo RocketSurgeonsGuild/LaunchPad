@@ -108,9 +108,7 @@ public partial class FluentValidationConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.AddFluentValidationAutoValidation()
-                .AddFluentValidationClientsideAdapters();
-        services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
+        services.AddFluentValidationClientsideAdapters();
         services
            .Configure<MvcOptions>(mvcOptions => mvcOptions.Filters.Insert(0, new ValidationExceptionFilter()))
            .Configure<JsonOptions>(options => options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()));
@@ -118,5 +116,3 @@ public partial class FluentValidationConvention : IServiceConvention
         AddFluentValidationRules(services);
     }
 }
-
-
