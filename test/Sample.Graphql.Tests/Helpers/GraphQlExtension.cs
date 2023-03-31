@@ -35,7 +35,7 @@ internal class GraphQlExtension : IAlbaExtension
             z => z
                 .AddW3CLogging(z => { })
                 .AddHttpLogging(z => { })
-                .AddGraphQLServer()
+                .AddGraphQL()
                 .AddDiagnosticEventListener<TestServerDiagnosticEventListener>()
                 .ModifyRequestOptions(
                      opt => { opt.IncludeExceptionDetails = true; }

@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    NodaTimeTest: {
+      Period: PT1H
+    }
+  },
+  DataInfo: {
+    NodaTimeTest: {
+      __typename: NodaTimeOutputs,
+      Period: PT1H
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}

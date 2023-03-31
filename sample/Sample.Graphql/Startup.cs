@@ -2,6 +2,8 @@
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 using MediatR;
+using NetTopologySuite.Geometries;
+using NodaTime;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Domain;
 using Sample.Core.Models;
@@ -127,6 +129,90 @@ public class QueryType
     public IQueryable<ReadyRocket> Rockets([Service] RocketDbContext context)
     {
         return context.Rockets;
+    }
+}
+
+public class NodaTimeOutputs
+{
+    public Instant? Instant { get; init; }
+    public LocalDate? LocalDate { get; init; }
+    public LocalTime? LocalTime { get; init; }
+    public LocalDateTime? LocalDateTime { get; init; }
+    public OffsetDateTime? OffsetDateTime { get; init; }
+    public OffsetTime? OffsetTime { get; init; }
+    public Period? Period { get; init; }
+    public Duration? Duration { get; init; }
+    public ZonedDateTime? ZonedDateTime { get; init; }
+    public Offset? Offset { get; init; }
+    public IsoDayOfWeek? IsoDayOfWeek { get; init; }
+}
+
+public class NodaTimeInputs
+{
+    public Instant? Instant { get; init; }
+    public LocalDate? LocalDate { get; init; }
+    public LocalTime? LocalTime { get; init; }
+    public LocalDateTime? LocalDateTime { get; init; }
+    public OffsetDateTime? OffsetDateTime { get; init; }
+    public OffsetTime? OffsetTime { get; init; }
+    public Period? Period { get; init; }
+    public Duration? Duration { get; init; }
+    public ZonedDateTime? ZonedDateTime { get; init; }
+    public Offset? Offset { get; init; }
+    public IsoDayOfWeek? IsoDayOfWeek { get; init; }
+}
+
+public class GeometryOutputs
+{
+    public Geometry? Geometry { get; init; }
+    public Point? Point { get; init; }
+    public LineString? LineString { get; init; }
+    public Polygon? Polygon { get; init; }
+    public MultiPoint? MultiPoint { get; init; }
+    public MultiLineString? MultiLineString { get; init; }
+    public MultiPolygon? MultiPolygon { get; init; }
+}
+
+public class GeometryInputs
+{
+    public Geometry? Geometry { get; init; }
+}
+
+[ExtendObjectType(OperationTypeNames.Query)]
+public class QueryTests
+{
+    public NodaTimeOutputs NodaTimeTest(NodaTimeInputs inputs)
+    {
+        return new NodaTimeOutputs
+        {
+            Instant = inputs.Instant,
+            LocalDate = inputs.LocalDate,
+            LocalTime = inputs.LocalTime,
+            LocalDateTime = inputs.LocalDateTime,
+            OffsetDateTime = inputs.OffsetDateTime,
+            OffsetTime = inputs.OffsetTime,
+            Period = inputs.Period,
+            Duration = inputs.Duration,
+            ZonedDateTime = inputs.ZonedDateTime,
+            Offset = inputs.Offset,
+            IsoDayOfWeek = inputs.IsoDayOfWeek
+        };
+    }
+
+    public GeometryOutputs GeometryTest(GeometryInputs inputs)
+    {
+        return new GeometryOutputs
+        {
+            Geometry = inputs.Geometry,
+            // TODO: Determine why these are not working
+//            Point = inputs.Geometry as Point,
+//            LineString = inputs.Geometry as LineString,
+//            Polygon = inputs.Geometry as Polygon,
+//            MultiPoint = inputs.Geometry as MultiPoint,
+//            MultiLineString = inputs.Geometry as MultiLineString,
+//            MultiPolygon = inputs.Geometry as MultiPolygon,
+//            GeometryCollection = inputs.GeometryCollection
+        };
     }
 }
 

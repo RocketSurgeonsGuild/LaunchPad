@@ -52,7 +52,7 @@ public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixtur
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
                 RocketId = record.RocketId.Value,
-                ScheduledLaunchDate = launchDate.ToString("O"),
+                ScheduledLaunchDate = launchDate.ToInstant(),
                 PayloadWeightKg = 200,
             }
         );

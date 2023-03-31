@@ -87,3 +87,61 @@ query GetRocket($id: UUID) {
         }
     }
 }
+
+query GetNodaTimeTypes($inputs: NodaTimeInputsInput!) {
+    nodaTimeTest(inputs: $inputs) {
+        isoDayOfWeek
+        offset
+        period
+        zonedDateTime
+        offsetTime
+        offsetDateTime
+        localTime
+        localDateTime
+        localDate
+        instant
+        duration
+    }
+}
+
+query GetGeometryTypes($inputs: GeometryInputsInput!) {
+    geometryTest(inputs: $inputs) {
+        geometry
+        point {
+            bbox
+            coordinates
+            crs
+            type
+        }
+        lineString {
+            bbox
+            coordinates
+            crs
+            type
+        }
+        polygon {
+            bbox
+            coordinates
+            crs
+            type
+        }
+        multiPoint {
+            bbox
+            coordinates
+            crs
+            type
+        }
+        multiLineString {
+            bbox
+            coordinates
+            crs
+            type
+        }
+        multiPolygon {
+            bbox
+            coordinates
+            crs
+            type
+        }
+    }
+}

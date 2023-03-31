@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    GeometryTest: {
+      Geometry: MULTIPOLYGON (((27 28, 31 32, 29 30, 27 28)), ((33 34, 37 38, 35 36, 33 34)))
+    }
+  },
+  DataInfo: {
+    GeometryTest: {
+      __typename: GeometryOutputs,
+      Geometry: MULTIPOLYGON (((27 28, 31 32, 29 30, 27 28)), ((33 34, 37 38, 35 36, 33 34)))
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}

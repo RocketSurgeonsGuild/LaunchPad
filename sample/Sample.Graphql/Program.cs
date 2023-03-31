@@ -1,3 +1,5 @@
+using HotChocolate.Types.Spatial;
+using HotChocolate.Types.Spatial.Configuration;
 using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
@@ -19,6 +21,12 @@ builder.Services
        .ConfigureStronglyTypedId<RocketId, UuidType>()
        .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
 //           .AddDefaultTransactionScopeHandler()
+
+//           .AddSpatialProjections()
+       .AddType(new GeometryType("Geometry", BindingBehavior.Implicit))
+       .AddSpatialTypes()
+       .AddSpatialFiltering()
+       .AddSpatialProjections()
        .AddExecutableTypes()
        .AddQueryType()
        .AddMutationType()

@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    NodaTimeTest: {
+      LocalTime: 00:00:00
+    }
+  },
+  DataInfo: {
+    NodaTimeTest: {
+      __typename: NodaTimeOutputs,
+      LocalTime: 00:00:00
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}

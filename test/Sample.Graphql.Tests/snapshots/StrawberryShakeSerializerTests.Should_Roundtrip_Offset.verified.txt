@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    NodaTimeTest: {
+      Offset: +02
+    }
+  },
+  DataInfo: {
+    NodaTimeTest: {
+      __typename: NodaTimeOutputs,
+      Offset: +02
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}

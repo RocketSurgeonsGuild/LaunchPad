@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    GeometryTest: {
+      Geometry: MULTIPOINT ((15 16), (17 18))
+    }
+  },
+  DataInfo: {
+    GeometryTest: {
+      __typename: GeometryOutputs,
+      Geometry: MULTIPOINT ((15 16), (17 18))
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}

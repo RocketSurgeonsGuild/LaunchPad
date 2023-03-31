@@ -14,6 +14,7 @@
         <PackageReference Include="xunit.analyzers" />
         <PackageReference Include="xunit.runner.visualstudio" />
         <PackageReference Include="Verify.Xunit" />
+        <PackageReference Include="Verify.NodaTime" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />

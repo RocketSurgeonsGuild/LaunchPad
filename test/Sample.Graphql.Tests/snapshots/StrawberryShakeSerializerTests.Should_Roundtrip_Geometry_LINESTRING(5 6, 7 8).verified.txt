@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    GeometryTest: {
+      Geometry: LINESTRING (5 6, 7 8)
+    }
+  },
+  DataInfo: {
+    GeometryTest: {
+      __typename: GeometryOutputs,
+      Geometry: LINESTRING (5 6, 7 8)
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}
