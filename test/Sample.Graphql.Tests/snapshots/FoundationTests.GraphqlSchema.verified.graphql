@@ -3,6 +3,15 @@
   mutation: Mutation
 }
 
+interface GeoJSONInterface {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
 "The launch record creation response"
 type CreateLaunchRecordResponse {
   "The id of the new launch record"
@@ -13,6 +22,88 @@ type CreateLaunchRecordResponse {
 type CreateRocketResponse {
   "The rocket id"
   id: UUID!
+}
+
+"Models an OGC-style LineString"
+type GeoJSONLineStringType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of two or more positions."
+  coordinates: [Position]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"Models a collection of LineStrings.\n\nAny collection of LineStrings is a valid MultiLineString."
+type GeoJSONMultiLineStringType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of LineString coordinate arrays."
+  coordinates: [Position]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"Models a collection of Points."
+type GeoJSONMultiPointType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of positions."
+  coordinates: [Position]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"Basic implementation of MultiPolygon."
+type GeoJSONMultiPolygonType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of Polygon coordinate arrays."
+  coordinates: Coordinates
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"Represents a single point.\n\nA Point is topologically valid if and only if:\n\nThe coordinate which defines it if any) is a valid coordinate\n(i.e. does not have an NaN X- or Y-ordinate"
+type GeoJSONPointType implements GeoJSONInterface {
+  "The \"coordinates\" field is a single position."
+  coordinates: Position
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"Represents a polygon with linear edges, which may include holes.\nThe outer boundary (shell)\nand inner boundaries (holes) of the polygon are represented by {@link LinearRing}s.\nThe boundary rings of the polygon may have any orientation.\nPolygons are closed, simple geometries by definition.\n\nThe polygon model conforms to the assertions specified in the\nOpenGIS Simple Features\nSpecification for SQL.\n\nA Polygon is topologically valid if and only if:\n\nthe coordinates which define it are valid coordinates\nthe linear rings for the shell and holes are valid\n(i.e. are closed and do not self-intersect)\nholes touch the shell or another hole at at most one point\n(which implies that the rings of the shell and holes must not cross)\nthe interior of the polygon is connected,\nor equivalently no sequence of touching holes\nmakes the interior of the polygon disconnected\n(i.e. effectively split the polygon into two pieces)."
+type GeoJSONPolygonType implements GeoJSONInterface {
+  "The \"coordinates\" field MUST be an array of linear ring coordinate arrays. For Polygons with more than one of these rings, the first MUST be the exterior ring, and any others MUST be interior rings. The exterior ring bounds the surface, and the interior rings (if present) bound holes within the surface."
+  coordinates: [[Position]]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+type GeometryOutputs {
+  geometry: Geometry
+  point: GeoJSONPointType
+  lineString: GeoJSONLineStringType
+  polygon: GeoJSONPolygonType
+  multiPoint: GeoJSONMultiPointType
+  multiLineString: GeoJSONMultiLineStringType
+  multiPolygon: GeoJSONMultiPolygonType
 }
 
 type LaunchRecord {
@@ -74,6 +165,20 @@ type Mutation {
   deleteRocket(request: DeleteRocketRequest!): Void!
 }
 
+type NodaTimeOutputs {
+  instant: Instant
+  localDate: LocalDate
+  localTime: LocalTime
+  localDateTime: LocalDateTime
+  offsetDateTime: OffsetDateTime
+  offsetTime: OffsetTime
+  period: Period
+  duration: Duration
+  zonedDateTime: ZonedDateTime
+  offset: Offset
+  isoDayOfWeek: IsoDayOfWeek
+}
+
 "Information about pagination in a connection."
 type PageInfo {
   "Indicates whether more edges exist following the set defined by the clients arguments."
@@ -87,6 +192,8 @@ type PageInfo {
 }
 
 type Query {
+  nodaTimeTest(inputs: NodaTimeInputsInput!): NodaTimeOutputs!
+  geometryTest(inputs: GeometryInputsInput!): GeometryOutputs!
   launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): LaunchRecordsConnection
   rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput order: [ReadyRocketSortInput!]): RocketsConnection
 }
@@ -222,6 +329,70 @@ input EditRocketRequest {
   type: RocketType!
 }
 
+"Models an OGC-style LineString"
+input GeoJSONLineStringInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of two or more positions."
+  coordinates: [Position]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"Models a collection of LineStrings.\n\nAny collection of LineStrings is a valid MultiLineString."
+input GeoJSONMultiLineStringInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of LineString coordinate arrays."
+  coordinates: [[Position]]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"Models a collection of Points."
+input GeoJSONMultiPointInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of positions."
+  coordinates: [Position]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"Basic implementation of MultiPolygon."
+input GeoJSONMultiPolygonInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of Polygon coordinate arrays."
+  coordinates: Coordinates
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"Represents a single point.\n\nA Point is topologically valid if and only if:\n\nThe coordinate which defines it if any) is a valid coordinate\n(i.e. does not have an NaN X- or Y-ordinate"
+input GeoJSONPointInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is a single position."
+  coordinates: Position
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"Represents a polygon with linear edges, which may include holes.\nThe outer boundary (shell)\nand inner boundaries (holes) of the polygon are represented by {@link LinearRing}s.\nThe boundary rings of the polygon may have any orientation.\nPolygons are closed, simple geometries by definition.\n\nThe polygon model conforms to the assertions specified in the\nOpenGIS Simple Features\nSpecification for SQL.\n\nA Polygon is topologically valid if and only if:\n\nthe coordinates which define it are valid coordinates\nthe linear rings for the shell and holes are valid\n(i.e. are closed and do not self-intersect)\nholes touch the shell or another hole at at most one point\n(which implies that the rings of the shell and holes must not cross)\nthe interior of the polygon is connected,\nor equivalently no sequence of touching holes\nmakes the interior of the polygon disconnected\n(i.e. effectively split the polygon into two pieces)."
+input GeoJSONPolygonInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field MUST be an array of linear ring coordinate arrays. For Polygons with more than one of these rings, the first MUST be the exterior ring, and any others MUST be interior rings. The exterior ring bounds the surface, and the interior rings (if present) bound holes within the surface."
+  coordinates: [[Position]]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+input GeometryInputsInput {
+  geometry: Geometry
+}
+
 input LaunchRecordFilterInput {
   and: [LaunchRecordFilterInput!]
   or: [LaunchRecordFilterInput!]
@@ -263,6 +434,20 @@ input LongOperationFilterInput {
   nlt: Long
   lte: Long
   nlte: Long
+}
+
+input NodaTimeInputsInput {
+  instant: Instant
+  localDate: LocalDate
+  localTime: LocalTime
+  localDateTime: LocalDateTime
+  offsetDateTime: OffsetDateTime
+  offsetTime: OffsetTime
+  period: Period
+  duration: Duration
+  zonedDateTime: ZonedDateTime
+  offset: Offset
+  isoDayOfWeek: IsoDayOfWeek
 }
 
 "A rocket in inventory"
@@ -317,6 +502,16 @@ input StronglyTypedIdOperationFilterInput {
   nin: [UUID]
 }
 
+enum GeoJSONGeometryType {
+  Point
+  MultiPoint
+  LineString
+  MultiLineString
+  Polygon
+  MultiPolygon
+  GeometryCollection
+}
+
 "The available rocket types"
 enum RocketType {
   "Your best bet"
@@ -335,6 +530,9 @@ enum SortEnumType {
 "The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
 directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
 
+"A coordinate is an array of positions."
+scalar Coordinates
+
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
 scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
 
@@ -343,6 +541,8 @@ scalar DateTimeZone
 
 "Represents a fixed (and calendar-independent) length of time."
 scalar Duration
+
+scalar Geometry
 
 "Represents an instant on the global timeline, with nanosecond resolution."
 scalar Instant
@@ -376,6 +576,9 @@ scalar OffsetTime
 
 "Represents a period of time expressed in human chronological terms: hours, days, weeks, months and so on."
 scalar Period
+
+"A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
+scalar Position
 
 scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
 

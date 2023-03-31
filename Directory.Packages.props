@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
@@ -38,12 +38,15 @@
     <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="13.0.5" />
+    <PackageVersion Include="HotChocolate.Data.Spatial" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Types.Analyzers" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="13.0.5" />
     <PackageVersion Include="HotChocolate.Types.NodaTime" Version="13.0.5" />
+    <PackageVersion Include="HotChocolate.Types.Spatial" Version="13.0.5" />
     <PackageVersion Include="StrawberryShake.Transport.Http" Version="13.0.5" />
     <PackageVersion Include="StrawberryShake" Version="13.0.5" />
+    <PackageVersion Include="StrawberryShake.Core" Version="13.0.5" />
     <PackageVersion Include="StrawberryShake.Server" Version="13.0.5" />
     <PackageVersion Include="StrawberryShake.Maui" Version="13.0.5" />
     <PackageVersion Include="StrawberryShake.Blazor" Version="13.0.5" />
@@ -149,10 +152,8 @@
     <PackageVersion Include="xunit.analyzers" Version="1.1.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageVersion Include="Verify.Xunit" Version="19.12.0" />
+    <PackageVersion Include="Verify.NodaTime" Version="2.1.0" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.1.0" />
   </ItemGroup>
-  <Import
-        Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
-        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
-    />
+  <Import Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props" Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')" />
 </Project>

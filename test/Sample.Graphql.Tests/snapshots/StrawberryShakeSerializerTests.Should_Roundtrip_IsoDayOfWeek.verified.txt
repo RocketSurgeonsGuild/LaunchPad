@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    NodaTimeTest: {
+      IsoDayOfWeek: Wednesday
+    }
+  },
+  DataInfo: {
+    NodaTimeTest: {
+      __typename: NodaTimeOutputs,
+      IsoDayOfWeek: Wednesday
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}

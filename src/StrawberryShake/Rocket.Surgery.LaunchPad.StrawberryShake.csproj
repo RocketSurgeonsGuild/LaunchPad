@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="StrawberryShake.Core" />
+        <PackageReference Include="Rocket.Surgery.Conventions" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    </ItemGroup>
+</Project>

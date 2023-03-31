@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    NodaTimeTest: {
+      LocalDate: 2020-01-01
+    }
+  },
+  DataInfo: {
+    NodaTimeTest: {
+      __typename: NodaTimeOutputs,
+      LocalDate: 2020-01-01
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}
