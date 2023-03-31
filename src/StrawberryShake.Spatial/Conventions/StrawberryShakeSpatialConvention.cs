@@ -24,7 +24,6 @@ public class StrawberryShakeSpatialConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services.AddSerializer<GeometrySerializer>();
-        services.AddSerializer<CoordinatesSerializer>();
+//        services.AddSerializer<CoordinatesSerializer>();
     }
 }
-

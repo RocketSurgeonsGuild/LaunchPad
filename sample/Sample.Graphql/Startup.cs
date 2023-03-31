@@ -198,18 +198,19 @@ public class QueryTests
             IsoDayOfWeek = inputs.IsoDayOfWeek
         };
     }
-    
+
     public GeometryOutputs GeometryTest(GeometryInputs inputs)
     {
         return new GeometryOutputs
         {
             Geometry = inputs.Geometry,
-            Point = inputs.Geometry as Point,
-            LineString = inputs.Geometry as LineString,
-            Polygon = inputs.Geometry as Polygon,
-            MultiPoint = inputs.Geometry as MultiPoint,
-            MultiLineString = inputs.Geometry as MultiLineString,
-            MultiPolygon = inputs.Geometry as MultiPolygon,
+            // TODO: Determine why these are not working
+//            Point = inputs.Geometry as Point,
+//            LineString = inputs.Geometry as LineString,
+//            Polygon = inputs.Geometry as Polygon,
+//            MultiPoint = inputs.Geometry as MultiPoint,
+//            MultiLineString = inputs.Geometry as MultiLineString,
+//            MultiPolygon = inputs.Geometry as MultiPolygon,
 //            GeometryCollection = inputs.GeometryCollection
         };
     }

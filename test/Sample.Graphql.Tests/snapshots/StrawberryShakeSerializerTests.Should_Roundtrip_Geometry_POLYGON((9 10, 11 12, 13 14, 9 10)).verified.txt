@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    GeometryTest: {
+      Geometry: POLYGON ((9 10, 13 14, 11 12, 9 10))
+    }
+  },
+  DataInfo: {
+    GeometryTest: {
+      __typename: GeometryOutputs,
+      Geometry: POLYGON ((9 10, 13 14, 11 12, 9 10))
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}

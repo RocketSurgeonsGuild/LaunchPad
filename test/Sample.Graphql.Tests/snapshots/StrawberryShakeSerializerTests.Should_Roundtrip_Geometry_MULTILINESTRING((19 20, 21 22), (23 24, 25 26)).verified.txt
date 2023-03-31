@@ -1,0 +1,15 @@
+﻿{
+  Data: {
+    GeometryTest: {
+      Geometry: MULTILINESTRING ((19 20, 21 22), (23 24, 25 26))
+    }
+  },
+  DataInfo: {
+    GeometryTest: {
+      __typename: GeometryOutputs,
+      Geometry: MULTILINESTRING ((19 20, 21 22), (23 24, 25 26))
+    },
+    Version: 1
+  },
+  DataFactory: {}
+}
