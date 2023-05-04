@@ -70,6 +70,7 @@ app.MapControllers();
 // Should this move into an extension method?
 app.MapSwagger();
 
+app.Run();
 
 static Task WriteResponse(HttpContext context, HealthReport healthReport)
 {
@@ -174,5 +175,6 @@ internal class CustomHostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var v = _options.Value.A;
     }
 }

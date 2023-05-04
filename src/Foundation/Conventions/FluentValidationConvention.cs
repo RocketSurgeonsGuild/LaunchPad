@@ -1,3 +1,4 @@
+using System.Globalization;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -56,7 +57,12 @@ public class FluentValidationConvention : IServiceConvention
             includeInternalTypes: true
         );
 
-        if (_options.RegisterValidationOptionsAsHealthChecks)
+        if (_options.RegisterValidationOptionsAsHealthChecks == true
+         || Convert.ToBoolean(context.Properties["RegisterValidationOptionsAsHealthChecks"], CultureInfo.InvariantCulture)
+         || Environment.CommandLine.Contains(
+                "microsoft.extensions.apidescription.server",
+                StringComparison.OrdinalIgnoreCase
+            ))
         {
             services.Decorate<HealthCheckService, CustomHealthCheckService>();
             services.AddSingleton<ValidationHealthCheckResults>();

@@ -36,5 +36,5 @@ public class FoundationOptions
     /// <summary>
     ///     Validation options are registered as health checks instead of throwing and stopping application startup
     /// </summary>
-    public bool RegisterValidationOptionsAsHealthChecks { get; set; }
+    public bool? RegisterValidationOptionsAsHealthChecks { get; set; }
 }
