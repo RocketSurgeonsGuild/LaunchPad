@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -20,6 +21,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(MediatRConvention))]
+[AfterConvention(typeof(HealthChecksConvention))]
 public class FluentValidationConvention : IServiceConvention
 {
     private readonly FoundationOptions _options;
@@ -46,12 +48,18 @@ public class FluentValidationConvention : IServiceConvention
             throw new ArgumentNullException(nameof(context));
         }
 
-        var assemblies = context
-                        .AssemblyCandidateFinder
-                        .GetCandidateAssemblies("FluentValidation");
-        foreach (var item in new AssemblyScanner(assemblies.SelectMany(z => z.DefinedTypes).Select(x => x.AsType())))
+        services.AddValidatorsFromAssemblies(
+            context
+               .AssemblyCandidateFinder
+               .GetCandidateAssemblies("FluentValidation"),
+            _options.ValidatorLifetime,
+            includeInternalTypes: true
+        );
+
+        if (_options.RegisterValidationOptionsAsHealthChecks)
         {
-            services.TryAddEnumerable(ServiceDescriptor.Describe(item.InterfaceType, item.ValidatorType, ServiceLifetime.Singleton));
+            services.Decorate<HealthCheckService, CustomHealthCheckService>();
+            services.AddSingleton<ValidationHealthCheckResults>();
         }
 
         services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));

@@ -3,9 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Serilog;
-using OpenTelemetry.Extensions.Hosting;
 
-namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
+namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
 ///     EnvironmentLoggingConvention.
