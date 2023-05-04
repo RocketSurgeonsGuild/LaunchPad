@@ -58,7 +58,9 @@ public class FluentValidationConvention : IServiceConvention
         );
 
         if (_options.RegisterValidationOptionsAsHealthChecks == true
-         || Convert.ToBoolean(context.Properties["RegisterValidationOptionsAsHealthChecks"], CultureInfo.InvariantCulture)
+         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue && Convert.ToBoolean(
+                context.Properties["RegisterValidationOptionsAsHealthChecks"], CultureInfo.InvariantCulture
+            ) )
          || Environment.CommandLine.Contains(
                 "microsoft.extensions.apidescription.server",
                 StringComparison.OrdinalIgnoreCase
@@ -66,9 +68,12 @@ public class FluentValidationConvention : IServiceConvention
         {
             services.Decorate<HealthCheckService, CustomHealthCheckService>();
             services.AddSingleton<ValidationHealthCheckResults>();
+            services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
         }
-
-        services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
+        else
+        {
+            services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
+        }
 
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
         services.TryAddEnumerable(

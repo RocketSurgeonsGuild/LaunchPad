@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
@@ -9,7 +10,13 @@ internal class ValidationHealthCheckResults
 {
     private readonly Dictionary<string, HealthReportEntry> _results = new();
 
+    public ValidationHealthCheckResults(IHostApplicationLifetime hostApplicationLifetime)
+    {
+        hostApplicationLifetime.ApplicationStarted.Register(() => ApplicationHasStarted = true);
+    }
+
     public IEnumerable<KeyValuePair<string, HealthReportEntry>> Results => _results;
+    public bool ApplicationHasStarted { get; internal set; }
 
     public void AddResult(string optionsTypeName, string optionsName, ValidationResult result)
     {
@@ -21,8 +28,7 @@ internal class ValidationHealthCheckResults
 
         if (result.IsValid)
         {
-            _results.Add(
-                key,
+            _results[key] =
                 new HealthReportEntry(
                     HealthStatus.Healthy,
                     $"Options Validation {key}",
@@ -36,13 +42,11 @@ internal class ValidationHealthCheckResults
                             z => (object)z.Select(x => x.ToString()).ToArray()
                         ),
                     new[] { "options-validation", key }
-                )
-            );
+                );
         }
         else
         {
-            _results.Add(
-                key,
+            _results[key] =
                 new HealthReportEntry(
                     HealthStatus.Unhealthy,
                     $"Options Validation {key}",
@@ -56,8 +60,7 @@ internal class ValidationHealthCheckResults
                             z => (object)z.Select(x => x.ToString()).ToArray()
                         ),
                     new[] { "options-validation", "Options Validation", key, optionsTypeName }
-                )
-            );
+                );
         }
     }
 }

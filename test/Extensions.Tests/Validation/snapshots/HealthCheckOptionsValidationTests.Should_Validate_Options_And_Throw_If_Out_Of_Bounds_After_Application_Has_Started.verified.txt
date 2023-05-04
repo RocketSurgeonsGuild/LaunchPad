@@ -1,5 +1,5 @@
 ﻿[
-  Failure while validating OptionsValidationTests+Options.,
+  Failure while validating HealthCheckOptionsValidationTests+Options.,
   'String' must not be empty.,
   'Int' must be greater than '0'.,
   'Bool' must not be equal to 'False'.,
