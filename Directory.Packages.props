@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
@@ -13,7 +13,7 @@
     <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="GitVersion.Tool" Version="5.12.0" />
+    <PackageVersion Include="GitVersion.Tool" Version="6.0.0-beta.1" />
     <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2023.1.1" />
     <PackageVersion Include="Nuke.Common" Version="6.3.0" />
     <PackageVersion Include="ReportGenerator" Version="5.1.20" />
@@ -155,5 +155,8 @@
     <PackageVersion Include="Verify.NodaTime" Version="2.1.0" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.1.0" />
   </ItemGroup>
-  <Import Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props" Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')" />
+  <Import
+        Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
+        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
+    />
 </Project>

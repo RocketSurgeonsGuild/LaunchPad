@@ -1,0 +1,10 @@
+﻿{
+  HealthCheckOptionsValidationTests+Options: {
+    Description: Options Validation HealthCheckOptionsValidationTests+Options,
+    Status: Healthy,
+    Tags: [
+      options-validation,
+      HealthCheckOptionsValidationTests+Options
+    ]
+  }
+}

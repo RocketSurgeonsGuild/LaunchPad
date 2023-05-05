@@ -1,8 +1,10 @@
+using System.Globalization;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -20,6 +22,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(MediatRConvention))]
+[AfterConvention(typeof(HealthChecksConvention))]
 public class FluentValidationConvention : IServiceConvention
 {
     private readonly FoundationOptions _options;
@@ -46,15 +49,31 @@ public class FluentValidationConvention : IServiceConvention
             throw new ArgumentNullException(nameof(context));
         }
 
-        var assemblies = context
-                        .AssemblyCandidateFinder
-                        .GetCandidateAssemblies("FluentValidation");
-        foreach (var item in new AssemblyScanner(assemblies.SelectMany(z => z.DefinedTypes).Select(x => x.AsType())))
-        {
-            services.TryAddEnumerable(ServiceDescriptor.Describe(item.InterfaceType, item.ValidatorType, ServiceLifetime.Singleton));
-        }
+        services.AddValidatorsFromAssemblies(
+            context
+               .AssemblyCandidateFinder
+               .GetCandidateAssemblies("FluentValidation"),
+            _options.ValidatorLifetime,
+            includeInternalTypes: true
+        );
 
-        services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
+        if (_options.RegisterValidationOptionsAsHealthChecks == true
+         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue && Convert.ToBoolean(
+                context.Properties["RegisterValidationOptionsAsHealthChecks"], CultureInfo.InvariantCulture
+            ) )
+         || Environment.CommandLine.Contains(
+                "microsoft.extensions.apidescription.server",
+                StringComparison.OrdinalIgnoreCase
+            ))
+        {
+            services.Decorate<HealthCheckService, CustomHealthCheckService>();
+            services.AddSingleton<ValidationHealthCheckResults>();
+            services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
+        }
+        else
+        {
+            services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
+        }
 
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
         services.TryAddEnumerable(

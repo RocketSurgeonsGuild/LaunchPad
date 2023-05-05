@@ -9,20 +9,20 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Foundation.Validation;
 using Serilog;
 
 namespace Extensions.Tests.Validation;
 
 [UsesVerify]
-public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
+public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
 {
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a.Should().Throw<OptionsValidationException>()
-                        .Which.Failures;
-        await Verify(failures);
+        var failures = a.Should().NotThrow();
+        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
     [Fact]
@@ -41,6 +41,7 @@ public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a.Should().NotThrow();
+        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
     [Fact]
@@ -58,12 +59,61 @@ public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
         );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
+        var failures = a.Should().NotThrow();
+        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
+    }
+
+    [Fact]
+    public async Task Should_Validate_Options_And_Throw_After_Application_Has_Started()
+    {
+        Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
+        var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a.Should().Throw<OptionsValidationException>()
                         .Which.Failures;
         await Verify(failures);
     }
 
-    public OptionsValidationTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    [Fact]
+    public async Task Should_Validate_Options_And_Pass_After_Application_Has_Started()
+    {
+        Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
+        var services = new ServiceCollection();
+        services.AddOptions<Options>().Configure(
+            options =>
+            {
+                options.Bool = true;
+                options.Double = -50;
+                options.Int = 50;
+                options.String = "Hello";
+            }
+        );
+        Populate(services);
+        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        var failures = a.Should().NotThrow();
+    }
+
+    [Fact]
+    public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds_After_Application_Has_Started()
+    {
+        Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
+        var services = new ServiceCollection();
+        services.AddOptions<Options>().Configure(
+            options =>
+            {
+                options.Bool = false;
+                options.Double = 50;
+                options.Int = -50;
+                options.String = "";
+            }
+        );
+        Populate(services);
+        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        var failures = a.Should().Throw<OptionsValidationException>()
+                        .Which.Failures;
+        await Verify(failures);
+    }
+
+    public HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) : base(outputHelper)
     {
     }
 
@@ -93,7 +143,7 @@ public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
                                                                .Set(
                                                                     new FoundationOptions
                                                                     {
-                                                                        RegisterValidationOptionsAsHealthChecks = false
+                                                                        RegisterValidationOptionsAsHealthChecks = true
                                                                     }
                                                                 )
                                                                .WithLogger(Logger);

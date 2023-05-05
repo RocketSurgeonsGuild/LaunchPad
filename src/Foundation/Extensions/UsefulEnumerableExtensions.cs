@@ -27,3 +27,11 @@ public static class UsefulEnumerableExtensions
         return enumerator;
     }
 }
+
+internal static class TypeExtensions
+{
+    public static string GetNestedTypeName(this Type type)
+    {
+        return type is { IsNested: true, DeclaringType: { } } ? $"{type.DeclaringType.GetNestedTypeName()}+{type.Name}" : type.Name;
+    }
+}
