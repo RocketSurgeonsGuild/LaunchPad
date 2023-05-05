@@ -8,7 +8,7 @@ using Rocket.Surgery.Nuke.GithubActions;
 
 [GitHubActionsSteps(
     "ci-ignore",
-    GitHubActionsImage.WindowsLatest,
+//    GitHubActionsImage.WindowsLatest,
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = false,
     On = new[] { RocketSurgeonGitHubActionsTrigger.Push },
@@ -20,7 +20,7 @@ using Rocket.Surgery.Nuke.GithubActions;
 [GitHubActionsSteps(
     "ci",
 //    GitHubActionsImage.MacOsLatest,
-    GitHubActionsImage.WindowsLatest,
+//    GitHubActionsImage.WindowsLatest,
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = false,
     On = new[] { RocketSurgeonGitHubActionsTrigger.Push },
