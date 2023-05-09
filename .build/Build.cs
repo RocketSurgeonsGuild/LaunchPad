@@ -16,7 +16,6 @@ using Rocket.Surgery.Nuke.DotNetCore;
 using Serilog;
 
 [PublicAPI]
-[CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
 [PackageIcon("https://raw.githubusercontent.com/RocketSurgeonsGuild/graphics/master/png/social-square-thrust-rounded.png")]
 [EnsureGitHooks(GitHook.PreCommit)]

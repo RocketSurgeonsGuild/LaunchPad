@@ -69,7 +69,7 @@ on:
       - '.github/renovate.json'
 
 jobs:
-  Build:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: N/A
