@@ -16,7 +16,7 @@ namespace MyNamespace.Controllers
         [ProducesResponseType(typeof(ProblemDetails), 404)]
         [ProducesResponseType(typeof(ProblemDetails), 400)]
         [ProducesResponseType(typeof(FluentValidationProblemDetails), 422)]
-        public partial async Task<ActionResult<RocketModel>> GetRocket(Guid id, [Bind(), CustomizeValidator(Properties = "")] GetRocket.Request request)
+        public partial async Task<ActionResult<RocketModel>> GetRocket(Guid id, [Bind()] GetRocket.Request request)
         {
             var result = await Mediator.Send(request with {Id = id}, HttpContext.RequestAborted).ConfigureAwait(false);
             return new ObjectResult(result)

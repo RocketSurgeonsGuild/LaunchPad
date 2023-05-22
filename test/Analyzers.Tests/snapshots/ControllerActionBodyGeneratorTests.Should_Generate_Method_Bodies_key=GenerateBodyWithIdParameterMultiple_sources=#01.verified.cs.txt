@@ -16,7 +16,7 @@ namespace MyNamespace.Controllers
         [ProducesResponseType(typeof(ProblemDetails), 404)]
         [ProducesResponseType(typeof(ProblemDetails), 400)]
         [ProducesResponseType(typeof(FluentValidationProblemDetails), 422)]
-        public partial async Task<ActionResult<RocketModel>> Save2Rocket(Guid id, string? sn, [Bind(), CustomizeValidator(Properties = "")] Save2Rocket.Request request)
+        public partial async Task<ActionResult<RocketModel>> Save2Rocket(Guid id, string? sn, [Bind()] Save2Rocket.Request request)
         {
             request.Id = id;
             request.Sn = sn;

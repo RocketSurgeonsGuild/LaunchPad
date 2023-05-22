@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Analyzers.Tests.Helpers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
@@ -69,7 +71,9 @@ public class RocketController : RestfulApiController
             typeof(ControllerBase),
             typeof(Controller),
             typeof(RouteAttribute),
-            typeof(RestfulApiController)
+            typeof(RestfulApiController),
+            typeof(ClaimsPrincipal),
+            typeof(HttpContext)
         );
         AddSources(
             @"
@@ -590,6 +594,74 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
     public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] string launchRecordId, GetRocketLaunchRecord.Request request);
+}"
+                }
+            );
+            Add(
+                "GenerateBodyWithClaimsPrincipal",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Security.Claims;
+namespace TestNamespace;
+public static class Save2Rocket
+{
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; init; }
+        public string Other { get; init; }
+    }
+}",
+                    @"using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    [HttpPost(""{id:guid}/{sn?}"")]
+    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
+}"
+                }
+            );
+            Add(
+                "GenerateBodyWithHttpRequest",
+                new[]
+                {
+                    defaultString,
+                    @"
+using Microsoft.AspNetCore.Http;
+namespace TestNamespace;
+public static class Save2Rocket
+{
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+        public string? Sn { get; init; } = null!;
+        public HttpRequest R { get; init; }
+        public string Other { get; init; }
+    }
+}",
+                    @"using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    [HttpPost(""{id:guid}/{sn?}"")]
+    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
 }"
                 }
             );
