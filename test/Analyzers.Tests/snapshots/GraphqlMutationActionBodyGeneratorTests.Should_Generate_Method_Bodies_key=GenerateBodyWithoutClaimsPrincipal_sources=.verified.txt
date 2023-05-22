@@ -1,7 +1,7 @@
 ﻿{
   ResultDiagnostics: [
     {
-      Id: LPAD0003,
+      Id: LPAD0006,
       Title: The parameter must exist in order for this request to process,
       Severity: Error,
       WarningLevel: 0,
@@ -16,7 +16,7 @@
   Results: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator: [
       {
-        Id: LPAD0003,
+        Id: LPAD0006,
         Title: The parameter must exist in order for this request to process,
         Severity: Error,
         WarningLevel: 0,
