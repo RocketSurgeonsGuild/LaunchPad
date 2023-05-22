@@ -48,4 +48,13 @@ internal static class GeneratorDiagnostics
         DiagnosticSeverity.Error,
         true
     );
+
+    public static DiagnosticDescriptor ParameterMustExist { get; } = new(
+        "LPAD0006",
+        "The parameter must exist in order for this request to process",
+        "The parameter of type {0} must exist in order to fulfill this request {1}",
+        "LaunchPad",
+        DiagnosticSeverity.Error,
+        true
+    );
 }

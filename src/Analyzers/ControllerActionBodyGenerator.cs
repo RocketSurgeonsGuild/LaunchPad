@@ -41,6 +41,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
 
     private static MethodDeclarationSyntax? GenerateMethod(
         SourceProductionContext context,
+        IPropertySymbol[] controllerBaseProperties,
         IRestfulApiMethodMatcher? matcher,
         IReadOnlyDictionary<RestfulApiMethod, int> statusCodeMap,
         MethodDeclarationSyntax syntax,
@@ -83,6 +84,25 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                         StringComparer.OrdinalIgnoreCase
                                                     )
                                                    .ToArray();
+            var controllerAttachedProperties = parameterType
+                                              .GetMembers()
+                                              .SelectMany(
+                                                   parameter =>
+                                                   {
+                                                       return parameter switch
+                                                       {
+                                                           IPropertySymbol { Type: not null, IsImplicitlyDeclared: false } ps => controllerBaseProperties.Where(
+                                                               p => SymbolEqualityComparer.Default.Equals(p.Type, ps.Type)
+                                                           ),
+                                                           IFieldSymbol { Type: not null, IsImplicitlyDeclared: false } fs => controllerBaseProperties.Where(
+                                                               p => SymbolEqualityComparer.Default.Equals(p.Type, fs.Type)
+                                                           ),
+                                                           _ => Enumerable.Empty<IPropertySymbol>()
+                                                       };
+                                                   }, (parameter, propertySymbol) => ( propertySymbol, parameter )
+                                               )
+                                              .ToArray();
+
 
             var mapping = parameterType.MemberNames.ToLookup(z => z, StringComparer.OrdinalIgnoreCase);
             var failed = false;
@@ -130,6 +150,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                               .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false } ps && ps.Name != "EqualityContract")
                                               .Select(z => z.Name)
                                               .Except(parameterProperties.Select(z => z.memberName))
+                                              .Except(controllerAttachedProperties.Select(z => z.parameter.Name))
                                               .ToArray();
 
             var newParam = declaredParam.AddAttributeLists(
@@ -144,27 +165,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                            .Select(z => AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(z))))
                                     )
                                 )
-                            ),
-                            Attribute(
-                                    IdentifierName("CustomizeValidator")
-                                )
-                               .WithArgumentList(
-                                    AttributeArgumentList(
-                                        SingletonSeparatedList(
-                                            AttributeArgument(
-                                                    LiteralExpression(
-                                                        SyntaxKind.StringLiteralExpression,
-                                                        Literal(string.Join(",", bindingMembers))
-                                                    )
-                                                )
-                                               .WithNameEquals(
-                                                    NameEquals(
-                                                        IdentifierName("Properties")
-                                                    )
-                                                )
-                                        )
-                                    )
-                                )
+                            )
                         }
                     )
                 )
@@ -175,22 +176,37 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
 
             if (parameterType.IsRecord)
             {
-                var withExpression = WithExpression(
-                    IdentifierName(parameter.Name),
-                    InitializerExpression(
-                        SyntaxKind.WithInitializerExpression,
-                        SeparatedList<ExpressionSyntax>(
-                            parameterProperties.Select(
-                                tuple => AssignmentExpression(
-                                    SyntaxKind.SimpleAssignmentExpression,
-                                    IdentifierName(tuple.memberName),
-                                    IdentifierName(tuple.symbol.Name)
+                if (parameterProperties.Any() || controllerAttachedProperties.Any())
+                {
+                    var withExpression = WithExpression(
+                        IdentifierName(parameter.Name),
+                        InitializerExpression(
+                            SyntaxKind.WithInitializerExpression,
+                            SeparatedList<ExpressionSyntax>(
+                                parameterProperties.Select(
+                                    tuple => AssignmentExpression(
+                                        SyntaxKind.SimpleAssignmentExpression,
+                                        IdentifierName(tuple.memberName),
+                                        IdentifierName(tuple.symbol.Name)
+                                    )
+                                ).Concat(
+                                    controllerAttachedProperties.Select(
+                                        s => AssignmentExpression(
+                                            SyntaxKind.SimpleAssignmentExpression,
+                                            IdentifierName(s.parameter.Name),
+                                            MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                ThisExpression(),
+                                                IdentifierName(s.propertySymbol.Name)
+                                            )
+                                        )
+                                    )
                                 )
                             )
                         )
-                    )
-                );
-                sendRequestExpression = isStream ? streamMediatorRequest(withExpression) : sendMediatorRequest(withExpression);
+                    );
+                    sendRequestExpression = isStream ? streamMediatorRequest(withExpression) : sendMediatorRequest(withExpression);
+                }
             }
             else
             {
@@ -206,6 +222,27 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                     IdentifierName(memberName)
                                 ),
                                 IdentifierName(s.Name)
+                            )
+                        )
+                    );
+                }
+
+                foreach (var s in controllerAttachedProperties)
+                {
+                    block = block.AddStatements(
+                        ExpressionStatement(
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    IdentifierName(parameter.Name),
+                                    IdentifierName(s.parameter.Name)
+                                ),
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    ThisExpression(),
+                                    IdentifierName(s.propertySymbol.Name)
+                                )
                             )
                         )
                     );
@@ -607,6 +644,10 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
     )
     {
         var (syntax, symbol, semanticModel) = valueTuple.Left;
+        var claimsPrincipal = semanticModel.Compilation.GetTypeByMetadataName("System.Security.Claims.ClaimsPrincipal")!;
+        var controllerBase = semanticModel.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ControllerBase")!;
+        var controllerBaseProperties =
+            controllerBase.GetMembers().OfType<IPropertySymbol>().Where(z => z.DeclaredAccessibility == Accessibility.Public).ToArray();
         var compilation = valueTuple.Right;
         var matchers = MatcherDefaults.GetMatchers(compilation);
         var members = syntax.Members
@@ -647,7 +688,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         {
             if (request != null)
             {
-                var methodBody = GenerateMethod(context, matcher, MatcherDefaults.MethodStatusCodeMap, method, methodSymbol, request, members);
+                var methodBody = GenerateMethod(
+                    context, controllerBaseProperties, matcher, MatcherDefaults.MethodStatusCodeMap, method, methodSymbol, request, members
+                );
                 if (methodBody is null) continue;
                 newClass = newClass.AddMembers(methodBody);
             }
@@ -738,13 +781,5 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
         );
 
         context.RegisterSourceOutput(syntaxProvider.Combine(context.CompilationProvider), GenerateMethods);
-    }
-}
-
-internal static class SymbolExtensions
-{
-    public static AttributeData? GetAttribute(this ISymbol symbol, string attributeClassName)
-    {
-        return symbol.GetAttributes().FirstOrDefault(z => z.AttributeClass?.Name == attributeClassName);
     }
 }

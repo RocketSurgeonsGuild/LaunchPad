@@ -16,9 +16,12 @@ namespace MyNamespace.Controllers
         [ProducesResponseType(typeof(ProblemDetails), 404)]
         [ProducesResponseType(typeof(ProblemDetails), 400)]
         [ProducesResponseType(typeof(FluentValidationProblemDetails), 422)]
-        public partial async Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord(Guid id, Guid launchId, [Bind()][BindRequired][FromRoute] GetRocketLaunchRecord.Request request)
+        public partial async Task<ActionResult<RocketModel>> Save2Rocket(Guid id, string? sn, [Bind("Other")] Save2Rocket.Request request)
         {
-            var result = await Mediator.Send(request with {Id = id, LaunchId = launchId}, HttpContext.RequestAborted).ConfigureAwait(false);
+            request.Id = id;
+            request.Sn = sn;
+            request.ClaimsPrincipal = this.User;
+            var result = await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
             return new ObjectResult(result)
             {StatusCode = 200};
         }
