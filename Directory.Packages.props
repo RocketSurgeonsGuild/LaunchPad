@@ -81,7 +81,7 @@
     <PackageVersion Include="NetTopologySuite.IO.GeoJSON" Version="3.0.0" />
     <PackageVersion Include="NodaTime" Version="3.1.9" />
     <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.0.1" />
-    <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
+    <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.1.0" />
     <PackageVersion Include="NodaTime.Testing" Version="3.1.9" />
     <PackageVersion Include="Polly" Version="7.2.4" />
     <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta06" />
