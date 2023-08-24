@@ -155,14 +155,14 @@ type LaunchRecordsEdge {
 }
 
 type Mutation {
-  createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse!
-  editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel!
-  patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel!
-  deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void!
   createRocket(request: CreateRocketRequest!): CreateRocketResponse!
   editRocket(request: EditRocketRequest!): RocketModel!
   patchRocket(request: EditRocketPatchRequestInput!): RocketModel!
   deleteRocket(request: DeleteRocketRequest!): Void!
+  createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse!
+  editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel!
+  patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel!
+  deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void!
 }
 
 type NodaTimeOutputs {
@@ -192,10 +192,10 @@ type PageInfo {
 }
 
 type Query {
-  nodaTimeTest(inputs: NodaTimeInputsInput!): NodaTimeOutputs!
-  geometryTest(inputs: GeometryInputsInput!): GeometryOutputs!
   launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput order: [LaunchRecordSortInput!]): LaunchRecordsConnection
   rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput order: [ReadyRocketSortInput!]): RocketsConnection
+  nodaTimeTest(inputs: NodaTimeInputsInput!): NodaTimeOutputs!
+  geometryTest(inputs: GeometryInputsInput!): GeometryOutputs!
 }
 
 "A rocket in inventory"

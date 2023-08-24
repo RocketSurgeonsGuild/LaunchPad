@@ -23,7 +23,7 @@
             "commands": ["codecov"]
         },
         "jetbrains.resharper.globaltools": {
-            "version": "2023.2.0",
+            "version": "2023.2.1",
             "commands": ["jb"]
         },
         "dotnet-format": {
@@ -35,7 +35,7 @@
             "commands": ["nukeeper"]
         },
         "strawberryshake.tools": {
-            "version": "13.1.0",
+            "version": "13.5.1",
             "commands": ["dotnet-graphql"]
         }
     }
