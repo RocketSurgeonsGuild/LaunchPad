@@ -52,11 +52,11 @@
     <PackageVersion Include="StrawberryShake.Blazor" Version="13.5.1" />
     <PackageVersion Include="StrawberryShake.Razor" Version="13.5.1" />
     <PackageVersion Include="MediatR" Version="12.1.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.5" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.5" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="7.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" />
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />

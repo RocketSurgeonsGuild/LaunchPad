@@ -25,7 +25,6 @@ public abstract class HandleTestHostBase : AutoFakeTest
             );
         ExcludeSourceContext(nameof(WebAssemblyHostBuilder));
         ExcludeSourceContext(nameof(WebAssemblyHost));
-        ExcludeSourceContext(nameof(DiagnosticSource));
         Populate(new ServiceCollection().ApplyConventions(_hostBuilder));
     }
 }
