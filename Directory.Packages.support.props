@@ -11,10 +11,10 @@
     <PackageVersion Update="System.Net.Http.Json" Version="3.2.1" />
     <PackageVersion Update="Microsoft.Extensions.Hosting" Version="3.1.32" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="4.7.0" />
-    <PackageVersion Update="Serilog.AspNetCore" Version="6.1.0" />
-    <PackageVersion Update="Serilog.Extensions.Hosting" Version="5.0.1" />
-    <PackageVersion Update="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageVersion Update="Serilog.Settings.Configuration" Version="3.4.0" />
+    <PackageVersion Update="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageVersion Update="Serilog.Extensions.Hosting" Version="7.0.0" />
+    <PackageVersion Update="Serilog.Extensions.Logging" Version="7.0.0" />
+    <PackageVersion Update="Serilog.Settings.Configuration" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.21" />
@@ -35,10 +35,10 @@
     <PackageVersion Update="Microsoft.Extensions.Options" Version="6.0.0" />      
     <PackageVersion Update="System.Text.Json" Version="6.0.8" />
     <PackageVersion Update="System.Net.Http.Json" Version="6.0.1" />
-    <PackageVersion Update="Serilog.AspNetCore" Version="6.1.0" />
-    <PackageVersion Update="Serilog.Extensions.Hosting" Version="5.0.1" />
-    <PackageVersion Update="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageVersion Update="Serilog.Settings.Configuration" Version="3.4.0" />
+    <PackageVersion Update="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageVersion Update="Serilog.Extensions.Hosting" Version="7.0.0" />
+    <PackageVersion Update="Serilog.Extensions.Logging" Version="7.0.0" />
+    <PackageVersion Update="Serilog.Settings.Configuration" Version="7.0.1" />
     <PackageVersion Update="Microsoft.Extensions.ApiDescription.Client" Version="6.0.21" />
     <PackageVersion Update="Microsoft.Extensions.ApiDescription.Server" Version="6.0.21" />
   </ItemGroup>
