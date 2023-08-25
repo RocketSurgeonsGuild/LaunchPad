@@ -26,6 +26,7 @@
           ErrorCode: NotEmptyValidator,
           FormattedMessagePlaceholderValues: {
             PropertyName: String,
+            PropertyPath: String,
             PropertyValue: 
           }
         },
@@ -38,6 +39,7 @@
             ComparisonProperty: ,
             ComparisonValue: 0,
             PropertyName: Int,
+            PropertyPath: Int,
             PropertyValue: -50
           }
         },
@@ -50,6 +52,7 @@
             ComparisonProperty: ,
             ComparisonValue: false,
             PropertyName: Bool,
+            PropertyPath: Bool,
             PropertyValue: false
           }
         },
@@ -62,6 +65,7 @@
             ComparisonProperty: ,
             ComparisonValue: 0.0,
             PropertyName: Double,
+            PropertyPath: Double,
             PropertyValue: 50.0
           }
         }
