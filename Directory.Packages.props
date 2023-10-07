@@ -92,11 +92,11 @@
     <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.8.0" />
     <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="12.8.0" />
     <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.8.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="11.5.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="11.5.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="11.5.0" />
-    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="11.5.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions" Version="11.5.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration" Version="12.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Json" Version="12.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Configuration.Yaml" Version="12.0.0" />
+    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="12.0.0" />
+    <PackageVersion Include="Rocket.Surgery.Extensions" Version="12.0.0" />
     <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.8.0" />
     <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.8.0" />
     <PackageVersion Include="Rocket.Surgery.Web.Hosting" Version="12.8.0" />
