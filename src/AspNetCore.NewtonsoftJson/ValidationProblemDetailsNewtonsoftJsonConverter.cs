@@ -100,7 +100,7 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         public string? Type { get; set; }
 
         [JsonProperty(PropertyName = "title", NullValueHandling = NullValueHandling.Ignore)]
-        public string? Title { get; set; }
+        public string? Title { get; set; }  
 
         [JsonProperty(PropertyName = "status", NullValueHandling = NullValueHandling.Ignore)]
         public int? Status { get; set; }

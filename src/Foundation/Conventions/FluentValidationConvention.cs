@@ -66,6 +66,7 @@ public class FluentValidationConvention : IServiceConvention
                 StringComparison.OrdinalIgnoreCase
             ))
         {
+            // need to do validations using ValidateOnStart
             services.Decorate<HealthCheckService, CustomHealthCheckService>();
             services.AddSingleton<ValidationHealthCheckResults>();
             services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
