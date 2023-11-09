@@ -17,8 +17,8 @@
         <NukeTelemetryVersion>1</NukeTelemetryVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <ImplicitUsings>enable</ImplicitUsings>
+        <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
         <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <NoWarn>$(NoWarn);0436;CA1014;CA1062</NoWarn>
     </PropertyGroup>
     <ItemGroup>
