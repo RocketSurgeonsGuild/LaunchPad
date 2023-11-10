@@ -29,7 +29,6 @@ internal class GraphQlExtension : IAlbaExtension
 
     public IHostBuilder Configure(IHostBuilder builder)
     {
-        new TemporaryGraphQlExtension().Configure(builder);
         builder.ConfigureServices(
             z => z
                 .AddW3CLogging(_ => { })

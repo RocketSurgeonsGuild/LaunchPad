@@ -114,10 +114,15 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     class AppFixtureLoggerFactory : ILoggerFactory
     {
         private ILoggerFactory? _innerLoggerFactory;
+        private List<DeferredLogger> _deferredLoggers = new();
 
         public void SetLoggerFactory(ILoggerFactory loggerFactory)
         {
             _innerLoggerFactory = loggerFactory;
+            foreach (var logger in _deferredLoggers)
+            {
+                logger.SetLogger(loggerFactory.CreateLogger(logger.CategoryName));
+            }
         }
 
         public void Dispose()
@@ -132,7 +137,60 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
 
         public ILogger CreateLogger(string categoryName)
         {
-            return _innerLoggerFactory?.CreateLogger(categoryName) ?? NullLogger.Instance;
+            return _innerLoggerFactory?.CreateLogger(categoryName) ?? AddDeferredLogger(categoryName);
+        }
+
+        private DeferredLogger AddDeferredLogger(string categoryName)
+        {
+            var logger = new DeferredLogger(categoryName);
+            _deferredLoggers.Add(logger);
+            return logger;
+        }
+    }
+
+    class DeferredLogger : ILogger
+    {
+        public string CategoryName { get; }
+        private List<(LogLevel logLevel, EventId eventId, string text)> _deferredLogs = new();
+        private ILogger? _logger;
+
+        public DeferredLogger(string categoryName)
+        {
+            CategoryName = categoryName;
+        }
+        
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (_logger is null)
+            {
+                _deferredLogs.Add((logLevel, eventId, formatter(state, exception)));
+                return;
+            }
+            _logger.Log(logLevel, eventId, state, exception, formatter);
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return _logger?.IsEnabled(logLevel) ?? true;
+        }
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+        {
+            return _logger?.BeginScope(state);
+        }
+
+        public void SetLogger(ILogger logger)
+        {
+            _logger = logger;
+            foreach (var log in _deferredLogs)
+            {
+#pragma warning disable CA1848
+#pragma warning disable CA2254
+                // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
+                _logger.Log(log.logLevel, log.eventId, log.text);
+#pragma warning restore CA2254
+#pragma warning restore CA1848
+            }
         }
     }
 
