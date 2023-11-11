@@ -8,6 +8,7 @@ public partial record PatchRocket
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<Guid> Id { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<Guid>.Empty(default);
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> SerialNumber { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<int> Type { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(default);
+#pragma warning disable CA1034
     public record Changes
     {
         public bool Id { get; init; }
@@ -23,25 +24,25 @@ public partial record PatchRocket
         {Id = Id.HasBeenSet(), SerialNumber = SerialNumber.HasBeenSet(), Type = Type.HasBeenSet()};
     }
 
-    public global::Request ApplyChanges(global::Request value)
+    public global::Request ApplyChanges(global::Request state)
     {
         if (Id.HasBeenSet())
         {
-            value = value with {Id = Id};
+            state = state with {Id = Id!};
         }
 
         if (SerialNumber.HasBeenSet())
         {
-            value = value with {SerialNumber = SerialNumber};
+            state = state with {SerialNumber = SerialNumber!};
         }
 
         if (Type.HasBeenSet())
         {
-            value = value with {Type = Type};
+            state = state with {Type = Type!};
         }
 
         ResetChanges();
-        return value;
+        return state;
     }
 
     public PatchRocket ResetChanges()

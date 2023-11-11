@@ -12,7 +12,7 @@ using Rocket.Surgery.Hosting;
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 /// <summary>
-/// An <see cref="IAlbaExtension"/> that is used for launchpad <see cref="TTestAssembly"/> is used to get the assembly to test
+/// An <see cref="IAlbaExtension"/> that is used for launchpad <typeparamref name="TTestAssembly"/> is used to get the assembly to test
 /// </summary>
 /// <typeparam name="TTestAssembly"></typeparam>
 public class LaunchPadExtension<TTestAssembly> : LaunchPadExtension
@@ -94,5 +94,5 @@ public class LaunchPadExtension : IAlbaExtension
         return builder;
     }
 }
-#pragma warning enable CA1816
-#pragma warning enable CA1063
+#pragma warning restore CA1816
+#pragma warning restore CA1063

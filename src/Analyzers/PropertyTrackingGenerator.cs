@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
+
 namespace Rocket.Surgery.LaunchPad.Analyzers;
 
 /// <summary>
@@ -69,7 +70,13 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                            .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
                            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
                            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-            ;
+                           .WithLeadingTrivia(
+                                Trivia(
+                                    PragmaWarningDirectiveTrivia(Token(SyntaxKind.DisableKeyword), true)
+                                       .WithErrorCodes(SingletonSeparatedList<ExpressionSyntax>(IdentifierName("CA1034")))
+                                )
+                            );
+
         var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var applyChangesBody = Block();
         var resetChangesBody = Block();
@@ -125,7 +132,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
             applyChangesBody = applyChangesBody.AddStatements(
-                GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("value"), isRecord)
+                GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("state"), isRecord)
             );
             resetChangesBody = resetChangesBody.AddStatements(
                 ExpressionStatement(
@@ -176,7 +183,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                 .WithParameterList(
                                      ParameterList(
                                          SingletonSeparatedList(
-                                             Parameter(Identifier("value")).WithType(
+                                             Parameter(Identifier("state")).WithType(
                                                  IdentifierName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
                                              )
                                          )
@@ -185,7 +192,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                 .WithBody(
                                      applyChangesBody.AddStatements(
                                          ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges"))),
-                                         ReturnStatement(IdentifierName("value"))
+                                         ReturnStatement(IdentifierName("state"))
                                      )
                                  );
         var resetChangesMethod = MethodDeclaration(IdentifierName(symbol.Name), "ResetChanges")
@@ -215,15 +222,12 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 resetChangesImplementation
             );
 
+        var usings = declaration.SyntaxTree.GetCompilationUnitRoot().Usings
+                                .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
+
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
-                     List(
-                         declaration.SyntaxTree.GetCompilationUnitRoot().Usings.AddRange(
-                             namespaces
-                                .Where(z => !string.IsNullOrWhiteSpace(z))
-                                .Select(z => UsingDirective(ParseName(z)))
-                         )
-                     ),
+                     List(usings),
                      List<AttributeListSyntax>(),
                      SingletonList<MemberDeclarationSyntax>(
                          symbol.ContainingNamespace.IsGlobalNamespace
@@ -270,7 +274,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                             AssignmentExpression(
                                                 SyntaxKind.SimpleAssignmentExpression,
                                                 IdentifierName(propertySymbol.Name),
-                                                IdentifierName(propertySymbol.Name)
+                                                PostfixUnaryExpression(SyntaxKind.SuppressNullableWarningExpression, IdentifierName(propertySymbol.Name))
                                             )
                                         )
                                     )
@@ -279,7 +283,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             : AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, valueIdentifier, IdentifierName(propertySymbol.Name)),
-                                IdentifierName(propertySymbol.Name)
+                                PostfixUnaryExpression(SyntaxKind.SuppressNullableWarningExpression, IdentifierName(propertySymbol.Name))
                             )
                     )
                 )
