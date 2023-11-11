@@ -4,7 +4,7 @@ using Sample.Core.Domain;
 
 namespace Sample.Pages.Tests;
 
-internal class SqliteConnectionService(IServiceProvider serviceProvider) : IHostedService
+internal sealed class SqliteConnectionService(IServiceProvider serviceProvider) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {

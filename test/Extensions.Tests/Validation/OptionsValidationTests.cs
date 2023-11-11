@@ -68,6 +68,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         public bool Bool { get; set; }
         public double Double { get; set; }
 
+        [UsedImplicitly]
         private class Validator : AbstractValidator<Options>
         {
             public Validator()

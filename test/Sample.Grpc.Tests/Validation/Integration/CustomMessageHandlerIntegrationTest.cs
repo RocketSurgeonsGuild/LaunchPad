@@ -31,7 +31,7 @@ public class CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHel
         Assert.Equal("Property Id failed validation.", rpcException.Status.Detail);
     }
 
-    private class CustomMessageHandler : IValidatorErrorMessageHandler
+    private sealed class CustomMessageHandler : IValidatorErrorMessageHandler
     {
         public Task<string> HandleAsync(IEnumerable<ValidationFailure> failures)
         {

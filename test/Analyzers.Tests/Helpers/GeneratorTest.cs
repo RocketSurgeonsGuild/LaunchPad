@@ -44,7 +44,7 @@ public static class AssemblyLoadContextCompilationHelpers
 //    }
 }
 
-internal class CollectibleTestAssemblyLoadContext() : AssemblyLoadContext(true), IDisposable
+internal sealed  class CollectibleTestAssemblyLoadContext() : AssemblyLoadContext(true), IDisposable
 {
     protected override Assembly? Load(AssemblyName assemblyName)
     {

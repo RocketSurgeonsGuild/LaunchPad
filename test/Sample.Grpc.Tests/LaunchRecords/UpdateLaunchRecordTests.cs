@@ -1,5 +1,4 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
@@ -17,7 +16,6 @@ public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppF
     public async Task Should_Update_A_LaunchRecord()
     {
         var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
-        var clock = ServiceProvider.GetRequiredService<IClock>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
                                                async (context, clk) =>

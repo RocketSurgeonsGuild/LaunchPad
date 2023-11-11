@@ -4,6 +4,7 @@ using HotChocolate.Resolvers;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 
+[UsedImplicitly]
 internal class ValidationMiddleware(
     FieldDelegate next,
     IValidatorProvider validatorProvider,
@@ -18,11 +19,6 @@ internal class ValidationMiddleware(
 
         foreach (var argument in arguments)
         {
-            if (argument == null)
-            {
-                continue;
-            }
-
             var resolvedValidators = validatorProvider
                                     .GetValidators(context, argument)
                                     .ToArray();

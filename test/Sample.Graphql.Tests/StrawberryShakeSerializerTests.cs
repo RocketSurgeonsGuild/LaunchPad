@@ -288,7 +288,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
 //        var result = await client.GetGeometryTypes.ExecuteAsync(
 //            new ()
 //            {
-//                Point = reader.Read(wkt)  
+//                Point = reader.Read(wkt)
 //            }
 //        );
 //

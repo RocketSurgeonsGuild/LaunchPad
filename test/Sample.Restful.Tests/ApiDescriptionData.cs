@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Restful.Tests;
 
-internal class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
+internal sealed class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
     where T : class, ILaunchPadWebAppFixture, IAsyncLifetime, new()
 {
     public ApiDescriptionData()

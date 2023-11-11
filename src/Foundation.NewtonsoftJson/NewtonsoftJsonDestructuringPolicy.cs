@@ -56,7 +56,7 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
         return new DictionaryValue(elements);
     }
 
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue? result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         switch (value)
         {

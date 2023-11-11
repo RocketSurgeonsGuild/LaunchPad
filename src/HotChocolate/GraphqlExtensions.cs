@@ -52,7 +52,9 @@ public static class GraphqlExtensions
     /// <typeparam name="TStrongType"></typeparam>
     /// <typeparam name="TSchemaType"></typeparam>
     /// <returns></returns>
-    public static IRequestExecutorBuilder ConfigureStronglyTypedId<TStrongType, TSchemaType>(this IRequestExecutorBuilder builder)
+    public static IRequestExecutorBuilder ConfigureStronglyTypedId<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] TStrongType,
+        TSchemaType>(this IRequestExecutorBuilder builder)
         where TSchemaType : INamedType
     {
         AddTypeConversion<TStrongType>(builder);
@@ -73,8 +75,17 @@ public static class GraphqlExtensions
                                                                       && z.GetParameters().Length == 2
                                                                 );
 
-    private static void AddTypeConversion<TStrongType>(IRequestExecutorBuilder builder)
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+        Justification = "only working with public properties and constructors"
+    )]
+    private static void AddTypeConversion<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] TStrongType>(
+        IRequestExecutorBuilder builder
+    )
     {
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         var underlyingType = typeof(TStrongType).GetProperty("Value")!.PropertyType;
 
         {
@@ -92,6 +103,7 @@ public static class GraphqlExtensions
             var value = Expression.Parameter(underlyingType, "value");
             var delegateType = typeof(ChangeType<,>).MakeGenericType(underlyingType, typeof(TStrongType));
 
+            // ReSharper disable once NullableWarningSuppressionIsUsed
             var constructor = typeof(TStrongType).GetConstructor(new[] { underlyingType })!;
             AddTypeConverterMethod.MakeGenericMethod(underlyingType, typeof(TStrongType))
                                   .Invoke(

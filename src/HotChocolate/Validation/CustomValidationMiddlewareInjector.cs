@@ -210,7 +210,7 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
                 // Cleanup context now we're done with these
                 foreach (var key in argDef.ContextData.Keys)
                 {
-                    if (key.StartsWith(WellKnownContextData.Prefix))
+                    if (key.StartsWith(WellKnownContextData.Prefix, StringComparison.OrdinalIgnoreCase))
                     {
                         argDef.ContextData.Remove(key);
                     }

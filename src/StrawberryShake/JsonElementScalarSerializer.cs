@@ -12,7 +12,7 @@ namespace Rocket.Surgery.LaunchPad.StrawberryShake;
 public abstract class JsonElementScalarSerializer<TRuntime> : ScalarSerializer<JsonElement, TRuntime>
 {
     private readonly IOptions<JsonSerializerOptions> _options;
-    
+
     /// <summary>
     /// Constructor for JsonElement Scalar Serializers
     /// </summary>
@@ -23,6 +23,7 @@ public abstract class JsonElementScalarSerializer<TRuntime> : ScalarSerializer<J
     /// <inheritdoc />
     public override TRuntime Parse(JsonElement serializedValue)
     {
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         return serializedValue.Deserialize<TRuntime>(_options.Value)!;
     }
 

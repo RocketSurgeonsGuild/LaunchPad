@@ -19,7 +19,7 @@ public abstract class EnumScalarSerializer<TRuntime> : ScalarSerializer<int, TRu
 
     /// <inheritdoc />
     public override TRuntime Parse(int serializedValue) => (TRuntime)Enum.ToObject(typeof(TRuntime), serializedValue);
-    
+
     /// <inheritdoc />
     protected override int Format(TRuntime runtimeValue) => (int)(object)runtimeValue;
 }

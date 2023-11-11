@@ -18,7 +18,10 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
+#pragma warning disable CA1849
+        // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
+#pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
@@ -39,7 +42,10 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
+#pragma warning disable CA1849
+        // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
+#pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
@@ -59,7 +65,10 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
+#pragma warning disable CA1849
+        // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
+#pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();

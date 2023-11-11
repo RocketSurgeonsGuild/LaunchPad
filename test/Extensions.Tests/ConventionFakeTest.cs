@@ -11,7 +11,7 @@ public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : A
     protected void Init(Action<ConventionContextBuilder>? action = null)
     {
         var conventionContextBuilder = ConventionContextBuilder.Create()
-                                                               .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
+                                                               .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
                                                                .WithLogger(Logger);
         action?.Invoke(conventionContextBuilder);
         var context = ConventionContext.From(conventionContextBuilder);

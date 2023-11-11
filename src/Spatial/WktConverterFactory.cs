@@ -25,7 +25,6 @@ public class WktConverterFactory : GeoJsonConverterFactory
     };
 
     private readonly GeometryFactory _factory;
-    private readonly bool _writeGeometryBBox;
 
     /// <summary>
     ///     Creates an instance of this class using the defaults.
@@ -70,15 +69,15 @@ public class WktConverterFactory : GeoJsonConverterFactory
         : base(factory, writeGeometryBBox, idPropertyName)
     {
         _factory = factory;
-        _writeGeometryBBox = writeGeometryBBox;
     }
 
     /// <inheritdoc />
     public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
         return GeometryTypes.Contains(typeToConvert)
-            ? new WktGeometryConverter(_factory, _writeGeometryBBox)
-            : base.CreateConverter(typeToConvert, options);
+            ? new WktGeometryConverter(_factory)
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            : base.CreateConverter(typeToConvert, options)!;
     }
 }
 

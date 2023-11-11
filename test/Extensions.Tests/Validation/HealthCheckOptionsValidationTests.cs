@@ -118,7 +118,8 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
         public bool Bool { get; set; }
         public double Double { get; set; }
 
-        private sealed  class Validator : AbstractValidator<Options>
+        [UsedImplicitly]
+        private sealed class Validator : AbstractValidator<Options>
         {
             public Validator()
             {

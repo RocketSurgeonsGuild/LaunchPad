@@ -1,4 +1,3 @@
-using NetTopologySuite.Algorithm;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Serilog.Core;
@@ -6,11 +5,11 @@ using Serilog.Events;
 
 namespace Rocket.Surgery.LaunchPad.Spatial;
 
-internal class NetTopologySuiteDestructuringPolicy(bool writeGeometryBBox, string? idPropertyName) : IDestructuringPolicy
+internal class NetTopologySuiteDestructuringPolicy(string? idPropertyName) : IDestructuringPolicy
 {
     public const string defaultIdPropertyName = "_NetTopologySuite_id";
 
-    public static LogEventPropertyValue WriteGeometry(ILogEventPropertyValueFactory propertyValueFactory, Geometry value)
+    public static LogEventPropertyValue WriteGeometry(Geometry value)
     {
         return new ScalarValue(value.AsText());
     }
@@ -69,96 +68,10 @@ internal class NetTopologySuiteDestructuringPolicy(bool writeGeometryBBox, strin
         return new StructureValue(props);
     }
 
-    private static SequenceValue WriteGeometrySequence(Geometry value)
-    {
-        var values = new LogEventPropertyValue?[value.NumGeometries];
-        for (var i = 0; i < value.NumGeometries; i++)
-        {
-            values[i] = value switch
-            {
-                MultiPoint      => WriteCoordinateSequence(( (Point)value.GetGeometryN(i) ).CoordinateSequence, false),
-                MultiLineString => WriteCoordinateSequence(( (LineString)value.GetGeometryN(i) ).CoordinateSequence, true),
-                MultiPolygon    => WritePolygon((Polygon)value.GetGeometryN(i)),
-                _               => default
-            };
-        }
-
-        return new SequenceValue(values);
-    }
-
-    private static LogEventPropertyValue WritePolygon(Polygon value)
-    {
-        var values = new List<LogEventPropertyValue>(value.NumInteriorRings + 1);
-        values.Add(WriteCoordinateSequence(value.ExteriorRing.CoordinateSequence, true, OrientationIndex.Clockwise));
-        for (var i = 0; i < value.NumInteriorRings; i++)
-            values.Add(
-                WriteCoordinateSequence(
-                    value.GetInteriorRingN(i).CoordinateSequence, true, OrientationIndex.CounterClockwise
-                )
-            );
-        return new SequenceValue(values);
-    }
-
-    private static LogEventPropertyValue WriteCoordinateSequence(
-        CoordinateSequence? sequence,
-        bool multiple,
-        OrientationIndex orientation = OrientationIndex.None
-    )
-    {
-        if (sequence == null)
-        {
-            return new ScalarValue(null);
-        }
-
-        var values = new List<LogEventPropertyValue>();
-
-        if (multiple)
-        {
-            if (( orientation == OrientationIndex.Clockwise && Orientation.IsCCW(sequence) ) ||
-                ( orientation == OrientationIndex.CounterClockwise && !Orientation.IsCCW(sequence) ))
-            {
-                CoordinateSequences.Reverse(sequence);
-            }
-        }
-
-        var hasZ = sequence.HasZ;
-        for (var i = 0; i < sequence.Count; i++)
-        {
-            var value = new List<LogEventPropertyValue>(3);
-            value.Add(new ScalarValue(sequence.GetX(i)));
-            value.Add(new ScalarValue(sequence.GetY(i)));
-
-            if (hasZ)
-            {
-                var z = sequence.GetZ(i);
-                if (!double.IsNaN(z))
-                    value.Add(new ScalarValue(z));
-            }
-
-            if (multiple)
-            {
-                values.Add(new SequenceValue(value));
-            }
-            else
-            {
-                values = value;
-                break;
-            }
-        }
-
-        return new SequenceValue(values);
-    }
-
     private readonly string _idPropertyName = idPropertyName ?? defaultIdPropertyName;
-    private readonly bool _writeGeometryBBox = writeGeometryBBox;
 
     public NetTopologySuiteDestructuringPolicy()
-        : this(false)
-    {
-    }
-
-    public NetTopologySuiteDestructuringPolicy(bool writeGeometryBBox)
-        : this(writeGeometryBBox, defaultIdPropertyName)
+        : this(defaultIdPropertyName)
     {
     }
 
@@ -207,11 +120,11 @@ internal class NetTopologySuiteDestructuringPolicy(bool writeGeometryBBox, strin
         return new StructureValue(props);
     }
 
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue? result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is Geometry geometry && GeometryTypes.Contains(value.GetType()))
         {
-            result = WriteGeometry(propertyValueFactory, geometry);
+            result = WriteGeometry(geometry);
             return true;
         }
 

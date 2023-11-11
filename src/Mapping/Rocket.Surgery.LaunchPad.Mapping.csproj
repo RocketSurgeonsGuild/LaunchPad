@@ -3,6 +3,7 @@
         <TargetFrameworks>netstandard2.1;net6.0;net7.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="AutoMapper" />

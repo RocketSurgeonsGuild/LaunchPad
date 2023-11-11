@@ -4,7 +4,7 @@ using Sample.Core.Operations.Rockets;
 
 namespace Sample.Worker;
 
-public class Worker(ILogger<Worker> logger, IExecuteScoped<IMediator> mediator) : BackgroundService
+public class BackgroundWorker(ILogger<BackgroundWorker> logger, IExecuteScoped<IMediator> mediator) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

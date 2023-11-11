@@ -20,10 +20,10 @@ public abstract class NodaTimeStringScalarSerializer<TRuntime> : ScalarSerialize
     {
         _pattern = pattern;
     }
-    
+
     /// <inheritdoc />
     public override TRuntime Parse(string serializedValue) => _pattern.Parse(serializedValue).Value;
-    
+
     /// <inheritdoc />
     protected override string Format(TRuntime runtimeValue) => _pattern.Format(runtimeValue);
 }

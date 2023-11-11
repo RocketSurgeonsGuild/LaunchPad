@@ -51,13 +51,14 @@ public sealed class NewtonsoftJsonCompositeNodaPatternConverter<T> : NodaConvert
             );
         }
 
-        // ReSharper disable once NullableWarningSuppressionIsUsed
-        var text = reader.Value!.ToString()!;
+        var text = reader.Value?.ToString();
 
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         ParseResult<T> result = null!;
         foreach (var patter in _patterns)
         {
-            result = patter.Parse(text);
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            result = patter.Parse(text!);
             if (result.Success)
                 break;
         }

@@ -4,7 +4,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Telemetry;
 
-namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 
 /// <summary>
 ///     InstrumentationConvention.

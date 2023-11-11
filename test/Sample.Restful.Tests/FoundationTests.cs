@@ -32,7 +32,7 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
                 .GetSwagger(document).Should().NotBeNull();
     }
 
-    private class OpenApiDocuments : TheoryData<string>
+    private sealed class OpenApiDocuments : TheoryData<string>
     {
         public OpenApiDocuments()
         {

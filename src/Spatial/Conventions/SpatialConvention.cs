@@ -28,7 +28,7 @@ public class SpatialConvention : IServiceConvention, ISerilogConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services.TryAddSingleton(NtsGeometryServices.Instance);
-        services.TryAddSingleton(_ => _.GetRequiredService<NtsGeometryServices>().CreateGeometryFactory(4326));
+        services.TryAddSingleton(provider => provider.GetRequiredService<NtsGeometryServices>().CreateGeometryFactory(4326));
         services
            .AddOptions<JsonSerializerOptions>(null)
            .Configure<GeometryFactory>(

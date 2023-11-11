@@ -40,6 +40,7 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T> : NodaConvert
         // ReSharper disable once NullableWarningSuppressionIsUsed
         var text = reader.GetString()!;
 
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         ParseResult<T> result = null!;
         foreach (var patter in _patterns)
         {

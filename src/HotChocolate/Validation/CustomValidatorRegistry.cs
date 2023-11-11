@@ -3,7 +3,6 @@ using FluentValidation;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 
-
 class CustomValidatorRegistry : ICustomValidatorRegistry, IValidatorRegistry
 {
     private readonly IServiceProvider _serviceProvider;
@@ -24,7 +23,7 @@ class CustomValidatorRegistry : ICustomValidatorRegistry, IValidatorRegistry
         }
 
         var validatorType = typeof(IValidator<>).MakeGenericType(type);
-        if (_serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) is { } service)
+        if (_serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) is { })
         {
             descriptor = _cache[type] = new ValidatorDescriptor(validatorType);
             return true;
