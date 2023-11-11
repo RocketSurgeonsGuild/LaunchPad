@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 namespace Sample.Restful.Controllers;
 
 [Route("[controller]")]
-public class WeatherForecastController(ILogger<WeatherForecastController> logger) : RestfulApiController
+public class WeatherForecastController : RestfulApiController
 {
     private static readonly string[] Summaries =
     {

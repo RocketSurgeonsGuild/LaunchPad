@@ -46,8 +46,7 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     /// <summary>
     ///     Implicitly gets the Assigned value.
     /// </summary>
-    [return: MaybeNull]
-    public static implicit operator T(Assigned<T> assigned)
+    public static implicit operator T?(Assigned<T> assigned)
     {
         return assigned.Value;
     }

@@ -18,7 +18,7 @@ public class WktGeometryConverter : GeometryConverter
     private readonly WKTReader _wktReader;
 
     /// <summary>
-    ///     Creates an instance of this class using <see cref="GeoJsonSerializer.Wgs84Factory" /> to create geometries.
+    ///     Creates an instance of this class using <see cref="WktGeometryConverter.Wgs84Factory" /> to create geometries.
     /// </summary>
     public WktGeometryConverter() : this(Wgs84Factory)
     {

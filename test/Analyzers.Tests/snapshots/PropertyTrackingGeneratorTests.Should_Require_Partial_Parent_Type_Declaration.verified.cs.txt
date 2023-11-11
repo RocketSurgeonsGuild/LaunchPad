@@ -11,6 +11,7 @@ namespace Sample.Core.Operations.Rockets
         {
             public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> SerialNumber { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
             public Rocket.Surgery.LaunchPad.Foundation.Assigned<int> Type { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(default);
+#pragma warning disable CA1034
             public record Changes
             {
                 public bool SerialNumber { get; init; }
@@ -24,20 +25,20 @@ namespace Sample.Core.Operations.Rockets
                 {SerialNumber = SerialNumber.HasBeenSet(), Type = Type.HasBeenSet()};
             }
 
-            public global::Sample.Core.Operations.Rockets.Request ApplyChanges(global::Sample.Core.Operations.Rockets.Request value)
+            public global::Sample.Core.Operations.Rockets.Request ApplyChanges(global::Sample.Core.Operations.Rockets.Request state)
             {
                 if (SerialNumber.HasBeenSet())
                 {
-                    value = value with {SerialNumber = SerialNumber};
+                    state = state with {SerialNumber = SerialNumber!};
                 }
 
                 if (Type.HasBeenSet())
                 {
-                    value = value with {Type = Type};
+                    state = state with {Type = Type!};
                 }
 
                 ResetChanges();
-                return value;
+                return state;
             }
 
             public PatchRocket ResetChanges()

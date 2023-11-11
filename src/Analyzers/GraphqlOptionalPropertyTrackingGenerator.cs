@@ -163,16 +163,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                            );
 
         classToInherit = classToInherit.AddMembers(createMethod);
+        var usings = declaration.SyntaxTree.GetCompilationUnitRoot().Usings
+                                .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
-                     List(
-                         declaration.SyntaxTree.GetCompilationUnitRoot().Usings.AddRange(
-                             namespaces
-                                .Where(z => !string.IsNullOrWhiteSpace(z))
-                                .Select(z => UsingDirective(ParseName(z)))
-                         )
-                     ),
+                     List(usings),
                      List<AttributeListSyntax>(),
                      SingletonList<MemberDeclarationSyntax>(
                          symbol.ContainingNamespace.IsGlobalNamespace

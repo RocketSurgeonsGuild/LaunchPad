@@ -710,12 +710,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             "Rocket.Surgery.LaunchPad.AspNetCore.Validation"
         };
 
-        var usings = syntax.SyntaxTree.GetCompilationUnitRoot().Usings;
-        foreach (var additionalUsing in additionalUsings)
-        {
-            if (usings.Any(z => z.Name.ToString() == additionalUsing)) continue;
-            usings = usings.Add(UsingDirective(ParseName(additionalUsing)));
-        }
+        var usings = syntax.SyntaxTree.GetCompilationUnitRoot().Usings
+                           .AddDistinctUsingStatements(additionalUsings.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
