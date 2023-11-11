@@ -6,14 +6,9 @@ using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class NewtonsoftJsonNetTopologySuiteGeoJsonTests : LoggerTest
+public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
 {
-    private readonly JsonSerializerSettings _settings;
-
-    public NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-        _settings = new JsonSerializerSettings().ConfigureGeoJsonForLaunchPad(null);
-    }
+    private readonly JsonSerializerSettings _settings = new JsonSerializerSettings().ConfigureGeoJsonForLaunchPad(null);
 
     // typeof(Geometry),
     // typeof(MultiPoint),

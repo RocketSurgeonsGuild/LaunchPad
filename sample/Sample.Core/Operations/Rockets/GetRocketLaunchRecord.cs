@@ -36,32 +36,23 @@ public static class GetRocketLaunchRecord
         }
     }
 
-    private class Handler : IRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, LaunchRecordModel>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
             if (rocket == null)
             {
                 throw new NotFoundException();
             }
 
-            var launchRecord = await _dbContext.LaunchRecords.FindAsync(new object[] { request.LaunchRecordId }, cancellationToken);
+            var launchRecord = await dbContext.LaunchRecords.FindAsync(new object[] { request.LaunchRecordId }, cancellationToken);
             if (launchRecord == null)
             {
                 throw new NotFoundException();
             }
 
-            return _mapper.Map<LaunchRecordModel>(launchRecord);
+            return mapper.Map<LaunchRecordModel>(launchRecord);
         }
     }
 }

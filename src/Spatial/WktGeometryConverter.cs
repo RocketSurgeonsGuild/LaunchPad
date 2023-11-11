@@ -10,22 +10,18 @@ internal partial class WktGeometryConverter : JsonConverter<Geometry?>
     /// <summary>
     ///     Gets the default geometry factory to use with this converter.
     /// </summary>
-    public static GeometryFactory DefaultGeometryFactory { get; } = new GeometryFactory(new PrecisionModel(), 4326);
+    public static GeometryFactory DefaultGeometryFactory { get; } = new(new PrecisionModel(), 4326);
 
-    private readonly GeometryFactory _geometryFactory;
-    private readonly bool _writeGeometryBBox;
     private readonly WKTReader _wktReader;
 
     /// <summary>
     ///     Creates an instance of this class
     /// </summary>
     /// <param name="geometryFactory">The geometry factory to use.</param>
-    /// <param name="writeGeometryBBox">Whether or not to write "bbox" with the geometry.</param>
-    public WktGeometryConverter(GeometryFactory geometryFactory, bool writeGeometryBBox)
+    public WktGeometryConverter(GeometryFactory? geometryFactory)
     {
-        _geometryFactory = geometryFactory ?? DefaultGeometryFactory;
-        _writeGeometryBBox = writeGeometryBBox;
-        _wktReader = new WKTReader(_geometryFactory.GeometryServices);
+        var geometryFactory1 = geometryFactory ?? DefaultGeometryFactory;
+        _wktReader = new WKTReader(geometryFactory1.GeometryServices);
     }
 
 

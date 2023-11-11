@@ -16,6 +16,6 @@ public static partial class Program
     {
         return Host.CreateDefaultBuilder(args)
                    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions));
+                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default!), z => z.WithConventionsFrom(GetConventions));
     }
 }

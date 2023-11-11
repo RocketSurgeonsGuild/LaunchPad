@@ -1,14 +1,13 @@
-﻿using DryIoc;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class ListRocketsTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
+public class ListRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     [Fact]
     public async Task Should_List_Rockets()
@@ -50,10 +49,6 @@ public class ListRocketsTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
         response.EnsureNoErrors();
 
         response.Data!.Rockets!.Nodes!.Should().HaveCount(5);
-    }
-
-    public ListRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
-    {
     }
 
     private static readonly Faker Faker = new();

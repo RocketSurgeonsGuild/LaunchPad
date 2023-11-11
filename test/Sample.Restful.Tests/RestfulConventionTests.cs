@@ -17,6 +17,7 @@ public class RestfulConventionTests
     [ClassData(typeof(ApiDescriptionData<TestWebAppFixture>))]
     public void Should_Have_Not_Found_Responses(ApiDescriptionData description)
     {
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         var method = ( description.Description.ActionDescriptor as ControllerActionDescriptor )!.MethodInfo;
         if (method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>)) return;
         description.Description.SupportedResponseTypes.Should().Contain(z => z.StatusCode == StatusCodes.Status404NotFound);

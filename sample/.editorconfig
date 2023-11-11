@@ -8,3 +8,4 @@ dotnet_diagnostic.CA1822.severity = none
 dotnet_diagnostic.CA5394.severity = none
 dotnet_diagnostic.CA1707.severity = none
 resharper_virtual_member_call_in_constructor_highlighting = none
+resharper_nullable_warning_suppression_is_used_highlighting = none

@@ -7,7 +7,7 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 
 namespace Sample.Pages;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
     private static Task WriteResponse(HttpContext context, HealthReport healthReport)
     {
@@ -84,12 +84,7 @@ public class Startup
         );
     }
 
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
-    public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; } = configuration;
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)

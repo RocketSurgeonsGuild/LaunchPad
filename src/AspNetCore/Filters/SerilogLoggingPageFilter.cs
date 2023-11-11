@@ -3,21 +3,14 @@ using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
-internal class SerilogLoggingPageFilter : IPageFilter
+internal class SerilogLoggingPageFilter(IDiagnosticContext diagnosticContext) : IPageFilter
 {
-    private readonly IDiagnosticContext _diagnosticContext;
-
-    public SerilogLoggingPageFilter(IDiagnosticContext diagnosticContext)
-    {
-        _diagnosticContext = diagnosticContext;
-    }
-
     public void OnPageHandlerSelected(PageHandlerSelectedContext context)
     {
         var name = context.HandlerMethod?.Name ?? context.HandlerMethod?.MethodInfo.Name;
         if (name != null)
         {
-            _diagnosticContext.Set("RazorPageHandler", name);
+            diagnosticContext.Set("RazorPageHandler", name);
         }
     }
 

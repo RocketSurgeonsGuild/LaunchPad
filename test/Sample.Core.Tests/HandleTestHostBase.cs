@@ -24,7 +24,7 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     {
         _context =
             ConventionContextBuilder.Create()
-                                    .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
+                                    .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
                                     .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)));
         ExcludeSourceContext(nameof(AutoFakeTest));
     }

@@ -6,12 +6,8 @@ using NodaTime;
 
 namespace Extensions.Tests.Mapping;
 
-public class LocalDateTimeTests : TypeConverterTest<LocalDateTimeTests.Converters>
+public class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<LocalDateTimeTests.Converters>(testOutputHelper)
 {
-    public LocalDateTimeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ValidateMapping()
     {

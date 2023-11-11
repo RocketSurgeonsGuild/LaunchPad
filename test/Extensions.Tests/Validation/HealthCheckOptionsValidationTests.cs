@@ -1,6 +1,5 @@
 #if NET6_0_OR_GREATER
 using DryIoc;
-using FakeItEasy.Creation;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
@@ -10,18 +9,17 @@ using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
-using Serilog;
 
 namespace Extensions.Tests.Validation;
 
 [UsesVerify]
-public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
+public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper), IAsyncLifetime
 {
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a.Should().NotThrow();
+        a.Should().NotThrow();
         await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
@@ -40,7 +38,7 @@ public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
         );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a.Should().NotThrow();
+        a.Should().NotThrow();
         await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
@@ -59,7 +57,7 @@ public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
         );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a.Should().NotThrow();
+        a.Should().NotThrow();
         await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
@@ -74,7 +72,7 @@ public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
     }
 
     [Fact]
-    public async Task Should_Validate_Options_And_Pass_After_Application_Has_Started()
+    public void Should_Validate_Options_And_Pass_After_Application_Has_Started()
     {
         Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
         var services = new ServiceCollection();
@@ -89,7 +87,7 @@ public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
         );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a.Should().NotThrow();
+        a.Should().NotThrow();
     }
 
     [Fact]
@@ -113,18 +111,15 @@ public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
         await Verify(failures);
     }
 
-    public HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
     private class Options
     {
-        public string String { get; set; }
+        public string? String { get; set; }
         public int Int { get; set; }
         public bool Bool { get; set; }
         public double Double { get; set; }
 
-        private class Validator : AbstractValidator<Options>
+        [UsedImplicitly]
+        private sealed class Validator : AbstractValidator<Options>
         {
             public Validator()
             {
@@ -139,7 +134,7 @@ public class HealthCheckOptionsValidationTests : AutoFakeTest, IAsyncLifetime
     public Task InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder.Create()
-                                                               .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
+                                                               .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
                                                                .Set(
                                                                     new FoundationOptions
                                                                     {

@@ -10,6 +10,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 /// </remarks>
 public interface IResettableAlbaExtension : IAlbaExtension
 {
+    /// <summary>
+    /// Reset the provider async
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <returns></returns>
     Task ResetAsync(IServiceProvider serviceProvider);
+    /// <summary>
+    /// Reset the provider
+    /// </summary>
+    /// <param name="serviceProvider"></param>
     void Reset(IServiceProvider serviceProvider);
 }

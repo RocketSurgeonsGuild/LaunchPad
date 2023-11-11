@@ -1,7 +1,6 @@
 // ReSharper disable once CheckNamespace
 
 using Rocket.Surgery.LaunchPad.Hosting.Telemetry;
-using Rocket.Surgery.LaunchPad.Telemetry;
 
 // ReSharper disable once CheckNamespace
 namespace Rocket.Surgery.Conventions;

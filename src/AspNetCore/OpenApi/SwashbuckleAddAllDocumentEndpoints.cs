@@ -5,20 +5,13 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-internal class SwashbuckleAddAllDocumentEndpoints : IConfigureOptions<SwaggerUIOptions>
+internal class SwashbuckleAddAllDocumentEndpoints(IOptions<SwaggerGenOptions> options) : IConfigureOptions<SwaggerUIOptions>
 {
-    private readonly IOptions<SwaggerGenOptions> _options;
-
-    public SwashbuckleAddAllDocumentEndpoints(IOptions<SwaggerGenOptions> options)
+    public void Configure(SwaggerUIOptions options1)
     {
-        _options = options;
-    }
-
-    public void Configure(SwaggerUIOptions options)
-    {
-        foreach (var item in _options.Value.SwaggerGeneratorOptions.SwaggerDocs)
+        foreach (var item in options.Value.SwaggerGeneratorOptions.SwaggerDocs)
         {
-            options.SwaggerEndpoint($"/swagger/{item.Key}/swagger.json", item.Value.Title);
+            options1.SwaggerEndpoint($"/swagger/{item.Key}/swagger.json", item.Value.Title);
         }
     }
 }

@@ -37,8 +37,10 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T> : NodaConvert
     /// <inheritdoc />
     protected override T ReadJsonImpl(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         var text = reader.GetString()!;
 
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         ParseResult<T> result = null!;
         foreach (var patter in _patterns)
         {

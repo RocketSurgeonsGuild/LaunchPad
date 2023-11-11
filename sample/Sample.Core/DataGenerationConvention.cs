@@ -18,18 +18,11 @@ public class DataGenerationConvention : IServiceConvention
         services.Insert(0, ServiceDescriptor.Singleton<IHostedService, HostedService>());
     }
 
-    private class HostedService : IHostedService
+    private class HostedService(IServiceProvider serviceProvider) : IHostedService
     {
-        private readonly IServiceProvider _serviceProvider;
-
-        public HostedService(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _serviceProvider.WithScoped<RocketDbContext>().Invoke(
+            await serviceProvider.WithScoped<RocketDbContext>().Invoke(
                 async dbContext =>
                 {
                     await dbContext.Database.EnsureCreatedAsync(cancellationToken).ConfigureAwait(false);

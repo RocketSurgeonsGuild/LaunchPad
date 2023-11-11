@@ -32,18 +32,11 @@ public static class DeleteLaunchRecord
     }
 
     [UsedImplicitly]
-    private class Handler : IRequestHandler<Request>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request>
     {
-        private readonly RocketDbContext _dbContext;
-
-        public Handler(RocketDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
         public async Task Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.LaunchRecords.FindAsync(new object[] { request.Id }, cancellationToken);
+            var rocket = await dbContext.LaunchRecords.FindAsync(new object[] { request.Id }, cancellationToken);
             if (rocket == null)
             {
                 throw new NotFoundException();
@@ -55,8 +48,8 @@ public static class DeleteLaunchRecord
                 throw new NotAuthorizedException("Unable to operate on given record");
             }
 
-            _dbContext.Remove(rocket);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            dbContext.Remove(rocket);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -367,6 +367,7 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
     public bool Equals(GitVersion? other)
     {
+        // ReSharper disable NullableWarningSuppressionIsUsed
         return other! != null!
             && Major == other.Major
             && Minor == other.Minor

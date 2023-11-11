@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Classic.Restful.Tests;
 
-internal class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
+internal sealed class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
     where T : class, ILaunchPadWebAppFixture, IAsyncLifetime, new()
 {
     public ApiDescriptionData()
@@ -20,14 +19,9 @@ internal class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
     }
 }
 
-public class ApiDescriptionData
+public sealed class ApiDescriptionData(ApiDescription description)
 {
-    public ApiDescriptionData(ApiDescription description)
-    {
-        Description = description;
-    }
-
-    public ApiDescription Description { get; }
+    public ApiDescription Description { get; } = description;
 
     public override string ToString()
     {

@@ -2,16 +2,13 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
-using Sample.BlazorServer.Tests;
 using Sample.Restful.Tests.Helpers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Sample.Restful.Tests;
 
-public class FoundationTests : WebAppFixtureTest<TestWebAppFixture>
+public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
 {
     [Fact]
     public void AutoMapper()
@@ -27,10 +24,6 @@ public class FoundationTests : WebAppFixtureTest<TestWebAppFixture>
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory)
-    {
-    }
-
     [Theory]
     [ClassData(typeof(OpenApiDocuments))]
     public void OpenApiDocument(string document)
@@ -39,7 +32,7 @@ public class FoundationTests : WebAppFixtureTest<TestWebAppFixture>
                 .GetSwagger(document).Should().NotBeNull();
     }
 
-    private class OpenApiDocuments : TheoryData<string>
+    private sealed class OpenApiDocuments : TheoryData<string>
     {
         public OpenApiDocuments()
         {

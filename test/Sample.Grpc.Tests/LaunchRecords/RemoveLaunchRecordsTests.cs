@@ -7,13 +7,10 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests : WebAppFixtureTest<TestWebAppFixture>
+public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : base(outputHelper, webAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Remove_LaunchRecord()

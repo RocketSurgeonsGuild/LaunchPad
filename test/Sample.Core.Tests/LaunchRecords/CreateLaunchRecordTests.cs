@@ -7,7 +7,7 @@ using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests : HandleTestHostBase
+public class CreateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Create_A_LaunchRecord()
@@ -43,10 +43,6 @@ public class CreateLaunchRecordTests : HandleTestHostBase
         );
 
         response.Id.Value.Should().NotBeEmpty();
-    }
-
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
     }
 
     private static readonly Faker Faker = new();

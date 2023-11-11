@@ -5,15 +5,10 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests;
 
-public class NewtonsoftJsonNodaTimeTests : LoggerTest
+public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
 {
-    private JsonSerializerSettings _settings;
-
-    public NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-        _settings = new JsonSerializerSettings()
-           .ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);
-    }
+    private JsonSerializerSettings _settings = new JsonSerializerSettings()
+       .ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);
 
     [Theory]
     [InlineData("2020-01-01T12:12:12Z")]

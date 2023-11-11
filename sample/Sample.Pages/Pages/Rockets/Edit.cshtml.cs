@@ -4,21 +4,14 @@ using Sample.Core.Operations.Rockets;
 
 namespace Sample.Pages.Pages.Rockets;
 
-public class RocketEditModel : RocketViewModel
+public class RocketEditModel(IMapper mapper) : RocketViewModel
 {
-    private readonly IMapper _mapper;
-
-    public RocketEditModel(IMapper mapper)
-    {
-        _mapper = mapper;
-    }
-
     [BindProperty] public EditRocket.Request Model { get; set; } = new();
 
     public override async Task OnGet()
     {
         await base.OnGet();
-        Model = _mapper.Map<EditRocket.Request>(Rocket);
+        Model = mapper.Map<EditRocket.Request>(Rocket);
     }
 
     public async Task<ActionResult> OnPost()

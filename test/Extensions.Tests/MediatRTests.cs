@@ -11,12 +11,14 @@ using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 namespace Extensions.Tests;
 
-public class MediatRTests : AutoFakeTest
+public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
 {
     [Fact]
     public async Task Test1()
     {
-        var builder = new ConventionContextBuilder(new Dictionary<object, object?>())
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+        var builder = new ConventionContextBuilder(new Dictionary<object, object>())
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
            .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
         var context = ConventionContext.From(builder);
         var services = new ServiceCollection();
@@ -31,7 +33,7 @@ public class MediatRTests : AutoFakeTest
         var r = services.BuildServiceProvider();
         var mediator = r.GetRequiredService<IMediator>();
 
-        await mediator.Send(new Request()).ConfigureAwait(false);
+        await mediator.Send(new Request());
 
         A.CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
          .MustHaveHappenedOnceExactly();
@@ -40,7 +42,9 @@ public class MediatRTests : AutoFakeTest
     [Fact]
     public async Task Test2()
     {
-        var builder = new ConventionContextBuilder(new Dictionary<object, object?>())
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+        var builder = new ConventionContextBuilder(new Dictionary<object, object>())
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
            .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
         var context = ConventionContext.From(builder);
         var services = new ServiceCollection();
@@ -63,14 +67,10 @@ public class MediatRTests : AutoFakeTest
 
         var mediator = r.GetRequiredService<IMediator>();
 
-        await mediator.Send(new Request()).ConfigureAwait(false);
+        await mediator.Send(new Request());
 
         A.CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
          .MustHaveHappenedOnceExactly();
-    }
-
-    public MediatRTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
     }
 
     private class TestAssemblyProvider : IAssemblyProvider
@@ -97,9 +97,7 @@ public class MediatRTests : AutoFakeTest
         }
     }
 
-    public class Request : IRequest
-    {
-    }
+    public class Request : IRequest;
 
     private class TestHandler : IRequestHandler<Request>
     {

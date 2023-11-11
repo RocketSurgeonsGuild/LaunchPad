@@ -10,10 +10,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore;
 ///     A RFC 7807 compliant <see cref="Newtonsoft.Json.JsonConverter" /> for <see cref="FluentValidationProblemDetails" />.
 /// </summary>
 [PublicAPI]
-public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConverter<FluentValidationProblemDetails>
+public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConverter<FluentValidationProblemDetails?>
 {
     /// <inheritdoc />
-    public override FluentValidationProblemDetails ReadJson(
+    public override FluentValidationProblemDetails? ReadJson(
         JsonReader reader,
         Type objectType,
         FluentValidationProblemDetails? existingValue,
@@ -29,7 +29,7 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         var annotatedProblemDetails = serializer.Deserialize<AnnotatedProblemDetails>(reader);
         if (annotatedProblemDetails == null)
         {
-            return null!;
+            return null;
         }
 
         var problemDetails = existingValue ?? new FluentValidationProblemDetails();
@@ -100,7 +100,7 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         public string? Type { get; set; }
 
         [JsonProperty(PropertyName = "title", NullValueHandling = NullValueHandling.Ignore)]
-        public string? Title { get; set; }  
+        public string? Title { get; set; }
 
         [JsonProperty(PropertyName = "status", NullValueHandling = NullValueHandling.Ignore)]
         public int? Status { get; set; }

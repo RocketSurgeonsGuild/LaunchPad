@@ -8,7 +8,8 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
 {
     private static LogEventPropertyValue Destructure(JValue jv, ILogEventPropertyValueFactory propertyValueFactory)
     {
-        return propertyValueFactory.CreatePropertyValue(jv.Value, true);
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        return propertyValueFactory.CreatePropertyValue(jv.Value!, true);
     }
 
     private static LogEventPropertyValue Destructure(JArray ja, ILogEventPropertyValueFactory propertyValueFactory)
@@ -55,7 +56,7 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
         return new DictionaryValue(elements);
     }
 
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue? result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         switch (value)
         {

@@ -1,8 +1,6 @@
 using Alba;
 using Grpc.Net.Client;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Grpc.Tests.Validation;
 
@@ -26,7 +24,7 @@ public static class WebApplicationFactoryHelper
         }
     }
 
-    private class ResponseVersionHandler : DelegatingHandler
+    private sealed  class ResponseVersionHandler : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,

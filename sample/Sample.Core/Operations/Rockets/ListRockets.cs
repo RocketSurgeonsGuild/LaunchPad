@@ -18,30 +18,19 @@ public static class ListRockets
     /// <param name="RocketType">The type of the rocket</param>
     public record Request(RocketType? RocketType) : IStreamRequest<RocketModel>;
 
-    private class Validator : AbstractValidator<Request>
+    private class Validator : AbstractValidator<Request>;
+
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IStreamRequestHandler<Request, RocketModel>
     {
-    }
-
-    private class Handler : IStreamRequestHandler<Request, RocketModel>
-    {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public IAsyncEnumerable<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var query = _dbContext.Rockets.AsQueryable();
+            var query = dbContext.Rockets.AsQueryable();
             if (request.RocketType.HasValue)
             {
                 query = query.Where(z => z.Type == request.RocketType);
             }
 
-            return query.ProjectTo<RocketModel>(_mapper.ConfigurationProvider).AsAsyncEnumerable();
+            return query.ProjectTo<RocketModel>(mapper.ConfigurationProvider).AsAsyncEnumerable();
         }
     }
 }

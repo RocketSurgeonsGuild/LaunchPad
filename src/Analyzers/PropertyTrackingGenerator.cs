@@ -349,6 +349,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                      ),
                                  static (syntaxContext, token) => (
                                      syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
+                                     // ReSharper disable once NullableWarningSuppressionIsUsed
                                      symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)!
                                  )
                              )
@@ -375,6 +376,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(
             values,
+            // ReSharper disable once NullableWarningSuppressionIsUsed
             static (productionContext, tuple) => GeneratePropertyTracking(productionContext, tuple.syntax, tuple.symbol, tuple.targetSymbol!)
         );
     }

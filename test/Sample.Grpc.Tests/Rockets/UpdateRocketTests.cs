@@ -7,13 +7,10 @@ using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class UpdateRocketTests : WebAppFixtureTest<TestWebAppFixture>
+public class UpdateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFixture testWebAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, testWebAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public UpdateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFixture testWebAppFixture) : base(testOutputHelper, testWebAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Update_A_Rocket()
@@ -63,7 +60,7 @@ public class UpdateRocketTests : WebAppFixtureTest<TestWebAppFixture>
         e.Message.Should().Contain(propertyName);
     }
 
-    private class ShouldValidateUsersRequiredFieldData : TheoryData<UpdateRocketRequest, string>
+    private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<UpdateRocketRequest, string>
     {
         public ShouldValidateUsersRequiredFieldData()
         {

@@ -14,7 +14,7 @@ public class NamedSchemaTests : LoggerTest, IAsyncLifetime
     {
         _context = ConventionContext.From(
             ConventionContextBuilder.Create()
-                                    .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
+                                    .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
                                     .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)))
                                     .ConfigureServices(
                                          (_, collection) =>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rocket.Surgery.LaunchPad.EntityFramework;
 using Sample.Core.Models;
@@ -11,6 +12,7 @@ namespace Sample.Core.Domain;
 public class ReadyRocket // : IReadyRocket
 {
     public RocketId Id { get; set; }
+    [StringLength(30)]
     public string SerialNumber { get; set; } = null!;
     public RocketType Type { get; set; }
 

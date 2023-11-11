@@ -7,53 +7,44 @@ using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Grpc.Services;
 
-public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
+public class LaunchRecordsService(IMediator mediator, IMapper mapper) : LaunchRecords.LaunchRecordsBase
 {
-    private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
-
-    public LaunchRecordsService(IMediator mediator, IMapper mapper)
-    {
-        _mediator = mediator;
-        _mapper = mapper;
-    }
-
     public override async Task<CreateLaunchRecordResponse> CreateLaunchRecord(CreateLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = _mapper.Map<CreateLaunchRecord.Request>(request);
-        var response = await _mediator.Send(mRequest, context.CancellationToken);
-        return _mapper.Map<CreateLaunchRecordResponse>(response);
+        var mRequest = mapper.Map<CreateLaunchRecord.Request>(request);
+        var response = await mediator.Send(mRequest, context.CancellationToken);
+        return mapper.Map<CreateLaunchRecordResponse>(response);
     }
 
     public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = _mapper.Map<EditLaunchRecord.Request>(request);
-        var response = await _mediator.Send(mRequest, context.CancellationToken);
-        return _mapper.Map<LaunchRecordModel>(response);
+        var mRequest = mapper.Map<EditLaunchRecord.Request>(request);
+        var response = await mediator.Send(mRequest, context.CancellationToken);
+        return mapper.Map<LaunchRecordModel>(response);
     }
 
     public override async Task<Empty> DeleteLaunchRecord(DeleteLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = _mapper.Map<DeleteLaunchRecord.Request>(request);
-        await _mediator.Send(mRequest, context.CancellationToken);
+        var mRequest = mapper.Map<DeleteLaunchRecord.Request>(request);
+        await mediator.Send(mRequest, context.CancellationToken);
         return new Empty();
     }
 
     public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = _mapper.Map<GetLaunchRecord.Request>(request);
-        var response = await _mediator.Send(mRequest, context.CancellationToken);
-        return _mapper.Map<LaunchRecordModel>(response);
+        var mRequest = mapper.Map<GetLaunchRecord.Request>(request);
+        var response = await mediator.Send(mRequest, context.CancellationToken);
+        return mapper.Map<LaunchRecordModel>(response);
     }
 
     public override async Task ListLaunchRecords(
         ListLaunchRecordsRequest request, IServerStreamWriter<LaunchRecordModel> responseStream, ServerCallContext context
     )
     {
-        var mRequest = _mapper.Map<ListLaunchRecords.Request>(request);
-        await foreach (var item in _mediator.CreateStream(mRequest, context.CancellationToken))
+        var mRequest = mapper.Map<ListLaunchRecords.Request>(request);
+        await foreach (var item in mediator.CreateStream(mRequest, context.CancellationToken))
         {
-            await responseStream.WriteAsync(_mapper.Map<LaunchRecordModel>(item));
+            await responseStream.WriteAsync(mapper.Map<LaunchRecordModel>(item));
         }
     }
 
@@ -131,9 +122,7 @@ public class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
     }
 
     [UsedImplicitly]
-    private class ListLaunchRecordsRequestValidator : AbstractValidator<ListLaunchRecordsRequest>
-    {
-    }
+    private class ListLaunchRecordsRequestValidator : AbstractValidator<ListLaunchRecordsRequest>;
 
     [UsedImplicitly]
     private class DeleteLaunchRecordRequestValidator : AbstractValidator<DeleteLaunchRecordRequest>

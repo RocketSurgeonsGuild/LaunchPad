@@ -1,21 +1,13 @@
 using FluentValidation.Results;
 using Grpc.Core;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
 using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
-public class CustomMessageHandlerIntegrationTest : WebAppFixtureTest<TestWebAppFixture>
+public class CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory)
+    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
 {
-    public CustomMessageHandlerIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory)
-    {
-    }
-
     [Fact]
     public async Task Should_ThrowInvalidArgument_When_NameOfMessageIsEmpty()
     {
@@ -39,7 +31,7 @@ public class CustomMessageHandlerIntegrationTest : WebAppFixtureTest<TestWebAppF
         Assert.Equal("Property Id failed validation.", rpcException.Status.Detail);
     }
 
-    private class CustomMessageHandler : IValidatorErrorMessageHandler
+    private sealed class CustomMessageHandler : IValidatorErrorMessageHandler
     {
         public Task<string> HandleAsync(IEnumerable<ValidationFailure> failures)
         {

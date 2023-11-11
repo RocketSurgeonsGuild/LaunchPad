@@ -5,12 +5,8 @@ using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class JsonElementConverterTests : TypeConverterTest
+public class JsonElementConverterTests(ITestOutputHelper testOutputHelper) : TypeConverterTest(testOutputHelper)
 {
-    public JsonElementConverterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ShouldMap_StringValue_To_JsonElement_From_Null()
     {

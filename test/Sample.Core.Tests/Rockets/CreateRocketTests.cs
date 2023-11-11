@@ -9,7 +9,7 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class CreateRocketTests : HandleTestHostBase
+public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Create_A_Rocket()
@@ -59,10 +59,6 @@ public class CreateRocketTests : HandleTestHostBase
            .And.Title.Should().Be("Rocket Creation Failed");
     }
 
-    public CreateRocketTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
-    }
-
     private static readonly Faker Faker = new();
 
     [Theory]
@@ -77,7 +73,7 @@ public class CreateRocketTests : HandleTestHostBase
         ( await a.Should().ThrowAsync<ValidationException>() ).And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
     }
 
-    private class ShouldValidateUsersRequiredFieldData : TheoryData<CreateRocket.Request, string>
+    private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<CreateRocket.Request, string>
     {
         public ShouldValidateUsersRequiredFieldData()
         {

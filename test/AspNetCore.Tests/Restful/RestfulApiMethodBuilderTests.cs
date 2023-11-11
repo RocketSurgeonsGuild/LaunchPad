@@ -8,12 +8,8 @@ using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
 namespace AspNetCore.Tests.Restful;
 
-public class RestfulApiMethodBuilderTests : LoggerTest
+public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
 {
-    public RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void Should_Have_Method()
     {
@@ -212,15 +208,11 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         throw new NotImplementedException();
     }
 
-    private class Request : IRequest
-    {
-    }
+    private sealed class Request : IRequest;
 
-    private class RequestResponse : IRequest<string>
-    {
-    }
+    private sealed class RequestResponse : IRequest<string>;
 
-    private class Matching : TheoryData<Type, string>
+    private sealed class Matching : TheoryData<Type, string>
     {
         public Matching()
         {
@@ -246,7 +238,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class ListActions
+        public sealed class ListActions
         {
             public Task<ActionResult<object>> ListPeople(Request listRequest)
             {
@@ -270,7 +262,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class GetActions
+        public sealed class GetActions
         {
             public Task<ActionResult<object>> GetPerson(Request personRequest)
             {
@@ -314,7 +306,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class PostActions
+        public sealed class PostActions
         {
             public Task<ActionResult<object>> PostPerson(Request request)
             {
@@ -348,7 +340,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class PutActions
+        public sealed class PutActions
         {
             public Task<ActionResult<object>> PutPerson(Guid personId, Request request)
             {
@@ -412,7 +404,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class DeleteActions
+        public sealed class DeleteActions
         {
             public Task<ActionResult<object>> DeletePerson(Request request)
             {
@@ -456,7 +448,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
     }
 
-    private class NonMatching : TheoryData<Type, string>
+    private sealed class NonMatching : TheoryData<Type, string>
     {
         public NonMatching()
         {
@@ -482,7 +474,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class ListActions
+        public sealed  class ListActions
         {
             public Task<ActionResult<object>> PeopleList(Request request)
             {
@@ -496,7 +488,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class GetActions
+        public sealed  class GetActions
         {
             public Task<ActionResult<object>> PeopleGet(Request request)
             {
@@ -520,7 +512,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class PostActions
+        public sealed  class PostActions
         {
             public Task<ActionResult<object>> PersonPost(Request request)
             {
@@ -539,7 +531,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class PutActions
+        public sealed class PutActions
         {
             public Task<ActionResult<object>> PersonPut(Guid id, Request request)
             {
@@ -573,7 +565,7 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         }
 
         [PublicAPI]
-        public class DeleteActions
+        public sealed  class DeleteActions
         {
             public Task<ActionResult<object>> PersonDelete(Request request)
             {

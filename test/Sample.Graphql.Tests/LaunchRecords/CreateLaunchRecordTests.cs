@@ -1,23 +1,16 @@
-﻿using Alba;
-using DryIoc;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
+public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebWebAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebWebAppFixture)
-        : base(outputHelper, rocketSurgeryWebWebAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Create_A_LaunchRecord()

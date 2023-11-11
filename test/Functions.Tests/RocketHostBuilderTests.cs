@@ -9,7 +9,7 @@ using Rocket.Surgery.LaunchPad.Functions;
 
 namespace Functions.Tests;
 
-internal class Startup : LaunchPadFunctionStartup, IServiceConvention
+internal sealed  class Startup : LaunchPadFunctionStartup, IServiceConvention
 {
     public Startup()
     {
@@ -29,7 +29,7 @@ internal class Startup : LaunchPadFunctionStartup, IServiceConvention
     }
 }
 
-public class RocketHostBuilderTests : AutoFakeTest
+public class RocketHostBuilderTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
 {
     [Fact]
     public void Should_UseAssemblies()
@@ -74,10 +74,6 @@ public class RocketHostBuilderTests : AutoFakeTest
 
         var sp = services.BuildServiceProvider();
         sp.Should().NotBeNull();
-    }
-
-    public RocketHostBuilderTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
     }
 
     private static IFunctionsConfigurationBuilder ConfigureConfiguration(IConfigurationBuilder configurationBuilder)

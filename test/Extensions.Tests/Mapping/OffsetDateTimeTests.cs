@@ -4,12 +4,8 @@ using NodaTime;
 
 namespace Extensions.Tests.Mapping;
 
-public class OffsetDateTimeTests : TypeConverterTest<OffsetDateTimeTests.Converters>
+public class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<OffsetDateTimeTests.Converters>(testOutputHelper)
 {
-    public OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ValidateMapping()
     {

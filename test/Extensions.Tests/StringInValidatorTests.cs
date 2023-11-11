@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Extensions.Tests;
 
-public class StringInValidatorTests : ConventionFakeTest
+public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
 {
     [Fact]
     public async Task Should_Validate_Invalid()
@@ -18,7 +18,10 @@ public class StringInValidatorTests : ConventionFakeTest
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
+#pragma warning disable CA1849
+        // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
+#pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
@@ -39,7 +42,10 @@ public class StringInValidatorTests : ConventionFakeTest
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
+#pragma warning disable CA1849
+        // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
+#pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
@@ -59,15 +65,14 @@ public class StringInValidatorTests : ConventionFakeTest
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
+#pragma warning disable CA1849
+        // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
+#pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(z => z.PropertyName == nameof(Target.TypeIgnoreCase));
-    }
-
-    public StringInValidatorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     private class Target

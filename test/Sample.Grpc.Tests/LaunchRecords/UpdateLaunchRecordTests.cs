@@ -1,25 +1,21 @@
-﻿using DryIoc;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Google.Protobuf.WellKnownTypes;
 using NodaTime;
-using NodaTime.Extensions;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
-using Duration = NodaTime.Duration;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests : WebAppFixtureTest<TestWebAppFixture>
+public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
 {
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
     {
         var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
-        var clock = ServiceProvider.GetRequiredService<IClock>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
                                                async (context, clk) =>
@@ -65,10 +61,6 @@ public class UpdateLaunchRecordTests : WebAppFixtureTest<TestWebAppFixture>
 
         response.ScheduledLaunchDate.Should().Be(launchDate);
         response.PayloadWeightKg.Should().Be(200);
-    }
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : base(outputHelper, webAppFixture)
-    {
     }
 
     private static readonly Faker Faker = new();

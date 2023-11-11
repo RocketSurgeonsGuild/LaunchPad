@@ -4,6 +4,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);1591</NoWarn>
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>        
         <InternalsVisibleTo Include="Sample.Graphql.Tests" />

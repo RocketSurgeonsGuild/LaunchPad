@@ -9,7 +9,7 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class UpdateRocketTests : HandleTestHostBase
+public class UpdateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Update_A_Rocket()
@@ -81,10 +81,6 @@ public class UpdateRocketTests : HandleTestHostBase
         response.Sn.Should().Be("12345678901234");
     }
 
-    public UpdateRocketTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
-    }
-
     private static readonly Faker Faker = new();
 
     [Theory]
@@ -99,7 +95,7 @@ public class UpdateRocketTests : HandleTestHostBase
         ( await a.Should().ThrowAsync<ValidationException>() ).And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
     }
 
-    private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocket.Request, string>
+    private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocket.Request, string>
     {
         public ShouldValidateUsersRequiredFieldData()
         {

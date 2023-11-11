@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
@@ -46,7 +47,8 @@ public sealed class SerilogConsoleLoggingConvention : ISerilogConvention
             c => c.Console(
                 LogEventLevel.Verbose,
                 _options.ConsoleMessageTemplate,
-                theme: AnsiConsoleTheme.Literate
+                theme: AnsiConsoleTheme.Literate,
+                formatProvider: CultureInfo.InvariantCulture
             )
         );
     }

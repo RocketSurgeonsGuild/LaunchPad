@@ -6,12 +6,8 @@ using NodaTime;
 
 namespace Extensions.Tests.Mapping;
 
-public class DurationTests : TypeConverterTest<DurationTests.Converters>
+public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<DurationTests.Converters>(testOutputHelper)
 {
-    public DurationTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ValidateMapping()
     {

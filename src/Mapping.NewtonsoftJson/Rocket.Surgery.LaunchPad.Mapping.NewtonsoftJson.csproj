@@ -5,6 +5,7 @@
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.Mapping</RootNamespace>
         <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />

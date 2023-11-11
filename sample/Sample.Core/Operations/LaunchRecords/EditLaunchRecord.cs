@@ -102,20 +102,12 @@ public static partial class EditLaunchRecord
         }
     }
 
-    private class Handler : PatchRequestHandler<Request, PatchRequest, LaunchRecordModel>, IRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext, IMapper mapper, IMediator mediator)
+        : PatchRequestHandler<Request, PatchRequest, LaunchRecordModel>(mediator), IRequestHandler<Request, LaunchRecordModel>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper, IMediator mediator) : base(mediator)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.LaunchRecords
+            var rocket = await dbContext.LaunchRecords
                                          .Include(z => z.Rocket)
                                          .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
                                          .ConfigureAwait(false);
@@ -130,18 +122,18 @@ public static partial class EditLaunchRecord
         protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
         {
             var rocket = await GetLaunchRecord(patchRequest.Id, cancellationToken);
-            return _mapper.Map<Request>(_mapper.Map<LaunchRecordModel>(rocket));
+            return mapper.Map<Request>(mapper.Map<LaunchRecordModel>(rocket));
         }
 
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await GetLaunchRecord(request.Id, cancellationToken);
 
-            _mapper.Map(request, rocket);
-            _dbContext.Update(rocket);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            mapper.Map(request, rocket);
+            dbContext.Update(rocket);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return _mapper.Map<LaunchRecordModel>(rocket);
+            return mapper.Map<LaunchRecordModel>(rocket);
         }
     }
 }

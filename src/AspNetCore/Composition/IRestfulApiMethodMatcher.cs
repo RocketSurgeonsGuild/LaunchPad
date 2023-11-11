@@ -9,5 +9,7 @@ internal interface IRestfulApiMethodMatcher
     ApiConventionNameMatchBehavior NameMatch { get; }
     string[] Names { get; }
     IDictionary<Index, IRestfulApiParameterMatcher> Parameters { get; }
+
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     bool IsMatch(ActionModel actionModel);
 }

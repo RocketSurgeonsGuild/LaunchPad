@@ -5,28 +5,20 @@ using Microsoft.CodeAnalysis;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers.Composition;
 
-internal class RestfulApiParameterMatcher : IRestfulApiParameterMatcher
+internal class RestfulApiParameterMatcher(
+    Index parameterIndex,
+    ApiConventionNameMatchBehavior nameMatch,
+    string[] names,
+    ApiConventionTypeMatchBehavior typeMatch,
+    INamedTypeSymbol? type
+)
+    : IRestfulApiParameterMatcher
 {
-    public RestfulApiParameterMatcher(
-        Index parameterIndex,
-        ApiConventionNameMatchBehavior nameMatch,
-        string[] names,
-        ApiConventionTypeMatchBehavior typeMatch,
-        INamedTypeSymbol? type
-    )
-    {
-        ParameterIndex = parameterIndex;
-        NameMatch = nameMatch;
-        Names = names;
-        TypeMatch = typeMatch;
-        Type = type;
-    }
-
-    public Index ParameterIndex { get; }
-    public ApiConventionNameMatchBehavior NameMatch { get; }
-    public string[] Names { get; }
-    public ApiConventionTypeMatchBehavior TypeMatch { get; }
-    public INamedTypeSymbol? Type { get; }
+    public Index ParameterIndex { get; } = parameterIndex;
+    public ApiConventionNameMatchBehavior NameMatch { get; } = nameMatch;
+    public string[] Names { get; } = names;
+    public ApiConventionTypeMatchBehavior TypeMatch { get; } = typeMatch;
+    public INamedTypeSymbol? Type { get; } = type;
 
     public bool IsMatch(ActionModel actionModel)
     {

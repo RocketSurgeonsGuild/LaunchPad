@@ -9,12 +9,7 @@ namespace Sample.BlazorServer.Tests.Helpers;
 
 public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where TDbContext : DbContext
 {
-    private readonly SqliteConnection _connection;
-
-    public SqliteExtension()
-    {
-        _connection = new SqliteConnection("DataSource=:memory:");
-    }
+    private readonly SqliteConnection _connection = new("DataSource=:memory:");
 
     public void Reset(IServiceProvider serviceProvider)
     {

@@ -9,7 +9,8 @@ internal static class ConverterHelpers
     {
         using var memory = new MemoryStream();
         using var sw = new StreamWriter(memory);
-        using var jw = new JsonTextWriter(sw) { Formatting = Formatting.None };
+        using var jw = new JsonTextWriter(sw);
+        jw.Formatting = Formatting.None;
         source.WriteTo(jw);
         jw.Flush();
         memory.Position = 0;

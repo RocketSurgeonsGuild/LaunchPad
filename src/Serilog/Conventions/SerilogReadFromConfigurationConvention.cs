@@ -18,6 +18,10 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
 {
     /// <inheritdoc />
+#if NET6_0_OR_GREATER
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification
+ = "The type is an enum value")]
+#endif
     public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
     {
         if (context == null)

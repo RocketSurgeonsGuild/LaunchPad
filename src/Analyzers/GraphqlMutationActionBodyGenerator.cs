@@ -1,11 +1,8 @@
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Rocket.Surgery.LaunchPad.Analyzers.Composition;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -16,29 +13,6 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 [Generator]
 public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 {
-    /// <summary>
-    ///     Same as Pascalize except that the first character is lower case
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
-    private static string Camelize(string input)
-    {
-        var word = Pascalize(input);
-#pragma warning disable CA1308
-        return word.Length > 0 ? string.Concat(word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture), word.Substring(1)) : word;
-#pragma warning restore CA1308
-    }
-
-    /// <summary>
-    ///     By default, pascalize converts strings to UpperCamelCase also removing underscores
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
-    private static string Pascalize(string input)
-    {
-        return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
-    }
-
     private static MethodDeclarationSyntax? GenerateMethod(
         SourceProductionContext context,
         INamedTypeSymbol mediator,
@@ -52,11 +26,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         var otherParams = symbol.Parameters.Remove(parameter);
         var parameterType = (INamedTypeSymbol)parameter.Type;
         var isUnit = parameterType.AllInterfaces.Any(z => z.MetadataName == "IRequest");
-        var isUnitResult = symbol.ReturnType is INamedTypeSymbol { Arity: 1 } nts && nts.TypeArguments[0].MetadataName == "ActionResult";
         var isStream = symbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
 
         var newSyntax = syntax
                        .WithParameterList(
+                            // ReSharper disable once NullableWarningSuppressionIsUsed
                             syntax.ParameterList.RemoveNodes(
                                 syntax.ParameterList.Parameters.SelectMany(z => z.AttributeLists), SyntaxRemoveOptions.KeepNoTrivia
                             )!
@@ -72,9 +46,9 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
         var block = Block();
         var resultName = parameter.Name == "result" ? "r" : "result";
-        var mediatorParameter = otherParams.FirstOrDefault(parameter => SymbolEqualityComparer.Default.Equals(mediator, parameter.Type));
-        var claimsPrincipalParameter = otherParams.FirstOrDefault(parameter => SymbolEqualityComparer.Default.Equals(claimsPrincipal, parameter.Type));
-        var cancellationTokenParameter = otherParams.FirstOrDefault(parameter => SymbolEqualityComparer.Default.Equals(cancellationToken, parameter.Type));
+        var mediatorParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(mediator, param.Type));
+        var claimsPrincipalParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(claimsPrincipal, param.Type));
+        var cancellationTokenParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(cancellationToken, param.Type));
         if (mediatorParameter is null)
         {
             context.ReportDiagnostic(
@@ -91,7 +65,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         var claimsPrincipalProperty = parameterType
                                      .GetMembers()
                                      .FirstOrDefault(
-                                          parameter => parameter switch
+                                          param => param switch
                                           {
                                               IPropertySymbol { Type: not null, IsImplicitlyDeclared: false } ps => SymbolEqualityComparer.Default.Equals(
                                                   claimsPrincipal, ps.Type
@@ -135,6 +109,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             var expressions = new List<ExpressionSyntax>();
             if (hasClaimsPrincipal)
             {
+                // ReSharper disable NullableWarningSuppressionIsUsed
                 expressions.Add(
                     AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
@@ -142,10 +117,12 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                         IdentifierName(claimsPrincipalParameter!.Name)
                     )
                 );
+                // ReSharper enable NullableWarningSuppressionIsUsed
             }
 
             if (cancellationTokenParameter is { })
             {
+                // ReSharper disable NullableWarningSuppressionIsUsed
                 expressions.Add(
                     AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
@@ -153,6 +130,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                         IdentifierName(claimsPrincipalParameter!.Name)
                     )
                 );
+                // ReSharper enable NullableWarningSuppressionIsUsed
             }
 
             if (expressions.Any())
@@ -268,15 +246,13 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
     private void GenerateMethods(
         SourceProductionContext context,
-        ((ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel) Left, Compilation Right) valueTuple
+        (ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel)  valueTuple
     )
     {
-        var (syntax, symbol, semanticModel) = valueTuple.Left;
+        var (syntax, symbol, semanticModel) = valueTuple;
         var claimsPrincipal = semanticModel.Compilation.GetTypeByMetadataName("System.Security.Claims.ClaimsPrincipal")!;
         var mediator = semanticModel.Compilation.GetTypeByMetadataName("MediatR.IMediator")!;
         var cancellationToken = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken")!;
-        var compilation = valueTuple.Right;
-        var matchers = MatcherDefaults.GetMatchers(compilation);
         var members = syntax.Members
                             .OfType<MethodDeclarationSyntax>()
                             .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
@@ -359,16 +335,16 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                                            && cds.Members.Any(
                                                   z => z is MethodDeclarationSyntax && z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
                                               ),
-                                 (syntaxContext, _) =>
+                                 (syntaxContext, cancellationToken) =>
                                  (
                                      syntax: (ClassDeclarationSyntax)syntaxContext.Node,
-                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((ClassDeclarationSyntax)syntaxContext.Node, _)!,
+                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((ClassDeclarationSyntax)syntaxContext.Node, cancellationToken)!,
                                      semanticModel: syntaxContext.SemanticModel
                                  )
                              )
                             .Where(z => z.symbol is { })
             ;
 
-        context.RegisterSourceOutput(syntaxProvider.Combine(context.CompilationProvider), GenerateMethods);
+        context.RegisterSourceOutput(syntaxProvider, GenerateMethods);
     }
 }

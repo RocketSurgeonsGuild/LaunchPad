@@ -4,12 +4,8 @@ using NodaTime.Text;
 
 namespace Extensions.Tests.Mapping;
 
-public class PeriodTests : TypeConverterTest<PeriodTests.Converters>
+public class PeriodTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<PeriodTests.Converters>(testOutputHelper)
 {
-    public PeriodTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ValidateMapping()
     {

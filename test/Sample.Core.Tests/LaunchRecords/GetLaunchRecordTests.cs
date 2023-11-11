@@ -9,7 +9,7 @@ using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : HandleTestHostBase
+public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
@@ -60,10 +60,6 @@ public class GetLaunchRecordTests : HandleTestHostBase
         );
 
         await action.Should().ThrowAsync<NotFoundException>();
-    }
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
     }
 
     private static readonly Faker Faker = new();

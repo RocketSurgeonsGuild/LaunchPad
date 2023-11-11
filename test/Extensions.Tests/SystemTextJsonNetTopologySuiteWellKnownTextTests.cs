@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using FluentAssertions.Primitives;
 using NetTopologySuite.Geometries;
 using Rocket.Surgery.Extensions.Testing;
@@ -7,11 +6,11 @@ using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class SystemTextJsonNetTopologySuiteWellKnownTextTests : LoggerTest
+public class SystemTextJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
 {
     private static T DeserializeObject<T>(string geom, JsonSerializerOptions settings)
     {
-        return JsonSerializer.Deserialize<T>("\"" + geom + "\"", settings);
+        return JsonSerializer.Deserialize<T>("\"" + geom + "\"", settings)!;
     }
 
     private static string SerializeObject(object geom, JsonSerializerOptions settings)
@@ -19,12 +18,7 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests : LoggerTest
         return JsonSerializer.Serialize(geom, settings).Trim('"');
     }
 
-    private readonly JsonSerializerOptions _settings;
-
-    public SystemTextJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-        _settings = new JsonSerializerOptions().ConfigureWellKnownTextForLaunchPad(null);
-    }
+    private readonly JsonSerializerOptions _settings = new JsonSerializerOptions().ConfigureWellKnownTextForLaunchPad(null);
 
     // typeof(Geometry),
     // typeof(MultiPoint),
@@ -136,6 +130,6 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests : LoggerTest
 
     public class ValueOf<T>
     {
-        public T Value { get; set; }
+        public T Value { get; set; } = default!;
     }
 }

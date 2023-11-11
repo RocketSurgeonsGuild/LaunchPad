@@ -4,6 +4,7 @@
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />

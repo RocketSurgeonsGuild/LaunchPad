@@ -110,6 +110,7 @@ public class AspNetCoreConvention : IServiceConvention
            .AddMvcCore()
            .AddApiExplorer();
         PopulateDefaultParts(
+            // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
             context.AssemblyCandidateFinder
                    .GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore")

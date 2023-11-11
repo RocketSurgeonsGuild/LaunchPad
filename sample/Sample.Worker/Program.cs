@@ -15,7 +15,7 @@ public static partial class Program
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
         return Host.CreateDefaultBuilder(args)
-                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default), z => z.WithConventionsFrom(GetConventions))
-                   .ConfigureServices((_, services) => { services.AddHostedService<Worker>(); });
+                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default!), z => z.WithConventionsFrom(GetConventions))
+                   .ConfigureServices((_, services) => { services.AddHostedService<BackgroundWorker>(); });
     }
 }

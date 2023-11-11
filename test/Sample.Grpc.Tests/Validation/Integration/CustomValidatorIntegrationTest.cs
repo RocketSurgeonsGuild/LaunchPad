@@ -1,16 +1,14 @@
 using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
-public class CustomValidatorIntegrationTest : WebAppFixtureTest<TestWebAppFixture>
+public class CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory)
+    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
 {
-    public CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory) { }
     [Fact]
     public async Task Should_ResponseMessage_When_MessageIsValid()
     {

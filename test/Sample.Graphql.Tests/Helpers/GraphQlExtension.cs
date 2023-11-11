@@ -1,7 +1,6 @@
 using Alba;
 using HotChocolate;
 using HotChocolate.AspNetCore.Instrumentation;
-using HotChocolate.Execution.Instrumentation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +32,8 @@ internal class GraphQlExtension : IAlbaExtension
         new TemporaryGraphQlExtension().Configure(builder);
         builder.ConfigureServices(
             z => z
-                .AddW3CLogging(z => { })
-                .AddHttpLogging(z => { })
+                .AddW3CLogging(_ => { })
+                .AddHttpLogging(_ => { })
                 .AddGraphQL()
                 .AddDiagnosticEventListener<TestServerDiagnosticEventListener>()
                 .ModifyRequestOptions(
@@ -53,44 +52,30 @@ internal class GraphQlExtension : IAlbaExtension
         return builder;
     }
 
-    public class CO : PostConfigureOptions<HttpClientFactoryOptions>
+    public class CO(TestServer testServer) : PostConfigureOptions<HttpClientFactoryOptions>(Options.DefaultName, null)
     {
-        private readonly TestServer _testServer;
-
-        public CO(TestServer testServer) : base(Options.DefaultName, null)
-        {
-            _testServer = testServer;
-        }
-
-        public override void PostConfigure(string name, HttpClientFactoryOptions options)
+        public override void PostConfigure(string? name, HttpClientFactoryOptions options)
         {
             options.HttpMessageHandlerBuilderActions.Add(
-                builder => builder.PrimaryHandler = _testServer.CreateHandler()
+                builder => builder.PrimaryHandler = testServer.CreateHandler()
             );
 
             options.HttpClientActions.Add(
-                client => client.BaseAddress = new Uri(_testServer.BaseAddress + "graphql/")
+                client => client.BaseAddress = new Uri(testServer.BaseAddress + "graphql/")
             );
         }
     }
 }
 
-public class TestServerDiagnosticEventListener : ServerDiagnosticEventListener
+public class TestServerDiagnosticEventListener(ILogger<TestServerDiagnosticEventListener> logger) : ServerDiagnosticEventListener
 {
-    private readonly ILogger<TestServerDiagnosticEventListener> _logger;
-
-    public TestServerDiagnosticEventListener(ILogger<TestServerDiagnosticEventListener> logger)
-    {
-        _logger = logger;
-    }
-
     public override void HttpRequestError(HttpContext context, Exception exception)
     {
-        _logger.LogError(exception, "HttpRequestError");
+        logger.LogError(exception, "HttpRequestError");
     }
 
     public override void HttpRequestError(HttpContext context, IError error)
     {
-        _logger.LogError(error.Exception, "HttpRequestError");
+        logger.LogError(error.Exception, "HttpRequestError");
     }
 }

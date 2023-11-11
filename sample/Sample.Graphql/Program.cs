@@ -1,5 +1,4 @@
 using HotChocolate.Types.Spatial;
-using HotChocolate.Types.Spatial.Configuration;
 using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
@@ -9,7 +8,7 @@ using Rocket.Surgery.Web.Hosting;
 
 var builder = WebApplication.CreateBuilder(args)
                             .LaunchWith(
-                                 RocketBooster.ForDependencyContext(DependencyContext.Default),
+                                 RocketBooster.ForDependencyContext(DependencyContext.Default!),
                                  z => z.WithConventionsFrom(Imports.GetConventions)
                              );
 
@@ -39,10 +38,8 @@ app.UseLaunchPadRequestLogging();
 
 app.UseRouting();
 
-app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+app.MapGraphQL();
 
 app.Run();
 
-public partial class Program
-{
-}
+public partial class Program;

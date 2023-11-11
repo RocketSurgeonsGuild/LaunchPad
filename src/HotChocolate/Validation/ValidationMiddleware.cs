@@ -4,23 +4,13 @@ using HotChocolate.Resolvers;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 
-internal class ValidationMiddleware
+[UsedImplicitly]
+internal class ValidationMiddleware(
+    FieldDelegate next,
+    IValidatorProvider validatorProvider,
+    IValidationErrorsHandler validationErrorsHandler
+)
 {
-    private readonly FieldDelegate _next;
-    private readonly IValidatorProvider _validatorProvider;
-    private readonly IValidationErrorsHandler _validationErrorsHandler;
-
-    public ValidationMiddleware(
-        FieldDelegate next,
-        IValidatorProvider validatorProvider,
-        IValidationErrorsHandler validationErrorsHandler
-    )
-    {
-        _next = next;
-        _validatorProvider = validatorProvider;
-        _validationErrorsHandler = validationErrorsHandler;
-    }
-
     public async Task InvokeAsync(IMiddlewareContext context)
     {
         var arguments = context.Selection.Field.Arguments;
@@ -29,12 +19,7 @@ internal class ValidationMiddleware
 
         foreach (var argument in arguments)
         {
-            if (argument == null)
-            {
-                continue;
-            }
-
-            var resolvedValidators = _validatorProvider
+            var resolvedValidators = validatorProvider
                                     .GetValidators(context, argument)
                                     .ToArray();
             if (resolvedValidators.Length > 0)
@@ -78,10 +63,10 @@ internal class ValidationMiddleware
 
         if (invalidResults.Any())
         {
-            _validationErrorsHandler.Handle(context, invalidResults);
+            validationErrorsHandler.Handle(context, invalidResults);
             return;
         }
 
-        await _next(context);
+        await next(context);
     }
 }

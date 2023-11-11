@@ -1,8 +1,6 @@
-﻿using DryIoc;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Graphql.Tests.Helpers;
@@ -10,7 +8,8 @@ using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
+public class GetLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
@@ -51,10 +50,6 @@ public class GetLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
         response.Data.LaunchRecords!.Nodes[0].Rocket.Type.Should().Be(RocketType.Falcon9);
         response.Data.LaunchRecords!.Nodes[0].Rocket.SerialNumber.Should().Be("12345678901234");
         response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate);
-    }
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
-    {
     }
 
     private static readonly Faker Faker = new();

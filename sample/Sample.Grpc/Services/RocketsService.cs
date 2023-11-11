@@ -8,47 +8,38 @@ using Sample.Core.Operations.Rockets;
 
 namespace Sample.Grpc.Services;
 
-public class RocketsService : Rockets.RocketsBase
+public class RocketsService(IMediator mediator, IMapper mapper) : Rockets.RocketsBase
 {
-    private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
-
-    public RocketsService(IMediator mediator, IMapper mapper)
-    {
-        _mediator = mediator;
-        _mapper = mapper;
-    }
-
     public override async Task<CreateRocketResponse> CreateRocket(CreateRocketRequest request, ServerCallContext context)
     {
-        var response = await _mediator.Send(_mapper.Map<CreateRocket.Request>(request), context.CancellationToken);
-        return _mapper.Map<CreateRocketResponse>(response);
+        var response = await mediator.Send(mapper.Map<CreateRocket.Request>(request), context.CancellationToken);
+        return mapper.Map<CreateRocketResponse>(response);
     }
 
     public override async Task<RocketModel> EditRocket(UpdateRocketRequest request, ServerCallContext context)
     {
-        var response = await _mediator.Send(_mapper.Map<EditRocket.Request>(request), context.CancellationToken);
-        return _mapper.Map<RocketModel>(response);
+        var response = await mediator.Send(mapper.Map<EditRocket.Request>(request), context.CancellationToken);
+        return mapper.Map<RocketModel>(response);
     }
 
     public override async Task<Empty> DeleteRocket(DeleteRocketRequest request, ServerCallContext context)
     {
-        await _mediator.Send(_mapper.Map<DeleteRocket.Request>(request), context.CancellationToken);
+        await mediator.Send(mapper.Map<DeleteRocket.Request>(request), context.CancellationToken);
         return new Empty();
     }
 
     public override async Task<RocketModel> GetRockets(GetRocketRequest request, ServerCallContext context)
     {
-        var response = await _mediator.Send(_mapper.Map<GetRocket.Request>(request), context.CancellationToken);
-        return _mapper.Map<RocketModel>(response);
+        var response = await mediator.Send(mapper.Map<GetRocket.Request>(request), context.CancellationToken);
+        return mapper.Map<RocketModel>(response);
     }
 
     public override async Task ListRockets(ListRocketsRequest request, IServerStreamWriter<RocketModel> responseStream, ServerCallContext context)
     {
-        var mRequest = _mapper.Map<ListRockets.Request>(request);
-        await foreach (var item in _mediator.CreateStream(mRequest, context.CancellationToken))
+        var mRequest = mapper.Map<ListRockets.Request>(request);
+        await foreach (var item in mediator.CreateStream(mRequest, context.CancellationToken))
         {
-            await responseStream.WriteAsync(_mapper.Map<RocketModel>(item));
+            await responseStream.WriteAsync(mapper.Map<RocketModel>(item));
         }
     }
 
@@ -129,9 +120,7 @@ public class RocketsService : Rockets.RocketsBase
     }
 
     [UsedImplicitly]
-    private class ListRocketsRequestValidator : AbstractValidator<ListRocketsRequest>
-    {
-    }
+    private class ListRocketsRequestValidator : AbstractValidator<ListRocketsRequest>;
 
     [UsedImplicitly]
     private class DeleteRocketRequestValidator : AbstractValidator<DeleteRocketRequest>

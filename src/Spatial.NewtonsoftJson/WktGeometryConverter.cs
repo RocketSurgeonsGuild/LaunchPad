@@ -13,10 +13,8 @@ public class WktGeometryConverter : GeometryConverter
     /// <summary>
     ///     Gets a default GeometryFactory
     /// </summary>
-    internal static GeometryFactory Wgs84Factory { get; } = new GeometryFactory(new PrecisionModel(), 4326);
+    internal static GeometryFactory Wgs84Factory { get; } = new (new PrecisionModel(), 4326);
 
-    private readonly GeometryFactory _geometryFactory;
-    private readonly int _dimension;
     private readonly WKTReader _wktReader;
 
     /// <summary>
@@ -41,21 +39,19 @@ public class WktGeometryConverter : GeometryConverter
     /// <param name="dimension">The number of dimensions to handle.  Must be 2 or 3.</param>
     public WktGeometryConverter(GeometryFactory geometryFactory, int dimension) : base(geometryFactory, dimension)
     {
-        _geometryFactory = geometryFactory;
-        _dimension = dimension;
         _wktReader = new WKTReader(geometryFactory.GeometryServices);
     }
 
     /// <inheritdoc />
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
 
-        return _wktReader.Read(reader.Value!.ToString());
+        return _wktReader.Read(reader.Value?.ToString());
     }
 
     /// <inheritdoc />
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         if (value is not Geometry geom)
         {

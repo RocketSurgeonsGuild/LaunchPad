@@ -6,12 +6,8 @@ using Sample.Core.Models;
 
 namespace Sample.Core.Domain;
 
-public class RocketDbContext : LpContext<RocketDbContext>
+public class RocketDbContext(DbContextOptions<RocketDbContext>? options = null) : LpContext<RocketDbContext>(options ?? new DbContextOptions<RocketDbContext>())
 {
-    public RocketDbContext(DbContextOptions<RocketDbContext>? options = null) : base(options ?? new DbContextOptions<RocketDbContext>())
-    {
-    }
-
     public DbSet<ReadyRocket> Rockets { get; set; } = null!;
     public DbSet<LaunchRecord> LaunchRecords { get; set; } = null!;
 
@@ -28,7 +24,7 @@ public class RocketDbContext : LpContext<RocketDbContext>
 #endif
 }
 
-public class StronglyTypedIdValueConverterSelector : ValueConverterSelector
+public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDependencies dependencies) : ValueConverterSelector(dependencies)
 {
     [return: NotNullIfNotNull("type")]
     private static Type? UnwrapNullableType(Type? type)
@@ -44,10 +40,6 @@ public class StronglyTypedIdValueConverterSelector : ValueConverterSelector
     // The dictionary in the base type is private, so we need our own one here.
     private readonly ConcurrentDictionary<(Type ModelClrType, Type ProviderClrType), ValueConverterInfo> _converters
         = new ConcurrentDictionary<(Type ModelClrType, Type ProviderClrType), ValueConverterInfo>();
-
-    public StronglyTypedIdValueConverterSelector(ValueConverterSelectorDependencies dependencies) : base(dependencies)
-    {
-    }
 
     public override IEnumerable<ValueConverterInfo> Select(Type modelClrType, Type? providerClrType = null)
     {

@@ -56,6 +56,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         var isUnitResult = symbol.ReturnType is INamedTypeSymbol { Arity: 1 } nts && nts.TypeArguments[0].MetadataName == "ActionResult";
         var isStream = symbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
 
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         var newSyntax = syntax
                        .WithParameterList(
                             syntax.ParameterList.RemoveNodes(
@@ -87,9 +88,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             var controllerAttachedProperties = parameterType
                                               .GetMembers()
                                               .SelectMany(
-                                                   parameter =>
+                                                   par =>
                                                    {
-                                                       return parameter switch
+                                                       return par switch
                                                        {
                                                            IPropertySymbol { Type: not null, IsImplicitlyDeclared: false } ps => controllerBaseProperties.Where(
                                                                p => SymbolEqualityComparer.Default.Equals(p.Type, ps.Type)
@@ -99,7 +100,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                            ),
                                                            _ => Enumerable.Empty<IPropertySymbol>()
                                                        };
-                                                   }, (parameter, propertySymbol) => ( propertySymbol, parameter )
+                                                   }, static (param, propertySymbol) => ( propertySymbol, parameter: param )
                                                )
                                               .ToArray();
 
@@ -279,9 +280,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                                              Key: "StatusCode", Value: { Kind: TypedConstantKind.Primitive, Value: int }
                                                                          }
                                                                      )
+                                                                     // ReSharper disable once NullableWarningSuppressionIsUsed
                                                                     .Select(c => (int)c.Value.Value!);
                                               var constructorArguments = z
                                                                         .ConstructorArguments.Where(c => c is { Kind: TypedConstantKind.Primitive, Value: int })
+                                                                         // ReSharper disable once NullableWarningSuppressionIsUsed
                                                                         .Select(c => (int)c.Value!);
 
                                               return namedArguments.Concat(constructorArguments);
@@ -375,6 +378,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         {
             if (symbol.GetAttribute("CreatedAttribute") is { ConstructorArguments: { Length: 1 } } created)
             {
+                // ReSharper disable once NullableWarningSuppressionIsUsed
                 var actionName = (string)created.ConstructorArguments[0].Value!;
                 var relatedMember = members.Single(z => z.symbol.Name == actionName);
                 var routeValues = getRouteValues(parameterType, resultName, relatedMember);
@@ -385,6 +389,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             }
             else if (symbol.GetAttribute("AcceptedAttribute") is { ConstructorArguments: { Length: 1 } } accepted)
             {
+                // ReSharper disable once NullableWarningSuppressionIsUsed
                 var actionName = (string)accepted.ConstructorArguments[0].Value!;
                 var relatedMember = members.Single(z => z.symbol.Name == actionName);
                 var routeValues = getRouteValues(parameterType, resultName, relatedMember);
@@ -409,6 +414,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             (MethodDeclarationSyntax method, IMethodSymbol symbol, IRestfulApiMethodMatcher? matcher, IParameterSymbol? request) relatedMember
         )
         {
+            // ReSharper disable once NullableWarningSuppressionIsUsed
             var parameterNames = relatedMember.symbol.Parameters.Remove(relatedMember.request!).Select(z => z.Name);
             parameterNames = parameterNames.Concat(
                 relatedMember.request?.Type.GetMembers()
@@ -644,8 +650,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
     )
     {
         var (syntax, symbol, semanticModel) = valueTuple.Left;
-        var claimsPrincipal = semanticModel.Compilation.GetTypeByMetadataName("System.Security.Claims.ClaimsPrincipal")!;
+        // ReSharper disable NullableWarningSuppressionIsUsed
         var controllerBase = semanticModel.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ControllerBase")!;
+        // ReSharper enable NullableWarningSuppressionIsUsed
         var controllerBaseProperties =
             controllerBase.GetMembers().OfType<IPropertySymbol>().Where(z => z.DeclaredAccessibility == Accessibility.Public).ToArray();
         var compilation = valueTuple.Right;
@@ -741,10 +748,10 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                            && cds.Members.Any(
                                                   z => z is MethodDeclarationSyntax && z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
                                               ),
-                                 (syntaxContext, _) =>
+                                 (syntaxContext, cancellationToken) =>
                                  (
                                      syntax: (ClassDeclarationSyntax)syntaxContext.Node,
-                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((ClassDeclarationSyntax)syntaxContext.Node, _)!,
+                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((ClassDeclarationSyntax)syntaxContext.Node, cancellationToken)!,
                                      semanticModel: syntaxContext.SemanticModel
                                  )
                              )

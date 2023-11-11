@@ -11,6 +11,7 @@ public class SystemJsonTextProfile : Profile
     /// <summary>
     ///     The default constructor
     /// </summary>
+#pragma warning disable IL2026
     public SystemJsonTextProfile()
     {
         CreateMap<JsonElement, byte[]?>().ConvertUsing(
@@ -65,6 +66,7 @@ public class SystemJsonTextProfile : Profile
                 : source.Value
         );
     }
+#pragma warning restore IL2026
 
     /// <summary>
     ///     Gets the name of the profile.

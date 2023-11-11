@@ -6,29 +6,22 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
-internal class RestfulApiParameterMatcher : IRestfulApiParameterMatcher
+internal class RestfulApiParameterMatcher(
+    Index parameterIndex,
+    ApiConventionNameMatchBehavior nameMatch,
+    string[] names,
+    ApiConventionTypeMatchBehavior typeMatch,
+    Type? type
+)
+    : IRestfulApiParameterMatcher
 {
-    public RestfulApiParameterMatcher(
-        Index parameterIndex,
-        ApiConventionNameMatchBehavior nameMatch,
-        string[] names,
-        ApiConventionTypeMatchBehavior typeMatch,
-        Type? type
-    )
-    {
-        ParameterIndex = parameterIndex;
-        NameMatch = nameMatch;
-        Names = names;
-        TypeMatch = typeMatch;
-        Type = type;
-    }
+    public Index ParameterIndex { get; } = parameterIndex;
+    public ApiConventionNameMatchBehavior NameMatch { get; } = nameMatch;
+    public string[] Names { get; } = names;
+    public ApiConventionTypeMatchBehavior TypeMatch { get; } = typeMatch;
+    public Type? Type { get; } = type;
 
-    public Index ParameterIndex { get; }
-    public ApiConventionNameMatchBehavior NameMatch { get; }
-    public string[] Names { get; }
-    public ApiConventionTypeMatchBehavior TypeMatch { get; }
-    public Type? Type { get; }
-
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     public bool IsMatch(ActionModel actionModel)
     {
         var parameters = actionModel.ActionMethod.GetParameters();
@@ -54,6 +47,7 @@ internal class RestfulApiParameterMatcher : IRestfulApiParameterMatcher
                 }
             }
 
+            // ReSharper disable NullableWarningSuppressionIsUsed
             return NameMatch switch
             {
                 ApiConventionNameMatchBehavior.Exact  => Names.Any(name => parameter.Name!.Equals(name, StringComparison.OrdinalIgnoreCase)),
@@ -61,6 +55,7 @@ internal class RestfulApiParameterMatcher : IRestfulApiParameterMatcher
                 ApiConventionNameMatchBehavior.Suffix => Names.Any(name => parameter.Name!.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
                 _                                     => true
             };
+            // ReSharper enable NullableWarningSuppressionIsUsed
         }
 
         return false;

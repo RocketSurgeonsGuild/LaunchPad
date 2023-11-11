@@ -8,7 +8,7 @@ using Sample.Core.Operations.Rockets;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class GetRocketTests : HandleTestHostBase
+public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Get_A_Rocket()
@@ -45,10 +45,6 @@ public class GetRocketTests : HandleTestHostBase
         );
 
         await action.Should().ThrowAsync<NotFoundException>();
-    }
-
-    public GetRocketTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
     }
 
     private static readonly Faker Faker = new();

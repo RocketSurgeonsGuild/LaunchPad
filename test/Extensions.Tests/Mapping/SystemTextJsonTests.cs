@@ -5,12 +5,8 @@ using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class SystemTextJsonWithNewtonsoftJsonTests : TypeConverterTest
+public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : TypeConverterTest(testOutputHelper)
 {
-    public SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ValidateMapping()
     {

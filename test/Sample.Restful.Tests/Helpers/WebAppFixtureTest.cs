@@ -5,7 +5,7 @@ using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Serilog;
 using Serilog.Events;
 
-namespace Sample.BlazorServer.Tests;
+namespace Sample.Restful.Tests.Helpers;
 
 public abstract class WebAppFixtureTest<TAppFixture> : LoggerTest, IClassFixture<TAppFixture>, IAsyncLifetime
     where TAppFixture : class, ILaunchPadWebAppFixture

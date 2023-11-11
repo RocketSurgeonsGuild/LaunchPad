@@ -7,15 +7,8 @@ using Newtonsoft.Json;
 
 namespace Sample_Function;
 
-public class TestFunction
+public class TestFunction(Service service)
 {
-    private readonly Service _service;
-
-    public TestFunction(Service service)
-    {
-        _service = service;
-    }
-
     [FunctionName("TestFunction")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]
@@ -29,16 +22,18 @@ public class TestFunction
 
         using var reader = new StreamReader(req.Body);
         var requestBody = await reader.ReadToEndAsync();
-        dynamic data = JsonConvert.DeserializeObject(requestBody);
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CA1508
+        dynamic data = JsonConvert.DeserializeObject(requestBody);
         name ??= data?.name;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning restore CA1508
 
         var responseMessage = string.IsNullOrEmpty(name)
             ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
             : $"Hello, {name}. This HTTP triggered function executed successfully.";
 
-        responseMessage += " " + _service.Value;
+        responseMessage += " " + service.Value;
 
         return new OkObjectResult(responseMessage);
     }

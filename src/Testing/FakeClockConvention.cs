@@ -36,6 +36,6 @@ public class FakeClockConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services.TryAddSingleton(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
-        services.TryAddSingleton<IClock>(_ => _.GetRequiredService<FakeClock>());
+        services.TryAddSingleton<IClock>(provider => provider.GetRequiredService<FakeClock>());
     }
 }

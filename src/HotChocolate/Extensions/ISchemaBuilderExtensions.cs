@@ -1,5 +1,4 @@
 using HotChocolate;
-using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Types.NodaTime;
 using NodaTime;

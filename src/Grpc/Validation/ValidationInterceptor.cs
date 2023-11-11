@@ -5,7 +5,7 @@ using Grpc.Core.Interceptors;
 
 namespace Rocket.Surgery.LaunchPad.Grpc.Validation;
 
-internal class ValidationInterceptor : Interceptor
+internal class ValidationInterceptor(IValidatorErrorMessageHandler handler, IServiceProvider serviceProvider) : Interceptor
 {
     private static RpcException CreateException(ValidationResult results, string? message)
     {
@@ -16,22 +16,13 @@ internal class ValidationInterceptor : Interceptor
         throw new RpcException(new Status(StatusCode.InvalidArgument, message ?? ""), validationMetadata, message ?? "");
     }
 
-    private readonly IValidatorErrorMessageHandler _handler;
-    private readonly IServiceProvider _serviceProvider;
-
-    public ValidationInterceptor(IValidatorErrorMessageHandler handler, IServiceProvider serviceProvider)
-    {
-        _handler = handler;
-        _serviceProvider = serviceProvider;
-    }
-
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
         TRequest request,
         ServerCallContext context,
         UnaryServerMethod<TRequest, TResponse> continuation
     )
     {
-        if (_serviceProvider.GetValidator<TRequest>() is { } validator)
+        if (serviceProvider.GetValidator<TRequest>() is { } validator)
         {
             var results = await validator.ValidateAsync(request, context.CancellationToken).ConfigureAwait(false);
 
@@ -40,7 +31,7 @@ internal class ValidationInterceptor : Interceptor
                 return await continuation(request, context);
             }
 
-            var message = await _handler.HandleAsync(results.Errors);
+            var message = await handler.HandleAsync(results.Errors);
             throw CreateException(results, message);
         }
 
@@ -53,7 +44,7 @@ internal class ValidationInterceptor : Interceptor
         AsyncUnaryCallContinuation<TRequest, TResponse> continuation
     )
     {
-        if (_serviceProvider.GetValidator<TRequest>() is { } validator)
+        if (serviceProvider.GetValidator<TRequest>() is { } validator)
         {
             var results = validator.Validate(request);
 
@@ -62,7 +53,7 @@ internal class ValidationInterceptor : Interceptor
                 return continuation(request, context);
             }
 
-            var message = _handler.Handle(results.Errors);
+            var message = handler.Handle(results.Errors);
             throw CreateException(results, message);
         }
 
@@ -75,7 +66,7 @@ internal class ValidationInterceptor : Interceptor
         BlockingUnaryCallContinuation<TRequest, TResponse> continuation
     )
     {
-        if (_serviceProvider.GetValidator<TRequest>() is { } validator)
+        if (serviceProvider.GetValidator<TRequest>() is { } validator)
         {
             var results = validator.Validate(request);
 
@@ -84,7 +75,7 @@ internal class ValidationInterceptor : Interceptor
                 return continuation(request, context);
             }
 
-            var message = _handler.Handle(results.Errors);
+            var message = handler.Handle(results.Errors);
             throw CreateException(results, message);
         }
 

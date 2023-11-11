@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
-namespace Sample.BlazorServer.Tests;
+namespace Sample.Restful.Tests.Helpers;
 
 public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where TDbContext : DbContext
 {

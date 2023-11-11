@@ -6,7 +6,7 @@ using Sample.Core.Operations.Rockets;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class RemoveRocketsTests : HandleTestHostBase
+public class RemoveRocketsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Remove_Rocket()
@@ -29,10 +29,6 @@ public class RemoveRocketsTests : HandleTestHostBase
         );
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
-    }
-
-    public RemoveRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
     }
 
     private static readonly Faker Faker = new();

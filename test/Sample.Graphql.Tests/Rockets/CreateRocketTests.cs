@@ -1,25 +1,11 @@
-﻿using DryIoc;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Mvc.Testing.Handlers;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyModel;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Options;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Testing;
-using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Sample.Graphql.Tests.Helpers;
 using Serilog.Events;
-using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class CreateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
+public class CreateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testOutputHelper, rocketSurgeryWebAppFixture, LogEventLevel.Information)
 {
     [Fact]
     public async Task Should_Create_A_Rocket()
@@ -59,9 +45,5 @@ public class CreateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
         );
         response2.IsErrorResult().Should().BeTrue();
         response2.Errors[0].Message.Should().Be("A Rocket already exists with that serial number!");
-    }
-
-    public CreateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(testOutputHelper, rocketSurgeryWebAppFixture, LogEventLevel.Information)
-    {
     }
 }

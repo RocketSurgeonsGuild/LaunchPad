@@ -9,7 +9,7 @@ using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests : HandleTestHostBase
+public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
@@ -43,7 +43,7 @@ public class UpdateLaunchRecordTests : HandleTestHostBase
 
         var launchDate = record.ScheduledLaunchDate.ToInstant().Plus(Duration.FromSeconds(1));
         var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
-            (mediator, clock) => mediator.Send(
+            (mediator, _) => mediator.Send(
                 new EditLaunchRecord.Request
                 {
                     Id = record.Id,
@@ -58,10 +58,6 @@ public class UpdateLaunchRecordTests : HandleTestHostBase
 
         response.ScheduledLaunchDate.Should().Be(launchDate);
         response.PayloadWeightKg.Should().Be(200);
-    }
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
     }
 
     private static readonly Faker Faker = new();

@@ -22,7 +22,7 @@ internal class SystemTextJsonDestructuringPolicy : IDestructuringPolicy
         };
     }
 
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory _, out LogEventPropertyValue? result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory _, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         switch (value)
         {

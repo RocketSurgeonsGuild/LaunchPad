@@ -92,7 +92,7 @@ global using System.Threading.Tasks;
         await Verify(await GenerateAsync(sources)).UseParameters(key, "");
     }
 
-    private class MethodBodyData : TheoryData<string, string[]>
+    private sealed class MethodBodyData : TheoryData<string, string[]>
     {
         private const string defaultString = @"
 namespace TestNamespace;

@@ -14,9 +14,9 @@ internal static class PrefixExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="provider">The provider.</param>
     /// <param name="instance">The instance.</param>
-    internal static void Infer<T>(this AssemblyMetadataProvider provider, T instance)
+    internal static void Infer<T>(this AssemblyMetadataProvider provider, T instance) where T : notnull
     {
-        foreach (var property in instance!.GetType().GetTypeInfo().DeclaredProperties)
+        foreach (var property in instance.GetType().GetTypeInfo().DeclaredProperties)
         {
             // simple props only
             if (

@@ -6,7 +6,7 @@ using Rocket.Surgery.LaunchPad.Testing;
 
 namespace Extensions.Tests;
 
-public class FakeClockConventionTests : ConventionFakeTest
+public class FakeClockConventionTests(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
 {
     [Fact]
     public void Clock_Convention_Default()
@@ -31,9 +31,5 @@ public class FakeClockConventionTests : ConventionFakeTest
         clock.Should().BeOfType<FakeClock>();
         clock.GetCurrentInstant().Should().Be(Instant.FromUnixTimeSeconds(0));
         clock.GetCurrentInstant().Should().Be(Instant.FromUnixTimeSeconds(0) + Duration.FromMinutes(1));
-    }
-
-    public FakeClockConventionTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 }

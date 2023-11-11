@@ -8,27 +8,19 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 ///     This class enables fluent validators to be used for options validations!
 /// </summary>
 /// <typeparam name="T"></typeparam>
-internal class FluentValidationOptions<T> : IValidateOptions<T>
+internal class FluentValidationOptions<T>(
+    ValidationHealthCheckResults? healthCheckResults = null,
+    IValidator<T>? validator = null
+)
+    : IValidateOptions<T>
     where T : class
 {
-    private readonly ValidationHealthCheckResults? _healthCheckResults;
-    private readonly IValidator<T>? _validator;
-
-    public FluentValidationOptions(
-        ValidationHealthCheckResults? healthCheckResults = null,
-        IValidator<T>? validator = null
-    )
+    public virtual ValidateOptionsResult Validate(string? name, T options)
     {
-        _healthCheckResults = healthCheckResults;
-        _validator = validator;
-    }
+        if (validator == null) return ValidateOptionsResult.Skip;
 
-    public virtual ValidateOptionsResult Validate(string name, T options)
-    {
-        if (_validator == null) return ValidateOptionsResult.Skip;
-
-        var result = _validator.Validate(options);
-        _healthCheckResults?.AddResult(typeof(T).GetNestedTypeName(), name, result);
+        var result = validator.Validate(options);
+        healthCheckResults?.AddResult(typeof(T).GetNestedTypeName(), name ?? Options.DefaultName, result);
         if (result.IsValid) return ValidateOptionsResult.Success;
 
         return ValidateOptionsResult.Fail(

@@ -41,6 +41,7 @@ public static class ModuleInitializer
 
                 var typeName = GetTypeName(type);
 
+                // ReSharper disable once RedundantAssignment
                 var path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots");
 #if !ROSLYN_CURRENT
                 path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "../Analyzers.Tests", "snapshots");
@@ -133,7 +134,7 @@ public static class ModuleInitializer
         return Convert(target.GetRunResult(), context);
     }
 
-    private class LocalizableStringConverter :
+    private sealed class LocalizableStringConverter :
         WriteOnlyJsonConverter<LocalizableString>
     {
         public override void Write(VerifyJsonWriter writer, LocalizableString value)
@@ -142,7 +143,7 @@ public static class ModuleInitializer
         }
     }
 
-    private class DiagnosticConverter :
+    private sealed class DiagnosticConverter :
         WriteOnlyJsonConverter<Diagnostic>
     {
         public override void Write(VerifyJsonWriter writer, Diagnostic value)
@@ -164,7 +165,7 @@ public static class ModuleInitializer
         }
     }
 
-    private class LocationConverter :
+    private sealed class LocationConverter :
         WriteOnlyJsonConverter<Location>
     {
         public override void Write(VerifyJsonWriter writer, Location value)
@@ -173,7 +174,7 @@ public static class ModuleInitializer
         }
     }
 
-    private class GeneratedSourceResultConverter :
+    private sealed class GeneratedSourceResultConverter :
         WriteOnlyJsonConverter<GeneratedSourceResult>
     {
         public override void Write(VerifyJsonWriter writer, GeneratedSourceResult value)
@@ -189,7 +190,7 @@ public static class ModuleInitializer
         }
     }
 
-    private class DiagnosticDescriptorConverter :
+    private sealed class DiagnosticDescriptorConverter :
         WriteOnlyJsonConverter<DiagnosticDescriptor>
     {
         public override void Write(VerifyJsonWriter writer, DiagnosticDescriptor value)
@@ -208,7 +209,7 @@ public static class ModuleInitializer
         }
     }
 
-    private class SourceTextConverter :
+    private sealed class SourceTextConverter :
         WriteOnlyJsonConverter<SourceText>
     {
         public override void Write(VerifyJsonWriter writer, SourceText value)

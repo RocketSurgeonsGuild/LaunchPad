@@ -48,12 +48,8 @@ public static class AutoMapperProfile
         [UsedImplicitly] public decimal? NullableDecimal { get; set; }
     }
 
-    public class OnlyDefinedPropertiesTests : AutoFakeTest
+    public class OnlyDefinedPropertiesTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
     {
-        public OnlyDefinedPropertiesTests(ITestOutputHelper outputHelper) : base(outputHelper)
-        {
-        }
-
         [Fact]
         public void ConfigurationIsValid()
         {

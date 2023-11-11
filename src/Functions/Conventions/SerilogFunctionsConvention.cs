@@ -60,9 +60,9 @@ public class SerilogFunctionsConvention : IServiceConvention
         }
 
         services.AddSingleton<ILoggerFactory>(
-            _ =>
+            serviceProvider =>
             {
-                var log = _.GetRequiredService<ILogger>();
+                var log = serviceProvider.GetRequiredService<ILogger>();
                 ILogger? registeredLogger = null;
                 if (_options.PreserveStaticLogger)
                 {
@@ -79,7 +79,7 @@ public class SerilogFunctionsConvention : IServiceConvention
 
                 if (_options.WriteToProviders)
                 {
-                    foreach (var provider in _.GetServices<ILoggerProvider>())
+                    foreach (var provider in serviceProvider.GetServices<ILoggerProvider>())
                         factory.AddProvider(provider);
                 }
 
@@ -94,14 +94,14 @@ public class SerilogFunctionsConvention : IServiceConvention
         else
         {
             services.AddSingleton(
-                _ =>
+                serviceProvider =>
                 {
                     var loggerConfiguration = new LoggerConfiguration();
 
                     if (loggerProviders != null)
                         loggerConfiguration.WriteTo.Providers(loggerProviders);
 
-                    loggerConfiguration.ApplyConventions(context, _);
+                    loggerConfiguration.ApplyConventions(context, serviceProvider);
 
                     return loggerConfiguration.CreateLogger();
                 }

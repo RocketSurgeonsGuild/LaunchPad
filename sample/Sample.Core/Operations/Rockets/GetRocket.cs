@@ -31,26 +31,17 @@ public static class GetRocket
         }
     }
 
-    private class Handler : IRequestHandler<Request, RocketModel>
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, RocketModel>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
             if (rocket == null)
             {
                 throw new NotFoundException();
             }
 
-            return _mapper.Map<RocketModel>(rocket);
+            return mapper.Map<RocketModel>(rocket);
         }
     }
 }

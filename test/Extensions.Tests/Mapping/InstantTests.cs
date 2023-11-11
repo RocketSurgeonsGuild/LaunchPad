@@ -4,12 +4,8 @@ using NodaTime;
 
 namespace Extensions.Tests.Mapping;
 
-public class InstantTests : TypeConverterTest<InstantTests.Converters>
+public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<InstantTests.Converters>(testOutputHelper)
 {
-    public InstantTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ValidateMapping()
     {

@@ -13,6 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc;
 public abstract class ProblemDetailsInterceptor<T> : Interceptor
     where T : Exception, IProblemDetailsData
 {
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
     private static Metadata CreateMetadata(T exception)
     {
         var metadata = new Metadata();
