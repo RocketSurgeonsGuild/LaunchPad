@@ -6,11 +6,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
 internal static class StronglyTypedIdHelpers
 {
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     public static bool IsStronglyTypedId(Type? type)
     {
         return GetStronglyTypedIdType(type) is { };
     }
 
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     public static Type? GetStronglyTypedIdType(Type? type)
     {
         if (type?.GetMember("New", BindingFlags.Static | BindingFlags.Public).FirstOrDefault() is MethodInfo
@@ -26,6 +28,8 @@ internal static class StronglyTypedIdHelpers
 
 internal class StronglyTypedIdSchemaFilter : ISchemaFilter
 {
+    // TODO: Make a source generator for this to work without generics
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         if (StronglyTypedIdHelpers.GetStronglyTypedIdType(context.Type) is not { } type) return;

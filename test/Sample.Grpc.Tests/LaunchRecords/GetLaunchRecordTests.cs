@@ -9,13 +9,10 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : WebAppFixtureTest<TestWebAppFixture>
+public class GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, testWebAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture) : base(outputHelper, testWebAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Get_A_LaunchRecord()

@@ -6,7 +6,7 @@ using Sample.Core.Operations.Rockets;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class ListRocketsTests : HandleTestHostBase
+public class ListRocketsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_List_Rockets()
@@ -27,10 +27,6 @@ public class ListRocketsTests : HandleTestHostBase
         );
 
         response.Should().HaveCount(10);
-    }
-
-    public ListRocketsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
     }
 
     private static readonly Faker Faker = new();

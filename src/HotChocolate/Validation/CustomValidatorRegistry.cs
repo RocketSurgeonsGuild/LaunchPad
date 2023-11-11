@@ -3,7 +3,8 @@ using FluentValidation;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 
-public class CustomValidatorRegistry : ICustomValidatorRegistry, IValidatorRegistry
+
+class CustomValidatorRegistry : ICustomValidatorRegistry, IValidatorRegistry
 {
     private readonly IServiceProvider _serviceProvider;
 

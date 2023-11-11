@@ -6,7 +6,7 @@ using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests : LoggerTest
+public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
 {
     private static T DeserializeObject<T>(string geom, JsonSerializerSettings settings)
     {
@@ -18,12 +18,7 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests : LoggerTest
         return JsonConvert.SerializeObject(geom, settings).Trim('"');
     }
 
-    private readonly JsonSerializerSettings _settings;
-
-    public NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-        _settings = new JsonSerializerSettings().ConfigureWellKnownTextForLaunchPad(null);
-    }
+    private readonly JsonSerializerSettings _settings = new JsonSerializerSettings().ConfigureWellKnownTextForLaunchPad(null);
 
     // typeof(Geometry),
     // typeof(MultiPoint),
@@ -129,6 +124,6 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests : LoggerTest
 
     public class ValueOf<T>
     {
-        public T Value { get; set; }
+        public T Value { get; set; } = default!;
     }
 }

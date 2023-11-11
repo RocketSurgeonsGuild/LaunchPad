@@ -1,6 +1,5 @@
 #if NET6_0_OR_GREATER
 using DryIoc;
-using FakeItEasy.Creation;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
@@ -9,12 +8,11 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Serilog;
 
 namespace Extensions.Tests.Validation;
 
 [UsesVerify]
-public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
+public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper), IAsyncLifetime
 {
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
@@ -26,7 +24,7 @@ public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
     }
 
     [Fact]
-    public async Task Should_Validate_Options_And_Pass()
+    public void Should_Validate_Options_And_Pass()
     {
         var services = new ServiceCollection();
         services.AddOptions<Options>().Configure(
@@ -40,7 +38,7 @@ public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
         );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a.Should().NotThrow();
+        a.Should().NotThrow();
     }
 
     [Fact]
@@ -63,13 +61,9 @@ public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
         await Verify(failures);
     }
 
-    public OptionsValidationTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
-    }
-
     private class Options
     {
-        public string String { get; set; }
+        public string? String { get; set; }
         public int Int { get; set; }
         public bool Bool { get; set; }
         public double Double { get; set; }
@@ -89,7 +83,7 @@ public class OptionsValidationTests : AutoFakeTest, IAsyncLifetime
     public Task InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder.Create()
-                                                               .ForTesting(DependencyContext.Load(GetType().Assembly), LoggerFactory)
+                                                               .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
                                                                .Set(
                                                                     new FoundationOptions
                                                                     {

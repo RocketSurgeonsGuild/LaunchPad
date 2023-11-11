@@ -2,7 +2,6 @@
 using FluentValidation.AspNetCore;
 using FluentValidation.Validators;
 using MicroElements.Swashbuckle.FluentValidation;
-using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,6 +93,7 @@ public partial class FluentValidationConvention : IServiceConvention
                     {
                         var validator = context.PropertyValidator as IStringInValidator;
                         context.Schema.Properties[context.PropertyKey].Enum =
+                            // ReSharper disable once NullableWarningSuppressionIsUsed
                             validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
                     }
                 )

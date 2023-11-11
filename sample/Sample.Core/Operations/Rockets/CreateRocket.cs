@@ -63,20 +63,11 @@ public static class CreateRocket
         }
     }
 
-    private class Handler : IRequestHandler<Request, Response>
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, Response>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            var existingRocket = await _dbContext.Rockets.AsQueryable()
+            var existingRocket = await dbContext.Rockets.AsQueryable()
                                                  .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
             if (existingRocket != null)
             {
@@ -95,9 +86,9 @@ public static class CreateRocket
                 };
             }
 
-            var rocket = _mapper.Map<ReadyRocket>(request);
-            await _dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            var rocket = mapper.Map<ReadyRocket>(request);
+            await dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return new Response
             {

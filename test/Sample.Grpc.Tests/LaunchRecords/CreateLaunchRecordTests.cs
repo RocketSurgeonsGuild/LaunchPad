@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
@@ -10,13 +9,10 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests : WebAppFixtureTest<TestWebAppFixture>
+public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, testWebAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture) : base(outputHelper, testWebAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Create_A_LaunchRecord()

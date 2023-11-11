@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using Rocket.Surgery.DependencyInjection;
+﻿using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
@@ -8,13 +7,10 @@ using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class RemoveRocketsTests : WebAppFixtureTest<TestWebAppFixture>
+public class RemoveRocketsTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, testWebAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public RemoveRocketsTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture) : base(outputHelper, testWebAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Remove_Rocket()
@@ -28,7 +24,7 @@ public class RemoveRocketsTests : WebAppFixtureTest<TestWebAppFixture>
                                                var rocket = faker.Generate();
                                                z.Add(rocket);
 
-                                               await z.SaveChangesAsync().ConfigureAwait(false);
+                                               await z.SaveChangesAsync();
                                                return rocket.Id;
                                            }
                                        );

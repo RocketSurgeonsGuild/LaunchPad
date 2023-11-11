@@ -3,17 +3,12 @@ using Microsoft.Extensions.Options;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
-internal class RestfulApiApplicationModelProvider : IApplicationModelProvider
+internal class RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> options) : IApplicationModelProvider
 {
-    public RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> options)
+    public List<IActionModelConvention> ActionModelConventions { get; } = new()
     {
-        ActionModelConventions = new List<IActionModelConvention>
-        {
-            new RestfulApiActionModelConvention(options)
-        };
-    }
-
-    public List<IActionModelConvention> ActionModelConventions { get; }
+        new RestfulApiActionModelConvention(options)
+    };
 
     public void OnProvidersExecuted(ApplicationModelProviderContext context)
     {

@@ -1,5 +1,4 @@
 ﻿using FairyBread;
-using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

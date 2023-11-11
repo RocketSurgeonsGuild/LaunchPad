@@ -29,12 +29,8 @@ public class EnvironmentLoggingConvention : ISerilogConvention
         LoggerConfiguration loggerConfiguration
     )
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        var environment = context.Get<IHostEnvironment>()!;
+        if (context == null) throw new ArgumentNullException(nameof(context));
+        if (context.Get<IHostEnvironment>() is not { } environment) return;
         loggerConfiguration.Enrich.WithProperty(nameof(environment.EnvironmentName), environment.EnvironmentName);
         loggerConfiguration.Enrich.WithProperty(nameof(environment.ApplicationName), environment.ApplicationName);
     }

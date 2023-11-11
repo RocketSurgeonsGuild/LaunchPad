@@ -30,25 +30,18 @@ public static class DeleteRocket
         }
     }
 
-    private class Handler : IRequestHandler<Request>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request>
     {
-        private readonly RocketDbContext _dbContext;
-
-        public Handler(RocketDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
         public async Task Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
             if (rocket == null)
             {
                 throw new NotFoundException();
             }
 
-            _dbContext.Remove(rocket);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            dbContext.Remove(rocket);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

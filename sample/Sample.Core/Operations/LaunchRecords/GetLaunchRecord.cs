@@ -32,20 +32,11 @@ public static class GetLaunchRecord
         }
     }
 
-    private class Handler : IRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, LaunchRecordModel>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.LaunchRecords
+            var rocket = await dbContext.LaunchRecords
                                          .Include(x => x.Rocket)
                                          .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
             if (rocket == null)
@@ -53,7 +44,7 @@ public static class GetLaunchRecord
                 throw new NotFoundException();
             }
 
-            return _mapper.Map<LaunchRecordModel>(rocket);
+            return mapper.Map<LaunchRecordModel>(rocket);
         }
     }
 }

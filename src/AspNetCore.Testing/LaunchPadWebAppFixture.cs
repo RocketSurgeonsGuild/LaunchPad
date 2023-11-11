@@ -27,26 +27,42 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         _extensions = new IAlbaExtension[]
                       {
                           new LaunchPadExtension(this, _loggerFactory),
+                          // ReSharper disable once NullableWarningSuppressionIsUsed
                           _sqlExtension!
                       }
+                      // ReSharper disable once NullableWarningSuppressionIsUsed
                      .Where(z => z != null!)
                      .Concat(extensions)
                      .ToArray();
     }
 
+    // ReSharper disable once NullableWarningSuppressionIsUsed
+    /// <summary>
+    /// The underlying alba host
+    /// </summary>
     public IAlbaHost AlbaHost => _host!;
 
+    /// <summary>
+    /// Set the loggerfactory when initializing the test
+    /// </summary>
+    /// <param name="loggerFactory"></param>
     public void SetLoggerFactory(ILoggerFactory loggerFactory)
     {
         _loggerFactory.SetLoggerFactory(loggerFactory);
     }
 
+    /// <summary>
+    /// Method to reset the database if provided
+    /// </summary>
     public void Reset()
     {
         if (_sqlExtension is null || _host is null) return;
         _sqlExtension.Reset(AlbaHost.Services);
     }
 
+    /// <summary>
+    /// Method to reset the database if provided
+    /// </summary>
     public async Task ResetAsync()
     {
         if (_sqlExtension is null || _host is null) return;
@@ -54,11 +70,17 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         await _sqlExtension.ResetAsync(AlbaHost.Services);
     }
 
+    /// <summary>
+    /// Method used to start the alba host
+    /// </summary>
     public async Task InitializeAsync()
     {
         _host = await Alba.AlbaHost.For<TEntryPoint>(_extensions);
     }
 
+    /// <summary>
+    /// Method used to dispose the alba host
+    /// </summary>
     public async Task DisposeAsync()
     {
         await AlbaHost.DisposeAsync();
@@ -70,11 +92,17 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         }
     }
 
+#pragma warning disable CA1816
     async ValueTask IAsyncDisposable.DisposeAsync()
+#pragma warning restore CA1816
     {
         await DisposeAsync().ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// The dispose method
+    /// </summary>
+    /// <param name="disposing"></param>
     protected virtual void Dispose(bool disposing)
     {
         if (!disposing) return;
@@ -108,6 +136,9 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         }
     }
 
+    /// <summary>
+    /// The dispose method
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);

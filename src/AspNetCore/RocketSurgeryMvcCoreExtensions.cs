@@ -50,7 +50,7 @@ public static class RocketSurgeryMvcCoreExtensions
     ///     AddMvc or AddMvcCore can cause breaking changes if called multiple times over the application lifespan.
     ///     This allows us to ensure that we don't upset that state, but get back the expected mvc builder.
     /// </summary>
-    private class ImmutableMvcBuilder : IMvcBuilder, IMvcCoreBuilder
+    private class ImmutableMvcBuilder(IServiceCollection services, bool core) : IMvcBuilder, IMvcCoreBuilder
     {
         private static ApplicationPartManager GetApplicationPartManager(IServiceCollection services, bool core)
         {
@@ -63,15 +63,9 @@ public static class RocketSurgeryMvcCoreExtensions
             return (T?)services.LastOrDefault(d => d.ServiceType == typeof(T))?.ImplementationInstance;
         }
 
-        private readonly Lazy<ApplicationPartManager> _partsManager;
-
-        public ImmutableMvcBuilder(IServiceCollection services, bool core)
-        {
-            Services = services;
-            _partsManager = new Lazy<ApplicationPartManager>(() => GetApplicationPartManager(services, core));
-        }
+        private readonly Lazy<ApplicationPartManager> _partsManager = new(() => GetApplicationPartManager(services, core));
 
         public ApplicationPartManager PartManager => _partsManager.Value;
-        public IServiceCollection Services { get; }
+        public IServiceCollection Services { get; } = services;
     }
 }

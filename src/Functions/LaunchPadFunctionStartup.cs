@@ -13,6 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Functions;
 public abstract class LaunchPadFunctionStartup : FunctionsStartup
 {
     internal ConventionContextBuilder _builder;
+    // ReSharper disable once NullableWarningSuppressionIsUsed
     internal IConventionContext _context = null!;
 
     /// <summary>

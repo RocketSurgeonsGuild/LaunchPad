@@ -4,7 +4,7 @@ using Rocket.Surgery.Extensions.Testing;
 
 namespace Extensions.Tests.Validation;
 
-public class ValidatorFactoryTests : AutoFakeTest
+public class ValidatorFactoryTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper, LogLevel.Information)
 {
 //    [Fact]
 //    public void Should_Aggregate_Validators()
@@ -20,11 +20,7 @@ public class ValidatorFactoryTests : AutoFakeTest
 //        result.Errors.Should().HaveCount(2);
 //    }
 
-    public ValidatorFactoryTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Information)
-    {
-    }
-
-    public interface IThing
+public interface IThing
     {
         public string? Thing { get; set; }
     }

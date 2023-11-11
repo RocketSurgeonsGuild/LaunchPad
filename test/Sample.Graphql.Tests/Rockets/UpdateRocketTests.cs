@@ -1,15 +1,14 @@
-﻿using DryIoc;
-using Humanizer;
+﻿using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class UpdateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
+public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testOutputHelper, rocketSurgeryWebAppFixture)
 {
     [Fact]
     public async Task Should_Update_A_Rocket()
@@ -144,12 +143,6 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
         u.Data!.PatchRocket.SerialNumber.Should().Be("12345678901234");
     }
 
-    public UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(
-        testOutputHelper, rocketSurgeryWebAppFixture
-    )
-    {
-    }
-
     private static readonly Faker Faker = new();
 
     [Theory]
@@ -161,7 +154,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
 
-        var extensionKey = response.Errors[0].Extensions.ContainsKey("propertyName") ? "propertyName" : "field";
+        var extensionKey = response.Errors[0].Extensions!.ContainsKey("propertyName") ? "propertyName" : "field";
 
         response.Errors[0].Extensions![extensionKey]
                 .As<string>().Split('.').Last()

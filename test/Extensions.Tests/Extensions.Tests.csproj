@@ -13,7 +13,6 @@
     <ItemGroup>
       <Folder Include="ChangeTracking" />
       <Folder Include="Mapping" />       
-        <PackageReference Include="Verify.Xunit" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />

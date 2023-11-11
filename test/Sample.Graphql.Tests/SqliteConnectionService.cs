@@ -4,18 +4,11 @@ using Sample.Core.Domain;
 
 namespace Sample.Graphql.Tests;
 
-internal class SqliteConnectionService : IHostedService
+internal class SqliteConnectionService(IServiceProvider serviceProvider) : IHostedService
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public SqliteConnectionService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await _serviceProvider.WithScoped<RocketDbContext>()
+        await serviceProvider.WithScoped<RocketDbContext>()
                               .Invoke(z => z.Database.EnsureCreatedAsync(cancellationToken))
                               .ConfigureAwait(false);
     }

@@ -3,16 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Sample.BlazorWasm.Tests;
 
-public class FoundationTests : HandleTestHostBase
+public class FoundationTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper)
 {
     [Fact]
     public void AutoMapper()
     {
         ServiceProvider.GetRequiredService<IMapper>()
                        .ConfigurationProvider.AssertConfigurationIsValid();
-    }
-
-    public FoundationTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
     }
 }

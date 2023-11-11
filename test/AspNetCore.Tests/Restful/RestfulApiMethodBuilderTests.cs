@@ -8,12 +8,8 @@ using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
 namespace AspNetCore.Tests.Restful;
 
-public class RestfulApiMethodBuilderTests : LoggerTest
+public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
 {
-    public RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void Should_Have_Method()
     {
@@ -212,13 +208,9 @@ public class RestfulApiMethodBuilderTests : LoggerTest
         throw new NotImplementedException();
     }
 
-    private class Request : IRequest
-    {
-    }
+    private class Request : IRequest;
 
-    private class RequestResponse : IRequest<string>
-    {
-    }
+    private class RequestResponse : IRequest<string>;
 
     private class Matching : TheoryData<Type, string>
     {

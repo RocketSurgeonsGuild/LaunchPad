@@ -1,19 +1,14 @@
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.MSBuild;
-using Polly;
 using Rocket.Surgery.Nuke.DotNetCore;
-using Serilog;
 
 [PublicAPI]
 [UnsetVisualStudioEnvironmentVariables]

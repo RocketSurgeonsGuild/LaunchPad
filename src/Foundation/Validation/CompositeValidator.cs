@@ -7,18 +7,12 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 internal class CompositeValidator
 {
     protected static readonly PropertyInfo RuleSetsExecutedProperty = typeof(ValidationResult)
+        // ReSharper disable once NullableWarningSuppressionIsUsed
        .GetProperty(nameof(ValidationResult.RuleSetsExecuted), BindingFlags.Instance | BindingFlags.Public)!;
 }
 
-internal class CompositeValidator<T> : CompositeValidator, IValidator<T>
+internal class CompositeValidator<T>(IEnumerable<IValidator> validators) : CompositeValidator, IValidator<T>
 {
-    private readonly IEnumerable<IValidator> _validators;
-
-    public CompositeValidator(IEnumerable<IValidator> validators)
-    {
-        _validators = validators;
-    }
-
     public CascadeMode CascadeMode { get; set; } = CascadeMode.Continue;
 
     public ValidationResult Validate(T instance)
@@ -33,7 +27,7 @@ internal class CompositeValidator<T> : CompositeValidator, IValidator<T>
 
     public ValidationResult Validate(IValidationContext context)
     {
-        return _validators
+        return validators
               .Select(z => z.Validate(context))
               .Aggregate(
                    new ValidationResult(),
@@ -49,7 +43,7 @@ internal class CompositeValidator<T> : CompositeValidator, IValidator<T>
     public async Task<ValidationResult> ValidateAsync(IValidationContext context, CancellationToken cancellation = default)
     {
         var tasks = new List<Task<ValidationResult>>();
-        foreach (var validator in _validators)
+        foreach (var validator in validators)
         {
             tasks.Add(validator.ValidateAsync(context, cancellation));
         }
@@ -68,11 +62,11 @@ internal class CompositeValidator<T> : CompositeValidator, IValidator<T>
 
     public IValidatorDescriptor CreateDescriptor()
     {
-        return new CompositeValidatorDescriptor(_validators);
+        return new CompositeValidatorDescriptor(validators);
     }
 
     public bool CanValidateInstancesOfType(Type type)
     {
-        return _validators.Any(z => z.CanValidateInstancesOfType(type));
+        return validators.Any(z => z.CanValidateInstancesOfType(type));
     }
 }

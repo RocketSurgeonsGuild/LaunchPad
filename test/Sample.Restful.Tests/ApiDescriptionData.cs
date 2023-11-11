@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
@@ -20,14 +19,9 @@ internal class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
     }
 }
 
-public class ApiDescriptionData
+public class ApiDescriptionData(ApiDescription description)
 {
-    public ApiDescriptionData(ApiDescription description)
-    {
-        Description = description;
-    }
-
-    public ApiDescription Description { get; }
+    public ApiDescription Description { get; } = description;
 
     public override string ToString()
     {

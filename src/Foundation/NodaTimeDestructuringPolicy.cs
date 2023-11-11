@@ -5,16 +5,11 @@ using Serilog.Events;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
 
-internal class NodaTimeDestructuringPolicy : IDestructuringPolicy
+internal class NodaTimeDestructuringPolicy(IDateTimeZoneProvider provider) : IDestructuringPolicy
 {
-    private readonly ZonedDateTimePattern _zonedDateTimePattern;
+    private readonly ZonedDateTimePattern _zonedDateTimePattern = ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", provider);
 
-    public NodaTimeDestructuringPolicy(IDateTimeZoneProvider provider)
-    {
-        _zonedDateTimePattern = ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", provider);
-    }
-
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory _, out LogEventPropertyValue? result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory _, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is Instant instant1)
         {

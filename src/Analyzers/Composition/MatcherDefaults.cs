@@ -31,8 +31,10 @@ internal static class MatcherDefaults
 
     private static IEnumerable<RestfulApiMethodBuilder> DefaultMatchers(Compilation compilation)
     {
+        // ReSharper disable NullableWarningSuppressionIsUsed
         var IBaseRequest = compilation.GetTypeByMetadataName("MediatR.IBaseRequest")!;
         var IStreamRequest = compilation.GetTypeByMetadataName("MediatR.IStreamRequest`1")!;
+        // ReSharper enable NullableWarningSuppressionIsUsed
         yield return new RestfulApiMethodBuilder(RestfulApiMethod.List)
                     .MatchPrefix("List", SearchMethodPrefixes)
                     .MatchParameterType(^1, IBaseRequest);

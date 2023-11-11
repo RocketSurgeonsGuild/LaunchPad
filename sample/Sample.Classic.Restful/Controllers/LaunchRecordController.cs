@@ -57,7 +57,6 @@ public partial class LaunchRecordController : RestfulApiController
     /// <summary>
     ///     Remove a launch record
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpDelete("{id:guid}")]

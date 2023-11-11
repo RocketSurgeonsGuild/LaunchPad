@@ -6,6 +6,7 @@
         <NoWarn>$(NoWarn);CA1812</NoWarn>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
         <IsPackable>false</IsPackable>
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <!-- used to trigger build information -->
     <PropertyGroup>
@@ -19,7 +20,9 @@
         <GitVersion_WeightedPreReleaseNumber Condition="'$(GitVersion_WeightedPreReleaseNumber)' == ''">30023</GitVersion_WeightedPreReleaseNumber>
         <GitVersion_BuildMetaData Condition="'$(GitVersion_BuildMetaData)' == ''"> </GitVersion_BuildMetaData>
         <GitVersion_BuildMetaDataPadded Condition="'$(GitVersion_BuildMetaDataPadded)' == ''"> </GitVersion_BuildMetaDataPadded>
-        <GitVersion_FullBuildMetaData Condition="'$(GitVersion_FullBuildMetaData)' == ''">Branch.feature-metadata.Sha.247f6f1c46147dd60479462ce2eef81c04b0a056</GitVersion_FullBuildMetaData>
+        <GitVersion_FullBuildMetaData
+            Condition="'$(GitVersion_FullBuildMetaData)' == ''"
+        >Branch.feature-metadata.Sha.247f6f1c46147dd60479462ce2eef81c04b0a056</GitVersion_FullBuildMetaData>
         <GitVersion_MajorMinorPatch Condition="'$(GitVersion_MajorMinorPatch)' == ''">0.1.0</GitVersion_MajorMinorPatch>
         <GitVersion_SemVer Condition="'$(GitVersion_SemVer)' == ''">0.1.0-metadata.23</GitVersion_SemVer>
         <GitVersion_LegacySemVer Condition="'$(GitVersion_LegacySemVer)' == ''">0.1.0-metadata23</GitVersion_LegacySemVer>
@@ -27,7 +30,9 @@
         <GitVersion_AssemblySemVer Condition="'$(GitVersion_AssemblySemVer)' == ''">0.1.0.0</GitVersion_AssemblySemVer>
         <GitVersion_AssemblySemFileVer Condition="'$(GitVersion_AssemblySemFileVer)' == ''">0.1.0.0</GitVersion_AssemblySemFileVer>
         <GitVersion_FullSemVer Condition="'$(GitVersion_FullSemVer)' == ''">0.1.0-metadata.23</GitVersion_FullSemVer>
-        <GitVersion_InformationalVersion Condition="'$(GitVersion_InformationalVersion)' == ''">0.1.0-metadata.23+Branch.feature-metadata.Sha.247f6f1c46147dd60479462ce2eef81c04b0a056</GitVersion_InformationalVersion>
+        <GitVersion_InformationalVersion
+            Condition="'$(GitVersion_InformationalVersion)' == ''"
+        >0.1.0-metadata.23+Branch.feature-metadata.Sha.247f6f1c46147dd60479462ce2eef81c04b0a056</GitVersion_InformationalVersion>
         <GitVersion_BranchName Condition="'$(GitVersion_BranchName)' == ''">feature/metadata</GitVersion_BranchName>
         <GitVersion_EscapedBranchName Condition="'$(GitVersion_EscapedBranchName)' == ''">feature-metadata</GitVersion_EscapedBranchName>
         <GitVersion_Sha Condition="'$(GitVersion_Sha)' == ''">247f6f1c46147dd60479462ce2eef81c04b0a056</GitVersion_Sha>
@@ -38,7 +43,9 @@
         <GitVersion_NuGetPreReleaseTag Condition="'$(GitVersion_NuGetPreReleaseTag)' == ''">metadata0023</GitVersion_NuGetPreReleaseTag>
         <GitVersion_VersionSourceSha Condition="'$(GitVersion_VersionSourceSha)' == ''">1981f927d7d3702e830e0ce96974ad5692b720f0</GitVersion_VersionSourceSha>
         <GitVersion_CommitsSinceVersionSource Condition="'$(GitVersion_CommitsSinceVersionSource)' == ''">23</GitVersion_CommitsSinceVersionSource>
-        <GitVersion_CommitsSinceVersionSourcePadded Condition="'$(GitVersion_CommitsSinceVersionSourcePadded)' == ''">0023</GitVersion_CommitsSinceVersionSourcePadded>
+        <GitVersion_CommitsSinceVersionSourcePadded
+            Condition="'$(GitVersion_CommitsSinceVersionSourcePadded)' == ''"
+        >0023</GitVersion_CommitsSinceVersionSourcePadded>
         <GitVersion_CommitDate Condition="'$(GitVersion_CommitDate)' == ''">2020-07-11</GitVersion_CommitDate>
     </PropertyGroup>
 </Project>

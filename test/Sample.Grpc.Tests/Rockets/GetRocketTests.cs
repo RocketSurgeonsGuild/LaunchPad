@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using Rocket.Surgery.DependencyInjection;
+﻿using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
@@ -7,13 +6,9 @@ using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class GetRocketTests : WebAppFixtureTest<TestWebAppFixture>
+public class GetRocketTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public GetRocketTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : base(outputHelper, webAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Get_A_Rocket()

@@ -80,6 +80,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                 {
                     if (declaration.BaseList?.Types.Any(z => z.IsEquivalentTo(item)) != true)
                     {
+                        // ReSharper disable once NullableWarningSuppressionIsUsed
                         classToInherit = ( classToInherit.AddBaseListTypes(item) as TypeDeclarationSyntax )!;
                     }
                 }
@@ -323,15 +324,15 @@ public class InheritFromGenerator : IIncrementalGenerator
                                      } recordDeclarationSyntax && recordDeclarationSyntax.AttributeLists.ContainsAttribute("InheritFrom"),
                                  static (syntaxContext, token) => (
                                      syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
+                                     // ReSharper disable once NullableWarningSuppressionIsUsed
                                      symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)! )
                              ).Combine(
                                  context.CompilationProvider
                                         .Select(
                                              static (z, _) => (
                                                  compilation: z,
-                                                 inheritFromAttribute: z.GetTypeByMetadataName(
-                                                     "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute"
-                                                 )! )
+                                                 // ReSharper disable once NullableWarningSuppressionIsUsed
+                                                 inheritFromAttribute: z.GetTypeByMetadataName("Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute")! )
                                          )
                              )
                             .Select(
@@ -350,6 +351,7 @@ public class InheritFromGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(
             values,
+            // ReSharper disable once NullableWarningSuppressionIsUsed
             static (productionContext, tuple) => GenerateInheritance(productionContext, tuple.compilation, tuple.syntax, tuple.symbol, tuple.attributes!)
         );
     }

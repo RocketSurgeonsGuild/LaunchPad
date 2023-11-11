@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.Functions;
 
 namespace Functions.Tests;
 
-internal class TestAssemblyProvider : IAssemblyProvider
+internal sealed class TestAssemblyProvider : IAssemblyProvider
 {
     public IEnumerable<Assembly> GetAssemblies()
     {

@@ -42,8 +42,9 @@ public class FluentValidator : ComponentBase
                 // It's an indexer
                 // This code assumes C# conventions (one indexer named Item with one param)
                 nextToken = nextToken.Substring(0, nextToken.Length - 1);
-                var prop = obj.GetType().GetProperty("Item");
-                var indexerType = prop!.GetIndexParameters()[0].ParameterType;
+                // ReSharper disable once NullableWarningSuppressionIsUsed
+                var prop = obj.GetType().GetProperty("Item")!;
+                var indexerType = prop.GetIndexParameters()[0].ParameterType;
                 var indexerValue = Convert.ChangeType(nextToken, indexerType, CultureInfo.InvariantCulture);
                 newObj = prop.GetValue(obj, new[] { indexerValue });
             }
@@ -128,10 +129,13 @@ public class FluentValidator : ComponentBase
     /// </summary>
     [Parameter]
     [DisallowNull]
+    // ReSharper disable once NullableWarningSuppressionIsUsed
     public IValidator? Validator { get; set; } = null!;
 
+    // ReSharper disable once NullableWarningSuppressionIsUsed
     [Inject] private IServiceProvider Services { get; set; } = null!;
 
+    // ReSharper disable once NullableWarningSuppressionIsUsed
     [CascadingParameter] private EditContext CurrentEditContext { get; set; } = null!;
 
     /// <inheritdoc />

@@ -98,6 +98,7 @@ public partial class SwashbuckleConvention : IServiceConvention
 
                 string nestedTypeName(Type type)
                 {
+                    // ReSharper disable once NullableWarningSuppressionIsUsed
                     return type.IsNested ? schemaIdSelector(type.DeclaringType!) + type.Name : type.Name;
                 }
 

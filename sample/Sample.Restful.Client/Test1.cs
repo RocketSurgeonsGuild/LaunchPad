@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace Sample.Restful.Client;
 
 public partial class RocketClient

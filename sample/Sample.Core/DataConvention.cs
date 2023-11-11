@@ -34,7 +34,7 @@ internal class DataConvention : IServiceConvention
             );
 #if NET
         // temp?
-        services.TryAddScoped(_ => _.GetRequiredService<IDbContextFactory<RocketDbContext>>().CreateDbContext());
+        services.TryAddScoped(provider => provider.GetRequiredService<IDbContextFactory<RocketDbContext>>().CreateDbContext());
 #endif
     }
 }

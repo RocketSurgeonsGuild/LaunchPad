@@ -1,6 +1,5 @@
 ﻿using Alba;
 using Microsoft.Extensions.DependencyInjection;
-using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using NodaTime;
 using Rocket.Surgery.Extensions.Testing;
@@ -11,7 +10,7 @@ using Sample.Graphql.Tests.Helpers;
 namespace Sample.Graphql.Tests;
 
 [UsesVerify]
-public class StrawberryShakeSerializerTests : LoggerTest
+public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
 {
     [Fact]
     public async Task Should_Roundtrip_Instant()
@@ -172,7 +171,6 @@ public class StrawberryShakeSerializerTests : LoggerTest
         await using var host = await AlbaHost.For<Program>(
             new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
         );
-        var clock = host.Services.GetRequiredService<IClock>();
         var client = host.Services.GetRequiredService<IRocketClient>();
 
 
@@ -194,7 +192,6 @@ public class StrawberryShakeSerializerTests : LoggerTest
         await using var host = await AlbaHost.For<Program>(
             new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
         );
-        var clock = host.Services.GetRequiredService<IClock>();
         var client = host.Services.GetRequiredService<IRocketClient>();
 
 
@@ -216,7 +213,6 @@ public class StrawberryShakeSerializerTests : LoggerTest
         await using var host = await AlbaHost.For<Program>(
             new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
         );
-        var clock = host.Services.GetRequiredService<IClock>();
         var client = host.Services.GetRequiredService<IRocketClient>();
 
 
@@ -250,7 +246,7 @@ public class StrawberryShakeSerializerTests : LoggerTest
 
         await Verify(result);
     }
-    
+
     [Theory]
     [InlineData("POINT(3 4)")]
     [InlineData("LINESTRING(5 6, 7 8)")]
@@ -263,22 +259,21 @@ public class StrawberryShakeSerializerTests : LoggerTest
         await using var host = await AlbaHost.For<Program>(
             new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
         );
-        
+
         var client = host.Services.GetRequiredService<IRocketClient>();
 
         var reader = new WKTReader();
         var result = await client.GetGeometryTypes.ExecuteAsync(
-            new ()
+            new()
             {
-                Geometry = reader.Read(wkt)  
+                Geometry = reader.Read(wkt)
             }
         );
 
         await Verify(result).UseTextForParameters(wkt);
     }
-    
-    
-    
+
+
 //    [Fact]
 //    public async Task Should_Roundtrip_Point()
 //    {
@@ -309,7 +304,4 @@ public class StrawberryShakeSerializerTests : LoggerTest
         multiLineString: "MULTILINESTRING((19 20, 21 22), (23 24, 25 26))"
         multiPolygon: "MULTIPOLYGON(((27 28, 29 30, 31 32, 27 28)), ((33 34, 35 36, 37 38, 33 34)))"
      */
-    public StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
 }

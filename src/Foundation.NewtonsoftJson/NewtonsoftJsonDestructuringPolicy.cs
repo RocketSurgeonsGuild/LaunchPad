@@ -8,7 +8,8 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
 {
     private static LogEventPropertyValue Destructure(JValue jv, ILogEventPropertyValueFactory propertyValueFactory)
     {
-        return propertyValueFactory.CreatePropertyValue(jv.Value, true);
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        return propertyValueFactory.CreatePropertyValue(jv.Value!, true);
     }
 
     private static LogEventPropertyValue Destructure(JArray ja, ILogEventPropertyValueFactory propertyValueFactory)

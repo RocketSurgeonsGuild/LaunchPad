@@ -91,22 +91,13 @@ public static class CreateLaunchRecord
         }
     }
 
-    private class Handler : IRequestHandler<Request, Response>
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, Response>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            var record = _mapper.Map<LaunchRecord>(request);
+            var record = mapper.Map<LaunchRecord>(request);
 
-            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.RocketId }, cancellationToken);
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.RocketId }, cancellationToken);
             if (rocket == null)
             {
                 throw new RequestFailedException("Rocket not found!");
@@ -114,8 +105,8 @@ public static class CreateLaunchRecord
 
             record.Rocket = rocket;
 
-            await _dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return new Response
             {

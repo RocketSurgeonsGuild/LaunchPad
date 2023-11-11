@@ -31,6 +31,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
         return httpMethods[0];
     }
 
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     private static void ExtractParameterDetails(ActionModel action)
     {
         var requestParameter = action.Parameters.FirstOrDefault(
@@ -98,7 +99,10 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
     private readonly ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> _matchers;
     private readonly RestfulApiOptions _options;
 
-
+    /// <summary>
+    /// An action model convention that allows <see cref="IRequest{TResponse}"/> and <see cref="IStreamRequest{TResponse}"/> to be used as parameters to controller actions.
+    /// </summary>
+    /// <param name="options"></param>
     public RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options)
     {
         _matchers = options.Value.GetMatchers();
@@ -159,6 +163,8 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
         }
     }
 
+    // TODO: Make a source generator for this to work without generics
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     public void Apply(ActionModel action)
     {
         if (!typeof(RestfulApiController).IsAssignableFrom(action.Controller.ControllerType))

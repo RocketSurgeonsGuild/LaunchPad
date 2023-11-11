@@ -14,13 +14,8 @@ public abstract class TypeConverterFactory
     public abstract IEnumerable<Type> GetTypeConverters();
 }
 
-internal class TypeConverterData<T> : TypeConverterData
-    where T : TypeConverterFactory, new()
-{
-    public TypeConverterData() : base(new T().GetTypeConverters)
-    {
-    }
-}
+internal class TypeConverterData<T>() : TypeConverterData(new T().GetTypeConverters)
+    where T : TypeConverterFactory, new();
 
 internal abstract class TypeConverterData : TheoryData<Type, Type, object?>
 {

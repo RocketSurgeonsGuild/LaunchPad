@@ -20,6 +20,7 @@ public partial class LaunchRecordController : RestfulApiController
     /// <summary>
     ///     Load details of a specific launch record
     /// </summary>
+    /// <param name="id">The id of the launch record</param>
     /// <param name="request">The request context</param>
     /// <returns></returns>
     [HttpGet("{id:guid}")]

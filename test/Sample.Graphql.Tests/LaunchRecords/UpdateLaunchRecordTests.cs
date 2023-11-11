@@ -1,9 +1,7 @@
-﻿using DryIoc;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Extensions;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Graphql.Tests.Helpers;
@@ -11,7 +9,8 @@ using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
+public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     [Fact]
     public async Task Should_Update_A_LaunchRecord()
@@ -62,10 +61,6 @@ public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest<GraphQlAppFixtur
 
         response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.Should().Be(launchDate);
         response.Data.LaunchRecords!.Nodes[0].PayloadWeightKg.Should().Be(200);
-    }
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
-    {
     }
 
     private static readonly Faker Faker = new();

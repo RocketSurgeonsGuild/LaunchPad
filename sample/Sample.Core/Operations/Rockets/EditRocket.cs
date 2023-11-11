@@ -72,20 +72,12 @@ public static partial class EditRocket
         }
     }
 
-    private class RequestHandler : PatchRequestHandler<Request, PatchRequest, RocketModel>, IRequestHandler<Request, RocketModel>
+    private class RequestHandler(RocketDbContext dbContext, IMapper mapper, IMediator mediator)
+        : PatchRequestHandler<Request, PatchRequest, RocketModel>(mediator), IRequestHandler<Request, RocketModel>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public RequestHandler(RocketDbContext dbContext, IMapper mapper, IMediator mediator) : base(mediator)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         private async Task<ReadyRocket?> GetRocket(RocketId id, CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.Rockets.FindAsync(new object[] { id }, cancellationToken)
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { id }, cancellationToken)
                                          .ConfigureAwait(false);
             if (rocket == null)
             {
@@ -98,7 +90,7 @@ public static partial class EditRocket
         protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
         {
             var rocket = await GetRocket(patchRequest.Id, cancellationToken);
-            return _mapper.Map<Request>(_mapper.Map<RocketModel>(rocket));
+            return mapper.Map<Request>(mapper.Map<RocketModel>(rocket));
         }
 
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
@@ -109,11 +101,11 @@ public static partial class EditRocket
                 throw new NotFoundException();
             }
 
-            _mapper.Map(request, rocket);
-            _dbContext.Update(rocket);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            mapper.Map(request, rocket);
+            dbContext.Update(rocket);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return _mapper.Map<RocketModel>(rocket);
+            return mapper.Map<RocketModel>(rocket);
         }
     }
 }

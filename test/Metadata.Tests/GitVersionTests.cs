@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.Metadata;
 
 namespace Metadata.Tests;
 
-public class GitVersionTests : AutoFakeTest
+public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
 {
     [Fact(Skip = "Disabled for CI")]
     public void ReturnsInformationForVersionedAssembly()
@@ -101,9 +101,5 @@ public class GitVersionTests : AutoFakeTest
 
         version.Should().NotBeNull();
         version.Should().HaveCount(1);
-    }
-
-    public GitVersionTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
     }
 }

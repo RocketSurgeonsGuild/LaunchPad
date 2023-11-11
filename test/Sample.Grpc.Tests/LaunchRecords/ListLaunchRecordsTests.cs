@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
@@ -9,13 +8,10 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class ListLaunchRecordsTests : WebAppFixtureTest<TestWebAppFixture>
+public class ListLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public ListLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : base(outputHelper, webAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_List_LaunchRecords()

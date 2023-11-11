@@ -3,9 +3,4 @@ using Sample.Core.Domain;
 
 namespace Sample.Pages.Tests.Helpers;
 
-public class TestWebAppFixture : LaunchPadWebAppFixture<Startup>, IAsyncLifetime
-{
-    public TestWebAppFixture() : base(new SqliteExtension<RocketDbContext>())
-    {
-    }
-}
+public class TestWebAppFixture() : LaunchPadWebAppFixture<Startup>(new SqliteExtension<RocketDbContext>()), IAsyncLifetime;

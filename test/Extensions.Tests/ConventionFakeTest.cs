@@ -6,12 +6,8 @@ using Rocket.Surgery.Extensions.Testing;
 
 namespace Extensions.Tests;
 
-public abstract class ConventionFakeTest : AutoFakeTest
+public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    protected ConventionFakeTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected void Init(Action<ConventionContextBuilder>? action = null)
     {
         var conventionContextBuilder = ConventionContextBuilder.Create()

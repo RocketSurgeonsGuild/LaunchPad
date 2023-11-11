@@ -1,5 +1,4 @@
 ﻿using FairyBread;
-using HotChocolate;
 using HotChocolate.Configuration;
 using HotChocolate.Internal;
 using HotChocolate.Resolvers;
@@ -134,7 +133,7 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
                 return null;
             }
 
-            return currBaseType!.GenericTypeArguments[0];
+            return currBaseType.GenericTypeArguments[0];
         }
 
         // Singular scalar
@@ -199,11 +198,13 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
                 }
                 catch (Exception ex)
                 {
+#pragma warning disable CA2201
                     throw new Exception(
                         $"Problem getting runtime type for argument '{argDef.Name}' " +
                         $"in field '{fieldDef.Name}' on object type '{objTypeDef.Name}'.",
                         ex
                     );
+#pragma warning restore CA2201
                 }
 
                 // Cleanup context now we're done with these

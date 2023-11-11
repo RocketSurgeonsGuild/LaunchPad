@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
@@ -44,7 +45,8 @@ public sealed class SerilogDebugLoggingConvention : ISerilogConvention
         loggerConfiguration.WriteTo.Async(
             c => c.Debug(
                 LogEventLevel.Verbose,
-                _options.DebugMessageTemplate
+                _options.DebugMessageTemplate,
+                formatProvider: CultureInfo.InvariantCulture
             )
         );
     }

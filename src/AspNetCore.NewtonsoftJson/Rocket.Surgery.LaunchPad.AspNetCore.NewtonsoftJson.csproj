@@ -5,6 +5,7 @@
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore</RootNamespace>
         <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />

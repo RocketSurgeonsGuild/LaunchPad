@@ -8,7 +8,7 @@ using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests : HandleTestHostBase
+public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
 {
     [Fact]
     public async Task Should_Remove_LaunchRecord()
@@ -59,10 +59,6 @@ public class RemoveLaunchRecordsTests : HandleTestHostBase
             mediator => mediator.Send(new DeleteLaunchRecord.Request { Id = id })
         );
         await action.Should().ThrowAsync<NotAuthorizedException>();
-    }
-
-    public RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : base(outputHelper, LogLevel.Trace)
-    {
     }
 
     private static readonly Faker Faker = new();

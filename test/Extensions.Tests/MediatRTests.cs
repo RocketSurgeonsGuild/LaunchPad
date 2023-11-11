@@ -11,7 +11,7 @@ using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 namespace Extensions.Tests;
 
-public class MediatRTests : AutoFakeTest
+public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
 {
     [Fact]
     public async Task Test1()
@@ -31,7 +31,7 @@ public class MediatRTests : AutoFakeTest
         var r = services.BuildServiceProvider();
         var mediator = r.GetRequiredService<IMediator>();
 
-        await mediator.Send(new Request()).ConfigureAwait(false);
+        await mediator.Send(new Request());
 
         A.CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
          .MustHaveHappenedOnceExactly();
@@ -63,14 +63,10 @@ public class MediatRTests : AutoFakeTest
 
         var mediator = r.GetRequiredService<IMediator>();
 
-        await mediator.Send(new Request()).ConfigureAwait(false);
+        await mediator.Send(new Request());
 
         A.CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
          .MustHaveHappenedOnceExactly();
-    }
-
-    public MediatRTests(ITestOutputHelper outputHelper) : base(outputHelper)
-    {
     }
 
     private class TestAssemblyProvider : IAssemblyProvider
@@ -97,9 +93,7 @@ public class MediatRTests : AutoFakeTest
         }
     }
 
-    public class Request : IRequest
-    {
-    }
+    public class Request : IRequest;
 
     private class TestHandler : IRequestHandler<Request>
     {

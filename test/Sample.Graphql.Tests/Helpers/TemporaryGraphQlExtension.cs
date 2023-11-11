@@ -31,12 +31,8 @@ internal class TemporaryGraphQlExtension : IAlbaExtension
     }
 
     [Obsolete("Remove once https://github.com/ChilliCream/hotchocolate/issues/5684 is fixed!")]
-    internal class MyHttpResponseFormatter : DefaultHttpResponseFormatter
+    internal class MyHttpResponseFormatter() : DefaultHttpResponseFormatter(true)
     {
-        public MyHttpResponseFormatter() : base(true)
-        {
-        }
-
         protected override HttpStatusCode OnDetermineStatusCode(IResponseStream responseStream, FormatInfo format, HttpStatusCode? proposedStatusCode)
         {
             var code = base.OnDetermineStatusCode(responseStream, format, proposedStatusCode);

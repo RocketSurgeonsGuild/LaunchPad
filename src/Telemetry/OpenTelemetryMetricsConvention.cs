@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using Rocket.Surgery.Conventions;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rocket.Surgery.LaunchPad.EntityFramework;
 using Sample.Core.Models;
@@ -8,8 +9,10 @@ namespace Sample.Core.Domain;
 public class LaunchRecord // : ILaunchRecord
 {
     public LaunchRecordId Id { get; set; }
-    public string? Partner { get; set; } = null!;
-    public string? Payload { get; set; } = null!;
+    [StringLength(1000)]
+    public string? Partner { get; set; }
+    [StringLength(1000)]
+    public string? Payload { get; set; }
     public long PayloadWeightKg { get; set; }
     public DateTimeOffset? ActualLaunchDate { get; set; }
     public DateTimeOffset ScheduledLaunchDate { get; set; }

@@ -1,13 +1,9 @@
 using Alba;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Options;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
-using Sample.Core.Domain;
 
 namespace Sample.Graphql.Tests.Helpers;
 

@@ -232,6 +232,7 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
         return _names.Length > 0;
     }
 
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     internal bool IsMatch(ActionModel actionModel)
     {
         var nameMatch = _nameMatchBehavior switch
@@ -264,6 +265,7 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     string[] IRestfulApiMethodMatcher.Names => _names;
     IDictionary<Index, IRestfulApiParameterMatcher> IRestfulApiMethodMatcher.Parameters => _parameters;
 
+    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     bool IRestfulApiMethodMatcher.IsMatch(ActionModel actionModel)
     {
         return IsMatch(actionModel);

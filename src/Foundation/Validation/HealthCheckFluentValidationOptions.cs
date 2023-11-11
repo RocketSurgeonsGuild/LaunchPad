@@ -8,27 +8,21 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 ///     This class enables fluent validators to be used for options validations!
 /// </summary>
 /// <typeparam name="T"></typeparam>
-internal class HealthCheckFluentValidationOptions<T> : FluentValidationOptions<T>
+internal class HealthCheckFluentValidationOptions<T>(
+    ValidationHealthCheckResults healthCheckResults,
+    IValidator<T>? validator = null
+)
+    : FluentValidationOptions<T>(null, validator)
     where T : class
 {
-    private readonly ValidationHealthCheckResults _healthCheckResults;
-    private readonly IValidator<T>? _validator;
+    /* null because we're adding results during the validate call here */
 
-    public HealthCheckFluentValidationOptions(
-        ValidationHealthCheckResults healthCheckResults,
-        IValidator<T>? validator = null
-    ) : base(null /* null because we're adding results during the validate call here */, validator)
+    public override ValidateOptionsResult Validate(string? name, T options)
     {
-        _healthCheckResults = healthCheckResults;
-        _validator = validator;
-    }
+        if (validator == null) return ValidateOptionsResult.Skip;
 
-    public override ValidateOptionsResult Validate(string name, T options)
-    {
-        if (_validator == null) return ValidateOptionsResult.Skip;
-
-        var result = _validator.Validate(options);
-        _healthCheckResults.AddResult(typeof(T).GetNestedTypeName(), name, result);
-        return _healthCheckResults.ApplicationHasStarted ? base.Validate(name, options) : ValidateOptionsResult.Skip;
+        var result = validator.Validate(options);
+        healthCheckResults.AddResult(typeof(T).GetNestedTypeName(), name ?? Options.DefaultName, result);
+        return healthCheckResults.ApplicationHasStarted ? base.Validate(name, options) : ValidateOptionsResult.Skip;
     }
 }

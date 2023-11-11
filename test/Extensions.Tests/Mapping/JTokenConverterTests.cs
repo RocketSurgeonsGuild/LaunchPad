@@ -5,12 +5,8 @@ using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class JTokenConverterTests : TypeConverterTest
+public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConverterTest(testOutputHelper)
 {
-    public JTokenConverterTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     [Fact]
     public void ShouldMap_StringValue_To_JObject()
     {

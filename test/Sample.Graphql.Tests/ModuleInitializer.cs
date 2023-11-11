@@ -14,9 +14,9 @@ public static class ModuleInitializer
     {
         DiffRunner.Disabled = true;
         VerifierSettings.DontScrubDateTimes();
-        VerifierSettings.AddExtraSettings(_ => _.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
-        VerifierSettings.AddExtraSettings(_ => _.Converters.Add(new GeometryConverter()));
-        
+        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
+        VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new GeometryConverter()));
+
         VerifierSettings.DisableRequireUniquePrefix();
         DerivePathInfo(
             (sourceFile, _, type, method) =>
@@ -42,6 +42,7 @@ public static class ModuleInitializer
         {
             _writer = new WKTWriter();
         }
+
         public override bool CanConvert(Type type)
         {
             return typeof(Geometry).IsAssignableFrom(type);

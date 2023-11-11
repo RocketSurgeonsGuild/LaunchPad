@@ -68,6 +68,7 @@ public class ProblemDetailsConvention : IServiceConvention
                              static (ctx, _) =>
                              {
                                  var result = ctx.Items[typeof(ValidationResult)] as ValidationResult;
+                                 // ReSharper disable once NullableWarningSuppressionIsUsed
                                  return new FluentValidationProblemDetails(result!.Errors)
                                  {
                                      Status = StatusCodes.Status422UnprocessableEntity

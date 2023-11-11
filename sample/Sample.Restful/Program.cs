@@ -147,15 +147,14 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
     );
 }
 
-public partial class Program
-{
-}
+public partial class Program;
 
 internal class CustomHostedServiceOptions
 {
     public string? A { get; set; }
 
-    private class Validator : AbstractValidator<CustomHostedServiceOptions>
+    [UsedImplicitly]
+    private sealed class Validator : AbstractValidator<CustomHostedServiceOptions>
     {
         public Validator()
         {
@@ -164,17 +163,10 @@ internal class CustomHostedServiceOptions
     }
 }
 
-internal class CustomHostedService : BackgroundService
+internal class CustomHostedService(IOptions<CustomHostedServiceOptions> options) : BackgroundService
 {
-    private readonly IOptions<CustomHostedServiceOptions> _options;
-
-    public CustomHostedService(IOptions<CustomHostedServiceOptions> options)
-    {
-        _options = options;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var v = _options.Value.A;
+        var v = options.Value.A;
     }
 }

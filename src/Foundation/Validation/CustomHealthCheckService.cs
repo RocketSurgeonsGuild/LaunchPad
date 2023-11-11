@@ -2,24 +2,16 @@
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 
-internal class CustomHealthCheckService : HealthCheckService
+internal class CustomHealthCheckService(HealthCheckService wrappedService, ValidationHealthCheckResults healthCheckResults)
+    : HealthCheckService
 {
-    private readonly HealthCheckService _wrappedService;
-    private readonly ValidationHealthCheckResults _healthCheckResults;
-
-    public CustomHealthCheckService(HealthCheckService wrappedService, ValidationHealthCheckResults healthCheckResults)
-    {
-        _wrappedService = wrappedService;
-        _healthCheckResults = healthCheckResults;
-    }
-
     public override async Task<HealthReport> CheckHealthAsync(
         Func<HealthCheckRegistration, bool>? predicate, CancellationToken cancellationToken = new CancellationToken()
     )
     {
-        var results = await _wrappedService.CheckHealthAsync(predicate, cancellationToken);
+        var results = await wrappedService.CheckHealthAsync(predicate, cancellationToken);
         return new HealthReport(
-            results.Entries.Concat(_healthCheckResults.Results).ToDictionary(z => z.Key, z => z.Value),
+            results.Entries.Concat(healthCheckResults.Results).ToDictionary(z => z.Key, z => z.Value),
             results.TotalDuration
         );
     }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Extensions.Tests;
 
-public class StringInValidatorTests : ConventionFakeTest
+public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
 {
     [Fact]
     public async Task Should_Validate_Invalid()
@@ -64,10 +64,6 @@ public class StringInValidatorTests : ConventionFakeTest
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(z => z.PropertyName == nameof(Target.TypeIgnoreCase));
-    }
-
-    public StringInValidatorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
     }
 
     private class Target

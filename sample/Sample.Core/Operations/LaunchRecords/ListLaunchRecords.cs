@@ -18,24 +18,13 @@ public static class ListLaunchRecords
     // TODO: Paging model!
     public record Request(RocketType? RocketType) : IStreamRequest<LaunchRecordModel>;
 
-    private class Validator : AbstractValidator<Request>
+    private class Validator : AbstractValidator<Request>;
+
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
-    }
-
-    private class Handler : IStreamRequestHandler<Request, LaunchRecordModel>
-    {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public IAsyncEnumerable<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var query = _dbContext.LaunchRecords
+            var query = dbContext.LaunchRecords
                                   .Include(x => x.Rocket)
                                   .AsQueryable();
             if (request.RocketType.HasValue)
@@ -44,7 +33,7 @@ public static class ListLaunchRecords
             }
 
             return query
-                  .ProjectTo<LaunchRecordModel>(_mapper.ConfigurationProvider)
+                  .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider)
                   .ToAsyncEnumerable();
         }
     }

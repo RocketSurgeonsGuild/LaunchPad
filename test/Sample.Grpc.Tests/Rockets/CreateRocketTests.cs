@@ -1,17 +1,13 @@
-﻿using DryIoc;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class CreateRocketTests : WebAppFixtureTest<TestWebAppFixture>
+public class CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFixture webAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, webAppFixture)
 {
-    public CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFixture webAppFixture) : base(testOutputHelper, webAppFixture)
-    {
-    }
-
     [Fact]
     public async Task Should_Create_A_Rocket()
     {

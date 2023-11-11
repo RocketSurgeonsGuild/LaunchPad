@@ -6,7 +6,7 @@ using Serilog.Events;
 
 namespace Rocket.Surgery.LaunchPad.Spatial;
 
-internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
+internal class NetTopologySuiteDestructuringPolicy(bool writeGeometryBBox, string? idPropertyName) : IDestructuringPolicy
 {
     public const string defaultIdPropertyName = "_NetTopologySuite_id";
 
@@ -149,8 +149,8 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
         return new SequenceValue(values);
     }
 
-    private readonly string _idPropertyName;
-    private readonly bool _writeGeometryBBox;
+    private readonly string _idPropertyName = idPropertyName ?? defaultIdPropertyName;
+    private readonly bool _writeGeometryBBox = writeGeometryBBox;
 
     public NetTopologySuiteDestructuringPolicy()
         : this(false)
@@ -160,12 +160,6 @@ internal class NetTopologySuiteDestructuringPolicy : IDestructuringPolicy
     public NetTopologySuiteDestructuringPolicy(bool writeGeometryBBox)
         : this(writeGeometryBBox, defaultIdPropertyName)
     {
-    }
-
-    public NetTopologySuiteDestructuringPolicy(bool writeGeometryBBox, string? idPropertyName)
-    {
-        _writeGeometryBBox = writeGeometryBBox;
-        _idPropertyName = idPropertyName ?? defaultIdPropertyName;
     }
 
     private LogEventPropertyValue WriteFeature(ILogEventPropertyValueFactory propertyValueFactory, IFeature value)

@@ -1,20 +1,15 @@
-﻿using DryIoc;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class RemoveRocketsTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
+public class RemoveRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     private static readonly Faker Faker = new();
-
-    public RemoveRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture) : base(outputHelper, rocketSurgeryWebAppFixture)
-    {
-    }
 
     [Fact]
     public async Task Should_Remove_Rocket()
@@ -28,7 +23,7 @@ public class RemoveRocketsTests : GraphQlWebAppFixtureTest<GraphQlAppFixture>
                                                var rocket = faker.Generate();
                                                z.Add(rocket);
 
-                                               await z.SaveChangesAsync().ConfigureAwait(false);
+                                               await z.SaveChangesAsync();
                                                return rocket.Id;
                                            }
                                        );

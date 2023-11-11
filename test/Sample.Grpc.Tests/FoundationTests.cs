@@ -1,13 +1,11 @@
 ﻿using System.Net;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Extensions.Testing;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests;
 
-public class FoundationTests : WebAppFixtureTest<TestWebAppFixture>
+public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
 {
     [Fact]
     public void AutoMapper()
@@ -21,9 +19,5 @@ public class FoundationTests : WebAppFixtureTest<TestWebAppFixture>
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    public FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : base(testOutputHelper, factory)
-    {
     }
 }

@@ -31,28 +31,19 @@ public static class GetRocketLaunchRecords
         }
     }
 
-    private class Handler : IStreamRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext, IMapper mapper) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
-        private readonly RocketDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public Handler(RocketDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public async IAsyncEnumerable<LaunchRecordModel> Handle(Request request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var rocket = await _dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
             if (rocket == null)
             {
                 throw new NotFoundException();
             }
 
-            var query = _dbContext.LaunchRecords.AsQueryable()
+            var query = dbContext.LaunchRecords.AsQueryable()
                                   .Where(z => z.RocketId == rocket.Id)
-                                  .ProjectTo<LaunchRecordModel>(_mapper.ConfigurationProvider);
+                                  .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider);
             await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
             {
                 yield return item;
