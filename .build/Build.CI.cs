@@ -63,11 +63,12 @@ public partial class Pipeline
 
     public static RocketSurgeonGitHubActionsConfiguration CiMiddleware(RocketSurgeonGitHubActionsConfiguration configuration)
     {
-        configuration
-           .ExcludeRepositoryConfigurationFiles()
-           .AddNugetPublish()
-           .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
-           .First(z => z.Name.Equals("build", StringComparison.OrdinalIgnoreCase))
+        var job = configuration
+                 .ExcludeRepositoryConfigurationFiles()
+                 .AddNugetPublish()
+                 .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
+                 .First(z => z.Name.Equals("build", StringComparison.OrdinalIgnoreCase));
+        job
            .UseDotNetSdks("6.0", "7.0")
            .AddNuGetCache()
             // .ConfigureForGitVersion()
@@ -75,6 +76,20 @@ public partial class Pipeline
            .PublishLogs<Pipeline>()
            .FailFast = false;
 
+        job.Steps.Insert(
+            GetCheckStepIndex(job), new RunStep("Create branch for tag (gitversion)")
+            {
+                If = "(github.ref_type == 'tag')",
+                Run = "git checkout -b ci/${{ github.ref }}"
+            }
+        );
+
         return configuration;
+    }
+
+    private static int GetCheckStepIndex(RocketSurgeonsGithubActionsJob job)
+    {
+        var checkoutStep = job.Steps.OfType<CheckoutStep>().SingleOrDefault();
+        return checkoutStep is null ? 1 : job.Steps.IndexOf(checkoutStep);
     }
 }
