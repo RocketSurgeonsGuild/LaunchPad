@@ -76,6 +76,10 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
+      - name: Create branch for tag (gitversion)
+        if: (github.ref_type == 'tag')
+        run: |
+          git checkout -b ci/${{ github.ref }}
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
