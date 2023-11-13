@@ -77,7 +77,7 @@ public partial class Pipeline
            .FailFast = false;
 
         job.Steps.Insert(
-            GetCheckStepIndex(job), new RunStep("Create branch for tag (gitversion)")
+            GetCheckStepIndex(job)+1, new RunStep("Create branch for tag (gitversion)")
             {
                 If = "(github.ref_type == 'tag')",
                 Run = "git checkout -b ci/${{ github.ref }}"
