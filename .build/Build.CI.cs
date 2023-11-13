@@ -80,7 +80,7 @@ public partial class Pipeline
             GetCheckStepIndex(job)+1, new RunStep("Create branch for tag (gitversion)")
             {
                 If = "(github.ref_type == 'tag')",
-                Run = "git checkout -b ci/${{ github.ref }}"
+                Run = "git checkout -b ${{ github.ref_name }}"
             }
         );
 
