@@ -76,13 +76,13 @@ public partial class Pipeline
            .PublishLogs<Pipeline>()
            .FailFast = false;
 
-        job.Steps.Insert(
-            GetCheckStepIndex(job)+1, new RunStep("Create branch for tag (gitversion)")
-            {
-                If = "(github.ref_type == 'tag')",
-                Run = "git checkout -b ${{ github.ref_name }}"
-            }
-        );
+//        job.Steps.Insert(
+//            GetCheckStepIndex(job)+1, new RunStep("Create branch for tag (gitversion)")
+//            {
+//                If = "(github.ref_type == 'tag')",
+//                Run = "git checkout -b ${{ github.ref_name }}"
+//            }
+//        );
 
         return configuration;
     }

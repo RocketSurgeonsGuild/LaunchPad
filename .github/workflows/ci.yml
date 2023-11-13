@@ -81,10 +81,6 @@ jobs:
         with:
           clean: 'false'
           fetch-depth: '0'
-      - name: Create branch for tag (gitversion)
-        if: (github.ref_type == 'tag')
-        run: |
-          git checkout -b ${{ github.ref_name }}
       - name: NuGet Cache
         uses: actions/cache@v3
         with:
