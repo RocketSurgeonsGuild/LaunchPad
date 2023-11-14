@@ -3,11 +3,11 @@
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
-    <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.1.2" />
-    <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.1.2" />
-    <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.1.2" Condition="'$(MSBuildProjectName)'!='.build'" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.1.4" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.1.4" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.1.4" Condition="'$(MSBuildProjectName)'!='.build'" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.Metadata" Version="1.1.0" />
-    <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.1.2" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.1.4" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.6.2" />
     <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.6.2" />
     <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.6.2" />
@@ -17,7 +17,7 @@
     <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2023.2.3" />
     <PackageVersion Include="Nuke.Common" Version="7.0.6" />
     <PackageVersion Include="ReportGenerator" Version="5.1.26" />
-    <PackageVersion Include="Rocket.Surgery.Nuke" Version="1.7.3" />
+    <PackageVersion Include="Rocket.Surgery.Nuke" Version="1.7.4" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="12.0.1" />
