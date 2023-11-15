@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
@@ -12,7 +12,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="ChangeTracking" />
-      <Folder Include="Mapping" />       
+      <Folder Include="Mapping" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />

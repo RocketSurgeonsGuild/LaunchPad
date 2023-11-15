@@ -8,7 +8,6 @@ using Rocket.Surgery.Nuke.GithubActions;
 
 [GitHubActionsSteps(
     "ci-ignore",
-//    GitHubActionsImage.WindowsLatest,
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = false,
     On = new[] { RocketSurgeonGitHubActionsTrigger.Push },
@@ -19,8 +18,6 @@ using Rocket.Surgery.Nuke.GithubActions;
 )]
 [GitHubActionsSteps(
     "ci",
-//    GitHubActionsImage.MacOsLatest,
-//    GitHubActionsImage.WindowsLatest,
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = false,
     On = new[] { RocketSurgeonGitHubActionsTrigger.Push },
@@ -50,7 +47,7 @@ public partial class Pipeline
 {
     public static RocketSurgeonGitHubActionsConfiguration CiIgnoreMiddleware(RocketSurgeonGitHubActionsConfiguration configuration)
     {
-        ( (RocketSurgeonsGithubActionsJob)configuration.Jobs[0] ).Steps = new List<GitHubActionsStep>
+        ((RocketSurgeonsGithubActionsJob)configuration.Jobs[0]).Steps = new List<GitHubActionsStep>
         {
             new RunStep("N/A")
             {
@@ -69,20 +66,11 @@ public partial class Pipeline
                  .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
                  .First(z => z.Name.Equals("build", StringComparison.OrdinalIgnoreCase));
         job
-           .UseDotNetSdks("6.0", "7.0")
+           .UseDotNetSdks("6.0", "8.0")
            .AddNuGetCache()
-            // .ConfigureForGitVersion()
            .ConfigureStep<CheckoutStep>(step => step.FetchDepth = 0)
            .PublishLogs<Pipeline>()
            .FailFast = false;
-
-//        job.Steps.Insert(
-//            GetCheckStepIndex(job)+1, new RunStep("Create branch for tag (gitversion)")
-//            {
-//                If = "(github.ref_type == 'tag')",
-//                Run = "git checkout -b ${{ github.ref_name }}"
-//            }
-//        );
 
         return configuration;
     }
