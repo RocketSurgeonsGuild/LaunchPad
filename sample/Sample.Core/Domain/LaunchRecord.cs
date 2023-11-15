@@ -9,10 +9,8 @@ namespace Sample.Core.Domain;
 public class LaunchRecord // : ILaunchRecord
 {
     public LaunchRecordId Id { get; set; }
-    [StringLength(1000)]
-    public string? Partner { get; set; }
-    [StringLength(1000)]
-    public string? Payload { get; set; }
+    [StringLength(1000)] public string? Partner { get; set; }
+    [StringLength(1000)] public string? Payload { get; set; }
     public long PayloadWeightKg { get; set; }
     public DateTimeOffset? ActualLaunchDate { get; set; }
     public DateTimeOffset ScheduledLaunchDate { get; set; }
@@ -27,7 +25,11 @@ public class LaunchRecord // : ILaunchRecord
             builder.HasKey(x => x.Id);
             builder.Property(z => z.Id)
                    .ValueGeneratedOnAdd()
+#if NET8_0_OR_GREATER
+                   .HasValueGenerator((property, @base) => StronglyTypedIdValueGenerator.Create(LaunchRecordId.New)(property, @base.ContainingEntityType));
+#else
                    .HasValueGenerator(StronglyTypedIdValueGenerator.Create(LaunchRecordId.New));
+#endif
         }
     }
 }
