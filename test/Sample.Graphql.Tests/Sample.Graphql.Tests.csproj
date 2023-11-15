@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-        
+        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.Net.Http.Json" />
-        
+
         <PackageReference Include="StrawberryShake.Transport.Http" />
         <PackageReference Include="StrawberryShake.Server" />
     </ItemGroup>
