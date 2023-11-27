@@ -147,7 +147,7 @@
     <PackageVersion Include="xunit" Version="2.6.2" />
     <PackageVersion Include="xunit.analyzers" Version="1.6.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.4" />
-    <PackageVersion Include="Verify.Xunit" Version="22.5.0" />
+    <PackageVersion Include="Verify.Xunit" Version="22.6.0" />
     <PackageVersion Include="Verify.NodaTime" Version="2.1.0" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
   </ItemGroup>
