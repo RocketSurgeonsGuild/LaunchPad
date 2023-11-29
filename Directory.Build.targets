@@ -7,11 +7,7 @@
             PrivateAssets="All"
         />
     <PackageReference Include="Microsoft.SourceLink.GitHub" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
-    <PackageReference
-            Include="Rocket.Surgery.MSBuild.CI"
-            IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive;BuildMultitargeting;"
-            PrivateAssets="All"
-        />
+    <PackageReference Include="Rocket.Surgery.MSBuild.CI" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
     <PackageReference Include="Rocket.Surgery.MSBuild.GitVersion" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
     <PackageReference
             Include="Rocket.Surgery.MSBuild.JetBrains.Annotations"
@@ -20,6 +16,7 @@
             Condition="'$(MSBuildProjectName)'!='.build'"
         />
     <PackageReference Include="Rocket.Surgery.MSBuild.SourceLink" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
+    <PackageReference Include="Polyfill" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
     <PackageReference Include="Roslynator.Analyzers" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
     <PackageReference Include="Roslynator.Formatting.Analyzers" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
     <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />
