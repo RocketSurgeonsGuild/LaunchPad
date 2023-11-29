@@ -19,6 +19,7 @@ using Rocket.Surgery.Nuke.DotNetCore;
 [MSBuildVerbosityMapping]
 [NuGetVerbosityMapping]
 [ShutdownDotNetAfterServerBuild]
+[LocalBuildConventions]
 public partial class Pipeline : NukeBuild,
                                 ICanRestoreWithDotNetCore,
                                 ICanBuildWithDotNetCore,
@@ -27,10 +28,15 @@ public partial class Pipeline : NukeBuild,
                                 IHaveNuGetPackages,
                                 IHaveDataCollector,
                                 ICanClean,
+                                ICanLintStagedFiles,
+                                ICanDotNetFormat,
+                                ICanPrettier,
+                                // IHavePublicApis,
                                 ICanUpdateReadme,
                                 IGenerateCodeCoverageReport,
                                 IGenerateCodeCoverageSummary,
                                 IGenerateCodeCoverageBadges,
+                                ICanRegenerateBuildConfiguration,
                                 IHaveConfiguration<Configuration>
 {
     /// <summary>
@@ -45,48 +51,26 @@ public partial class Pipeline : NukeBuild,
         return Execute<Pipeline>(x => x.Default);
     }
 
-    public static int FindFreePort()
-    {
-        var port = 0;
-        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        try
-        {
-            var localEP = new IPEndPoint(IPAddress.Any, 0);
-            socket.Bind(localEP);
-            localEP = (IPEndPoint)socket.LocalEndPoint;
-            port = localEP.Port;
-        }
-        finally
-        {
-            socket.Close();
-        }
-
-        return port;
-    }
-
-    public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
-                                .DependsOn(Clean);
-
-    public Target BuildVersion => _ => _.Inherit<IHaveBuildVersion>(x => x.BuildVersion)
-                                        .Before(Default)
-                                        .Before(Clean);
-
-    [OptionalGitRepository] public GitRepository? GitRepository { get; }
-
     private Target Default => _ => _
                                   .DependsOn(Restore)
                                   .DependsOn(Build)
                                   .DependsOn(Test)
                                   .DependsOn(Pack);
 
-    [Solution(GenerateProjects = true)] private Solution Solution { get; } = null!;
-
     public Target Build => _ => _.Inherit<ICanBuildWithDotNetCore>(x => x.CoreBuild);
 
-    public Target Clean => _ => _.Inherit<ICanClean>(x => x.Clean);
+    public Target Pack => _ => _.Inherit<ICanPackWithDotNetCore>(x => x.CorePack)
+                                .DependsOn(Clean);
+
+    public Target Clean   => _ => _.Inherit<ICanClean>(x => x.Clean);
+    public Target Lint    => _ => _.Inherit<ICanLint>(x => x.Lint);
     public Target Restore => _ => _.Inherit<ICanRestoreWithDotNetCore>(x => x.CoreRestore);
+    public Target Test    => _ => _.Inherit<ICanTestWithDotNetCore>(x => x.CoreTest);
+
+    [Solution(GenerateProjects = true)] private Solution Solution { get; } = null!;
     Nuke.Common.ProjectModel.Solution IHaveSolution.Solution => Solution;
+
+    [OptionalGitRepository] public GitRepository? GitRepository { get; }
     [ComputedGitVersion] public GitVersion GitVersion { get; } = null!;
-    public Target Test => _ => _.Inherit<ICanTestWithDotNetCore>(x => x.CoreTest);
     [Parameter("Configuration to build")] public Configuration Configuration { get; } = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 }

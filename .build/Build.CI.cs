@@ -38,6 +38,13 @@ using Rocket.Surgery.Nuke.GithubActions;
     ExcludedTargets = new[] { nameof(ICanClean.Clean), nameof(ICanRestoreWithDotNetCore.DotnetToolRestore) },
     Enhancements = new[] { nameof(CiMiddleware) }
 )]
+[GitHubActionsLint(
+    "lint",
+    GitHubActionsImage.UbuntuLatest,
+    AutoGenerate = false,
+    OnPullRequestTargetBranches = new[] { "master", "main", "next" },
+    Enhancements = new[] { nameof(LintStagedMiddleware) }
+)]
 [PrintBuildVersion]
 [PrintCIEnvironment]
 [UploadLogs]
@@ -69,15 +76,18 @@ public partial class Pipeline
            .UseDotNetSdks("6.0", "8.0")
            .AddNuGetCache()
            .ConfigureStep<CheckoutStep>(step => step.FetchDepth = 0)
-           .PublishLogs<Pipeline>()
-           .FailFast = false;
+           .PublishLogs<Pipeline>();
 
         return configuration;
     }
 
-    private static int GetCheckStepIndex(RocketSurgeonsGithubActionsJob job)
+    public static RocketSurgeonGitHubActionsConfiguration LintStagedMiddleware(RocketSurgeonGitHubActionsConfiguration configuration)
     {
-        var checkoutStep = job.Steps.OfType<CheckoutStep>().SingleOrDefault();
-        return checkoutStep is null ? 1 : job.Steps.IndexOf(checkoutStep);
+        configuration
+           .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
+           .First(z => z.Name.Equals("Build", StringComparison.OrdinalIgnoreCase))
+           .UseDotNetSdks("6.0", "8.0");
+
+        return configuration;
     }
 }
