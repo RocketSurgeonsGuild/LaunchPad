@@ -43,9 +43,9 @@ public static class ModuleInitializer
 
                 // ReSharper disable once RedundantAssignment
                 var path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots");
-#if !ROSLYN_CURRENT
+                #if !ROSLYN_CURRENT
                 path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "../Analyzers.Tests", "snapshots");
-#endif
+                #endif
                 return new(path, typeName, method.Name);
             }
         );
@@ -60,15 +60,16 @@ public static class ModuleInitializer
             targets.AddRange(item.Value.SyntaxTrees.Select(Selector));
         }
 
-        return new(new { target.ResultDiagnostics, Results = target.Results.ToDictionary(z => z.Key.FullName!, z => z.Value.Diagnostics) }, targets);
+        return new(new { target.ResultDiagnostics, Results = target.Results.ToDictionary(z => z.Key.FullName!, z => z.Value.Diagnostics), }, targets);
     }
 
     private static Target Selector(SyntaxTree source)
     {
-        var hintPath = source.FilePath
-                             .Replace("\\", "/", StringComparison.OrdinalIgnoreCase)
-                             .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
-                             .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase);
+        var hintPath = source
+                      .FilePath
+                      .Replace("\\", "/", StringComparison.OrdinalIgnoreCase)
+                      .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
+                      .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase);
         var data = $@"//HintName: {hintPath}
 {source.GetText()}";
         return new("cs", data.Replace("\r", string.Empty, StringComparison.OrdinalIgnoreCase));
@@ -76,7 +77,7 @@ public static class ModuleInitializer
 
     private static ConversionResult Convert(GenerationTestResult target, IReadOnlyDictionary<string, object> context)
     {
-        return new(new { target.Diagnostics }, target.SyntaxTrees.Select(Selector));
+        return new(new { target.Diagnostics, }, target.SyntaxTrees.Select(Selector));
     }
 
 
@@ -91,9 +92,10 @@ public static class ModuleInitializer
                 exceptions.Add(result.Exception);
             }
 
-            var collection = result.GeneratedSources
-                                   .OrderBy(x => x.HintName)
-                                   .Select(SourceToTarget);
+            var collection = result
+                            .GeneratedSources
+                            .OrderBy(x => x.HintName)
+                            .Select(SourceToTarget);
             targets.AddRange(collection);
         }
 
@@ -110,9 +112,9 @@ public static class ModuleInitializer
         if (target.Diagnostics.Any())
         {
             var info = new
-            {
-                target.Diagnostics
-            };
+                       {
+                           target.Diagnostics,
+                       };
             return new(info, targets);
         }
 
@@ -121,9 +123,10 @@ public static class ModuleInitializer
 
     private static Target SourceToTarget(GeneratedSourceResult source)
     {
-        var hintName = source.HintName
-                             .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
-                             .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase);
+        var hintName = source
+                      .HintName
+                      .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
+                      .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase);
         var data = $@"//HintName: {hintName}
 {source.SourceText}";
         return new("cs", data, Path.GetFileNameWithoutExtension(hintName));
@@ -181,9 +184,12 @@ public static class ModuleInitializer
         {
             writer.WriteStartObject();
             writer.WriteMember(
-                value, value.HintName
-                            .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
-                            .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase), "HintName"
+                value,
+                value
+                   .HintName
+                   .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
+                   .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase),
+                "HintName"
             );
             writer.WriteMember(value, value.SourceText, "Source");
             writer.WriteEndObject();
