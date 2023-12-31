@@ -71,7 +71,7 @@ public static class ModuleInitializer
                              .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase);
         var data = $@"//HintName: {hintPath}
 {source.GetText()}";
-        return new("cs.txt", data.Replace("\r", string.Empty, StringComparison.OrdinalIgnoreCase));
+        return new("cs", data.Replace("\r", string.Empty, StringComparison.OrdinalIgnoreCase));
     }
 
     private static ConversionResult Convert(GenerationTestResult target, IReadOnlyDictionary<string, object> context)
