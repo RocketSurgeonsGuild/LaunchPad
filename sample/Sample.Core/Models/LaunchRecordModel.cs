@@ -10,9 +10,7 @@ namespace Sample.Core.Models;
 /// </summary>
 #pragma warning disable CA1036
 [StronglyTypedId(Template.Guid, "guid-efcore")]
-public partial struct LaunchRecordId
-{
-}
+public partial struct LaunchRecordId { }
 #pragma warning restore CA1036
 
 /// <summary>
