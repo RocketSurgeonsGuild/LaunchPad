@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FluentValidation.AspNetCore;
 using FluentValidation.Validators;
+using MicroElements.OpenApi.FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +34,13 @@ public partial class FluentValidationConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
-                        var propertyType = context.ReflectionContext.PropertyInfo?.DeclaringType ?? context.ReflectionContext.ParameterInfo?.ParameterType;
+                        var ruleContext = ((ValidationRuleContext)context
+                                                                 .GetType()
+                                                                 .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                                                                 .First(z => z.PropertyType == typeof(ValidationRuleContext))
+                                                                 .GetValue(context))
+                           .GetReflectionContext();
+                        var propertyType = ruleContext?.PropertyInfo?.DeclaringType;
                         if (propertyType == typeof(string))
                         {
                             context.Schema.Properties[context.PropertyKey].MinLength = 1;
@@ -47,7 +54,13 @@ public partial class FluentValidationConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
-                        var propertyType = context.ReflectionContext.PropertyInfo?.DeclaringType ?? context.ReflectionContext.ParameterInfo?.ParameterType;
+                        var ruleContext = ((ValidationRuleContext)context
+                                                                .GetType()
+                                                                .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                                                                .First(z => z.PropertyType == typeof(ValidationRuleContext))
+                                                                .GetValue(context))
+                           .GetReflectionContext();
+                        var propertyType = ruleContext?.PropertyInfo?.DeclaringType;
                         if (propertyType != null &&
                             ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) ||
                               propertyType.IsEnum ))
@@ -64,11 +77,15 @@ public partial class FluentValidationConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
+                        var ruleContext = ((ValidationRuleContext)context
+                                                                 .GetType()
+                                                                 .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                                                                 .First(z => z.PropertyType == typeof(ValidationRuleContext))
+                                                                 .GetValue(context))
+                           .GetReflectionContext();
                         context.Schema.Properties[context.PropertyKey].Nullable =
                             context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
-                         || ( context.ReflectionContext.ParameterInfo is { } pai && getNullableValue(pai.GetNullability(), pai.ParameterType) )
-                         || ( context.ReflectionContext.PropertyInfo is PropertyInfo pi && getNullableValue(pi.GetNullability(), pi.PropertyType) )
-                         || ( context.ReflectionContext.PropertyInfo is FieldInfo fi && getNullableValue(fi.GetNullability(), fi.FieldType) )
+                         || ( ruleContext.PropertyInfo is FieldInfo fi && getNullableValue(fi.GetNullability(), fi.FieldType) )
                             ;
 
                         static bool getNullableValue(Nullability nullability, Type propertyType)
