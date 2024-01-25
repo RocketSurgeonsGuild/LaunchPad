@@ -8,13 +8,8 @@ namespace Sample.Core.Models;
 ///     Unique Id of a rocket
 /// </summary>
 #pragma warning disable CA1036
-[StronglyTypedId(
-    StronglyTypedIdBackingType.Guid,
-    StronglyTypedIdConverter.SystemTextJson | StronglyTypedIdConverter.EfCoreValueConverter | StronglyTypedIdConverter.TypeConverter
-)]
-public partial struct RocketId
-{
-}
+[StronglyTypedId(Template.Guid, "guid-efcore")]
+public partial struct RocketId { }
 #pragma warning restore CA1036
 
 /// <summary>

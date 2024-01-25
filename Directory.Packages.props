@@ -8,7 +8,7 @@
     <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.1.5" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.1.5" Condition="'$(MSBuildProjectName)'!='.build'" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.1.5" />
-    <PackageVersion Include="Polyfill" Version="1.32.1" />
+    <PackageVersion Include="Polyfill" Version="2.1.0" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.10.0" />
     <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.10.0" />
     <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.10.0" />
@@ -17,43 +17,43 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="GitVersion.Tool" Version="5.12.0" />
-    <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2023.2.3" />
-    <PackageVersion Include="Nuke.Common" Version="7.0.6" />
+    <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2023.3.3" />
+    <PackageVersion Include="Nuke.Common" Version="8.0.0" />
     <PackageVersion Include="ReportGenerator" Version="5.2.0" />
-    <PackageVersion Include="Rocket.Surgery.Nuke" Version="1.8.6" />
+    <PackageVersion Include="Rocket.Surgery.Nuke" Version="1.8.14" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="12.0.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageVersion Include="FairyBread" Version="10.0.0" />
-    <PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.11.0" />
-    <PackageVersion Include="FluentValidation" Version="11.8.1" />
+    <PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.11.1" />
+    <PackageVersion Include="FluentValidation" Version="11.9.0" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
-    <PackageVersion Include="Grpc.AspNetCore" Version="2.59.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.60.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
-    <PackageVersion Include="HotChocolate" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Abstractions" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.AspNetCore" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Data" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="14.0.0-p.15" />
-    <PackageVersion Include="HotChocolate.Types.Spatial" Version="14.0.0-p.15" />
-    <PackageVersion Include="StrawberryShake.Transport.Http" Version="14.0.0-p.15" />
-    <PackageVersion Include="StrawberryShake" Version="14.0.0-p.15" />
-    <PackageVersion Include="StrawberryShake.Core" Version="14.0.0-p.15" />
-    <PackageVersion Include="StrawberryShake.Server" Version="14.0.0-p.15" />
-    <PackageVersion Include="StrawberryShake.Maui" Version="14.0.0-p.15" />
-    <PackageVersion Include="StrawberryShake.Blazor" Version="14.0.0-p.15" />
-    <PackageVersion Include="StrawberryShake.Razor" Version="14.0.0-p.15" />
+    <PackageVersion Include="HotChocolate" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Abstractions" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Data" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="14.0.0-p.22" />
+    <PackageVersion Include="HotChocolate.Types.Spatial" Version="14.0.0-p.22" />
+    <PackageVersion Include="StrawberryShake.Transport.Http" Version="14.0.0-p.22" />
+    <PackageVersion Include="StrawberryShake" Version="14.0.0-p.22" />
+    <PackageVersion Include="StrawberryShake.Core" Version="14.0.0-p.22" />
+    <PackageVersion Include="StrawberryShake.Server" Version="14.0.0-p.22" />
+    <PackageVersion Include="StrawberryShake.Maui" Version="14.0.0-p.22" />
+    <PackageVersion Include="StrawberryShake.Blazor" Version="14.0.0-p.22" />
+    <PackageVersion Include="StrawberryShake.Razor" Version="14.0.0-p.22" />
     <PackageVersion Include="MediatR" Version="12.2.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
@@ -76,18 +76,18 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" />
     <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.0" />
-    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
+    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NetTopologySuite" Version="2.5.0" />
     <PackageVersion Include="NetTopologySuite.Features" Version="2.1.0" />
     <PackageVersion Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
     <PackageVersion Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
-    <PackageVersion Include="NodaTime" Version="3.1.9" />
+    <PackageVersion Include="NodaTime" Version="3.1.10" />
     <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.1.0" />
     <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.1.2" />
-    <PackageVersion Include="NodaTime.Testing" Version="3.1.9" />
-    <PackageVersion Include="Polly" Version="8.2.0" />
-    <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta06" />
+    <PackageVersion Include="NodaTime.Testing" Version="3.1.10" />
+    <PackageVersion Include="Polly" Version="8.2.1" />
+    <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta07" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
     <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.9.3" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="12.9.3" />
@@ -103,7 +103,7 @@
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="12.9.3" />
     <PackageVersion Include="Scrutor" Version="4.2.2" />
     <PackageVersion Include="Serilog" Version="3.1.1" />
-    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
     <PackageVersion Include="Serilog.Enrichers.Demystify" Version="1.0.0-dev-00019" />
     <PackageVersion Include="Serilog.Exceptions" Version="8.4.0" />
     <PackageVersion Include="Serilog.Enrichers.Environment" Version="2.3.0" />
@@ -130,28 +130,28 @@
     <PackageVersion Include="NSwag.ApiDescription.Client" Version="13.20.0" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="8.0.0" />
-    <PackageVersion Include="OpenTelemetry" Version="1.6.0" />
-    <PackageVersion Include="OpenTelemetry.Api" Version="1.6.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.14" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.14" />
+    <PackageVersion Include="OpenTelemetry" Version="1.7.0" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.7.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.7.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Alba" Version="7.4.1" />
-    <PackageVersion Include="Bogus" Version="34.0.2" />
+    <PackageVersion Include="Bogus" Version="35.4.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
-    <PackageVersion Include="FakeItEasy" Version="8.0.0" />
+    <PackageVersion Include="FakeItEasy" Version="8.1.0" />
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-    <PackageVersion Include="FluentAssertions.Analyzers" Version="0.26.0" />
+    <PackageVersion Include="FluentAssertions.Analyzers" Version="0.30.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="8.0.3" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="8.0.3" />
-    <PackageVersion Include="xunit" Version="2.6.2" />
-    <PackageVersion Include="xunit.analyzers" Version="1.6.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.4" />
-    <PackageVersion Include="Verify.Xunit" Version="22.6.0" />
+    <PackageVersion Include="xunit" Version="2.6.6" />
+    <PackageVersion Include="xunit.analyzers" Version="1.10.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.6" />
+    <PackageVersion Include="Verify.Xunit" Version="22.11.5" />
     <PackageVersion Include="Verify.NodaTime" Version="2.1.0" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
   </ItemGroup>

@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
       <PackageReference Include="StronglyTypedId" />
+      <PackageReference Include="StronglyTypedId.Templates" />
 
   </ItemGroup>
 
