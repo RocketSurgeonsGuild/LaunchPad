@@ -9,7 +9,6 @@ using Rocket.Surgery.LaunchPad.Analyzers;
 
 namespace Analyzers.Tests;
 
-[UsesVerify]
 public class GraphqlMutationActionBodyGeneratorTests : GeneratorTest
 {
     [Fact]
@@ -198,7 +197,7 @@ public static class GetRocketLaunchRecord
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
-        
+
         public Guid LaunchId { get; init; }
     }
 }",
@@ -238,7 +237,7 @@ public static class GetRocketLaunchRecord
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
-        
+
         public Guid LaunchRecordId { get; init; }
     }
 }",
@@ -278,7 +277,7 @@ public static class GetRocketLaunchRecord
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
-        
+
         public string LaunchRecordId { get; init; }
     }
 }",

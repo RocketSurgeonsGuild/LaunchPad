@@ -10,7 +10,6 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Analyzers.Tests;
 
-[UsesVerify]
 public class GraphqlOptionalPropertyTrackingGeneratorTests : GeneratorTest
 {
     [Fact]
@@ -28,7 +27,7 @@ namespace Sample.Core.Operations.Rockets
     }
     public class PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
     {
-        public Guid Id { get; init; }        
+        public Guid Id { get; init; }
     }
 }
 ";
@@ -58,7 +57,7 @@ namespace Sample.Core.Operations.Rockets
     {
         public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
         {
-            public Guid Id { get; init; }        
+            public Guid Id { get; init; }
         }
     }
 }

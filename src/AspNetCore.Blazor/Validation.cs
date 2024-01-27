@@ -37,7 +37,7 @@ public class FluentValidator : ComponentBase
             propertyPath = propertyPath.Substring(nextTokenEnd + 1);
 
             object? newObj;
-            if (nextToken.EndsWith("]", StringComparison.OrdinalIgnoreCase))
+            if (nextToken.EndsWith(']'))
             {
                 // It's an indexer
                 // This code assumes C# conventions (one indexer named Item with one param)

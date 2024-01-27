@@ -13,7 +13,6 @@ using Serilog.Context;
 
 namespace Extensions.Tests;
 
-[UsesVerify]
 public class SerilogDestructuringTests : LoggerTest
 {
     [Fact]

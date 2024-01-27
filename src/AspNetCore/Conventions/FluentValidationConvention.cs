@@ -38,7 +38,7 @@ public partial class FluentValidationConvention : IServiceConvention
                                                                  .GetType()
                                                                  .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
                                                                  .First(z => z.PropertyType == typeof(ValidationRuleContext))
-                                                                 .GetValue(context))
+                                                                 .GetValue(context)!)
                            .GetReflectionContext();
                         var propertyType = ruleContext?.PropertyInfo?.DeclaringType;
                         if (propertyType == typeof(string))
@@ -58,7 +58,7 @@ public partial class FluentValidationConvention : IServiceConvention
                                                                 .GetType()
                                                                 .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
                                                                 .First(z => z.PropertyType == typeof(ValidationRuleContext))
-                                                                .GetValue(context))
+                                                                .GetValue(context)!)
                            .GetReflectionContext();
                         var propertyType = ruleContext?.PropertyInfo?.DeclaringType;
                         if (propertyType != null &&
@@ -81,7 +81,7 @@ public partial class FluentValidationConvention : IServiceConvention
                                                                  .GetType()
                                                                  .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
                                                                  .First(z => z.PropertyType == typeof(ValidationRuleContext))
-                                                                 .GetValue(context))
+                                                                 .GetValue(context)!)
                            .GetReflectionContext();
                         context.Schema.Properties[context.PropertyKey].Nullable =
                             context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)

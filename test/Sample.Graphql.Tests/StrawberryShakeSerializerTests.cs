@@ -9,7 +9,6 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-[UsesVerify]
 public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
 {
     [Fact]
@@ -280,7 +279,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
 //        await using var host = await AlbaHost.For<Program>(
 //            new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
 //        );
-//        
+//
 //        var client = host.Services.GetRequiredService<IRocketClient>();
 //
 //        var reader = new WKTReader();

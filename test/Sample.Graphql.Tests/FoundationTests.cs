@@ -10,7 +10,6 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-[UsesVerify]
 public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
 {
     [Fact]

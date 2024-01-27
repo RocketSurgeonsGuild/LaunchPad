@@ -22,19 +22,93 @@
             PrivateAssets="All"
             ReferenceOutputAssembly="false"
             OutputPath="client/$(TargetFramework)/Sample.RestfulClient.cs"
-        >
-            <Options
-            >/generateClientClasses:true /generateClientInterfaces:true /injectHttpClient:true /disposeHttpClient:false /generateExceptionClasses:true /wrapDtoExceptions:true /useBaseUrl:false /generateBaseUrlProperty:false /operationGenerationMode:"MultipleClientsFromFirstTagAndOperationId" /generateOptionalParameters:true /generateJsonMethods:false /enforceFlagEnums:true /parameterArrayType:"System.Collections.Generic.IEnumerable" /parameterDictionaryType:"System.Collections.Generic.IDictionary" /responseArrayType:"System.Collections.Generic.ICollection" /responseDictionaryType:"System.Collections.Generic.IDictionary" /wrapResponses:true /generateResponseClasses:true /responseClass:"Response" /requiredPropertiesMustBeDefined:false /dateType:"System.DateTimeOffset" /dateTimeType:"System.DateTimeOffset" /timeType:"System.TimeSpan" /timeSpanType:"System.TimeSpan" /arrayType:"System.Collections.ObjectModel.Collection" /arrayInstanceType:"System.Collections.ObjectModel.Collection" /dictionaryType:"System.Collections.Generic.IDictionary" /dictionaryInstanceType:"System.Collections.Generic.Dictionary" /arrayBaseType:"System.Collections.ObjectModel.Collection" /dictionaryBaseType:"System.Collections.Generic.Dictionary" /classStyle:"Poco" /generateDefaultValues:true /generateDataAnnotations:true /generateImmutableArrayProperties:true /generateImmutableDictionaryProperties:true /generateDtoTypes:true /generateOptionalPropertiesAsNullable:true</Options>
-        </OpenApiProjectReference>
+        />
     </ItemGroup>
-
-    <!-- Hack to fix multi-targeting -->
-    <ItemGroup Condition="Exists('$(OpenApiCodeDirectory)\$(MSBuildProjectName).$(TargetFramework).cs') AND '$(OpenApiGenerateCodeOnBuild)'=='false'">
-    </ItemGroup>
-    <Target
-        Name="_TieInGenerateOpenApiCodeHack"
-        BeforeTargets="BeforeCompile"
-        Condition="'$(OpenApiGenerateCodeOnBuild)'=='true'"
-        DependsOnTargets="GenerateOpenApiCode"
-    />
+    
+    <PropertyGroup>
+        <NSwagGenerateExceptionClasses>true</NSwagGenerateExceptionClasses>
+        <NSwagClientBaseClass />
+        <NSwagConfigurationClass />
+        <NSwagGenerateClientClasses>true</NSwagGenerateClientClasses>
+        <NSwagSuppressClientClassesOutput />
+        <NSwagGenerateClientInterfaces>true</NSwagGenerateClientInterfaces>
+        <NSwagSuppressClientInterfacesOutput />
+        <NSwagClientBaseInterface />
+        <NSwagInjectHttpClient>true</NSwagInjectHttpClient>
+        <NSwagDisposeHttpClient>false</NSwagDisposeHttpClient>
+        <NSwagProtectedMethods />
+        <NSwagExceptionClass />
+        <NSwagWrapDtoExceptions>true</NSwagWrapDtoExceptions>
+        <NSwagUseHttpClientCreationMethod />
+        <NSwagHttpClientType />
+        <NSwagUseHttpRequestMessageCreationMethod />
+        <NSwagUseBaseUrl>false</NSwagUseBaseUrl>
+        <NSwagGenerateBaseUrlProperty>false</NSwagGenerateBaseUrlProperty>
+        <NSwagGenerateSyncMethods />
+        <NSwagGeneratePrepareRequestAndProcessResponseAsAsyncMethods />
+        <NSwagExposeJsonSerializerSettings />
+        <NSwagClientClassAccessModifier />
+        <NSwagTypeAccessModifier />
+        <NSwagGenerateContractsOutput />
+        <NSwagContractsNamespace />
+        <NSwagParameterDateTimeFormat />
+        <NSwagParameterDateFormat />
+        <NSwagGenerateUpdateJsonSerializerSettingsMethod />
+        <NSwagUseRequestAndResponseSerializationSettings />
+        <NSwagSerializeTypeInformation />
+        <NSwagQueryNullValue />
+        <NSwagOperationGenerationMode>MultipleClientsFromFirstTagAndOperationId</NSwagOperationGenerationMode>
+        <NSwagAdditionalNamespaceUsages />
+        <NSwagAdditionalContractNamespaceUsages />
+        <NSwagGenerateOptionalParameters>true</NSwagGenerateOptionalParameters>
+        <NSwagGenerateJsonMethods>false</NSwagGenerateJsonMethods>
+        <NSwagEnforceFlagEnums>true</NSwagEnforceFlagEnums>
+        <NSwagParameterArrayType>System.Collections.Generic.IEnumerable</NSwagParameterArrayType>
+        <NSwagParameterDictionaryType>System.Collections.Generic.IReadOnlyDictionary</NSwagParameterDictionaryType>
+        <NSwagResponseArrayType>System.Collections.Generic.ICollection</NSwagResponseArrayType>
+        <NSwagResponseDictionaryType>System.Collections.Generic.IReadOnlyDictionary</NSwagResponseDictionaryType>
+        <NSwagWrapResponses>true</NSwagWrapResponses>
+        <NSwagWrapResponseMethods />
+        <NSwagGenerateResponseClasses>true</NSwagGenerateResponseClasses>
+        <NSwagResponseClass>Response</NSwagResponseClass>
+        <NSwagNamespace />
+        <NSwagRequiredPropertiesMustBeDefined>true</NSwagRequiredPropertiesMustBeDefined>
+<!--        <NSwagDateType>NodaTime.LocalDate</NSwagDateType>-->
+        <NSwagJsonConverters />
+        <NSwagAnyType />
+<!--        <NSwagDateTimeType>NodaTime.LocalDateTime</NSwagDateTimeType>-->
+<!--        <NSwagTimeType>NodaTime.LocalTime</NSwagTimeType>-->
+<!--        <NSwagTimeSpanType>NodaTime.Duration</NSwagTimeSpanType>-->
+        <NSwagArrayType>System.Collections.ObjectModel.Collection</NSwagArrayType>
+        <NSwagArrayInstanceType>System.Collections.ObjectModel.Collection</NSwagArrayInstanceType>
+        <NSwagDictionaryType>System.Collections.Generic.IDictionary</NSwagDictionaryType>
+        <NSwagDictionaryInstanceType>System.Collections.Generic.Dictionary</NSwagDictionaryInstanceType>
+        <NSwagArrayBaseType>System.Collections.ObjectModel.Collection</NSwagArrayBaseType>
+        <NSwagDictionaryBaseType>System.Collections.Generic.Dictionary</NSwagDictionaryBaseType>
+        <NSwagClassStyle>POCO</NSwagClassStyle>
+        <NSwagJsonLibrary />
+        <NSwagGenerateDefaultValues>true</NSwagGenerateDefaultValues>
+        <NSwagGenerateDataAnnotations>true</NSwagGenerateDataAnnotations>
+        <NSwagExcludedTypeNames />
+        <NSwagExcludedParameterNames />
+        <NSwagHandleReferences />
+        <NSwagGenerateImmutableArrayProperties>true</NSwagGenerateImmutableArrayProperties>
+        <NSwagGenerateImmutableDictionaryProperties>true</NSwagGenerateImmutableDictionaryProperties>
+        <NSwagJsonSerializerSettingsTransformationMethod />
+        <NSwagInlineNamedArrays />
+        <NSwagInlineNamedDictionaries />
+        <NSwagInlineNamedTuples />
+        <NSwagInlineNamedAny />
+        <NSwagGenerateDtoTypes>true</NSwagGenerateDtoTypes>
+        <NSwagGenerateOptionalPropertiesAsNullable>true</NSwagGenerateOptionalPropertiesAsNullable>
+        <NSwagGenerateNullableReferenceTypes>true</NSwagGenerateNullableReferenceTypes>
+        <NSwagTemplateDirectory />
+        <NSwagTypeNameGeneratorType />
+        <NSwagPropertyNameGeneratorType />
+        <NSwagEnumNameGeneratorType />
+        <NSwagServiceHost />
+        <NSwagServiceSchemes />
+        <NSwagOutput />
+        <NSwagNewLineBehavior />
+    </PropertyGroup>
 </Project>

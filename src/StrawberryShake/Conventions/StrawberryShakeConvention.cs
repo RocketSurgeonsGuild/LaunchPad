@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using StrawberryShake.Serialization;
 
 namespace Rocket.Surgery.LaunchPad.StrawberryShake.Conventions;
 
@@ -15,16 +16,16 @@ public class StrawberryShakeConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.AddSerializer<InstantSerializer>();
-        services.AddSerializer<LocalDateSerializer>();
-        services.AddSerializer<LocalTimeSerializer>();
-        services.AddSerializer<LocalDateTimeSerializer>();
-        services.AddSerializer<OffsetDateTimeSerializer>();
-        services.AddSerializer<OffsetTimeSerializer>();
-        services.AddSerializer<PeriodSerializer>();
-        services.AddSerializer<DurationSerializer>();
-        services.AddSerializer<ZonedDateTimeSerializer>();
-        services.AddSerializer<OffsetSerializer>();
-        services.AddSerializer<IsoDayOfWeekSerializer>();
+        services.AddSingleton<ISerializer, InstantSerializer>();
+        services.AddSingleton<ISerializer, LocalDateSerializer>();
+        services.AddSingleton<ISerializer, LocalTimeSerializer>();
+        services.AddSingleton<ISerializer, LocalDateTimeSerializer>();
+        services.AddSingleton<ISerializer, OffsetDateTimeSerializer>();
+        services.AddSingleton<ISerializer, OffsetTimeSerializer>();
+        services.AddSingleton<ISerializer, PeriodSerializer>();
+        services.AddSingleton<ISerializer, DurationSerializer>();
+        services.AddSingleton<ISerializer, ZonedDateTimeSerializer>();
+        services.AddSingleton<ISerializer, OffsetSerializer>();
+        services.AddSingleton<ISerializer, IsoDayOfWeekSerializer>();
     }
 }

@@ -7,7 +7,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-[UsesVerify]
 public class PropertyTrackingGeneratorTests : GeneratorTest
 {
     [Fact]
@@ -24,7 +23,7 @@ namespace Sample.Core.Operations.Rockets
     }
     public class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
-        public Guid Id { get; init; }        
+        public Guid Id { get; init; }
     }
 }
 ";
@@ -53,7 +52,7 @@ namespace Sample.Core.Operations.Rockets
     {
         public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
         {
-            public Guid Id { get; init; }        
+            public Guid Id { get; init; }
         }
     }
 }

@@ -11,7 +11,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests.Validation;
 
-[UsesVerify]
 public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper), IAsyncLifetime
 {
     [Fact]
