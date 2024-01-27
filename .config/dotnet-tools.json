@@ -27,7 +27,7 @@
             "commands": ["nukeeper"]
         },
         "docfx": {
-            "version": "2.75.1",
+            "version": "2.75.2",
             "commands": ["docfx"]
         },
         "strawberryshake.tools": {
