@@ -1,6 +1,6 @@
 using Analyzers.Tests.Helpers;
-using HotChocolate;
 using DryIoc.ImTools;
+using HotChocolate;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -231,7 +231,14 @@ namespace Sample.Core.Operations.Rockets
     public GraphqlOptionalPropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
     {
         WithGenerator<GraphqlOptionalPropertyTrackingGenerator>();
-        AddReferences(typeof(IOptionalTracking<>), typeof(Optional<>), typeof(Instant), typeof(IPropertyTracking<>), typeof(IMediator), typeof(IBaseRequest));
+        AddReferences(
+            typeof(IOptionalTracking<>),
+            typeof(Optional<>),
+            typeof(Instant),
+            typeof(IPropertyTracking<>),
+            typeof(IMediator),
+            typeof(IBaseRequest)
+        );
         AddSources(
             @"
 global using System;
@@ -438,7 +445,7 @@ public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
         await Verify(result).UseParameters(property, value);
     }
 
-    private enum RocketModelType { Record, Class }
+    private enum RocketModelType { Record, Class, }
 
     private void AddPatchRocketModel(RocketModelType type)
     {

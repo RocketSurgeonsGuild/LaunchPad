@@ -46,7 +46,7 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
                     {
                         "Serilog:MinimumLevel:Default",
                         LevelConvert.ToSerilogLevel(applicationLogLevel.Value).ToString()
-                    }
+                    },
                 }
             );
         }

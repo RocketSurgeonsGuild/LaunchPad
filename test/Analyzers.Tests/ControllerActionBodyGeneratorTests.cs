@@ -130,7 +130,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpGet(""{id:guid}"")]
     public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -159,7 +159,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpPost(""{id:guid}"")]
     public partial Task<ActionResult> SaveRocket([BindRequired][FromRoute] Guid id, [FromRoute] SaveRocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -189,7 +189,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpPost(""{id:guid}"")]
     public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -219,7 +219,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpPost(""{id:guid}/{sn?}"")]
     public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -246,7 +246,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpGet]
     public partial IAsyncEnumerable<RocketModel> ListRockets(ListRockets.Request model);
-}"
+}",
                 }
             );
 
@@ -295,7 +295,7 @@ public partial class RocketController : RestfulApiController
     [HttpPost]
     [Created(nameof(GetRocket))]
     public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -344,7 +344,7 @@ public partial class RocketController : RestfulApiController
     [Accepted(nameof(GetRocket))]
     [ProducesResponseType(202)]
     public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -374,7 +374,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpGet(""{id:guid}"")]
     public partial Task<ActionResult> DeleteRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] DeleteRocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -404,7 +404,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpDelete(""{id:guid}"")]
     public partial Task<ActionResult> DeleteLaunchRecord([BindRequired] [FromRoute] Guid id, DeleteLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -461,7 +461,7 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
     public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -505,7 +505,7 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
     public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchId, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -549,7 +549,7 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
     public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -593,7 +593,7 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
     public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] string launchRecordId, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -627,7 +627,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpPost(""{id:guid}/{sn?}"")]
     public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -661,7 +661,7 @@ public partial class RocketController : RestfulApiController
 {
     [HttpPost(""{id:guid}/{sn?}"")]
     public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}"
+}",
                 }
             );
         }
