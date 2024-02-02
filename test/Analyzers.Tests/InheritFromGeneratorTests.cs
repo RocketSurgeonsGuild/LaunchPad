@@ -6,7 +6,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-[UsesVerify]
 public class InheritFromGeneratorTests : GeneratorTest
 {
     [Fact]

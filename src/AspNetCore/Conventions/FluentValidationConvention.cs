@@ -34,11 +34,11 @@ public partial class FluentValidationConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
-                        var ruleContext = ((ValidationRuleContext)context
-                                                                 .GetType()
-                                                                 .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                                                                 .First(z => z.PropertyType == typeof(ValidationRuleContext))
-                                                                 .GetValue(context))
+                        var ruleContext = ( (ValidationRuleContext)context
+                                                                  .GetType()
+                                                                  .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                                                                  .First(z => z.PropertyType == typeof(ValidationRuleContext))
+                                                                  .GetValue(context)! )
                            .GetReflectionContext();
                         var propertyType = ruleContext?.PropertyInfo?.DeclaringType;
                         if (propertyType == typeof(string))
@@ -54,16 +54,14 @@ public partial class FluentValidationConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
-                        var ruleContext = ((ValidationRuleContext)context
-                                                                .GetType()
-                                                                .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                                                                .First(z => z.PropertyType == typeof(ValidationRuleContext))
-                                                                .GetValue(context))
+                        var ruleContext = ( (ValidationRuleContext)context
+                                                                  .GetType()
+                                                                  .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                                                                  .First(z => z.PropertyType == typeof(ValidationRuleContext))
+                                                                  .GetValue(context)! )
                            .GetReflectionContext();
                         var propertyType = ruleContext?.PropertyInfo?.DeclaringType;
-                        if (propertyType != null &&
-                            ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) ||
-                              propertyType.IsEnum ))
+                        if (propertyType != null && ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) || propertyType.IsEnum ))
                         {
                             context.Schema.Required.Add(context.PropertyKey);
                             context.Schema.Properties[context.PropertyKey].Nullable = false;
@@ -77,11 +75,11 @@ public partial class FluentValidationConvention : IServiceConvention
                .WithApply(
                     context =>
                     {
-                        var ruleContext = ((ValidationRuleContext)context
-                                                                 .GetType()
-                                                                 .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                                                                 .First(z => z.PropertyType == typeof(ValidationRuleContext))
-                                                                 .GetValue(context))
+                        var ruleContext = ( (ValidationRuleContext)context
+                                                                  .GetType()
+                                                                  .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                                                                  .First(z => z.PropertyType == typeof(ValidationRuleContext))
+                                                                  .GetValue(context)! )
                            .GetReflectionContext();
                         context.Schema.Properties[context.PropertyKey].Nullable =
                             context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
@@ -91,12 +89,12 @@ public partial class FluentValidationConvention : IServiceConvention
                         static bool getNullableValue(Nullability nullability, Type propertyType)
                         {
                             return nullability switch
-                            {
-                                Nullability.Nullable    => true,
-                                Nullability.NonNullable => false,
-                                Nullability.NotDefined  => !propertyType.IsValueType || Nullable.GetUnderlyingType(propertyType) is not null,
-                                _                       => false
-                            };
+                                   {
+                                       Nullability.Nullable    => true,
+                                       Nullability.NonNullable => false,
+                                       Nullability.NotDefined  => !propertyType.IsValueType || Nullable.GetUnderlyingType(propertyType) is { },
+                                       _                       => false,
+                                   };
                         }
                     }
                 )

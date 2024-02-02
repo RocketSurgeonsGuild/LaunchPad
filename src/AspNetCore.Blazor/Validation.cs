@@ -11,7 +11,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
 /// </summary>
 public class FluentValidator : ComponentBase
 {
-    private static readonly char[] _separators = { '.', '[' };
+    private static readonly char[] _separators = { '.', '[', };
 
     private static FieldIdentifier ToFieldIdentifier(EditContext editContext, string propertyPath)
     {
@@ -30,14 +30,14 @@ public class FluentValidator : ComponentBase
             var nextTokenEnd = propertyPath.IndexOfAny(_separators);
             if (nextTokenEnd < 0)
             {
-                return new FieldIdentifier(obj, propertyPath);
+                return new(obj, propertyPath);
             }
 
             var nextToken = propertyPath.Substring(0, nextTokenEnd);
             propertyPath = propertyPath.Substring(nextTokenEnd + 1);
 
             object? newObj;
-            if (nextToken.EndsWith("]", StringComparison.OrdinalIgnoreCase))
+            if (nextToken.EndsWith(']'))
             {
                 // It's an indexer
                 // This code assumes C# conventions (one indexer named Item with one param)
@@ -46,7 +46,7 @@ public class FluentValidator : ComponentBase
                 var prop = obj.GetType().GetProperty("Item")!;
                 var indexerType = prop.GetIndexParameters()[0].ParameterType;
                 var indexerValue = Convert.ChangeType(nextToken, indexerType, CultureInfo.InvariantCulture);
-                newObj = prop.GetValue(obj, new[] { indexerValue });
+                newObj = prop.GetValue(obj, new[] { indexerValue, });
             }
             else
             {
@@ -63,7 +63,7 @@ public class FluentValidator : ComponentBase
             if (newObj == null)
             {
                 // This is as far as we can go
-                return new FieldIdentifier(obj, nextToken);
+                return new(obj, nextToken);
             }
 
             obj = newObj;
@@ -113,8 +113,8 @@ public class FluentValidator : ComponentBase
     {
         if (validator != null)
         {
-            var properties = new[] { fieldIdentifier.FieldName };
-            var context = new ValidationContext<object>(fieldIdentifier.Model, new PropertyChain(), new MemberNameValidatorSelector(properties));
+            var properties = new[] { fieldIdentifier.FieldName, };
+            var context = new ValidationContext<object>(fieldIdentifier.Model, new(), new MemberNameValidatorSelector(properties));
             var validationResults = await validator.ValidateAsync(context);
 
             messages.Clear(fieldIdentifier);
@@ -133,10 +133,12 @@ public class FluentValidator : ComponentBase
     public IValidator? Validator { get; set; } = null!;
 
     // ReSharper disable once NullableWarningSuppressionIsUsed
-    [Inject] private IServiceProvider Services { get; set; } = null!;
+    [Inject]
+    private IServiceProvider Services { get; set; } = null!;
 
     // ReSharper disable once NullableWarningSuppressionIsUsed
-    [CascadingParameter] private EditContext CurrentEditContext { get; set; } = null!;
+    [CascadingParameter]
+    private EditContext CurrentEditContext { get; set; } = null!;
 
     /// <inheritdoc />
     protected override void OnInitialized()
@@ -144,9 +146,9 @@ public class FluentValidator : ComponentBase
         if (CurrentEditContext == null)
         {
             throw new InvalidOperationException(
-                $"{nameof(FluentValidator)} requires a cascading " +
-                $"parameter of type {nameof(EditContext)}. For example, you can use {nameof(FluentValidator)} " +
-                $"inside an {nameof(EditForm)}."
+                $"{nameof(FluentValidator)} requires a cascading "
+              + $"parameter of type {nameof(EditContext)}. For example, you can use {nameof(FluentValidator)} "
+              + $"inside an {nameof(EditForm)}."
             );
         }
 

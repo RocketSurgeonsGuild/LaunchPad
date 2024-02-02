@@ -7,7 +7,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-[UsesVerify]
 public class PropertyTrackingGeneratorTests : GeneratorTest
 {
     [Fact]
@@ -24,7 +23,7 @@ namespace Sample.Core.Operations.Rockets
     }
     public class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
-        public Guid Id { get; init; }        
+        public Guid Id { get; init; }
     }
 }
 ";
@@ -53,7 +52,7 @@ namespace Sample.Core.Operations.Rockets
     {
         public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
         {
-            public Guid Id { get; init; }        
+            public Guid Id { get; init; }
         }
     }
 }
@@ -322,7 +321,7 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
 
         var assignedType = typeof(Assigned<>).MakeGenericType(value.GetType());
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
-        request = applyChangesMethod.Invoke(instance, new[] { request });
+        request = applyChangesMethod.Invoke(instance, new[] { request, });
         var r = requestPropertyUnderTest.GetValue(request);
         r.Should().Be(value);
         currentPropertyValues.Should().ContainInOrder(otherRequestProperties.Select(z => z.GetValue(request)).ToArray());
@@ -365,7 +364,7 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
 
         var assignedType = typeof(Assigned<>).MakeGenericType(value.GetType());
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
-        applyChangesMethod.Invoke(instance, new[] { request });
+        applyChangesMethod.Invoke(instance, new[] { request, });
         var r = requestPropertyUnderTest.GetValue(request);
         r.Should().Be(value);
         currentPropertyValues.Should().ContainInOrder(otherRequestProperties.Select(z => z.GetValue(request)).ToArray());

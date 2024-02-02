@@ -9,7 +9,6 @@ using Rocket.Surgery.LaunchPad.Analyzers;
 
 namespace Analyzers.Tests;
 
-[UsesVerify]
 public class GraphqlMutationActionBodyGeneratorTests : GeneratorTest
 {
     [Fact]
@@ -87,7 +86,7 @@ global using HotChocolate.Types;
         await Verify(await GenerateAsync(sources)).UseParameters(key, "");
     }
 
-    private sealed  class MethodBodyData : TheoryData<string, string[]>
+    private sealed class MethodBodyData : TheoryData<string, string[]>
     {
         private const string defaultString = @"
 namespace TestNamespace;
@@ -123,7 +122,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -175,7 +174,7 @@ public partial class RocketMutation
     /// </summary>
     /// <returns></returns>
     public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -198,7 +197,7 @@ public static class GetRocketLaunchRecord
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
-        
+
         public Guid LaunchId { get; init; }
     }
 }",
@@ -215,7 +214,7 @@ public partial class RocketMutation
     /// </summary>
     /// <returns></returns>
     public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -238,7 +237,7 @@ public static class GetRocketLaunchRecord
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
-        
+
         public Guid LaunchRecordId { get; init; }
     }
 }",
@@ -255,7 +254,7 @@ public partial class RocketMutation
     /// </summary>
     /// <returns></returns>
     public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -278,7 +277,7 @@ public static class GetRocketLaunchRecord
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
-        
+
         public string LaunchRecordId { get; init; }
     }
 }",
@@ -295,7 +294,7 @@ public partial class RocketMutation
     /// </summary>
     /// <returns></returns>
     public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -326,7 +325,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, ClaimsPrincipal claimsPrincipal);
-}"
+}",
                 }
             );
             Add(
@@ -357,7 +356,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, ClaimsPrincipal cp);
-}"
+}",
                 }
             );
             Add(
@@ -388,7 +387,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request);
-}"
+}",
                 }
             );
             Add(
@@ -418,7 +417,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, CancellationToken cancellationToken);
-}"
+}",
                 }
             );
             Add(
@@ -448,7 +447,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, CancellationToken token);
-}"
+}",
                 }
             );
             Add(
@@ -477,7 +476,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request);
-}"
+}",
                 }
             );
         }

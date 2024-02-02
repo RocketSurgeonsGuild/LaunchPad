@@ -10,21 +10,29 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-[UsesVerify]
 public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
 {
     [Fact]
     public async Task AutoMapper()
     {
-        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
-        host.Services.GetRequiredService<IMapper>()
-            .ConfigurationProvider.AssertConfigurationIsValid();
+        await using var host = await AlbaHost.For<Program>(
+            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new GraphQlExtension(),
+            new SqliteExtension<RocketDbContext>()
+        );
+        host
+           .Services.GetRequiredService<IMapper>()
+           .ConfigurationProvider.AssertConfigurationIsValid();
     }
 
     [Fact]
     public async Task Starts()
     {
-        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
+        await using var host = await AlbaHost.For<Program>(
+            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new GraphQlExtension(),
+            new SqliteExtension<RocketDbContext>()
+        );
         var response = await host.Server.CreateClient().GetAsync("/graphql/index.html");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -32,7 +40,11 @@ public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest(te
     [Fact]
     public async Task GraphqlSchema()
     {
-        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
+        await using var host = await AlbaHost.For<Program>(
+            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new GraphQlExtension(),
+            new SqliteExtension<RocketDbContext>()
+        );
         var exeuctor = await host.Services.GetRequestExecutorAsync();
         await Verify(exeuctor.Schema.Print(), "graphql");
     }

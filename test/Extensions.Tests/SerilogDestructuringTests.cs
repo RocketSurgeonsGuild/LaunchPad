@@ -13,7 +13,6 @@ using Serilog.Context;
 
 namespace Extensions.Tests;
 
-[UsesVerify]
 public class SerilogDestructuringTests : LoggerTest
 {
     [Fact]
@@ -23,7 +22,7 @@ public class SerilogDestructuringTests : LoggerTest
 
         Logger.LogInformation(
             "This is just a test {@Data}",
-            JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234" } }), options: null)
+            JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234", }, }), options: null)
         );
 
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -36,7 +35,7 @@ public class SerilogDestructuringTests : LoggerTest
 
         Logger.LogInformation(
             "This is just a test {@Data}",
-            JsonSerializer.Deserialize<JsonDocument>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234" } }), options: null)
+            JsonSerializer.Deserialize<JsonDocument>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234", }, }), options: null)
         );
 
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -47,7 +46,7 @@ public class SerilogDestructuringTests : LoggerTest
     {
         using var _ = CaptureLogs(out var logs);
 
-        Logger.LogInformation("This is just a test {@Data}", JObject.FromObject(new { test = true, system = new { data = "1234" } }));
+        Logger.LogInformation("This is just a test {@Data}", JObject.FromObject(new { test = true, system = new { data = "1234", }, }));
 
         await Verify(logs.Select(z => z.RenderMessage()));
     }
@@ -57,7 +56,7 @@ public class SerilogDestructuringTests : LoggerTest
     {
         using var _ = CaptureLogs(out var logs);
 
-        Logger.LogInformation("This is just a test {@Data}", JArray.FromObject(new object[] { 1, "2", 3d }));
+        Logger.LogInformation("This is just a test {@Data}", JArray.FromObject(new object[] { 1, "2", 3d, }));
 
         await Verify(logs.Select(z => z.RenderMessage()));
     }
@@ -66,9 +65,9 @@ public class SerilogDestructuringTests : LoggerTest
     public async Task Should_Destructure_NewtonsoftJson_JValue()
     {
         var faker = new Faker
-        {
-            Random = new Randomizer(17)
-        };
+                    {
+                        Random = new(17),
+                    };
         using var _ = CaptureLogs(out var logs);
 
         Logger.LogInformation("This is just a test {@Data}", new JValue(faker.Random.Guid()));
@@ -81,7 +80,8 @@ public class SerilogDestructuringTests : LoggerTest
     {
         var value = new FeatureFactory().CreateRandomAttributes(
             ( "id", TypeCode.Int32 ),
-            ( "label", TypeCode.String ), ( "number1", TypeCode.Double ),
+            ( "label", TypeCode.String ),
+            ( "number1", TypeCode.Double ),
             ( "number2", TypeCode.Int64 )
         );
 
@@ -187,15 +187,26 @@ public class SerilogDestructuringTests : LoggerTest
     }
 
     public SerilogDestructuringTests(ITestOutputHelper outputHelper) : base(
-        outputHelper, LogLevel.Information, configureLogger: configuration => configuration
-                                                                             .Destructure.NewtonsoftJsonTypes()
-                                                                             .Destructure.SystemTextJsonTypes()
-                                                                             .Destructure.NetTopologySuiteTypes()
-                                                                             .Destructure.NodaTimeTypes(DateTimeZoneProviders.Tzdb)
+        outputHelper,
+        LogLevel.Information,
+        configureLogger: configuration => configuration
+                                         .Destructure.NewtonsoftJsonTypes()
+                                         .Destructure.SystemTextJsonTypes()
+                                         .Destructure.NetTopologySuiteTypes()
+                                         .Destructure.NodaTimeTypes(DateTimeZoneProviders.Tzdb)
     )
     {
         LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
-        _clock = new FakeClock(Instant.FromUtc(2022, 1, 1, 4, 4, 4));
+        _clock = new(
+            Instant.FromUtc(
+                2022,
+                1,
+                1,
+                4,
+                4,
+                4
+            )
+        );
     }
 
     private readonly FakeClock _clock;
@@ -220,8 +231,11 @@ public class SerilogDestructuringTests : LoggerTest
         {
             fc.Add(
                 FeatureFactory.Create(
-                    type, threeD, ( "id", TypeCode.Int32 ),
-                    ( "label", TypeCode.String ), ( "number1", TypeCode.Double ),
+                    type,
+                    threeD,
+                    ( "id", TypeCode.Int32 ),
+                    ( "label", TypeCode.String ),
+                    ( "number1", TypeCode.Double ),
                     ( "number2", TypeCode.Int64 )
                 )
             );
@@ -254,6 +268,5 @@ public class SerilogDestructuringTests : LoggerTest
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, threeD);
     }
 }
-
 
 #endif
