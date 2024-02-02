@@ -17,5 +17,13 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
       <ProjectReference Include="..\..\src\Spatial.NewtonsoftJson\Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
+    </ItemGroup>    
+    <ItemGroup>
+        <ProjectReference
+            Include="../../src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj"
+            PrivateAssets="none"
+            OutputItemType="Analyzer"
+            ReferenceOutputAssembly="false"
+        />
     </ItemGroup>
 </Project>

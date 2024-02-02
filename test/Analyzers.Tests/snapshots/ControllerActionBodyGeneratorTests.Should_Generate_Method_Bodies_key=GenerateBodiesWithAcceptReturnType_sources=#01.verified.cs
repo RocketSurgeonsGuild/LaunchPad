@@ -18,9 +18,11 @@ namespace MyNamespace.Controllers
         [ProducesResponseType(typeof(FluentValidationProblemDetails), 422)]
         public partial async Task<ActionResult<RocketModel>> GetRocket(Guid id, [Bind()] GetRocket.Request request)
         {
-            var result = await Mediator.Send(request with {Id = id}, HttpContext.RequestAborted).ConfigureAwait(false);
+            var result = await Mediator.Send(request with { Id = id }, HttpContext.RequestAborted).ConfigureAwait(false);
             return new ObjectResult(result)
-            {StatusCode = 200};
+            {
+                StatusCode = 200
+            };
         }
 
         [ProducesDefaultResponseType]
@@ -30,12 +32,7 @@ namespace MyNamespace.Controllers
         public partial async Task<ActionResult<CreateRocket.Response>> CreateRocket([BindRequired][FromBody] CreateRocket.Request request)
         {
             var result = await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
-            return new AcceptedAtActionResult("GetRocket", null, new
-            {
-            id = result.Id
-            }
-
-            , result);
+            return new AcceptedAtActionResult("GetRocket", null, new { id = result.Id }, result);
         }
     }
 }

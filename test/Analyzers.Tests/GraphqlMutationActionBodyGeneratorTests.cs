@@ -75,6 +75,7 @@ global using System.Collections.Generic;
 global using System.Threading.Tasks;
 global using HotChocolate;
 global using HotChocolate.Types;
+global using System.Security.Claims;
 "
         );
     }
@@ -167,7 +168,7 @@ public partial class RocketMutation
     /// Get the launch records for a given rocket
     /// </summary>
     /// <returns></returns>
-    public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords([Service] IMediator mediator, GetRocketLaunchRecords.Request request);
+    public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(IMediator mediator, GetRocketLaunchRecords.Request request);
 
     /// <summary>
     /// Get a specific launch record for a given rocket
@@ -307,7 +308,7 @@ using System.Security.Claims;
 namespace TestNamespace;
 public static class Save2Rocket
 {
-    public class Request : IRequest<RocketModel>
+    public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
@@ -324,7 +325,7 @@ namespace MyNamespace.Controllers;
 [ExtendObjectType(OperationTypeNames.Mutation)]
 public partial class RocketMutation
 {
-    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, ClaimsPrincipal claimsPrincipal);
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, ClaimsPrincipal claimsPrincipal, Save2Rocket.Request request);
 }",
                 }
             );
@@ -365,7 +366,6 @@ public partial class RocketMutation
                 {
                     defaultString,
                     @"
-using System.Security.Claims;
 namespace TestNamespace;
 public static class Save2Rocket
 {
@@ -417,6 +417,37 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, CancellationToken cancellationToken);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithCancellationTokenAndClaimsPrincipal",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Threading;
+namespace TestNamespace;
+public static class Save2Rocket
+{
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; init; }
+        public string Other { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+using System.Threading;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, ClaimsPrincipal cp, CancellationToken cancellationToken);
 }",
                 }
             );

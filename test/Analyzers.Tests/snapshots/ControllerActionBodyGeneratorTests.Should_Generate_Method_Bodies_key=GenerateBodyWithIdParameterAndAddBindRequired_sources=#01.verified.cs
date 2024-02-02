@@ -18,7 +18,7 @@ namespace MyNamespace.Controllers
         [ProducesResponseType(typeof(FluentValidationProblemDetails), 422)]
         public partial async Task<ActionResult> SaveRocket(Guid id, [Bind()][BindRequired][FromBody] SaveRocket.Request request)
         {
-            await Mediator.Send(request with {Id = id}, HttpContext.RequestAborted).ConfigureAwait(false);
+            await Mediator.Send(request with { Id = id }, HttpContext.RequestAborted).ConfigureAwait(false);
             return new StatusCodeResult(204);
         }
     }

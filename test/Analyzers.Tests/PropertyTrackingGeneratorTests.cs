@@ -175,10 +175,7 @@ namespace Sample.Core.Operations.Rockets
         public string SerialNumber { get; set; } = null!;
         public int Type { get; set; }
     }
-    public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
+    public partial class PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
 }
 ";
         var result = await GenerateAsync(source);
@@ -229,10 +226,7 @@ namespace Sample.Core.Operations.Rockets
         public string? SerialNumber { get; set; } = null!;
         public int Type { get; set; }
     }
-    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
+    public partial record PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
 }
 ";
         var result = await GenerateAsync(source);

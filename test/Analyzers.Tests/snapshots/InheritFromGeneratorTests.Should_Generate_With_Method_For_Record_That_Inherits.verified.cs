@@ -11,7 +11,10 @@ namespace Sample.Core.Operations.Rockets
         [System.Runtime.CompilerServices.CompilerGenerated]
         public partial record Request
         {
-            public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
+            public Request With(Model value) => this with
+            {
+                SerialNumber = value.SerialNumber
+            };
         }
     }
 }

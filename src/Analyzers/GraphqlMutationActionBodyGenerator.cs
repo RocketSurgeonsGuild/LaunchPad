@@ -32,7 +32,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                        .WithParameterList(
                             // ReSharper disable once NullableWarningSuppressionIsUsed
                             syntax.ParameterList.RemoveNodes(
-                                syntax.ParameterList.Parameters.SelectMany(z => z.AttributeLists), SyntaxRemoveOptions.KeepNoTrivia
+                                syntax.ParameterList.Parameters.SelectMany(z => z.AttributeLists),
+                                SyntaxRemoveOptions.KeepNoTrivia
                             )!
                         )
                        .WithAttributeLists(List<AttributeListSyntax>())
@@ -62,21 +63,18 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             );
         }
 
-        var claimsPrincipalProperty = parameterType
-                                     .GetMembers()
-                                     .FirstOrDefault(
-                                          param => param switch
-                                          {
-                                              IPropertySymbol { Type: not null, IsImplicitlyDeclared: false } ps => SymbolEqualityComparer.Default.Equals(
-                                                  claimsPrincipal, ps.Type
-                                              ),
-                                              IFieldSymbol { Type: not null, IsImplicitlyDeclared: false } fs => SymbolEqualityComparer.Default.Equals(
-                                                  claimsPrincipal, fs.Type
-                                              ),
-                                              _ => false
-                                          }
-                                      );
-        var hasClaimsPrincipal = claimsPrincipalProperty is not null;
+        var claimsPrincipalProperty =
+            parameterType
+               .GetMembers()
+               .FirstOrDefault(
+                    param => param switch
+                             {
+                                 IPropertySymbol { IsImplicitlyDeclared: false, } ps => SymbolEqualityComparer.Default.Equals(claimsPrincipal, ps.Type),
+                                 IFieldSymbol { IsImplicitlyDeclared: false, } fs    => SymbolEqualityComparer.Default.Equals(claimsPrincipal, fs.Type),
+                                 _                                                   => false,
+                             }
+                );
+        var hasClaimsPrincipal = claimsPrincipalProperty is { };
         if (hasClaimsPrincipal)
         {
             if (claimsPrincipalParameter is null)
@@ -98,29 +96,28 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             return null;
         }
 
+        if (mediatorParameter.GetAttribute("HotChocolate.ServiceAttribute") is null)
+        {
+            var node = newSyntax.ParameterList.Parameters.FirstOrDefault(z => z.Identifier.Text == mediatorParameter.Name)!;
+            newSyntax = newSyntax.WithParameterList(
+                newSyntax.ParameterList
+                         .ReplaceNode(
+                              node,
+                              node.WithAttributeLists(
+                                  SingletonList(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("HotChocolate.ServiceAttribute")))))
+                              )
+                          )
+            );
+        }
 
         var sendRequestExpression = isStream
             ? streamMediatorRequest(IdentifierName(parameter.Name), cancellationTokenParameter)
             : sendMediatorRequest(IdentifierName(parameter.Name), cancellationTokenParameter);
 
-
         if (parameterType.IsRecord)
         {
             var expressions = new List<ExpressionSyntax>();
             if (hasClaimsPrincipal)
-            {
-                // ReSharper disable NullableWarningSuppressionIsUsed
-                expressions.Add(
-                    AssignmentExpression(
-                        SyntaxKind.SimpleAssignmentExpression,
-                        IdentifierName(claimsPrincipalProperty!.Name),
-                        IdentifierName(claimsPrincipalParameter!.Name)
-                    )
-                );
-                // ReSharper enable NullableWarningSuppressionIsUsed
-            }
-
-            if (cancellationTokenParameter is { })
             {
                 // ReSharper disable NullableWarningSuppressionIsUsed
                 expressions.Add(
@@ -190,7 +187,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
         static ExpressionSyntax sendMediatorRequest(ExpressionSyntax nameSyntax, IParameterSymbol? cancellationTokenParameter)
         {
-            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax) };
+            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
             {
                 arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
@@ -227,7 +224,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
         static ExpressionSyntax streamMediatorRequest(ExpressionSyntax nameSyntax, IParameterSymbol? cancellationTokenParameter)
         {
-            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax) };
+            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
             {
                 arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
@@ -246,59 +243,71 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
     private void GenerateMethods(
         SourceProductionContext context,
-        (ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel)  valueTuple
+        (ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel) valueTuple
     )
     {
-        var (syntax, symbol, semanticModel) = valueTuple;
+        ( var syntax, var symbol, var semanticModel ) = valueTuple;
         var claimsPrincipal = semanticModel.Compilation.GetTypeByMetadataName("System.Security.Claims.ClaimsPrincipal")!;
         var mediator = semanticModel.Compilation.GetTypeByMetadataName("MediatR.IMediator")!;
         var cancellationToken = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken")!;
-        var members = syntax.Members
-                            .OfType<MethodDeclarationSyntax>()
-                            .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
-                            .Select(
-                                 method =>
-                                 {
-                                     var methodSymbol = semanticModel.GetDeclaredSymbol(method);
-                                     // ReSharper disable once UseNullPropagationWhenPossible
-                                     if (methodSymbol is null)
-                                     {
-                                         context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation()));
-                                         return default;
-                                     }
+        var members = syntax
+                     .Members
+                     .OfType<MethodDeclarationSyntax>()
+                     .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                     .Select(
+                          method =>
+                          {
+                              var methodSymbol = semanticModel.GetDeclaredSymbol(method);
+                              // ReSharper disable once UseNullPropagationWhenPossible
+                              if (methodSymbol is null)
+                              {
+                                  context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation()));
+                                  return default;
+                              }
 
-                                     var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"))
-                                                ?? methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest"));
-                                     var streamRequest = methodSymbol.Parameters.FirstOrDefault(
-                                         p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
-                                     );
-                                     return ( method, symbol: methodSymbol, request: request ?? streamRequest );
-                                 }
-                             )
-                            .Where(z => z is { symbol: { }, method: { } })
-                            .ToImmutableArray();
+                              var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"))
+                               ?? methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest"));
+                              var streamRequest = methodSymbol.Parameters.FirstOrDefault(
+                                  p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
+                              );
+                              return ( method, symbol: methodSymbol, request: request ?? streamRequest );
+                          }
+                      )
+                     .Where(z => z is { symbol: { }, method: { }, })
+                     .ToImmutableArray();
 
-        var newClass = syntax.WithMembers(List<MemberDeclarationSyntax>())
-                             .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                             .WithAttributeLists(List<AttributeListSyntax>())
-                             .WithBaseList(null)
+        var newClass = syntax
+                      .WithMembers(List<MemberDeclarationSyntax>())
+                      .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
+                      .WithAttributeLists(List<AttributeListSyntax>())
+                      .WithBaseList(null)
             ;
 
 
-        foreach (var (method, methodSymbol, request) in members)
+        foreach (( var method, var methodSymbol, var request ) in members)
         {
             if (request != null)
             {
-                var methodBody = GenerateMethod(context, mediator, claimsPrincipal, cancellationToken, method, methodSymbol, request);
+                var methodBody = GenerateMethod(
+                    context,
+                    mediator,
+                    claimsPrincipal,
+                    cancellationToken,
+                    method,
+                    methodSymbol,
+                    request
+                );
                 if (methodBody is null) continue;
                 newClass = newClass.AddMembers(methodBody);
             }
         }
 
-        var additionalUsings = new[] { "MediatR" };
+        var additionalUsings = new[] { "MediatR", };
 
-        var usings = syntax.SyntaxTree.GetCompilationUnitRoot().Usings
-                           .AddDistinctUsingStatements(additionalUsings.Where(z => !string.IsNullOrWhiteSpace(z)));
+        var usings = syntax
+                    .SyntaxTree.GetCompilationUnitRoot()
+                    .Usings
+                    .AddDistinctUsingStatements(additionalUsings.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
@@ -326,11 +335,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                             .SyntaxProvider
                             .CreateSyntaxProvider(
                                  (node, _) => node is ClassDeclarationSyntax cds
-                                           && cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
-                                           && cds.AttributeLists.ContainsAttribute("ExtendObjectType")
-                                           && cds.Members.Any(
-                                                  z => z is MethodDeclarationSyntax && z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
-                                              ),
+                                  && cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
+                                  && cds.AttributeLists.ContainsAttribute("ExtendObjectType")
+                                  && cds.Members.Any(
+                                         z => z is MethodDeclarationSyntax && z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
+                                     ),
                                  (syntaxContext, cancellationToken) =>
                                  (
                                      syntax: (ClassDeclarationSyntax)syntaxContext.Node,

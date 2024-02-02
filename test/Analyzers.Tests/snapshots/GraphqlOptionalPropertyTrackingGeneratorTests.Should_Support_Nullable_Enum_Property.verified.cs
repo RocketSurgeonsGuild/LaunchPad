@@ -10,34 +10,45 @@ namespace Sample.Core.Operations.Rockets
     public partial record PatchRocketUnderTest
     {
         public HotChocolate.Optional<RocketId?> Id { get; set; }
-
         public HotChocolate.Optional<string?> SerialNumber { get; set; }
-
         public HotChocolate.Optional<RocketType?> Type { get; set; }
-
         public HotChocolate.Optional<Instant?> PlannedDate { get; set; }
 
         public global::Sample.Core.Operations.Rockets.Request Create()
         {
-            var value = new global::Sample.Core.Operations.Rockets.Request{};
+            var value = new global::Sample.Core.Operations.Rockets.Request()
+            {
+            };
             if (Id.HasValue)
             {
-                value = value with {Id = Id.Value};
+                value = value with
+                {
+                    Id = Id.Value
+                };
             }
 
             if (SerialNumber.HasValue)
             {
-                value = value with {SerialNumber = SerialNumber.Value};
+                value = value with
+                {
+                    SerialNumber = SerialNumber.Value
+                };
             }
 
             if (Type.HasValue)
             {
-                value = value with {Type = Type.Value};
+                value = value with
+                {
+                    Type = Type.Value
+                };
             }
 
             if (PlannedDate.HasValue)
             {
-                value = value with {PlannedDate = PlannedDate.Value};
+                value = value with
+                {
+                    PlannedDate = PlannedDate.Value
+                };
             }
 
             return value;

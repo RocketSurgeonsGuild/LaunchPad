@@ -13,7 +13,10 @@ namespace Sample.Core.Operations.Rockets
         {
             public string SerialNumber { get; set; }
 
-            public Request With(Model value) => this with {SerialNumber = value.SerialNumber};
+            public Request With(Model value) => this with
+            {
+                SerialNumber = value.SerialNumber
+            };
         }
     }
 }

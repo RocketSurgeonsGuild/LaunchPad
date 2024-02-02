@@ -25,41 +25,39 @@ public static partial class EditLaunchRecord
         /// <summary>
         ///     The updated launch partner
         /// </summary>
-        public string Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string Partner { get; init; } = null!; // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The updated launch payload
         /// </summary>
-        public string Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string Payload { get; init; } = null!; // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The updated payload weight
         /// </summary>
-        public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public double PayloadWeightKg { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The updated actual launch date
         /// </summary>
-        public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public Instant? ActualLaunchDate { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The scheduled launch date
         /// </summary>
-        public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public Instant ScheduledLaunchDate { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The update rocket id
         /// </summary>
-        public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public RocketId RocketId { get; init; } // TODO: Make generator that can be used to create a writable view model
     }
 
-    public partial record PatchRequest : IRequest<LaunchRecordModel>, IPropertyTracking<Request>
-    {
-        /// <summary>
-        ///     The rocket id
-        /// </summary>
-        public LaunchRecordId Id { get; init; }
-    }
+    /// <summary>
+    ///     The patch request
+    /// </summary>
+    /// <param name="Id">The rocket id</param>
+    public partial record PatchRequest(LaunchRecordId Id) : IRequest<LaunchRecordModel>, IPropertyTracking<Request>;
 
     private class Mapper : Profile
     {
@@ -107,10 +105,11 @@ public static partial class EditLaunchRecord
     {
         private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.LaunchRecords
-                                         .Include(z => z.Rocket)
-                                         .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
-                                         .ConfigureAwait(false);
+            var rocket = await dbContext
+                              .LaunchRecords
+                              .Include(z => z.Rocket)
+                              .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
+                              .ConfigureAwait(false);
             if (rocket == null)
             {
                 throw new NotFoundException();

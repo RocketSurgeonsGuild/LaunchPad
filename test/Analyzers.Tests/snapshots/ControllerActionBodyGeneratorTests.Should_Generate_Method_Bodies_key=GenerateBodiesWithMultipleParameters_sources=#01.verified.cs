@@ -18,7 +18,7 @@ namespace MyNamespace.Controllers
         [ProducesResponseType(typeof(FluentValidationProblemDetails), 422)]
         public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(Guid id, [Bind()][BindRequired][FromRoute] GetRocketLaunchRecords.Request request)
         {
-            var result = Mediator.CreateStream(request with {Id = id}, HttpContext.RequestAborted);
+            var result = Mediator.CreateStream(request with { Id = id }, HttpContext.RequestAborted);
             return result;
         }
     }

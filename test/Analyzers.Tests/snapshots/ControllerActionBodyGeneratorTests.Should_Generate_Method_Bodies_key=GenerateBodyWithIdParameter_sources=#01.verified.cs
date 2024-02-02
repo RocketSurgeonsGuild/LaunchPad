@@ -21,7 +21,9 @@ namespace MyNamespace.Controllers
             request.Id = id;
             var result = await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
             return new ObjectResult(result)
-            {StatusCode = 200};
+            {
+                StatusCode = 200
+            };
         }
     }
 }
