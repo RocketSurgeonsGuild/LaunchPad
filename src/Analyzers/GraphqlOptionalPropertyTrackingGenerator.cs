@@ -62,11 +62,11 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             targetSymbol
                .GetMembers()
                .OfType<IPropertySymbol>()
-               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false });
+               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
         if (!targetSymbol.IsRecord)
         {
             // not able to use with operator, so ignore any init only properties.
-            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false });
+            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, });
         }
 
 
@@ -77,33 +77,37 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         var existingMembers = targetSymbol
                              .GetMembers()
                              .OfType<IPropertySymbol>()
-                             .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false })
+                             .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
                              .Where(z => symbol.GetMembers(z.Name).Any())
                              .Except(writeableProperties)
                              .ToArray();
 
         var memberNamesSet = targetSymbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
-        var constructor = targetSymbol.Constructors
-                                      .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
-                                      .Where(z => !z.IsImplicitlyDeclared)
-                                      .OrderByDescending(z => z.Parameters.Length)
-                                      .FirstOrDefault();
+        var constructor = targetSymbol
+                         .Constructors
+                         .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
+                         .Where(z => !z.IsImplicitlyDeclared)
+                         .OrderByDescending(z => z.Parameters.Length)
+                         .FirstOrDefault();
 
-        existingMembers = existingMembers.Except(
-            existingMembers
-               .Join(
-                    constructor?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty,
-                    z => z.Name,
-                    z => z.Name,
-                    (a, _) => a,
-                    StringComparer.OrdinalIgnoreCase
-                    )
-            )
-           .ToArray();
+        existingMembers = existingMembers
+                         .Except(
+                              existingMembers
+                                 .Join(
+                                      constructor?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty,
+                                      z => z.Name,
+                                      z => z.Name,
+                                      (a, _) => a,
+                                      StringComparer.OrdinalIgnoreCase
+                                  )
+                          )
+                         .ToArray();
         var createArgumentList = constructor is null
             ? ArgumentList()
-            : ArgumentList(SeparatedList(constructor.Parameters.Select(z => Argument(IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name)))));
+            : ArgumentList(
+                SeparatedList(constructor.Parameters.Select(z => Argument(IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name))))
+            );
 
         var createBody = Block()
            .AddStatements(
@@ -164,12 +168,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             ITypeSymbol propertyType;
             propertyType = propertySymbol.Type is INamedTypeSymbol
             {
-                Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation"
+                Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
             } namedTypeSymbol
                 ? namedTypeSymbol.TypeArguments[0]
                 : propertySymbol.Type;
             type = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
-            if (propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum } && type is not NullableTypeSyntax)
+            if (propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, } && type is not NullableTypeSyntax)
             {
                 type = NullableType(type);
             }
@@ -323,7 +327,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                             }
                         )
                     )
-                )
+                ),
         };
     }
 
@@ -337,7 +341,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                              node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
                                  and TypeDeclarationSyntax
                                      {
-                                         BaseList: { } baseList
+                                         BaseList: { } baseList,
                                      }
                           && baseList.Types.Any(
                                  z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IOptionalTracking", StringComparison.Ordinal)
@@ -367,7 +371,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                              );
                          }
                      )
-                    .Where(x => x.symbol is not null && x.targetSymbol is not null);
+                    .Where(x => x.symbol is { } && x.targetSymbol is { });
 
         context.RegisterSourceOutput(
             values,

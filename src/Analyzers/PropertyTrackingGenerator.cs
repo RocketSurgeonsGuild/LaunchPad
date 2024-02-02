@@ -65,12 +65,12 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                .OfType<IPropertySymbol>()
                 // only works for `set`able properties not init only
                .Where(z => !symbol.GetMembers(z.Name).Any())
-               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false })
+               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
                .ToArray();
         if (!targetSymbol.IsRecord)
         {
             // not able to use with operator, so ignore any init only properties.
-            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false }).ToArray();
+            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, }).ToArray();
         }
 
         var changesRecord = RecordDeclaration(Token(SyntaxKind.RecordKeyword), "Changes")
@@ -110,7 +110,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
             var type = ParseTypeName(propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
             AddNamespacesFromPropertyType(namespaces, propertySymbol.Type);
 
-            var assignedType =  GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
+            var assignedType = GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
                .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type)));
 
             classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, assignedType));
@@ -123,7 +123,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                 new[]
                                 {
                                     AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                    AccessorDeclaration(SyntaxKind.InitAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                                    AccessorDeclaration(SyntaxKind.InitAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
                                 }
                             )
                         )
@@ -176,7 +176,6 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
                         IdentifierName(propertySymbol.Name),
-
                         InvocationExpression(
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -404,7 +403,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             new[]
                             {
                                 AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
                             }
                         )
                     )
@@ -432,7 +431,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             )
                     )
                 )
-               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
         };
     }
 
@@ -446,7 +445,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                              node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
                                  and TypeDeclarationSyntax
                                      {
-                                         BaseList: { } baseList
+                                         BaseList: { } baseList,
                                      }
                           && baseList.Types.Any(
                                  z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
@@ -476,7 +475,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                              );
                          }
                      )
-                    .Where(x => x.symbol is not null && x.targetSymbol is not null);
+                    .Where(x => x.symbol is { } && x.targetSymbol is { });
 
         context.RegisterSourceOutput(
             values,

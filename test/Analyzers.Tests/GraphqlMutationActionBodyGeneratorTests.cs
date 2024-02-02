@@ -448,7 +448,7 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, ClaimsPrincipal cp, CancellationToken cancellationToken);
-}"
+}",
                 }
             );
             Add(

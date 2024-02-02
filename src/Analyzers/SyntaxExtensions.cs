@@ -115,15 +115,15 @@ internal static class SyntaxExtensions
     public static string? GetSyntaxName(this TypeSyntax typeSyntax)
     {
         return typeSyntax switch
-        {
-            SimpleNameSyntax sns     => sns.Identifier.Text,
-            QualifiedNameSyntax qns  => qns.Right.Identifier.Text,
-            NullableTypeSyntax nts   => nts.ElementType.GetSyntaxName() + "?",
-            PredefinedTypeSyntax pts => pts.Keyword.Text,
-            ArrayTypeSyntax ats      => ats.ElementType.GetSyntaxName() + "[]",
-            TupleTypeSyntax tts      => "(" + tts.Elements.Select(z => $"{z.Type.GetSyntaxName()}{z.Identifier.Text}") + ")",
-            _                        => null // there might be more but for now... throw new NotSupportedException(typeSyntax.GetType().FullName)
-        };
+               {
+                   SimpleNameSyntax sns     => sns.Identifier.Text,
+                   QualifiedNameSyntax qns  => qns.Right.Identifier.Text,
+                   NullableTypeSyntax nts   => nts.ElementType.GetSyntaxName() + "?",
+                   PredefinedTypeSyntax pts => pts.Keyword.Text,
+                   ArrayTypeSyntax ats      => ats.ElementType.GetSyntaxName() + "[]",
+                   TupleTypeSyntax tts      => "(" + tts.Elements.Select(z => $"{z.Type.GetSyntaxName()}{z.Identifier.Text}") + ")",
+                   _                        => null, // there might be more but for now... throw new NotSupportedException(typeSyntax.GetType().FullName)
+               };
     }
 
     public static bool ContainsAttribute(this TypeDeclarationSyntax syntax, string attributePrefixes) // string is comma separated
@@ -133,7 +133,7 @@ internal static class SyntaxExtensions
 
     public static bool ContainsAttribute(this AttributeListSyntax list, string attributePrefixes) // string is comma separated
     {
-        if (list is { Attributes: { Count: 0 } })
+        if (list is { Attributes: { Count: 0, }, })
             return false;
         var names = GetNames(attributePrefixes);
 
@@ -148,7 +148,7 @@ internal static class SyntaxExtensions
 
     public static bool ContainsAttribute(this in SyntaxList<AttributeListSyntax> list, string attributePrefixes) // string is comma separated
     {
-        if (list is { Count: 0 })
+        if (list is { Count: 0, })
             return false;
         var names = GetNames(attributePrefixes);
 
@@ -171,7 +171,7 @@ internal static class SyntaxExtensions
 
     public static AttributeSyntax? GetAttribute(this AttributeListSyntax list, string attributePrefixes) // string is comma separated
     {
-        if (list is { Attributes: { Count: 0 } })
+        if (list is { Attributes: { Count: 0, }, })
             return null;
         var names = GetNames(attributePrefixes);
 
@@ -186,7 +186,7 @@ internal static class SyntaxExtensions
 
     public static AttributeSyntax? GetAttribute(this in SyntaxList<AttributeListSyntax> list, string attributePrefixes) // string is comma separated
     {
-        if (list is { Count: 0 })
+        if (list is { Count: 0, })
             return null;
         var names = GetNames(attributePrefixes);
 
@@ -214,7 +214,7 @@ internal static class SyntaxExtensions
     {
         if (!AttributeNames.TryGetValue(attributePrefixes, out var names))
         {
-            names = new HashSet<string>(attributePrefixes.Split(',').SelectMany(z => new[] { z, z + "Attribute" }));
+            names = new(attributePrefixes.Split(',').SelectMany(z => new[] { z, z + "Attribute", }));
             AttributeNames.TryAdd(attributePrefixes, names);
         }
 

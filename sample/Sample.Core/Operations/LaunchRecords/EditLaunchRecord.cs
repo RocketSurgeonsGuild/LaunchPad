@@ -54,7 +54,7 @@ public static partial class EditLaunchRecord
     }
 
     /// <summary>
-    /// The patch request
+    ///     The patch request
     /// </summary>
     /// <param name="Id">The rocket id</param>
     public partial record PatchRequest(LaunchRecordId Id) : IRequest<LaunchRecordModel>, IPropertyTracking<Request>;

@@ -69,9 +69,9 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                .FirstOrDefault(
                     param => param switch
                              {
-                                 IPropertySymbol { IsImplicitlyDeclared: false } ps => SymbolEqualityComparer.Default.Equals(claimsPrincipal, ps.Type),
-                                 IFieldSymbol { IsImplicitlyDeclared: false } fs    => SymbolEqualityComparer.Default.Equals(claimsPrincipal, fs.Type),
-                                 _                                                  => false
+                                 IPropertySymbol { IsImplicitlyDeclared: false, } ps => SymbolEqualityComparer.Default.Equals(claimsPrincipal, ps.Type),
+                                 IFieldSymbol { IsImplicitlyDeclared: false, } fs    => SymbolEqualityComparer.Default.Equals(claimsPrincipal, fs.Type),
+                                 _                                                   => false,
                              }
                 );
         var hasClaimsPrincipal = claimsPrincipalProperty is { };
@@ -187,7 +187,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
         static ExpressionSyntax sendMediatorRequest(ExpressionSyntax nameSyntax, IParameterSymbol? cancellationTokenParameter)
         {
-            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax) };
+            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
             {
                 arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
@@ -224,7 +224,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
         static ExpressionSyntax streamMediatorRequest(ExpressionSyntax nameSyntax, IParameterSymbol? cancellationTokenParameter)
         {
-            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax) };
+            var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
             {
                 arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
@@ -246,7 +246,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         (ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel) valueTuple
     )
     {
-        var (syntax, symbol, semanticModel) = valueTuple;
+        ( var syntax, var symbol, var semanticModel ) = valueTuple;
         var claimsPrincipal = semanticModel.Compilation.GetTypeByMetadataName("System.Security.Claims.ClaimsPrincipal")!;
         var mediator = semanticModel.Compilation.GetTypeByMetadataName("MediatR.IMediator")!;
         var cancellationToken = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken")!;
@@ -273,7 +273,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                               return ( method, symbol: methodSymbol, request: request ?? streamRequest );
                           }
                       )
-                     .Where(z => z is { symbol: { }, method: { } })
+                     .Where(z => z is { symbol: { }, method: { }, })
                      .ToImmutableArray();
 
         var newClass = syntax
@@ -284,7 +284,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             ;
 
 
-        foreach (var (method, methodSymbol, request) in members)
+        foreach (( var method, var methodSymbol, var request ) in members)
         {
             if (request != null)
             {
@@ -302,7 +302,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             }
         }
 
-        var additionalUsings = new[] { "MediatR" };
+        var additionalUsings = new[] { "MediatR", };
 
         var usings = syntax
                     .SyntaxTree.GetCompilationUnitRoot()

@@ -113,9 +113,9 @@ public static class ModuleInitializer
         if (target.Diagnostics.Any())
         {
             var info = new
-                       {
-                           target.Diagnostics,
-                       };
+            {
+                target.Diagnostics,
+            };
             return new(info, targets);
         }
 

@@ -30,7 +30,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
     {
         var instance = new Class(1)
         {
-            Name = "MyName"
+            Name = "MyName",
         };
         var tracking = new ClassWithTracking(1)
         {
@@ -47,7 +47,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         var instance = new Class(1)
         {
             Name = "MyName",
-            Description = "MyDescription"
+            Description = "MyDescription",
         };
         var tracking = ClassWithTracking.Create(instance);
         tracking.Description = "My New description";
@@ -97,7 +97,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
     {
         var instance = new Record(1, "MyName")
         {
-            Description = "MyDescription"
+            Description = "MyDescription",
         };
         var tracking = RecordWithTracking.Create(instance);
         tracking.Description = "My New description";
@@ -115,6 +115,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         public string? Name { get; set; }
         public string? Description { get; set; }
     }
+
     public partial class ClassWithTracking(int Id) : IPropertyTracking<Class>
     {
         public int Id { get; } = Id;
@@ -124,5 +125,6 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
     {
         public string? Description { get; set; }
     }
+
     public partial record RecordWithTracking(int Id) : IPropertyTracking<Record>;
 }
