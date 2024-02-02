@@ -7,14 +7,15 @@ using NodaTime;
 public partial class PatchGraphRocket
 {
     public HotChocolate.Optional<string?> SerialNumber { get; set; }
-
     public HotChocolate.Optional<int?> Type { get; set; }
-
     public HotChocolate.Optional<Instant?> PlannedDate { get; set; }
 
     public global::Request Create()
     {
-        var value = new global::Request{Id = Id};
+        var value = new global::Request()
+        {
+            Id = Id
+        };
         if (SerialNumber.HasValue)
         {
             value.SerialNumber = SerialNumber.Value;

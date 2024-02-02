@@ -13,7 +13,11 @@ namespace Sample.Core.Operations.Rockets
         {
             public string SerialNumber { get; set; }
 
-            public Request With(Model value) => new Request{Id = this.Id, SerialNumber = value.SerialNumber};
+            public Request With(Model value) => new Request
+            {
+                Id = this.Id,
+                SerialNumber = value.SerialNumber
+            };
         }
     }
 }

@@ -69,7 +69,8 @@ public static class ModuleInitializer
                       .FilePath
                       .Replace("\\", "/", StringComparison.OrdinalIgnoreCase)
                       .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
-                      .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase);
+                      .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase)
+                      .Replace(".roslyn4.6", string.Empty, StringComparison.OrdinalIgnoreCase);
         var data = $@"//HintName: {hintPath}
 {source.GetText()}";
         return new("cs", data.Replace("\r", string.Empty, StringComparison.OrdinalIgnoreCase));
@@ -126,7 +127,8 @@ public static class ModuleInitializer
         var hintName = source
                       .HintName
                       .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
-                      .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase);
+                      .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase)
+                      .Replace(".roslyn4.6", string.Empty, StringComparison.OrdinalIgnoreCase);
         var data = $@"//HintName: {hintName}
 {source.SourceText}";
         return new("cs", data, Path.GetFileNameWithoutExtension(hintName));
@@ -188,7 +190,8 @@ public static class ModuleInitializer
                 value
                    .HintName
                    .Replace(".roslyn4.0", string.Empty, StringComparison.OrdinalIgnoreCase)
-                   .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase),
+                   .Replace(".roslyn4.4", string.Empty, StringComparison.OrdinalIgnoreCase)
+                   .Replace(".roslyn4.6", string.Empty, StringComparison.OrdinalIgnoreCase),
                 "HintName"
             );
             writer.WriteMember(value, value.SourceText, "Source");

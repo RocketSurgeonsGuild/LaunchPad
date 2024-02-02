@@ -28,11 +28,12 @@ internal static class SyntaxExtensions
         var parent = source.Parent;
         while (parent is TypeDeclarationSyntax parentSyntax)
         {
-            classToNest = parentSyntax
-                         .WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>())
-                         .WithAttributeLists(SyntaxFactory.List<AttributeListSyntax>())
-                         .WithConstraintClauses(SyntaxFactory.List<TypeParameterConstraintClauseSyntax>())
-                         .WithBaseList(null)
+            classToNest = ( parentSyntax is RecordDeclarationSyntax
+                              ? (TypeDeclarationSyntax)SyntaxFactory.RecordDeclaration(SyntaxFactory.Token(SyntaxKind.RecordKeyword), parentSyntax.Identifier)
+                              : SyntaxFactory.ClassDeclaration(parentSyntax.Identifier) )
+                         .WithModifiers(parentSyntax.Modifiers)
+                         .WithOpenBraceToken(SyntaxFactory.Token(SyntaxKind.OpenBraceToken))
+                         .WithCloseBraceToken(SyntaxFactory.Token(SyntaxKind.CloseBraceToken))
                          .AddMembers(classToNest);
 
             if (!parentSyntax.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))

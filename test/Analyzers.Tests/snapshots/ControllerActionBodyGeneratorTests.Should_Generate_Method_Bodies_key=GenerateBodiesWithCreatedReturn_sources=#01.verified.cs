@@ -21,7 +21,9 @@ namespace MyNamespace.Controllers
             request.Id = id;
             var result = await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
             return new ObjectResult(result)
-            {StatusCode = 200};
+            {
+                StatusCode = 200
+            };
         }
 
         [ProducesDefaultResponseType]
@@ -32,12 +34,7 @@ namespace MyNamespace.Controllers
         public partial async Task<ActionResult<CreateRocket.Response>> CreateRocket([BindRequired][FromBody] CreateRocket.Request request)
         {
             var result = await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
-            return new CreatedAtActionResult("GetRocket", null, new
-            {
-            id = result.Id
-            }
-
-            , result);
+            return new CreatedAtActionResult("GetRocket", null, new { id = result.Id }, result);
         }
     }
 }

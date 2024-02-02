@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -33,30 +34,35 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
-                    GeneratorDiagnostics.ParameterMustBeSameTypeOfObject, declaration.Keyword.GetLocation(), declaration.GetFullMetadataName(),
+                    GeneratorDiagnostics.ParameterMustBeSameTypeOfObject,
+                    declaration.Keyword.GetLocation(),
+                    declaration.GetFullMetadataName(),
                     declaration.Keyword.IsKind(SyntaxKind.ClassKeyword) ? "record" : "class"
                 )
             );
             return;
         }
 
-        var classToInherit = declaration
-                            .WithMembers(List<MemberDeclarationSyntax>())
-                            .WithAttributeLists(List<AttributeListSyntax>())
-                            .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                            .WithBaseList(null)
-                            .WithAttributeLists(
-                                 SingletonList(
-                                     AttributeList(
-                                         SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
-                                     )
-                                 )
-                             );
+        var classToInherit =
+            ( isRecord
+                ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
+                : ClassDeclaration(declaration.Identifier) )
+           .WithModifiers(declaration.Modifiers)
+           .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
+           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
+           .WithAttributeLists(
+                SingletonList(
+                    AttributeList(
+                        SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
+                    )
+                )
+            );
 
         var writeableProperties =
-            targetSymbol.GetMembers()
-                        .OfType<IPropertySymbol>()
-                        .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false });
+            targetSymbol
+               .GetMembers()
+               .OfType<IPropertySymbol>()
+               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false });
         if (!targetSymbol.IsRecord)
         {
             // not able to use with operator, so ignore any init only properties.
@@ -68,26 +74,51 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                               // only works for `set`able properties not init only
                              .Where(z => !symbol.GetMembers(z.Name).Any())
                              .ToArray();
-        var existingMembers = targetSymbol.GetMembers()
-                                          .OfType<IPropertySymbol>()
-                                          .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false })
-                                          .Where(z => symbol.GetMembers(z.Name).Any())
-                                          .Except(writeableProperties);
+        var existingMembers = targetSymbol
+                             .GetMembers()
+                             .OfType<IPropertySymbol>()
+                             .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false })
+                             .Where(z => symbol.GetMembers(z.Name).Any())
+                             .Except(writeableProperties)
+                             .ToArray();
+
+        var memberNamesSet = targetSymbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var constructor = targetSymbol.Constructors
+                                      .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
+                                      .Where(z => !z.IsImplicitlyDeclared)
+                                      .OrderByDescending(z => z.Parameters.Length)
+                                      .FirstOrDefault();
+
+        existingMembers = existingMembers.Except(
+            existingMembers
+               .Join(
+                    constructor?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty,
+                    z => z.Name,
+                    z => z.Name,
+                    (a, _) => a,
+                    StringComparer.OrdinalIgnoreCase
+                    )
+            )
+           .ToArray();
+        var createArgumentList = constructor is null
+            ? ArgumentList()
+            : ArgumentList(SeparatedList(constructor.Parameters.Select(z => Argument(IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name)))));
 
         var createBody = Block()
            .AddStatements(
                 LocalDeclarationStatement(
                     VariableDeclaration(
-                        IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList()))
-                    ).WithVariables(
-                        SingletonSeparatedList(
-                            VariableDeclarator(Identifier("value"))
-                               .WithInitializer(
-                                    EqualsValueClause(
-                                        ObjectCreationExpression(
-                                                IdentifierName(Identifier(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
-                                            )
-                                           .WithInitializer(
+                            IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList()))
+                        )
+                       .WithVariables(
+                            SingletonSeparatedList(
+                                VariableDeclarator(Identifier("value"))
+                                   .WithInitializer(
+                                        EqualsValueClause(
+                                            ObjectCreationExpression(
+                                                IdentifierName(Identifier(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))),
+                                                createArgumentList,
                                                 InitializerExpression(
                                                     SyntaxKind.ObjectInitializerExpression,
                                                     SeparatedList<ExpressionSyntax>(
@@ -103,10 +134,10 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                                     )
                                                 )
                                             )
+                                        )
                                     )
-                                )
+                            )
                         )
-                    )
                 )
             );
 
@@ -152,8 +183,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             );
         }
 
+        // declaration.Members.OfType<ConstructorDeclarationSyntax>();
+        // or primary consturctor list
+
         var createMethod = MethodDeclaration(
-                               ParseTypeName(targetSymbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)), "Create"
+                               ParseTypeName(targetSymbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
+                               "Create"
                            )
                           .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
                           .WithBody(
@@ -163,8 +198,10 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                            );
 
         classToInherit = classToInherit.AddMembers(createMethod);
-        var usings = declaration.SyntaxTree.GetCompilationUnitRoot().Usings
-                                .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
+        var usings = declaration
+                    .SyntaxTree.GetCompilationUnitRoot()
+                    .Usings
+                    .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
@@ -189,7 +226,9 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
     }
 
     private static StatementSyntax GenerateApplyChangesBodyPart(
-        IPropertySymbol propertySymbol, IdentifierNameSyntax valueIdentifier, bool isRecord
+        IPropertySymbol propertySymbol,
+        IdentifierNameSyntax valueIdentifier,
+        bool isRecord
     )
     {
         return IfStatement(
@@ -202,7 +241,9 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 SingletonList<StatementSyntax>(
                     ExpressionStatement(
                         GenerateAssignmentExpression(
-                            propertySymbol, valueIdentifier, isRecord,
+                            propertySymbol,
+                            valueIdentifier,
+                            isRecord,
                             propertySymbol.NullableAnnotation == NullableAnnotation.NotAnnotated && propertySymbol.Type.TypeKind == TypeKind.Struct
                                 ? BinaryExpression(
                                     SyntaxKind.CoalesceExpression,
@@ -229,7 +270,10 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
     }
 
     private static AssignmentExpressionSyntax GenerateAssignmentExpression(
-        IPropertySymbol propertySymbol, IdentifierNameSyntax valueIdentifier, bool isRecord, ExpressionSyntax valueExpression
+        IPropertySymbol propertySymbol,
+        IdentifierNameSyntax valueIdentifier,
+        bool isRecord,
+        ExpressionSyntax valueExpression
     )
     {
         return isRecord
@@ -286,41 +330,44 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var values = context.SyntaxProvider
-                            .CreateSyntaxProvider(
-                                 static (node, _) =>
-                                     node is (ClassDeclarationSyntax or RecordDeclarationSyntax) and TypeDeclarationSyntax
+        var values = context
+                    .SyntaxProvider
+                    .CreateSyntaxProvider(
+                         static (node, _) =>
+                             node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
+                                 and TypeDeclarationSyntax
                                      {
                                          BaseList: { } baseList
-                                     } && baseList.Types.Any(
-                                         z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IOptionalTracking", StringComparison.Ordinal)
-                                     ),
-                                 static (syntaxContext, token) => (
-                                     syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
-                                     // ReSharper disable once NullableWarningSuppressionIsUsed
-                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)!
-                                 )
-                             )
-                            .Select(
-                                 (tuple, _) =>
-                                 {
-                                     var interfaceSymbol = tuple.symbol
-                                                                .Interfaces.FirstOrDefault(
-                                                                     z => z.Name.StartsWith("IOptionalTracking", StringComparison.Ordinal)
-                                                                 );
-                                     var targetSymbol = interfaceSymbol?.ContainingAssembly.Name == "Rocket.Surgery.LaunchPad.HotChocolate"
-                                         ? (INamedTypeSymbol?)interfaceSymbol.TypeArguments[0]
-                                         : null;
-                                     return (
-                                         tuple.symbol,
-                                         tuple.syntax,
-                                         tuple.semanticModel,
-                                         interfaceSymbol,
-                                         targetSymbol
-                                     );
-                                 }
-                             )
-                            .Where(x => x.symbol is not null && x.targetSymbol is not null);
+                                     }
+                          && baseList.Types.Any(
+                                 z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IOptionalTracking", StringComparison.Ordinal)
+                             ),
+                         static (syntaxContext, token) => (
+                             syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
+                             // ReSharper disable once NullableWarningSuppressionIsUsed
+                             symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)!
+                         )
+                     )
+                    .Select(
+                         (tuple, _) =>
+                         {
+                             var interfaceSymbol = tuple.symbol
+                                                        .Interfaces.FirstOrDefault(
+                                                             z => z.Name.StartsWith("IOptionalTracking", StringComparison.Ordinal)
+                                                         );
+                             var targetSymbol = interfaceSymbol?.ContainingAssembly.Name == "Rocket.Surgery.LaunchPad.HotChocolate"
+                                 ? (INamedTypeSymbol?)interfaceSymbol.TypeArguments[0]
+                                 : null;
+                             return (
+                                 tuple.symbol,
+                                 tuple.syntax,
+                                 tuple.semanticModel,
+                                 interfaceSymbol,
+                                 targetSymbol
+                             );
+                         }
+                     )
+                    .Where(x => x.symbol is not null && x.targetSymbol is not null);
 
         context.RegisterSourceOutput(
             values,

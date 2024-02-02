@@ -9,30 +9,39 @@ namespace Sample.Core.Operations.Rockets
     {
         public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> SerialNumber { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
         public Rocket.Surgery.LaunchPad.Foundation.Assigned<int?> Type { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<int?>.Empty(default);
+
 #pragma warning disable CA1034
         public record Changes
         {
             public bool SerialNumber { get; init; }
-
             public bool Type { get; init; }
         }
 
         public Changes GetChangedState()
         {
             return new Changes()
-            {SerialNumber = SerialNumber.HasBeenSet(), Type = Type.HasBeenSet()};
+            {
+                SerialNumber = SerialNumber.HasBeenSet(),
+                Type = Type.HasBeenSet()
+            };
         }
 
         public global::Sample.Core.Operations.Rockets.Request ApplyChanges(global::Sample.Core.Operations.Rockets.Request state)
         {
             if (SerialNumber.HasBeenSet())
             {
-                state = state with {SerialNumber = SerialNumber!};
+                state = state with
+                {
+                    SerialNumber = SerialNumber!
+                };
             }
 
             if (Type.HasBeenSet())
             {
-                state = state with {Type = Type!};
+                state = state with
+                {
+                    Type = Type!
+                };
             }
 
             ResetChanges();
@@ -50,6 +59,12 @@ namespace Sample.Core.Operations.Rockets
         {
             ResetChanges();
         }
+
+        public static global::Sample.Core.Operations.Rockets.PatchRocket Create(global::Sample.Core.Operations.Rockets.Request value) => new global::Sample.Core.Operations.Rockets.PatchRocket()
+        {
+            SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.SerialNumber),
+            Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int?>.Empty(value.Type)
+        };
     }
 }
 #nullable restore

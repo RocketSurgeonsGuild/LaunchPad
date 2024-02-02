@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -34,36 +35,42 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
-                    GeneratorDiagnostics.ParameterMustBeSameTypeOfObject, declaration.Keyword.GetLocation(), declaration.GetFullMetadataName(),
+                    GeneratorDiagnostics.ParameterMustBeSameTypeOfObject,
+                    declaration.Keyword.GetLocation(),
+                    declaration.GetFullMetadataName(),
                     declaration.Keyword.IsKind(SyntaxKind.ClassKeyword) ? "record" : "class"
                 )
             );
             return;
         }
 
-        var classToInherit = declaration
-                            .WithMembers(List<MemberDeclarationSyntax>())
-                            .WithAttributeLists(List<AttributeListSyntax>())
-                            .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                            .WithBaseList(null)
-                            .WithAttributeLists(
-                                 SingletonList(
-                                     AttributeList(
-                                         SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
-                                     )
-                                 )
-                             );
+        var classToInherit =
+            ( isRecord
+                ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
+                : ClassDeclaration(declaration.Identifier) )
+           .WithModifiers(declaration.Modifiers)
+           .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
+           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
+           .WithAttributeLists(
+                SingletonList(
+                    AttributeList(
+                        SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
+                    )
+                )
+            );
 
         var writeableProperties =
-            targetSymbol.GetMembers()
-                        .OfType<IPropertySymbol>()
-                         // only works for `set`able properties not init only
-                        .Where(z => !symbol.GetMembers(z.Name).Any())
-                        .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false });
+            targetSymbol
+               .GetMembers()
+               .OfType<IPropertySymbol>()
+                // only works for `set`able properties not init only
+               .Where(z => !symbol.GetMembers(z.Name).Any())
+               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false })
+               .ToArray();
         if (!targetSymbol.IsRecord)
         {
             // not able to use with operator, so ignore any init only properties.
-            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false });
+            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false }).ToArray();
         }
 
         var changesRecord = RecordDeclaration(Token(SyntaxKind.RecordKeyword), "Changes")
@@ -80,6 +87,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var applyChangesBody = Block();
         var resetChangesBody = Block();
+        var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var namespaces = new HashSet<string>();
 
         static void AddNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
@@ -102,7 +110,10 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
             var type = ParseTypeName(propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
             AddNamespacesFromPropertyType(namespaces, propertySymbol.Type);
 
-            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
+            var assignedType =  GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
+               .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type)));
+
+            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, assignedType));
             changesRecord = changesRecord.AddMembers(
                 PropertyDeclaration(PredefinedType(Token(SyntaxKind.BoolKeyword)), Identifier(propertySymbol.Name))
                    .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
@@ -131,6 +142,32 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     )
                 )
             );
+            createMethodInitializer = createMethodInitializer.AddExpressions(
+                AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                    IdentifierName(propertySymbol.Name),
+                    InvocationExpression(
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                assignedType,
+                                IdentifierName("Empty")
+                            )
+                        )
+                       .WithArgumentList(
+                            ArgumentList(
+                                SingletonSeparatedList(
+                                    Argument(
+                                        MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            IdentifierName("value"),
+                                            IdentifierName(propertySymbol.Name)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                )
+            );
             applyChangesBody = applyChangesBody.AddStatements(
                 GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("state"), isRecord)
             );
@@ -139,6 +176,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
                         IdentifierName(propertySymbol.Name),
+
                         InvocationExpression(
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -163,7 +201,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
 
         var getChangedStateMethod =
             MethodDeclaration(
-                    ParseTypeName("Changes"), Identifier("GetChangedState")
+                    ParseTypeName("Changes"),
+                    Identifier("GetChangedState")
                 )
                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
                .WithBody(
@@ -183,9 +222,10 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                 .WithParameterList(
                                      ParameterList(
                                          SingletonSeparatedList(
-                                             Parameter(Identifier("state")).WithType(
-                                                 IdentifierName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                                             )
+                                             Parameter(Identifier("state"))
+                                                .WithType(
+                                                     IdentifierName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
+                                                 )
                                          )
                                      )
                                  )
@@ -213,17 +253,72 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                          )
                                         .WithBody(Block().AddStatements(ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges")))));
 
+
+        var memberNamesSet = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var constructor = symbol
+                         .Constructors
+                         .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
+                         .Where(z => !z.IsImplicitlyDeclared)
+                         .OrderByDescending(z => z.Parameters.Length)
+                         .FirstOrDefault();
+
+        var createArgumentList = constructor is null
+            ? ArgumentList()
+            : ArgumentList(
+                SeparatedList(
+                    constructor.Parameters
+                               .Select(
+                                    z => Argument(
+                                        MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            IdentifierName("value"),
+                                            IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name)
+                                        )
+                                    )
+                                )
+                )
+            );
+
+        var createMethod = MethodDeclaration(
+                               ParseTypeName(symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
+                               "Create"
+                           )
+                          .WithParameterList(
+                               ParameterList(
+                                   SingletonSeparatedList(
+                                       Parameter(Identifier("value"))
+                                          .WithType(
+                                               ParseTypeName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
+                                           )
+                                   )
+                               )
+                           )
+                          .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword)))
+                          .WithExpressionBody(
+                               ArrowExpressionClause(
+                                   ObjectCreationExpression(
+                                       IdentifierName(Identifier(symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))),
+                                       createArgumentList,
+                                       createMethodInitializer
+                                   )
+                               )
+                           )
+                          .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+
         classToInherit = classToInherit
            .AddMembers(
                 changesRecord,
                 getChangedStateMethod,
                 applyChangesMethod,
                 resetChangesMethod,
-                resetChangesImplementation
+                resetChangesImplementation,
+                createMethod
             );
 
-        var usings = declaration.SyntaxTree.GetCompilationUnitRoot().Usings
-                                .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
+        var usings = declaration
+                    .SyntaxTree.GetCompilationUnitRoot()
+                    .Usings
+                    .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
@@ -248,7 +343,9 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
     }
 
     private static StatementSyntax GenerateApplyChangesBodyPart(
-        IPropertySymbol propertySymbol, IdentifierNameSyntax valueIdentifier, bool isRecord
+        IPropertySymbol propertySymbol,
+        IdentifierNameSyntax valueIdentifier,
+        bool isRecord
     )
     {
         return IfStatement(
@@ -291,13 +388,11 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         );
     }
 
-    private static MemberDeclarationSyntax[] GenerateTrackingProperties(IPropertySymbol propertySymbol, TypeSyntax typeSyntax)
+    private static MemberDeclarationSyntax[] GenerateTrackingProperties(IPropertySymbol propertySymbol, GenericNameSyntax assignedType)
     {
-        var type = GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
-           .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(typeSyntax)));
         return new MemberDeclarationSyntax[]
         {
-            PropertyDeclaration(type, Identifier(propertySymbol.Name))
+            PropertyDeclaration(assignedType, Identifier(propertySymbol.Name))
                .WithModifiers(
                     TokenList(
                         Token(SyntaxKind.PublicKeyword)
@@ -313,12 +408,13 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             }
                         )
                     )
-                ).WithInitializer(
+                )
+               .WithInitializer(
                     EqualsValueClause(
                         InvocationExpression(
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    type,
+                                    assignedType,
                                     IdentifierName("Empty")
                                 )
                             )
@@ -335,48 +431,52 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                 )
                             )
                     )
-                ).WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                )
+               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
         };
     }
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var values = context.SyntaxProvider
-                            .CreateSyntaxProvider(
-                                 static (node, _) =>
-                                     node is (ClassDeclarationSyntax or RecordDeclarationSyntax) and TypeDeclarationSyntax
+        var values = context
+                    .SyntaxProvider
+                    .CreateSyntaxProvider(
+                         static (node, _) =>
+                             node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
+                                 and TypeDeclarationSyntax
                                      {
                                          BaseList: { } baseList
-                                     } && baseList.Types.Any(
-                                         z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
-                                     ),
-                                 static (syntaxContext, token) => (
-                                     syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
-                                     // ReSharper disable once NullableWarningSuppressionIsUsed
-                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)!
-                                 )
-                             )
-                            .Select(
-                                 (tuple, _) =>
-                                 {
-                                     var interfaceSymbol = tuple.symbol
-                                                                .Interfaces.FirstOrDefault(
-                                                                     z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)
-                                                                 );
-                                     var targetSymbol = interfaceSymbol?.ContainingAssembly.Name == "Rocket.Surgery.LaunchPad.Foundation"
-                                         ? (INamedTypeSymbol?)interfaceSymbol.TypeArguments[0]
-                                         : null;
-                                     return (
-                                         tuple.symbol,
-                                         tuple.syntax,
-                                         tuple.semanticModel,
-                                         interfaceSymbol,
-                                         targetSymbol
-                                     );
-                                 }
-                             )
-                            .Where(x => x.symbol is not null && x.targetSymbol is not null);
+                                     }
+                          && baseList.Types.Any(
+                                 z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
+                             ),
+                         static (syntaxContext, token) => (
+                             syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
+                             // ReSharper disable once NullableWarningSuppressionIsUsed
+                             symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)!
+                         )
+                     )
+                    .Select(
+                         (tuple, _) =>
+                         {
+                             var interfaceSymbol = tuple.symbol
+                                                        .Interfaces.FirstOrDefault(
+                                                             z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)
+                                                         );
+                             var targetSymbol = interfaceSymbol?.ContainingAssembly.Name == "Rocket.Surgery.LaunchPad.Foundation"
+                                 ? (INamedTypeSymbol?)interfaceSymbol.TypeArguments[0]
+                                 : null;
+                             return (
+                                 tuple.symbol,
+                                 tuple.syntax,
+                                 tuple.semanticModel,
+                                 interfaceSymbol,
+                                 targetSymbol
+                             );
+                         }
+                     )
+                    .Where(x => x.symbol is not null && x.targetSymbol is not null);
 
         context.RegisterSourceOutput(
             values,

@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <NoPackageAnalysis>true</NoPackageAnalysis>
-        <DefineConstants>$(DefineConstants);ROSLYN4_0;ROSLYN4_4</DefineConstants>
+        <DefineConstants>$(DefineConstants);ROSLYN4_0;ROSLYN4_4;ROSLYN4_6;ROSLYN4_8</DefineConstants>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     </PropertyGroup>
     <ItemGroup>
@@ -19,6 +19,11 @@
             PrivateAssets="all"
             ReferenceOutputAssembly="false"
         />
+        <ProjectReference
+            Include="../Analyzers.roslyn4.6/Rocket.Surgery.LaunchPad.Analyzers.roslyn4.6.csproj"
+            PrivateAssets="all"
+            ReferenceOutputAssembly="false"
+        />
     </ItemGroup>
     <ItemGroup>
         <None
@@ -31,6 +36,18 @@
             Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.4\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
             Pack="true"
             PackagePath="analyzers/dotnet/roslyn4.4/cs"
+            Visible="false"
+        />
+        <None
+            Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.6\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
+            Pack="true"
+            PackagePath="analyzers/dotnet/roslyn4.6/cs"
+            Visible="false"
+        />
+        <None
+            Include="$(MSBuildThisFileDirectory)\..\Analyzers\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
+            Pack="true"
+            PackagePath="analyzers/dotnet/roslyn4.8/cs"
             Visible="false"
         />
     </ItemGroup>

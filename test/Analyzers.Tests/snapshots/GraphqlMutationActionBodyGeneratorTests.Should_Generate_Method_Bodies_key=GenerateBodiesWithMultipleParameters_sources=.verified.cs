@@ -11,7 +11,7 @@ namespace MyNamespace.Controllers
         /// Get the launch records for a given rocket
         /// </summary>
         /// <returns></returns>
-        public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(IMediator mediator, GetRocketLaunchRecords.Request request)
+        public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords([HotChocolate.ServiceAttribute] IMediator mediator, GetRocketLaunchRecords.Request request)
         {
             var result = Mediator.CreateStream(request);
             return result;

@@ -8,7 +8,7 @@ internal static class SymbolExtensions
 {
     public static AttributeData? GetAttribute(this ISymbol symbol, string attributeClassName)
     {
-        return symbol.GetAttributes().FirstOrDefault(z => z.AttributeClass?.Name == attributeClassName);
+        return symbol.GetAttributes().FirstOrDefault(z => z.AttributeClass?.Name == attributeClassName || z.AttributeClass.GetFullMetadataName() == attributeClassName);
     }
 
     public static SyntaxList<UsingDirectiveSyntax> AddDistinctUsingStatements(this SyntaxList<UsingDirectiveSyntax> usingDirectiveSyntax, IEnumerable<string> namespaces)

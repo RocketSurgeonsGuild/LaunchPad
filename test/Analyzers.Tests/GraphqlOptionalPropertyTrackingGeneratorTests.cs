@@ -183,16 +183,14 @@ namespace Sample.Core.Operations.Rockets
         var source = @"
 namespace Sample.Core.Operations.Rockets
 {
-    public record Request : IRequest<RocketModel>
+    public record Request(Guid Id) : IRequest<RocketModel>
     {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-        public Instant? PlannedDate { get; set; }
+        public string SerialNumber { get; init; }
+        public int Type { get; init; }
+        public Instant? PlannedDate { get; init; }
     }
-    public partial record PatchRocket : IOptionalTracking<Request>, IRequest<RocketModel>
+    public partial record PatchRocket(Guid Id) : IOptionalTracking<Request>, IRequest<RocketModel>
     {
-        public Guid Id { get; init; }
     }
 }
 ";
