@@ -1,11 +1,10 @@
 using Alba;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 /// <summary>
-/// A fixture used to bootstrap the alba test server with a custom sql extension
+///     A fixture used to bootstrap the alba test server with a custom sql extension
 /// </summary>
 public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixture
     where TEntryPoint : class
@@ -16,34 +15,65 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     private IAlbaHost? _host;
 
     /// <summary>
-    /// The base constructor for use with hte web app fixture
+    ///     The base constructor for use with hte web app fixture
     /// </summary>
     /// <param name="resettableAlbaExtension"></param>
     /// <param name="extensions"></param>
-    protected LaunchPadWebAppFixture(IResettableAlbaExtension? resettableAlbaExtension, params IAlbaExtension[] extensions)
+    protected LaunchPadWebAppFixture(IResettableAlbaExtension resettableAlbaExtension, params IAlbaExtension[] extensions) : this(
+        [resettableAlbaExtension, ..extensions,]
+    )
     {
-        _loggerFactory = new AppFixtureLoggerFactory();
         _sqlExtension = resettableAlbaExtension;
-        _extensions = new IAlbaExtension[]
-                      {
-                          new LaunchPadExtension(this, _loggerFactory),
-                          // ReSharper disable once NullableWarningSuppressionIsUsed
-                          _sqlExtension!
-                      }
-                      // ReSharper disable once NullableWarningSuppressionIsUsed
-                     .Where(z => z != null!)
-                     .Concat(extensions)
-                     .ToArray();
+    }
+
+    /// <summary>
+    ///     The base constructor for use with hte web app fixture
+    /// </summary>
+    /// <param name="extensions"></param>
+    protected LaunchPadWebAppFixture(params IAlbaExtension[] extensions)
+    {
+        _loggerFactory = new();
+        _extensions = [new LaunchPadExtension(this, _loggerFactory), ..extensions,];
+    }
+
+    /// <summary>
+    ///     Method used to start the alba host
+    /// </summary>
+    public async Task InitializeAsync()
+    {
+        _host = await Alba.AlbaHost.For<TEntryPoint>(_extensions);
+    }
+
+    /// <summary>
+    ///     Method used to dispose the alba host
+    /// </summary>
+    public async Task DisposeAsync()
+    {
+        if (_host is { }) await _host.DisposeAsync();
+        _loggerFactory.Dispose();
+        if (_sqlExtension != null) await _sqlExtension.DisposeAsync();
+    }
+
+    /// <summary>
+    ///     The dispose method
+    /// </summary>
+    /// <param name="disposing"></param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposing) return;
+        _loggerFactory.Dispose();
+        _sqlExtension?.Dispose();
+        _host?.Dispose();
     }
 
     // ReSharper disable once NullableWarningSuppressionIsUsed
     /// <summary>
-    /// The underlying alba host
+    ///     The underlying alba host
     /// </summary>
     public IAlbaHost AlbaHost => _host!;
 
     /// <summary>
-    /// Set the loggerfactory when initializing the test
+    ///     Set the logger factory when initializing the test
     /// </summary>
     /// <param name="loggerFactory"></param>
     public void SetLoggerFactory(ILoggerFactory loggerFactory)
@@ -52,7 +82,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     }
 
     /// <summary>
-    /// Method to reset the database if provided
+    ///     Method to reset the database if provided
     /// </summary>
     public void Reset()
     {
@@ -61,60 +91,35 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     }
 
     /// <summary>
-    /// Method to reset the database if provided
+    ///     Method to reset the database if provided
     /// </summary>
-    public async Task ResetAsync()
+    public Task ResetAsync()
     {
-        if (_sqlExtension is null || _host is null) return;
+        if (_sqlExtension is null || _host is null) return Task.CompletedTask;
 
-        await _sqlExtension.ResetAsync(AlbaHost.Services);
+        return _sqlExtension.ResetAsync(AlbaHost.Services);
     }
 
-    /// <summary>
-    /// Method used to start the alba host
-    /// </summary>
-    public async Task InitializeAsync()
-    {
-        _host = await Alba.AlbaHost.For<TEntryPoint>(_extensions);
-    }
-
-    /// <summary>
-    /// Method used to dispose the alba host
-    /// </summary>
-    public async Task DisposeAsync()
-    {
-        await AlbaHost.DisposeAsync();
-        _loggerFactory.Dispose();
-
-        if (_sqlExtension != null)
-        {
-            await _sqlExtension.DisposeAsync();
-        }
-    }
-
-#pragma warning disable CA1816
+    #pragma warning disable CA1816
     async ValueTask IAsyncDisposable.DisposeAsync()
-#pragma warning restore CA1816
+        #pragma warning restore CA1816
     {
         await DisposeAsync().ConfigureAwait(false);
     }
 
     /// <summary>
-    /// The dispose method
+    ///     The dispose method
     /// </summary>
-    /// <param name="disposing"></param>
-    protected virtual void Dispose(bool disposing)
+    public void Dispose()
     {
-        if (!disposing) return;
-        _loggerFactory.Dispose();
-        _sqlExtension?.Dispose();
-        AlbaHost.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    class AppFixtureLoggerFactory : ILoggerFactory
+    private class AppFixtureLoggerFactory : ILoggerFactory
     {
+        private readonly List<DeferredLogger> _deferredLoggers = new();
         private ILoggerFactory? _innerLoggerFactory;
-        private List<DeferredLogger> _deferredLoggers = new();
 
         public void SetLoggerFactory(ILoggerFactory loggerFactory)
         {
@@ -125,10 +130,14 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
             }
         }
 
-        public void Dispose()
+        private DeferredLogger AddDeferredLogger(string categoryName)
         {
-            _innerLoggerFactory?.Dispose();
+            var logger = new DeferredLogger(categoryName);
+            _deferredLoggers.Add(logger);
+            return logger;
         }
+
+        public void Dispose() { }
 
         public void AddProvider(ILoggerProvider provider)
         {
@@ -139,33 +148,36 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         {
             return _innerLoggerFactory?.CreateLogger(categoryName) ?? AddDeferredLogger(categoryName);
         }
-
-        private DeferredLogger AddDeferredLogger(string categoryName)
-        {
-            var logger = new DeferredLogger(categoryName);
-            _deferredLoggers.Add(logger);
-            return logger;
-        }
     }
 
-    class DeferredLogger : ILogger
+    private class DeferredLogger(string categoryName) : ILogger
     {
-        public string CategoryName { get; }
-        private List<(LogLevel logLevel, EventId eventId, string text)> _deferredLogs = new();
+        private readonly List<(LogLevel logLevel, EventId eventId, string text)> _deferredLogs = [];
         private ILogger? _logger;
+        public string CategoryName { get; } = categoryName;
 
-        public DeferredLogger(string categoryName)
+        public void SetLogger(ILogger logger)
         {
-            CategoryName = categoryName;
+            _logger = logger;
+            foreach (var log in _deferredLogs)
+            {
+                #pragma warning disable CA1848
+                #pragma warning disable CA2254
+                // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
+                _logger.Log(log.logLevel, log.eventId, log.text);
+                #pragma warning restore CA2254
+                #pragma warning restore CA1848
+            }
         }
-        
+
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             if (_logger is null)
             {
-                _deferredLogs.Add((logLevel, eventId, formatter(state, exception)));
+                _deferredLogs.Add(( logLevel, eventId, formatter(state, exception) ));
                 return;
             }
+
             _logger.Log(logLevel, eventId, state, exception, formatter);
         }
 
@@ -178,28 +190,5 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         {
             return _logger?.BeginScope(state);
         }
-
-        public void SetLogger(ILogger logger)
-        {
-            _logger = logger;
-            foreach (var log in _deferredLogs)
-            {
-#pragma warning disable CA1848
-#pragma warning disable CA2254
-                // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
-                _logger.Log(log.logLevel, log.eventId, log.text);
-#pragma warning restore CA2254
-#pragma warning restore CA1848
-            }
-        }
-    }
-
-    /// <summary>
-    /// The dispose method
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 }
