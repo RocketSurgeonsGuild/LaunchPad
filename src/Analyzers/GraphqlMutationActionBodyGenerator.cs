@@ -185,7 +185,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
               .WithBody(block.NormalizeWhitespace())
               .WithSemicolonToken(Token(SyntaxKind.None));
 
-        static ExpressionSyntax sendMediatorRequest(ExpressionSyntax nameSyntax, ExpressionSyntax mediatorParameterSyntax, IParameterSymbol? cancellationTokenParameter)
+        static ExpressionSyntax sendMediatorRequest(
+            ExpressionSyntax nameSyntax,
+            ExpressionSyntax mediatorParameterSyntax,
+            IParameterSymbol? cancellationTokenParameter
+        )
         {
             var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
@@ -222,7 +226,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             );
         }
 
-        static ExpressionSyntax streamMediatorRequest(ExpressionSyntax nameSyntax, ExpressionSyntax mediatorParameterSyntax, IParameterSymbol? cancellationTokenParameter)
+        static ExpressionSyntax streamMediatorRequest(
+            ExpressionSyntax nameSyntax,
+            ExpressionSyntax mediatorParameterSyntax,
+            IParameterSymbol? cancellationTokenParameter
+        )
         {
             var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
