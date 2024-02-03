@@ -111,8 +111,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         }
 
         var sendRequestExpression = isStream
-            ? streamMediatorRequest(IdentifierName(parameter.Name), cancellationTokenParameter)
-            : sendMediatorRequest(IdentifierName(parameter.Name), cancellationTokenParameter);
+            ? streamMediatorRequest(IdentifierName(parameter.Name), IdentifierName(mediatorParameter.Name), cancellationTokenParameter)
+            : sendMediatorRequest(IdentifierName(parameter.Name), IdentifierName(mediatorParameter.Name), cancellationTokenParameter);
 
         if (parameterType.IsRecord)
         {
@@ -137,8 +137,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     InitializerExpression(SyntaxKind.WithInitializerExpression, SeparatedList(expressions))
                 );
                 sendRequestExpression = isStream
-                    ? streamMediatorRequest(withExpression, cancellationTokenParameter)
-                    : sendMediatorRequest(withExpression, cancellationTokenParameter);
+                    ? streamMediatorRequest(withExpression, IdentifierName(mediatorParameter.Name), cancellationTokenParameter)
+                    : sendMediatorRequest(withExpression, IdentifierName(mediatorParameter.Name), cancellationTokenParameter);
             }
         }
         else
@@ -185,7 +185,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
               .WithBody(block.NormalizeWhitespace())
               .WithSemicolonToken(Token(SyntaxKind.None));
 
-        static ExpressionSyntax sendMediatorRequest(ExpressionSyntax nameSyntax, IParameterSymbol? cancellationTokenParameter)
+        static ExpressionSyntax sendMediatorRequest(
+            ExpressionSyntax nameSyntax,
+            ExpressionSyntax mediatorParameterSyntax,
+            IParameterSymbol? cancellationTokenParameter
+        )
         {
             var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
@@ -200,7 +204,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                             InvocationExpression(
                                     MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName("Mediator"),
+                                        mediatorParameterSyntax,
                                         IdentifierName("Send")
                                     )
                                 )
@@ -222,7 +226,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             );
         }
 
-        static ExpressionSyntax streamMediatorRequest(ExpressionSyntax nameSyntax, IParameterSymbol? cancellationTokenParameter)
+        static ExpressionSyntax streamMediatorRequest(
+            ExpressionSyntax nameSyntax,
+            ExpressionSyntax mediatorParameterSyntax,
+            IParameterSymbol? cancellationTokenParameter
+        )
         {
             var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
             if (cancellationTokenParameter is { })
@@ -233,7 +241,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             return InvocationExpression(
                     MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName("Mediator"),
+                        mediatorParameterSyntax,
                         IdentifierName("CreateStream")
                     )
                 )

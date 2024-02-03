@@ -10,7 +10,7 @@ namespace MyNamespace.Controllers
     {
         public partial async Task<RocketModel> Save2Rocket(IMediator mediator, ClaimsPrincipal claimsPrincipal, Save2Rocket.Request request)
         {
-            var result = await Mediator.Send(request with { ClaimsPrincipal = claimsPrincipal }).ConfigureAwait(false);
+            var result = await mediator.Send(request with { ClaimsPrincipal = claimsPrincipal }).ConfigureAwait(false);
             return result;
         }
     }
