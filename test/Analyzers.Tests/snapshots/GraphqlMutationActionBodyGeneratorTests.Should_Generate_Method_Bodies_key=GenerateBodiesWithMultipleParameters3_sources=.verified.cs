@@ -13,7 +13,7 @@ namespace MyNamespace.Controllers
         /// <returns></returns>
         public partial async Task<LaunchRecordModel> GetRocketLaunchRecord(IMediator mediator, GetRocketLaunchRecord.Request request)
         {
-            var result = await Mediator.Send(request).ConfigureAwait(false);
+            var result = await mediator.Send(request).ConfigureAwait(false);
             return result;
         }
     }

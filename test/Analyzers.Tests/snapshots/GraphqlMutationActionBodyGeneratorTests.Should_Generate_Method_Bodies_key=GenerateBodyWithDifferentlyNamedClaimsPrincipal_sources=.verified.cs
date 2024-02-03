@@ -11,7 +11,7 @@ namespace MyNamespace.Controllers
         public partial async Task<RocketModel> Save2Rocket(IMediator mediator, Save2Rocket.Request request, ClaimsPrincipal cp)
         {
             request.ClaimsPrincipal = cp;
-            var result = await Mediator.Send(request).ConfigureAwait(false);
+            var result = await mediator.Send(request).ConfigureAwait(false);
             return result;
         }
     }

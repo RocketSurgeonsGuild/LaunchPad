@@ -13,7 +13,7 @@ namespace MyNamespace.Controllers
         /// <returns></returns>
         public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords([HotChocolate.ServiceAttribute] IMediator mediator, GetRocketLaunchRecords.Request request)
         {
-            var result = Mediator.CreateStream(request);
+            var result = mediator.CreateStream(request);
             return result;
         }
 
@@ -23,7 +23,7 @@ namespace MyNamespace.Controllers
         /// <returns></returns>
         public partial async Task<LaunchRecordModel> GetRocketLaunchRecord(IMediator mediator, GetRocketLaunchRecord.Request request)
         {
-            var result = await Mediator.Send(request).ConfigureAwait(false);
+            var result = await mediator.Send(request).ConfigureAwait(false);
             return result;
         }
     }
