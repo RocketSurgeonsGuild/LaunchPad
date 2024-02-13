@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
@@ -36,9 +36,9 @@
     <PackageVersion Include="HotChocolate.Abstractions" Version="14.0.0-p.33" />
     <PackageVersion Include="HotChocolate.AspNetCore" Version="14.0.0-p.33" />
     <PackageVersion Include="HotChocolate.Data" Version="14.0.0-p.33" />
-    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0-tags-13-1-0-preview-5.1" />
+    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0-p.33" />
     <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.0.0-p.33" />
-    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="14.0.0-tags-13-1-0-preview-5.1" />
+    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="14.0.0-p.33" />
     <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.0.0-p.33" />
     <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.0.0-p.33" />
     <PackageVersion Include="HotChocolate.Types.Analyzers" Version="14.0.0-p.33" />
