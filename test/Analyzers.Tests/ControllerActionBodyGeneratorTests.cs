@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Analyzers.Tests.Helpers;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +11,57 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 
 namespace Analyzers.Tests;
 
-public class ControllerActionBodyGeneratorTests : GeneratorTest
+public class ControllerActionBodyGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
 {
+    [Fact]
+    public async Task Should_Error_If_Class_Property_Is_Init()
+    {
+        var result = await Builder
+                          .AddSources(
+                               @"
+namespace TestNamespace;
+public record RocketModel
+{
+    public Guid Id { get; init; }
+    public string Sn { get; init; } = null!;
+}
+public enum RocketType { A, B }
+",
+                               @"
+namespace TestNamespace;
+public static class Save2Rocket
+{
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+    }
+}",
+                               @"using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[Route(""[controller]"")]
+public partial class RocketController : RestfulApiController
+{
+    [HttpPost(""{id:guid}/{sn?}"")]
+    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
+}"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
     [Fact]
     public async Task Should_Error_If_Controller_Is_Not_Partial()
     {
-        var source2 = @"
+        var result = await Builder
+                          .AddSources(
+                               @"
 namespace TestNamespace;
 
 public record RocketModel
@@ -37,8 +84,8 @@ public static class ListRockets
     public record Request : IRequest<IEnumerable<RocketModel>>;
 }
 
-";
-        var source1 = @"using Microsoft.AspNetCore.Mvc;
+",
+                               @"using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using TestNamespace;
@@ -54,41 +101,18 @@ public class RocketController : RestfulApiController
     [HttpGet(""{id:guid}"")]
     public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
 }
-";
-        await Verify(await GenerateAsync(source1, source2));
-    }
-
-    public ControllerActionBodyGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
-    {
-        WithGenerator<ControllerActionBodyGenerator>();
-        AddReferences(
-            typeof(Guid),
-            typeof(IRequest),
-            typeof(IMediator),
-            typeof(Task<>),
-            typeof(IEnumerable<>),
-            typeof(ControllerBase),
-            typeof(Controller),
-            typeof(RouteAttribute),
-            typeof(RestfulApiController),
-            typeof(ClaimsPrincipal),
-            typeof(HttpContext)
-        );
-        AddSources(
-            @"
-global using MediatR;
-global using System;
-global using System.Collections.Generic;
-global using System.Threading.Tasks;
 "
-        );
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
     }
 
     [Theory]
     [ClassData(typeof(MethodBodyData))]
     public async Task Should_Generate_Method_Bodies(string key, string[] sources)
     {
-        await Verify(await GenerateAsync(sources)).UseParameters(key, "");
+        await Verify(Builder.AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
     }
 
     private sealed class MethodBodyData : TheoryData<string, string[]>
@@ -100,6 +124,7 @@ public record RocketModel
     public Guid Id { get; init; }
     public string Sn { get; init; } = null!;
 }
+public enum RocketType { A, B }
 ";
 
         public MethodBodyData()
@@ -204,7 +229,7 @@ public static class Save2Rocket
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
-        public string? Sn { get; init; } = null!;
+        public string? Sn { get; set; } = null!;
     }
 }",
                     @"using Microsoft.AspNetCore.Mvc;
@@ -232,7 +257,7 @@ namespace TestNamespace;
 public static class ListRockets
 {
     // TODO: Paging model!
-    public record Request : IStreamRequest<IEnumerable<RocketModel>>;
+    public record Request : IStreamRequest<RocketModel>;
 }",
                     @"using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -435,6 +460,7 @@ public static class GetRocketLaunchRecord
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
+        public Guid LaunchRecordId { get; init; }
     }
 }",
                     @"
@@ -609,9 +635,9 @@ public static class Save2Rocket
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
-        public string? Sn { get; init; } = null!;
-        public ClaimsPrincipal ClaimsPrincipal { get; init; }
-        public string Other { get; init; }
+        public string? Sn { get; set; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; set; }
+        public string Other { get; set; }
     }
 }",
                     @"using Microsoft.AspNetCore.Mvc;
@@ -665,5 +691,34 @@ public partial class RocketController : RestfulApiController
                 }
             );
         }
+    }
+
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        Builder = Builder
+                 .WithGenerator<ControllerActionBodyGenerator>()
+                 .AddReferences(
+                      typeof(Guid),
+                      typeof(IRequest),
+                      typeof(IMediator),
+                      typeof(Task<>),
+                      typeof(IEnumerable<>),
+                      typeof(ControllerBase),
+                      typeof(Controller),
+                      typeof(RouteAttribute),
+                      typeof(RestfulApiController),
+                      typeof(ClaimsPrincipal),
+                      typeof(HttpContext),
+                      typeof(ProblemDetails),
+                      typeof(IValidator),
+                      typeof(IValidatorInterceptor)
+                  )
+                 .AddSources(@"
+global using MediatR;
+global using System;
+global using System.Collections.Generic;
+global using System.Threading.Tasks;
+");
     }
 }

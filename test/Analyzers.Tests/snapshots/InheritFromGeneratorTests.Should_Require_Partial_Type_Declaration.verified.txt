@@ -1,28 +1,13 @@
 ﻿{
-  ResultDiagnostics: [
-    {
-      Id: LPAD0001,
-      Title: Type must be made partial,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Test0.cs: (15,22)-(15,29),
-      Description: ,
-      HelpLink: ,
-      MessageFormat: Type {0} must be made partial.,
-      Message: Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.,
-      Category: LaunchPad
-    }
-  ],
-  Results: {
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [
       {
         Id: LPAD0001,
         Title: Type must be made partial,
         Severity: Error,
         WarningLevel: 0,
-        Location: Test0.cs: (15,22)-(15,29),
-        Description: ,
-        HelpLink: ,
+        Location: Input1.cs: (15,22)-(15,29),
         MessageFormat: Type {0} must be made partial.,
         Message: Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.,
         Category: LaunchPad

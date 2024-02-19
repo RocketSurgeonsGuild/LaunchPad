@@ -7,12 +7,12 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-public class PropertyTrackingGeneratorTests : GeneratorTest
+public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
 {
     [Fact]
     public async Task Should_Require_Partial_Type_Declaration()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 namespace Sample.Core.Operations.Rockets
 {
     public class Request : IRequest<RocketModel>
@@ -26,8 +26,7 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
     }
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
@@ -39,7 +38,7 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Require_Partial_Parent_Type_Declaration()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -56,8 +55,7 @@ namespace Sample.Core.Operations.Rockets
         }
     }
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
@@ -69,7 +67,7 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Generate_Record_With_Underlying_Properties_And_Track_Changes()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 public record Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -79,13 +77,11 @@ public record Request : IRequest<RocketModel>
 public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
 {
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var assembly = EmitAssembly(result).Should().NotBeNull().And.Subject;
-        var type = assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
         var typeProperty = type.GetProperty("Type")!;
         var idProperty = type.GetProperty("Id")!;
@@ -120,7 +116,7 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
     [Fact]
     public async Task Should_Generate_Class_With_Underlying_Properties_And_Track_Changes()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 public class Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -130,13 +126,11 @@ public class Request : IRequest<RocketModel>
 public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
 {
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var assembly = EmitAssembly(result).Should().NotBeNull().And.Subject;
-        var type = assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
         var typeProperty = type.GetProperty("Type")!;
         var getChangesMethod = type.GetMethod("GetChangedState")!;
@@ -166,7 +160,7 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
     [Fact]
     public async Task Should_Require_Same_Type_As_Record()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -177,8 +171,7 @@ namespace Sample.Core.Operations.Rockets
     }
     public partial class PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0005");
@@ -190,7 +183,7 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Require_Same_Type_As_Class()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 namespace Sample.Core.Operations.Rockets
 {
     public class Request : IRequest<RocketModel>
@@ -204,8 +197,7 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
     }
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0005");
@@ -217,7 +209,7 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Support_Nullable_Class_Property()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -228,8 +220,7 @@ namespace Sample.Core.Operations.Rockets
     }
     public partial record PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
@@ -238,7 +229,7 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Support_Nullable_Struct_Property()
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -252,33 +243,10 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
     }
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
-    }
-
-    public PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
-    {
-        WithGenerator<PropertyTrackingGenerator>();
-        AddReferences(typeof(IPropertyTracking<>), typeof(IMediator), typeof(IBaseRequest));
-        AddSources(
-            @"
-global using System;
-global using MediatR;
-global using Rocket.Surgery.LaunchPad.Foundation;
-global using Sample.Core.Operations.Rockets;
-namespace Sample.Core.Operations.Rockets
-{
-    public class RocketModel
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-    }
-}
-"
-        );
     }
 
     [Theory]
@@ -286,7 +254,7 @@ namespace Sample.Core.Operations.Rockets
     [InlineData("Type", 12345)]
     public async Task Should_Generate_Record_With_Underlying_Properties_And_Apply_Changes(string property, object value)
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 public record Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -296,16 +264,14 @@ public record Request : IRequest<RocketModel>
 public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
 {
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var assembly = EmitAssembly(result).Should().NotBeNull().And.Subject;
-        var type = assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
         var propertyUnderTest = type.GetProperty(property)!;
-        var requestType = assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
+        var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
         var requestPropertyUnderTest = requestType.GetProperty(property)!;
         var otherRequestProperties = requestType.GetProperties().Where(z => z.Name != property);
         var request = Activator.CreateInstance(requestType);
@@ -328,7 +294,7 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
     [InlineData("Type", 12345)]
     public async Task Should_Generate_Class_With_Underlying_Properties_And_Apply_Changes(string property, object value)
     {
-        var source = @"
+        var result = await Builder.AddSources(@"
 public class Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -339,16 +305,14 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
 {
     public Guid Id { get; init; }
 }
-";
-        var result = await GenerateAsync(source);
+").Build().GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var assembly = EmitAssembly(result).Should().NotBeNull().And.Subject;
-        var type = assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
         var propertyUnderTest = type.GetProperty(property)!;
-        var requestType = assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
+        var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
         var requestPropertyUnderTest = requestType.GetProperty(property)!;
         var otherRequestProperties = requestType.GetProperties().Where(z => z.Name != property);
         var request = Activator.CreateInstance(requestType);
@@ -364,5 +328,31 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         currentPropertyValues.Should().ContainInOrder(otherRequestProperties.Select(z => z.GetValue(request)).ToArray());
 
         await Verify(result).UseParameters(property, value);
+    }
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        Builder = Builder
+                 .WithGenerator<PropertyTrackingGenerator>()
+                 .AddReferences(
+                      typeof(IPropertyTracking<>),
+                      typeof(IMediator),
+                      typeof(IBaseRequest)
+                  ).AddSources(
+                      @"
+global using System;
+global using MediatR;
+global using Rocket.Surgery.LaunchPad.Foundation;
+global using Sample.Core.Operations.Rockets;
+namespace Sample.Core.Operations.Rockets
+{
+    public class RocketModel
+    {
+        public Guid Id { get; init; }
+        public string SerialNumber { get; set; } = null!;
+    }
+}
+"
+                  );
     }
 }

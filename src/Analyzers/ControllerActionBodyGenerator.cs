@@ -79,9 +79,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         if (otherParams.Length > 0)
         {
             var declaredParam = newSyntax.ParameterList.Parameters.Single(z => z.Identifier.Text == parameter.Name);
-            var parameterProperties = parameterType.MemberNames
+            var parameterProperties = parameterType.GetMembers()
                                                    .Join(
-                                                        otherParams, z => z, z => z.Name, (memberName, s) => ( memberName, symbol: s ),
+                                                        otherParams, z => z.Name, z => z.Name, static (member, parameter) => ( member, parameter ),
                                                         StringComparer.OrdinalIgnoreCase
                                                     )
                                                    .ToArray();
@@ -92,21 +92,51 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                    {
                                                        return par switch
                                                        {
-                                                           IPropertySymbol { Type: not null, IsImplicitlyDeclared: false } ps => controllerBaseProperties.Where(
+                                                           IPropertySymbol { IsImplicitlyDeclared: false } ps => controllerBaseProperties.Where(
                                                                p => SymbolEqualityComparer.Default.Equals(p.Type, ps.Type)
                                                            ),
-                                                           IFieldSymbol { Type: not null, IsImplicitlyDeclared: false } fs => controllerBaseProperties.Where(
+                                                           IFieldSymbol { IsImplicitlyDeclared: false } fs => controllerBaseProperties.Where(
                                                                p => SymbolEqualityComparer.Default.Equals(p.Type, fs.Type)
                                                            ),
                                                            _ => Enumerable.Empty<IPropertySymbol>()
                                                        };
-                                                   }, static (param, propertySymbol) => ( propertySymbol, parameter: param )
+                                                   }, static (member, controllerProperty) => ( member, controllerProperty )
                                                )
                                               .ToArray();
-
+            var failed = false;
+            if (!parameterType.IsRecord)
+            {
+                foreach (var (member, _) in parameterProperties)
+                {
+                    if (member is not IPropertySymbol { SetMethod.IsInitOnly: true }) continue;
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            GeneratorDiagnostics.PropertyMustBeSettableForTheRequest,
+                            member.Locations.First(),
+                            member.Locations.Skip(1),
+                            member.Name,
+                            parameterType.Name
+                        )
+                    );
+                    failed = true;
+                }
+                foreach (var (member, _) in controllerAttachedProperties)
+                {
+                    if (member is not IPropertySymbol { SetMethod.IsInitOnly: true }) continue;
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            GeneratorDiagnostics.PropertyMustBeSettableForTheRequest,
+                            member.Locations.First(),
+                            member.Locations.Skip(1),
+                            member.Name,
+                            parameterType.Name
+                        )
+                    );
+                    failed = true;
+                }
+            }
 
             var mapping = parameterType.MemberNames.ToLookup(z => z, StringComparer.OrdinalIgnoreCase);
-            var failed = false;
             foreach (var param in otherParams)
             {
                 if (!mapping[param.Name].Any())
@@ -150,8 +180,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             var bindingMembers = parameterType.GetMembers()
                                               .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false } ps && ps.Name != "EqualityContract")
                                               .Select(z => z.Name)
-                                              .Except(parameterProperties.Select(z => z.memberName))
-                                              .Except(controllerAttachedProperties.Select(z => z.parameter.Name))
+                                              .Except(parameterProperties.Select(z => z.member.Name))
+                                              .Except(controllerAttachedProperties.Select(z => z.member.Name))
                                               .ToArray();
 
             var newParam = declaredParam.AddAttributeLists(
@@ -187,18 +217,18 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                 parameterProperties.Select(
                                     tuple => AssignmentExpression(
                                         SyntaxKind.SimpleAssignmentExpression,
-                                        IdentifierName(tuple.memberName),
-                                        IdentifierName(tuple.symbol.Name)
+                                        IdentifierName(tuple.member.Name),
+                                        IdentifierName(tuple.parameter.Name)
                                     )
                                 ).Concat(
                                     controllerAttachedProperties.Select(
                                         s => AssignmentExpression(
                                             SyntaxKind.SimpleAssignmentExpression,
-                                            IdentifierName(s.parameter.Name),
+                                            IdentifierName(s.member.Name),
                                             MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 ThisExpression(),
-                                                IdentifierName(s.propertySymbol.Name)
+                                                IdentifierName(s.controllerProperty.Name)
                                             )
                                         )
                                     )
@@ -211,7 +241,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             }
             else
             {
-                foreach (var (memberName, s) in parameterProperties)
+                foreach (var (member, s) in parameterProperties)
                 {
                     block = block.AddStatements(
                         ExpressionStatement(
@@ -220,7 +250,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     IdentifierName(parameter.Name),
-                                    IdentifierName(memberName)
+                                    IdentifierName(member.Name)
                                 ),
                                 IdentifierName(s.Name)
                             )
@@ -237,12 +267,12 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     IdentifierName(parameter.Name),
-                                    IdentifierName(s.parameter.Name)
+                                    IdentifierName(s.member.Name)
                                 ),
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     ThisExpression(),
-                                    IdentifierName(s.propertySymbol.Name)
+                                    IdentifierName(s.controllerProperty.Name)
                                 )
                             )
                         )

@@ -1,28 +1,30 @@
 ﻿{
-  ResultDiagnostics: [
+  FinalDiagnostics: [
     {
-      Id: LPAD0006,
-      Title: The parameter must exist in order for this request to process,
+      Id: CS8795,
+      Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Test3.cs: (9,99)-(9,106),
-      Description: ,
-      HelpLink: ,
-      MessageFormat: The parameter of type {0} must exist in order to fulfill this request {1},
-      Message: The parameter of type System.Security.Claims.ClaimsPrincipal must exist in order to fulfill this request Request,
-      Category: LaunchPad
+      Location: Input3.cs: (9,37)-(9,48),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8795),
+      MessageFormat: Partial method '{0}' must have an implementation part because it has accessibility modifiers.,
+      Message: Partial method 'RocketMutation.Save2Rocket(IMediator, Save2Rocket.Request)' must have an implementation part because it has accessibility modifiers.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
     }
   ],
-  Results: {
+  GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator: [
       {
         Id: LPAD0006,
         Title: The parameter must exist in order for this request to process,
         Severity: Error,
         WarningLevel: 0,
-        Location: Test3.cs: (9,99)-(9,106),
-        Description: ,
-        HelpLink: ,
+        Location: Input3.cs: (9,99)-(9,106),
         MessageFormat: The parameter of type {0} must exist in order to fulfill this request {1},
         Message: The parameter of type System.Security.Claims.ClaimsPrincipal must exist in order to fulfill this request Request,
         Category: LaunchPad

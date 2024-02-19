@@ -57,4 +57,13 @@ internal static class GeneratorDiagnostics
         DiagnosticSeverity.Error,
         true
     );
+
+    public static DiagnosticDescriptor PropertyMustBeSettableForTheRequest { get; } = new(
+        "LPAD0007",
+        "The property must be settable on a request class, init is not supported.",
+        "The property {0} must be settable on a request class {1}, init is not supported",
+        "LaunchPad",
+        DiagnosticSeverity.Error,
+        true
+    );
 }
