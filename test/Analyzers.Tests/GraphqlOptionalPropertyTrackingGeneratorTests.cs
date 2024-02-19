@@ -2,7 +2,6 @@ using Analyzers.Tests.Helpers;
 using DryIoc.ImTools;
 using HotChocolate;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 using Rocket.Surgery.LaunchPad.Analyzers;
@@ -17,8 +16,8 @@ public class GraphqlOptionalPropertyTrackingGeneratorTests(ITestOutputHelper tes
     public async Task Should_Require_Partial_Type_Declaration()
     {
         var result = await Builder
-                    .AddSources(
-                         @"
+                          .AddSources(
+                               @"
 namespace Sample.Core.Operations.Rockets
 {
     public class Request : IRequest<RocketModel>
@@ -34,9 +33,9 @@ namespace Sample.Core.Operations.Rockets
     }
 }
 "
-                     )
-                    .Build()
-                    .GenerateAsync();
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
@@ -84,7 +83,8 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Require_Same_Type_As_Record()
     {
         var result = await Builder
-           .AddSources(@"
+                          .AddSources(
+                               @"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -99,9 +99,10 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
     }
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0005");
@@ -114,7 +115,8 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Require_Same_Type_As_Class()
     {
         var result = await Builder
-           .AddSources(@"
+                          .AddSources(
+                               @"
 namespace Sample.Core.Operations.Rockets
 {
     public class Request : IRequest<RocketModel>
@@ -129,9 +131,10 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
     }
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0005");
@@ -144,7 +147,8 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Support_Nullable_Class_Property()
     {
         var result = await Builder
-           .AddSources(@"
+                          .AddSources(
+                               @"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -159,9 +163,10 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
     }
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
@@ -171,7 +176,8 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Support_Nullable_Builtin_Struct_Property()
     {
         var result = await Builder
-           .AddSources(@"
+                          .AddSources(
+                               @"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -186,9 +192,10 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
     }
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
@@ -198,7 +205,8 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Support_Nullable_Struct_Property()
     {
         var result = await Builder
-           .AddSources( @"
+                          .AddSources(
+                               @"
 namespace Sample.Core.Operations.Rockets
 {
     public record Request(Guid Id) : IRequest<RocketModel>
@@ -211,9 +219,10 @@ namespace Sample.Core.Operations.Rockets
     {
     }
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
@@ -223,7 +232,8 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Support_Nullable_Enum_Property()
     {
         var result = await Builder
-           .AddSources(@"
+                          .AddSources(
+                               @"
 namespace Sample.Core.Operations.Rockets
 {
     public enum RocketType { Falcon9, FalconHeavy, AtlasV }
@@ -239,9 +249,10 @@ namespace Sample.Core.Operations.Rockets
     {
     }
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
@@ -259,7 +270,8 @@ namespace Sample.Core.Operations.Rockets
         }
 
         var result = await Builder
-           .AddSources(@"
+                          .AddSources(
+                               @"
 public record Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -270,9 +282,10 @@ public record Request : IRequest<RocketModel>
 public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
 {
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
@@ -305,7 +318,8 @@ public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<Ro
         }
 
         var result = await Builder
-           .AddSources( @"
+                          .AddSources(
+                               @"
 public class Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -317,9 +331,10 @@ public partial class PatchGraphRocket : IOptionalTracking<Request>, IRequest<Roc
 {
     public Guid Id { get; init; }
 }
-")
-           .Build()
-           .GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
@@ -352,7 +367,8 @@ public partial class PatchGraphRocket : IOptionalTracking<Request>, IRequest<Roc
         }
 
         var result = await AddPatchRocketModel(RocketModelType.Record)
-                          .AddSources(@"
+                          .AddSources(
+                               @"
 public record Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -364,7 +380,8 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>
 {
     public Guid Id { get; init; }
 }
-")
+"
+                           )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
@@ -400,7 +417,8 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>
         }
 
         var result = await AddPatchRocketModel(RocketModelType.Class)
-                          .AddSources(@"
+                          .AddSources(
+                               @"
 public class Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -412,7 +430,8 @@ public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
 {
     public Guid Id { get; init; }
 }
-")
+"
+                           )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
@@ -509,7 +528,8 @@ namespace Sample.Core.Operations.Rockets
 }"
             );
         }
-        else if (type == RocketModelType.Class)
+
+        if (type == RocketModelType.Class)
         {
             return Builder.AddSources(
                 @"
@@ -596,7 +616,8 @@ namespace Sample.Core.Operations.Rockets
                       typeof(IMediator),
                       typeof(IBaseRequest)
                   )
-                 .AddSources(@"
+                 .AddSources(
+                      @"
 global using System;
 global using MediatR;
 global using NodaTime;
@@ -611,6 +632,7 @@ namespace Sample.Core.Operations.Rockets
         public string SerialNumber { get; set; } = null!;
     }
 }
-");
+"
+                  );
     }
 }

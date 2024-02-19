@@ -5,7 +5,6 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 
@@ -714,11 +713,13 @@ public partial class RocketController : RestfulApiController
                       typeof(IValidator),
                       typeof(IValidatorInterceptor)
                   )
-                 .AddSources(@"
+                 .AddSources(
+                      @"
 global using MediatR;
 global using System;
 global using System.Collections.Generic;
 global using System.Threading.Tasks;
-");
+"
+                  );
     }
 }

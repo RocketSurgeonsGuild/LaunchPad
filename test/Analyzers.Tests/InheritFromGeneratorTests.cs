@@ -1,7 +1,5 @@
 using Analyzers.Tests.Helpers;
 using MediatR;
-using Microsoft.Extensions.Logging;
-using NodaTime;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -12,7 +10,9 @@ public class InheritFromGeneratorTests(ITestOutputHelper testOutputHelper) : Gen
     [Fact]
     public async Task Should_Require_Partial_Type_Declaration()
     {
-        var result = await Builder.AddSources(@"
+        var result = await Builder
+                          .AddSources(
+                               @"
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -35,7 +35,10 @@ namespace Sample.Core.Operations.Rockets
         public partial record Response {}
     }
 }
-"   ).Build().GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
@@ -47,7 +50,9 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Require_Partial_Parent_Type_Declaration()
     {
-        var result = await Builder.AddSources(@"
+        var result = await Builder
+                          .AddSources(
+                               @"
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -70,7 +75,10 @@ namespace Sample.Core.Operations.Rockets
         public partial record Response {}
     }
 }
-"   ).Build().GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
         var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
@@ -82,7 +90,9 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Generate_With_Method_For_Record()
     {
-        var result = await Builder.AddSources(@"
+        var result = await Builder
+                          .AddSources(
+                               @"
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -105,14 +115,19 @@ namespace Sample.Core.Operations.Rockets
         public partial record Response {}
     }
 }
-"   ).Build().GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
         await Verify(result);
     }
 
     [Fact]
     public async Task Should_Inherit_Multiple_With_Method_For_Record()
     {
-        var result = await Builder.AddSources(@"
+        var result = await Builder
+                          .AddSources(
+                               @"
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -141,7 +156,10 @@ namespace Sample.Core.Operations.Rockets
         public partial record Response {}
     }
 }
-"   ).Build().GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
 
         await Verify(result);
     }
@@ -149,7 +167,9 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Generate_With_Method_For_Record_That_Inherits()
     {
-        var result = await Builder.AddSources(@"
+        var result = await Builder
+                          .AddSources(
+                               @"
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -172,7 +192,10 @@ namespace Sample.Core.Operations.Rockets
         public partial record Response {}
     }
 }
-"   ).Build().GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
 
         await Verify(result);
     }
@@ -180,7 +203,9 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Generate_With_Method_For_Class()
     {
-        var result = await Builder.AddSources(@"
+        var result = await Builder
+                          .AddSources(
+                               @"
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -203,7 +228,10 @@ namespace Sample.Core.Operations.Rockets
         public partial record Response {}
     }
 }
-"   ).Build().GenerateAsync();
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
 
         await Verify(result);
     }
@@ -218,7 +246,8 @@ namespace Sample.Core.Operations.Rockets
                       typeof(IMediator),
                       typeof(IBaseRequest)
                   )
-                 .AddSources(@"
+                 .AddSources(
+                      @"
 global using System;
 global using MediatR;
 global using Sample.Core.Operations.Rockets;
@@ -230,6 +259,7 @@ namespace Sample.Core.Operations.Rockets
         public string SerialNumber { get; set; } = null!;
     }
 }
-");
+"
+                  );
     }
 }

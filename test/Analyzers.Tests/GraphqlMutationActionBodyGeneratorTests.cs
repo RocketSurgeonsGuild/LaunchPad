@@ -4,7 +4,6 @@ using HotChocolate;
 using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 
 namespace Analyzers.Tests;
@@ -544,7 +543,8 @@ public partial class RocketMutation
                       typeof(OperationTypeNames),
                       typeof(ClaimsPrincipal)
                   )
-                 .AddSources(@"
+                 .AddSources(
+                      @"
 global using MediatR;
 global using System;
 global using System.Collections.Generic;
@@ -552,6 +552,7 @@ global using System.Threading.Tasks;
 global using HotChocolate;
 global using HotChocolate.Types;
 global using System.Security.Claims;
-");
+"
+                  );
     }
 }

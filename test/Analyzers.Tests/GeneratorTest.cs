@@ -1,9 +1,6 @@
-using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
@@ -30,9 +27,9 @@ public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : Logger
     private readonly HashSet<MetadataReference> _metadataReferences = new(ReferenceEqualityComparer.Instance);
     private readonly HashSet<Type> _generators = new();
     private readonly List<string> _sources = new();
-    protected GeneratorTestContextBuilder Builder { get; set; } = null!;
 
     public AssemblyLoadContext AssemblyLoadContext { get; } = new CollectibleTestAssemblyLoadContext();
+    protected GeneratorTestContextBuilder Builder { get; set; } = null!;
 
     public virtual Task InitializeAsync()
     {
@@ -56,6 +53,7 @@ public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : Logger
         {
             Disposables.Add(disposable);
         }
+
         Disposables.Dispose();
         return Task.CompletedTask;
     }

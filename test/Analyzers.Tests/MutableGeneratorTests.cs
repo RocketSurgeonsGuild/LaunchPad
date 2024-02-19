@@ -1,5 +1,4 @@
 ﻿using Analyzers.Tests.Helpers;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 

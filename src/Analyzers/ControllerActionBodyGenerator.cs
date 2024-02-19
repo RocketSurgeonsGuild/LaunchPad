@@ -24,9 +24,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
     private static string Camelize(string input)
     {
         var word = Pascalize(input);
-#pragma warning disable CA1308
+        #pragma warning disable CA1308
         return word.Length > 0 ? string.Concat(word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture), word.Substring(1)) : word;
-#pragma warning restore CA1308
+        #pragma warning restore CA1308
     }
 
     /// <summary>
@@ -53,14 +53,15 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         var otherParams = symbol.Parameters.Remove(parameter);
         var parameterType = (INamedTypeSymbol)parameter.Type;
         var isUnit = parameterType.AllInterfaces.Any(z => z.MetadataName == "IRequest");
-        var isUnitResult = symbol.ReturnType is INamedTypeSymbol { Arity: 1 } nts && nts.TypeArguments[0].MetadataName == "ActionResult";
+        var isUnitResult = symbol.ReturnType is INamedTypeSymbol { Arity: 1, } nts && nts.TypeArguments[0].MetadataName == "ActionResult";
         var isStream = symbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
         var newSyntax = syntax
                        .WithParameterList(
                             syntax.ParameterList.RemoveNodes(
-                                syntax.ParameterList.Parameters.SelectMany(z => z.AttributeLists), SyntaxRemoveOptions.KeepNoTrivia
+                                syntax.ParameterList.Parameters.SelectMany(z => z.AttributeLists),
+                                SyntaxRemoveOptions.KeepNoTrivia
                             )!
                         )
                        .WithAttributeLists(List<AttributeListSyntax>())
@@ -79,36 +80,41 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         if (otherParams.Length > 0)
         {
             var declaredParam = newSyntax.ParameterList.Parameters.Single(z => z.Identifier.Text == parameter.Name);
-            var parameterProperties = parameterType.GetMembers()
-                                                   .Join(
-                                                        otherParams, z => z.Name, z => z.Name, static (member, parameter) => ( member, parameter ),
-                                                        StringComparer.OrdinalIgnoreCase
-                                                    )
-                                                   .ToArray();
+            var parameterProperties = parameterType
+                                     .GetMembers()
+                                     .Join(
+                                          otherParams,
+                                          z => z.Name,
+                                          z => z.Name,
+                                          static (member, parameter) => ( member, parameter ),
+                                          StringComparer.OrdinalIgnoreCase
+                                      )
+                                     .ToArray();
             var controllerAttachedProperties = parameterType
                                               .GetMembers()
                                               .SelectMany(
                                                    par =>
                                                    {
                                                        return par switch
-                                                       {
-                                                           IPropertySymbol { IsImplicitlyDeclared: false } ps => controllerBaseProperties.Where(
-                                                               p => SymbolEqualityComparer.Default.Equals(p.Type, ps.Type)
-                                                           ),
-                                                           IFieldSymbol { IsImplicitlyDeclared: false } fs => controllerBaseProperties.Where(
-                                                               p => SymbolEqualityComparer.Default.Equals(p.Type, fs.Type)
-                                                           ),
-                                                           _ => Enumerable.Empty<IPropertySymbol>()
-                                                       };
-                                                   }, static (member, controllerProperty) => ( member, controllerProperty )
+                                                              {
+                                                                  IPropertySymbol { IsImplicitlyDeclared: false, } ps => controllerBaseProperties.Where(
+                                                                      p => SymbolEqualityComparer.Default.Equals(p.Type, ps.Type)
+                                                                  ),
+                                                                  IFieldSymbol { IsImplicitlyDeclared: false, } fs => controllerBaseProperties.Where(
+                                                                      p => SymbolEqualityComparer.Default.Equals(p.Type, fs.Type)
+                                                                  ),
+                                                                  _ => Enumerable.Empty<IPropertySymbol>(),
+                                                              };
+                                                   },
+                                                   static (member, controllerProperty) => ( member, controllerProperty )
                                                )
                                               .ToArray();
             var failed = false;
             if (!parameterType.IsRecord)
             {
-                foreach (var (member, _) in parameterProperties)
+                foreach (( var member, _ ) in parameterProperties)
                 {
-                    if (member is not IPropertySymbol { SetMethod.IsInitOnly: true }) continue;
+                    if (member is not IPropertySymbol { SetMethod.IsInitOnly: true, }) continue;
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             GeneratorDiagnostics.PropertyMustBeSettableForTheRequest,
@@ -120,9 +126,10 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                     );
                     failed = true;
                 }
-                foreach (var (member, _) in controllerAttachedProperties)
+
+                foreach (( var member, _ ) in controllerAttachedProperties)
                 {
-                    if (member is not IPropertySymbol { SetMethod.IsInitOnly: true }) continue;
+                    if (member is not IPropertySymbol { SetMethod.IsInitOnly: true, }) continue;
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             GeneratorDiagnostics.PropertyMustBeSettableForTheRequest,
@@ -177,12 +184,13 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                 return null;
             }
 
-            var bindingMembers = parameterType.GetMembers()
-                                              .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false } ps && ps.Name != "EqualityContract")
-                                              .Select(z => z.Name)
-                                              .Except(parameterProperties.Select(z => z.member.Name))
-                                              .Except(controllerAttachedProperties.Select(z => z.member.Name))
-                                              .ToArray();
+            var bindingMembers = parameterType
+                                .GetMembers()
+                                .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false, } ps && ps.Name != "EqualityContract")
+                                .Select(z => z.Name)
+                                .Except(parameterProperties.Select(z => z.member.Name))
+                                .Except(controllerAttachedProperties.Select(z => z.member.Name))
+                                .ToArray();
 
             var newParam = declaredParam.AddAttributeLists(
                 AttributeList(
@@ -190,13 +198,14 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                         new[]
                         {
                             Attribute(
-                                IdentifierName("Bind"), AttributeArgumentList(
+                                IdentifierName("Bind"),
+                                AttributeArgumentList(
                                     SeparatedList(
                                         bindingMembers
                                            .Select(z => AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(z))))
                                     )
                                 )
-                            )
+                            ),
                         }
                     )
                 )
@@ -214,25 +223,27 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                         InitializerExpression(
                             SyntaxKind.WithInitializerExpression,
                             SeparatedList<ExpressionSyntax>(
-                                parameterProperties.Select(
-                                    tuple => AssignmentExpression(
-                                        SyntaxKind.SimpleAssignmentExpression,
-                                        IdentifierName(tuple.member.Name),
-                                        IdentifierName(tuple.parameter.Name)
-                                    )
-                                ).Concat(
-                                    controllerAttachedProperties.Select(
-                                        s => AssignmentExpression(
+                                parameterProperties
+                                   .Select(
+                                        tuple => AssignmentExpression(
                                             SyntaxKind.SimpleAssignmentExpression,
-                                            IdentifierName(s.member.Name),
-                                            MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                ThisExpression(),
-                                                IdentifierName(s.controllerProperty.Name)
+                                            IdentifierName(tuple.member.Name),
+                                            IdentifierName(tuple.parameter.Name)
+                                        )
+                                    )
+                                   .Concat(
+                                        controllerAttachedProperties.Select(
+                                            s => AssignmentExpression(
+                                                SyntaxKind.SimpleAssignmentExpression,
+                                                IdentifierName(s.member.Name),
+                                                MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    ThisExpression(),
+                                                    IdentifierName(s.controllerProperty.Name)
+                                                )
                                             )
                                         )
                                     )
-                                )
                             )
                         )
                     );
@@ -241,7 +252,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             }
             else
             {
-                foreach (var (member, s) in parameterProperties)
+                foreach (( var member, var s ) in parameterProperties)
                 {
                     block = block.AddStatements(
                         ExpressionStatement(
@@ -298,29 +309,31 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                 );
         }
 
-        var knownStatusCodes = symbol.GetAttributes()
-                                     .Where(z => z.AttributeClass?.Name == "ProducesResponseTypeAttribute")
-                                     .SelectMany(
-                                          z =>
-                                          {
-                                              var namedArguments = z.NamedArguments
-                                                                    .Where(
-                                                                         x => x is
-                                                                         {
-                                                                             Key: "StatusCode", Value: { Kind: TypedConstantKind.Primitive, Value: int }
-                                                                         }
-                                                                     )
-                                                                     // ReSharper disable once NullableWarningSuppressionIsUsed
-                                                                    .Select(c => (int)c.Value.Value!);
-                                              var constructorArguments = z
-                                                                        .ConstructorArguments.Where(c => c is { Kind: TypedConstantKind.Primitive, Value: int })
-                                                                         // ReSharper disable once NullableWarningSuppressionIsUsed
-                                                                        .Select(c => (int)c.Value!);
+        var knownStatusCodes = symbol
+                              .GetAttributes()
+                              .Where(z => z.AttributeClass?.Name == "ProducesResponseTypeAttribute")
+                              .SelectMany(
+                                   z =>
+                                   {
+                                       var namedArguments = z
+                                                           .NamedArguments
+                                                           .Where(
+                                                                x => x is
+                                                                {
+                                                                    Key: "StatusCode", Value: { Kind: TypedConstantKind.Primitive, Value: int, },
+                                                                }
+                                                            )
+                                                            // ReSharper disable once NullableWarningSuppressionIsUsed
+                                                           .Select(c => (int)c.Value.Value!);
+                                       var constructorArguments = z
+                                                                 .ConstructorArguments.Where(c => c is { Kind: TypedConstantKind.Primitive, Value: int, })
+                                                                  // ReSharper disable once NullableWarningSuppressionIsUsed
+                                                                 .Select(c => (int)c.Value!);
 
-                                              return namedArguments.Concat(constructorArguments);
-                                          }
-                                      )
-                                     .ToImmutableHashSet();
+                                       return namedArguments.Concat(constructorArguments);
+                                   }
+                               )
+                              .ToImmutableHashSet();
 
         var hasSuccess = knownStatusCodes.Any(z => z is >= 200 and < 300);
         var hasDefault = symbol.GetAttribute("ProducesDefaultResponseTypeAttribute") is { };
@@ -334,27 +347,27 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             {
                 switch (matcher)
                 {
-                    case { Method: RestfulApiMethod.List }:
-                    {
-                        if (!attributes["FromQueryAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("FromQuery"));
-                        break;
-                    }
+                    case { Method: RestfulApiMethod.List, }:
+                        {
+                            if (!attributes["FromQueryAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("FromQuery"));
+                            break;
+                        }
 
-                    case { Method: RestfulApiMethod.Update }:
-                    case { Method: RestfulApiMethod.Create }:
-                    {
-                        if (!attributes["BindRequiredAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("BindRequired"));
-                        if (!attributes["FromBodyAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("FromBody"));
-                        break;
-                    }
+                    case { Method: RestfulApiMethod.Update, }:
+                    case { Method: RestfulApiMethod.Create, }:
+                        {
+                            if (!attributes["BindRequiredAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("BindRequired"));
+                            if (!attributes["FromBodyAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("FromBody"));
+                            break;
+                        }
 
-                    case { Method: RestfulApiMethod.Read }:
-                    case { Method: RestfulApiMethod.Delete }:
-                    {
-                        if (!attributes["BindRequiredAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("BindRequired"));
-                        if (!attributes["FromRouteAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("FromRoute"));
-                        break;
-                    }
+                    case { Method: RestfulApiMethod.Read, }:
+                    case { Method: RestfulApiMethod.Delete, }:
+                        {
+                            if (!attributes["BindRequiredAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("BindRequired"));
+                            if (!attributes["FromRouteAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("FromRoute"));
+                            break;
+                        }
                 }
             }
 
@@ -406,7 +419,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         }
         else
         {
-            if (symbol.GetAttribute("CreatedAttribute") is { ConstructorArguments: { Length: 1 } } created)
+            if (symbol.GetAttribute("CreatedAttribute") is { ConstructorArguments: { Length: 1, }, } created)
             {
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 var actionName = (string)created.ConstructorArguments[0].Value!;
@@ -417,7 +430,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                     ReturnStatement(routeResult("CreatedAtActionResult", resultName, actionName, routeValues))
                 );
             }
-            else if (symbol.GetAttribute("AcceptedAttribute") is { ConstructorArguments: { Length: 1 } } accepted)
+            else if (symbol.GetAttribute("AcceptedAttribute") is { ConstructorArguments: { Length: 1, }, } accepted)
             {
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 var actionName = (string)accepted.ConstructorArguments[0].Value!;
@@ -447,9 +460,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             // ReSharper disable once NullableWarningSuppressionIsUsed
             var parameterNames = relatedMember.symbol.Parameters.Remove(relatedMember.request!).Select(z => z.Name);
             parameterNames = parameterNames.Concat(
-                relatedMember.request?.Type.GetMembers()
-                             .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false } ps && ps.Name != "EqualityContract")
-                             .Select(z => z.Name) ?? Enumerable.Empty<string>()
+                relatedMember
+                   .request?.Type.GetMembers()
+                   .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false, } ps && ps.Name != "EqualityContract")
+                   .Select(z => z.Name)
+             ?? Enumerable.Empty<string>()
             );
             return parameterNames.Select(Camelize).Distinct().ToImmutableArray();
         }
@@ -461,7 +476,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         )
         {
             var parameterNames = availableRouteParameters(relatedMember);
-            var response = parameterType.AllInterfaces.First(z => z is { Name: "IRequest", Arity: 1 }).TypeArguments[0];
+            var response = parameterType.AllInterfaces.First(z => z is { Name: "IRequest", Arity: 1, }).TypeArguments[0];
 
             var properties = response.GetMembers().Select(z => z.Name);
             var routeValues = parameterNames.Join(
@@ -507,7 +522,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         }
 
         static ExpressionSyntax routeResult(
-            string resultType, string resultName, string actionName, ExpressionSyntax routeValues, string? controllerName = null
+            string resultType,
+            string resultName,
+            string actionName,
+            ExpressionSyntax routeValues,
+            string? controllerName = null
         )
         {
             return ObjectCreationExpression(IdentifierName(resultType))
@@ -525,7 +544,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                         : LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(controllerName))
                                 ),
                                 Argument(routeValues),
-                                Argument(IdentifierName(resultName))
+                                Argument(IdentifierName(resultName)),
                             }
                         )
                     )
@@ -562,7 +581,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                     new[]
                                     {
                                         AttributeArgument(TypeOfExpression(ParseName(responseType))),
-                                        AttributeArgument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(statusCode)))
+                                        AttributeArgument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(statusCode))),
                                     }
                                 )
                             )
@@ -622,7 +641,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                         IdentifierName("HttpContext"),
                                                         IdentifierName("RequestAborted")
                                                     )
-                                                )
+                                                ),
                                             }
                                         )
                                     )
@@ -666,7 +685,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                         IdentifierName("HttpContext"),
                                         IdentifierName("RequestAborted")
                                     )
-                                )
+                                ),
                             }
                         )
                     )
@@ -679,7 +698,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         ((ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel) Left, Compilation Right) valueTuple
     )
     {
-        var (syntax, symbol, semanticModel) = valueTuple.Left;
+        ( var syntax, var symbol, var semanticModel ) = valueTuple.Left;
         // ReSharper disable NullableWarningSuppressionIsUsed
         var controllerBase = semanticModel.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ControllerBase")!;
         // ReSharper enable NullableWarningSuppressionIsUsed
@@ -687,46 +706,55 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             controllerBase.GetMembers().OfType<IPropertySymbol>().Where(z => z.DeclaredAccessibility == Accessibility.Public).ToArray();
         var compilation = valueTuple.Right;
         var matchers = MatcherDefaults.GetMatchers(compilation);
-        var members = syntax.Members
-                            .OfType<MethodDeclarationSyntax>()
-                            .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
-                            .Select(
-                                 method =>
-                                 {
-                                     var methodSymbol = semanticModel.GetDeclaredSymbol(method);
-                                     // ReSharper disable once UseNullPropagationWhenPossible
-                                     if (methodSymbol is null)
-                                     {
-                                         context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation()));
-                                         return default;
-                                     }
+        var members = syntax
+                     .Members
+                     .OfType<MethodDeclarationSyntax>()
+                     .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                     .Select(
+                          method =>
+                          {
+                              var methodSymbol = semanticModel.GetDeclaredSymbol(method);
+                              // ReSharper disable once UseNullPropagationWhenPossible
+                              if (methodSymbol is null)
+                              {
+                                  context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation()));
+                                  return default;
+                              }
 
-                                     var actionModel = new ActionModel(compilation, methodSymbol.Name, methodSymbol);
-                                     var matcher = matchers.FirstOrDefault(z => z.IsMatch(actionModel));
-                                     var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"))
-                                                ?? methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest"));
-                                     var streamRequest = methodSymbol.Parameters.FirstOrDefault(
-                                         p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
-                                     );
-                                     return ( method, symbol: methodSymbol, matcher, request: request ?? streamRequest );
-                                 }
-                             )
-                            .Where(z => z is { symbol: { }, method: { } })
-                            .ToImmutableArray();
+                              var actionModel = new ActionModel(compilation, methodSymbol.Name, methodSymbol);
+                              var matcher = matchers.FirstOrDefault(z => z.IsMatch(actionModel));
+                              var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"))
+                               ?? methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest"));
+                              var streamRequest = methodSymbol.Parameters.FirstOrDefault(
+                                  p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
+                              );
+                              return ( method, symbol: methodSymbol, matcher, request: request ?? streamRequest );
+                          }
+                      )
+                     .Where(z => z is { symbol: { }, method: { }, })
+                     .ToImmutableArray();
 
-        var newClass = syntax.WithMembers(List<MemberDeclarationSyntax>())
-                             .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                             .WithAttributeLists(List<AttributeListSyntax>())
-                             .WithBaseList(null)
+        var newClass = syntax
+                      .WithMembers(List<MemberDeclarationSyntax>())
+                      .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
+                      .WithAttributeLists(List<AttributeListSyntax>())
+                      .WithBaseList(null)
             ;
 
 
-        foreach (var (method, methodSymbol, matcher, request) in members)
+        foreach (( var method, var methodSymbol, var matcher, var request ) in members)
         {
             if (request != null)
             {
                 var methodBody = GenerateMethod(
-                    context, controllerBaseProperties, matcher, MatcherDefaults.MethodStatusCodeMap, method, methodSymbol, request, members
+                    context,
+                    controllerBaseProperties,
+                    matcher,
+                    MatcherDefaults.MethodStatusCodeMap,
+                    method,
+                    methodSymbol,
+                    request,
+                    members
                 );
                 if (methodBody is null) continue;
                 newClass = newClass.AddMembers(methodBody);
@@ -737,11 +765,13 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         {
             "Microsoft.AspNetCore.Mvc",
             "FluentValidation.AspNetCore",
-            "Rocket.Surgery.LaunchPad.AspNetCore.Validation"
+            "Rocket.Surgery.LaunchPad.AspNetCore.Validation",
         };
 
-        var usings = syntax.SyntaxTree.GetCompilationUnitRoot().Usings
-                           .AddDistinctUsingStatements(additionalUsings.Where(z => !string.IsNullOrWhiteSpace(z)));
+        var usings = syntax
+                    .SyntaxTree.GetCompilationUnitRoot()
+                    .Usings
+                    .AddDistinctUsingStatements(additionalUsings.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
@@ -769,11 +799,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                             .SyntaxProvider
                             .CreateSyntaxProvider(
                                  (node, _) => node is ClassDeclarationSyntax cds
-                                           && cds.BaseList?.Types.FirstOrDefault()?.Type.GetSyntaxName() == "RestfulApiController"
-                                           && cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
-                                           && cds.Members.Any(
-                                                  z => z is MethodDeclarationSyntax && z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
-                                              ),
+                                  && cds.BaseList?.Types.FirstOrDefault()?.Type.GetSyntaxName() == "RestfulApiController"
+                                  && cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
+                                  && cds.Members.Any(
+                                         z => z is MethodDeclarationSyntax && z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))
+                                     ),
                                  (syntaxContext, cancellationToken) =>
                                  (
                                      syntax: (ClassDeclarationSyntax)syntaxContext.Node,
@@ -788,7 +818,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             initializationContext =>
             {
                 initializationContext.AddSource(
-                    "Attributes.cs", @"
+                    "Attributes.cs",
+                    @"
 using System;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
