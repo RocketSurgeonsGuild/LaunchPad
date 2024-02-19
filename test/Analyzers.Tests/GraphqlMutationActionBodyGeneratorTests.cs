@@ -4,13 +4,54 @@ using HotChocolate;
 using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 
 namespace Analyzers.Tests;
 
-public class GraphqlMutationActionBodyGeneratorTests : GeneratorTest
+public class GraphqlMutationActionBodyGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
 {
+    [Fact]
+    public async Task Should_Error_If_Class_Property_Is_Init()
+    {
+        var result = await Builder
+                          .AddSources(
+                               @"
+namespace TestNamespace;
+public record RocketModel
+{
+    public Guid Id { get; init; }
+    public string Sn { get; init; } = null!;
+}",
+                               @"
+using System.Security.Claims;
+namespace TestNamespace;
+public static class Save2Rocket
+{
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; init; }
+        public string Other { get; init; }
+    }
+}",
+                               @"
+using TestNamespace;
+using System.Security.Claims;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request, ClaimsPrincipal cp);
+}"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
     [Fact]
     public async Task Should_Error_If_Class_Is_Not_Partial()
     {
@@ -49,42 +90,14 @@ public class RocketMutation
     public partial Task<IEnumerable<RocketModel>> ListRockets([Service] IMediator mediator, ListRockets.Request request);
 }
 ";
-        await Verify(await GenerateAsync(source1, source2));
-    }
-
-    public GraphqlMutationActionBodyGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
-    {
-        WithGenerator<GraphqlMutationActionBodyGenerator>();
-        AddReferences(
-            typeof(Guid),
-            typeof(IRequest),
-            typeof(IMediator),
-            typeof(Task<>),
-            typeof(IEnumerable<>),
-            typeof(ExtendObjectTypeAttribute),
-            typeof(ServiceAttribute),
-            typeof(OperationType),
-            typeof(OperationTypeNames),
-            typeof(ClaimsPrincipal)
-        );
-        AddSources(
-            @"
-global using MediatR;
-global using System;
-global using System.Collections.Generic;
-global using System.Threading.Tasks;
-global using HotChocolate;
-global using HotChocolate.Types;
-global using System.Security.Claims;
-"
-        );
+        await Verify(await Builder.AddSources(source1, source2).Build().GenerateAsync());
     }
 
     [Theory]
     [ClassData(typeof(MethodBodyData))]
     public async Task Should_Generate_Method_Bodies(string key, string[] sources)
     {
-        await Verify(await GenerateAsync(sources)).UseParameters(key, "");
+        await Verify(await Builder.AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
     }
 
     private sealed class MethodBodyData : TheoryData<string, string[]>
@@ -343,7 +356,7 @@ public static class Save2Rocket
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
-        public ClaimsPrincipal ClaimsPrincipal { get; init; }
+        public ClaimsPrincipal ClaimsPrincipal { get; set; }
         public string Other { get; init; }
     }
 }",
@@ -373,7 +386,7 @@ public static class Save2Rocket
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
-        public ClaimsPrincipal ClaimsPrincipal { get; init; }
+        public ClaimsPrincipal ClaimsPrincipal { get; set; }
         public string Other { get; init; }
     }
 }",
@@ -511,5 +524,35 @@ public partial class RocketMutation
                 }
             );
         }
+    }
+
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        Builder = Builder
+                 .WithGenerator<GraphqlMutationActionBodyGenerator>()
+                 .AddReferences(
+                      typeof(Guid),
+                      typeof(IRequest),
+                      typeof(IMediator),
+                      typeof(Task<>),
+                      typeof(IEnumerable<>),
+                      typeof(ExtendObjectTypeAttribute),
+                      typeof(ServiceAttribute),
+                      typeof(OperationType),
+                      typeof(OperationTypeNames),
+                      typeof(ClaimsPrincipal)
+                  )
+                 .AddSources(
+                      @"
+global using MediatR;
+global using System;
+global using System.Collections.Generic;
+global using System.Threading.Tasks;
+global using HotChocolate;
+global using HotChocolate.Types;
+global using System.Security.Claims;
+"
+                  );
     }
 }

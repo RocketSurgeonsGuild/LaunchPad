@@ -1,0 +1,34 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: CS8795,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input3.cs: (9,37)-(9,48),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8795),
+      MessageFormat: Partial method '{0}' must have an implementation part because it has accessibility modifiers.,
+      Message: Partial method 'RocketMutation.Save2Rocket(IMediator, Save2Rocket.Request, ClaimsPrincipal)' must have an implementation part because it has accessibility modifiers.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator: [
+      {
+        Id: LPAD0007,
+        Title: The property must be settable on a request class, init is not supported.,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input2.cs: (9,31)-(9,46),
+        MessageFormat: The property {0} must be settable on a request class {1}, init is not supported,
+        Message: The property ClaimsPrincipal must be settable on a request class Request, init is not supported,
+        Category: LaunchPad
+      }
+    ]
+  }
+}

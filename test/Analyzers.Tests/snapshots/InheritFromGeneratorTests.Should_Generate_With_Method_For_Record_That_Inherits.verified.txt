@@ -1,4 +1,6 @@
 ﻿{
-  ResultDiagnostics: null,
-  Results: {}
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: []
+  }
 }

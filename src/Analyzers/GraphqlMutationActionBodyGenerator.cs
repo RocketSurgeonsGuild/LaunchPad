@@ -145,6 +145,20 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         {
             if (hasClaimsPrincipal)
             {
+                if (claimsPrincipalProperty is IPropertySymbol { SetMethod.IsInitOnly: true, })
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            GeneratorDiagnostics.PropertyMustBeSettableForTheRequest,
+                            claimsPrincipalProperty.Locations.First(),
+                            claimsPrincipalProperty.Locations.Skip(1),
+                            claimsPrincipalProperty.Name,
+                            parameterType.Name
+                        )
+                    );
+                    return null;
+                }
+
                 block = block.AddStatements(
                     ExpressionStatement(
                         AssignmentExpression(

@@ -1,15 +1,18 @@
 ﻿using Analyzers.Tests.Helpers;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-public class MutableGeneratorTests : GeneratorTest
+public class MutableGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
 {
-    public MutableGeneratorTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogLevel.Trace)
+    public override async Task InitializeAsync()
     {
-        WithGenerator<MutableGenerator>();
-        AddReferences(typeof(MutableAttribute));
+        await base.InitializeAsync();
+        Builder = Builder
+                 .WithGenerator<MutableGenerator>()
+                 .AddReferences(
+                      typeof(MutableAttribute)
+                  );
     }
 }

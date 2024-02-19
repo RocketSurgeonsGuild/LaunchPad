@@ -1,4 +1,39 @@
 ﻿{
-  ResultDiagnostics: null,
-  Results: {}
+  FinalDiagnostics: [
+    {
+      Id: CS0751,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,50)-(8,61),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0751),
+      MessageFormat: A partial method must be declared within a partial type,
+      Message: A partial method must be declared within a partial type,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS8795,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,50)-(8,61),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8795),
+      MessageFormat: Partial method '{0}' must have an implementation part because it has accessibility modifiers.,
+      Message: Partial method 'RocketMutation.ListRockets(IMediator, ListRockets.Request)' must have an implementation part because it has accessibility modifiers.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator: []
+  }
 }

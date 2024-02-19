@@ -1,28 +1,46 @@
 ﻿{
-  ResultDiagnostics: [
+  FinalDiagnostics: [
     {
-      Id: LPAD0001,
-      Title: Type must be made partial,
+      Id: CS0535,
+      Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Test1.cs: (9,17)-(9,28),
-      Description: ,
-      HelpLink: ,
-      MessageFormat: Type {0} must be made partial.,
-      Message: Type Sample.Core.Operations.Rockets.PatchRocket must be made partial.,
-      Category: LaunchPad
+      Location: Input1.cs: (9,31)-(9,57),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'PatchRocket' does not implement interface member 'IPropertyTracking<Request>.ApplyChanges(Request)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0535,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (9,31)-(9,57),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'PatchRocket' does not implement interface member 'IPropertyTracking<Request>.ResetChanges()',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
     }
   ],
-  Results: {
+  GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: [
       {
         Id: LPAD0001,
         Title: Type must be made partial,
         Severity: Error,
         WarningLevel: 0,
-        Location: Test1.cs: (9,17)-(9,28),
-        Description: ,
-        HelpLink: ,
+        Location: Input1.cs: (9,17)-(9,28),
         MessageFormat: Type {0} must be made partial.,
         Message: Type Sample.Core.Operations.Rockets.PatchRocket must be made partial.,
         Category: LaunchPad
