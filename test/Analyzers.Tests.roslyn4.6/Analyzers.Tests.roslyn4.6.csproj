@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-        <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Analyzers.Tests.", ""))</_Analyzer_Roslyn_Version_>        
+        <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Analyzers.Tests.", ""))</_Analyzer_Roslyn_Version_>
         <DefineConstants>$(DefineConstants);ROSLYN_CURRENT;ROSLYN4_0;ROSLYN4_4;ROSLYN4_6</DefineConstants>
         <RootNamespace>Analyzers.Tests</RootNamespace>
         <AssemblyName>Analyzers.Tests</AssemblyName>
@@ -9,6 +9,9 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
         <ProjectReference Include="..\..\src\Analyzers.$(_Analyzer_Roslyn_Version_)\Rocket.Surgery.LaunchPad.Analyzers.$(_Analyzer_Roslyn_Version_).csproj" />
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
