@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
@@ -74,6 +74,9 @@
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.8.0" />
     <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.0" />
     <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
