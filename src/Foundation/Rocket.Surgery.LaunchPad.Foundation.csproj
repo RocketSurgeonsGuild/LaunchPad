@@ -39,5 +39,11 @@
             PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"
             OutputItemType="Analyzer"
         />
+        <PackageReference
+            Include="Polyfill"
+            IncludeAssets="runtime;build;buildMultitargeting;buildTransitive;native;contentfiles;analyzers"
+            PrivateAssets="All"
+            Condition="'$(TargetFramework)' == 'netstandard2.1'"
+        />
     </ItemGroup>
 </Project>

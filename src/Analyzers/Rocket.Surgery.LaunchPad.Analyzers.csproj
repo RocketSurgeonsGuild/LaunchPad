@@ -8,6 +8,11 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+        <PackageReference
+            Include="Polyfill"
+            IncludeAssets="runtime;build;buildMultitargeting;buildTransitive;native;contentfiles;analyzers"
+            PrivateAssets="All"
+        />
         
         <ProjectReference
             Include="../Analyzers.roslyn4.0/Rocket.Surgery.LaunchPad.Analyzers.roslyn4.0.csproj"

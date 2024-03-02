@@ -3,7 +3,7 @@
     "isRoot": true,
     "tools": {
         "gitversion.tool": {
-            "version": "5.12.0",
+            "version": "6.0.0-beta.4",
             "commands": ["dotnet-gitversion"]
         },
         "dotnet-reportgenerator-globaltool": {
@@ -31,7 +31,7 @@
             "commands": ["docfx"]
         },
         "strawberryshake.tools": {
-            "version": "13.9.0",
+            "version": "14.0.0-p.47",
             "commands": ["dotnet-graphql"]
         },
         "dotnet-outdated-tool": {

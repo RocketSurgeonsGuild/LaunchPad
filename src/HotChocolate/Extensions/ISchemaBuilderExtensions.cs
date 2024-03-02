@@ -16,8 +16,9 @@ public static class ISchemaBuilderExtensions
     ///     Add nodatime types to HotChocolate
     /// </summary>
     /// <param name="schemaBuilder"></param>
+    /// <param name="dateTimeZoneProvider"></param>
     /// <returns></returns>
-    public static ISchemaBuilder AddNodaTime(this ISchemaBuilder schemaBuilder)
+    public static ISchemaBuilder AddNodaTime(this ISchemaBuilder schemaBuilder, IDateTimeZoneProvider dateTimeZoneProvider)
     {
         schemaBuilder
            .AddConvention<IFilterConvention>(
@@ -51,10 +52,10 @@ public static class ISchemaBuilderExtensions
             );
 
         return schemaBuilder
-              .AddType<DateTimeZoneType>()
+              .AddType(new DateTimeZoneType())
               .AddType(new DurationType(DurationPattern.JsonRoundtrip, DurationPattern.Roundtrip))
               .AddType(new InstantType(InstantPattern.General, InstantPattern.ExtendedIso, new InstantDateTimeOffsetPattern()))
-              .AddType<IsoDayOfWeekType>()
+              .AddType(new IsoDayOfWeekType())
               .AddType(new LocalDateTimeType(LocalDateTimePattern.GeneralIso, LocalDateTimePattern.ExtendedIso, LocalDateTimePattern.BclRoundtrip))
               .AddType(new LocalDateType(LocalDatePattern.Iso, LocalDatePattern.FullRoundtrip))
               .AddType(new LocalTimeType(LocalTimePattern.ExtendedIso, LocalTimePattern.GeneralIso))
@@ -63,6 +64,12 @@ public static class ISchemaBuilderExtensions
               .AddType(new OffsetTimeType(OffsetTimePattern.Rfc3339, OffsetTimePattern.GeneralIso, OffsetTimePattern.ExtendedIso))
               .AddType(new OffsetType(OffsetPattern.GeneralInvariant, OffsetPattern.GeneralInvariantWithZ))
               .AddType(new PeriodType(PeriodPattern.Roundtrip, PeriodPattern.NormalizingIso))
-              .AddType<ZonedDateTimeType>();
+              .AddType(
+                   new ZonedDateTimeType(
+                       ZonedDateTimePattern.GeneralFormatOnlyIso,
+                       ZonedDateTimePattern.ExtendedFormatOnlyIso,
+                       ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)
+                   )
+               );
     }
 }
