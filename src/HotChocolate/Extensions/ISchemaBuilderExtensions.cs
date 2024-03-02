@@ -64,9 +64,12 @@ public static class ISchemaBuilderExtensions
               .AddType(new OffsetTimeType(OffsetTimePattern.Rfc3339, OffsetTimePattern.GeneralIso, OffsetTimePattern.ExtendedIso))
               .AddType(new OffsetType(OffsetPattern.GeneralInvariant, OffsetPattern.GeneralInvariantWithZ))
               .AddType(new PeriodType(PeriodPattern.Roundtrip, PeriodPattern.NormalizingIso))
-              .AddType(new ZonedDateTimeType(
-                   ZonedDateTimePattern.GeneralFormatOnlyIso,
-                   ZonedDateTimePattern.ExtendedFormatOnlyIso,
-                   ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)));
+              .AddType(
+                   new ZonedDateTimeType(
+                       ZonedDateTimePattern.GeneralFormatOnlyIso,
+                       ZonedDateTimePattern.ExtendedFormatOnlyIso,
+                       ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)
+                   )
+               );
     }
 }

@@ -80,12 +80,12 @@ internal class NodaTimeDestructuringPolicy(IDateTimeZoneProvider provider) : IDe
             var values = new List<LogEventProperty>();
             if (interval.HasStart)
             {
-                values.Add(new LogEventProperty("Start", _.CreatePropertyValue(interval.Start)));
+                values.Add(new("Start", _.CreatePropertyValue(interval.Start)));
             }
 
             if (interval.HasEnd)
             {
-                values.Add(new LogEventProperty("End", _.CreatePropertyValue(interval.End)));
+                values.Add(new("End", _.CreatePropertyValue(interval.End)));
             }
 
             result = new StructureValue(values);

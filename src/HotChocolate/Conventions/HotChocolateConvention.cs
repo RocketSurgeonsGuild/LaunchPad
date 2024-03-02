@@ -23,7 +23,7 @@ public class HotChocolateConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         if (services.FirstOrDefault(z => z.ServiceType == typeof(IDateTimeZoneProvider) && z.ImplementationInstance != null) is not
-            { ImplementationInstance: IDateTimeZoneProvider dateTimeZoneProvider })
+            { ImplementationInstance: IDateTimeZoneProvider dateTimeZoneProvider, })
             dateTimeZoneProvider = new DateTimeZoneCache(context.Get<FoundationOptions>()?.DateTimeZoneSource ?? TzdbDateTimeZoneSource.Default);
 
         services
