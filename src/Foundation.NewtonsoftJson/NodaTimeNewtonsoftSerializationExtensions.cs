@@ -127,6 +127,8 @@ public static class NodaTimeSerializationExtensions
         ReplaceConverter(
             converters,
             new NewtonsoftJsonCompositeNodaPatternConverter<ZonedDateTime>(
+                ZonedDateTimePattern.GeneralFormatOnlyIso,
+                ZonedDateTimePattern.ExtendedFormatOnlyIso,
                 ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)
             )
         );

@@ -97,6 +97,8 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
         ReplaceConverter(
             options.Converters,
             new SystemTextJsonCompositeNodaPatternConverter<ZonedDateTime>(
+                ZonedDateTimePattern.GeneralFormatOnlyIso,
+                ZonedDateTimePattern.ExtendedFormatOnlyIso,
                 ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)
             )
         );

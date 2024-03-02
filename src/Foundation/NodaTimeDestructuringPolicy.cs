@@ -7,19 +7,17 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 
 internal class NodaTimeDestructuringPolicy(IDateTimeZoneProvider provider) : IDestructuringPolicy
 {
-    private readonly ZonedDateTimePattern _zonedDateTimePattern = ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", provider);
-
     public bool TryDestructure(object value, ILogEventPropertyValueFactory _, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is Instant instant1)
         {
-            result = new ScalarValue(InstantPattern.ExtendedIso.Format(instant1));
+            result = new ScalarValue(InstantPattern.General.Format(instant1));
             return true;
         }
 
         if (value is LocalDateTime localDateTime)
         {
-            result = new ScalarValue(LocalDateTimePattern.ExtendedIso.Format(localDateTime));
+            result = new ScalarValue(LocalDateTimePattern.GeneralIso.Format(localDateTime));
             return true;
         }
 
@@ -31,13 +29,13 @@ internal class NodaTimeDestructuringPolicy(IDateTimeZoneProvider provider) : IDe
 
         if (value is LocalTime localTime)
         {
-            result = new ScalarValue(LocalTimePattern.ExtendedIso.Format(localTime));
+            result = new ScalarValue(LocalTimePattern.GeneralIso.Format(localTime));
             return true;
         }
 
         if (value is OffsetDateTime offsetDateTime)
         {
-            result = new ScalarValue(OffsetDateTimePattern.ExtendedIso.Format(offsetDateTime));
+            result = new ScalarValue(OffsetDateTimePattern.GeneralIso.Format(offsetDateTime));
             return true;
         }
 
@@ -49,13 +47,13 @@ internal class NodaTimeDestructuringPolicy(IDateTimeZoneProvider provider) : IDe
 
         if (value is OffsetTime offsetTime)
         {
-            result = new ScalarValue(OffsetTimePattern.ExtendedIso.Format(offsetTime));
+            result = new ScalarValue(OffsetTimePattern.GeneralIso.Format(offsetTime));
             return true;
         }
 
         if (value is ZonedDateTime zonedDateTime)
         {
-            result = new ScalarValue(_zonedDateTimePattern.Format(zonedDateTime));
+            result = new ScalarValue(ZonedDateTimePattern.GeneralFormatOnlyIso.Format(zonedDateTime));
             return true;
         }
 
