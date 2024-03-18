@@ -20,7 +20,7 @@
     <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2023.3.4" />
     <PackageVersion Include="Nuke.Common" Version="8.0.0" />
     <PackageVersion Include="ReportGenerator" Version="5.2.3" />
-    <PackageVersion Include="Rocket.Surgery.Nuke" Version="1.8.20" />
+    <PackageVersion Include="Rocket.Surgery.Nuke" Version="1.8.21" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="13.0.1" />
