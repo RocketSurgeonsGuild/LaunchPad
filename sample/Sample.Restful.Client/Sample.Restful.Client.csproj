@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.1;net6.0;net8.0</TargetFrameworks>
         <OpenApiGenerateCodeOnBuild>true</OpenApiGenerateCodeOnBuild>
     </PropertyGroup>
     <ItemGroup>
@@ -24,7 +24,7 @@
             OutputPath="client/$(TargetFramework)/Sample.RestfulClient.cs"
         />
     </ItemGroup>
-    
+
     <PropertyGroup>
         <NSwagGenerateExceptionClasses>true</NSwagGenerateExceptionClasses>
         <NSwagClientBaseClass />

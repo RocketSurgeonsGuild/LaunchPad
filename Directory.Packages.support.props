@@ -12,13 +12,4 @@
     <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.14" />
     <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="7.0.14" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="7.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.14" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.14" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.14" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="7.0.14" />
-  </ItemGroup>
 </Project>
