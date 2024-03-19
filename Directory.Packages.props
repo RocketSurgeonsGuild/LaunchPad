@@ -4,7 +4,7 @@
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
-    <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.2.1" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.2.0" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.2.1" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.2.1" Condition="'$(MSBuildProjectName)'!='.build'" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.2.1" />
@@ -158,8 +158,5 @@
     <PackageVersion Include="Verify.NodaTime" Version="2.1.0" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
   </ItemGroup>
-  <Import
-        Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
-        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
-    />
+  <Import Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props" Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')" />
 </Project>
