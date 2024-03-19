@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net8.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
@@ -17,7 +17,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
       <ProjectReference Include="..\..\src\Spatial.NewtonsoftJson\Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
-    </ItemGroup>    
+    </ItemGroup>
     <ItemGroup>
         <ProjectReference
             Include="../../src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj"
