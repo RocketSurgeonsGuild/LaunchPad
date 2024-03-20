@@ -1,6 +1,16 @@
 ﻿{
   FinalDiagnostics: [
     {
+      Id: LPAD0007,
+      Title: The property must be settable on a request class, init is not supported.,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input2.cs: (9,31)-(9,46),
+      MessageFormat: The property {0} must be settable on a request class {1}, init is not supported,
+      Message: The property ClaimsPrincipal must be settable on a request class Request, init is not supported,
+      Category: LaunchPad
+    },
+    {
       Id: CS8795,
       Title: ,
       Severity: Error,

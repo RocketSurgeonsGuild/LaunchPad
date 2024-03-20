@@ -1,6 +1,16 @@
 ﻿{
   FinalDiagnostics: [
     {
+      Id: LPAD0005,
+      Title: The given declaration must match,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (9,19)-(9,24),
+      MessageFormat: The declaration {0} must be a {1}.,
+      Message: The declaration Sample.Core.Operations.Rockets.PatchRocket must be a record.,
+      Category: LaunchPad
+    },
+    {
       Id: CS0535,
       Title: ,
       Severity: Error,
