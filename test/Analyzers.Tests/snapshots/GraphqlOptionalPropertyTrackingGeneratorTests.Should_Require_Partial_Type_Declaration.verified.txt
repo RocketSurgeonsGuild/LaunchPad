@@ -1,5 +1,16 @@
 ﻿{
-  FinalDiagnostics: [],
+  FinalDiagnostics: [
+    {
+      Id: LPAD0001,
+      Title: Type must be made partial,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (10,17)-(10,33),
+      MessageFormat: Type {0} must be made partial.,
+      Message: Type Sample.Core.Operations.Rockets.PatchGraphRocket must be made partial.,
+      Category: LaunchPad
+    }
+  ],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [
       {

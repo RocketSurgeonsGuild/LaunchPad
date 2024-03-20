@@ -1,5 +1,16 @@
 ﻿{
-  FinalDiagnostics: [],
+  FinalDiagnostics: [
+    {
+      Id: LPAD0005,
+      Title: The given declaration must match,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (10,19)-(10,25),
+      MessageFormat: The declaration {0} must be a {1}.,
+      Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.,
+      Category: LaunchPad
+    }
+  ],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [
       {
