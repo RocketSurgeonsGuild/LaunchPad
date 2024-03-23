@@ -27,6 +27,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         var otherParams = symbol.Parameters.Remove(parameter);
         var parameterType = (INamedTypeSymbol)parameter.Type;
         var isUnit = parameterType.AllInterfaces.Any(z => z.MetadataName == "IRequest");
+        var returnsMediatorUnit = symbol.ReturnType is INamedTypeSymbol { MetadataName: "Task`1", TypeArguments: [{ MetadataName: "Unit" }] };
+        isUnit = returnsMediatorUnit || isUnit;
         var isStream = symbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
 
         var newSyntax = syntax
@@ -179,7 +181,16 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
         if (isUnit)
         {
-            block = block.AddStatements(ExpressionStatement(sendRequestExpression));
+            block = block.AddStatements(
+                ExpressionStatement(sendRequestExpression),
+                ReturnStatement(
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName("Unit"),
+                        IdentifierName("Value")
+                    )
+                )
+            );
         }
         else
         {

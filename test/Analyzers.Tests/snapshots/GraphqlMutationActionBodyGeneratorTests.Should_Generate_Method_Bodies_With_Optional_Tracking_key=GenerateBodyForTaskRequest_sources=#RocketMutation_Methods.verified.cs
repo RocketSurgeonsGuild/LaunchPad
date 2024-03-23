@@ -7,9 +7,9 @@ namespace MyNamespace.Controllers
 {
     public partial class RocketMutation
     {
-        public partial async Task<Unit> GetRocket(IMediator mediator, GetRocket.Request request)
+        public partial async Task<Unit> GetRocket(IMediator mediator, GetRocket.TrackingRequest request)
         {
-            await mediator.Send(request).ConfigureAwait(false);
+            await mediator.Send(request.Create()).ConfigureAwait(false);
             return Unit.Value;
         }
     }
