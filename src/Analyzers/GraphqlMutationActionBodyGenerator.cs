@@ -20,7 +20,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         INamedTypeSymbol cancellationToken,
         MethodDeclarationSyntax syntax,
         IMethodSymbol symbol,
-        IParameterSymbol parameter
+        IParameterSymbol parameter,
+        ExpressionSyntax requestExpression
     )
     {
         var otherParams = symbol.Parameters.Remove(parameter);
@@ -96,6 +97,10 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             return null;
         }
 
+        var sendRequestExpression = isStream
+            ? streamMediatorRequest(requestExpression, IdentifierName(mediatorParameter.Name), cancellationTokenParameter)
+            : sendMediatorRequest(requestExpression, IdentifierName(mediatorParameter.Name), cancellationTokenParameter);
+
         if (mediatorParameter.GetAttribute("HotChocolate.ServiceAttribute") is null)
         {
             var node = newSyntax.ParameterList.Parameters.FirstOrDefault(z => z.Identifier.Text == mediatorParameter.Name)!;
@@ -109,10 +114,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                           )
             );
         }
-
-        var sendRequestExpression = isStream
-            ? streamMediatorRequest(IdentifierName(parameter.Name), IdentifierName(mediatorParameter.Name), cancellationTokenParameter)
-            : sendMediatorRequest(IdentifierName(parameter.Name), IdentifierName(mediatorParameter.Name), cancellationTokenParameter);
 
         if (parameterType.IsRecord)
         {
@@ -189,11 +190,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                            .WithVariables(
                                 SingletonSeparatedList(VariableDeclarator(Identifier(resultName)).WithInitializer(EqualsValueClause(sendRequestExpression)))
                             )
-                    )
+                    ),
+                    ReturnStatement(IdentifierName(resultName))
                 );
         }
 
-        block = block.AddStatements(ReturnStatement(IdentifierName(resultName)));
 
         return newSyntax
               .WithBody(block.NormalizeWhitespace())
@@ -272,31 +273,65 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         var claimsPrincipal = semanticModel.Compilation.GetTypeByMetadataName("System.Security.Claims.ClaimsPrincipal")!;
         var mediator = semanticModel.Compilation.GetTypeByMetadataName("MediatR.IMediator")!;
         var cancellationToken = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken")!;
-        var members = syntax
-                     .Members
-                     .OfType<MethodDeclarationSyntax>()
-                     .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
-                     .Select(
-                          method =>
-                          {
-                              var methodSymbol = semanticModel.GetDeclaredSymbol(method);
-                              // ReSharper disable once UseNullPropagationWhenPossible
-                              if (methodSymbol is null)
-                              {
-                                  context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation()));
-                                  return default;
-                              }
+        var normalMembers = syntax
+                           .Members
+                           .OfType<MethodDeclarationSyntax>()
+                           .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                           .Select(
+                                method =>
+                                {
+                                    var methodSymbol = semanticModel.GetDeclaredSymbol(method);
+                                    // ReSharper disable once UseNullPropagationWhenPossible
+                                    if (methodSymbol is null)
+                                    {
+                                        context.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation()));
+                                        return default;
+                                    }
 
-                              var request = methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest`1"))
-                               ?? methodSymbol.Parameters.FirstOrDefault(p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IRequest"));
-                              var streamRequest = methodSymbol.Parameters.FirstOrDefault(
-                                  p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
-                              );
-                              return ( method, symbol: methodSymbol, request: request ?? streamRequest );
-                          }
-                      )
-                     .Where(z => z is { symbol: { }, method: { }, })
-                     .ToImmutableArray();
+                                    var request = methodSymbol.Parameters.FirstOrDefault(static p => isRequestType(p.Type));
+                                    return ( method, symbol: methodSymbol, request: request );
+                                }
+                            )
+                           .Where(z => z is { symbol: { }, method: { }, })
+                           .ToImmutableArray();
+        var optionalTrackingRequestMembers = syntax
+                                            .Members
+                                            .OfType<MethodDeclarationSyntax>()
+                                            .Where(z => z.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                                            .Select(
+                                                 method =>
+                                                 {
+                                                     var methodSymbol = semanticModel.GetDeclaredSymbol(method);
+                                                     // ReSharper disable once UseNullPropagationWhenPossible
+                                                     if (methodSymbol is null)
+                                                     {
+                                                         context.ReportDiagnostic(
+                                                             Diagnostic.Create(GeneratorDiagnostics.TypeMustLiveInSameProject, method.GetLocation())
+                                                         );
+                                                         return default;
+                                                     }
+
+                                                     var (optionalTrackingMethod, requestType) =
+                                                         methodSymbol
+                                                            .Parameters.SelectMany(
+                                                                 p => p.Type.AllInterfaces.Select(
+                                                                     static i => i is INamedTypeSymbol
+                                                                     {
+                                                                         MetadataName: "IOptionalTracking`1", TypeArguments: [var requestType]
+                                                                     }
+                                                                         ? requestType
+                                                                         : null
+                                                                 ),
+                                                                 ( (parameterSymbol, typeSymbol) => ( parameterSymbol, typeSymbol ) )
+                                                             )
+                                                            .FirstOrDefault(z => z.typeSymbol is { });
+                                                     return requestType is null
+                                                         ? default
+                                                         : ( method, symbol: methodSymbol, request: optionalTrackingMethod, type: requestType );
+                                                 }
+                                             )
+                                            .Where(z => z is { symbol: { }, method: { }, })
+                                            .ToImmutableArray();
 
         var newClass = syntax
                       .WithMembers(List<MemberDeclarationSyntax>())
@@ -306,22 +341,45 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             ;
 
 
-        foreach (( var method, var methodSymbol, var request ) in members)
+        foreach (( var method, var methodSymbol, var parameter ) in normalMembers)
         {
-            if (request != null)
-            {
-                var methodBody = GenerateMethod(
-                    context,
-                    mediator,
-                    claimsPrincipal,
-                    cancellationToken,
-                    method,
-                    methodSymbol,
-                    request
-                );
-                if (methodBody is null) continue;
-                newClass = newClass.AddMembers(methodBody);
-            }
+            if (parameter == null) continue;
+            var methodBody = GenerateMethod(
+                context,
+                mediator,
+                claimsPrincipal,
+                cancellationToken,
+                method,
+                methodSymbol,
+                parameter,
+                IdentifierName(parameter.Name)
+            );
+            if (methodBody is null) continue;
+            newClass = newClass.AddMembers(methodBody);
+        }
+
+        foreach (( var method, var methodSymbol, var parameter, var requestType ) in optionalTrackingRequestMembers)
+        {
+            if (parameter == null) continue;
+
+            var methodBody = GenerateMethod(
+                context,
+                mediator,
+                claimsPrincipal,
+                cancellationToken,
+                method,
+                methodSymbol,
+                parameter,
+                InvocationExpression(
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName(parameter.Name),
+                        IdentifierName("Create")
+                    )
+                )
+            );
+            if (methodBody is null) continue;
+            newClass = newClass.AddMembers(methodBody);
         }
 
         var additionalUsings = new[] { "MediatR", };
@@ -348,6 +406,11 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
         context.AddSource($"{newClass.Identifier.Text}_Methods.cs", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+
+        static bool isRequestType(ITypeSymbol typeSymbol) =>
+            typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IRequest`1")
+         || typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IRequest")
+         || typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IStreamRequest`1");
     }
 
     /// <inheritdoc />

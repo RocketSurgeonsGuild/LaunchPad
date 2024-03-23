@@ -1,0 +1,45 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: LPAD0005,
+      Title: The given declaration must match,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input2.cs: (4,19)-(4,25),
+      MessageFormat: The declaration {0} must be a {1}.,
+      Message: The declaration Save2Rocket+TrackingRequest must be a class.,
+      Category: LaunchPad
+    },
+    {
+      Id: CS1061,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator/RocketMutation_Methods.cs: (10,53)-(10,59),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1061),
+      MessageFormat: '{0}' does not contain a definition for '{1}' and no accessible extension method '{1}' accepting a first argument of type '{0}' could be found (are you missing a using directive or an assembly reference?),
+      Message: 'Save2Rocket.TrackingRequest' does not contain a definition for 'Create' and no accessible extension method 'Create' accepting a first argument of type 'Save2Rocket.TrackingRequest' could be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [
+      {
+        Id: LPAD0005,
+        Title: The given declaration must match,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input2.cs: (4,19)-(4,25),
+        MessageFormat: The declaration {0} must be a {1}.,
+        Message: The declaration Save2Rocket+TrackingRequest must be a class.,
+        Category: LaunchPad
+      }
+    ]
+  }
+}

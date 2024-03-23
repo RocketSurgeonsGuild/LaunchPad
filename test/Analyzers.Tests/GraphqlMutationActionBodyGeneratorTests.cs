@@ -5,6 +5,7 @@ using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Analyzers;
+using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Analyzers.Tests;
 
@@ -100,6 +101,16 @@ public class RocketMutation
         await Verify(await Builder.AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
     }
 
+    [Theory]
+    [ClassData(typeof(MethodBodyWithOptionalTrackingData))]
+    public async Task Should_Generate_Method_Bodies_With_Optional_Tracking(string key, string[] sources)
+    {
+        await Verify(await Builder
+                          .WithGenerator<GraphqlOptionalPropertyTrackingGenerator>()
+                          .AddReferences(typeof(IOptionalTracking<>))
+                          .AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
+    }
+
     private sealed class MethodBodyData : TheoryData<string, string[]>
     {
         private const string defaultString = @"
@@ -136,6 +147,32 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.Request request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyForTaskRequest",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+public static class GetRocket
+{
+    public record Request : IRequest
+    {
+        public Guid Id { get; set; }
+    }
+}",
+                    @"
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task GetRocket([Service] IMediator mediator, GetRocket.Request request);
 }",
                 }
             );
@@ -520,6 +557,515 @@ namespace MyNamespace.Controllers;
 public partial class RocketMutation
 {
     public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.Request request);
+}",
+                }
+            );
+        }
+    }
+    private sealed class MethodBodyWithOptionalTrackingData : TheoryData<string, string[]>
+    {
+        private const string defaultString = @"
+global using Rocket.Surgery.LaunchPad.HotChocolate;
+namespace TestNamespace;
+public record RocketModel
+{
+    public Guid Id { get; init; }
+    public string Sn { get; init; } = null!;
+}
+";
+
+        public MethodBodyWithOptionalTrackingData()
+        {
+            Add(
+                "GenerateBodyForRequest",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+public static partial class GetRocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyForTaskRequest",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+public static partial class GetRocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest
+    {
+        public Guid Id { get; set; }
+    }
+}",
+                    @"
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodiesWithMultipleParameters",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static partial class GetRocketLaunchRecords
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IStreamRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+    }
+}
+
+public static partial class GetRocketLaunchRecord
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    /// <summary>
+    /// Get the launch records for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(IMediator mediator, GetRocketLaunchRecords.TrackingRequest request);
+
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodiesWithMultipleParameters2",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static partial class GetRocketLaunchRecord
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+
+        public Guid LaunchId { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodiesWithMultipleParameters3",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static partial class GetRocketLaunchRecord
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+
+        public Guid LaunchRecordId { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodiesWithMultipleParameters4",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+
+public record LaunchRecordModel
+{
+    public Guid Id { get; init; }
+    public string Partner { get; init; } = null!;
+    public string Payload { get; init; } = null!;
+}
+
+public static partial class GetRocketLaunchRecord
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; init; }
+
+        public string LaunchRecordId { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    /// <summary>
+    /// Get a specific launch record for a given rocket
+    /// </summary>
+    /// <returns></returns>
+    public partial Task<LaunchRecordModel> GetRocketLaunchRecord([Service] IMediator mediator, GetRocketLaunchRecord.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithClaimsPrincipal",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Security.Claims;
+namespace TestNamespace;
+public static partial class Save2Rocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; init; }
+        public string Other { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+using System.Security.Claims;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, ClaimsPrincipal claimsPrincipal, Save2Rocket.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithDifferentlyNamedClaimsPrincipal",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Security.Claims;
+namespace TestNamespace;
+public static partial class Save2Rocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; set; }
+        public string Other { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+using System.Security.Claims;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.TrackingRequest request, ClaimsPrincipal cp);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithoutClaimsPrincipal",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+public static partial class Save2Rocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; set; }
+        public string Other { get; init; }
+    }
+}",
+                    @"
+
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.TrackingRequest request);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithCancellationToken",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Threading;
+namespace TestNamespace;
+public static partial class Save2Rocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public string Other { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+using System.Threading;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.TrackingRequest request, CancellationToken cancellationToken);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithCancellationTokenAndClaimsPrincipal",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Threading;
+namespace TestNamespace;
+public static partial class Save2Rocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public ClaimsPrincipal ClaimsPrincipal { get; init; }
+        public string Other { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+using System.Threading;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.TrackingRequest request, ClaimsPrincipal cp, CancellationToken cancellationToken);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithDifferentlyNamedCancellationToken",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Threading;
+namespace TestNamespace;
+public static partial class Save2Rocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public string Other { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+using System.Threading;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.TrackingRequest request, CancellationToken token);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyWithoutCancellationToken",
+                new[]
+                {
+                    defaultString,
+                    @"
+namespace TestNamespace;
+public static partial class Save2Rocket
+{
+    public partial record TrackingRequest : IOptionalTracking<Request>
+    {
+        public Guid Id { get; set; }
+    }
+    public class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+        public string? Sn { get; init; } = null!;
+        public string Other { get; init; }
+    }
+}",
+                    @"
+using TestNamespace;
+using System.Threading;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> Save2Rocket([Service] IMediator mediator, Save2Rocket.TrackingRequest request);
 }",
                 }
             );

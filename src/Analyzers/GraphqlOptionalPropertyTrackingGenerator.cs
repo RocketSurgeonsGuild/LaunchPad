@@ -224,7 +224,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
         context.AddSource(
-            $"{Path.GetFileNameWithoutExtension(declaration.SyntaxTree.FilePath)}_{declaration.Identifier.Text}",
+            $"{Path.GetFileNameWithoutExtension(declaration.SyntaxTree.FilePath)}_{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}",
             cu.NormalizeWhitespace().GetText(Encoding.UTF8)
         );
     }

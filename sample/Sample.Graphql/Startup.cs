@@ -23,91 +23,75 @@ public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunc
 }
 
 [ExtendObjectType(OperationTypeNames.Mutation)]
-public class RocketMutation
+public partial class RocketMutation
 {
-    [UseServiceScope]
-    public Task<CreateRocket.Response> CreateRocket(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task<CreateRocket.Response> CreateRocket(
+        [Service]
+        IMediator mediator,
         CreateRocket.Request request,
         CancellationToken cancellationToken
-    )
-    {
-        return mediator.Send(request, cancellationToken);
-    }
+    );
 
-    [UseServiceScope]
-    public Task<RocketModel> EditRocket(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task<RocketModel> EditRocket(
+        [Service]
+        IMediator mediator,
         EditRocket.Request request,
         CancellationToken cancellationToken
-    )
-    {
-        return mediator.Send(request, cancellationToken);
-    }
+    );
 
-    [UseServiceScope]
-    public Task<RocketModel> PatchRocket(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task<RocketModel> PatchRocket(
+        [Service]
+        IMediator mediator,
         EditRocketPatchRequest request,
         CancellationToken cancellationToken
-    )
-    {
-        return mediator.Send(request.Create(), cancellationToken);
-    }
+    );
 
-    [UseServiceScope]
-    public Task<Unit> DeleteRocket(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task DeleteRocket(
+        [Service]
+        IMediator mediator,
         DeleteRocket.Request request,
         CancellationToken cancellationToken
-    )
-    {
-        return (Task<Unit>)mediator.Send(request, cancellationToken);
-    }
+    );
 }
 
 [ExtendObjectType(OperationTypeNames.Mutation)]
-public class LaunchRecordMutation
+public partial class LaunchRecordMutation
 {
-    [UseServiceScope]
-    public Task<CreateLaunchRecord.Response> CreateLaunchRecord(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task<CreateLaunchRecord.Response> CreateLaunchRecord(
+        [Service]
+        IMediator mediator,
         CreateLaunchRecord.Request request,
         CancellationToken cancellationToken
-    )
-    {
-        return mediator.Send(request, cancellationToken);
-    }
+    );
 
-    [UseServiceScope]
-    public Task<LaunchRecordModel> EditLaunchRecord(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task<LaunchRecordModel> EditLaunchRecord(
+        [Service]
+        IMediator mediator,
         EditLaunchRecord.Request request,
         CancellationToken cancellationToken
-    )
-    {
-        return mediator.Send(request, cancellationToken);
-    }
+    );
 
-    [UseServiceScope]
-    public Task<LaunchRecordModel> PatchLaunchRecord(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task<LaunchRecordModel> PatchLaunchRecord(
+        [Service]
+        IMediator mediator,
         EditLaunchRecordPatchRequest request,
         CancellationToken cancellationToken
-    )
-    {
-        return mediator.Send(request.Create(), cancellationToken);
-    }
+    );
 
-    [UseServiceScope]
-    public Task<Unit> DeleteLaunchRecord(
-        [Service] IMediator mediator,
+    [UseRequestScope]
+    public partial Task DeleteLaunchRecord(
+        [Service]
+        IMediator mediator,
         DeleteLaunchRecord.Request request,
         CancellationToken cancellationToken
-    )
-    {
-        return (Task<Unit>)mediator.Send(request, cancellationToken);
-    }
+    );
 }
 
 [ExtendObjectType(OperationTypeNames.Query)]
