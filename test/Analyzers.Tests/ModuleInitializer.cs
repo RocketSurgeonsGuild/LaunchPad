@@ -10,7 +10,7 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Init()
     {
-        VerifyGeneratorTextContext.Initialize(false, false, DiagnosticSeverity.Error);
+        VerifyGeneratorTextContext.Initialize(DiagnosticSeverity.Error, Customizers.Empty);
 
         DiffRunner.Disabled = true;
         DerivePathInfo(
