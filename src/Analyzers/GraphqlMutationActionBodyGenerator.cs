@@ -289,7 +289,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                                     }
 
                                     var request = methodSymbol.Parameters.FirstOrDefault(static p => isRequestType(p.Type));
-                                    return ( method, symbol: methodSymbol, request: request );
+                                    return ( method, symbol: methodSymbol, request );
                                 }
                             )
                            .Where(z => z is { symbol: { }, method: { }, })
@@ -311,18 +311,18 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                                                          return default;
                                                      }
 
-                                                     var (optionalTrackingMethod, requestType) =
+                                                     ( var optionalTrackingMethod, var requestType ) =
                                                          methodSymbol
                                                             .Parameters.SelectMany(
                                                                  p => p.Type.AllInterfaces.Select(
                                                                      static i => i is INamedTypeSymbol
                                                                      {
-                                                                         MetadataName: "IOptionalTracking`1", TypeArguments: [var requestType]
+                                                                         MetadataName: "IOptionalTracking`1", TypeArguments: [var requestType,],
                                                                      }
                                                                          ? requestType
                                                                          : null
                                                                  ),
-                                                                 ( (parameterSymbol, typeSymbol) => ( parameterSymbol, typeSymbol ) )
+                                                                 (parameterSymbol, typeSymbol) => ( parameterSymbol, typeSymbol )
                                                              )
                                                             .FirstOrDefault(z => z.typeSymbol is { });
                                                      return requestType is null
@@ -407,10 +407,12 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
         context.AddSource($"{newClass.Identifier.Text}_Methods.cs", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
 
-        static bool isRequestType(ITypeSymbol typeSymbol) =>
-            typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IRequest`1")
-         || typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IRequest")
-         || typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IStreamRequest`1");
+        static bool isRequestType(ITypeSymbol typeSymbol)
+        {
+            return typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IRequest`1")
+             || typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IRequest")
+             || typeSymbol.AllInterfaces.Any(static i => i.MetadataName == "IStreamRequest`1");
+        }
     }
 
     /// <inheritdoc />

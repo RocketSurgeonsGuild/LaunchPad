@@ -167,7 +167,7 @@ public class QueryTests
 {
     public NodaTimeOutputs NodaTimeTest(NodaTimeInputs inputs)
     {
-        return new NodaTimeOutputs
+        return new()
         {
             Instant = inputs.Instant,
             LocalDate = inputs.LocalDate,
@@ -179,13 +179,13 @@ public class QueryTests
             Duration = inputs.Duration,
             ZonedDateTime = inputs.ZonedDateTime,
             Offset = inputs.Offset,
-            IsoDayOfWeek = inputs.IsoDayOfWeek
+            IsoDayOfWeek = inputs.IsoDayOfWeek,
         };
     }
 
     public GeometryOutputs GeometryTest(GeometryInputs inputs)
     {
-        return new GeometryOutputs
+        return new()
         {
             Geometry = inputs.Geometry,
             // TODO: Determine why these are not working
@@ -240,8 +240,9 @@ public class ReadyRocketType : ObjectType<ReadyRocket>
     protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor)
     {
 //        descriptor.Implements<InterfaceType<IReadyRocket>>();
-        descriptor.Field(z => z.LaunchRecords)
-                  .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
+        descriptor
+           .Field(z => z.LaunchRecords)
+           .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
 //                  .UseFiltering()
 //                  .UseSorting()
             ;
@@ -254,8 +255,9 @@ public class LaunchRecordType : ObjectType<LaunchRecord>
     protected override void Configure(IObjectTypeDescriptor<LaunchRecord> descriptor)
     {
 //        descriptor.Implements<InterfaceType<ILaunchRecord>>();
-        descriptor.Field(z => z.Rocket)
-                  .Type<NonNullType<ObjectType<ReadyRocket>>>();
+        descriptor
+           .Field(z => z.Rocket)
+           .Type<NonNullType<ObjectType<ReadyRocket>>>();
         descriptor.Field(z => z.RocketId).Ignore();
 //        descriptor.Ignore(z => z.LaunchRecords);
     }
@@ -263,30 +265,30 @@ public class LaunchRecordType : ObjectType<LaunchRecord>
 
 public class StronglyTypedIdOperationFilterInputType
     : FilterInputType
-    , IComparableOperationFilterInputType
+      , IComparableOperationFilterInputType
 {
-    public StronglyTypedIdOperationFilterInputType()
-    {
-    }
+    public StronglyTypedIdOperationFilterInputType() { }
 
     public StronglyTypedIdOperationFilterInputType(Action<IFilterInputTypeDescriptor> configure)
-        : base(configure)
-    {
-    }
+        : base(configure) { }
 
     protected override void Configure(IFilterInputTypeDescriptor descriptor)
     {
-        descriptor.Operation(DefaultFilterOperations.Equals)
-                  .Type<UuidType>();
+        descriptor
+           .Operation(DefaultFilterOperations.Equals)
+           .Type<UuidType>();
 
-        descriptor.Operation(DefaultFilterOperations.NotEquals)
-                  .Type<UuidType>();
+        descriptor
+           .Operation(DefaultFilterOperations.NotEquals)
+           .Type<UuidType>();
 
-        descriptor.Operation(DefaultFilterOperations.In)
-                  .Type<ListType<UuidType>>();
+        descriptor
+           .Operation(DefaultFilterOperations.In)
+           .Type<ListType<UuidType>>();
 
-        descriptor.Operation(DefaultFilterOperations.NotIn)
-                  .Type<ListType<UuidType>>();
+        descriptor
+           .Operation(DefaultFilterOperations.NotIn)
+           .Type<ListType<UuidType>>();
 
         descriptor.AllowAnd(false).AllowOr(false);
     }
