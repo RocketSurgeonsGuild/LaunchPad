@@ -129,7 +129,7 @@
     <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.0.0" />
     <PackageVersion Include="System.Text.Json" Version="8.0.0" />
     <PackageVersion Include="System.Net.Http.Json" Version="8.0.0" />
-    <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.0.3" />
+    <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.0.4" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="8.0.0" />
     <PackageVersion Include="OpenTelemetry" Version="1.7.0" />
