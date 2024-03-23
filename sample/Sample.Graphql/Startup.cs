@@ -50,7 +50,7 @@ public partial class RocketMutation
     );
 
     [UseRequestScope]
-    public partial Task DeleteRocket(
+    public partial Task<Unit> DeleteRocket(
         [Service]
         IMediator mediator,
         DeleteRocket.Request request,
@@ -86,7 +86,7 @@ public partial class LaunchRecordMutation
     );
 
     [UseRequestScope]
-    public partial Task DeleteLaunchRecord(
+    public partial Task<Unit> DeleteLaunchRecord(
         [Service]
         IMediator mediator,
         DeleteLaunchRecord.Request request,

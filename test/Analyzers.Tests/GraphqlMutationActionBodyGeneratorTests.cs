@@ -177,7 +177,7 @@ namespace MyNamespace.Controllers;
 [ExtendObjectType(OperationTypeNames.Mutation)]
 public partial class RocketMutation
 {
-    public partial Task GetRocket([Service] IMediator mediator, GetRocket.Request request);
+    public partial Task<Unit> GetRocket([Service] IMediator mediator, GetRocket.Request request);
 }",
                 }
             );
@@ -639,7 +639,7 @@ namespace MyNamespace.Controllers;
 [ExtendObjectType(OperationTypeNames.Mutation)]
 public partial class RocketMutation
 {
-    public partial Task GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request);
+    public partial Task<Unit> GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request);
 }",
                 }
             );
