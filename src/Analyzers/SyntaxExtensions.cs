@@ -19,6 +19,19 @@ internal static class SyntaxExtensions
         return typeSyntax is NullableTypeSyntax nts ? nts.ElementType : typeSyntax;
     }
 
+    public static IEnumerable<TypeDeclarationSyntax> GetParentDeclarationsWithSelf(
+        this TypeDeclarationSyntax source
+    )
+    {
+        yield return source;
+        var parent = source.Parent;
+        while (parent is TypeDeclarationSyntax parentSyntax)
+        {
+            yield return parentSyntax;
+            parent = parentSyntax.Parent;
+        }
+    }
+
     public static TypeDeclarationSyntax ReparentDeclaration(
         this TypeDeclarationSyntax classToNest,
         SourceProductionContext context,
