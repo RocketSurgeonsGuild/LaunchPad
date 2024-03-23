@@ -105,10 +105,15 @@ public class RocketMutation
     [ClassData(typeof(MethodBodyWithOptionalTrackingData))]
     public async Task Should_Generate_Method_Bodies_With_Optional_Tracking(string key, string[] sources)
     {
-        await Verify(await Builder
-                          .WithGenerator<GraphqlOptionalPropertyTrackingGenerator>()
-                          .AddReferences(typeof(IOptionalTracking<>))
-                          .AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
+        await Verify(
+                await Builder
+                     .WithGenerator<GraphqlOptionalPropertyTrackingGenerator>()
+                     .AddReferences(typeof(IOptionalTracking<>))
+                     .AddSources(sources)
+                     .Build()
+                     .GenerateAsync()
+            )
+           .UseParameters(key, "");
     }
 
     private sealed class MethodBodyData : TheoryData<string, string[]>
@@ -562,6 +567,7 @@ public partial class RocketMutation
             );
         }
     }
+
     private sealed class MethodBodyWithOptionalTrackingData : TheoryData<string, string[]>
     {
         private const string defaultString = @"
