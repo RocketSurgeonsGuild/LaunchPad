@@ -83,7 +83,7 @@ public partial class FluentValidationConvention : IServiceConvention
                            .GetReflectionContext();
                         context.Schema.Properties[context.PropertyKey].Nullable =
                             context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
-                         || ( ruleContext.PropertyInfo is FieldInfo fi && getNullableValue(fi.GetNullability(), fi.FieldType) )
+                         || ( ruleContext is { PropertyInfo: FieldInfo fi, } && getNullableValue(fi.GetNullability(), fi.FieldType) )
                             ;
 
                         static bool getNullableValue(Nullability nullability, Type propertyType)

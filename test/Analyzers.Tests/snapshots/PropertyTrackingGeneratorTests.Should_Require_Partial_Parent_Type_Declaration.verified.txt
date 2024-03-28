@@ -5,7 +5,7 @@
       Title: Type must be made partial,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input1.cs: (9,24)-(9,35),
+      Location: Input1.cs: (13,24)-(13,35),
       MessageFormat: Type {0} must be made partial.,
       Message: Type Sample.Core.Operations.Rockets.PublicClass must be made partial.,
       Category: LaunchPad
@@ -34,7 +34,7 @@
         Title: Type must be made partial,
         Severity: Error,
         WarningLevel: 0,
-        Location: Input1.cs: (9,24)-(9,35),
+        Location: Input1.cs: (13,24)-(13,35),
         MessageFormat: Type {0} must be made partial.,
         Message: Type Sample.Core.Operations.Rockets.PublicClass must be made partial.,
         Category: LaunchPad

@@ -47,7 +47,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             ( isRecord
                 ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
                 : ClassDeclaration(declaration.Identifier) )
-           .WithModifiers(declaration.Modifiers)
+           .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
            .WithAttributeLists(

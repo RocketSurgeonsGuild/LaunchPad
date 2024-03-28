@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
 
@@ -11,7 +12,7 @@ internal static class SyntaxExtensions
     public static TypeSyntax EnsureNullable(this TypeSyntax typeSyntax, NullableAnnotation? annotation = null)
     {
         if (annotation.HasValue && annotation == NullableAnnotation.Annotated) return typeSyntax;
-        return typeSyntax as NullableTypeSyntax ?? SyntaxFactory.NullableType(typeSyntax);
+        return typeSyntax as NullableTypeSyntax ?? NullableType(typeSyntax);
     }
 
     public static TypeSyntax EnsureNotNullable(this TypeSyntax typeSyntax)
@@ -42,11 +43,11 @@ internal static class SyntaxExtensions
         while (parent is TypeDeclarationSyntax parentSyntax)
         {
             classToNest = ( parentSyntax is RecordDeclarationSyntax
-                              ? (TypeDeclarationSyntax)SyntaxFactory.RecordDeclaration(SyntaxFactory.Token(SyntaxKind.RecordKeyword), parentSyntax.Identifier)
-                              : SyntaxFactory.ClassDeclaration(parentSyntax.Identifier) )
-                         .WithModifiers(parentSyntax.Modifiers)
-                         .WithOpenBraceToken(SyntaxFactory.Token(SyntaxKind.OpenBraceToken))
-                         .WithCloseBraceToken(SyntaxFactory.Token(SyntaxKind.CloseBraceToken))
+                              ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), parentSyntax.Identifier)
+                              : ClassDeclaration(parentSyntax.Identifier) )
+                         .WithModifiers(TokenList(parentSyntax.Modifiers.Select(z => z.WithoutTrivia())))
+                         .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
+                         .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
                          .AddMembers(classToNest);
 
             if (!parentSyntax.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))

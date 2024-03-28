@@ -5,7 +5,7 @@
       Title: The given declaration must match,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input1.cs: (10,19)-(10,24),
+      Location: Input1.cs: (14,19)-(14,24),
       MessageFormat: The declaration {0} must be a {1}.,
       Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.,
       Category: LaunchPad
@@ -18,7 +18,7 @@
         Title: The given declaration must match,
         Severity: Error,
         WarningLevel: 0,
-        Location: Input1.cs: (10,19)-(10,24),
+        Location: Input1.cs: (14,19)-(14,24),
         MessageFormat: The declaration {0} must be a {1}.,
         Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.,
         Category: LaunchPad
