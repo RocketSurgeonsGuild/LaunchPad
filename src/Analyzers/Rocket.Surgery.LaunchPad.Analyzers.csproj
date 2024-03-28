@@ -52,7 +52,7 @@
         <None
             Include="$(MSBuildThisFileDirectory)\..\Analyzers\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
             Pack="true"
-            PackagePath="analyzers/dotnet/roslyn4.8/cs"
+            PackagePath="analyzers/dotnet/roslyn4.9/cs"
             Visible="false"
         />
     </ItemGroup>
