@@ -16,6 +16,10 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                @"
 namespace Sample.Core.Operations.Rockets
 {
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -47,6 +51,10 @@ namespace Sample.Core.Operations.Rockets
                                @"
 namespace Sample.Core.Operations.Rockets
 {
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -79,6 +87,10 @@ namespace Sample.Core.Operations.Rockets
         var result = await Builder
                           .AddSources(
                                @"
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public record Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -95,7 +107,7 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
         var typeProperty = type.GetProperty("Type")!;
         var idProperty = type.GetProperty("Id")!;
@@ -133,6 +145,10 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
         var result = await Builder
                           .AddSources(
                                @"
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public class Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -149,7 +165,7 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
         var typeProperty = type.GetProperty("Type")!;
         var getChangesMethod = type.GetMethod("GetChangedState")!;
@@ -182,6 +198,10 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         var result = await Builder
                           .AddSources(
                                @"
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 namespace Sample.Core.Operations.Rockets
 {
     public record Request : IRequest<RocketModel>
@@ -212,6 +232,10 @@ namespace Sample.Core.Operations.Rockets
                                @"
 namespace Sample.Core.Operations.Rockets
 {
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -243,6 +267,10 @@ namespace Sample.Core.Operations.Rockets
                                @"
 namespace Sample.Core.Operations.Rockets
 {
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -268,6 +296,10 @@ namespace Sample.Core.Operations.Rockets
                                @"
 namespace Sample.Core.Operations.Rockets
 {
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -296,6 +328,10 @@ namespace Sample.Core.Operations.Rockets
         var result = await Builder
                           .AddSources(
                                @"
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public record Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -312,7 +348,7 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
         var propertyUnderTest = type.GetProperty(property)!;
         var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
@@ -341,6 +377,10 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
         var result = await Builder
                           .AddSources(
                                @"
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public class Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -358,7 +398,7 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
         var propertyUnderTest = type.GetProperty(property)!;
         var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");

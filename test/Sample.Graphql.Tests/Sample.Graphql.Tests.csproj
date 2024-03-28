@@ -18,4 +18,10 @@
         <Using Include="StrawberryShake" />
         <Compile Include="obj\$(Configuration)\$(TargetFramework)\berry\*.cs" />
     </ItemGroup>
+    <Target Name="DeleteGraphqlSchema" BeforeTargets="_GenerateGraphQLCode">
+        <Delete
+            Files="snapshots/FoundationTests.GraphqlSchema.received.graphql"
+            Condition="Exists('snapshots/FoundationTests.GraphqlSchema.received.graphql')"
+        />
+    </Target>
 </Project>

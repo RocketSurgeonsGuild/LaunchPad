@@ -20,7 +20,7 @@ internal static class SymbolExtensions
     {
         foreach (var additionalUsing in namespaces.Where(z => !string.IsNullOrWhiteSpace(z)))
         {
-            if (usingDirectiveSyntax.Any(z => z.Name.ToString() == additionalUsing)) continue;
+            if (usingDirectiveSyntax.Any(z => z.Name?.ToString() == additionalUsing)) continue;
             usingDirectiveSyntax = usingDirectiveSyntax.Add(UsingDirective(ParseName(additionalUsing)));
         }
 

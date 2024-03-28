@@ -27,6 +27,10 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public class PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -59,6 +63,10 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public static class PublicClass
     {
         public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
@@ -94,6 +102,10 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public partial class PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -126,6 +138,10 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -158,6 +174,10 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public partial record PatchRocket : IOptionalTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -187,6 +207,10 @@ namespace Sample.Core.Operations.Rockets
         public int? Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public partial record PatchRocket : IOptionalTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
@@ -215,6 +239,10 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; init; }
         public Instant? PlannedDate { get; init; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public partial record PatchRocket(Guid Id) : IOptionalTracking<Request>, IRequest<RocketModel>
     {
     }
@@ -245,6 +273,10 @@ namespace Sample.Core.Operations.Rockets
         public RocketType Type { get; set; }
         public Instant? PlannedDate { get; set; }
     }
+    /// <summary>
+    /// Request
+    /// </summary>
+    /// <param name=""Id"">The rocket id</param>
     public partial record PatchRocketUnderTest : IOptionalTracking<Request>
     {
     }
@@ -279,6 +311,10 @@ public record Request : IRequest<RocketModel>
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
 {
 }
@@ -290,7 +326,7 @@ public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<Ro
         output!.Diagnostics.Should().HaveCount(0);
 
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
         var propertyUnderTest = type.GetProperty(property)!;
         var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
@@ -327,6 +363,10 @@ public class Request : IRequest<RocketModel>
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public partial class PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -338,7 +378,7 @@ public partial class PatchGraphRocket : IOptionalTracking<Request>, IRequest<Roc
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
         var propertyUnderTest = type.GetProperty(property)!;
         var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
@@ -376,6 +416,10 @@ public record Request : IRequest<RocketModel>
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>
 {
     public Guid Id { get; init; }
@@ -387,7 +431,7 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
         var propertyUnderTest = type.GetProperty(property)!;
         var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
@@ -426,6 +470,10 @@ public class Request : IRequest<RocketModel>
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
 public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
 {
     public Guid Id { get; init; }
@@ -437,7 +485,7 @@ public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-        var type = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
         var propertyUnderTest = type.GetProperty(property)!;
         var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");

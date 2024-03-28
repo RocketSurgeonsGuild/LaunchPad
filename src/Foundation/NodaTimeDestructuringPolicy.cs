@@ -5,7 +5,7 @@ using Serilog.Events;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
 
-internal class NodaTimeDestructuringPolicy(IDateTimeZoneProvider provider) : IDestructuringPolicy
+internal class NodaTimeDestructuringPolicy : IDestructuringPolicy
 {
     public bool TryDestructure(object value, ILogEventPropertyValueFactory _, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
