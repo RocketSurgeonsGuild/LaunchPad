@@ -18,8 +18,10 @@ public static class NodaTimeLoggerConfigurationExtensions
     public static LoggerConfiguration NodaTimeTypes(this LoggerDestructuringConfiguration configuration, IDateTimeZoneProvider provider)
     {
         return configuration
-              .AsScalar<Offset>().Destructure
-              .AsScalar<CalendarSystem>().Destructure
+              .AsScalar<Offset>()
+              .Destructure
+              .AsScalar<CalendarSystem>()
+              .Destructure
               .With(new NodaTimeDestructuringPolicy());
     }
 }
