@@ -104,6 +104,44 @@ namespace Sample.Core.Operations.Rockets
         public partial record Model
         {
             public string SerialNumber { get; set; }
+            public string Excluded { get; set; }
+        }
+
+        [InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.Excluded) })]
+        public partial record Request : IRequest<Response>
+        {
+            public Guid Id { get; init; }
+        }
+
+        public partial record Response {}
+    }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
+    [Fact]
+    public async Task Should_Generate_And_Ignore_Type_Declaration_Members()
+    {
+        var result = await Builder
+                          .AddSources(
+                               @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        public partial record Model
+        {
+            public string SerialNumber { get; set; }
+
+            private class Mapper;
         }
 
         [InheritFrom(typeof(Model))]
@@ -163,6 +201,51 @@ namespace Sample.Core.Operations.Rockets
 
         await Verify(result);
     }
+
+    #if !ROSLYN4_0
+    [Fact]
+    public async Task Should_Inherit_Using_Generic_Type_Arguments()
+    {
+        var result = await Builder
+                          .AddSources(
+                               @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        public partial record Model
+        {
+            public string SerialNumber { get; set; }
+            public string Excluded { get; set; }
+        }
+
+        public partial record Other
+        {
+            public string OtherNumber { get; set; }
+        }
+
+        [InheritFrom<Model>(Exclude = new[] { nameof(Model.Excluded) })]
+        [InheritFrom<Other>]
+        public partial record Request : IRequest<Response>
+        {
+            public Guid Id { get; init; }
+        }
+
+        public partial record Response {}
+    }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+
+        await Verify(result);
+    }
+    #endif
 
     [Fact]
     public async Task Should_Generate_With_Method_For_Record_That_Inherits()

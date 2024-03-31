@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>net8.0</TargetFrameworks>
         <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Analyzers.Tests.", ""))</_Analyzer_Roslyn_Version_>
-        <DefineConstants>$(DefineConstants);ROSLYN_CURRENT;ROSLYN4_0</DefineConstants>
+        <DefineConstants>$(DefineConstants);ROSLYN4_0</DefineConstants>
         <RootNamespace>Analyzers.Tests</RootNamespace>
         <AssemblyName>Analyzers.Tests</AssemblyName>
     </PropertyGroup>

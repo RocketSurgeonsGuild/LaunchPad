@@ -344,11 +344,10 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                                             .Where(z => z is { symbol: { }, method: { }, })
                                             .ToImmutableArray();
 
-        var newClass = syntax
-                      .WithMembers(List<MemberDeclarationSyntax>())
-                      .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                      .WithAttributeLists(List<AttributeListSyntax>())
-                      .WithBaseList(null)
+        var newClass = ClassDeclaration(syntax.Identifier)
+                      .WithModifiers(TokenList(syntax.Modifiers.Select(z => z.WithoutTrivia())))
+                      .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
+                      .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
             ;
 
 
