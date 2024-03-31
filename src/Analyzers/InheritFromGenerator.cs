@@ -28,36 +28,46 @@ public class InheritFromGenerator : IIncrementalGenerator
             return;
         }
 
-        var classToInherit = declaration
-                            .WithMembers(List<MemberDeclarationSyntax>())
-                            .WithAttributeLists(List<AttributeListSyntax>())
-                            .WithConstraintClauses(List<TypeParameterConstraintClauseSyntax>())
-                            .WithBaseList(null)
-                            .WithAttributeLists(
-                                 SingletonList(
-                                     AttributeList(
-                                         SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
-                                     )
-                                 )
-                             );
+        var isRecord = declaration is RecordDeclarationSyntax;
+
+        var classToInherit =
+            ( isRecord
+                ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
+                : ClassDeclaration(declaration.Identifier) )
+           .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
+           .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
+           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
+           .WithAttributeLists(
+                SingletonList(
+                    AttributeList(
+                        SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
+                    )
+                )
+            );
 
         foreach (var attribute in attributes)
         {
             if (attribute.ApplicationSyntaxReference?.GetSyntax() is not { } attributeSyntax)
                 continue;
-            if (attribute is { ConstructorArguments: { Length: 0 } } || attribute.ConstructorArguments[0] is { Kind: not TypedConstantKind.Type })
+
+            INamedTypeSymbol inheritFromSymbol;
+            switch (attribute)
             {
-                // will be a normal compiler error
-                continue;
+                case { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], }:
+                    inheritFromSymbol = genericArgumentSymbol;
+                    break;
+                case
+                {
+                    ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },],
+                }:
+                    inheritFromSymbol = constructorArgumentSymbol;
+                    break;
+                default:
+                    // will be a normal compiler error
+                    continue;
             }
 
-            if (attribute.ConstructorArguments[0].Value is not INamedTypeSymbol inheritFromSymbol)
-            {
-                // will be a normal compiler error
-                continue;
-            }
-
-            if (inheritFromSymbol is { DeclaringSyntaxReferences: { Length: 0 } })
+            if (inheritFromSymbol is { DeclaringSyntaxReferences.Length: 0 })
             {
                 // TODO: Support generation from another assembly
                 context.ReportDiagnostic(
@@ -71,10 +81,21 @@ public class InheritFromGenerator : IIncrementalGenerator
                 continue;
             }
 
+            var excludeMembers = new HashSet<string>(
+                attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0 } values }, },] }
+                    ? values.Select(z => (string)z.Value!).ToArray()
+                    : Array.Empty<string>()
+            );
+
             var members = new List<MemberDeclarationSyntax>();
             foreach (var type in inheritFromSymbol.DeclaringSyntaxReferences.Select(z => z.GetSyntax()).OfType<TypeDeclarationSyntax>())
             {
-                members.AddRange(type.Members);
+                members.AddRange(
+                    type
+                       .Members
+                       .Where(z => z is not TypeDeclarationSyntax)
+                       .Where(z => z is not PropertyDeclarationSyntax propertyDeclarationSyntax || !excludeMembers.Contains(propertyDeclarationSyntax.Identifier.ToString()))
+                );
                 classToInherit = classToInherit.AddAttributeLists(type.AttributeLists.ToArray());
                 foreach (var item in type.BaseList?.Types ?? SeparatedList<BaseTypeSyntax>())
                 {
@@ -140,37 +161,39 @@ public class InheritFromGenerator : IIncrementalGenerator
         ITypeSymbol inheritFromSymbol
     )
     {
-        var sourceAssignmentMembers = sourceSyntax.Members
-                                                  .OfType<PropertyDeclarationSyntax>()
-                                                  .Select(
-                                                       m => AssignmentExpression(
-                                                           SyntaxKind.SimpleAssignmentExpression,
-                                                           IdentifierName(m.Identifier.Text),
-                                                           MemberAccessExpression(
-                                                               SyntaxKind.SimpleMemberAccessExpression,
-                                                               ThisExpression(),
-                                                               IdentifierName(m.Identifier.Text)
-                                                           )
-                                                       )
-                                                   )
-                                                  .Concat(
-                                                       sourceSyntax.Members.OfType<FieldDeclarationSyntax>()
-                                                                   .SelectMany(
-                                                                        m => m.Declaration.Variables.Select(
-                                                                            z => AssignmentExpression(
-                                                                                SyntaxKind.SimpleAssignmentExpression,
-                                                                                IdentifierName(z.Identifier.Text),
-                                                                                MemberAccessExpression(
-                                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                                    ThisExpression(),
-                                                                                    IdentifierName(z.Identifier.Text)
-                                                                                )
-                                                                            )
-                                                                        )
-                                                                    )
-                                                   )
-                                                  .Cast<ExpressionSyntax>()
-                                                  .ToArray();
+        var sourceAssignmentMembers = sourceSyntax
+                                     .Members
+                                     .OfType<PropertyDeclarationSyntax>()
+                                     .Select(
+                                          m => AssignmentExpression(
+                                              SyntaxKind.SimpleAssignmentExpression,
+                                              IdentifierName(m.Identifier.Text),
+                                              MemberAccessExpression(
+                                                  SyntaxKind.SimpleMemberAccessExpression,
+                                                  ThisExpression(),
+                                                  IdentifierName(m.Identifier.Text)
+                                              )
+                                          )
+                                      )
+                                     .Concat(
+                                          sourceSyntax
+                                             .Members.OfType<FieldDeclarationSyntax>()
+                                             .SelectMany(
+                                                  m => m.Declaration.Variables.Select(
+                                                      z => AssignmentExpression(
+                                                          SyntaxKind.SimpleAssignmentExpression,
+                                                          IdentifierName(z.Identifier.Text),
+                                                          MemberAccessExpression(
+                                                              SyntaxKind.SimpleMemberAccessExpression,
+                                                              ThisExpression(),
+                                                              IdentifierName(z.Identifier.Text)
+                                                          )
+                                                      )
+                                                  )
+                                              )
+                                      )
+                                     .Cast<ExpressionSyntax>()
+                                     .ToArray();
 
         var valueAssignmentMembers = members
                                     .OfType<PropertyDeclarationSyntax>()
@@ -186,20 +209,21 @@ public class InheritFromGenerator : IIncrementalGenerator
                                          )
                                      )
                                     .Concat(
-                                         members.OfType<FieldDeclarationSyntax>()
-                                                .SelectMany(
-                                                     m => m.Declaration.Variables.Select(
-                                                         z => AssignmentExpression(
-                                                             SyntaxKind.SimpleAssignmentExpression,
-                                                             IdentifierName(z.Identifier.Text),
-                                                             MemberAccessExpression(
-                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                 IdentifierName("value"),
-                                                                 IdentifierName(z.Identifier.Text)
-                                                             )
+                                         members
+                                            .OfType<FieldDeclarationSyntax>()
+                                            .SelectMany(
+                                                 m => m.Declaration.Variables.Select(
+                                                     z => AssignmentExpression(
+                                                         SyntaxKind.SimpleAssignmentExpression,
+                                                         IdentifierName(z.Identifier.Text),
+                                                         MemberAccessExpression(
+                                                             SyntaxKind.SimpleMemberAccessExpression,
+                                                             IdentifierName("value"),
+                                                             IdentifierName(z.Identifier.Text)
                                                          )
                                                      )
                                                  )
+                                             )
                                      )
                                     .Cast<ExpressionSyntax>()
                                     .ToArray();
@@ -249,20 +273,21 @@ public class InheritFromGenerator : IIncrementalGenerator
                                          )
                                      )
                                     .Concat(
-                                         members.OfType<FieldDeclarationSyntax>()
-                                                .SelectMany(
-                                                     m => m.Declaration.Variables.Select(
-                                                         z => AssignmentExpression(
-                                                             SyntaxKind.SimpleAssignmentExpression,
-                                                             IdentifierName(z.Identifier.Text),
-                                                             MemberAccessExpression(
-                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                 IdentifierName("value"),
-                                                                 IdentifierName(z.Identifier.Text)
-                                                             )
+                                         members
+                                            .OfType<FieldDeclarationSyntax>()
+                                            .SelectMany(
+                                                 m => m.Declaration.Variables.Select(
+                                                     z => AssignmentExpression(
+                                                         SyntaxKind.SimpleAssignmentExpression,
+                                                         IdentifierName(z.Identifier.Text),
+                                                         MemberAccessExpression(
+                                                             SyntaxKind.SimpleMemberAccessExpression,
+                                                             IdentifierName("value"),
+                                                             IdentifierName(z.Identifier.Text)
                                                          )
                                                      )
                                                  )
+                                             )
                                      )
                                     .Cast<ExpressionSyntax>()
                                     .ToArray();
@@ -296,25 +321,51 @@ public class InheritFromGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-#if ROSLYN4_4
-        var values = context.SyntaxProvider.ForAttributeWithMetadataName(
-                                 "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute",
-                                 (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
-                                 (syntaxContext, _) => syntaxContext
-                             )
-                            .Combine(context.CompilationProvider)
-                            .Select(
-                                 static (tuple, _) => (
-                                     syntax: (TypeDeclarationSyntax)tuple.Left.TargetNode,
-                                     semanticModel: tuple.Left.SemanticModel,
-                                     symbol: (INamedTypeSymbol)tuple.Left.TargetSymbol,
-                                     compilation: tuple.Right,
-                                     attributes: tuple.Left.Attributes
-                                                      .Where(z => z.AttributeClass?.Name == "InheritFromAttribute")
-                                                      .ToArray()
-                                 )
-                             );
-#else
+        #if ROSLYN4_4
+        var values = context
+                    .SyntaxProvider.ForAttributeWithMetadataName(
+                         "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute",
+                         (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
+                         (syntaxContext, _) => syntaxContext
+                     )
+                    .Combine(context.CompilationProvider)
+                    .Select(
+                         static (tuple, _) => (
+                             syntax: (TypeDeclarationSyntax)tuple.Left.TargetNode,
+                             semanticModel: tuple.Left.SemanticModel,
+                             symbol: (INamedTypeSymbol)tuple.Left.TargetSymbol,
+                             compilation: tuple.Right,
+                             attributes: tuple
+                                        .Left.Attributes
+                                        .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
+                                        .ToArray()
+                         )
+                     );
+        var values2 = context
+                     .SyntaxProvider.ForAttributeWithMetadataName(
+                          "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute`1",
+                          (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
+                          (syntaxContext, _) => syntaxContext
+                      )
+                     .Combine(context.CompilationProvider)
+                     .Select(
+                          static (tuple, _) => (
+                              syntax: (TypeDeclarationSyntax)tuple.Left.TargetNode,
+                              semanticModel: tuple.Left.SemanticModel,
+                              symbol: (INamedTypeSymbol)tuple.Left.TargetSymbol,
+                              compilation: tuple.Right,
+                              attributes: tuple
+                                         .Left.Attributes
+                                         .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
+                                         .ToArray()
+                          )
+                      );
+        context.RegisterSourceOutput(
+            values2,
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            static (productionContext, tuple) => GenerateInheritance(productionContext, tuple.compilation, tuple.syntax, tuple.symbol, tuple.attributes!)
+        );
+        #else
         var values = context.SyntaxProvider
                             .CreateSyntaxProvider(
                                  static (node, _) =>
@@ -347,7 +398,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                                  )
                              )
                             .Where(x => !( x.symbol is null || x.attributes is null or { Length: 0 } ));
-#endif
+        #endif
 
         context.RegisterSourceOutput(
             values,

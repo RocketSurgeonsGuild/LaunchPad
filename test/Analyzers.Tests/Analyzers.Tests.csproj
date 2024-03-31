@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net8.0</TargetFrameworks>
-        <DefineConstants>$(DefineConstants);ROSLYN_CURRENT;ROSLYN4_0;ROSLYN4_4;ROSLYN4_6;ROSLYN4_8</DefineConstants>
+        <DefineConstants>$(DefineConstants);ROSLYN_CURRENT;ROSLYN4_8</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
