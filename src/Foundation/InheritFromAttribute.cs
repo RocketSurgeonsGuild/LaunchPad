@@ -14,16 +14,13 @@ public sealed class InheritFromAttribute : Attribute
     ///     Create  the inherit from attribute
     /// </summary>
     /// <param name="classToCopy"></param>
-    public InheritFromAttribute(Type classToCopy)
-    {
-    }
+    public InheritFromAttribute(Type classToCopy) { }
 
     /// <summary>
-    /// Exclude the given properties from the copy
+    ///     Exclude the given properties from the copy
     /// </summary>
     public string[] Exclude { get; init; } = Array.Empty<string>();
 }
-
 
 /// <summary>
 ///     Allows you copy the properties of the another class or interface, and include a helper method to copy content to the given record.
@@ -36,12 +33,10 @@ public sealed class InheritFromAttribute<T> : Attribute where T : notnull
     /// <summary>
     ///     Create  the inherit from attribute
     /// </summary>
-    public InheritFromAttribute()
-    {
-    }
+    public InheritFromAttribute() { }
 
     /// <summary>
-    /// Exclude the given properties from the copy
+    ///     Exclude the given properties from the copy
     /// </summary>
     public string[] Exclude { get; init; } = Array.Empty<string>();
 }

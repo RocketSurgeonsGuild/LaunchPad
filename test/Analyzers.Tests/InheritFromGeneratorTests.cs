@@ -245,7 +245,7 @@ namespace Sample.Core.Operations.Rockets
 
         await Verify(result);
     }
-#endif
+    #endif
 
     [Fact]
     public async Task Should_Generate_With_Method_For_Record_That_Inherits()

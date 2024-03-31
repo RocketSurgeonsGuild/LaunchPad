@@ -67,7 +67,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                     continue;
             }
 
-            if (inheritFromSymbol is { DeclaringSyntaxReferences.Length: 0 })
+            if (inheritFromSymbol is { DeclaringSyntaxReferences.Length: 0, })
             {
                 // TODO: Support generation from another assembly
                 context.ReportDiagnostic(
@@ -82,7 +82,7 @@ public class InheritFromGenerator : IIncrementalGenerator
             }
 
             var excludeMembers = new HashSet<string>(
-                attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0 } values }, },] }
+                attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
                     ? values.Select(z => (string)z.Value!).ToArray()
                     : Array.Empty<string>()
             );
@@ -94,7 +94,10 @@ public class InheritFromGenerator : IIncrementalGenerator
                     type
                        .Members
                        .Where(z => z is not TypeDeclarationSyntax)
-                       .Where(z => z is not PropertyDeclarationSyntax propertyDeclarationSyntax || !excludeMembers.Contains(propertyDeclarationSyntax.Identifier.ToString()))
+                       .Where(
+                            z => z is not PropertyDeclarationSyntax propertyDeclarationSyntax
+                             || !excludeMembers.Contains(propertyDeclarationSyntax.Identifier.ToString())
+                        )
                 );
                 classToInherit = classToInherit.AddAttributeLists(type.AttributeLists.ToArray());
                 foreach (var item in type.BaseList?.Types ?? SeparatedList<BaseTypeSyntax>())
@@ -366,38 +369,43 @@ public class InheritFromGenerator : IIncrementalGenerator
             static (productionContext, tuple) => GenerateInheritance(productionContext, tuple.compilation, tuple.syntax, tuple.symbol, tuple.attributes!)
         );
         #else
-        var values = context.SyntaxProvider
-                            .CreateSyntaxProvider(
-                                 static (node, _) =>
-                                     node is (ClassDeclarationSyntax or RecordDeclarationSyntax) and TypeDeclarationSyntax
+        var values = context
+                    .SyntaxProvider
+                    .CreateSyntaxProvider(
+                         static (node, _) =>
+                             node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
+                                 and TypeDeclarationSyntax
                                      {
-                                         AttributeLists: { Count: > 0 }
-                                     } recordDeclarationSyntax && recordDeclarationSyntax.AttributeLists.ContainsAttribute("InheritFrom"),
-                                 static (syntaxContext, token) => (
-                                     syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
-                                     // ReSharper disable once NullableWarningSuppressionIsUsed
-                                     symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)! )
-                             ).Combine(
-                                 context.CompilationProvider
-                                        .Select(
-                                             static (z, _) => (
-                                                 compilation: z,
-                                                 // ReSharper disable once NullableWarningSuppressionIsUsed
-                                                 inheritFromAttribute: z.GetTypeByMetadataName("Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute")! )
-                                         )
-                             )
-                            .Select(
-                                 static (tuple, _) => (
-                                     tuple.Left.syntax,
-                                     tuple.Left.semanticModel,
-                                     tuple.Left.symbol,
-                                     tuple.Right.compilation,
-                                     attributes: tuple.Left.symbol?.GetAttributes()
-                                                      .Where(z => SymbolEqualityComparer.Default.Equals(tuple.Right.inheritFromAttribute, z.AttributeClass))
-                                                      .ToArray()
+                                         AttributeLists: { Count: > 0, },
+                                     } recordDeclarationSyntax
+                          && recordDeclarationSyntax.AttributeLists.ContainsAttribute("InheritFrom"),
+                         static (syntaxContext, token) => (
+                             syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
+                             // ReSharper disable once NullableWarningSuppressionIsUsed
+                             symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)! )
+                     )
+                    .Combine(
+                         context.CompilationProvider
+                                .Select(
+                                     static (z, _) => (
+                                         compilation: z,
+                                         // ReSharper disable once NullableWarningSuppressionIsUsed
+                                         inheritFromAttribute: z.GetTypeByMetadataName("Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute")! )
                                  )
-                             )
-                            .Where(x => !( x.symbol is null || x.attributes is null or { Length: 0 } ));
+                     )
+                    .Select(
+                         static (tuple, _) => (
+                             tuple.Left.syntax,
+                             tuple.Left.semanticModel,
+                             tuple.Left.symbol,
+                             tuple.Right.compilation,
+                             attributes: tuple
+                                        .Left.symbol?.GetAttributes()
+                                        .Where(z => SymbolEqualityComparer.Default.Equals(tuple.Right.inheritFromAttribute, z.AttributeClass))
+                                        .ToArray()
+                         )
+                     )
+                    .Where(x => !( x.symbol is null || x.attributes is null or { Length: 0, } ));
         #endif
 
         context.RegisterSourceOutput(
