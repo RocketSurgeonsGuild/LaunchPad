@@ -338,7 +338,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
         {
             namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
-            if (symbol is not INamedTypeSymbol { IsGenericType: true } namedTypeSymbol) return;
+            if (symbol is not INamedTypeSymbol { IsGenericType: true, } namedTypeSymbol) return;
             foreach (var genericType in namedTypeSymbol.TypeArguments)
             {
                 addNamespacesFromPropertyType(namespaces, genericType);
