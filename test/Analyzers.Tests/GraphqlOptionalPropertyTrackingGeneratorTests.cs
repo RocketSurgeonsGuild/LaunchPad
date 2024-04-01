@@ -528,7 +528,7 @@ public partial class Request : IRequest<RocketModel>
 /// Request
 /// </summary>
 /// <param name=""Id"">The rocket id</param>
-public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
+public partial class PatchRequest : IOptionalTracking<Request>
 {
     public Guid Id { get; init; }
 }
@@ -565,7 +565,7 @@ public partial class Request : IRequest<RocketModel>
 /// Request
 /// </summary>
 /// <param name=""Id"">The rocket id</param>
-public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
+public partial class PatchRequest : IOptionalTracking<Request>
 {
     public Guid Id { get; init; }
 }

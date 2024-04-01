@@ -1,9 +1,9 @@
-﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input1_PatchRocket.cs
+﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input1_PatchRequest.cs
 #nullable enable
 using System;
 
 [System.Runtime.CompilerServices.CompilerGenerated]
-public partial class PatchRocket
+public partial class PatchRequest
 {
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<int> Type { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(default);
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> Something { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
@@ -40,7 +40,7 @@ public partial class PatchRocket
         return state;
     }
 
-    public PatchRocket ResetChanges()
+    public PatchRequest ResetChanges()
     {
         Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(Type);
         Something = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(Something);
@@ -52,7 +52,7 @@ public partial class PatchRocket
         ResetChanges();
     }
 
-    public static global::PatchRocket Create(global::Request value) => new global::PatchRocket()
+    public static global::PatchRequest Create(global::Request value) => new global::PatchRequest()
     {
         Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(value.Type),
         Something = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.Something)

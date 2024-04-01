@@ -437,7 +437,7 @@ public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
 }
-public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
 {
     public Guid Id { get; init; }
 }
@@ -468,7 +468,7 @@ public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
 }
-public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
 {
     public Guid Id { get; init; }
 }
