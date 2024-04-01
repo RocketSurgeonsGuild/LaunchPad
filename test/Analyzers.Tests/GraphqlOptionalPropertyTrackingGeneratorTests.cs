@@ -577,6 +577,80 @@ public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
         await Verify(result).UseParameters(property, value);
     }
 
+
+    [Fact]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator()
+    {
+        var result = await AddPatchRocketModel(RocketModelType.Class)
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddReferences(typeof(InheritFromAttribute))
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public int Type { get; set; }
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public Instant PlannedDate { get; set; }
+}
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
+public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
+{
+    public Guid Id { get; init; }
+}
+"
+                           )
+                          .WithCustomizer(Customizers.IncludeReferences)
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
+
+    [Fact]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude()
+    {
+        var result = await AddPatchRocketModel(RocketModelType.Class)
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddReferences(typeof(InheritFromAttribute))
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public int Type { get; set; }
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public Instant PlannedDate { get; set; }
+}
+/// <summary>
+/// Request
+/// </summary>
+/// <param name=""Id"">The rocket id</param>
+public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
+{
+    public Guid Id { get; init; }
+}
+"
+                           )
+                          .WithCustomizer(Customizers.IncludeReferences)
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
     private enum RocketModelType { Record, Class, }
 
     private GeneratorTestContextBuilder AddPatchRocketModel(RocketModelType type)

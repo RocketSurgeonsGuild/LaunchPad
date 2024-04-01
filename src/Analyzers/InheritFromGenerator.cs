@@ -150,6 +150,33 @@ public class InheritFromGenerator : IIncrementalGenerator
         );
     }
 
+    internal static INamedTypeSymbol? GetInheritingSymbol(SourceProductionContext context, AttributeData attribute, string otherSymbolName)
+    {
+        var inheritFromSymbol = attribute switch
+                                {
+                                    { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
+                                    { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
+                                        constructorArgumentSymbol,
+                                    _ => null
+                                };
+        switch (inheritFromSymbol)
+        {
+            case { DeclaringSyntaxReferences.Length: 0, }:
+                // TODO: Support generation from another assembly
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        GeneratorDiagnostics.TypeMustLiveInSameProject,
+                        attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation(),
+                        inheritFromSymbol.Name,
+                        otherSymbolName
+                    )
+                );
+                return null;
+        }
+
+        return inheritFromSymbol;
+    }
+
     private static ImmutableArray<MemberDeclarationSyntax> GetInheritableMembers(
         AttributeData attribute,
         INamedTypeSymbol inheritFromSymbol
@@ -174,6 +201,21 @@ public class InheritFromGenerator : IIncrementalGenerator
                                 || !excludeMembers.Contains(propertyDeclarationSyntax.Identifier.ToString())
                            )
                )
+              .ToImmutableArray();
+    }
+
+    internal static ImmutableArray<ISymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol)
+    {
+        var excludeMembers = new HashSet<string>(
+            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
+                ? values.Select(z => (string)z.Value!).ToArray()
+                : Array.Empty<string>()
+        );
+
+        return inheritFromSymbol
+              .GetMembers()
+              .Where(z => z is not INamedTypeSymbol)
+              .Where(z => z is not IPropertySymbol property || !excludeMembers.Contains(property.Name))
               .ToImmutableArray();
     }
 
@@ -214,8 +256,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         string inheritFromSymbolName
     )
     {
-        var sourceAssignmentMembers = declaration
-                                     .Members
+        var sourceAssignmentMembers = declaration.Members
                                      .OfType<PropertyDeclarationSyntax>()
                                      .Select(
                                           m => AssignmentExpression(
