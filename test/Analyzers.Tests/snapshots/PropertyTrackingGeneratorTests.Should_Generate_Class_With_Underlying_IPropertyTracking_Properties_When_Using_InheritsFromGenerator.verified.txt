@@ -1,0 +1,7 @@
+﻿{
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
+  }
+}

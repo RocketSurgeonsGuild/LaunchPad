@@ -59,9 +59,20 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
 
+        var inheritedMembers = targetSymbol
+                              .GetAttributes()
+                              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
+                              .Select(
+                                   attribute => InheritFromGenerator.GetInheritingSymbol(context, attribute, symbol.Name) is not { } inheritFromSymbol
+                                       ? ImmutableArray<ISymbol>.Empty
+                                       : InheritFromGenerator.GetInheritableMemberSymbols(attribute, inheritFromSymbol)
+                               )
+                              .Aggregate(ImmutableArray<ISymbol>.Empty, (a, b) => a.AddRange(b));
+
         var writeableProperties =
             targetSymbol
                .GetMembers()
+               .Concat(inheritedMembers)
                .OfType<IPropertySymbol>()
                 // only works for `set`able properties not init only
                .Where(z => !symbol.GetMembers(z.Name).Any())
@@ -90,25 +101,10 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var namespaces = new HashSet<string>();
 
-        static void AddNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
-        {
-            namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
-            if (symbol is INamedTypeSymbol namedTypeSymbol)
-            {
-                if (namedTypeSymbol.IsGenericType)
-                {
-                    foreach (var genericType in namedTypeSymbol.TypeArguments)
-                    {
-                        AddNamespacesFromPropertyType(namespaces, genericType);
-                    }
-                }
-            }
-        }
-
         foreach (var propertySymbol in writeableProperties)
         {
             var type = ParseTypeName(propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
-            AddNamespacesFromPropertyType(namespaces, propertySymbol.Type);
+            addNamespacesFromPropertyType(namespaces, propertySymbol.Type);
 
             var assignedType = GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
                .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type)));
@@ -337,6 +333,17 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
             $"{Path.GetFileNameWithoutExtension(declaration.SyntaxTree.FilePath)}_{declaration.Identifier.Text}",
             cu.NormalizeWhitespace().GetText(Encoding.UTF8)
         );
+        return;
+
+        static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
+        {
+            namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
+            if (symbol is not INamedTypeSymbol { IsGenericType: true, } namedTypeSymbol) return;
+            foreach (var genericType in namedTypeSymbol.TypeArguments)
+            {
+                addNamespacesFromPropertyType(namespaces, genericType);
+            }
+        }
     }
 
     private static StatementSyntax GenerateApplyChangesBodyPart(
