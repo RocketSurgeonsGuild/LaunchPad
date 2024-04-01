@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,7 +17,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         SourceProductionContext context,
         Compilation compilation,
         TypeDeclarationSyntax declaration,
-        INamedTypeSymbol symbol,
+        INamedTypeSymbol targetSymbol,
         AttributeData[] attributes
     )
     {
@@ -47,81 +48,30 @@ public class InheritFromGenerator : IIncrementalGenerator
 
         foreach (var attribute in attributes)
         {
-            if (attribute.ApplicationSyntaxReference?.GetSyntax() is not { } attributeSyntax)
-                continue;
-
-            INamedTypeSymbol inheritFromSymbol;
-            switch (attribute)
+            var inheritFromSymbol = GetInheritingSymbol(context, attribute, classToInherit.Identifier.Text);
+            if (inheritFromSymbol is null)
             {
-                case { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], }:
-                    inheritFromSymbol = genericArgumentSymbol;
-                    break;
-                case
-                {
-                    ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },],
-                }:
-                    inheritFromSymbol = constructorArgumentSymbol;
-                    break;
-                default:
-                    // will be a normal compiler error
-                    continue;
-            }
-
-            if (inheritFromSymbol is { DeclaringSyntaxReferences.Length: 0, })
-            {
-                // TODO: Support generation from another assembly
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        GeneratorDiagnostics.TypeMustLiveInSameProject,
-                        attributeSyntax.GetLocation(),
-                        inheritFromSymbol.Name,
-                        declaration.Identifier.Text
-                    )
-                );
                 continue;
             }
 
-            var excludeMembers = new HashSet<string>(
-                attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
-                    ? values.Select(z => (string)z.Value!).ToArray()
-                    : Array.Empty<string>()
+            var inheritableMembers = GetInheritableMembers(attribute, inheritFromSymbol);
+
+            classToInherit = AddInheritableMembers(
+                classToInherit,
+                inheritableMembers,
+                compilation,
+                declaration,
+                targetSymbol,
+                inheritFromSymbol
             );
-
-            var members = new List<MemberDeclarationSyntax>();
-            foreach (var type in inheritFromSymbol.DeclaringSyntaxReferences.Select(z => z.GetSyntax()).OfType<TypeDeclarationSyntax>())
-            {
-                members.AddRange(
-                    type
-                       .Members
-                       .Where(z => z is not TypeDeclarationSyntax)
-                       .Where(
-                            z => z is not PropertyDeclarationSyntax propertyDeclarationSyntax
-                             || !excludeMembers.Contains(propertyDeclarationSyntax.Identifier.ToString())
-                        )
-                );
-                classToInherit = classToInherit.AddAttributeLists(type.AttributeLists.ToArray());
-                foreach (var item in type.BaseList?.Types ?? SeparatedList<BaseTypeSyntax>())
-                {
-                    if (declaration.BaseList?.Types.Any(z => z.IsEquivalentTo(item)) != true)
-                    {
-                        // ReSharper disable once NullableWarningSuppressionIsUsed
-                        classToInherit = ( classToInherit.AddBaseListTypes(item) as TypeDeclarationSyntax )!;
-                    }
-                }
-            }
-
-            if (!compilation.HasImplicitConversion(symbol, inheritFromSymbol))
-            {
-                classToInherit = classToInherit.AddMembers(members.ToArray());
-            }
 
             if (classToInherit is ClassDeclarationSyntax classDeclarationSyntax)
             {
                 classToInherit = AddWithMethod(
-                    declaration,
                     classDeclarationSyntax,
-                    members,
-                    inheritFromSymbol
+                    declaration,
+                    inheritableMembers,
+                    inheritFromSymbol.Name
                 );
             }
 
@@ -129,8 +79,9 @@ public class InheritFromGenerator : IIncrementalGenerator
             {
                 classToInherit = AddWithMethod(
                     recordDeclarationSyntax,
-                    members,
-                    inheritFromSymbol
+                    declaration,
+                    inheritableMembers,
+                    inheritFromSymbol.Name
                 );
             }
         }
@@ -140,9 +91,9 @@ public class InheritFromGenerator : IIncrementalGenerator
                      List(declaration.SyntaxTree.GetCompilationUnitRoot().Usings),
                      List<AttributeListSyntax>(),
                      SingletonList<MemberDeclarationSyntax>(
-                         symbol.ContainingNamespace.IsGlobalNamespace
+                         targetSymbol.ContainingNamespace.IsGlobalNamespace
                              ? classToInherit.ReparentDeclaration(context, declaration)
-                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                             : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
                                 .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
                      )
                  )
@@ -152,20 +103,118 @@ public class InheritFromGenerator : IIncrementalGenerator
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
         context.AddSource(
-            $"{Path.GetFileNameWithoutExtension(declaration.SyntaxTree.FilePath)}_{declaration.Identifier.Text}",
+            $"{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_InheritFrom",
             cu.NormalizeWhitespace().GetText(Encoding.UTF8)
         );
     }
 
-    private static TypeDeclarationSyntax AddWithMethod(
-        TypeDeclarationSyntax sourceSyntax,
-        ClassDeclarationSyntax syntax,
-        List<MemberDeclarationSyntax> members,
-        ITypeSymbol inheritFromSymbol
+    internal static INamedTypeSymbol? GetInheritingSymbol(SourceProductionContext context, AttributeData attribute, string otherSymbolName)
+    {
+        var inheritFromSymbol = attribute switch
+                                {
+                                    { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
+                                    { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
+                                        constructorArgumentSymbol,
+                                    _ => null
+                                };
+        switch (inheritFromSymbol)
+        {
+            case { DeclaringSyntaxReferences.Length: 0, }:
+                // TODO: Support generation from another assembly
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        GeneratorDiagnostics.TypeMustLiveInSameProject,
+                        attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation(),
+                        inheritFromSymbol.Name,
+                        otherSymbolName
+                    )
+                );
+                return null;
+        }
+
+        return inheritFromSymbol;
+    }
+
+    private static ImmutableArray<MemberDeclarationSyntax> GetInheritableMembers(
+        AttributeData attribute,
+        INamedTypeSymbol inheritFromSymbol
     )
     {
-        var sourceAssignmentMembers = sourceSyntax
-                                     .Members
+        var excludeMembers = new HashSet<string>(
+            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
+                ? values.Select(z => (string)z.Value!).ToArray()
+                : Array.Empty<string>()
+        );
+
+        return inheritFromSymbol
+              .DeclaringSyntaxReferences.Select(z => z.GetSyntax())
+              .OfType<TypeDeclarationSyntax>()
+              .SelectMany(
+                   type =>
+                       type
+                          .Members
+                          .Where(z => z is not TypeDeclarationSyntax)
+                          .Where(
+                               z => z is not PropertyDeclarationSyntax propertyDeclarationSyntax
+                                || !excludeMembers.Contains(propertyDeclarationSyntax.Identifier.ToString())
+                           )
+               )
+              .ToImmutableArray();
+    }
+
+    internal static ImmutableArray<ISymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol)
+    {
+        var excludeMembers = new HashSet<string>(
+            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
+                ? values.Select(z => (string)z.Value!).ToArray()
+                : Array.Empty<string>()
+        );
+
+        return inheritFromSymbol
+              .GetMembers()
+              .Where(z => z is not INamedTypeSymbol)
+              .Where(z => z is not IPropertySymbol property || !excludeMembers.Contains(property.Name))
+              .ToImmutableArray();
+    }
+
+    private static TypeDeclarationSyntax AddInheritableMembers(
+        TypeDeclarationSyntax classToInherit,
+        ImmutableArray<MemberDeclarationSyntax> members,
+        Compilation compilation,
+        TypeDeclarationSyntax declaration,
+        INamedTypeSymbol targetSymbol,
+        INamedTypeSymbol inheritFromSymbol
+    )
+    {
+        if (!compilation.HasImplicitConversion(targetSymbol, inheritFromSymbol))
+        {
+            classToInherit = classToInherit.AddMembers(members.ToArray());
+        }
+
+        return inheritFromSymbol
+              .DeclaringSyntaxReferences.Select(z => z.GetSyntax())
+              .OfType<TypeDeclarationSyntax>()
+              .Aggregate(
+                   classToInherit,
+                   (current1, type) => ( type.BaseList?.Types ?? SeparatedList<BaseTypeSyntax>() )
+                                      .Where(item => declaration.BaseList?.Types.Any(z => z.IsEquivalentTo(item)) != true)
+                                      .Aggregate(
+                                           // are attributes needed?
+                                           // current1.AddAttributeLists(type.AttributeLists.ToArray())
+                                           current1,
+                                           (current, item) => ( current.AddBaseListTypes(item) as TypeDeclarationSyntax )!
+                                       )
+               );
+    }
+
+    private static TypeDeclarationSyntax AddWithMethod(
+        ClassDeclarationSyntax classToInherit,
+        TypeDeclarationSyntax declaration,
+        ImmutableArray<MemberDeclarationSyntax> members,
+        string inheritFromSymbolName
+    )
+    {
+        var sourceAssignmentMembers = declaration.Members
                                      .OfType<PropertyDeclarationSyntax>()
                                      .Select(
                                           m => AssignmentExpression(
@@ -179,7 +228,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                                           )
                                       )
                                      .Concat(
-                                          sourceSyntax
+                                          declaration
                                              .Members.OfType<FieldDeclarationSyntax>()
                                              .SelectMany(
                                                   m => m.Declaration.Variables.Select(
@@ -212,7 +261,8 @@ public class InheritFromGenerator : IIncrementalGenerator
                                          )
                                      )
                                     .Concat(
-                                         members
+                                         classToInherit
+                                            .Members
                                             .OfType<FieldDeclarationSyntax>()
                                             .SelectMany(
                                                  m => m.Declaration.Variables.Select(
@@ -232,19 +282,19 @@ public class InheritFromGenerator : IIncrementalGenerator
                                     .ToArray();
 
 
-        return syntax.AddMembers(
-            MethodDeclaration(IdentifierName(sourceSyntax.Identifier.Text), Identifier("With"))
+        return classToInherit.AddMembers(
+            MethodDeclaration(IdentifierName(declaration.Identifier.Text), Identifier("With"))
                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
                .WithParameterList(
                     ParameterList(
                         SingletonSeparatedList(
-                            Parameter(Identifier("value")).WithType(IdentifierName(inheritFromSymbol.Name))
+                            Parameter(Identifier("value")).WithType(IdentifierName(inheritFromSymbolName))
                         )
                     )
                 )
                .WithExpressionBody(
                     ArrowExpressionClause(
-                        ObjectCreationExpression(IdentifierName(sourceSyntax.Identifier.Text))
+                        ObjectCreationExpression(IdentifierName(declaration.Identifier.Text))
                            .WithInitializer(
                                 InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList<ExpressionSyntax>())
                                    .AddExpressions(sourceAssignmentMembers)
@@ -258,8 +308,9 @@ public class InheritFromGenerator : IIncrementalGenerator
 
     private static TypeDeclarationSyntax AddWithMethod(
         RecordDeclarationSyntax syntax,
-        List<MemberDeclarationSyntax> members,
-        ITypeSymbol inheritFromSymbol
+        TypeDeclarationSyntax declaration,
+        ImmutableArray<MemberDeclarationSyntax> members,
+        string inheritFromSymbolName
     )
     {
         var valueAssignmentMembers = members
@@ -276,7 +327,8 @@ public class InheritFromGenerator : IIncrementalGenerator
                                          )
                                      )
                                     .Concat(
-                                         members
+                                         declaration
+                                            .Members
                                             .OfType<FieldDeclarationSyntax>()
                                             .SelectMany(
                                                  m => m.Declaration.Variables.Select(
@@ -302,7 +354,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                .WithParameterList(
                     ParameterList(
                         SingletonSeparatedList(
-                            Parameter(Identifier("value")).WithType(IdentifierName(inheritFromSymbol.Name))
+                            Parameter(Identifier("value")).WithType(IdentifierName(inheritFromSymbolName))
                         )
                     )
                 )

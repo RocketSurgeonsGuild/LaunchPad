@@ -58,9 +58,20 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
 
+        var inheritedMembers = targetSymbol
+                              .GetAttributes()
+                              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
+                              .Select(
+                                   attribute => InheritFromGenerator.GetInheritingSymbol(context, attribute, symbol.Name) is not { } inheritFromSymbol
+                                       ? ImmutableArray<ISymbol>.Empty
+                                       : InheritFromGenerator.GetInheritableMemberSymbols(attribute, inheritFromSymbol)
+                               )
+                              .Aggregate(ImmutableArray<ISymbol>.Empty, (a, b) => a.AddRange(b));
+
         var writeableProperties =
             targetSymbol
                .GetMembers()
+               .Concat(inheritedMembers)
                .OfType<IPropertySymbol>()
                .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
         if (!targetSymbol.IsRecord)
@@ -150,29 +161,22 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         static void AddNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
         {
             namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
-            if (symbol is INamedTypeSymbol namedTypeSymbol)
+            if (symbol is not INamedTypeSymbol { IsGenericType: true } namedTypeSymbol) return;
+            foreach (var genericType in namedTypeSymbol.TypeArguments)
             {
-                if (namedTypeSymbol.IsGenericType)
-                {
-                    foreach (var genericType in namedTypeSymbol.TypeArguments)
-                    {
-                        AddNamespacesFromPropertyType(namespaces, genericType);
-                    }
-                }
+                AddNamespacesFromPropertyType(namespaces, genericType);
             }
         }
 
         foreach (var propertySymbol in writeableProperties)
         {
-            TypeSyntax type;
-            ITypeSymbol propertyType;
-            propertyType = propertySymbol.Type is INamedTypeSymbol
+            var propertyType = propertySymbol.Type is INamedTypeSymbol
             {
                 Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
             } namedTypeSymbol
                 ? namedTypeSymbol.TypeArguments[0]
                 : propertySymbol.Type;
-            type = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
+            var type = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
             if (propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, } && type is not NullableTypeSyntax)
             {
                 type = NullableType(type);
@@ -224,7 +228,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
         context.AddSource(
-            $"{Path.GetFileNameWithoutExtension(declaration.SyntaxTree.FilePath)}_{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}",
+            $"{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_Optionals",
             cu.NormalizeWhitespace().GetText(Encoding.UTF8)
         );
     }
@@ -376,7 +380,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(
             values,
             // ReSharper disable once NullableWarningSuppressionIsUsed
-            static (productionContext, tuple) => GeneratePropertyTracking(productionContext, tuple.syntax, tuple.symbol, tuple.targetSymbol!)
+            static (productionContext, tuple) => GeneratePropertyTracking(
+                productionContext,
+                tuple.syntax,
+                tuple.symbol,
+                tuple.targetSymbol!
+            )
         );
     }
 }

@@ -789,7 +789,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                 .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
-        context.AddSource($"{newClass.Identifier.Text}_Methods.cs", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+        context.AddSource($"{string.Join("_", newClass.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_ControllerMethods.cs", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
     }
 
     /// <inheritdoc />

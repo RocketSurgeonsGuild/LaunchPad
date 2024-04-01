@@ -419,6 +419,66 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         await Verify(result).UseParameters(property, value);
     }
 
+    [Fact]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator()
+    {
+        var result = await Builder
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+{
+    public Guid Id { get; init; }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
+
+    [Fact]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude()
+    {
+        var result = await Builder
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+{
+    public Guid Id { get; init; }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
