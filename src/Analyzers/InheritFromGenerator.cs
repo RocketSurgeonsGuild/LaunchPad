@@ -40,13 +40,18 @@ public class InheritFromGenerator : IIncrementalGenerator
         return inheritFromSymbol;
     }
 
-    internal static ImmutableArray<ISymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol)
+    internal static ImmutableHashSet<string> GetExcludedMembers(AttributeData attribute)
     {
-        var excludeMembers = new HashSet<string>(
+        return ImmutableHashSet.CreateRange(
             attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
                 ? values.Select(z => (string)z.Value!).ToArray()
                 : Array.Empty<string>()
         );
+    }
+
+    internal static ImmutableArray<ISymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol)
+    {
+        var excludeMembers = GetExcludedMembers(attribute);
 
         return inheritFromSymbol
               .GetMembers()
@@ -91,9 +96,10 @@ public class InheritFromGenerator : IIncrementalGenerator
         foreach (var attribute in attributes)
         {
             var inheritFromSymbol = GetInheritingSymbol(context, attribute, classToInherit.Identifier.Text);
-            if (inheritFromSymbol is null)
+            switch (inheritFromSymbol)
             {
-                continue;
+                case null:
+                    continue;
             }
 
             var inheritableMembers = GetInheritableMembers(attribute, inheritFromSymbol);
@@ -107,24 +113,28 @@ public class InheritFromGenerator : IIncrementalGenerator
                 inheritFromSymbol
             );
 
-            if (classToInherit is ClassDeclarationSyntax classDeclarationSyntax)
+            switch (classToInherit)
             {
-                classToInherit = AddWithMethod(
-                    classDeclarationSyntax,
-                    declaration,
-                    inheritableMembers,
-                    inheritFromSymbol.Name
-                );
+                case ClassDeclarationSyntax classDeclarationSyntax:
+                    classToInherit = AddWithMethod(
+                        classDeclarationSyntax,
+                        declaration,
+                        inheritableMembers,
+                        inheritFromSymbol.Name
+                    );
+                    break;
             }
 
-            if (classToInherit is RecordDeclarationSyntax recordDeclarationSyntax)
+            switch (classToInherit)
             {
-                classToInherit = AddWithMethod(
-                    recordDeclarationSyntax,
-                    declaration,
-                    inheritableMembers,
-                    inheritFromSymbol.Name
-                );
+                case RecordDeclarationSyntax recordDeclarationSyntax:
+                    classToInherit = AddWithMethod(
+                        recordDeclarationSyntax,
+                        declaration,
+                        inheritableMembers,
+                        inheritFromSymbol.Name
+                    );
+                    break;
             }
         }
 
@@ -155,11 +165,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         INamedTypeSymbol inheritFromSymbol
     )
     {
-        var excludeMembers = new HashSet<string>(
-            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
-                ? values.Select(z => (string)z.Value!).ToArray()
-                : Array.Empty<string>()
-        );
+        var excludeMembers = GetExcludedMembers(attribute);
 
         return inheritFromSymbol
               .DeclaringSyntaxReferences.Select(z => z.GetSyntax())
@@ -466,5 +472,370 @@ public class InheritFromGenerator : IIncrementalGenerator
             // ReSharper disable once NullableWarningSuppressionIsUsed
             static (productionContext, tuple) => GenerateInheritance(productionContext, tuple.compilation, tuple.syntax, tuple.symbol, tuple.attributes!)
         );
+
+        var validatorSyntaxProvider = context
+                                     .SyntaxProvider.CreateSyntaxProvider(
+                                          static (node, _) => node is ClassDeclarationSyntax
+                                          {
+                                              BaseList:
+                                              {
+                                                  Types:
+                                                  [
+                                                      {
+                                                          Type: GenericNameSyntax
+                                                          {
+                                                              TypeArgumentList.Arguments: [SimpleNameSyntax,],
+                                                              Identifier.Text: "AbstractValidator",
+                                                          },
+                                                      },
+                                                  ],
+                                              },
+                                          },
+                                          static (syntaxContext, _) => (
+                                              declaration: (ClassDeclarationSyntax)syntaxContext.Node,
+                                              semanticModel: syntaxContext.SemanticModel,
+                                              targetSymbol: syntaxContext.SemanticModel.GetDeclaredSymbol((ClassDeclarationSyntax)syntaxContext.Node, _)!,
+                                              relatedType: syntaxContext.Node is ClassDeclarationSyntax
+                                              {
+                                                  BaseList.Types:
+                                                  [
+                                                      {
+                                                          Type: GenericNameSyntax
+                                                          {
+                                                              TypeArgumentList.Arguments: [SimpleNameSyntax arg,],
+                                                              Identifier.Text: "AbstractValidator",
+                                                          },
+                                                      },
+                                                  ],
+                                              }
+                                                  ? arg
+                                                  : null
+                                          )
+                                      )
+                                     .Select(
+                                          (z, _) => ( z.declaration, z.targetSymbol, z.semanticModel,
+                                                      relatedTypeSymbol: z.semanticModel.GetSymbolInfo(z.relatedType!).Symbol! )
+                                      )
+                                     .Where(z => z is { targetSymbol: { }, relatedTypeSymbol: { }, })
+                                     .Select(
+                                          (z, _) => (
+                                              z.declaration,
+                                              z.targetSymbol,
+                                              z.semanticModel,
+                                              z.relatedTypeSymbol,
+                                              attributes: z
+                                                         .relatedTypeSymbol.GetAttributes()
+                                                         .Where(x => x is { AttributeClass.Name: "InheritFromAttribute" or "InheritFrom", })
+                                                         .ToImmutableArray()
+                                          )
+                                      )
+                                     .Where(z => z.attributes.Any());
+
+        context.RegisterSourceOutput(
+            validatorSyntaxProvider,
+            static (context, syntaxContext) =>
+            {
+                ( var declaration, var targetSymbol, var semanticModel, var relatedTypeSymbol, var attributes ) = syntaxContext;
+                AddFluentValidationMethod(
+                    context,
+                    declaration,
+                    targetSymbol,
+                    semanticModel,
+                    relatedTypeSymbol,
+                    attributes
+                );
+            }
+        );
+
+        static void AddFluentValidationMethod(
+            SourceProductionContext context,
+            ClassDeclarationSyntax declaration,
+            INamedTypeSymbol targetSymbol,
+            SemanticModel semanticModel,
+            ISymbol relatedTypeSymbol,
+            ImmutableArray<AttributeData> attributes
+        )
+        {
+            // generate methods for each attribute
+            // they will be named InheritFrom<InhertingType>
+            // filter the members to remove excluded properties
+            if (!declaration.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
+            {
+//                context.ReportDiagnostic(
+//                    Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
+//                );
+                return;
+            }
+
+            var classToInherit = ClassDeclaration(declaration.Identifier)
+                                .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
+                                .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
+                                .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
+                                .WithAttributeLists(
+                                     SingletonList(
+                                         AttributeList(
+                                             SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
+                                         )
+                                     )
+                                 );
+
+            foreach (var attribute in attributes)
+            {
+                var inheritFromSymbol = GetInheritingSymbol(context, attribute, classToInherit.Identifier.Text);
+                if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], }) continue;
+                if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax) continue;
+
+                var excludedMembers = GetExcludedMembers(attribute);
+
+                // TODO: Search the assembly for a validator that is not nested?
+                foreach (var validator in inheritFromSymbol
+                                         .GetMembers()
+                                         .OfType<INamedTypeSymbol>()
+                                         .Where(
+                                              z => z.BaseType is { Name: "AbstractValidator", TypeArguments: [INamedTypeSymbol nts,], }
+                                               && SymbolEqualityComparer.Default.Equals(nts, inheritFromSymbol)
+                                          )
+                        )
+                {
+                    if (validator is not { DeclaringSyntaxReferences: [var syntaxReference,], }) continue;
+                    if (syntaxReference.GetSyntax() is not ClassDeclarationSyntax validatorSyntax) continue;
+                    if (validatorSyntax.Members.OfType<ConstructorDeclarationSyntax>().FirstOrDefault() is not { } constructor) continue;
+
+                    var visitor = new RuleExpressionVisitor(excludedMembers);
+                    constructor.Accept(visitor);
+
+                    if (visitor is { Results: [] results, })
+                    {
+                        continue;
+                    }
+
+                    var parameters = constructor
+                                    .ParameterList.Parameters.Where(
+                                         parameter => results.Any(
+                                             z => z.DescendantNodes().OfType<SimpleNameSyntax>().Any(s => s.Identifier.Text == parameter.Identifier.Text)
+                                         )
+                                     )
+                                    .ToList();
+
+                    var methodName =
+                        $"InheritFrom{string.Join("", inheritFromSyntax.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}";
+                    var method = MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), Identifier(methodName))
+                                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+                                .WithParameterList(ParameterList(SeparatedList(parameters)))
+                                .WithBody(Block(results.Select(ExpressionStatement)));
+
+                    if (!declaration
+                        .DescendantNodes()
+                        .OfType<InvocationExpressionSyntax>()
+                        .Any(z => z is { Expression: SimpleNameSyntax { Identifier.Text: { Length: > 0, } invocationName, }, } && invocationName == methodName))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                GeneratorDiagnostics.ValidatorShouldCallGeneratedValidationMethod,
+                                declaration.Identifier.GetLocation(),
+                                methodName
+                            )
+                        );
+                    }
+
+                    classToInherit = classToInherit.AddMembers(method);
+                }
+            }
+
+            var cu = CompilationUnit(
+                         List<ExternAliasDirectiveSyntax>(),
+                         List(declaration.SyntaxTree.GetCompilationUnitRoot().Usings),
+                         List<AttributeListSyntax>(),
+                         SingletonList<MemberDeclarationSyntax>(
+                             targetSymbol.ContainingNamespace.IsGlobalNamespace
+                                 ? classToInherit.ReparentDeclaration(context, declaration)
+                                 : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
+                                    .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                         )
+                     )
+                    .WithLeadingTrivia()
+                    .WithTrailingTrivia()
+                    .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
+                    .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
+
+            context.AddSource(
+                $"{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_InheritFrom_Validator",
+                cu.NormalizeWhitespace().GetText(Encoding.UTF8)
+            );
+        }
+    }
+}
+
+internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) : CSharpSyntaxWalker
+{
+    private readonly ImmutableArray<InvocationExpressionSyntax>.Builder _results = ImmutableArray.CreateBuilder<InvocationExpressionSyntax>();
+    public ImmutableArray<InvocationExpressionSyntax> Results => _results.ToImmutable();
+
+    public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+    {
+        SyntaxNode? parent = node;
+        while (parent is { } and not { Parent: StatementSyntax, })
+        {
+            parent = parent.Parent;
+        }
+
+        if (parent is not InvocationExpressionSyntax parentNode) throw new("Unable to find invocation node");
+        switch (node)
+        {
+            case
+            {
+                Expression: SimpleNameSyntax { Identifier.ValueText: "RuleFor" or "RuleForEach", }
+                         or MemberAccessExpressionSyntax { Name.Identifier.Text: "RuleFor" or "RuleForEach", },
+                ArgumentList.Arguments: [{ Expression: SimpleLambdaExpressionSyntax { Body: MemberAccessExpressionSyntax memberAccessExpressionSyntax, }, },],
+            }:
+                HandleRuleFor(parentNode, memberAccessExpressionSyntax);
+                break;
+            case
+            {
+                Expression: SimpleNameSyntax { Identifier.ValueText: "RuleSet", } or MemberAccessExpressionSyntax { Name.Identifier.Text: "RuleSet", },
+                ArgumentList.Arguments: [_, var action,],
+            }:
+                HandleRuleSet(parentNode, action);
+                break;
+            case
+            {
+                Expression: SimpleNameSyntax { Identifier.ValueText: "When" or "WhenAsync", }
+                         or MemberAccessExpressionSyntax { Name.Identifier.Text: "When" or "WhenAsync", },
+                ArgumentList.Arguments: [var predicate, var whenAction,],
+            }:
+                HandleWhen(parentNode, predicate, whenAction, null);
+                break;
+            case
+            {
+                Expression: SimpleNameSyntax { Identifier.ValueText: "Otherwise", }
+                         or MemberAccessExpressionSyntax { Name.Identifier.Text: "Otherwise", },
+                ArgumentList.Arguments: [var otherwiseAction2,],
+            }:
+                ( var predicate2, var whenAction2 ) = parentNode
+                                                     .DescendantNodesAndSelf()
+                                                     .OfType<InvocationExpressionSyntax>()
+                                                     .Select(
+                                                          static z => z is
+                                                          {
+                                                              Expression: SimpleNameSyntax { Identifier.ValueText: "When" or "WhenAsync", }
+                                                                       or MemberAccessExpressionSyntax { Name.Identifier.Text: "When" or "WhenAsync", },
+                                                              ArgumentList.Arguments: [var p, var action,],
+                                                          }
+                                                              ? ( p, action )
+                                                              : ( null!, null! )
+                                                      )
+                                                     .First(z => z is { action: { }, p: { }, });
+
+                HandleWhen(parentNode, predicate2, whenAction2, otherwiseAction2);
+                break;
+            default:
+                base.VisitInvocationExpression(node);
+                break;
+        }
+    }
+
+    private void HandleRuleFor(InvocationExpressionSyntax parent, MemberAccessExpressionSyntax memberAccessExpressionSyntax)
+    {
+        if (excludedMembers.Contains(memberAccessExpressionSyntax.Name.Identifier.Text)) return;
+        _results.Add(parent);
+    }
+
+    private void HandleRuleSet(InvocationExpressionSyntax parent, ArgumentSyntax action)
+    {
+        // TODO: Support methods?
+        if (HandleNestedAction(action) is { } updatedAction)
+        {
+            _results.Add(parent.ReplaceNode(action, updatedAction));
+        }
+    }
+
+    private void HandleWhen(InvocationExpressionSyntax parent, ArgumentSyntax predicate, ArgumentSyntax whenAction, ArgumentSyntax? otherwiseAction)
+    {
+        // TODO: this needs it's own visitor
+//            var visitor = new RuleExpressionVisitor(excludedMembers);
+//            visitor.Visit(predicate);
+        var parameter = predicate.DescendantNodes().OfType<ParameterSyntax>().First();
+        var predicateContainsExcludedMember = predicate
+                                             .DescendantNodes()
+                                             .OfType<MemberAccessExpressionSyntax>()
+                                             .Where(
+                                                  z => z is { Expression: SimpleNameSyntax expression, Name: { } name, }
+                                                   && expression.Identifier.Text == parameter.Identifier.Text
+                                              )
+                                             .Any(z => excludedMembers.Contains(z.Name.Identifier.Text));
+        if (predicateContainsExcludedMember)
+        {
+            return;
+        }
+
+        if (otherwiseAction is null && HandleNestedAction(whenAction) is { } updatedWhenAction)
+        {
+            _results.Add(parent.ReplaceNode(whenAction, updatedWhenAction));
+            return;
+        }
+
+        if (otherwiseAction is null)
+        {
+            return;
+        }
+
+        switch ( HandleNestedAction(whenAction), HandleNestedAction(otherwiseAction) )
+        {
+            case (null, null):
+                return;
+            case ({ } updatedWhenAction2, null):
+                _results.Add(
+                    parent
+                       .RemoveNode(otherwiseAction, SyntaxRemoveOptions.KeepEndOfLine)!
+                       .ReplaceNode(whenAction, updatedWhenAction2)
+                );
+                break;
+            case (null, { } updatedOtherwiseAction2):
+                parent = parent.ReplaceNodes(
+                    [whenAction, otherwiseAction,],
+                    (syntax, argumentSyntax) => syntax == otherwiseAction
+                        ? HandleNestedAction(otherwiseAction) ?? argumentSyntax.WithExpression(ParenthesizedLambdaExpression().WithBlock(Block()))
+                        : syntax == whenAction
+                            ? argumentSyntax.WithExpression(ParenthesizedLambdaExpression().WithBlock(Block()))
+                            : argumentSyntax
+                );
+                _results.Add(parent);
+                break;
+            case ({ }, { }):
+                parent = parent.ReplaceNodes(
+                    [whenAction, otherwiseAction,],
+                    (syntax, argumentSyntax) =>
+                    {
+                        if (syntax == otherwiseAction)
+                            return HandleNestedAction(otherwiseAction) ?? argumentSyntax.WithExpression(ParenthesizedLambdaExpression().WithBlock(Block()));
+                        if (syntax == whenAction)
+                            return HandleNestedAction(whenAction) ?? argumentSyntax.WithExpression(ParenthesizedLambdaExpression().WithBlock(Block()));
+                        return argumentSyntax;
+                    }
+                );
+                _results.Add(parent);
+                break;
+        }
+    }
+
+    private ArgumentSyntax? HandleNestedAction(ArgumentSyntax? action)
+    {
+        if (action is null) return null;
+        // TODO: Support methods?
+        var visitor = new RuleExpressionVisitor(excludedMembers);
+        visitor.Visit(action);
+        if (visitor.Results.Length == 0)
+        {
+            return null;
+        }
+
+        var removeNodes = action
+                         .DescendantNodes()
+                         .OfType<InvocationExpressionSyntax>()
+                         .Where(z => z.Parent is StatementSyntax)
+                         .Except(visitor.Results)
+                         .Select(z => z.Parent)
+                         .ToImmutableArray();
+        return action.RemoveNodes(removeNodes, SyntaxRemoveOptions.KeepEndOfLine)!;
     }
 }

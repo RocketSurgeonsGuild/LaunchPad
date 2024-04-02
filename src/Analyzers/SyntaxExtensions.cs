@@ -33,6 +33,19 @@ internal static class SyntaxExtensions
         }
     }
 
+    public static IEnumerable<INamedTypeSymbol> GetParentDeclarationsWithSelf(
+        this INamedTypeSymbol source
+    )
+    {
+        yield return source;
+        var parent = source.ContainingType;
+        while (parent is { } parentSymbol)
+        {
+            yield return parentSymbol;
+            parent = parentSymbol.ContainingType;
+        }
+    }
+
     public static TypeDeclarationSyntax ReparentDeclaration(
         this TypeDeclarationSyntax classToNest,
         SourceProductionContext context,

@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Analyzers.Tests.Helpers;
+using FluentValidation;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -317,6 +319,485 @@ namespace Sample.Core.Operations.Rockets
                           .GenerateAsync();
 
         await Verify(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
+    public async Task Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods(string name, string source)
+    {
+        var result = await Builder
+                          .AddReferences(typeof(AbstractValidator<>))
+                          .AddReferences(typeof(Expression))
+                          .AddSources(source)
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result).UseParameters(name);
+    }
+
+    public static IEnumerable<object[]> Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data()
+    {
+        yield return
+        [
+            "RuleFor",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Id).NotEmpty();
+            this.RuleFor(x => x.SerialNumber).NotEmpty();
+            RuleFor(x => x.Something).NotEmpty();
+        }
+    }
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel();
+    }
+}
+",
+        ];
+        yield return
+        [
+            "Constructor_Parameters",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+public record AddressModel
+{
+    public string? AddressLine1 { get; init; }
+    public string? AddressLine2 { get; init; }
+    public string? City { get; init; }
+    public string? Country { get; init; }
+    public string? State { get; init; }
+    public string? Zip { get; init; }
+
+    public class Validator : AbstractValidator<AddressModel>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.AddressLine1).NotEmpty();
+            RuleFor(x => x.City).NotEmpty();
+            RuleFor(x => x.Country).NotEmpty();
+            RuleFor(x => x.State).NotEmpty();
+            RuleFor(x => x.Zip).NotEmpty();
+        }
+    }
+}
+
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public AddressModel Address { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator(IValidator<AddressModel> addressModelValidator)
+        {
+            RuleFor(x => x.Id).NotEmpty();
+            this.RuleFor(x => x.SerialNumber).NotEmpty();
+            RuleFor(x => x.Address).NotNull().SetValidator(addressModelValidator);
+        }
+    }
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator(IValidator<AddressModel> addressModelValidator)
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel(addressModelValidator);
+    }
+}
+",
+        ];
+        yield return
+        [
+            "Constructor_Parameters_Missing_Parameter",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+public record AddressModel
+{
+    public string? AddressLine1 { get; init; }
+    public string? AddressLine2 { get; init; }
+    public string? City { get; init; }
+    public string? Country { get; init; }
+    public string? State { get; init; }
+    public string? Zip { get; init; }
+
+    public class Validator : AbstractValidator<AddressModel>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.AddressLine1).NotEmpty();
+            RuleFor(x => x.City).NotEmpty();
+            RuleFor(x => x.Country).NotEmpty();
+            RuleFor(x => x.State).NotEmpty();
+            RuleFor(x => x.Zip).NotEmpty();
+        }
+    }
+}
+
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public AddressModel Address { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator(IValidator<AddressModel> addressModelValidator)
+        {
+            RuleFor(x => x.Id).NotEmpty();
+            this.RuleFor(x => x.SerialNumber).NotEmpty();
+            RuleFor(x => x.Address).NotNull().SetValidator(addressModelValidator);
+        }
+    }
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator(IValidator<AddressModel> addressModelValidator)
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel(addressModelValidator);
+    }
+}
+",
+        ];
+        yield return
+        [
+            "When_Otherwise",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            When(z => z.Id != Guid.Empty, () => RuleFor(z => z.SerialNumber).NotEmpty())
+               .Otherwise(
+                    () => { RuleFor(z => z.SerialNumber).Empty(); }
+                );
+        }
+    }
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel();
+    }
+}
+",
+        ];
+        yield return
+        [
+            "When_Otherwise_Exclude",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            When(z => z.Id != Guid.Empty, () => RuleFor(z => z.SerialNumber).NotEmpty())
+               .Otherwise(
+                    () => { RuleFor(z => z.SerialNumber).Empty(); }
+                );
+        }
+    }
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+    }
+}
+",
+        ];
+        yield return
+        [
+            "Otherwise_Exclude",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            When(z => z.Id != Guid.Empty, () => RuleFor(z => z.SerialNumber).NotEmpty())
+               .Otherwise(
+                    () => { RuleFor(z => z.SerialNumber).Empty();
+RuleFor(z => z.Something).Empty(); }
+                );
+        }
+    }
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel();
+    }
+}
+",
+        ];
+        yield return
+        [
+            "When_Otherwise_Exclude_Id",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            When(z => z.Id != Guid.Empty, () => RuleFor(z => z.SerialNumber).NotEmpty())
+               .Otherwise(
+                    () => { RuleFor(z => z.SerialNumber).Empty(); }
+                );
+        }
+    }
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.Id) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+    }
+}
+",
+        ];
+
+        yield return
+        [
+            "RuleFor_Exclude",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Id).NotEmpty();
+            RuleFor(x => x.SerialNumber).NotEmpty();
+            this.RuleFor(x => x.Something).NotEmpty();
+        }
+    }
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel();
+    }
+}
+",
+        ];
+        yield return
+        [
+            "RuleSet",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            RuleSet(""Create"",
+                () =>
+                {
+                    RuleFor(x => x.SerialNumber).NotNull();
+                    RuleFor(x => x.Id).NotNull();
+                    RuleFor(x => x.Something).NotNull();
+                });
+            this.RuleSet(""OnlySerialNumber"",
+                () =>
+                {
+                    RuleFor(x => x.SerialNumber).NotNull();
+                });
+        }
+    }
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel();
+    }
+}
+",
+        ];
+
+        yield return
+        [
+            "RuleSet_Exclude",
+            @"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+
+    class Validator : AbstractValidator<Model>
+    {
+        public Validator()
+        {
+            RuleSet(""Create"",
+                () =>
+                {
+                    RuleFor(x => x.SerialNumber).NotNull();
+                    RuleFor(x => x.Id).NotNull();
+                    RuleFor(x => x.Something).NotNull();
+                });
+            this.RuleSet(""OnlySerialNumber"",
+                () =>
+                {
+                    RuleFor(x => x.SerialNumber).NotNull();
+                });
+        }
+    }
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+
+partial class Validator : AbstractValidator<Request>
+{
+    public Validator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        InheritFromModel();
+    }
+}
+",
+        ];
     }
 
     public override async Task InitializeAsync()
