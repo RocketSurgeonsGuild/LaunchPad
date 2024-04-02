@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Analyzers.Tests.Helpers;
 using DryIoc.ImTools;
 using FluentValidation;
@@ -321,6 +322,66 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
+    [Fact]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator()
+    {
+        var result = await Builder
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+{
+    public Guid Id { get; init; }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
+
+    [Fact]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude()
+    {
+        var result = await Builder
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+{
+    public Guid Id { get; init; }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
     [Theory]
     [InlineData("SerialNumber", "12345")]
     [InlineData("Type", 12345)]
@@ -420,73 +481,13 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         await Verify(result).UseParameters(property, value);
     }
 
-    [Fact]
-    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator()
-    {
-        var result = await Builder
-                          .WithGenerator<InheritFromGenerator>()
-                          .AddSources(
-                               @"
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-}
-
-[InheritFrom(typeof(Model))]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-"
-                           )
-                          .Build()
-                          .GenerateAsync();
-        await Verify(result);
-    }
-
-
-    [Fact]
-    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude()
-    {
-        var result = await Builder
-                          .WithGenerator<InheritFromGenerator>()
-                          .AddSources(
-                               @"
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
-}
-
-[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-"
-                           )
-                          .Build()
-                          .GenerateAsync();
-        await Verify(result);
-    }
-
     [Theory(Skip = "Need to figure out how to get the correct type for the validator")]
     [MemberData(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
     public async Task Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods(string name, string source)
     {
         var result = await Builder
                           .AddReferences(typeof(AbstractValidator<>))
-                          .AddReferences(typeof(System.Linq.Expressions.Expression))
+                          .AddReferences(typeof(Expression))
                           .WithGenerator<InheritFromGenerator>()
                           .AddSources(source)
                           .Build()
@@ -538,7 +539,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel();
     }
 }
-"
+",
         ];
         yield return
         [
@@ -605,7 +606,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel(addressModelValidator);
     }
 }
-"
+",
         ];
         yield return
         [
@@ -672,7 +673,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel(addressModelValidator);
     }
 }
-"
+",
         ];
         yield return
         [
@@ -718,7 +719,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel();
     }
 }
-"
+",
         ];
         yield return
         [
@@ -763,7 +764,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         RuleFor(x => x.Id).NotEmpty();
     }
 }
-"
+",
         ];
         yield return
         [
@@ -810,7 +811,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel();
     }
 }
-"
+",
         ];
         yield return
         [
@@ -854,7 +855,7 @@ partial class Validator : AbstractValidator<PatchRequest>
     {
     }
 }
-"
+",
         ];
 
         yield return
@@ -899,7 +900,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel();
     }
 }
-"
+",
         ];
         yield return
         [
@@ -952,7 +953,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel();
     }
 }
-"
+",
         ];
 
         yield return
@@ -1006,7 +1007,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         InheritFromModel();
     }
 }
-"
+",
         ];
     }
 
