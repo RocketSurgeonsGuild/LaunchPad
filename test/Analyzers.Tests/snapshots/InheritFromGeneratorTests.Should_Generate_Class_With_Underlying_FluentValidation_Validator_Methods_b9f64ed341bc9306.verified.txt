@@ -1,0 +1,86 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: CS1061,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (30,23)-(30,25),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1061),
+      MessageFormat: '{0}' does not contain a definition for '{1}' and no accessible extension method '{1}' accepting a first argument of type '{0}' could be found (are you missing a using directive or an assembly reference?),
+      Message: 'Request' does not contain a definition for 'Id' and no accessible extension method 'Id' accepting a first argument of type 'Request' could be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0103,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (31,8)-(31,24),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
+      MessageFormat: The name '{0}' does not exist in the current context,
+      Message: The name 'InheritFromModel' does not exist in the current context,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [
+      {
+        Id: CS8785,
+        Title: Generator failed to generate source.,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: : (0,0)-(0,0),
+        MessageFormat:
+Generator '{0}' failed to generate source. It will not contribute to the output and compilation errors may occur as a result. Exception was of type '{1}' with message '{2}'.
+{3},
+        Message:
+Generator 'InheritFromGenerator' failed to generate source. It will not contribute to the output and compilation errors may occur as a result. Exception was of type 'Exception' with message 'Unable to find invocation node'.
+System.Exception: Unable to find invocation node
+   at Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator.RuleExpressionVisitor.HandleRuleFor(InvocationExpressionSyntax invocationExpressionSyntax, MemberAccessExpressionSyntax memberAccessExpressionSyntax) in {SolutionDirectory}src\Analyzers\InheritFromGenerator.cs:line 712
+   at Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator.RuleExpressionVisitor.VisitInvocationExpression(InvocationExpressionSyntax node) in {SolutionDirectory}src\Analyzers\InheritFromGenerator.cs:line 673
+   at Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax.Accept(CSharpSyntaxVisitor visitor) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Syntax.Generated.cs:line 2467
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.Visit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 29
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.DefaultVisit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 50
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitMemberAccessExpression(MemberAccessExpressionSyntax node) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Main.Generated.cs:line 820
+   at Microsoft.CodeAnalysis.CSharp.Syntax.MemberAccessExpressionSyntax.Accept(CSharpSyntaxVisitor visitor) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Syntax.Generated.cs:line 1393
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.Visit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 29
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.DefaultVisit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 50
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitInvocationExpression(InvocationExpressionSyntax node) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Main.Generated.cs:line 877
+   at Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator.RuleExpressionVisitor.VisitInvocationExpression(InvocationExpressionSyntax node) in {SolutionDirectory}src\Analyzers\InheritFromGenerator.cs:line 698
+   at Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax.Accept(CSharpSyntaxVisitor visitor) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Syntax.Generated.cs:line 2467
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.Visit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 29
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.DefaultVisit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 50
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitExpressionStatement(ExpressionStatementSyntax node) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Main.Generated.cs:line 1093
+   at Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionStatementSyntax.Accept(CSharpSyntaxVisitor visitor) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Syntax.Generated.cs:line 6841
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.Visit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 29
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.DefaultVisit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 50
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitBlock(BlockSyntax node) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Main.Generated.cs:line 1066
+   at Microsoft.CodeAnalysis.CSharp.Syntax.BlockSyntax.Accept(CSharpSyntaxVisitor visitor) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Syntax.Generated.cs:line 6241
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.Visit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 29
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxWalker.DefaultVisit(SyntaxNode node) in /_/src/Compilers/CSharp/Portable/Syntax/CSharpSyntaxWalker.cs:line 50
+   at Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitConstructorDeclaration(ConstructorDeclarationSyntax node) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Main.Generated.cs:line 1294
+   at Microsoft.CodeAnalysis.CSharp.Syntax.ConstructorDeclarationSyntax.Accept(CSharpSyntaxVisitor visitor) in /_/src/Compilers/CSharp/Portable/CSharpSyntaxGenerator/CSharpSyntaxGenerator.SourceGenerator/Syntax.xml.Syntax.Generated.cs:line 12492
+   at Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator.<Initialize>g__AddFluentValidationMethod|8_15(SourceProductionContext context, ClassDeclarationSyntax declaration, INamedTypeSymbol targetSymbol, SemanticModel semanticModel, ISymbol relatedTypeSymbol, ImmutableArray`1 attributes) in {SolutionDirectory}src\Analyzers\InheritFromGenerator.cs:line 605
+   at Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator.<>c.<Initialize>b__8_14(SourceProductionContext context, ValueTuple`5 syntaxContext) in {SolutionDirectory}src\Analyzers\InheritFromGenerator.cs:line 539
+   at Microsoft.CodeAnalysis.UserFunctionExtensions.<>c__DisplayClass3_0`2.<WrapUserAction>b__0(TInput1 input1, TInput2 input2, CancellationToken token) in /_/src/Compilers/Core/Portable/SourceGeneration/UserFunction.cs:line 101
+-----
+,
+        Category: Compiler,
+        CustomTags: [
+          AnalyzerException
+        ]
+      }
+    ]
+  }
+}

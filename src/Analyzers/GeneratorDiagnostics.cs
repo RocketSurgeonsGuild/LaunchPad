@@ -66,4 +66,13 @@ internal static class GeneratorDiagnostics
         DiagnosticSeverity.Error,
         true
     );
+
+    public static DiagnosticDescriptor ValidatorShouldCallGeneratedValidationMethod { get; } = new(
+        "LPAD0008",
+        "The validator should call the generated method",
+        "The validator should call the generated method '{0}'",
+        "LaunchPad",
+        DiagnosticSeverity.Warning,
+        true
+    );
 }
