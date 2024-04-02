@@ -93,14 +93,14 @@ public class InheritFromGenerator : IIncrementalGenerator
                 )
             );
 
+        var namespaces = declaration.SyntaxTree.GetCompilationUnitRoot().Usings;
+
         foreach (var attribute in attributes)
         {
             var inheritFromSymbol = GetInheritingSymbol(context, attribute, classToInherit.Identifier.Text);
-            switch (inheritFromSymbol)
-            {
-                case null:
-                    continue;
-            }
+            if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], }) continue;
+            if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax) continue;
+            namespaces = namespaces.AddDistinctUsingStatements(inheritFromSyntax.SyntaxTree.GetCompilationUnitRoot().Usings);
 
             var inheritableMembers = GetInheritableMembers(attribute, inheritFromSymbol);
 
@@ -123,10 +123,6 @@ public class InheritFromGenerator : IIncrementalGenerator
                         inheritFromSymbol.Name
                     );
                     break;
-            }
-
-            switch (classToInherit)
-            {
                 case RecordDeclarationSyntax recordDeclarationSyntax:
                     classToInherit = AddWithMethod(
                         recordDeclarationSyntax,
@@ -140,7 +136,7 @@ public class InheritFromGenerator : IIncrementalGenerator
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
-                     List(declaration.SyntaxTree.GetCompilationUnitRoot().Usings),
+                     List(namespaces),
                      List<AttributeListSyntax>(),
                      SingletonList<MemberDeclarationSyntax>(
                          targetSymbol.ContainingNamespace.IsGlobalNamespace
@@ -578,6 +574,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                                          )
                                      )
                                  );
+            var namespaces = declaration.SyntaxTree.GetCompilationUnitRoot().Usings;
 
             foreach (var attribute in attributes)
             {
@@ -638,13 +635,14 @@ public class InheritFromGenerator : IIncrementalGenerator
                         );
                     }
 
+                    namespaces = namespaces.AddDistinctUsingStatements(inheritFromSyntax.SyntaxTree.GetCompilationUnitRoot().Usings);
                     classToInherit = classToInherit.AddMembers(method);
                 }
             }
 
             var cu = CompilationUnit(
                          List<ExternAliasDirectiveSyntax>(),
-                         List(declaration.SyntaxTree.GetCompilationUnitRoot().Usings),
+                         namespaces,
                          List<AttributeListSyntax>(),
                          SingletonList<MemberDeclarationSyntax>(
                              targetSymbol.ContainingNamespace.IsGlobalNamespace

@@ -26,4 +26,18 @@ internal static class SymbolExtensions
 
         return usingDirectiveSyntax;
     }
+
+    public static SyntaxList<UsingDirectiveSyntax> AddDistinctUsingStatements(
+        this SyntaxList<UsingDirectiveSyntax> usingDirectiveSyntax,
+        IEnumerable<UsingDirectiveSyntax> namespaces
+    )
+    {
+        foreach (var additionalUsing in namespaces)
+        {
+            if (usingDirectiveSyntax.Any(z => z.Name?.ToString() == additionalUsing?.Name?.ToString())) continue;
+            usingDirectiveSyntax = usingDirectiveSyntax.Add(additionalUsing);
+        }
+
+        return usingDirectiveSyntax;
+    }
 }
