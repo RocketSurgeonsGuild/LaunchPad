@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Collections.Immutable;
 using Analyzers.Tests.Helpers;
 using FluentValidation;
 using MediatR;
@@ -166,7 +167,25 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Inherit_Multiple_With_Method_For_Record()
     {
         var result = await Builder
+                          .AddReferences(typeof(ImmutableArray<>))
                           .AddSources(
+                               @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+using System.Collections.Immutable;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        public partial record Model
+        {
+            public string SerialNumber { get; set; }
+            public ImmutableArray<string> Items { get; set; }
+        }
+    }
+}",
                                @"
 using System;
 using MediatR;
@@ -176,11 +195,6 @@ namespace Sample.Core.Operations.Rockets
 {
     public static partial class CreateRocket
     {
-        public partial record Model
-        {
-            public string SerialNumber { get; set; }
-        }
-
         public partial record Other
         {
             public string OtherNumber { get; set; }
