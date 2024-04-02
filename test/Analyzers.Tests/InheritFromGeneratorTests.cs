@@ -1,5 +1,5 @@
-using System.Linq.Expressions;
 using System.Collections.Immutable;
+using System.Linq.Expressions;
 using Analyzers.Tests.Helpers;
 using FluentValidation;
 using MediatR;
