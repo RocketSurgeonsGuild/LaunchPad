@@ -2,6 +2,7 @@
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator: [],
-    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
   }
 }

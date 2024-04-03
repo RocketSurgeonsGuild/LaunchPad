@@ -23,6 +23,7 @@
         Message: Type Sample.Core.Operations.Rockets.PatchGraphRocket must be made partial.,
         Category: LaunchPad
       }
-    ]
+    ],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
   }
 }

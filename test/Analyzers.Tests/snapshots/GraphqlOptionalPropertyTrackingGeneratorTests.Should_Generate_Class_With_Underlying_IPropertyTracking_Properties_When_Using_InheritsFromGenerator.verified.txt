@@ -2,7 +2,8 @@
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [],
-    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
   },
   References: [
     HotChocolate.Abstractions.dll,

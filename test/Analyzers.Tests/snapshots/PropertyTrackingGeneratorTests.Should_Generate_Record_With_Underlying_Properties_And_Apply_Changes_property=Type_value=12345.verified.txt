@@ -1,4 +1,0 @@
-﻿{
-  ResultDiagnostics: null,
-  Results: {}
-}

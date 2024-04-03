@@ -38,7 +38,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     GeneratorDiagnostics.ParameterMustBeSameTypeOfObject,
                     declaration.Keyword.GetLocation(),
                     declaration.GetFullMetadataName(),
-                    declaration.Keyword.IsKind(SyntaxKind.ClassKeyword) ? "record" : "class"
+                    targetSymbol.IsRecord ? "record" : "class"
                 )
             );
             return;
@@ -59,25 +59,15 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
 
-        var inheritedMembers = targetSymbol
-                              .GetAttributes()
-                              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
-                              .Select(
-                                   attribute => InheritFromGenerator.GetInheritingSymbol(context, attribute, symbol.Name) is not { } inheritFromSymbol
-                                       ? ImmutableArray<ISymbol>.Empty
-                                       : InheritFromGenerator.GetInheritableMemberSymbols(attribute, inheritFromSymbol)
-                               )
-                              .Aggregate(ImmutableArray<ISymbol>.Empty, (a, b) => a.AddRange(b));
+        var targetMembers = targetSymbol.GetMembers();
+        targetMembers = targetMembers.AddRange(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol));
 
-        var writeableProperties =
-            targetSymbol
-               .GetMembers()
-               .Concat(inheritedMembers)
-               .OfType<IPropertySymbol>()
-                // only works for `set`able properties not init only
-               .Where(z => !symbol.GetMembers(z.Name).Any())
-               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
-               .ToArray();
+        var writeableProperties = targetMembers
+                                 .OfType<IPropertySymbol>()
+                                  // only works for `set`able properties not init only
+                                 .Where(z => !symbol.GetMembers(z.Name).Any())
+                                 .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                                 .ToArray();
         if (!targetSymbol.IsRecord)
         {
             // not able to use with operator, so ignore any init only properties.
@@ -98,7 +88,63 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var applyChangesBody = Block();
         var resetChangesBody = Block();
-        var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
+        var memberNamesSet = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var constructor = symbol
+                         .Constructors
+                         .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
+                         .Where(z => !z.IsImplicitlyDeclared)
+                         .OrderByDescending(z => z.Parameters.Length)
+                         .FirstOrDefault();
+
+        var existingMembers = targetSymbol
+                             .GetMembers()
+                             .OfType<IPropertySymbol>()
+                             .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                             .Where(z => symbol.GetMembers(z.Name).Any())
+                             .Except(writeableProperties)
+                             .ToArray();
+
+        var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
+         ?? ImmutableHashSet<string>.Empty;
+        var nonConstructorMembers = existingMembers
+                                   .Where(z => !constructorParams.Contains(z.Name))
+                                   .ToArray();
+
+        var createArgumentList = constructor is null
+            ? ArgumentList()
+            : ArgumentList(
+                SeparatedList(
+                    constructor.Parameters
+                               .Select(
+                                    z => Argument(
+                                        MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            IdentifierName("value"),
+                                            IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name)
+                                        )
+                                    )
+                                )
+                )
+            );
+
+        var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
+           .AddExpressions(
+                nonConstructorMembers
+                   .Select(
+                        z =>
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                IdentifierName(z.Name),
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    IdentifierName("value"),
+                                    IdentifierName(z.Name)
+                                )
+                            )
+                    )
+                   .ToArray()
+            );
+
         var namespaces = new HashSet<string>();
 
         foreach (var propertySymbol in writeableProperties)
@@ -249,31 +295,6 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                         .WithBody(Block().AddStatements(ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges")))));
 
 
-        var memberNamesSet = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
-        var constructor = symbol
-                         .Constructors
-                         .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
-                         .Where(z => !z.IsImplicitlyDeclared)
-                         .OrderByDescending(z => z.Parameters.Length)
-                         .FirstOrDefault();
-
-        var createArgumentList = constructor is null
-            ? ArgumentList()
-            : ArgumentList(
-                SeparatedList(
-                    constructor.Parameters
-                               .Select(
-                                    z => Argument(
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            IdentifierName("value"),
-                                            IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name)
-                                        )
-                                    )
-                                )
-                )
-            );
-
         var createMethod = MethodDeclaration(
                                ParseTypeName(symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
                                "Create"
@@ -329,10 +350,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
-        context.AddSource(
-            $"{Path.GetFileNameWithoutExtension(declaration.SyntaxTree.FilePath)}_{declaration.Identifier.Text}",
-            cu.NormalizeWhitespace().GetText(Encoding.UTF8)
-        );
+        context.AddSourceRelativeTo(declaration, "PropertyTracking", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
         return;
 
         static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
@@ -464,13 +482,14 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     .Select(
                          (tuple, _) =>
                          {
-                             var interfaceSymbol = tuple.symbol
-                                                        .Interfaces.FirstOrDefault(
-                                                             z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)
-                                                         );
-                             var targetSymbol = interfaceSymbol?.ContainingAssembly.Name == "Rocket.Surgery.LaunchPad.Foundation"
-                                 ? (INamedTypeSymbol?)interfaceSymbol.TypeArguments[0]
-                                 : null;
+                             var interfaceSymbol =
+                                 tuple.symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal));
+                             if (interfaceSymbol is not
+                                 {
+                                     ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
+                                     TypeArguments: [INamedTypeSymbol targetSymbol]
+                                 }) return default;
+
                              return (
                                  tuple.symbol,
                                  tuple.syntax,
@@ -480,7 +499,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                              );
                          }
                      )
-                    .Where(x => x.symbol is { } && x.targetSymbol is { });
+                    .Where(x => x is { symbol: { }, targetSymbol: { } });
 
         context.RegisterSourceOutput(
             values,

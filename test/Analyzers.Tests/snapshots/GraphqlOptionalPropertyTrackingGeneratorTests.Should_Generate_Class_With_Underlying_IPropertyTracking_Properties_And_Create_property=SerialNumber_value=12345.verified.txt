@@ -1,6 +1,0 @@
-﻿{
-  FinalDiagnostics: [],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: []
-  }
-}

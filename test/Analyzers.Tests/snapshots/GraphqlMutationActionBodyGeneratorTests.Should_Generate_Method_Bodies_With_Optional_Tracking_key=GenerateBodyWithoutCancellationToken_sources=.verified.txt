@@ -5,20 +5,68 @@
       Title: The given declaration must match,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input2.cs: (4,19)-(4,25),
+      Location: Input2.cs: (10,19)-(10,25),
       MessageFormat: The declaration {0} must be a {1}.,
-      Message: The declaration Save2Rocket+TrackingRequest must be a class.,
+      Message: The declaration Save2Rocket+PatchRequest must be a class.,
       Category: LaunchPad
     },
     {
-      Id: CS1061,
+      Id: CS0535,
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator/RocketMutation_Mutations.cs: (11,53)-(11,59),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1061),
-      MessageFormat: '{0}' does not contain a definition for '{1}' and no accessible extension method '{1}' accepting a first argument of type '{0}' could be found (are you missing a using directive or an assembly reference?),
-      Message: 'Save2Rocket.TrackingRequest' does not contain a definition for 'Create' and no accessible extension method 'Create' accepting a first argument of type 'Save2Rocket.TrackingRequest' could be found (are you missing a using directive or an assembly reference?),
+      Location: Input2.cs: (10,41)-(10,67),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'Save2Rocket.PatchRequest' does not implement interface member 'IPropertyTracking<Save2Rocket.Request>.ApplyChanges(Save2Rocket.Request)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0535,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input2.cs: (10,41)-(10,67),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'Save2Rocket.PatchRequest' does not implement interface member 'IPropertyTracking<Save2Rocket.Request>.ResetChanges()',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0117,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/Input2_Save2Rocket_TrackingRequest_Optionals.cs: (23,24)-(23,26),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0117),
+      MessageFormat: '{0}' does not contain a definition for '{1}',
+      Message: 'Save2Rocket.PatchRequest' does not contain a definition for 'Sn',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0117,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/Input2_Save2Rocket_TrackingRequest_Optionals.cs: (31,24)-(31,29),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0117),
+      MessageFormat: '{0}' does not contain a definition for '{1}',
+      Message: 'Save2Rocket.PatchRequest' does not contain a definition for 'Other',
       Category: Compiler,
       CustomTags: [
         Compiler,
@@ -29,15 +77,16 @@
   ],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlMutationActionBodyGenerator: [],
-    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: [
       {
         Id: LPAD0005,
         Title: The given declaration must match,
         Severity: Error,
         WarningLevel: 0,
-        Location: Input2.cs: (4,19)-(4,25),
+        Location: Input2.cs: (10,19)-(10,25),
         MessageFormat: The declaration {0} must be a {1}.,
-        Message: The declaration Save2Rocket+TrackingRequest must be a class.,
+        Message: The declaration Save2Rocket+PatchRequest must be a class.,
         Category: LaunchPad
       }
     ]

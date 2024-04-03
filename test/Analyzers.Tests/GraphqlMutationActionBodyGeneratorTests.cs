@@ -5,6 +5,7 @@ using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Analyzers;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Analyzers.Tests;
@@ -108,7 +109,8 @@ public class RocketMutation
         await Verify(
                 await Builder
                      .WithGenerator<GraphqlOptionalPropertyTrackingGenerator>()
-                     .AddReferences(typeof(IOptionalTracking<>))
+                     .WithGenerator<PropertyTrackingGenerator>()
+                     .AddReferences(typeof(IOptionalTracking<>), typeof(IPropertyTracking))
                      .AddSources(sources)
                      .Build()
                      .GenerateAsync()
@@ -571,6 +573,7 @@ public partial class RocketMutation
     private sealed class MethodBodyWithOptionalTrackingData : TheoryData<string, string[]>
     {
         private const string defaultString = @"
+global using Rocket.Surgery.LaunchPad.Foundation;
 global using Rocket.Surgery.LaunchPad.HotChocolate;
 namespace TestNamespace;
 public record RocketModel
@@ -591,14 +594,18 @@ public record RocketModel
 namespace TestNamespace;
 public static partial class GetRocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; init; }
         public string Name { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -622,11 +629,15 @@ public partial class RocketMutation
 namespace TestNamespace;
 public static partial class GetRocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
+    public record Request : IRequest
     {
         public Guid Id { get; set; }
     }
-    public record Request : IRequest
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
     {
         public Guid Id { get; set; }
     }
@@ -660,25 +671,33 @@ public record LaunchRecordModel
 
 public static partial class GetRocketLaunchRecords
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IStreamRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IStreamRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }
 
 public static partial class GetRocketLaunchRecord
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -720,15 +739,19 @@ public record LaunchRecordModel
 
 public static partial class GetRocketLaunchRecord
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
 
         public Guid LaunchId { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -764,15 +787,19 @@ public record LaunchRecordModel
 
 public static partial class GetRocketLaunchRecord
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
 
         public Guid LaunchRecordId { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -808,15 +835,19 @@ public record LaunchRecordModel
 
 public static partial class GetRocketLaunchRecord
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IRequest<LaunchRecordModel>
     {
         public Guid Id { get; init; }
 
         public string LaunchRecordId { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<LaunchRecordModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -845,16 +876,20 @@ using System.Security.Claims;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
         public ClaimsPrincipal ClaimsPrincipal { get; init; }
         public string Other { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -880,16 +915,20 @@ using System.Security.Claims;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
         public ClaimsPrincipal ClaimsPrincipal { get; set; }
         public string Other { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -914,16 +953,20 @@ public partial class RocketMutation
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
         public ClaimsPrincipal ClaimsPrincipal { get; set; }
         public string Other { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -949,15 +992,19 @@ using System.Threading;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
         public string Other { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -983,16 +1030,20 @@ using System.Threading;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
         public ClaimsPrincipal ClaimsPrincipal { get; init; }
         public string Other { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -1018,15 +1069,19 @@ using System.Threading;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
         public string Other { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"
@@ -1051,15 +1106,19 @@ public partial class RocketMutation
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public partial record TrackingRequest : IOptionalTracking<Request>
-    {
-        public Guid Id { get; set; }
-    }
     public class Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
         public string Other { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
+    {
+        public Guid Id { get; set; }
     }
 }",
                     @"

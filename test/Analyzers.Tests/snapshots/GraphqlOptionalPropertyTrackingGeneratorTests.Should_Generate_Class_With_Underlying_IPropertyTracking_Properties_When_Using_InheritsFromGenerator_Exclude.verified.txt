@@ -1,25 +1,9 @@
 ﻿{
-  FinalDiagnostics: [
-    {
-      Id: CS1061,
-      Title: ,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Input1.cs: (33,22)-(33,34),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1061),
-      MessageFormat: '{0}' does not contain a definition for '{1}' and no accessible extension method '{1}' accepting a first argument of type '{0}' could be found (are you missing a using directive or an assembly reference?),
-      Message: 'Request' does not contain a definition for 'SerialNumber' and no accessible extension method 'SerialNumber' accepting a first argument of type 'Request' could be found (are you missing a using directive or an assembly reference?),
-      Category: Compiler,
-      CustomTags: [
-        Compiler,
-        Telemetry,
-        NotConfigurable
-      ]
-    }
-  ],
+  FinalDiagnostics: [],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [],
-    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
   },
   References: [
     HotChocolate.Abstractions.dll,

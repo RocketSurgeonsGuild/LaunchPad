@@ -29,11 +29,11 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public class PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
+    public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+    }
+    public class PatchGraphRocket : IOptionalTracking<PatchRocket>
     {
         public Guid Id { get; init; }
     }
@@ -65,13 +65,13 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
+    public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+    }
     public static class PublicClass
     {
-        public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
+        public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>, IRequest<RocketModel>
         {
             public Guid Id { get; init; }
         }
@@ -81,10 +81,6 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
-        diagnostic.Id.Should().Be("LPAD0001");
-        diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.PublicClass must be made partial.");
 
         await Verify(result);
     }
@@ -104,14 +100,11 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public partial class PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
+    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
     }
+    public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }
 "
                            )
@@ -140,14 +133,11 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
+    public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
     }
+    public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }
 "
                            )
@@ -176,14 +166,11 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; set; }
         public Instant PlannedDate { get; set; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public partial record PatchRocket : IOptionalTracking<Request>, IRequest<RocketModel>
+    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
     }
+    public partial record GraphPatchRocket : IOptionalTracking<PatchRocket>;
 }
 "
                            )
@@ -207,16 +194,13 @@ namespace Sample.Core.Operations.Rockets
         public Guid Id { get; init; }
         public string SerialNumber { get; set; } = null!;
         public int? Type { get; set; }
-        public Instant PlannedDate { get; set; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public partial record PatchRocket : IOptionalTracking<Request>, IRequest<RocketModel>
+    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
+        public Instant PlannedDate { get; set; }
     }
+    public partial record GraphPatchRocket : IOptionalTracking<PatchRocket>;
 }
 "
                            )
@@ -241,13 +225,10 @@ namespace Sample.Core.Operations.Rockets
         public int Type { get; init; }
         public Instant? PlannedDate { get; init; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public partial record PatchRocket(Guid Id) : IOptionalTracking<Request>, IRequest<RocketModel>
+    public partial record PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>
     {
     }
+    public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }
 "
                            )
@@ -270,18 +251,17 @@ namespace Sample.Core.Operations.Rockets
 
     public record Request : IRequest<RocketModel>
     {
-        public RocketId Id { get; init; }
+        public Guid Id { get; init; }
         public string SerialNumber { get; set; } = null!;
         public RocketType Type { get; set; }
         public Instant? PlannedDate { get; set; }
     }
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public partial record PatchRocketUnderTest : IOptionalTracking<Request>
+
+    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
+        public Guid Id { get; init; }
     }
+    public partial record PatchRocketUnderTest : IOptionalTracking<PatchRocket>;
 }
 "
                            )
@@ -296,12 +276,12 @@ namespace Sample.Core.Operations.Rockets
     [Fact]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator()
     {
-        var result = await AddPatchRocketModel(RocketModelType.Class)
-                          .WithGenerator<InheritFromGenerator>()
-                          .AddReferences(typeof(InheritFromAttribute))
-                          .AddSources(
-                               @"
-public class Model
+        var result = Builder
+                    .WithGenerator<InheritFromGenerator>()
+                    .AddReferences(typeof(InheritFromAttribute))
+                    .AddSources(
+                         @"
+public record Model
 {
     public Guid Id { get; init; }
     public string SerialNumber { get; set; } = null!;
@@ -309,23 +289,22 @@ public class Model
 }
 
 [InheritFrom(typeof(Model))]
-public partial class Request : IRequest<RocketModel>
+public partial record Request : IRequest<Model>
 {
     public Instant PlannedDate { get; set; }
 }
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public partial class PatchRequest : IOptionalTracking<Request>
+
+public partial record PatchRocket : IPropertyTracking<Request>, IRequest<Model>
 {
     public Guid Id { get; init; }
 }
+
+public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
 "
-                           )
-                          .WithCustomizer(Customizers.IncludeReferences)
-                          .Build()
-                          .GenerateAsync();
+                     )
+                    .WithCustomizer(Customizers.IncludeReferences)
+                    .Build()
+                    .GenerateAsync();
         await Verify(result);
     }
 
@@ -335,6 +314,7 @@ public partial class PatchRequest : IOptionalTracking<Request>
     {
         var result = await AddPatchRocketModel(RocketModelType.Class)
                           .WithGenerator<InheritFromGenerator>()
+                          .WithGenerator<PropertyTrackingGenerator>()
                           .AddReferences(typeof(InheritFromAttribute))
                           .AddSources(
                                @"
@@ -349,14 +329,6 @@ public class Model
 public partial class Request : IRequest<RocketModel>
 {
     public Instant PlannedDate { get; set; }
-}
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public partial class PatchRequest : IOptionalTracking<Request>
-{
-    public Guid Id { get; init; }
 }
 "
                            )
@@ -377,7 +349,7 @@ public partial class PatchRequest : IOptionalTracking<Request>
             valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
         }
 
-        var result = await Builder
+        var result = await AddPatchRocketModel(RocketModelType.Record)
                           .AddSources(
                                @"
 public record Request : IRequest<RocketModel>
@@ -387,35 +359,30 @@ public record Request : IRequest<RocketModel>
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-}
 "
                            )
                           .Build()
                           .GenerateAsync();
+
+        await Verify(result).UseParameters(property, value);
+
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
-
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
-        var applyChangesMethod = type.GetMethod("Create")!;
+        var typeInstance = Activator.CreateInstance(type);
+        var patchCreateMethod = type.GetMethod("Create")!;
         var propertyUnderTest = type.GetProperty(property)!;
-        var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
+        var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var requestPropertyUnderTest = requestType.GetProperty(property)!;
-        var instance = Activator.CreateInstance(type);
 
-        var assignedType = typeof(Optional<>).MakeGenericType(valueType);
-        propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
-        var request = applyChangesMethod.Invoke(instance, Array.Empty<object>());
+        var optionalType = typeof(Optional<>).MakeGenericType(valueType);
+        var assignedType = typeof(Assigned<>).MakeGenericType(value.GetType());
+        var assignedPropertyUnderTest = assignedType.GetProperty("Value")!;
+        propertyUnderTest.SetValue(typeInstance, Activator.CreateInstance(optionalType, value));
+        var request = patchCreateMethod.Invoke(typeInstance, Array.Empty<object>());
         var r = requestPropertyUnderTest.GetValue(request);
-        r.Should().Be(value);
-
-        await Verify(result).UseParameters(property, value);
+        assignedPropertyUnderTest.GetValue(r).Should().BeEquivalentTo(value);
     }
 
     [Theory]
@@ -429,9 +396,9 @@ public partial record PatchGraphRocket : IOptionalTracking<Request>, IRequest<Ro
             valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
         }
 
-        var result = await Builder
-                          .AddSources(
-                               @"
+        var result = await AddPatchRocketModel(RocketModelType.Class)
+                                .AddSources(
+                                     @"
 public class Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
@@ -439,35 +406,29 @@ public class Request : IRequest<RocketModel>
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public partial class PatchGraphRocket : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
 "
-                           )
-                          .Build()
-                          .GenerateAsync();
+                                 )
+                                .Build()
+                                .GenerateAsync();
+
+        await Verify(result).UseParameters(property, value);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
-        var applyChangesMethod = type.GetMethod("Create")!;
+        var typeInstance = Activator.CreateInstance(type);
+        var patchCreateMethod = type.GetMethod("Create")!;
         var propertyUnderTest = type.GetProperty(property)!;
-        var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
+        var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var requestPropertyUnderTest = requestType.GetProperty(property)!;
-        var instance = Activator.CreateInstance(type);
 
-        var assignedType = typeof(Optional<>).MakeGenericType(valueType);
-        propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
-        var request = applyChangesMethod.Invoke(instance, Array.Empty<object>());
+        var optionalType = typeof(Optional<>).MakeGenericType(valueType);
+        var assignedType = typeof(Assigned<>).MakeGenericType(value.GetType());
+        var assignedPropertyUnderTest = assignedType.GetProperty("Value")!;
+        propertyUnderTest.SetValue(typeInstance, Activator.CreateInstance(optionalType, value));
+        var request = patchCreateMethod.Invoke(typeInstance, Array.Empty<object>());
         var r = requestPropertyUnderTest.GetValue(request);
-        r.Should().Be(value);
-
-        await Verify(result).UseParameters(property, value);
+        assignedPropertyUnderTest.GetValue(r).Should().BeEquivalentTo(value);
     }
 
 
@@ -492,18 +453,12 @@ public record Request : IRequest<RocketModel>
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>
-{
-    public Guid Id { get; init; }
-}
 "
                            )
                           .Build()
                           .GenerateAsync();
+
+        await Verify(result).UseParameters(property, value);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
         output!.Diagnostics.Should().HaveCount(0);
 
@@ -520,15 +475,15 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(optionalType, value));
         var request = applyChangesMethod.Invoke(instance, Array.Empty<object>());
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).Should().Be(value);
-
-        await Verify(result).UseParameters(property, value);
+        assignedPropertyUnderTest.GetValue(r).Should().BeEquivalentTo(value);
     }
 
     [Theory]
-    [InlineData("SerialNumber", "12345")]
-    [InlineData("Type", 12345)]
-    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_And_Create(string property, object value)
+    [InlineData("SerialNumber", "12345", RocketModelType.Class)]
+    [InlineData("SerialNumber", "12345", RocketModelType.Record)]
+    [InlineData("Type", 12345, RocketModelType.Class)]
+    [InlineData("Type", 12345, RocketModelType.Record)]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_And_Create(string property, object value, RocketModelType modelType)
     {
         var valueType = value.GetType();
         if (value.GetType().IsValueType)
@@ -536,25 +491,17 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>
             valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
         }
 
-        var result = await AddPatchRocketModel(RocketModelType.Class)
+        var result = await AddPatchRocketModel(modelType)
                           .AddSources(
-                               @"
-public class Request : IRequest<RocketModel>
+                               $$""""
+public {{(modelType == RocketModelType.Class ? "class" : "record")}} Request : IRequest<RocketModel>
 {
     public Guid Id { get; init; }
     public string SerialNumber { get; set; } = null!;
     public int Type { get; set; }
     public Instant PlannedDate { get; set; }
 }
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
-{
-    public Guid Id { get; init; }
-}
-"
+""""
                            )
                           .Build()
                           .GenerateAsync();
@@ -576,10 +523,10 @@ public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>
         var r = requestPropertyUnderTest.GetValue(request);
         assignedPropertyUnderTest.GetValue(r).Should().Be(value);
 
-        await Verify(result).UseParameters(property, value);
+        await Verify(result).UseParameters(property, value, modelType);
     }
 
-    private enum RocketModelType { Record, Class, }
+    public enum RocketModelType { Record, Class, }
 
     private GeneratorTestContextBuilder AddPatchRocketModel(RocketModelType type)
     {
@@ -594,61 +541,8 @@ namespace Sample.Core.Operations.Rockets
     {
         public Guid Id { get; init; }
     }
-    public partial record PatchRocket
-    {
-        public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> SerialNumber { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
-        public Rocket.Surgery.LaunchPad.Foundation.Assigned<int> Type { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(default);
-        public Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant> PlannedDate { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant>.Empty(default);
 
-        public record Changes
-        {
-            public bool SerialNumber { get; init; }
-
-            public bool Type { get; init; }
-
-            public bool PlannedDate { get; init; }
-        }
-
-        public Changes GetChangedState()
-        {
-            return new Changes()
-            {SerialNumber = SerialNumber.HasBeenSet(), Type = Type.HasBeenSet(), PlannedDate = PlannedDate.HasBeenSet()};
-        }
-
-        public Request ApplyChanges(Request value)
-        {
-            if (SerialNumber.HasBeenSet())
-            {
-                value = value with {SerialNumber = SerialNumber};
-            }
-
-            if (Type.HasBeenSet())
-            {
-                value = value with {Type = Type};
-            }
-
-            if (PlannedDate.HasBeenSet())
-            {
-                value.PlannedDate = PlannedDate;
-            }
-
-            ResetChanges();
-            return value;
-        }
-
-        public PatchRocket ResetChanges()
-        {
-            SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(SerialNumber);
-            Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(Type);
-            PlannedDate = Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant>.Empty(PlannedDate);
-            return this;
-        }
-
-        void IPropertyTracking<Request>.ResetChanges()
-        {
-            ResetChanges();
-        }
-    }
+    public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }"
             );
         }
@@ -658,67 +552,13 @@ namespace Sample.Core.Operations.Rockets
             return Builder.AddSources(
                 @"
 namespace Sample.Core.Operations.Rockets
-    {
+{
     public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
     {
         public Guid Id { get; init; }
     }
 
-    public partial class PatchRocket
-    {
-        public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> SerialNumber { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
-        public Rocket.Surgery.LaunchPad.Foundation.Assigned<int> Type { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(default);
-        public Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant> PlannedDate { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant>.Empty(default);
-
-        public record Changes
-        {
-            public bool SerialNumber { get; init; }
-
-            public bool Type { get; init; }
-
-            public bool PlannedDate { get; init; }
-        }
-
-        public Changes GetChangedState()
-        {
-            return new Changes()
-            {SerialNumber = SerialNumber.HasBeenSet(), Type = Type.HasBeenSet(), PlannedDate = PlannedDate.HasBeenSet()};
-        }
-
-        public Request ApplyChanges(Request value)
-        {
-            if (SerialNumber.HasBeenSet())
-            {
-                value.SerialNumber = SerialNumber;
-            }
-
-            if (Type.HasBeenSet())
-            {
-                value.Type = Type;
-            }
-
-            if (PlannedDate.HasBeenSet())
-            {
-                value.PlannedDate = PlannedDate;
-            }
-
-            ResetChanges();
-            return value;
-        }
-
-        public PatchRocket ResetChanges()
-        {
-            SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(SerialNumber);
-            Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(Type);
-            PlannedDate = Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant>.Empty(PlannedDate);
-            return this;
-        }
-
-        void IPropertyTracking<Request>.ResetChanges()
-        {
-            ResetChanges();
-        }
-    }
+    public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }
 "
             );
@@ -732,6 +572,18 @@ namespace Sample.Core.Operations.Rockets
     public async Task Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods(string name, string source)
     {
         var result = await Builder
+                          .AddSources(@"
+using FluentValidation;
+using Rocket.Surgery.LaunchPad.Foundation;
+public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+{
+    public Guid Id { get; init; }
+}
+
+public partial class GraphPatchRequest : IOptionalTracking<PatchRequest>
+{
+    public Guid Id { get; init; }
+}")
                           .AddReferences(typeof(AbstractValidator<>))
                           .AddReferences(typeof(Expression))
                           .WithGenerator<InheritFromGenerator>()
@@ -770,11 +622,6 @@ public class Model
 public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
-}
-
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
 }
 
 partial class Validator : AbstractValidator<PatchRequest>
@@ -839,11 +686,6 @@ public partial class Request : IRequest<RocketModel>
     public int Type { get; set; }
 }
 
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
 partial class Validator : AbstractValidator<PatchRequest>
 {
     public Validator(IValidator<AddressModel> addressModelValidator)
@@ -906,11 +748,6 @@ public partial class Request : IRequest<RocketModel>
     public int Type { get; set; }
 }
 
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
 partial class Validator : AbstractValidator<PatchRequest>
 {
     public Validator(IValidator<AddressModel> addressModelValidator)
@@ -950,11 +787,6 @@ public class Model
 public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
-}
-
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
 }
 
 partial class Validator : AbstractValidator<PatchRequest>
@@ -998,11 +830,6 @@ public partial class Request : IRequest<RocketModel>
     public int Type { get; set; }
 }
 
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
 partial class Validator : AbstractValidator<PatchRequest>
 {
     public Validator()
@@ -1042,11 +869,6 @@ RuleFor(z => z.Something).Empty(); }
 public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
-}
-
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
 }
 
 partial class Validator : AbstractValidator<PatchRequest>
@@ -1090,11 +912,6 @@ public partial class Request : IRequest<RocketModel>
     public int Type { get; set; }
 }
 
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
 partial class Validator : AbstractValidator<PatchRequest>
 {
     public Validator()
@@ -1131,11 +948,6 @@ public class Model
 public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
-}
-
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
 }
 
 partial class Validator : AbstractValidator<PatchRequest>
@@ -1184,11 +996,6 @@ public class Model
 public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
-}
-
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
 }
 
 partial class Validator : AbstractValidator<PatchRequest>
@@ -1240,11 +1047,6 @@ public partial class Request : IRequest<RocketModel>
     public int Type { get; set; }
 }
 
-public partial class PatchRequest : IOptionalTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
 partial class Validator : AbstractValidator<PatchRequest>
 {
     public Validator()
@@ -1262,6 +1064,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         await base.InitializeAsync();
         Builder = Builder
                  .WithGenerator<GraphqlOptionalPropertyTrackingGenerator>()
+                 .WithGenerator<PropertyTrackingGenerator>()
                  .AddReferences(
                       typeof(IOptionalTracking<>),
                       typeof(Optional<>),
