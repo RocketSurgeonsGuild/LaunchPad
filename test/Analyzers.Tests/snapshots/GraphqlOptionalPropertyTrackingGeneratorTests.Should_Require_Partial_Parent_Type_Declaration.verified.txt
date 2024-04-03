@@ -1,42 +1,80 @@
 ﻿{
   FinalDiagnostics: [
     {
-      Id: LPAD0001,
-      Title: Type must be made partial,
+      Id: LPAD0005,
+      Title: The given declaration must match,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input1.cs: (14,24)-(14,35),
-      MessageFormat: Type {0} must be made partial.,
-      Message: Type Sample.Core.Operations.Rockets.PublicClass must be made partial.,
+      Location: Input1.cs: (10,19)-(10,24),
+      MessageFormat: The declaration {0} must be a {1}.,
+      Message: The declaration Sample.Core.Operations.Rockets.PatchRocket must be a record.,
       Category: LaunchPad
     },
     {
-      Id: CS0101,
+      Id: CS0535,
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/PublicClass_PatchGraphRocket_Optionals.cs: (6,24)-(6,35),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0101),
-      MessageFormat: The namespace '{1}' already contains a definition for '{0}',
-      Message: The namespace 'Sample.Core.Operations.Rockets' already contains a definition for 'PublicClass',
+      Location: Input1.cs: (10,39)-(10,65),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'PatchRocket' does not implement interface member 'IPropertyTracking<Request>.ApplyChanges(Request)',
       Category: Compiler,
       CustomTags: [
         Compiler,
         Telemetry,
         NotConfigurable
       ]
+    },
+    {
+      Id: CS0535,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (10,39)-(10,65),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'PatchRocket' does not implement interface member 'IPropertyTracking<Request>.ResetChanges()',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: LPAD0005,
+      Title: The given declaration must match,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (16,23)-(16,29),
+      MessageFormat: The declaration {0} must be a {1}.,
+      Message: The declaration Sample.Core.Operations.Rockets.PublicClass+PatchGraphRocket must be a class.,
+      Category: LaunchPad
     }
   ],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [
       {
-        Id: LPAD0001,
-        Title: Type must be made partial,
+        Id: LPAD0005,
+        Title: The given declaration must match,
         Severity: Error,
         WarningLevel: 0,
-        Location: Input1.cs: (14,24)-(14,35),
-        MessageFormat: Type {0} must be made partial.,
-        Message: Type Sample.Core.Operations.Rockets.PublicClass must be made partial.,
+        Location: Input1.cs: (16,23)-(16,29),
+        MessageFormat: The declaration {0} must be a {1}.,
+        Message: The declaration Sample.Core.Operations.Rockets.PublicClass+PatchGraphRocket must be a class.,
+        Category: LaunchPad
+      }
+    ],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: [
+      {
+        Id: LPAD0005,
+        Title: The given declaration must match,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (10,19)-(10,24),
+        MessageFormat: The declaration {0} must be a {1}.,
+        Message: The declaration Sample.Core.Operations.Rockets.PatchRocket must be a record.,
         Category: LaunchPad
       }
     ]

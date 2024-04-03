@@ -13,7 +13,37 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 [Generator]
 public class InheritFromGenerator : IIncrementalGenerator
 {
-    internal static INamedTypeSymbol? GetInheritingSymbol(SourceProductionContext context, AttributeData attribute, string otherSymbolName)
+    internal static ImmutableHashSet<string> GetExcludedMembers(AttributeData attribute)
+    {
+        return ImmutableHashSet.CreateRange(
+            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
+                ? values.Select(z => (string)z.Value!).ToArray()
+                : Array.Empty<string>()
+        );
+    }
+
+    internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)
+    {
+        return targetSymbol
+              .GetAttributes()
+              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
+              .Select(
+                   attribute => GetInheritingSymbol(attribute) is not { } inheritFromSymbol
+                       ? ImmutableArray<IPropertySymbol>.Empty
+                       : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
+               )
+              .Aggregate(
+                   ImmutableArray.CreateBuilder<IPropertySymbol>(),
+                   (a, b) =>
+                   {
+                       a.AddRange(b);
+                       return a;
+                   }
+               )
+              .ToImmutable();
+    }
+
+    private static INamedTypeSymbol? GetInheritingSymbol(SourceProductionContext context, AttributeData attribute, string otherSymbolName)
     {
         var inheritFromSymbol = attribute switch
                                 {
@@ -40,23 +70,35 @@ public class InheritFromGenerator : IIncrementalGenerator
         return inheritFromSymbol;
     }
 
-    internal static ImmutableHashSet<string> GetExcludedMembers(AttributeData attribute)
+    private static INamedTypeSymbol? GetInheritingSymbol(AttributeData attribute)
     {
-        return ImmutableHashSet.CreateRange(
-            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
-                ? values.Select(z => (string)z.Value!).ToArray()
-                : Array.Empty<string>()
-        );
+        var inheritFromSymbol = attribute switch
+                                {
+                                    { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
+                                    { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
+                                        constructorArgumentSymbol,
+                                    _ => null,
+                                };
+
+        return inheritFromSymbol;
     }
 
-    internal static ImmutableArray<ISymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol)
+    private static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(
+        AttributeData attribute,
+        INamedTypeSymbol inheritFromSymbol,
+        HashSet<string> excludedProperties
+    )
     {
         var excludeMembers = GetExcludedMembers(attribute);
+        foreach (var excludedProperty in excludeMembers)
+        {
+            excludedProperties.Add(excludedProperty);
+        }
 
         return inheritFromSymbol
               .GetMembers()
-              .Where(z => z is not INamedTypeSymbol)
-              .Where(z => z is not IPropertySymbol property || !excludeMembers.Contains(property.Name))
+              .Where(z => z is IPropertySymbol property && !excludeMembers.Contains(property.Name))
+              .OfType<IPropertySymbol>()
               .ToImmutableArray();
     }
 
@@ -150,10 +192,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                 .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
-        context.AddSource(
-            $"{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_InheritFrom",
-            cu.NormalizeWhitespace().GetText(Encoding.UTF8)
-        );
+        context.AddSourceRelativeTo(declaration, "InheritFrom", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
     }
 
     private static ImmutableArray<MemberDeclarationSyntax> GetInheritableMembers(
@@ -656,10 +695,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                     .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
                     .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
-            context.AddSource(
-                $"{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_InheritFrom_Validator",
-                cu.NormalizeWhitespace().GetText(Encoding.UTF8)
-            );
+            context.AddSourceRelativeTo(declaration, "InheritFrom_Validator", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
         }
     }
 }

@@ -744,21 +744,19 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
 
         foreach (( var method, var methodSymbol, var matcher, var request ) in members)
         {
-            if (request != null)
-            {
-                var methodBody = GenerateMethod(
-                    context,
-                    controllerBaseProperties,
-                    matcher,
-                    MatcherDefaults.MethodStatusCodeMap,
-                    method,
-                    methodSymbol,
-                    request,
-                    members
-                );
-                if (methodBody is null) continue;
-                newClass = newClass.AddMembers(methodBody);
-            }
+            if (request == null) continue;
+            var methodBody = GenerateMethod(
+                context,
+                controllerBaseProperties,
+                matcher,
+                MatcherDefaults.MethodStatusCodeMap,
+                method,
+                methodSymbol,
+                request,
+                members
+            );
+            if (methodBody is null) continue;
+            newClass = newClass.AddMembers(methodBody);
         }
 
         var additionalUsings = new[]
@@ -789,10 +787,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                 .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
-        context.AddSource(
-            $"{string.Join("_", newClass.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_ControllerMethods.cs",
-            cu.NormalizeWhitespace().GetText(Encoding.UTF8)
-        );
+        context.AddSourceRelativeTo(syntax, "ControllerMethods", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
     }
 
     /// <inheritdoc />

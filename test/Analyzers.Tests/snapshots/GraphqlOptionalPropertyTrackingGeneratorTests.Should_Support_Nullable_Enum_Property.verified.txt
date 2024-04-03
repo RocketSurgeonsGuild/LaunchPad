@@ -1,55 +1,7 @@
 ﻿{
-  FinalDiagnostics: [
-    {
-      Id: CS0246,
-      Title: ,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Input1.cs: (7,15)-(7,23),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
-      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
-      Message: The type or namespace name 'RocketId' could not be found (are you missing a using directive or an assembly reference?),
-      Category: Compiler,
-      CustomTags: [
-        Compiler,
-        Telemetry,
-        NotConfigurable
-      ]
-    },
-    {
-      Id: CS0246,
-      Title: ,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/PatchRocketUnderTest_Optionals.cs: (10,37)-(10,45),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
-      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
-      Message: The type or namespace name 'RocketId' could not be found (are you missing a using directive or an assembly reference?),
-      Category: Compiler,
-      CustomTags: [
-        Compiler,
-        Telemetry,
-        NotConfigurable
-      ]
-    },
-    {
-      Id: CS0266,
-      Title: ,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/PatchRocketUnderTest_Optionals.cs: (40,27)-(40,37),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0266),
-      MessageFormat: Cannot implicitly convert type '{0}' to '{1}'. An explicit conversion exists (are you missing a cast?),
-      Message: Cannot implicitly convert type 'Sample.Core.Operations.Rockets.RocketType?' to 'Sample.Core.Operations.Rockets.RocketType'. An explicit conversion exists (are you missing a cast?),
-      Category: Compiler,
-      CustomTags: [
-        Compiler,
-        Telemetry,
-        NotConfigurable
-      ]
-    }
-  ],
+  FinalDiagnostics: [],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
   }
 }

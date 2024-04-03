@@ -23,6 +23,7 @@
         Message: The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.,
         Category: LaunchPad
       }
-    ]
+    ],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
   }
 }

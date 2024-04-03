@@ -43,6 +43,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             return;
         }
 
+        if (targetSymbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)) is not
+            { TypeArguments: [INamedTypeSymbol propertyTrackingSymbol,], })
+        {
+            return;
+        }
+
         var classToInherit =
             ( isRecord
                 ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
@@ -58,42 +64,41 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
 
-        var inheritedMembers = targetSymbol
-                              .GetAttributes()
-                              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
-                              .Select(
-                                   attribute => InheritFromGenerator.GetInheritingSymbol(context, attribute, symbol.Name) is not { } inheritFromSymbol
-                                       ? ImmutableArray<ISymbol>.Empty
-                                       : InheritFromGenerator.GetInheritableMemberSymbols(attribute, inheritFromSymbol)
-                               )
-                              .Aggregate(ImmutableArray<ISymbol>.Empty, (a, b) => a.AddRange(b));
+        var existingMembers = targetSymbol
+                             .GetMembers()
+                             .OfType<IPropertySymbol>()
+                             .Where(z => symbol.GetMembers(z.Name).Any())
+                             .ToImmutableArray();
 
-        var writeableProperties =
-            targetSymbol
-               .GetMembers()
-               .Concat(inheritedMembers)
-               .OfType<IPropertySymbol>()
-               .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
+        var memberNamesSet = targetSymbol.MemberNames.Concat(propertyTrackingSymbol.MemberNames).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // likely same assembly, we need to get the methods from the request type as well.
+        var excludedProperties = new HashSet<string>();
+
+        var targetMembers = Enumerable
+                           .Empty<IPropertySymbol>()
+                           .Concat(targetSymbol.GetMembers().OfType<IPropertySymbol>())
+                           .Concat(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties))
+                           .Concat(propertyTrackingSymbol.GetMembers().OfType<IPropertySymbol>())
+                           .Concat(InheritFromGenerator.GetInheritableMemberSymbols(propertyTrackingSymbol, excludedProperties));
+        var missingProperties = targetSymbol
+                               .GetMembers()
+                               .OfType<IPropertySymbol>()
+                               .Where(z => !symbol.GetMembers(z.Name).Any())
+                               .Where(
+                                    z => z.Type is not INamedTypeSymbol { Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation", }
+                                );
+
+        var writeableProperties = targetMembers
+                                 .Where(z => !symbol.GetMembers(z.Name).Any())
+                                 .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
         if (!targetSymbol.IsRecord)
         {
             // not able to use with operator, so ignore any init only properties.
             writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, });
         }
 
-
-        writeableProperties = writeableProperties
-                              // only works for `set`able properties not init only
-                             .Where(z => !symbol.GetMembers(z.Name).Any())
-                             .ToArray();
-        var existingMembers = targetSymbol
-                             .GetMembers()
-                             .OfType<IPropertySymbol>()
-                             .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
-                             .Where(z => symbol.GetMembers(z.Name).Any())
-                             .Except(writeableProperties)
-                             .ToArray();
-
-        var memberNamesSet = targetSymbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        writeableProperties = writeableProperties.ToImmutableArray();
 
         var constructor = targetSymbol
                          .Constructors
@@ -102,6 +107,27 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                          .OrderByDescending(z => z.Parameters.Length)
                          .FirstOrDefault();
 
+        missingProperties = missingProperties
+                           .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                           .DistinctBy(z => z.Name)
+                           .ToImmutableArray();
+        existingMembers = existingMembers
+                         .Concat(missingProperties)
+                         .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                         .DistinctBy(z => z.Name)
+                         .ToImmutableArray();
+        writeableProperties = writeableProperties
+                             .Except(
+                                  writeableProperties.Join(
+                                      existingMembers,
+                                      z => z.Name,
+                                      z => z.Name,
+                                      (propertySymbol, symbol1) => propertySymbol,
+                                      StringComparer.OrdinalIgnoreCase
+                                  )
+                              )
+                             .DistinctBy(z => z.Name)
+                             .ToImmutableArray();
         existingMembers = existingMembers
                          .Except(
                               existingMembers
@@ -113,7 +139,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                       StringComparer.OrdinalIgnoreCase
                                   )
                           )
-                         .ToArray();
+                         .ToImmutableArray();
         var createArgumentList = constructor is null
             ? ArgumentList()
             : ArgumentList(
@@ -158,18 +184,33 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 
         var namespaces = new HashSet<string>();
 
-        static void AddNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
+        foreach (var propertySymbol in missingProperties)
         {
-            namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
-            if (symbol is not INamedTypeSymbol { IsGenericType: true, } namedTypeSymbol) return;
-            foreach (var genericType in namedTypeSymbol.TypeArguments)
+            var propertyType = propertySymbol.Type is INamedTypeSymbol
             {
-                AddNamespacesFromPropertyType(namespaces, genericType);
+                Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
+            } namedTypeSymbol
+                ? namedTypeSymbol.TypeArguments[0]
+                : propertySymbol.Type;
+            var typeName = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
+            if (!SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
+             && propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, }
+             && typeName is not NullableTypeSyntax)
+            {
+                typeName = NullableType(typeName);
             }
+
+            addNamespacesFromPropertyType(namespaces, propertyType);
+            classToInherit = classToInherit.AddMembers(
+                SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
+                    ? GenerateProperty(propertySymbol, typeName)
+                    : GenerateTrackingProperties(propertySymbol, typeName)
+            );
         }
 
         foreach (var propertySymbol in writeableProperties)
         {
+            if (excludedProperties.Contains(propertySymbol.Name)) continue;
             var propertyType = propertySymbol.Type is INamedTypeSymbol
             {
                 Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
@@ -182,7 +223,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 type = NullableType(type);
             }
 
-            AddNamespacesFromPropertyType(namespaces, propertyType);
+            addNamespacesFromPropertyType(namespaces, propertyType);
 
 //            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
             classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
@@ -227,10 +268,18 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
                 .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
-        context.AddSource(
-            $"{string.Join("_", declaration.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}_Optionals",
-            cu.NormalizeWhitespace().GetText(Encoding.UTF8)
-        );
+        context.AddSourceRelativeTo(declaration, "Optionals", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+        return;
+
+        static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
+        {
+            namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
+            if (symbol is not INamedTypeSymbol { IsGenericType: true, } namedTypeSymbol) return;
+            foreach (var genericType in namedTypeSymbol.TypeArguments)
+            {
+                addNamespacesFromPropertyType(namespaces, genericType);
+            }
+        }
     }
 
     private static StatementSyntax GenerateApplyChangesBodyPart(
@@ -335,6 +384,26 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         };
     }
 
+    private static MemberDeclarationSyntax[] GenerateProperty(IPropertySymbol propertySymbol, TypeSyntax typeSyntax)
+    {
+        return new MemberDeclarationSyntax[]
+        {
+            PropertyDeclaration(typeSyntax, Identifier(propertySymbol.Name))
+               .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+               .WithAccessorList(
+                    AccessorList(
+                        List(
+                            new[]
+                            {
+                                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                            }
+                        )
+                    )
+                ),
+        };
+    }
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -359,13 +428,14 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                     .Select(
                          (tuple, _) =>
                          {
-                             var interfaceSymbol = tuple.symbol
-                                                        .Interfaces.FirstOrDefault(
-                                                             z => z.Name.StartsWith("IOptionalTracking", StringComparison.Ordinal)
-                                                         );
-                             var targetSymbol = interfaceSymbol?.ContainingAssembly.Name == "Rocket.Surgery.LaunchPad.HotChocolate"
-                                 ? (INamedTypeSymbol?)interfaceSymbol.TypeArguments[0]
-                                 : null;
+                             var interfaceSymbol =
+                                 tuple.symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IOptionalTracking", StringComparison.Ordinal));
+                             if (interfaceSymbol is not
+                                 {
+                                     ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.HotChocolate",
+                                     TypeArguments: [INamedTypeSymbol targetSymbol,],
+                                 }) return default;
+
                              return (
                                  tuple.symbol,
                                  tuple.syntax,
@@ -375,7 +445,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                              );
                          }
                      )
-                    .Where(x => x.symbol is { } && x.targetSymbol is { });
+                    .Where(x => x is { symbol: { }, targetSymbol: { }, });
 
         context.RegisterSourceOutput(
             values,
