@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
-using Rocket.Surgery.LaunchPad.Analyzers;
 
 namespace Analyzers.Tests.Helpers;
 

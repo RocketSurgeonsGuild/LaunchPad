@@ -13,6 +13,36 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 [Generator]
 public class InheritFromGenerator : IIncrementalGenerator
 {
+    internal static ImmutableHashSet<string> GetExcludedMembers(AttributeData attribute)
+    {
+        return ImmutableHashSet.CreateRange(
+            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
+                ? values.Select(z => (string)z.Value!).ToArray()
+                : Array.Empty<string>()
+        );
+    }
+
+    internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)
+    {
+        return targetSymbol
+              .GetAttributes()
+              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
+              .Select(
+                   attribute => GetInheritingSymbol(attribute) is not { } inheritFromSymbol
+                       ? ImmutableArray<IPropertySymbol>.Empty
+                       : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
+               )
+              .Aggregate(
+                   ImmutableArray.CreateBuilder<IPropertySymbol>(),
+                   (a, b) =>
+                   {
+                       a.AddRange(b);
+                       return a;
+                   }
+               )
+              .ToImmutable();
+    }
+
     private static INamedTypeSymbol? GetInheritingSymbol(SourceProductionContext context, AttributeData attribute, string otherSymbolName)
     {
         var inheritFromSymbol = attribute switch
@@ -53,16 +83,11 @@ public class InheritFromGenerator : IIncrementalGenerator
         return inheritFromSymbol;
     }
 
-    internal static ImmutableHashSet<string> GetExcludedMembers(AttributeData attribute)
-    {
-        return ImmutableHashSet.CreateRange(
-            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
-                ? values.Select(z => (string)z.Value!).ToArray()
-                : Array.Empty<string>()
-        );
-    }
-
-    private static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol, HashSet<string> excludedProperties)
+    private static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(
+        AttributeData attribute,
+        INamedTypeSymbol inheritFromSymbol,
+        HashSet<string> excludedProperties
+    )
     {
         var excludeMembers = GetExcludedMembers(attribute);
         foreach (var excludedProperty in excludeMembers)
@@ -75,23 +100,6 @@ public class InheritFromGenerator : IIncrementalGenerator
               .Where(z => z is IPropertySymbol property && !excludeMembers.Contains(property.Name))
               .OfType<IPropertySymbol>()
               .ToImmutableArray();
-    }
-
-    internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)
-    {
-        return targetSymbol
-              .GetAttributes()
-              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
-              .Select(
-                   attribute => GetInheritingSymbol( attribute) is not { } inheritFromSymbol
-                       ? ImmutableArray<IPropertySymbol>.Empty
-                       : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
-               )
-              .Aggregate(ImmutableArray.CreateBuilder<IPropertySymbol>(), (a, b) =>
-                                                                          {
-                                                                               a.AddRange(b);
-                                                                               return a;
-                                                                          }).ToImmutable();
     }
 
     private static void GenerateInheritance(
@@ -687,7 +695,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                     .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
                     .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
 
-            context.AddSourceRelativeTo( declaration, "InheritFrom_Validator", cu.NormalizeWhitespace().GetText(Encoding.UTF8) );
+            context.AddSourceRelativeTo(declaration, "InheritFrom_Validator", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
         }
     }
 }

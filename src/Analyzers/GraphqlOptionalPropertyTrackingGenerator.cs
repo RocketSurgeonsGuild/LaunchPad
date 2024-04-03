@@ -44,7 +44,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         }
 
         if (targetSymbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)) is not
-            { TypeArguments: [INamedTypeSymbol propertyTrackingSymbol] })
+            { TypeArguments: [INamedTypeSymbol propertyTrackingSymbol,], })
         {
             return;
         }
@@ -433,7 +433,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                              if (interfaceSymbol is not
                                  {
                                      ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.HotChocolate",
-                                     TypeArguments: [INamedTypeSymbol targetSymbol]
+                                     TypeArguments: [INamedTypeSymbol targetSymbol,],
                                  }) return default;
 
                              return (
@@ -445,7 +445,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                              );
                          }
                      )
-                    .Where(x => x is { symbol: { }, targetSymbol: { } });
+                    .Where(x => x is { symbol: { }, targetSymbol: { }, });
 
         context.RegisterSourceOutput(
             values,

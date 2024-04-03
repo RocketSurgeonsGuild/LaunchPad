@@ -487,7 +487,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                              if (interfaceSymbol is not
                                  {
                                      ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
-                                     TypeArguments: [INamedTypeSymbol targetSymbol]
+                                     TypeArguments: [INamedTypeSymbol targetSymbol,],
                                  }) return default;
 
                              return (
@@ -499,7 +499,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                              );
                          }
                      )
-                    .Where(x => x is { symbol: { }, targetSymbol: { } });
+                    .Where(x => x is { symbol: { }, targetSymbol: { }, });
 
         context.RegisterSourceOutput(
             values,

@@ -321,7 +321,9 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
     [Theory]
     [InlineData(PropertyTracking.SameAssembly)]
     [InlineData(PropertyTracking.OtherAssembly)]
-    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude(PropertyTracking propertyTracking)
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude(
+        PropertyTracking propertyTracking
+    )
     {
         var result = await AddPatchRocketModel(RocketModelType.Class, propertyTracking)
                           .WithGenerator<InheritFromGenerator>()
@@ -451,7 +453,11 @@ public class Request : IRequest<RocketModel>
     [InlineData("Type", 12345, PropertyTracking.SameAssembly)]
     [InlineData("SerialNumber", "12345", PropertyTracking.OtherAssembly)]
     [InlineData("Type", 12345, PropertyTracking.OtherAssembly)]
-    public async Task Should_Generate_Record_With_Underlying_IPropertyTracking_Properties_And_Create(string property, object value, PropertyTracking propertyTracking)
+    public async Task Should_Generate_Record_With_Underlying_IPropertyTracking_Properties_And_Create(
+        string property,
+        object value,
+        PropertyTracking propertyTracking
+    )
     {
         var valueType = value.GetType();
         if (value.GetType().IsValueType)
@@ -503,7 +509,12 @@ public record Request : IRequest<RocketModel>
     [InlineData("SerialNumber", "12345", RocketModelType.Record, PropertyTracking.OtherAssembly)]
     [InlineData("Type", 12345, RocketModelType.Class, PropertyTracking.OtherAssembly)]
     [InlineData("Type", 12345, RocketModelType.Record, PropertyTracking.OtherAssembly)]
-    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_And_Create(string property, object value, RocketModelType modelType, PropertyTracking propertyTracking)
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_And_Create(
+        string property,
+        object value,
+        RocketModelType modelType,
+        PropertyTracking propertyTracking
+    )
     {
         var valueType = value.GetType();
         if (value.GetType().IsValueType)
@@ -558,7 +569,7 @@ public record Request : IRequest<RocketModel>
                 return Builder
                       .WithGenerator<PropertyTrackingGenerator>()
                       .AddSources(
-                    @"
+                           @"
 
 namespace Sample.Core.Operations.Rockets
 {
@@ -569,12 +580,12 @@ namespace Sample.Core.Operations.Rockets
 
     public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }"
-                );
+                       );
             case (RocketModelType.Class, PropertyTracking.SameAssembly):
                 return Builder
                       .WithGenerator<PropertyTrackingGenerator>()
                       .AddSources(
-                    @"
+                           @"
 namespace Sample.Core.Operations.Rockets
 {
     public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
@@ -585,7 +596,7 @@ namespace Sample.Core.Operations.Rockets
     public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }
 "
-                );
+                       );
             case (RocketModelType.Record, PropertyTracking.OtherAssembly):
                 return Builder.AddSources(
                     @"
