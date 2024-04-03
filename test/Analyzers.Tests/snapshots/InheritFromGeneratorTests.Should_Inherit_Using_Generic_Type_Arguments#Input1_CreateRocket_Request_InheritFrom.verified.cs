@@ -3,7 +3,6 @@
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
-using System.Collections.Immutable;
 
 namespace Sample.Core.Operations.Rockets
 {
@@ -13,12 +12,10 @@ namespace Sample.Core.Operations.Rockets
         public partial record Request
         {
             public string SerialNumber { get; set; }
-            public ImmutableArray<string> Items { get; set; }
 
             public Request With(Model value) => this with
             {
-                SerialNumber = value.SerialNumber,
-                Items = value.Items
+                SerialNumber = value.SerialNumber
             };
             public string OtherNumber { get; set; }
 

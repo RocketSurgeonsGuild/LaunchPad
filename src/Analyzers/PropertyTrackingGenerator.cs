@@ -60,7 +60,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
             );
 
         var targetMembers = targetSymbol.GetMembers();
-        targetMembers = targetMembers.AddRange(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol));
+        targetMembers = targetMembers.AddRange(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, new()));
 
         var writeableProperties = targetMembers
                                  .OfType<IPropertySymbol>()

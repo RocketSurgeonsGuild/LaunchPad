@@ -603,10 +603,7 @@ public static partial class GetRocket
     {
         public Guid Id { get; set; }
     }
-    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
-    {
-        public Guid Id { get; set; }
-    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>;
 }",
                     @"
 using TestNamespace;
@@ -637,10 +634,7 @@ public static partial class GetRocket
     {
         public Guid Id { get; set; }
     }
-    public partial record TrackingRequest : IOptionalTracking<PatchRequest>
-    {
-        public Guid Id { get; set; }
-    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>;
 }",
                     @"
 using TestNamespace;
@@ -915,7 +909,7 @@ using System.Security.Claims;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public class Request : IRequest<RocketModel>
+    public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
@@ -953,7 +947,7 @@ public partial class RocketMutation
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public class Request : IRequest<RocketModel>
+    public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
@@ -992,7 +986,7 @@ using System.Threading;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public class Request : IRequest<RocketModel>
+    public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
@@ -1069,7 +1063,7 @@ using System.Threading;
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public class Request : IRequest<RocketModel>
+    public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;
@@ -1106,7 +1100,7 @@ public partial class RocketMutation
 namespace TestNamespace;
 public static partial class Save2Rocket
 {
-    public class Request : IRequest<RocketModel>
+    public record Request : IRequest<RocketModel>
     {
         public Guid Id { get; set; }
         public string? Sn { get; init; } = null!;

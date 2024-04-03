@@ -9,6 +9,7 @@ namespace TestNamespace
         [System.Runtime.CompilerServices.CompilerGenerated]
         public partial record TrackingRequest
         {
+            public Guid Id { get; set; }
             public HotChocolate.Optional<string?> Name { get; set; }
 
             public global::TestNamespace.GetRocket.PatchRequest Create()

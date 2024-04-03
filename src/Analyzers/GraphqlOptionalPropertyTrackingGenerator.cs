@@ -43,6 +43,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             return;
         }
 
+        if (targetSymbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)) is not
+            { TypeArguments: [INamedTypeSymbol propertyTrackingSymbol] })
+        {
+            return;
+        }
+
         var classToInherit =
             ( isRecord
                 ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
@@ -64,37 +70,24 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                              .Where(z => symbol.GetMembers(z.Name).Any())
                              .ToImmutableArray();
 
-        var targetMembers = Enumerable.Empty<IPropertySymbol>();
-        targetMembers = targetMembers.Concat(targetSymbol.GetMembers().OfType<IPropertySymbol>());
-        targetMembers = targetMembers.Concat(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol));
-        var memberNamesSet = targetSymbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var missingProperties = ImmutableArray<IPropertySymbol>.Empty;
+        var memberNamesSet = targetSymbol.MemberNames.Concat(propertyTrackingSymbol.MemberNames).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
         // likely same assembly, we need to get the methods from the request type as well.
+        var excludedProperties = new HashSet<string>();
 
-        if (targetSymbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)) is
-                { TypeArguments: [INamedTypeSymbol propertyTrackingSymbol] }
-         && SymbolEqualityComparer.Default.Equals(propertyTrackingSymbol.ContainingAssembly, targetSymbol.ContainingAssembly))
-        {
-            targetMembers = targetMembers
-                           .Concat(
-                                propertyTrackingSymbol
-                                   .GetMembers()
-                                   .OfType<IPropertySymbol>()
-                                   .Concat(InheritFromGenerator.GetInheritableMemberSymbols(propertyTrackingSymbol))
-                            )
-                           .Where(z => !targetSymbol.GetMembers(z.Name).Any())
-                ;
-            missingProperties = missingProperties.AddRange(
-                targetSymbol
-                   .GetMembers()
-                   .OfType<IPropertySymbol>()
-                   .Where(z => !symbol.GetMembers(z.Name).Any())
-            );
-            existingMembers = existingMembers.AddRange(missingProperties);
-            memberNamesSet = memberNamesSet.Union(propertyTrackingSymbol.MemberNames).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
-        }
+        var targetMembers = Enumerable
+                           .Empty<IPropertySymbol>()
+                           .Concat(targetSymbol.GetMembers().OfType<IPropertySymbol>())
+                           .Concat(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties))
+                           .Concat(propertyTrackingSymbol.GetMembers().OfType<IPropertySymbol>())
+                           .Concat(InheritFromGenerator.GetInheritableMemberSymbols(propertyTrackingSymbol, excludedProperties));
+        var missingProperties = targetSymbol
+                               .GetMembers()
+                               .OfType<IPropertySymbol>()
+                               .Where(z => !symbol.GetMembers(z.Name).Any())
+                               .Where(
+                                    z => z.Type is not INamedTypeSymbol { Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation", }
+                                );
 
         var writeableProperties = targetMembers
                                  .Where(z => !symbol.GetMembers(z.Name).Any())
@@ -114,10 +107,27 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                          .OrderByDescending(z => z.Parameters.Length)
                          .FirstOrDefault();
 
+        missingProperties = missingProperties
+                           .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                           .DistinctBy(z => z.Name)
+                           .ToImmutableArray();
         existingMembers = existingMembers
-                         .Except(writeableProperties)
+                         .Concat(missingProperties)
                          .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                         .DistinctBy(z => z.Name)
                          .ToImmutableArray();
+        writeableProperties = writeableProperties
+                             .Except(
+                                  writeableProperties.Join(
+                                      existingMembers,
+                                      z => z.Name,
+                                      z => z.Name,
+                                      (propertySymbol, symbol1) => propertySymbol,
+                                      StringComparer.OrdinalIgnoreCase
+                                  )
+                              )
+                             .DistinctBy(z => z.Name)
+                             .ToImmutableArray();
         existingMembers = existingMembers
                          .Except(
                               existingMembers
@@ -176,15 +186,31 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 
         foreach (var propertySymbol in missingProperties)
         {
-            var propertyType = propertySymbol.Type;
-            var type = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
+            var propertyType = propertySymbol.Type is INamedTypeSymbol
+            {
+                Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
+            } namedTypeSymbol
+                ? namedTypeSymbol.TypeArguments[0]
+                : propertySymbol.Type;
+            var typeName = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
+            if (!SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
+             && propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, }
+             && typeName is not NullableTypeSyntax)
+            {
+                typeName = NullableType(typeName);
+            }
 
             addNamespacesFromPropertyType(namespaces, propertyType);
-            classToInherit = classToInherit.AddMembers(GenerateProperty(propertySymbol, type));
+            classToInherit = classToInherit.AddMembers(
+                SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
+                    ? GenerateProperty(propertySymbol, typeName)
+                    : GenerateTrackingProperties(propertySymbol, typeName)
+            );
         }
 
         foreach (var propertySymbol in writeableProperties)
         {
+            if (excludedProperties.Contains(propertySymbol.Name)) continue;
             var propertyType = propertySymbol.Type is INamedTypeSymbol
             {
                 Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",

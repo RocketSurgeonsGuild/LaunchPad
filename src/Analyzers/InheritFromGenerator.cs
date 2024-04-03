@@ -62,9 +62,13 @@ public class InheritFromGenerator : IIncrementalGenerator
         );
     }
 
-    private static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol)
+    private static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(AttributeData attribute, INamedTypeSymbol inheritFromSymbol, HashSet<string> excludedProperties)
     {
         var excludeMembers = GetExcludedMembers(attribute);
+        foreach (var excludedProperty in excludeMembers)
+        {
+            excludedProperties.Add(excludedProperty);
+        }
 
         return inheritFromSymbol
               .GetMembers()
@@ -73,7 +77,7 @@ public class InheritFromGenerator : IIncrementalGenerator
               .ToImmutableArray();
     }
 
-    internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol)
+    internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)
     {
         return targetSymbol
               .GetAttributes()
@@ -81,7 +85,7 @@ public class InheritFromGenerator : IIncrementalGenerator
               .Select(
                    attribute => GetInheritingSymbol( attribute) is not { } inheritFromSymbol
                        ? ImmutableArray<IPropertySymbol>.Empty
-                       : GetInheritableMemberSymbols(attribute, inheritFromSymbol)
+                       : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
                )
               .Aggregate(ImmutableArray.CreateBuilder<IPropertySymbol>(), (a, b) =>
                                                                           {
