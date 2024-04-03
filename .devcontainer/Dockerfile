@@ -5,6 +5,6 @@
 
 # To fully customize the contents of this image, use the following Dockerfile instead:
 # https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/codespaces-linux/.devcontainer/Dockerfile
-FROM mcr.microsoft.com/vscode/devcontainers/universal:2-linux@sha256:b4cf1d2d47258dd2f9c70c6514f0a5fecf552d35385cc8606a4e9c8f56228c05
+FROM mcr.microsoft.com/vscode/devcontainers/universal:2-linux@sha256:d65ecf6261be25aa8fb32e0e846c31d86ed239fa3dd75a60ac3e4b1b52962262
 
 RUN curl -fsSL https://dotnet.microsoft.com/download/dotnet-core/scripts/v1/dotnet-install.sh | sudo bash -s -- --channel Current --install-dir /home/codespace/.dotnet/
