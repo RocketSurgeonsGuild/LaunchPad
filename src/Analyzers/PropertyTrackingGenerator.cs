@@ -63,7 +63,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var excludedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var inheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
         var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
-        var targetSymbolMemberNames = targetSymbol.MemberNames.Concat(inheritedMembers.Select(z => z.Name)).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var targetSymbolMemberNames =
+            targetSymbol.MemberNames.Concat(inheritedMembers.Select(z => z.Name)).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
         targetMembers = targetMembers.AddRange(inheritedMembers);
 
@@ -108,38 +109,44 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
          ?? ImmutableHashSet<string>.Empty;
 
-        var createArgumentList = constructor is null
-            ? ArgumentList()
-            : ArgumentList(
-                SeparatedList(
-                    existingMembers
-                       .Where(z => constructorParams.Contains(z.Name))
+        var createParameterList =
+            ParameterList(
+                    SingletonSeparatedList(
+                        Parameter(Identifier("value"))
+                           .WithType(
+                                ParseTypeName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
+                            )
+                    )
+                )
+               .AddParameters(
+                    missingMembers
                        .Select(
-                            z => Argument(
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("value"),
-                                    IdentifierName(symbolMemberNames.TryGetValue(z.Name, out var name) ? name : z.Name)
-                                )
+                            z => Parameter(Identifier(ContextExtensions.Camelize(z.Name)))
+                               .WithType(ParseTypeName(z.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
+                        )
+                       .ToArray()
+                );
+
+        var createArgumentList = ArgumentList(
+            SeparatedList(
+                existingMembers
+                   .Where(z => constructorParams.Contains(z.Name))
+                   .Select(
+                        z => Argument(
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName("value"),
+                                IdentifierName(symbolMemberNames.TryGetValue(z.Name, out var name) ? name : z.Name)
                             )
                         )
-                       .Concat(
-                            missingMembers
-                               .Where(z => constructorParams.Contains(z.Name))
-                               .Select(
-                                    z => Argument(
-                                        PostfixUnaryExpression(
-                                            SyntaxKind.SuppressNullableWarningExpression,
-                                            LiteralExpression(
-                                                SyntaxKind.DefaultLiteralExpression,
-                                                Token(SyntaxKind.DefaultKeyword)
-                                            )
-                                        )
-                                    )
-                                )
-                        )
-                )
-            );
+                    )
+                   .Concat(
+                        missingMembers
+                           .Where(z => constructorParams.Contains(z.Name))
+                           .Select(z => Argument(IdentifierName(ContextExtensions.Camelize(z.Name))))
+                    )
+            )
+        );
 
         var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
                                      .AddExpressions(
@@ -168,13 +175,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                                       AssignmentExpression(
                                                           SyntaxKind.SimpleAssignmentExpression,
                                                           IdentifierName(z.Name),
-                                                          PostfixUnaryExpression(
-                                                              SyntaxKind.SuppressNullableWarningExpression,
-                                                              LiteralExpression(
-                                                                  SyntaxKind.DefaultLiteralExpression,
-                                                                  Token(SyntaxKind.DefaultKeyword)
-                                                              )
-                                                          )
+                                                          IdentifierName(ContextExtensions.Camelize(z.Name))
                                                       )
                                               )
                                              .OfType<ExpressionSyntax>()
@@ -335,16 +336,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                ParseTypeName(symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
                                "Create"
                            )
-                          .WithParameterList(
-                               ParameterList(
-                                   SingletonSeparatedList(
-                                       Parameter(Identifier("value"))
-                                          .WithType(
-                                               ParseTypeName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                                           )
-                                   )
-                               )
-                           )
+                          .WithParameterList(createParameterList)
                           .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword)))
                           .WithExpressionBody(
                                ArrowExpressionClause(

@@ -51,7 +51,7 @@ namespace TestNamespace
                 ResetChanges();
             }
 
-            public static global::TestNamespace.GetRocket.PatchRequest Create(global::TestNamespace.GetRocket.Request value) => new global::TestNamespace.GetRocket.PatchRequest(value.Id, default !)
+            public static global::TestNamespace.GetRocket.PatchRequest Create(global::TestNamespace.GetRocket.Request value, global::System.Security.Claims.ClaimsPrincipal claimsPrincipal) => new global::TestNamespace.GetRocket.PatchRequest(value.Id, claimsPrincipal)
             {
                 Name = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.Name)
             };
