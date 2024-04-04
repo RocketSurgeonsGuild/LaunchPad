@@ -55,8 +55,9 @@ namespace Sample.Core.Operations.Rockets
             ResetChanges();
         }
 
-        public static global::Sample.Core.Operations.Rockets.PatchRocket Create(global::Request value) => new global::Sample.Core.Operations.Rockets.PatchRocket()
+        public static global::Sample.Core.Operations.Rockets.PatchRocket TrackChanges(global::Request value, global::System.Guid id) => new global::Sample.Core.Operations.Rockets.PatchRocket()
         {
+            Id = id,
             PlannedDate = Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant>.Empty(value.PlannedDate),
             Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(value.Type)
         };

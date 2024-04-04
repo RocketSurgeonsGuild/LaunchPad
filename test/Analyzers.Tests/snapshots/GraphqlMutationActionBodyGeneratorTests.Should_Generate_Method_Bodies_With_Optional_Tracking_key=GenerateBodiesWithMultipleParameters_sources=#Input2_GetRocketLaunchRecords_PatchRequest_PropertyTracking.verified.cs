@@ -35,7 +35,7 @@ namespace TestNamespace
                 ResetChanges();
             }
 
-            public static global::TestNamespace.GetRocketLaunchRecords.PatchRequest Create(global::TestNamespace.GetRocketLaunchRecords.Request value) => new global::TestNamespace.GetRocketLaunchRecords.PatchRequest()
+            public static global::TestNamespace.GetRocketLaunchRecords.PatchRequest TrackChanges(global::TestNamespace.GetRocketLaunchRecords.Request value) => new global::TestNamespace.GetRocketLaunchRecords.PatchRequest()
             {
                 Id = value.Id
             };

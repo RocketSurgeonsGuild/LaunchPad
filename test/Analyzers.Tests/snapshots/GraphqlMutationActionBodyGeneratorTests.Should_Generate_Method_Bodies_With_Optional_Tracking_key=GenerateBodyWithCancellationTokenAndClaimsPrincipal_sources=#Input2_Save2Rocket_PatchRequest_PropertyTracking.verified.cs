@@ -76,7 +76,7 @@ namespace TestNamespace
                 ResetChanges();
             }
 
-            public static global::TestNamespace.Save2Rocket.PatchRequest Create(global::TestNamespace.Save2Rocket.Request value) => new global::TestNamespace.Save2Rocket.PatchRequest()
+            public static global::TestNamespace.Save2Rocket.PatchRequest TrackChanges(global::TestNamespace.Save2Rocket.Request value) => new global::TestNamespace.Save2Rocket.PatchRequest()
             {
                 Id = value.Id,
                 Sn = Rocket.Surgery.LaunchPad.Foundation.Assigned<string?>.Empty(value.Sn),

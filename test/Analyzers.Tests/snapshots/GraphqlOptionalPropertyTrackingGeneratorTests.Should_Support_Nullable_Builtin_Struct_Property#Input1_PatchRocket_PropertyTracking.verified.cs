@@ -60,7 +60,7 @@ namespace Sample.Core.Operations.Rockets
             ResetChanges();
         }
 
-        public static global::Sample.Core.Operations.Rockets.PatchRocket Create(global::Sample.Core.Operations.Rockets.Request value, global::NodaTime.Instant plannedDate) => new global::Sample.Core.Operations.Rockets.PatchRocket()
+        public static global::Sample.Core.Operations.Rockets.PatchRocket TrackChanges(global::Sample.Core.Operations.Rockets.Request value, global::NodaTime.Instant plannedDate) => new global::Sample.Core.Operations.Rockets.PatchRocket()
         {
             Id = value.Id,
             PlannedDate = plannedDate,

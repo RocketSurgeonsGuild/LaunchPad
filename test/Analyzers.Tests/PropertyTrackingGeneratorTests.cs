@@ -381,6 +381,35 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
                           .GenerateAsync();
         await Verify(result);
     }
+    [Fact]
+    public async Task Should_Generate_Class_Primary_Constructor()
+    {
+        var result = await Builder
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public string Something { get; set; } = null!;
+}
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>
+{
+    public Guid Id { get; } = Id;
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
 
     [Theory]
     [InlineData("SerialNumber", "12345")]
@@ -593,9 +622,9 @@ public partial class Request : IRequest<RocketModel>
     public int Type { get; set; }
 }
 
-public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+public partial class PatchRequest(int Id) : IPropertyTracking<Request>, IRequest<RocketModel>
 {
-    public Guid Id { get; init; }
+    public int Id { get; } = Id;
 }
 
 partial class Validator : AbstractValidator<PatchRequest>

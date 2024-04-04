@@ -64,7 +64,9 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var inheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
         var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
         var targetSymbolMemberNames =
-            targetSymbol.MemberNames.Concat(inheritedMembers.Select(z => z.Name)).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+            targetSymbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var targetSymbolInheritedMemberNames =
+            targetSymbolMemberNames.Concat(inheritedMembers.Select(z => z.Name)).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
         targetMembers = targetMembers.AddRange(inheritedMembers);
 
@@ -91,7 +93,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var constructor = symbol
                          .Constructors
                          .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
-                         .Where(z => !z.IsImplicitlyDeclared)
+                         .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, symbol)))
                          .OrderByDescending(z => z.Parameters.Length)
                          .FirstOrDefault();
 
@@ -109,6 +111,35 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
          ?? ImmutableHashSet<string>.Empty;
 
+        var constructorArguments = constructor
+                                ?
+                               .Parameters
+                                  .Select(
+                                       param => Argument(
+                                           targetSymbolInheritedMemberNames.TryGetValue(param.Name, out var name)
+                                               ? MemberAccessExpression(
+                                                   SyntaxKind.SimpleMemberAccessExpression,
+                                                   IdentifierName("value"),
+                                                   IdentifierName(name)
+                                               )
+                                               : IdentifierName(ContextExtensions.Camelize(param.Name))
+                                       )
+                                   )
+                                  .ToImmutableArray()
+         ?? ImmutableArray<ArgumentSyntax>.Empty;
+
+        var constructorParameters = constructor
+                                 ?
+                                .Parameters
+                                   .Where(param => !missingMembers.Any(z => z.Name.Equals(param.Name, StringComparison.OrdinalIgnoreCase)))
+                                   .Where(param => !targetSymbolInheritedMemberNames.Contains(param.Name))
+                                   .Select(
+                                        param => Parameter(Identifier(ContextExtensions.Camelize(param.Name)))
+                                           .WithType(ParseTypeName(param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
+                                    )
+                                   .ToImmutableArray()
+         ?? ImmutableArray<ParameterSyntax>.Empty;
+
         var createParameterList =
             ParameterList(
                     SingletonSeparatedList(
@@ -118,6 +149,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             )
                     )
                 )
+               .AddParameters(constructorParameters.ToArray())
                .AddParameters(
                     missingMembers
                        .Select(
@@ -126,27 +158,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                         )
                        .ToArray()
                 );
-
-        var createArgumentList = ArgumentList(
-            SeparatedList(
-                existingMembers
-                   .Where(z => constructorParams.Contains(z.Name))
-                   .Select(
-                        z => Argument(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName("value"),
-                                IdentifierName(symbolMemberNames.TryGetValue(z.Name, out var name) ? name : z.Name)
-                            )
-                        )
-                    )
-                   .Concat(
-                        missingMembers
-                           .Where(z => constructorParams.Contains(z.Name))
-                           .Select(z => Argument(IdentifierName(ContextExtensions.Camelize(z.Name))))
-                    )
-            )
-        );
+        var createArgumentList = ArgumentList(SeparatedList(constructorArguments));
 
         var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
                                      .AddExpressions(
@@ -334,7 +346,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
 
         var createMethod = MethodDeclaration(
                                ParseTypeName(symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
-                               "Create"
+                               "TrackChanges"
                            )
                           .WithParameterList(createParameterList)
                           .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword)))
