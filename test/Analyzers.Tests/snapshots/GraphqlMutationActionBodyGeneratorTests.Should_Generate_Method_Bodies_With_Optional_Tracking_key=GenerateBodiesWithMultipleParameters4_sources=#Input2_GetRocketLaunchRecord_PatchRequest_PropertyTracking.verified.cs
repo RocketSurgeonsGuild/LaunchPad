@@ -50,7 +50,7 @@ namespace TestNamespace
                 ResetChanges();
             }
 
-            public static global::TestNamespace.GetRocketLaunchRecord.PatchRequest Create(global::TestNamespace.GetRocketLaunchRecord.Request value) => new global::TestNamespace.GetRocketLaunchRecord.PatchRequest()
+            public static global::TestNamespace.GetRocketLaunchRecord.PatchRequest TrackChanges(global::TestNamespace.GetRocketLaunchRecord.Request value) => new global::TestNamespace.GetRocketLaunchRecord.PatchRequest()
             {
                 Id = value.Id,
                 LaunchRecordId = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.LaunchRecordId)

@@ -62,7 +62,7 @@ namespace Sample.Core.Operations.Rockets
                 ResetChanges();
             }
 
-            public static global::Sample.Core.Operations.Rockets.PublicClass.PatchRocket Create(global::Sample.Core.Operations.Rockets.Request value) => new global::Sample.Core.Operations.Rockets.PublicClass.PatchRocket()
+            public static global::Sample.Core.Operations.Rockets.PublicClass.PatchRocket TrackChanges(global::Sample.Core.Operations.Rockets.Request value) => new global::Sample.Core.Operations.Rockets.PublicClass.PatchRocket()
             {
                 Id = value.Id,
                 SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.SerialNumber),

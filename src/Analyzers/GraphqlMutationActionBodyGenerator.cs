@@ -21,12 +21,12 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         MethodDeclarationSyntax syntax,
         IMethodSymbol symbol,
         IParameterSymbol parameter,
+        ITypeSymbol requestType,
         ExpressionSyntax requestExpression
     )
     {
         var otherParams = symbol.Parameters.Remove(parameter);
-        var parameterType = (INamedTypeSymbol)parameter.Type;
-        var isUnit = parameterType.AllInterfaces.Any(z => z.MetadataName == "IRequest");
+        var isUnit = requestType.AllInterfaces.Any(z => z.MetadataName == "IRequest");
         var returnsMediatorUnit = symbol.ReturnType is INamedTypeSymbol { MetadataName: "Task`1", TypeArguments: [{ MetadataName: "Unit", },], };
         isUnit = returnsMediatorUnit || isUnit;
         var isStream = symbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
@@ -61,13 +61,13 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     parameter.Locations.First(),
                     parameter.Locations.Skip(1),
                     mediator,
-                    parameterType.Name
+                    requestType.Name
                 )
             );
         }
 
         var claimsPrincipalProperty =
-            parameterType
+            requestType
                .GetMembers()
                .FirstOrDefault(
                     param => param switch
@@ -88,7 +88,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                         parameter.Locations.First(),
                         parameter.Locations.Skip(1),
                         claimsPrincipal,
-                        parameterType.Name
+                        requestType.Name
                     )
                 );
             }
@@ -97,6 +97,19 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         if (( hasClaimsPrincipal && claimsPrincipalParameter is null ) || mediatorParameter is null)
         {
             return null;
+        }
+
+        if (!requestType.IsRecord)
+        {
+            block = block.AddStatements(
+                LocalDeclarationStatement(
+                    VariableDeclaration(
+                            IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList()))
+                        )
+                       .WithVariables(SingletonSeparatedList(VariableDeclarator("_" + parameter.Name).WithInitializer(EqualsValueClause(requestExpression))))
+                )
+            );
+            requestExpression = IdentifierName("_" + parameter.Name);
         }
 
         var sendRequestExpression = isStream
@@ -117,7 +130,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             );
         }
 
-        if (parameterType.IsRecord)
+        if (requestType.IsRecord)
         {
             var expressions = new List<ExpressionSyntax>();
             if (hasClaimsPrincipal)
@@ -136,7 +149,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             if (expressions.Any())
             {
                 var withExpression = WithExpression(
-                    IdentifierName(parameter.Name),
+                    requestExpression,
                     InitializerExpression(SyntaxKind.WithInitializerExpression, SeparatedList(expressions))
                 );
                 sendRequestExpression = isStream
@@ -156,7 +169,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                             claimsPrincipalProperty.Locations.First(),
                             claimsPrincipalProperty.Locations.Skip(1),
                             claimsPrincipalProperty.Name,
-                            parameterType.Name
+                            requestType.Name
                         )
                     );
                     return null;
@@ -168,7 +181,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                             SyntaxKind.SimpleAssignmentExpression,
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName(parameter.Name),
+                                IdentifierName("_" + parameter.Name),
                                 IdentifierName(claimsPrincipalProperty!.Name)
                             ),
                             IdentifierName(claimsPrincipalParameter!.Name)
@@ -362,6 +375,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                 method,
                 methodSymbol,
                 parameter,
+                parameter.Type,
                 IdentifierName(parameter.Name)
             );
             if (methodBody is null) continue;
@@ -380,6 +394,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                 method,
                 methodSymbol,
                 parameter,
+                requestType,
                 InvocationExpression(
                     MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,

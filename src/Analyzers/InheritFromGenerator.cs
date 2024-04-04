@@ -96,9 +96,8 @@ public class InheritFromGenerator : IIncrementalGenerator
         }
 
         return inheritFromSymbol
-              .GetMembers()
-              .Where(z => z is IPropertySymbol property && !excludeMembers.Contains(property.Name))
-              .OfType<IPropertySymbol>()
+              .FilterProperties()
+              .Where(z => !excludeMembers.Contains(z.Name))
               .ToImmutableArray();
     }
 
