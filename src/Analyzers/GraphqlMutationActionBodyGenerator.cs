@@ -159,7 +159,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         }
         else
         {
-
             if (hasClaimsPrincipal)
             {
                 if (claimsPrincipalProperty is IPropertySymbol { SetMethod.IsInitOnly: true, })

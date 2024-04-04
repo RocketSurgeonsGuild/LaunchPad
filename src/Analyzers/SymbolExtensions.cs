@@ -44,10 +44,9 @@ internal static class SymbolExtensions
     public static IEnumerable<IPropertySymbol> FilterProperties(this ITypeSymbol typeSymbol)
     {
         var members = typeSymbol
-           .GetMembers()
-           .OfType<IPropertySymbol>()
-
-           .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
+                     .GetMembers()
+                     .OfType<IPropertySymbol>()
+                     .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
 
         return members;
     }

@@ -15,6 +15,7 @@ internal static class ContextExtensions
             sourceText
         );
     }
+
     /// <summary>
     ///     Same as Pascalize except that the first character is lower case
     /// </summary>

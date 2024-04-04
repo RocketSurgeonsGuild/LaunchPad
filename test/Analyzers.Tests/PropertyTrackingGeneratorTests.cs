@@ -381,6 +381,7 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
                           .GenerateAsync();
         await Verify(result);
     }
+
     [Fact]
     public async Task Should_Generate_Class_Primary_Constructor()
     {

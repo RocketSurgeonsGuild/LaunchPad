@@ -68,11 +68,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
         var targetSymbolInheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
         var propertyTrackingSymbolInheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(propertyTrackingSymbol, excludedProperties);
-        var memberNamesSet = targetSymbol.MemberNames
-                                         .Concat(targetSymbolInheritedMembers.Select(z => z.Name))
-                                         .Concat(propertyTrackingSymbol.MemberNames)
-                                         .Concat(propertyTrackingSymbolInheritedMembers.Select(z => z.Name))
-                                         .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var memberNamesSet = targetSymbol
+                            .MemberNames
+                            .Concat(targetSymbolInheritedMembers.Select(z => z.Name))
+                            .Concat(propertyTrackingSymbol.MemberNames)
+                            .Concat(propertyTrackingSymbolInheritedMembers.Select(z => z.Name))
+                            .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
         var existingMembers = targetSymbol
                              .FilterProperties()
