@@ -59,20 +59,19 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
 
-        var targetMembers = targetSymbol.GetMembers();
-        targetMembers = targetMembers.AddRange(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, new()));
+        var targetMembers = targetSymbol.FilterProperties().ToImmutableArray();
+        var excludedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var inheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
+        var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var targetSymbolMemberNames = targetSymbol.MemberNames.Concat(inheritedMembers.Select(z => z.Name)).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        targetMembers = targetMembers.AddRange(inheritedMembers);
 
         var writeableProperties = targetMembers
-                                 .OfType<IPropertySymbol>()
                                   // only works for `set`able properties not init only
-                                 .Where(z => !symbol.GetMembers(z.Name).Any())
-                                 .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                                 .Where(z => !symbolMemberNames.Contains(z.Name))
+                                 .Where(z => targetSymbol.IsRecord || z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, })
                                  .ToArray();
-        if (!targetSymbol.IsRecord)
-        {
-            // not able to use with operator, so ignore any init only properties.
-            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, }).ToArray();
-        }
 
         var changesRecord = RecordDeclaration(Token(SyntaxKind.RecordKeyword), "Changes")
                            .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
@@ -88,7 +87,6 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var applyChangesBody = Block();
         var resetChangesBody = Block();
-        var memberNamesSet = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
         var constructor = symbol
                          .Constructors
                          .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
@@ -97,53 +95,91 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                          .FirstOrDefault();
 
         var existingMembers = targetSymbol
-                             .GetMembers()
-                             .OfType<IPropertySymbol>()
-                             .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
-                             .Where(z => symbol.GetMembers(z.Name).Any())
+                             .FilterProperties()
+                             .Where(z => symbolMemberNames.Contains(z.Name))
                              .Except(writeableProperties)
                              .ToArray();
+        var missingMembers = symbol
+                            .FilterProperties()
+                            .Where(z => !targetSymbolMemberNames.Contains(z.Name))
+                            .Except(writeableProperties)
+                            .ToArray();
 
         var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
          ?? ImmutableHashSet<string>.Empty;
-        var nonConstructorMembers = existingMembers
-                                   .Where(z => !constructorParams.Contains(z.Name))
-                                   .ToArray();
 
         var createArgumentList = constructor is null
             ? ArgumentList()
             : ArgumentList(
                 SeparatedList(
-                    constructor.Parameters
+                    existingMembers
+                       .Where(z => constructorParams.Contains(z.Name))
+                       .Select(
+                            z => Argument(
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    IdentifierName("value"),
+                                    IdentifierName(symbolMemberNames.TryGetValue(z.Name, out var name) ? name : z.Name)
+                                )
+                            )
+                        )
+                       .Concat(
+                            missingMembers
+                               .Where(z => constructorParams.Contains(z.Name))
                                .Select(
                                     z => Argument(
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            IdentifierName("value"),
-                                            IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name)
+                                        PostfixUnaryExpression(
+                                            SyntaxKind.SuppressNullableWarningExpression,
+                                            LiteralExpression(
+                                                SyntaxKind.DefaultLiteralExpression,
+                                                Token(SyntaxKind.DefaultKeyword)
+                                            )
                                         )
                                     )
                                 )
+                        )
                 )
             );
 
         var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
-           .AddExpressions(
-                nonConstructorMembers
-                   .Select(
-                        z =>
-                            AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                IdentifierName(z.Name),
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("value"),
-                                    IdentifierName(z.Name)
-                                )
-                            )
-                    )
-                   .ToArray()
-            );
+                                     .AddExpressions(
+                                          existingMembers
+                                             .Where(z => !constructorParams.Contains(z.Name))
+                                             .Select(
+                                                  z =>
+                                                      AssignmentExpression(
+                                                          SyntaxKind.SimpleAssignmentExpression,
+                                                          IdentifierName(z.Name),
+                                                          MemberAccessExpression(
+                                                              SyntaxKind.SimpleMemberAccessExpression,
+                                                              IdentifierName("value"),
+                                                              IdentifierName(z.Name)
+                                                          )
+                                                      )
+                                              )
+                                             .OfType<ExpressionSyntax>()
+                                             .ToArray()
+                                      )
+                                     .AddExpressions(
+                                          missingMembers
+                                             .Where(z => !constructorParams.Contains(z.Name))
+                                             .Select(
+                                                  z =>
+                                                      AssignmentExpression(
+                                                          SyntaxKind.SimpleAssignmentExpression,
+                                                          IdentifierName(z.Name),
+                                                          PostfixUnaryExpression(
+                                                              SyntaxKind.SuppressNullableWarningExpression,
+                                                              LiteralExpression(
+                                                                  SyntaxKind.DefaultLiteralExpression,
+                                                                  Token(SyntaxKind.DefaultKeyword)
+                                                              )
+                                                          )
+                                                      )
+                                              )
+                                             .OfType<ExpressionSyntax>()
+                                             .ToArray()
+                                      );
 
         var namespaces = new HashSet<string>();
 

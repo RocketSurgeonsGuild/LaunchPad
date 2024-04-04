@@ -63,6 +63,7 @@ namespace Sample.Core.Operations.Rockets
         public static global::Sample.Core.Operations.Rockets.PatchRocket Create(global::Sample.Core.Operations.Rockets.Request value) => new global::Sample.Core.Operations.Rockets.PatchRocket()
         {
             Id = value.Id,
+            PlannedDate = default !,
             SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.SerialNumber),
             Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int?>.Empty(value.Type)
         };

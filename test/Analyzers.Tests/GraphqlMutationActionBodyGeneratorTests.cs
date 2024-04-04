@@ -618,6 +618,176 @@ public partial class RocketMutation
                 }
             );
             Add(
+                "GenerateBodyForRequestWithClaimsPrincipal",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Security.Claims;
+namespace TestNamespace;
+public static partial class GetRocket
+{
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public required Guid Id { get; set; }
+        public required ClaimsPrincipal ClaimsPrincipal { get; init; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>;
+}",
+                    @"
+using System.Security.Claims;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request, ClaimsPrincipal claimsPrincipal);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyForRequestWithClaimsPrincipal2",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Security.Claims;
+namespace TestNamespace;
+public static partial class GetRocket
+{
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+    }
+    public partial record PatchRequest(Guid Id, ClaimsPrincipal ClaimsPrincipal) : IPropertyTracking<Request>, IRequest<RocketModel>;
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>;
+}",
+                    @"
+using System.Security.Claims;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request, ClaimsPrincipal claimsPrincipal);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyForRequestWithCancellationToken",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Threading;
+namespace TestNamespace;
+public static partial class GetRocket
+{
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public required Guid Id { get; set; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>;
+}",
+                    @"
+using System.Threading;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request, CancellationToken cancellationToken);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyForRequestWithClaimsPrincipalAndCancellationToken",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Threading;
+using System.Security.Claims;
+namespace TestNamespace;
+public static partial class GetRocket
+{
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+    }
+    public partial record PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+    {
+        public required Guid Id { get; set; }
+        public required ClaimsPrincipal ClaimsPrincipal { get; init; }
+    }
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>;
+}",
+                    @"
+using System.Threading;
+using System.Security.Claims;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request, ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken);
+}",
+                }
+            );
+            Add(
+                "GenerateBodyForRequestWithClaimsPrincipalConstructor",
+                new[]
+                {
+                    defaultString,
+                    @"
+using System.Threading;
+using System.Security.Claims;
+namespace TestNamespace;
+public static partial class GetRocket
+{
+    public record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+    }
+    public partial record PatchRequest(Guid Id, ClaimsPrincipal ClaimsPrincipal) : IPropertyTracking<Request>, IRequest<RocketModel>;
+    public partial record TrackingRequest : IOptionalTracking<PatchRequest>;
+}",
+                    @"
+using System.Threading;
+using System.Security.Claims;
+using TestNamespace;
+
+namespace MyNamespace.Controllers;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public partial class RocketMutation
+{
+    public partial Task<RocketModel> GetRocket([Service] IMediator mediator, GetRocket.TrackingRequest request, ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken);
+}",
+                }
+            );
+            Add(
                 "GenerateBodyForTaskRequest",
                 new[]
                 {
