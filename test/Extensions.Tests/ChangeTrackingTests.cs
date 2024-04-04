@@ -49,7 +49,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
             Name = "MyName",
             Description = "MyDescription",
         };
-        var tracking = ClassWithTracking.Create(instance);
+        var tracking = ClassWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
         tracking.Name.HasBeenSet().Should().BeFalse();
         tracking.Description.HasBeenSet().Should().BeTrue();
@@ -99,7 +99,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         {
             Description = "MyDescription",
         };
-        var tracking = RecordWithTracking.Create(instance);
+        var tracking = RecordWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
         tracking.Name.HasBeenSet().Should().BeFalse();
         tracking.Description.HasBeenSet().Should().BeTrue();
