@@ -126,13 +126,7 @@ public class InheritFromGenerator : IIncrementalGenerator
            .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-           .WithAttributeLists(
-                SingletonList(
-                    AttributeList(
-                        SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
-                    )
-                )
-            );
+           .WithAttributeLists(SingletonList(AttributeList(Helpers.CompilerGeneratedAttributes.Attributes)));
 
         var namespaces = declaration.SyntaxTree.GetCompilationUnitRoot().Usings;
 
@@ -605,13 +599,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                                 .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
                                 .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
                                 .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-                                .WithAttributeLists(
-                                     SingletonList(
-                                         AttributeList(
-                                             SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
-                                         )
-                                     )
-                                 );
+                                .WithAttributeLists(SingletonList(AttributeList(Helpers.CompilerGeneratedAttributes.Attributes)));
             var namespaces = declaration.SyntaxTree.GetCompilationUnitRoot().Usings;
 
             foreach (var attribute in attributes)

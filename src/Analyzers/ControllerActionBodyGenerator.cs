@@ -441,7 +441,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                    .Select(z => z.Name)
              ?? Enumerable.Empty<string>()
             );
-            return parameterNames.Select(ContextExtensions.Camelize).Distinct().ToImmutableArray();
+            return parameterNames.Select(Helpers.Camelize).Distinct().ToImmutableArray();
         }
 
         static ExpressionSyntax getRouteValues(
@@ -797,6 +797,7 @@ using System;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
     sealed class CreatedAttribute : Attribute
@@ -805,6 +806,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore
         public string MethodName { get; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [System.Runtime.CompilerServices.CompilerGenerated]
     [AttributeUsage(AttributeTargets.Method)]
     sealed class AcceptedAttribute : Attribute

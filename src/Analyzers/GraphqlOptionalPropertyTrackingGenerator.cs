@@ -56,13 +56,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
            .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-           .WithAttributeLists(
-                SingletonList(
-                    AttributeList(
-                        SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
-                    )
-                )
-            );
+           .WithAttributeLists(SingletonList(AttributeList(Helpers.CompilerGeneratedAttributes.Attributes)));
 
         var excludedProperties = new HashSet<string>();
         var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
