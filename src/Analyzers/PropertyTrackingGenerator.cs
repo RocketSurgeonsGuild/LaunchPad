@@ -59,20 +59,22 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
 
-        var targetMembers = targetSymbol.GetMembers();
-        targetMembers = targetMembers.AddRange(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, new()));
+        var targetMembers = targetSymbol.FilterProperties().ToImmutableArray();
+        var excludedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var inheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
+        var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var targetSymbolMemberNames =
+            targetSymbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var targetSymbolInheritedMemberNames =
+            targetSymbolMemberNames.Concat(inheritedMembers.Select(z => z.Name)).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        targetMembers = targetMembers.AddRange(inheritedMembers);
 
         var writeableProperties = targetMembers
-                                 .OfType<IPropertySymbol>()
                                   // only works for `set`able properties not init only
-                                 .Where(z => !symbol.GetMembers(z.Name).Any())
-                                 .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
+                                 .Where(z => !symbolMemberNames.Contains(z.Name))
+                                 .Where(z => targetSymbol.IsRecord || z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, })
                                  .ToArray();
-        if (!targetSymbol.IsRecord)
-        {
-            // not able to use with operator, so ignore any init only properties.
-            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, }).ToArray();
-        }
 
         var changesRecord = RecordDeclaration(Token(SyntaxKind.RecordKeyword), "Changes")
                            .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
@@ -88,62 +90,109 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var applyChangesBody = Block();
         var resetChangesBody = Block();
-        var memberNamesSet = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
         var constructor = symbol
                          .Constructors
                          .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
-                         .Where(z => !z.IsImplicitlyDeclared)
+                         .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, symbol)))
                          .OrderByDescending(z => z.Parameters.Length)
                          .FirstOrDefault();
 
         var existingMembers = targetSymbol
-                             .GetMembers()
-                             .OfType<IPropertySymbol>()
-                             .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
-                             .Where(z => symbol.GetMembers(z.Name).Any())
+                             .FilterProperties()
+                             .Where(z => symbolMemberNames.Contains(z.Name))
                              .Except(writeableProperties)
                              .ToArray();
+        var missingMembers = symbol
+                            .FilterProperties()
+                            .Where(z => !targetSymbolMemberNames.Contains(z.Name))
+                            .Except(writeableProperties)
+                            .ToArray();
 
         var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
          ?? ImmutableHashSet<string>.Empty;
-        var nonConstructorMembers = existingMembers
-                                   .Where(z => !constructorParams.Contains(z.Name))
-                                   .ToArray();
 
-        var createArgumentList = constructor is null
-            ? ArgumentList()
-            : ArgumentList(
-                SeparatedList(
-                    constructor.Parameters
-                               .Select(
-                                    z => Argument(
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            IdentifierName("value"),
-                                            IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name)
-                                        )
+        var constructorArguments = constructor
+                                ?
+                               .Parameters
+                                  .Select(
+                                       param => Argument(
+                                           targetSymbolInheritedMemberNames.TryGetValue(param.Name, out var name)
+                                               ? MemberAccessExpression(
+                                                   SyntaxKind.SimpleMemberAccessExpression,
+                                                   IdentifierName("value"),
+                                                   IdentifierName(name)
+                                               )
+                                               : IdentifierName(ContextExtensions.Camelize(param.Name))
+                                       )
+                                   )
+                                  .ToImmutableArray()
+         ?? ImmutableArray<ArgumentSyntax>.Empty;
+
+        var constructorParameters = constructor
+                                 ?
+                                .Parameters
+                                   .Where(param => !missingMembers.Any(z => z.Name.Equals(param.Name, StringComparison.OrdinalIgnoreCase)))
+                                   .Where(param => !targetSymbolInheritedMemberNames.Contains(param.Name))
+                                   .Select(
+                                        param => Parameter(Identifier(ContextExtensions.Camelize(param.Name)))
+                                           .WithType(ParseTypeName(param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
                                     )
-                                )
-                )
-            );
+                                   .ToImmutableArray()
+         ?? ImmutableArray<ParameterSyntax>.Empty;
 
-        var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
-           .AddExpressions(
-                nonConstructorMembers
-                   .Select(
-                        z =>
-                            AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                IdentifierName(z.Name),
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("value"),
-                                    IdentifierName(z.Name)
-                                )
+        var createParameterList =
+            ParameterList(
+                    SingletonSeparatedList(
+                        Parameter(Identifier("value"))
+                           .WithType(
+                                ParseTypeName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
                             )
                     )
-                   .ToArray()
-            );
+                )
+               .AddParameters(constructorParameters.ToArray())
+               .AddParameters(
+                    missingMembers
+                       .Select(
+                            z => Parameter(Identifier(ContextExtensions.Camelize(z.Name)))
+                               .WithType(ParseTypeName(z.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
+                        )
+                       .ToArray()
+                );
+        var createArgumentList = ArgumentList(SeparatedList(constructorArguments));
+
+        var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
+                                     .AddExpressions(
+                                          existingMembers
+                                             .Where(z => !constructorParams.Contains(z.Name))
+                                             .Select(
+                                                  z =>
+                                                      AssignmentExpression(
+                                                          SyntaxKind.SimpleAssignmentExpression,
+                                                          IdentifierName(z.Name),
+                                                          MemberAccessExpression(
+                                                              SyntaxKind.SimpleMemberAccessExpression,
+                                                              IdentifierName("value"),
+                                                              IdentifierName(z.Name)
+                                                          )
+                                                      )
+                                              )
+                                             .OfType<ExpressionSyntax>()
+                                             .ToArray()
+                                      )
+                                     .AddExpressions(
+                                          missingMembers
+                                             .Where(z => !constructorParams.Contains(z.Name))
+                                             .Select(
+                                                  z =>
+                                                      AssignmentExpression(
+                                                          SyntaxKind.SimpleAssignmentExpression,
+                                                          IdentifierName(z.Name),
+                                                          IdentifierName(ContextExtensions.Camelize(z.Name))
+                                                      )
+                                              )
+                                             .OfType<ExpressionSyntax>()
+                                             .ToArray()
+                                      );
 
         var namespaces = new HashSet<string>();
 
@@ -297,18 +346,9 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
 
         var createMethod = MethodDeclaration(
                                ParseTypeName(symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
-                               "Create"
+                               "TrackChanges"
                            )
-                          .WithParameterList(
-                               ParameterList(
-                                   SingletonSeparatedList(
-                                       Parameter(Identifier("value"))
-                                          .WithType(
-                                               ParseTypeName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                                           )
-                                   )
-                               )
-                           )
+                          .WithParameterList(createParameterList)
                           .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword)))
                           .WithExpressionBody(
                                ArrowExpressionClause(

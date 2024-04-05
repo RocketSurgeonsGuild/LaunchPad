@@ -71,8 +71,9 @@ public partial record PatchRocket
         ResetChanges();
     }
 
-    public static global::PatchRocket Create(global::Request value) => new global::PatchRocket()
+    public static global::PatchRocket TrackChanges(global::Request value, global::System.Guid id) => new global::PatchRocket()
     {
+        Id = id,
         PlannedDate = Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant>.Empty(value.PlannedDate),
         SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.SerialNumber),
         Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(value.Type)

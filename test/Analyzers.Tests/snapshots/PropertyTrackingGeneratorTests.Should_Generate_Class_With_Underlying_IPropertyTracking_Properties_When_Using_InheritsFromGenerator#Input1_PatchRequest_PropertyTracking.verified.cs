@@ -52,8 +52,9 @@ public partial class PatchRequest
         ResetChanges();
     }
 
-    public static global::PatchRequest Create(global::Request value) => new global::PatchRequest()
+    public static global::PatchRequest TrackChanges(global::Request value, global::System.Guid id) => new global::PatchRequest()
     {
+        Id = id,
         Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(value.Type),
         SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.SerialNumber)
     };

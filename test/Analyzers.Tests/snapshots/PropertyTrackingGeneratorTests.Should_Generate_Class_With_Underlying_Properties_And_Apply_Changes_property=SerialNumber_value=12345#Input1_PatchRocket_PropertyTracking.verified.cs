@@ -52,7 +52,7 @@ public partial class PatchRocket
         ResetChanges();
     }
 
-    public static global::PatchRocket Create(global::Request value) => new global::PatchRocket()
+    public static global::PatchRocket TrackChanges(global::Request value) => new global::PatchRocket()
     {
         Id = value.Id,
         SerialNumber = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(value.SerialNumber),

@@ -64,41 +64,43 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 )
             );
 
-        var existingMembers = targetSymbol
-                             .GetMembers()
-                             .OfType<IPropertySymbol>()
-                             .Where(z => symbol.GetMembers(z.Name).Any())
-                             .ToImmutableArray();
-
-        var memberNamesSet = targetSymbol.MemberNames.Concat(propertyTrackingSymbol.MemberNames).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
-
-        // likely same assembly, we need to get the methods from the request type as well.
         var excludedProperties = new HashSet<string>();
+        var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var targetSymbolInheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
+        var propertyTrackingSymbolInheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(propertyTrackingSymbol, excludedProperties);
+        var memberNamesSet = targetSymbol
+                            .MemberNames
+                            .Concat(targetSymbolInheritedMembers.Select(z => z.Name))
+                            .Concat(propertyTrackingSymbol.MemberNames)
+                            .Concat(propertyTrackingSymbolInheritedMembers.Select(z => z.Name))
+                            .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var existingMembers = targetSymbol
+                             .FilterProperties()
+                             .Where(z => symbolMemberNames.Contains(z.Name))
+                             .ToImmutableArray();
 
         var targetMembers = Enumerable
                            .Empty<IPropertySymbol>()
-                           .Concat(targetSymbol.GetMembers().OfType<IPropertySymbol>())
-                           .Concat(InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties))
-                           .Concat(propertyTrackingSymbol.GetMembers().OfType<IPropertySymbol>())
-                           .Concat(InheritFromGenerator.GetInheritableMemberSymbols(propertyTrackingSymbol, excludedProperties));
+                           .Concat(targetSymbol.FilterProperties())
+                           .Concat(targetSymbolInheritedMembers)
+                           .Concat(propertyTrackingSymbol.FilterProperties())
+                           .Concat(propertyTrackingSymbolInheritedMembers);
         var missingProperties = targetSymbol
-                               .GetMembers()
-                               .OfType<IPropertySymbol>()
-                               .Where(z => !symbol.GetMembers(z.Name).Any())
+                               .FilterProperties()
+                               .Where(z => !symbolMemberNames.Contains(z.Name))
                                .Where(
-                                    z => z.Type is not INamedTypeSymbol { Name: "Assigned", ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation", }
+                                    z => z.Type is not INamedTypeSymbol
+                                    {
+                                        Name: "Assigned",
+                                        ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
+                                    }
                                 );
 
         var writeableProperties = targetMembers
-                                 .Where(z => !symbol.GetMembers(z.Name).Any())
-                                 .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
-        if (!targetSymbol.IsRecord)
-        {
-            // not able to use with operator, so ignore any init only properties.
-            writeableProperties = writeableProperties.Where(z => z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, });
-        }
-
-        writeableProperties = writeableProperties.ToImmutableArray();
+                                 .Where(z => !symbolMemberNames.Contains(z.Name))
+                                 .Where(z => targetSymbol.IsRecord || z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, })
+                                 .ToImmutableArray();
 
         var constructor = targetSymbol
                          .Constructors
@@ -108,12 +110,10 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                          .FirstOrDefault();
 
         missingProperties = missingProperties
-                           .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
                            .DistinctBy(z => z.Name)
                            .ToImmutableArray();
         existingMembers = existingMembers
                          .Concat(missingProperties)
-                         .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, })
                          .DistinctBy(z => z.Name)
                          .ToImmutableArray();
         writeableProperties = writeableProperties
@@ -140,6 +140,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                   )
                           )
                          .ToImmutableArray();
+
         var createArgumentList = constructor is null
             ? ArgumentList()
             : ArgumentList(
@@ -165,12 +166,11 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                                     SeparatedList<ExpressionSyntax>(
                                                         existingMembers
                                                            .Select(
-                                                                z =>
-                                                                    AssignmentExpression(
-                                                                        SyntaxKind.SimpleAssignmentExpression,
-                                                                        IdentifierName(z.Name),
-                                                                        IdentifierName(z.Name)
-                                                                    )
+                                                                z => AssignmentExpression(
+                                                                    SyntaxKind.SimpleAssignmentExpression,
+                                                                    IdentifierName(z.Name),
+                                                                    IdentifierName(z.Name)
+                                                                )
                                                             )
                                                     )
                                                 )
@@ -402,6 +402,21 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                     )
                 ),
         };
+    }
+
+    private static AssignmentExpressionSyntax GenerateNullValueProperty(NameSyntax nameSyntax)
+    {
+        return AssignmentExpression(
+            SyntaxKind.SimpleAssignmentExpression,
+            nameSyntax,
+            PostfixUnaryExpression(
+                SyntaxKind.SuppressNullableWarningExpression,
+                LiteralExpression(
+                    SyntaxKind.DefaultLiteralExpression,
+                    Token(SyntaxKind.DefaultKeyword)
+                )
+            )
+        );
     }
 
     /// <inheritdoc />

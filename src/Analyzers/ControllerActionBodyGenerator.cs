@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,29 +14,6 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 [Generator]
 public class ControllerActionBodyGenerator : IIncrementalGenerator
 {
-    /// <summary>
-    ///     Same as Pascalize except that the first character is lower case
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
-    private static string Camelize(string input)
-    {
-        var word = Pascalize(input);
-        #pragma warning disable CA1308
-        return word.Length > 0 ? string.Concat(word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture), word.Substring(1)) : word;
-        #pragma warning restore CA1308
-    }
-
-    /// <summary>
-    ///     By default, pascalize converts strings to UpperCamelCase also removing underscores
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
-    private static string Pascalize(string input)
-    {
-        return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
-    }
-
     private static MethodDeclarationSyntax? GenerateMethod(
         SourceProductionContext context,
         IPropertySymbol[] controllerBaseProperties,
@@ -466,7 +441,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                    .Select(z => z.Name)
              ?? Enumerable.Empty<string>()
             );
-            return parameterNames.Select(Camelize).Distinct().ToImmutableArray();
+            return parameterNames.Select(ContextExtensions.Camelize).Distinct().ToImmutableArray();
         }
 
         static ExpressionSyntax getRouteValues(
