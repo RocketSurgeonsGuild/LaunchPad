@@ -547,3 +547,4 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         );
     }
 }
+

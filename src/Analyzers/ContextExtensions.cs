@@ -11,6 +11,38 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 
 internal static class Helpers
 {
+
+    internal static AttributeListSyntax CompilerGeneratedAttributes =
+        AttributeList(
+            SeparatedList(
+                [
+                    Attribute(ParseName("System.CodeDom.Compiler.GeneratedCode"))
+                       .WithArgumentList(
+                            AttributeArgumentList(
+                                SeparatedList(
+                                    [
+                                        AttributeArgument(
+                                            LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                Literal(typeof(Helpers).Assembly.GetName().Name)
+                                            )
+                                        ),
+                                        AttributeArgument(
+                                            LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                Literal(typeof(Helpers).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "generated")
+                                            )
+                                        )
+                                    ]
+                                )
+                            )
+                        ),
+                    Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")),
+                    Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))
+                ]
+            )
+        );
+
     public static void AddSourceRelativeTo(this SourceProductionContext context, TypeDeclarationSyntax declaration, string suffix, SourceText sourceText)
     {
         context.AddSource(
@@ -78,3 +110,4 @@ internal static class Helpers
     internal static AttributeListSyntax CompilerAttributes =
         AttributeList(SeparatedList([..ExcludeFromCodeCoverage.Attributes, ..CompilerGenerated.Attributes,]));
 }
+
