@@ -369,7 +369,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     .SyntaxTree.GetCompilationUnitRoot()
                     .Usings
                     .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
-        
+
         classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
 
         var cu = CompilationUnit(
