@@ -8,7 +8,7 @@ namespace Sample.Core.Operations.Rockets
 {
     public static partial class CreateRocket
     {
-        [System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+        [System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
         public partial record Request
         {
             public Request With(Model value) => this with

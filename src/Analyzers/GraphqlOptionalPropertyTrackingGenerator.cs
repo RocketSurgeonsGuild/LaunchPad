@@ -56,7 +56,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
            .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-           .WithAttributeLists(SingletonList(AttributeList(Helpers.CompilerGeneratedAttributes.Attributes)));
+           .WithAttributeLists(SingletonList(Helpers.CompilerGenerated));
 
         var excludedProperties = new HashSet<string>();
         var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
@@ -245,6 +245,8 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                     .SyntaxTree.GetCompilationUnitRoot()
                     .Usings
                     .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
+
+        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),

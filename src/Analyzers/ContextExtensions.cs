@@ -42,7 +42,10 @@ internal static class Helpers
         return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
     }
 
-    internal static AttributeListSyntax CompilerGeneratedAttributes =
+    internal static AttributeListSyntax ExcludeFromCodeCoverage =
+        AttributeList(SingletonSeparatedList(Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))));
+
+    internal static AttributeListSyntax CompilerGenerated =
         AttributeList(
             SeparatedList(
                 [
@@ -68,8 +71,10 @@ internal static class Helpers
                             )
                         ),
                     Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")),
-                    Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage")),
                 ]
             )
         );
+
+    internal static AttributeListSyntax CompilerAttributes =
+        AttributeList(SeparatedList([..ExcludeFromCodeCoverage.Attributes, ..CompilerGenerated.Attributes,]));
 }

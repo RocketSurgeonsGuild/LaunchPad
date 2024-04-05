@@ -2,12 +2,16 @@
 #nullable enable
 using System;
 
-[System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+[System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
 public partial class PatchRequest
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<int> Type { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(default);
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> Something { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
 #pragma warning disable CA1034
     public record Changes
     {
@@ -15,6 +19,7 @@ public partial class PatchRequest
         public bool Something { get; init; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public Changes GetChangedState()
     {
         return new Changes()
@@ -24,6 +29,7 @@ public partial class PatchRequest
         };
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public global::Request ApplyChanges(global::Request state)
     {
         if (Type.HasBeenSet())
@@ -40,6 +46,7 @@ public partial class PatchRequest
         return state;
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public PatchRequest ResetChanges()
     {
         Type = Rocket.Surgery.LaunchPad.Foundation.Assigned<int>.Empty(Type);
@@ -47,11 +54,13 @@ public partial class PatchRequest
         return this;
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     void IPropertyTracking<global::Request>.ResetChanges()
     {
         ResetChanges();
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public static global::PatchRequest TrackChanges(global::Request value, global::System.Guid id) => new global::PatchRequest()
     {
         Id = id,
