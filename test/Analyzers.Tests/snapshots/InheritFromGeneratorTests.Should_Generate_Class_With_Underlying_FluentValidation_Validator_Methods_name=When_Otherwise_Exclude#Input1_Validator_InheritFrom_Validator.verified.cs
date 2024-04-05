@@ -3,7 +3,7 @@
 using FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation;
 
-[System.Runtime.CompilerServices.CompilerGenerated]
+[System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
 partial class Validator
 {
 }

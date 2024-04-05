@@ -1,7 +1,9 @@
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using DiffEngine;
 using Microsoft.CodeAnalysis;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
+using Rocket.Surgery.LaunchPad.Analyzers;
 
 namespace Analyzers.Tests;
 
@@ -29,6 +31,14 @@ public static class ModuleInitializer
                 path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "../Analyzers.Tests", "snapshots");
                 #endif
                 return new(path, typeName, method.Name);
+            }
+        );
+
+        VerifierSettings.AddScrubber(
+            (builder, counter) =>
+            {
+                if (typeof(InheritFromGenerator).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>() is { Version: { Length: > 0, } version, })
+                    builder.Replace(version, "version");
             }
         );
     }

@@ -1,12 +1,15 @@
 ﻿using System.Globalization;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
 
-internal static class ContextExtensions
+internal static class Helpers
 {
     public static void AddSourceRelativeTo(this SourceProductionContext context, TypeDeclarationSyntax declaration, string suffix, SourceText sourceText)
     {
@@ -38,4 +41,40 @@ internal static class ContextExtensions
     {
         return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
     }
+
+    internal static AttributeListSyntax ExcludeFromCodeCoverage =
+        AttributeList(SingletonSeparatedList(Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))));
+
+    internal static AttributeListSyntax CompilerGenerated =
+        AttributeList(
+            SeparatedList(
+                [
+                    Attribute(ParseName("System.CodeDom.Compiler.GeneratedCode"))
+                       .WithArgumentList(
+                            AttributeArgumentList(
+                                SeparatedList(
+                                    [
+                                        AttributeArgument(
+                                            LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                Literal(typeof(Helpers).Assembly.GetName().Name)
+                                            )
+                                        ),
+                                        AttributeArgument(
+                                            LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                Literal(typeof(Helpers).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "generated")
+                                            )
+                                        ),
+                                    ]
+                                )
+                            )
+                        ),
+                    Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")),
+                ]
+            )
+        );
+
+    internal static AttributeListSyntax CompilerAttributes =
+        AttributeList(SeparatedList([..ExcludeFromCodeCoverage.Attributes, ..CompilerGenerated.Attributes,]));
 }

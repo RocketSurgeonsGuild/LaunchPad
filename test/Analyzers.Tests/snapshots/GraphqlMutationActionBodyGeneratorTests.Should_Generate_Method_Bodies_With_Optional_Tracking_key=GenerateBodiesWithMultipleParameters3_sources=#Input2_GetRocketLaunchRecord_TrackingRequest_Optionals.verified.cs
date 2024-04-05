@@ -6,11 +6,13 @@ namespace TestNamespace
 {
     public static partial class GetRocketLaunchRecord
     {
-        [System.Runtime.CompilerServices.CompilerGenerated]
+        [System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
         public partial record TrackingRequest
         {
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public HotChocolate.Optional<Guid?> LaunchRecordId { get; set; }
 
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public global::TestNamespace.GetRocketLaunchRecord.PatchRequest Create()
             {
                 var value = new global::TestNamespace.GetRocketLaunchRecord.PatchRequest()

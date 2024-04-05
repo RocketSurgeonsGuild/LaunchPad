@@ -6,12 +6,16 @@ namespace TestNamespace
 {
     public static partial class Save2Rocket
     {
-        [System.Runtime.CompilerServices.CompilerGenerated]
+        [System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
         public partial record PatchRequest
         {
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public Rocket.Surgery.LaunchPad.Foundation.Assigned<string?> Sn { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string?>.Empty(default);
+
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> Other { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
 
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
 #pragma warning disable CA1034
             public record Changes
             {
@@ -19,6 +23,7 @@ namespace TestNamespace
                 public bool Other { get; init; }
             }
 
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public Changes GetChangedState()
             {
                 return new Changes()
@@ -28,6 +33,7 @@ namespace TestNamespace
                 };
             }
 
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public global::TestNamespace.Save2Rocket.Request ApplyChanges(global::TestNamespace.Save2Rocket.Request state)
             {
                 if (Sn.HasBeenSet())
@@ -50,6 +56,7 @@ namespace TestNamespace
                 return state;
             }
 
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public PatchRequest ResetChanges()
             {
                 Sn = Rocket.Surgery.LaunchPad.Foundation.Assigned<string?>.Empty(Sn);
@@ -57,11 +64,13 @@ namespace TestNamespace
                 return this;
             }
 
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             void IPropertyTracking<global::TestNamespace.Save2Rocket.Request>.ResetChanges()
             {
                 ResetChanges();
             }
 
+            [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public static global::TestNamespace.Save2Rocket.PatchRequest TrackChanges(global::TestNamespace.Save2Rocket.Request value) => new global::TestNamespace.Save2Rocket.PatchRequest()
             {
                 Id = value.Id,

@@ -51,13 +51,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
            .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-           .WithAttributeLists(
-                SingletonList(
-                    AttributeList(
-                        SingletonSeparatedList(Attribute(ParseName("System.Runtime.CompilerServices.CompilerGenerated")))
-                    )
-                )
-            );
+           .WithAttributeLists(SingletonList(Helpers.CompilerGenerated));
 
         var targetMembers = targetSymbol.FilterProperties().ToImmutableArray();
         var excludedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -122,7 +116,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                                    IdentifierName("value"),
                                                    IdentifierName(name)
                                                )
-                                               : IdentifierName(ContextExtensions.Camelize(param.Name))
+                                               : IdentifierName(Helpers.Camelize(param.Name))
                                        )
                                    )
                                   .ToImmutableArray()
@@ -134,7 +128,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                    .Where(param => !missingMembers.Any(z => z.Name.Equals(param.Name, StringComparison.OrdinalIgnoreCase)))
                                    .Where(param => !targetSymbolInheritedMemberNames.Contains(param.Name))
                                    .Select(
-                                        param => Parameter(Identifier(ContextExtensions.Camelize(param.Name)))
+                                        param => Parameter(Identifier(Helpers.Camelize(param.Name)))
                                            .WithType(ParseTypeName(param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
                                     )
                                    .ToImmutableArray()
@@ -153,7 +147,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                .AddParameters(
                     missingMembers
                        .Select(
-                            z => Parameter(Identifier(ContextExtensions.Camelize(z.Name)))
+                            z => Parameter(Identifier(Helpers.Camelize(z.Name)))
                                .WithType(ParseTypeName(z.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
                         )
                        .ToArray()
@@ -187,7 +181,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                                       AssignmentExpression(
                                                           SyntaxKind.SimpleAssignmentExpression,
                                                           IdentifierName(z.Name),
-                                                          IdentifierName(ContextExtensions.Camelize(z.Name))
+                                                          IdentifierName(Helpers.Camelize(z.Name))
                                                       )
                                               )
                                              .OfType<ExpressionSyntax>()
@@ -375,6 +369,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     .SyntaxTree.GetCompilationUnitRoot()
                     .Usings
                     .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
+
+        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
 
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
