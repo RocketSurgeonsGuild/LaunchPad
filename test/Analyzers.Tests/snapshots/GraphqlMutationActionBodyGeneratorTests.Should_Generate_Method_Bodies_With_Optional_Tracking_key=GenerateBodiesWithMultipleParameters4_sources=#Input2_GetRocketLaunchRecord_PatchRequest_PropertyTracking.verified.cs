@@ -6,7 +6,7 @@ namespace TestNamespace
 {
     public static partial class GetRocketLaunchRecord
     {
-        [System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "1.0.0.0"), System.Runtime.CompilerServices.CompilerGenerated, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+        [System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public partial record PatchRequest
         {
             public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> LaunchRecordId { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
