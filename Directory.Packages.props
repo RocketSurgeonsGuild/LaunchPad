@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
@@ -6,8 +6,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.CI" Version="1.2.1" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.2.1" />
-    <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.2.1"
-      Condition="'$(MSBuildProjectName)'!='.build'" />
+    <PackageVersion Include="Rocket.Surgery.MSBuild.JetBrains.Annotations" Version="1.2.1" Condition="'$(MSBuildProjectName)'!='.build'" />
     <PackageVersion Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.2.1" />
     <PackageVersion Include="Polyfill" Version="4.3.0" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.12.0" />
@@ -71,8 +70,7 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions"
-      Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.2" />
@@ -160,7 +158,7 @@
     <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
   </ItemGroup>
   <Import
-    Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
-    Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
-  />
+        Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
+        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
+    />
 </Project>
