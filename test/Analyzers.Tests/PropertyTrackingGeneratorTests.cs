@@ -394,17 +394,14 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
                           .WithGenerator<InheritFromGenerator>()
                           .AddSources(
                                @"
-public class Model
-{
-    public Guid Id { get; init; }
-    [IgnoreGeneration]
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
-}
-
+using Rocket.Surgery.LaunchPad.Foundation;
 public partial class Request : IRequest<RocketModel>
 {
+    [GenerationIgnore]
     public int Type { get; set; }
+    public string Name { get; set; }
+    [ExcludeFromGeneration]
+    public string Other { get; set; }
 }
 public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>
 {

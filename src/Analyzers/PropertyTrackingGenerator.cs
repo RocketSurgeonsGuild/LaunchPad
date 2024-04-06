@@ -56,11 +56,11 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var targetMembers = targetSymbol.FilterProperties().ToImmutableArray();
         var excludedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var inheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
-        var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+        var symbolMemberNames = symbol.MemberNames.Except(excludedProperties).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
         var targetSymbolMemberNames =
-            targetSymbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+            targetSymbol.MemberNames.Except(excludedProperties).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
         var targetSymbolInheritedMemberNames =
-            targetSymbolMemberNames.Concat(inheritedMembers.Select(z => z.Name)).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+            targetSymbolMemberNames.Concat(inheritedMembers.Select(z => z.Name)).Except(excludedProperties).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
         targetMembers = targetMembers.AddRange(inheritedMembers);
 

@@ -349,6 +349,72 @@ public partial class Request : IRequest<RocketModel>
                           .GenerateAsync();
         await Verify(result).UseParameters(propertyTracking);
     }
+    [Theory]
+    [InlineData(PropertyTracking.SameAssembly)]
+    [InlineData(PropertyTracking.OtherAssembly)]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude_Attribute(
+        PropertyTracking propertyTracking
+    )
+    {
+        var result = await AddPatchRocketModel(RocketModelType.Class, propertyTracking)
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddReferences(typeof(InheritFromAttribute))
+                          .AddSources(
+                               @"
+public class Model
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public int Type { get; set; }
+    [GenerationIgnore]
+    public string Other1 { get; set; } = null!;
+    [ExcludeFromGeneration]
+    public int Other2 { get; set; }
+}
+
+[InheritFrom(typeof(Model))]
+public partial class Request : IRequest<RocketModel>
+{
+    public Instant PlannedDate { get; set; }
+}
+"
+                           )
+                          .WithCustomizer(Customizers.IncludeReferences)
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result).UseParameters(propertyTracking);
+    }
+    [Theory]
+    [InlineData(PropertyTracking.SameAssembly)]
+    [InlineData(PropertyTracking.OtherAssembly)]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude_Attribute2(
+        PropertyTracking propertyTracking
+    )
+    {
+        var result = await AddPatchRocketModel(RocketModelType.Class, propertyTracking)
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddReferences(typeof(InheritFromAttribute))
+                          .AddSources(
+                               @"
+
+public partial class Request : IRequest<RocketModel>
+{
+    public Guid Id { get; init; }
+    public string SerialNumber { get; set; } = null!;
+    public int Type { get; set; }
+    public Instant PlannedDate { get; set; }
+    [GenerationIgnore]
+    public string Other1 { get; set; } = null!;
+    [ExcludeFromGeneration]
+    public int Other2 { get; set; }
+}
+"
+                           )
+                          .WithCustomizer(Customizers.IncludeReferences)
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result).UseParameters(propertyTracking);
+    }
 
     [Theory]
     [InlineData("SerialNumber", "12345", PropertyTracking.SameAssembly)]

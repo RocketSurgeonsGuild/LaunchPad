@@ -13,31 +13,30 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 [Generator]
 public class InheritFromGenerator : IIncrementalGenerator
 {
-    internal static ImmutableHashSet<string> GetExcludedMembers(AttributeData attribute)
-    {
-        return ImmutableHashSet.CreateRange(
-            attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
-                ? values.Select(z => (string)z.Value!).ToArray()
-                : Array.Empty<string>()
-        );
-    }
     internal static ImmutableHashSet<string> GetExcludedMembers(INamedTypeSymbol targetSymbol, AttributeData attribute)
     {
         targetSymbol
            .GetMembers()
-           .Where(z => z.GetAttribute("ExcludeFromGeneration") is { } || z.GetAttribute("GenerationIgnore") is { });
+           .Where(z => z.GetAttribute("ExcludeFromGenerationAttribute") is { } || z.GetAttribute("GenerationIgnoreAttribute") is { });
 
-        var excludeMembers = GetExcludedMembers(attribute);
+        var excludeMembers = getExcludedMembers(attribute);
         var builder = excludeMembers.ToBuilder();
         foreach (var item in
                  targetSymbol
                     .GetMembers()
-                    .Where(z => z.GetAttribute("ExcludeFromGeneration") is { } || z.GetAttribute("GenerationIgnore") is { }))
+                    .Where(z => z.GetAttribute("ExcludeFromGenerationAttribute") is { } || z.GetAttribute("GenerationIgnoreAttribute") is { }))
         {
             builder.Add(item.Name);
         }
 
         return builder.ToImmutable();
+
+        static ImmutableHashSet<string> getExcludedMembers(AttributeData attribute) =>
+            ImmutableHashSet.CreateRange(
+                attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
+                    ? values.Select(z => (string)z.Value!).ToArray()
+                    : Array.Empty<string>()
+            );
     }
 
     internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)
@@ -107,7 +106,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         HashSet<string> excludedProperties
     )
     {
-        var excludeMembers = GetExcludedMembers(attribute);
+        var excludeMembers = GetExcludedMembers(inheritFromSymbol, attribute);
         foreach (var excludedProperty in excludeMembers)
         {
             excludedProperties.Add(excludedProperty);
@@ -211,7 +210,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         INamedTypeSymbol inheritFromSymbol
     )
     {
-        var excludeMembers = GetExcludedMembers(attribute);
+        var excludeMembers = GetExcludedMembers(inheritFromSymbol, attribute);
 
         return inheritFromSymbol
               .DeclaringSyntaxReferences.Select(z => z.GetSyntax())
@@ -626,7 +625,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                 if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], }) continue;
                 if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax) continue;
 
-                var excludedMembers = GetExcludedMembers(attribute);
+                var excludedMembers = GetExcludedMembers(inheritFromSymbol, attribute);
 
                 // TODO: Search the assembly for a validator that is not nested?
                 foreach (var validator in inheritFromSymbol
