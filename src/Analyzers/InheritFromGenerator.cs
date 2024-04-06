@@ -31,12 +31,14 @@ public class InheritFromGenerator : IIncrementalGenerator
 
         return builder.ToImmutable();
 
-        static ImmutableHashSet<string> getExcludedMembers(AttributeData attribute) =>
-            ImmutableHashSet.CreateRange(
+        static ImmutableHashSet<string> getExcludedMembers(AttributeData attribute)
+        {
+            return ImmutableHashSet.CreateRange(
                 attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
                     ? values.Select(z => (string)z.Value!).ToArray()
                     : Array.Empty<string>()
             );
+        }
     }
 
     internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)

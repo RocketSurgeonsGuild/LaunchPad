@@ -383,9 +383,7 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
     }
 
     [Fact]
-    public async Task Should_Generate_Class_Primary_Constructor()
-    {
-    }
+    public async Task Should_Generate_Class_Primary_Constructor() { }
 
     [Fact]
     public async Task Should_Generate_And_Exclude_Properties()

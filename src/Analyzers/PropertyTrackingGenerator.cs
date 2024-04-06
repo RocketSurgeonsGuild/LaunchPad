@@ -60,7 +60,10 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var targetSymbolMemberNames =
             targetSymbol.MemberNames.Except(excludedProperties).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
         var targetSymbolInheritedMemberNames =
-            targetSymbolMemberNames.Concat(inheritedMembers.Select(z => z.Name)).Except(excludedProperties).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+            targetSymbolMemberNames
+               .Concat(inheritedMembers.Select(z => z.Name))
+               .Except(excludedProperties)
+               .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
         targetMembers = targetMembers.AddRange(inheritedMembers);
 
@@ -106,8 +109,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
          ?? ImmutableHashSet<string>.Empty;
 
         var constructorArguments = constructor
-                                ?
-                               .Parameters
+ ?
+.Parameters
                                   .Select(
                                        param => Argument(
                                            targetSymbolInheritedMemberNames.TryGetValue(param.Name, out var name)
@@ -123,8 +126,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
          ?? ImmutableArray<ArgumentSyntax>.Empty;
 
         var constructorParameters = constructor
-                                 ?
-                                .Parameters
+ ?
+.Parameters
                                    .Where(param => !missingMembers.Any(z => z.Name.Equals(param.Name, StringComparison.OrdinalIgnoreCase)))
                                    .Where(param => !targetSymbolInheritedMemberNames.Contains(param.Name))
                                    .Select(

@@ -349,6 +349,7 @@ public partial class Request : IRequest<RocketModel>
                           .GenerateAsync();
         await Verify(result).UseParameters(propertyTracking);
     }
+
     [Theory]
     [InlineData(PropertyTracking.SameAssembly)]
     [InlineData(PropertyTracking.OtherAssembly)]
@@ -384,6 +385,7 @@ public partial class Request : IRequest<RocketModel>
                           .GenerateAsync();
         await Verify(result).UseParameters(propertyTracking);
     }
+
     [Theory]
     [InlineData(PropertyTracking.SameAssembly)]
     [InlineData(PropertyTracking.OtherAssembly)]
