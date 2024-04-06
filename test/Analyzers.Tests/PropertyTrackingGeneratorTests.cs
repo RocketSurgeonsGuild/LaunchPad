@@ -383,23 +383,23 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
     }
 
     [Fact]
-    public async Task Should_Generate_Class_Primary_Constructor()
+    public async Task Should_Generate_Class_Primary_Constructor() { }
+
+    [Fact]
+    public async Task Should_Generate_And_Exclude_Properties()
     {
         var result = await Builder
                           .WithGenerator<InheritFromGenerator>()
                           .AddSources(
                                @"
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
-}
-
-[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+using Rocket.Surgery.LaunchPad.Foundation;
 public partial class Request : IRequest<RocketModel>
 {
+    [GenerationIgnore]
     public int Type { get; set; }
+    public string Name { get; set; }
+    [ExcludeFromGeneration]
+    public string Other { get; set; }
 }
 public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>
 {

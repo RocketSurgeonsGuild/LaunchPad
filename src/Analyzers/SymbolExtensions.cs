@@ -46,6 +46,8 @@ internal static class SymbolExtensions
         var members = typeSymbol
                      .GetMembers()
                      .OfType<IPropertySymbol>()
+                     .Where(z => z.GetAttribute("ExcludeFromGenerationAttribute") is null)
+                     .Where(z => z.GetAttribute("GenerationIgnoreAttribute") is null)
                      .Where(z => z is { IsStatic: false, IsIndexer: false, IsReadOnly: false, });
 
         return members;

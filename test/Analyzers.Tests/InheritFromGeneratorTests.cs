@@ -127,6 +127,45 @@ namespace Sample.Core.Operations.Rockets
     }
 
     [Fact]
+    public async Task Should_Generate_With_Method_For_Record_Exclude_Attribute()
+    {
+        var result = await Builder
+                          .AddSources(
+                               @"
+using System;
+using MediatR;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        public partial record Model
+        {
+            public string SerialNumber { get; set; }
+            [ExcludeFromGeneration]
+            public string Excluded { get; set; }
+            [GenerationIgnore]
+            public string Excluded2 { get; set; }
+        }
+
+        [InheritFrom(typeof(Model))]
+        public partial record Request : IRequest<Response>
+        {
+            public Guid Id { get; init; }
+        }
+
+        public partial record Response {}
+    }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync();
+        await Verify(result);
+    }
+
+    [Fact]
     public async Task Should_Generate_And_Ignore_Type_Declaration_Members()
     {
         var result = await Builder
