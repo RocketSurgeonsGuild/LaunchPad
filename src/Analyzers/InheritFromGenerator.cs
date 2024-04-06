@@ -21,6 +21,24 @@ public class InheritFromGenerator : IIncrementalGenerator
                 : Array.Empty<string>()
         );
     }
+    internal static ImmutableHashSet<string> GetExcludedMembers(INamedTypeSymbol targetSymbol, AttributeData attribute)
+    {
+        targetSymbol
+           .GetMembers()
+           .Where(z => z.GetAttribute("ExcludeFromGeneration") is { } || z.GetAttribute("GenerationIgnore") is { });
+
+        var excludeMembers = GetExcludedMembers(attribute);
+        var builder = excludeMembers.ToBuilder();
+        foreach (var item in
+                 targetSymbol
+                    .GetMembers()
+                    .Where(z => z.GetAttribute("ExcludeFromGeneration") is { } || z.GetAttribute("GenerationIgnore") is { }))
+        {
+            builder.Add(item.Name);
+        }
+
+        return builder.ToImmutable();
+    }
 
     internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)
     {

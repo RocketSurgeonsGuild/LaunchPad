@@ -385,6 +385,11 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
     [Fact]
     public async Task Should_Generate_Class_Primary_Constructor()
     {
+    }
+
+    [Fact]
+    public async Task Should_Generate_And_Exclude_Properties()
+    {
         var result = await Builder
                           .WithGenerator<InheritFromGenerator>()
                           .AddSources(
@@ -392,11 +397,11 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
 public class Model
 {
     public Guid Id { get; init; }
+    [IgnoreGeneration]
     public string SerialNumber { get; set; } = null!;
     public string Something { get; set; } = null!;
 }
 
-[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
 public partial class Request : IRequest<RocketModel>
 {
     public int Type { get; set; }
