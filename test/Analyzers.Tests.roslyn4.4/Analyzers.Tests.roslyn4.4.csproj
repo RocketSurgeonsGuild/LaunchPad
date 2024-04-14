@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <_Analyzer_Roslyn_Version_>$(MSBuildProjectName.Replace("Analyzers.Tests.", ""))</_Analyzer_Roslyn_Version_>
         <DefineConstants>$(DefineConstants);ROSLYN4_4</DefineConstants>
         <RootNamespace>Analyzers.Tests</RootNamespace>

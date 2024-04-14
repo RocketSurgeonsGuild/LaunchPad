@@ -91,18 +91,16 @@
     <PackageVersion Include="Polly" Version="8.3.1" />
     <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta07" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-    <PackageVersion Include="Rocket.Surgery.Conventions" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="12.11.2" />
+    <PackageVersion Include="Rocket.Surgery.Conventions" Version="13.0.0-next.828" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="13.0.0-next.828" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="13.0.0-next.828" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.CommandLine" Version="13.0.0-next.828" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="13.0.0-next.828" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="13.0.0-next.828" />
     <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="12.1.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="12.1.0" />
-    <PackageVersion Include="Rocket.Surgery.Hosting" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.Hosting.Abstractions" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.Web.Hosting" Version="12.11.2" />
-    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="12.11.2" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="13.0.0-next.828" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="13.0.0-next.828" />
     <PackageVersion Include="Scrutor" Version="4.2.2" />
     <PackageVersion Include="Serilog" Version="3.1.1" />
     <PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
