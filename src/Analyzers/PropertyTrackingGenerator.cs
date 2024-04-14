@@ -375,6 +375,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
 
         classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
 
+        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
+
         var cu = CompilationUnit(
                      List<ExternAliasDirectiveSyntax>(),
                      List(usings),
