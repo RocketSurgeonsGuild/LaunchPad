@@ -882,5 +882,3 @@ internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) :
         return action.RemoveNodes(removeNodes, SyntaxRemoveOptions.KeepEndOfLine)!;
     }
 }
-
-

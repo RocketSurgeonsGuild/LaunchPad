@@ -78,5 +78,3 @@ internal static class Helpers
     internal static AttributeListSyntax CompilerAttributes =
         AttributeList(SeparatedList([..ExcludeFromCodeCoverage.Attributes, ..CompilerGenerated.Attributes,]));
 }
-
-

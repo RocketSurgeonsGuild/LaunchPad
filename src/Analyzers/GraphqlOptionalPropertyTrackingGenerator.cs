@@ -471,5 +471,3 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         );
     }
 }
-
-
