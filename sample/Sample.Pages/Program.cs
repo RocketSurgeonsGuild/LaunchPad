@@ -1,13 +1,15 @@
 using System.Text;
 using System.Text.Json;
 using Humanizer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
+using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Pages;
 
-var builder = await Host.CreateApplicationBuilder(args)
+var builder = await WebApplication.CreateBuilder(args)
                   .LaunchWith(RocketBooster.For(Imports.GetConventions));
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
