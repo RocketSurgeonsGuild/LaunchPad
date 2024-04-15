@@ -7,24 +7,29 @@ using Rocket.Surgery.Extensions.Testing;
 
 namespace Sample.BlazorWasm.Tests;
 
-public abstract class HandleTestHostBase : AutoFakeTest
+public abstract class HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : AutoFakeTest(
+    outputHelper,
+    logLevel,
+    "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
+), IAsyncLifetime
 {
-    private readonly IConventionContext _hostBuilder;
+    private IConventionContext _hostBuilder = null!;
 
-    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : base(
-        outputHelper,
-        logLevel,
-        "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
-    )
+    public async Task InitializeAsync()
     {
         _hostBuilder =
-            ConventionContext.From(
+            await ConventionContext.FromAsync(
                 ConventionContextBuilder.Create()
                                         .ForTesting(AppDomain.CurrentDomain, LoggerFactory)
                                         .WithLogger(Logger)
             );
         ExcludeSourceContext(nameof(WebAssemblyHostBuilder));
         ExcludeSourceContext(nameof(WebAssemblyHost));
-        Populate(new ServiceCollection().ApplyConventions(_hostBuilder));
+        Populate(await new ServiceCollection().ApplyConventionsAsync(_hostBuilder));
+    }
+
+    public Task DisposeAsync()
+    {
+        return Task.CompletedTask;
     }
 }

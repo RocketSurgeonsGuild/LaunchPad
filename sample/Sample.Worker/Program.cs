@@ -1,21 +1,11 @@
 using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
+using Sample.Worker;
 
-namespace Sample.Worker;
+var builder = await Host
+                   .CreateApplicationBuilder(args)
+                   .LaunchWith(RocketBooster.For(Imports.GetConventions));
+builder.Services.AddHostedService<BackgroundWorker>();
 
-[ImportConventions]
-public static partial class Program
-{
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
-
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host.CreateDefaultBuilder(args)
-                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default!), z => z.WithConventionsFrom(GetConventions))
-                   .ConfigureServices((_, services) => { services.AddHostedService<BackgroundWorker>(); });
-    }
-}
+await builder.RunAsync();

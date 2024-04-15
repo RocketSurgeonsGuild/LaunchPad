@@ -1,4 +1,5 @@
 using AutoMapper;
+using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Mapping;
 
@@ -10,42 +11,86 @@ public static class AutoMapperProfile
 {
     private class ParentModel
     {
-        [UsedImplicitly] public int Integer { get; set; }
-        [UsedImplicitly] public int? NullableInteger { get; set; }
-        [UsedImplicitly] public string? String { get; set; }
-        [UsedImplicitly] public decimal Decimal { get; set; }
-        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
-        [UsedImplicitly] public ChildModel? Child { get; set; }
+        [UsedImplicitly]
+        public int Integer { get; set; }
+
+        [UsedImplicitly]
+        public int? NullableInteger { get; set; }
+
+        [UsedImplicitly]
+        public string? String { get; set; }
+
+        [UsedImplicitly]
+        public decimal Decimal { get; set; }
+
+        [UsedImplicitly]
+        public decimal? NullableDecimal { get; set; }
+
+        [UsedImplicitly]
+        public ChildModel? Child { get; set; }
     }
 
     private class ParentDto
     {
-        [UsedImplicitly] public int Integer { get; set; }
-        [UsedImplicitly] public int Version { get; set; }
-        [UsedImplicitly] public int? NullableInteger { get; set; }
-        [UsedImplicitly] public string? String { get; set; }
-        [UsedImplicitly] public decimal Decimal { get; set; }
-        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
-        [UsedImplicitly] public ChildDto? Child { get; set; }
+        [UsedImplicitly]
+        public int Integer { get; set; }
+
+        [UsedImplicitly]
+        public int Version { get; set; }
+
+        [UsedImplicitly]
+        public int? NullableInteger { get; set; }
+
+        [UsedImplicitly]
+        public string? String { get; set; }
+
+        [UsedImplicitly]
+        public decimal Decimal { get; set; }
+
+        [UsedImplicitly]
+        public decimal? NullableDecimal { get; set; }
+
+        [UsedImplicitly]
+        public ChildDto? Child { get; set; }
     }
 
     private class ChildModel
     {
-        [UsedImplicitly] public int Integer { get; set; }
-        [UsedImplicitly] public int? NullableInteger { get; set; }
-        [UsedImplicitly] public string? String { get; set; }
-        [UsedImplicitly] public decimal Decimal { get; set; }
-        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
+        [UsedImplicitly]
+        public int Integer { get; set; }
+
+        [UsedImplicitly]
+        public int? NullableInteger { get; set; }
+
+        [UsedImplicitly]
+        public string? String { get; set; }
+
+        [UsedImplicitly]
+        public decimal Decimal { get; set; }
+
+        [UsedImplicitly]
+        public decimal? NullableDecimal { get; set; }
     }
 
     private class ChildDto
     {
-        [UsedImplicitly] public int Integer { get; set; }
-        [UsedImplicitly] public int Version { get; set; }
-        [UsedImplicitly] public int? NullableInteger { get; set; }
-        [UsedImplicitly] public string? String { get; set; }
-        [UsedImplicitly] public decimal Decimal { get; set; }
-        [UsedImplicitly] public decimal? NullableDecimal { get; set; }
+        [UsedImplicitly]
+        public int Integer { get; set; }
+
+        [UsedImplicitly]
+        public int Version { get; set; }
+
+        [UsedImplicitly]
+        public int? NullableInteger { get; set; }
+
+        [UsedImplicitly]
+        public string? String { get; set; }
+
+        [UsedImplicitly]
+        public decimal Decimal { get; set; }
+
+        [UsedImplicitly]
+        public decimal? NullableDecimal { get; set; }
     }
 
     public class OnlyDefinedPropertiesTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
@@ -56,9 +101,11 @@ public static class AutoMapperProfile
             var mapper = new MapperConfiguration(
                     cfg =>
                     {
-                        cfg.CreateMap<ChildModel, ChildDto>()
+                        cfg
+                           .CreateMap<ChildModel, ChildDto>()
                            .ForMember(x => x.Version, x => x.Ignore());
-                        cfg.CreateMap<ParentModel, ParentDto>()
+                        cfg
+                           .CreateMap<ParentModel, ParentDto>()
                            .ForMember(x => x.Version, x => x.Ignore());
                         cfg.OnlyDefinedProperties();
                     }
@@ -194,6 +241,66 @@ public static class AutoMapperProfile
             {
                 this.OnlyDefinedProperties();
             }
+        }
+    }
+}
+
+public class AutoMapperConventionTests
+{
+    [Fact]
+    public void ShouldRegisterAutoMapperTypes()
+    {
+        var conventionBuilder = new ConventionContextBuilder(new Dictionary<object, object>());
+        var provider = Imports.GetConventions.CreateAssemblyProvider(conventionBuilder);
+        provider.GetTypes(x => x.FromAssemblyOf(typeof(IValueResolver<,,>)).GetTypes(f => f.AssignableTo(typeof(IValueResolver<,,>)))).Should().NotBeEmpty();
+    }
+    class Source
+    {
+        public string Name { get; set; }
+    }
+
+    class Destination
+    {
+        public string Name { get; set; }
+    }
+
+    class A : IValueResolver<Source, Destination, string>
+    {
+        public string Resolve(Source source, Destination destination, string destMember, ResolutionContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class B : IMemberValueResolver<Source, Destination, string, string>
+    {
+        public string Resolve(Source source, Destination destination, string sourceMember, string destMember, ResolutionContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class C : ITypeConverter<Source, Destination>
+    {
+        public Destination Convert(Source source, Destination destination, ResolutionContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class D : IValueConverter<string, string>
+    {
+        public string Convert(string sourceMember, ResolutionContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class E : IMappingAction<Source, Destination>
+    {
+        public void Process(Source source, Destination destination, ResolutionContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

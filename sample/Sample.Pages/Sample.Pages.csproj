@@ -5,6 +5,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\Web.Hosting\Rocket.Surgery.LaunchPad.Web.Hosting.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

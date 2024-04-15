@@ -8,14 +8,14 @@ namespace Extensions.Tests;
 
 public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    protected void Init(Action<ConventionContextBuilder>? action = null)
+    protected async Task Init(Action<ConventionContextBuilder>? action = null)
     {
         var conventionContextBuilder = ConventionContextBuilder.Create()
                                                                .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
                                                                .WithLogger(Logger);
         action?.Invoke(conventionContextBuilder);
-        var context = ConventionContext.From(conventionContextBuilder);
+        var context = await ConventionContext.FromAsync(conventionContextBuilder);
 
-        Populate(new ServiceCollection().ApplyConventions(context));
+        Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
 }

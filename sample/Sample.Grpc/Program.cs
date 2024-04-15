@@ -1,23 +1,27 @@
-using Microsoft.Extensions.DependencyModel;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
+using Sample.Grpc;
+using Sample.Grpc.Services;
 
-namespace Sample.Grpc;
+var builder = await Host.CreateApplicationBuilder(args)
+                        .LaunchWith(RocketBooster.For(Imports.GetConventions))
 
-[ImportConventions]
-public static partial class Program
-{
-    public static void Main(string[] args)
+var app = builder.Build();
+
+app.UseLaunchPadRequestLogging();
+
+app.UseRouting();
+
+app.UseEndpoints(
+    endpoints =>
     {
-        CreateHostBuilder(args).Build().Run();
-    }
+        endpoints.MapGrpcService<LaunchRecordsService>();
+        endpoints.MapGrpcService<RocketsService>();
 
-    // Additional configuration is required to successfully run gRPC on macOS.
-    // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host.CreateDefaultBuilder(args)
-                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default!), z => z.WithConventionsFrom(GetConventions))
-                   .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        endpoints.MapGet(
+            "/",
+            async context => await context.Response.WriteAsync(
+                "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909"
+            )
+        );
     }
-}
+);

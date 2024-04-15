@@ -49,13 +49,15 @@ public class FluentValidationConvention : IServiceConvention
             throw new ArgumentNullException(nameof(context));
         }
 
-        services.AddValidatorsFromAssemblies(
-            context
-               .AssemblyCandidateFinder
-               .GetCandidateAssemblies("FluentValidation"),
-            _options.ValidatorLifetime,
-            includeInternalTypes: true
-        );
+        foreach (var validator in context
+                                 .AssemblyProvider.GetTypes(
+                                      z => z.FromAssemblyDependenciesOf<IValidator>().GetTypes(f => f.AssignableTo(typeof(IValidator<>)))
+                                  ))
+        {
+            var interfaceType = typeof(IValidator<>).MakeGenericType(validator.BaseType?.GetGenericArguments()[0]!);
+            services.Add(new ServiceDescriptor(interfaceType, validator, _options.ValidatorLifetime));
+            services.Add(new ServiceDescriptor(validator, validator, _options.ValidatorLifetime));
+        }
 
         if (_options.RegisterValidationOptionsAsHealthChecks == true
          || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue && Convert.ToBoolean(

@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.Web.Hosting;
 using Sample.Restful;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-var builder = WebApplication.CreateBuilder(args)
+var builder = await WebApplication.CreateBuilder(args)
                             .ConfigureRocketSurgery(Imports.GetConventions);
 
 builder.Services.AddControllers().AddControllersAsServices();

@@ -104,16 +104,13 @@ public class AspNetCoreConvention : IServiceConvention
         }
 
         services
-#if NET6_0_OR_GREATER
            .AddEndpointsApiExplorer()
-#endif
            .AddMvcCore()
            .AddApiExplorer();
         PopulateDefaultParts(
             // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
-            context.AssemblyCandidateFinder
-                   .GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore")
+            context.AssemblyProvider.GetAssemblies(s => s.FromAssemblyDependenciesOf(typeof(AspNetCoreConvention)))
                    .Where(_options.AssemblyPartFilter)
                    .SelectMany(GetApplicationPartAssemblies)
         );

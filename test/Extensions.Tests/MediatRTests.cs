@@ -20,7 +20,7 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
         var builder = new ConventionContextBuilder(new Dictionary<object, object>())
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
            .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
-        var context = ConventionContext.From(builder);
+        var context = await ConventionContext.FromAsync(builder);
         var services = new ServiceCollection();
         new MediatRConvention().Register(context, new ConfigurationBuilder().Build(), services);
 
@@ -46,7 +46,7 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
         var builder = new ConventionContextBuilder(new Dictionary<object, object>())
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
            .UseAssemblies(new TestAssemblyProvider().GetAssemblies());
-        var context = ConventionContext.From(builder);
+        var context = await ConventionContext.FromAsync(builder);
         var services = new ServiceCollection();
         new MediatRConvention(
             new FoundationOptions
@@ -83,17 +83,19 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
                 typeof(MediatRConvention).GetTypeInfo().Assembly
             };
         }
-    }
 
-    private class TestAssemblyCandidateFinder : IAssemblyCandidateFinder
-    {
-        public IEnumerable<Assembly> GetCandidateAssemblies(IEnumerable<string> candidates)
+        public IEnumerable<Assembly> GetAssemblies(Action<IAssemblyProviderAssemblySelector> action, string filePath = "", string memberName = "", int lineNumber = 0)
         {
             return new[]
             {
                 typeof(TestAssemblyProvider).GetTypeInfo().Assembly,
                 typeof(MediatRConvention).GetTypeInfo().Assembly
             };
+        }
+
+        public IEnumerable<Type> GetTypes(Func<ITypeProviderAssemblySelector, IEnumerable<Type>> selector, string filePath = "", string memberName = "", int lineNumber = 0)
+        {
+            return Enumerable.Empty<Type>();
         }
     }
 

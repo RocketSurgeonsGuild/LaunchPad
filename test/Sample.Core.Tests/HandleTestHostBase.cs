@@ -48,7 +48,7 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
                 }
             );
 
-        Populate(new ServiceCollection().ApplyConventions(ConventionContext.From(_context)));
+        Populate(await new ServiceCollection().ApplyConventionsAsync(await ConventionContext.FromAsync(_context)));
 
         await ServiceProvider.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
     }

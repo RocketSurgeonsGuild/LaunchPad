@@ -1,22 +1,44 @@
+using System.Reflection;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.Extensions.DependencyModel;
+using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Hosting;
+using Rocket.Surgery.LaunchPad.AspNetCore;
+using Sample.Classic.Restful;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Sample.Classic.Restful;
 
-/// <summary>
-///     Startup interop (here for testing only or for 3.1 support)
-/// </summary>
-public static partial class Program
-{
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
+var builder = WebApplication.CreateBuilder(args);
+await builder.LaunchWith(RocketBooster.For(Imports.GetConventions));
+builder.Services.AddControllers().AddControllersAsServices();
+builder.Services
+       .Configure<SwaggerGenOptions>(
+            c => c.SwaggerDoc(
+                "v1",
+                new()
+                {
+                    Version = typeof(Program).GetCustomAttribute<AssemblyVersionAttribute>()?.Version
+                     ?? typeof(Program).GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.1.0",
+                    Title = "Test Application",
+                }
+            )
+        );
+var app = builder.Build();
 
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host.CreateDefaultBuilder(args)
-                   .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-                   .LaunchWith(RocketBooster.ForDependencyContext(DependencyContext.Default!), z => z.WithConventionsFrom(Imports.GetConventions));
-    }
-}
+app.UseProblemDetails();
+app.UseHttpsRedirection();
+
+app.UseLaunchPadRequestLogging();
+
+app.UseRouting();
+
+app
+   .UseSwaggerUI()
+   .UseReDoc();
+
+app.UseAuthorization();
+
+app.MapControllers();
+app.MapSwagger();
+
+await app.RunAsync();

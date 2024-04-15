@@ -88,7 +88,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         }
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
@@ -101,10 +101,8 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
                                        )
                                       .WithLogger(Logger);
 
-        var context = ConventionContext.From(conventionContextBuilder);
-        Populate(new ServiceCollection().ApplyConventions(context));
-
-        return Task.CompletedTask;
+        var context = await ConventionContext.FromAsync(conventionContextBuilder);
+        Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
 
     public Task DisposeAsync()

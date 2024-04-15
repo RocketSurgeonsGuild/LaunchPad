@@ -142,7 +142,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
         }
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
@@ -155,10 +155,8 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
                                        )
                                       .WithLogger(Logger);
 
-        var context = ConventionContext.From(conventionContextBuilder);
-        Populate(new ServiceCollection().ApplyConventions(context));
-
-        return Task.CompletedTask;
+        var context = await ConventionContext.FromAsync(conventionContextBuilder);
+        Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
 
     public Task DisposeAsync()

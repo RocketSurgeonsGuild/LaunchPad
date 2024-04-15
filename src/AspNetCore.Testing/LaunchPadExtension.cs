@@ -86,14 +86,9 @@ public class LaunchPadExtension : IAlbaExtension
     /// <returns></returns>
     public virtual IHostBuilder Configure(IHostBuilder builder)
     {
-        builder.ConfigureRocketSurgery(z => z.ForTesting(_testAssemblyReference, _loggerFactory));
         builder.ConfigureLogging((_, loggingBuilder) => loggingBuilder.Services.AddSingleton(_loggerFactory));
         builder.ConfigureServices(s => s.AddSingleton<TestServer>(z => (TestServer)z.GetRequiredService<IServer>()));
-        builder.ConfigureServices(s => s.AddHttpLogging(
-                                      options =>
-                                      {
-                                          options.LoggingFields = HttpLoggingFields.All;
-                                      }));
+        builder.ConfigureServices(s => s.AddHttpLogging(options => options.LoggingFields = HttpLoggingFields.All));
 
         return builder;
     }
