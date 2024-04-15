@@ -36,6 +36,7 @@ public class AutoMapperConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
+        // TODO: does not do the auto map properties
         var profiles = context
                       .AssemblyProvider.GetTypes(t => t.FromAssemblyDependenciesOf<Mapper>().GetTypes(f => f.AssignableTo<Profile>().NotInfoOf(TypeInfoFilter.Abstract))).ToArray();
 

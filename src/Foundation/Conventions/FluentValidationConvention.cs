@@ -49,10 +49,11 @@ public class FluentValidationConvention : IServiceConvention
             throw new ArgumentNullException(nameof(context));
         }
 
-        foreach (var validator in context
-                                 .AssemblyProvider.GetTypes(
-                                      z => z.FromAssemblyDependenciesOf<IValidator>().GetTypes(f => f.AssignableTo(typeof(IValidator<>)))
-                                  ))
+        var types = context
+                   .AssemblyProvider.GetTypes(
+                        z => z.FromAssemblyDependenciesOf<IValidator>().GetTypes(f => f.AssignableTo(typeof(IValidator<>)))
+                    );
+        foreach (var validator in types)
         {
             var interfaceType = typeof(IValidator<>).MakeGenericType(validator.BaseType?.GetGenericArguments()[0]!);
             services.Add(new ServiceDescriptor(interfaceType, validator, _options.ValidatorLifetime));

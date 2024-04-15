@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
 using FluentValidation;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Restful;
@@ -15,7 +17,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = await WebApplication.CreateBuilder(args)
-                            .ConfigureRocketSurgery(Imports.GetConventions);
+                                  .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
 
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services.AddHostedService<CustomHostedService>();

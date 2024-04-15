@@ -1,5 +1,7 @@
+using System.Runtime.Loader;
 using HotChocolate.Types.Spatial;
 using Microsoft.Extensions.DependencyModel;
+using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
@@ -8,7 +10,7 @@ using Sample.Graphql;
 
 var builder = await WebApplication
              .CreateBuilder(args)
-             .LaunchWith(RocketBooster.For(Imports.GetConventions));
+                   .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
 
 builder
    .Services

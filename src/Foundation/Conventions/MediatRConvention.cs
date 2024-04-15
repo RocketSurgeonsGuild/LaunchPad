@@ -38,6 +38,7 @@ public class MediatRConvention : IServiceConvention
         services.AddMediatR(
             c =>
             {
+                // TODO: Look at converting this to use the assembly type provider
                 c.RegisterServicesFromAssemblies(context.AssemblyProvider.GetAssemblies(x => x.FromAssemblyDependenciesOf<IMediator>()).ToArray());
                 c.Lifetime = _options switch
                 {

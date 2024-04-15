@@ -1,15 +1,17 @@
 using System.Reflection;
+using System.Runtime.Loader;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.OpenApi.Models;
+using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Classic.Restful;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 
-var builder = WebApplication.CreateBuilder(args);
-await builder.LaunchWith(RocketBooster.For(Imports.GetConventions));
+var builder = await WebApplication.CreateBuilder(args)
+                                  .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services
        .Configure<SwaggerGenOptions>(
@@ -42,3 +44,5 @@ app.MapControllers();
 app.MapSwagger();
 
 await app.RunAsync();
+
+public partial class Program;

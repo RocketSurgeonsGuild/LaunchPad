@@ -1,3 +1,4 @@
+using System.Runtime.Loader;
 using AutoMapper;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
@@ -248,11 +249,12 @@ public static class AutoMapperProfile
 public class AutoMapperConventionTests
 {
     [Fact]
-    public void ShouldRegisterAutoMapperTypes()
+    public async Task ShouldRegisterAutoMapperTypes()
     {
-        var conventionBuilder = new ConventionContextBuilder(new Dictionary<object, object>());
-        var provider = Imports.GetConventions.CreateAssemblyProvider(conventionBuilder);
-        provider.GetTypes(x => x.FromAssemblyOf(typeof(IValueResolver<,,>)).GetTypes(f => f.AssignableTo(typeof(IValueResolver<,,>)))).Should().NotBeEmpty();
+        var conventionBuilder = new ConventionContextBuilder(new Dictionary<object, object>()).WithConventionsFrom(global::Extensions.Tests.Imports.GetConventions).Set(AssemblyLoadContext.Default);
+        var context = await ConventionContext.FromAsync(conventionBuilder);
+        var types = context.AssemblyProvider.GetTypes(x => x.FromAssemblyDependenciesOf(typeof(IMapper)).GetTypes(f => f.AssignableTo(typeof(IMapper)))).ToArray();
+            types.Should().NotBeEmpty();
     }
     class Source
     {

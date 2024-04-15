@@ -1,10 +1,12 @@
+using System.Runtime.Loader;
+using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.BlazorServer;
 using Sample.BlazorServer.Data;
 
-var builder = WebApplication.CreateBuilder(args);
-await builder.LaunchWith(RocketBooster.For(Imports.GetConventions));
+var builder = await WebApplication.CreateBuilder(args)
+                                  .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -34,3 +36,5 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 await app.RunAsync();
+
+public partial class Program;

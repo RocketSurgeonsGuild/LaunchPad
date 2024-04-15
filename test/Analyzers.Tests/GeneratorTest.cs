@@ -39,7 +39,6 @@ public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : Logger
                  .WithAssemblyLoadContext(AssemblyLoadContext)
                  .AddReferences(
                       typeof(ActivatorUtilities).Assembly,
-                      typeof(ConventionAttribute).Assembly,
                       typeof(ConventionContext).Assembly,
                       typeof(IConventionContext).Assembly
                   );

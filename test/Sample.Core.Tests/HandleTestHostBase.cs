@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Runtime.Loader;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
@@ -24,7 +25,8 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     {
         _context =
             ConventionContextBuilder.Create()
-                                    .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
+                                    .ForTesting(Imports.GetConventions, LoggerFactory)
+                                    .Set(AssemblyLoadContext.Default)
                                     .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)));
         ExcludeSourceContext(nameof(AutoFakeTest));
     }

@@ -1,14 +1,16 @@
+using System.Runtime.Loader;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Rocket.Surgery.Conventions;
+using Rocket.Surgery.Hosting;
 using Rocket.Surgery.WebAssembly.Hosting;
 using Sample.BlazorWasm;
 
 
 var builder = await WebAssemblyHostBuilder.CreateDefault(args)
-                                          .ConfigureRocketSurgery(Imports.GetConventions)
-    ;
+                                          .ConfigureRocketSurgery(Imports.GetConventions);
+
 builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
