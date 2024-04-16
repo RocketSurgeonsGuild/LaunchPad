@@ -251,11 +251,22 @@ public class AutoMapperConventionTests
     [Fact]
     public async Task ShouldRegisterAutoMapperTypes()
     {
-        var conventionBuilder = new ConventionContextBuilder(new Dictionary<object, object>()).WithConventionsFrom(global::Extensions.Tests.Imports.GetConventions).Set(AssemblyLoadContext.Default);
+        var conventionBuilder = new ConventionContextBuilder(new Dictionary<object, object>())
+                               .WithConventionsFrom(Imports.GetConventions)
+                               .Set(AssemblyLoadContext.Default);
         var context = await ConventionContext.FromAsync(conventionBuilder);
-        var types = context.AssemblyProvider.GetTypes(x => x.FromAssemblyDependenciesOf(typeof(IMapper)).GetTypes(f => f.AssignableTo(typeof(IMapper)))).ToArray();
-            types.Should().NotBeEmpty();
+        var types = context.AssemblyProvider.GetTypes(
+                                x => x.FromAssemblyDependenciesOf(typeof(IMapper))
+                                      .GetTypes(f => f.AssignableToAny(typeof(IValueResolver<,,>),
+                                                    typeof(IMemberValueResolver<,,,>),
+                                                    typeof(ITypeConverter<,>),
+                                                    typeof(IValueConverter<,>),
+                                                    typeof(IMappingAction<,>)))
+                            )
+                           .ToArray();
+        types.Should().NotBeEmpty();
     }
+
     class Source
     {
         public string Name { get; set; }
