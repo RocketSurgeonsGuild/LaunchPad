@@ -1,3 +1,4 @@
+using System.Runtime.Loader;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.Conventions;
@@ -11,7 +12,8 @@ public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : A
     protected async Task Init(Action<ConventionContextBuilder>? action = null)
     {
         var conventionContextBuilder = ConventionContextBuilder.Create()
-                                                               .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
+                                                               .ForTesting(Imports.GetConventions, LoggerFactory)
+                                                               .Set(AssemblyLoadContext.Default)
                                                                .WithLogger(Logger);
         action?.Invoke(conventionContextBuilder);
         var context = await ConventionContext.FromAsync(conventionContextBuilder);

@@ -50,12 +50,14 @@ public class FluentValidationConvention : IServiceConvention
         }
 
         var types = context
-                   .AssemblyProvider.GetTypes(
-                        z => z.FromAssemblyDependenciesOf<IValidator>().GetTypes(f => f.AssignableTo(typeof(IValidator<>)))
+                   .AssemblyProvider.GetTypes(z => z.FromAssemblyDependenciesOf<IValidator>()
+                                                    .GetTypes(f => f.AssignableTo(typeof(AbstractValidator<>))
+                                                                    .NotInfoOf(TypeInfoFilter.GenericType, TypeInfoFilter.Abstract))
                     );
         foreach (var validator in types)
         {
-            var interfaceType = typeof(IValidator<>).MakeGenericType(validator.BaseType?.GetGenericArguments()[0]!);
+            if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType] } }) continue;
+            var interfaceType = typeof(IValidator<>).MakeGenericType(innerType);
             services.Add(new ServiceDescriptor(interfaceType, validator, _options.ValidatorLifetime));
             services.Add(new ServiceDescriptor(validator, validator, _options.ValidatorLifetime));
         }

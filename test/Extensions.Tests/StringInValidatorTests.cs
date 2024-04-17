@@ -8,7 +8,7 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
     [Fact]
     public async Task Should_Validate_Invalid()
     {
-        Init();
+        await Init();
         var data = new Target
         {
             Type = "NotTruck",
@@ -32,7 +32,7 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
     [Fact]
     public async Task Should_Validate_CaseSensitive()
     {
-        Init();
+       await Init();
         var data = new Target
         {
             Type = "truck",
@@ -55,7 +55,7 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
     [Fact]
     public async Task Should_Validate_CaseInsensitive()
     {
-        Init();
+        await Init();
         var data = new Target
         {
             Type = "Truck",

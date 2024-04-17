@@ -1,4 +1,5 @@
 #if NET6_0_OR_GREATER
+using System.Runtime.Loader;
 using DryIoc;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -146,7 +147,8 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
-                                      .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
+                                      .ForTesting(Imports.GetConventions, LoggerFactory)
+                                      .Set(AssemblyLoadContext.Default)
                                       .Set(
                                            new FoundationOptions
                                            {
