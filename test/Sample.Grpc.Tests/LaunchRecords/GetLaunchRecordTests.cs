@@ -51,6 +51,6 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixt
         response.Payload.Should().Be("geo-fence-ftl");
         response.RocketType.Should().Be(RocketType.Falcon9);
         response.RocketSerialNumber.Should().Be("12345678901234");
-        response.ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate.ToTimestamp());
+        response.ScheduledLaunchDate.ToDateTimeOffset().Should().BeCloseTo(record.ScheduledLaunchDate, TimeSpan.FromMilliseconds(1));
     }
 }

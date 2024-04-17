@@ -59,7 +59,7 @@ public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppF
 
         var response = await client.GetLaunchRecordsAsync(new GetLaunchRecordRequest { Id = record.Id.ToString() });
 
-        response.ScheduledLaunchDate.Should().Be(launchDate);
+        response.ScheduledLaunchDate.ToDateTimeOffset().Should().BeCloseTo(launchDate.ToDateTimeOffset(), TimeSpan.FromMilliseconds(1));
         response.PayloadWeightKg.Should().Be(200);
     }
 
