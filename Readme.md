@@ -29,7 +29,6 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.EntityFramework | [![nuget-version-nutptsm/tbya-badge]![nuget-downloads-nutptsm/tbya-badge]][nuget-nutptsm/tbya] |
 | Rocket.Surgery.LaunchPad.Foundation | [![nuget-version-kb2xyygxvala-badge]![nuget-downloads-kb2xyygxvala-badge]][nuget-kb2xyygxvala] |
 | Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson | [![nuget-version-m0yumfedtfoa-badge]![nuget-downloads-m0yumfedtfoa-badge]][nuget-m0yumfedtfoa] |
-| Rocket.Surgery.LaunchPad.Functions | [![nuget-version-hllqtixjuvag-badge]![nuget-downloads-hllqtixjuvag-badge]][nuget-hllqtixjuvag] |
 | Rocket.Surgery.LaunchPad.Grpc | [![nuget-version-auwnvpy8f+6g-badge]![nuget-downloads-auwnvpy8f+6g-badge]][nuget-auwnvpy8f+6g] |
 | Rocket.Surgery.LaunchPad.Hosting | [![nuget-version-w/tyeoj0dncw-badge]![nuget-downloads-w/tyeoj0dncw-badge]][nuget-w/tyeoj0dncw] |
 | Rocket.Surgery.LaunchPad.HotChocolate | [![nuget-version-ozd3tvimwvrq-badge]![nuget-downloads-ozd3tvimwvrq-badge]][nuget-ozd3tvimwvrq] |
@@ -87,9 +86,6 @@ TBD
 [nuget-m0yumfedtfoa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson/
 [nuget-version-m0yumfedtfoa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-m0yumfedtfoa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-hllqtixjuvag]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Functions/
-[nuget-version-hllqtixjuvag-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Functions.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-hllqtixjuvag-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Functions.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-auwnvpy8f+6g]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Grpc/
 [nuget-version-auwnvpy8f+6g-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Grpc.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-auwnvpy8f+6g-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Grpc.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
