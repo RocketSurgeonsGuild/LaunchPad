@@ -132,9 +132,9 @@
     <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.0.7" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="8.0.0" />
-    <PackageVersion Include="OpenTelemetry" Version="1.8.0" />
-    <PackageVersion Include="OpenTelemetry.Api" Version="1.8.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.0" />
+    <PackageVersion Include="OpenTelemetry" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
   </ItemGroup>
