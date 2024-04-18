@@ -3,7 +3,6 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Telemetry;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;

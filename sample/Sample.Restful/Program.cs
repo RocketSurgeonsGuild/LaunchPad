@@ -14,8 +14,8 @@ using Sample.Restful;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-var builder =  WebApplication
-                   .CreateBuilder(args);
+var builder = WebApplication
+   .CreateBuilder(args);
 
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services.AddHostedService<CustomHostedService>();
@@ -33,7 +33,7 @@ builder.Services
         );
 
 var app = await builder
-         .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 app.UseProblemDetails();
 app.UseHttpsRedirection();
 

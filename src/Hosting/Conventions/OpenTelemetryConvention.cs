@@ -21,9 +21,11 @@ public class OpenTelemetryConvention : IServiceAsyncConvention
         IConfiguration configuration,
         IServiceCollection services,
         CancellationToken cancellationToken
-    ) =>
+    )
+    {
         await services
              .AddOpenTelemetry()
              .ApplyConventionsAsync(context, cancellationToken)
              .ConfigureAwait(false);
+    }
 }

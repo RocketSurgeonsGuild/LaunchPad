@@ -145,7 +145,10 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, Func<IOpenTelemetryBuilder, CancellationToken, ValueTask> @delegate)
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        Func<IOpenTelemetryBuilder, CancellationToken, ValueTask> @delegate
+    )
     {
         if (container == null)
         {

@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Telemetry;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;

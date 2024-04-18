@@ -1,9 +1,8 @@
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Sample.Worker;
 
 var builder = Host
-                   .CreateApplicationBuilder(args);
+   .CreateApplicationBuilder(args);
 builder.Services.AddHostedService<BackgroundWorker>();
 
 

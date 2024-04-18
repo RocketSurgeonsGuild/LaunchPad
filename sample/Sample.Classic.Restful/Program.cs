@@ -8,7 +8,7 @@ using Sample.Classic.Restful;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication
-                   .CreateBuilder(args);
+   .CreateBuilder(args);
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services
        .Configure<SwaggerGenOptions>(

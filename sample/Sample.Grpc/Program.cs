@@ -6,8 +6,8 @@ using Sample.Grpc;
 using Sample.Grpc.Services;
 
 var app = await WebApplication
-                   .CreateBuilder(args)
-                   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+               .CreateBuilder(args)
+               .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 
 app.UseLaunchPadRequestLogging();
 
