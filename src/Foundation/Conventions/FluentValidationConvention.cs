@@ -49,18 +49,30 @@ public class FluentValidationConvention : IServiceConvention
             throw new ArgumentNullException(nameof(context));
         }
 
-        services.AddValidatorsFromAssemblies(
-            context
-               .AssemblyCandidateFinder
-               .GetCandidateAssemblies("FluentValidation"),
-            _options.ValidatorLifetime,
-            includeInternalTypes: true
-        );
+        var types = context
+                   .AssemblyProvider.GetTypes(
+                        z => z
+                            .FromAssemblyDependenciesOf<IValidator>()
+                            .GetTypes(
+                                 f => f
+                                     .AssignableTo(typeof(AbstractValidator<>))
+                                     .NotInfoOf(TypeInfoFilter.GenericType, TypeInfoFilter.Abstract)
+                             )
+                    );
+        foreach (var validator in types)
+        {
+            if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType,], }, }) continue;
+            var interfaceType = typeof(IValidator<>).MakeGenericType(innerType);
+            services.Add(new(interfaceType, validator, _options.ValidatorLifetime));
+            services.Add(new(validator, validator, _options.ValidatorLifetime));
+        }
 
         if (_options.RegisterValidationOptionsAsHealthChecks == true
-         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue && Convert.ToBoolean(
-                context.Properties["RegisterValidationOptionsAsHealthChecks"], CultureInfo.InvariantCulture
-            ) )
+         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue
+             && Convert.ToBoolean(
+                    context.Properties["RegisterValidationOptionsAsHealthChecks"],
+                    CultureInfo.InvariantCulture
+                ) )
          || Environment.CommandLine.Contains(
                 "microsoft.extensions.apidescription.server",
                 StringComparison.OrdinalIgnoreCase

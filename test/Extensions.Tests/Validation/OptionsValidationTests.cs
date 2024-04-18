@@ -1,8 +1,8 @@
 #if NET6_0_OR_GREATER
+using System.Runtime.Loader;
 using DryIoc;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
@@ -88,11 +88,12 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         }
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
-                                      .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
+                                      .ForTesting(Imports.Instance, LoggerFactory)
+                                      .Set(AssemblyLoadContext.Default)
                                       .Set(
                                            new FoundationOptions
                                            {
@@ -101,10 +102,8 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
                                        )
                                       .WithLogger(Logger);
 
-        var context = ConventionContext.From(conventionContextBuilder);
-        Populate(new ServiceCollection().ApplyConventions(context));
-
-        return Task.CompletedTask;
+        var context = await ConventionContext.FromAsync(conventionContextBuilder);
+        Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
 
     public Task DisposeAsync()

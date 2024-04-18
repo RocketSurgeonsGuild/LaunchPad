@@ -17,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// <seealso cref="IHostingConvention" />
 [PublicAPI]
 [ExportConvention]
-public class SerilogHostingConvention : IHostingConvention
+public class SerilogHostingConvention : IHostApplicationConvention
 {
     private readonly LaunchPadLoggingOptions _options;
 
@@ -31,38 +31,34 @@ public class SerilogHostingConvention : IHostingConvention
     }
 
     /// <inheritdoc />
-    public void Register(IConventionContext context, IHostBuilder builder)
+    public void Register(IConventionContext context, IHostApplicationBuilder builder)
     {
         if (context == null)
         {
             throw new ArgumentNullException(nameof(context));
         }
 
-        builder.ConfigureServices(
-            (_, services) =>
-            {
-                // removes default console loggers and such
-                foreach (var item in services
-                                    .Where(
-                                         x => x.ImplementationType?.FullName?.StartsWith("Microsoft.Extensions.Logging", StringComparison.Ordinal) == true
-                                           && x.ImplementationType?.FullName.EndsWith("Provider", StringComparison.Ordinal) == true
-                                     )
-                                    .ToArray()
-                        )
-                {
-                    services.Remove(item);
-                }
-            }
-        );
+        // removes default console loggers and such
+        foreach (var item in builder
+                            .Services
+                            .Where(
+                                 x => x.ImplementationType?.FullName?.StartsWith("Microsoft.Extensions.Logging", StringComparison.Ordinal) == true
+                                  && x.ImplementationType?.FullName.EndsWith("Provider", StringComparison.Ordinal) == true
+                             )
+                            .ToArray()
+                )
+        {
+            builder.Services.Remove(item);
+        }
 
         if (context.Get<ILogger>() is { } logger)
         {
-            builder.UseSerilog(logger);
+            builder.Services.AddSerilog(logger);
         }
         else
         {
-            builder.UseSerilog(
-                (_, services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, services),
+            builder.Services.AddSerilog(
+                (services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, services),
                 _options.PreserveStaticLogger,
                 _options.WriteToProviders
             );
@@ -70,7 +66,7 @@ public class SerilogHostingConvention : IHostingConvention
             if (context.Get<ILoggerFactory>() != null)
             {
                 // ReSharper disable once NullableWarningSuppressionIsUsed
-                builder.ConfigureServices((_, services) => services.AddSingleton(context.Get<ILoggerFactory>()!));
+                builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
             }
         }
     }

@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Reflection;
@@ -34,7 +36,39 @@ public class AutoMapperConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        var assemblies = context.AssemblyCandidateFinder.GetCandidateAssemblies(nameof(AutoMapper)).ToArray();
-        services.AddAutoMapper(assemblies, _options.ServiceLifetime);
+        var provider = context.AssemblyProvider;
+        var autoMapperTypes = provider.GetTypes(
+            t => t
+                .FromAssemblyDependenciesOf<IMapper>()
+                .GetTypes(
+                     f => f
+                         .AssignableToAny(
+                              typeof(IValueResolver<,,>),
+                              typeof(IMemberValueResolver<,,,>),
+                              typeof(ITypeConverter<,>),
+                              typeof(IValueConverter<,>),
+                              typeof(IMappingAction<,>)
+                          )
+                         .NotInfoOf(TypeInfoFilter.Abstract)
+                 )
+        );
+        // TODO: does not do the auto map properties
+        var profiles = provider
+                      .GetTypes(t => t.FromAssemblyDependenciesOf<IMapper>().GetTypes(f => f.AssignableTo<Profile>().NotInfoOf(TypeInfoFilter.Abstract)))
+                      .ToArray();
+        foreach (var type in autoMapperTypes)
+        {
+            services.TryAdd(new ServiceDescriptor(type, type, _options.ServiceLifetime));
+        }
+
+        services.AddAutoMapper(
+            config =>
+            {
+                foreach (var profile in profiles)
+                {
+                    config.AddProfile(profile);
+                }
+            }
+        );
     }
 }

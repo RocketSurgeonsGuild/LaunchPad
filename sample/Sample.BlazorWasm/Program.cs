@@ -1,25 +1,17 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.WebAssembly.Hosting;
+using Sample.BlazorWasm;
 
-namespace Sample.BlazorWasm;
+var builder = await WebAssemblyHostBuilder
+                   .CreateDefault(args)
+                   .ConfigureRocketSurgery(Imports.Instance);
 
-[ImportConventions]
-public static partial class Program
-{
-    public static async Task Main(string[] args)
-    {
-        var builder = await WebAssemblyHostBuilder.CreateDefault(args)
-                                                  .ConfigureRocketSurgery(AppDomain.CurrentDomain, GetConventions)
-            ;
-        builder.RootComponents.Add<App>("app");
-        builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
+builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress), });
 
-        await builder.Build().RunAsync();
-    }
-}
+await builder.Build().RunAsync();
 
 public static class TestHandler
 {
@@ -67,5 +59,3 @@ public static class TestHandler
         }
     }
 }
-
-

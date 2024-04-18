@@ -1,7 +1,7 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Runtime.Loader;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
@@ -23,15 +23,17 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     )
     {
         _context =
-            ConventionContextBuilder.Create()
-                                    .ForTesting(DependencyContext.Load(GetType().Assembly)!, LoggerFactory)
-                                    .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)));
+            ConventionContextBuilder
+               .Create()
+               .ForTesting(Imports.Instance, LoggerFactory)
+               .Set(AssemblyLoadContext.Default)
+               .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)));
         ExcludeSourceContext(nameof(AutoFakeTest));
     }
 
     public async Task InitializeAsync()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection = new("DataSource=:memory:");
         await _connection.OpenAsync();
 
         _context
@@ -41,14 +43,15 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
                     services.AddDbContextPool<RocketDbContext>(
                         z => z
                             .EnableDetailedErrors()
-                            .EnableSensitiveDataLogging().UseSqlite(
+                            .EnableSensitiveDataLogging()
+                            .UseSqlite(
                                  _connection
                              )
                     );
                 }
             );
 
-        Populate(new ServiceCollection().ApplyConventions(ConventionContext.From(_context)));
+        Populate(await new ServiceCollection().ApplyConventionsAsync(await ConventionContext.FromAsync(_context)));
 
         await ServiceProvider.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
     }

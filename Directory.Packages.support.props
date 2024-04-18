@@ -3,13 +3,4 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
     <PackageVersion Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.24" />
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.24" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="6.0.24" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.24" />
-    <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.24" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.14" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="7.0.14" />
-  </ItemGroup>
 </Project>

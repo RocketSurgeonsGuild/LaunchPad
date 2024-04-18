@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -14,7 +14,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />
-        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />
         <PackageReference Include="Swashbuckle.AspNetCore" />

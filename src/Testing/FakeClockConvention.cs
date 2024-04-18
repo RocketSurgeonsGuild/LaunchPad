@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using NodaTime;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
@@ -35,7 +34,7 @@ public class FakeClockConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.TryAddSingleton(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
-        services.TryAddSingleton<IClock>(provider => provider.GetRequiredService<FakeClock>());
+        services.AddSingleton(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
+        services.AddSingleton<IClock>(provider => provider.GetRequiredService<FakeClock>());
     }
 }

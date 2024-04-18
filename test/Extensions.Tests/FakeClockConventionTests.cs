@@ -21,9 +21,9 @@ public class FakeClockConventionTests(ITestOutputHelper testOutputHelper) : Conv
     }
 
     [Fact]
-    public void Clock_Convention_Override()
+    public async Task Clock_Convention_Override()
     {
-        Init(
+        await Init(
             x => { x.AppendConvention(new FakeClockConvention(0, Duration.FromMinutes(1))); }
         );
 
