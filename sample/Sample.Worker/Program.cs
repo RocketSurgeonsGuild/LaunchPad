@@ -5,7 +5,7 @@ using Sample.Worker;
 
 var builder = await Host
                    .CreateApplicationBuilder(args)
-                   .LaunchWith(RocketBooster.For(Imports.GetConventions));
+                   .LaunchWith(RocketBooster.For(Imports.Instance));
 builder.Services.AddHostedService<BackgroundWorker>();
 
 await builder.RunAsync();

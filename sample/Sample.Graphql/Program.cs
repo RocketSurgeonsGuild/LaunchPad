@@ -8,9 +8,7 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Models;
 using Sample.Graphql;
 
-var builder = await WebApplication
-             .CreateBuilder(args)
-                   .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
+var builder = WebApplication.CreateBuilder(args);
 
 builder
    .Services
@@ -32,7 +30,8 @@ builder
    .AddMutationType()
    .ModifyRequestOptions(options => options.IncludeExceptionDetails = true);
 
-var app = builder.Build();
+var app = ( await builder
+   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default))).Build();
 
 app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();

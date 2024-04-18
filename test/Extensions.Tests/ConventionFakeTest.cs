@@ -12,7 +12,7 @@ public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : A
     protected async Task Init(Action<ConventionContextBuilder>? action = null)
     {
         var conventionContextBuilder = ConventionContextBuilder.Create()
-                                                               .ForTesting(Imports.GetConventions, LoggerFactory)
+                                                               .ForTesting(Imports.Instance, LoggerFactory)
                                                                .Set(AssemblyLoadContext.Default)
                                                                .WithLogger(Logger);
         action?.Invoke(conventionContextBuilder);

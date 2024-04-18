@@ -12,7 +12,7 @@ using Sample.Pages;
 
 var builder = await WebApplication
                    .CreateBuilder(args)
-                   .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
+                   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 

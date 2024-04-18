@@ -9,7 +9,7 @@ using Sample.BlazorWasm;
 
 
 var builder = await WebAssemblyHostBuilder.CreateDefault(args)
-                                          .ConfigureRocketSurgery(Imports.GetConventions);
+                                          .ConfigureRocketSurgery(Imports.Instance);
 
 builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

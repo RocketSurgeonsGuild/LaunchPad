@@ -93,7 +93,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
-                                      .ForTesting(Imports.GetConventions, LoggerFactory)
+                                      .ForTesting(Imports.Instance, LoggerFactory)
                                       .Set(AssemblyLoadContext.Default)
                                       .Set(
                                            new FoundationOptions

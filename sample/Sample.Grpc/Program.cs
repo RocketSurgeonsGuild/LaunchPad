@@ -6,7 +6,7 @@ using Sample.Grpc;
 using Sample.Grpc.Services;
 
 var builder = await WebApplication.CreateBuilder(args)
-                                  .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
+                                  .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 
 var app = builder.Build();
 

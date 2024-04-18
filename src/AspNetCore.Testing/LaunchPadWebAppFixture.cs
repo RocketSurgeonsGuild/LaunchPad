@@ -33,7 +33,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     protected LaunchPadWebAppFixture(params IAlbaExtension[] extensions)
     {
         _loggerFactory = new();
-        _extensions = [new LaunchPadExtension(this, _loggerFactory), ..extensions,];
+        _extensions = [new LaunchPadExtension(_loggerFactory), ..extensions,];
     }
 
     /// <summary>

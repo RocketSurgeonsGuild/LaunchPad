@@ -11,7 +11,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 
 var builder = await WebApplication.CreateBuilder(args)
-                                  .LaunchWith(RocketBooster.For(Imports.GetConventions), b => b.Set(AssemblyLoadContext.Default));
+                                  .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services
        .Configure<SwaggerGenOptions>(

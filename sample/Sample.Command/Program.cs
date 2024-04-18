@@ -13,7 +13,7 @@ using Spectre.Console.Cli;
 await ( await Host
        .CreateApplicationBuilder(args)
        .LaunchWith(
-            RocketBooster.For(Imports.GetConventions),
+            RocketBooster.For(Imports.Instance),
             builder => builder
                       .SetDefaultCommand<DefaultCommand>()
                       .ConfigureLogging(z => z.AddConsole())
