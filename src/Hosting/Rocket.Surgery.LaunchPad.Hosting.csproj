@@ -17,4 +17,7 @@
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Telemetry\" />
+    </ItemGroup>
 </Project>

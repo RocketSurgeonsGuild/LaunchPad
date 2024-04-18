@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Rocket.Surgery.Conventions;
@@ -8,25 +9,20 @@ using Rocket.Surgery.LaunchPad.Telemetry;
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
 /// <summary>
-///     ProblemDetailsConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     AspNetCoreConventionInstrumentationConvention.
+///     Implements the <see cref="IOpenTelemetryConvention" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
-/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IOpenTelemetryConvention" />
+/// <seealso cref="IOpenTelemetryConvention" />
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(AspNetCoreConvention))]
-public class AspNetCoreConventionInstrumentationConvention : IOpenTelemetryMetricsConvention, IOpenTelemetryTracingConvention
+public class AspNetCoreConventionInstrumentationConvention : IOpenTelemetryConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder)
+    public void Register(IConventionContext conventionContext, IConfiguration configuration, IOpenTelemetryBuilder builder)
     {
-        builder.AddAspNetCoreInstrumentation();
-    }
-
-    /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, TracerProviderBuilder builder)
-    {
-        builder.AddAspNetCoreInstrumentation(options => options.RecordException = true);
+        builder.WithTracing(b => b.AddAspNetCoreInstrumentation(options => options.RecordException = true));
+        builder.WithMetrics(b => b.AddAspNetCoreInstrumentation());
     }
 }

@@ -5,11 +5,9 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Grpc;
 using Sample.Grpc.Services;
 
-var builder = await WebApplication
+var app = await WebApplication
                    .CreateBuilder(args)
                    .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
-
-var app = builder.Build();
 
 app.UseLaunchPadRequestLogging();
 

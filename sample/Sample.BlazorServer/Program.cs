@@ -5,15 +5,13 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.BlazorServer;
 using Sample.BlazorServer.Data;
 
-var builder = await WebApplication
-                   .CreateBuilder(args)
-                   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-var app = builder.Build();
+var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 
 if (builder.Environment.IsDevelopment())
 {

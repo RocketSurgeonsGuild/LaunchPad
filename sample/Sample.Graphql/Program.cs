@@ -29,8 +29,8 @@ builder
    .AddMutationType()
    .ModifyRequestOptions(options => options.IncludeExceptionDetails = true);
 
-var app = ( await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default)) ).Build();
+var app = await builder
+   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 
 app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();
