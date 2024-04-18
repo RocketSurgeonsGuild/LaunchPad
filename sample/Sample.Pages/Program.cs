@@ -2,8 +2,6 @@ using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
 using Humanizer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
@@ -40,15 +38,15 @@ app.UseAuthorization();
 
 app.MapHealthChecks(
     "/health",
-    new HealthCheckOptions
+    new()
     {
         ResponseWriter = WriteResponse,
         ResultStatusCodes = new Dictionary<HealthStatus, int>
         {
             { HealthStatus.Healthy, StatusCodes.Status200OK },
             { HealthStatus.Degraded, StatusCodes.Status500InternalServerError },
-            { HealthStatus.Unhealthy, StatusCodes.Status503ServiceUnavailable }
-        }
+            { HealthStatus.Unhealthy, StatusCodes.Status503ServiceUnavailable },
+        },
     }
 );
 app.MapRazorPages();
@@ -59,7 +57,7 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
 {
     context.Response.ContentType = "application/json; charset=utf-8";
 
-    var options = new JsonWriterOptions { Indented = true };
+    var options = new JsonWriterOptions { Indented = true, };
 
     using var memoryStream = new MemoryStream();
     using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))

@@ -50,22 +50,29 @@ public class FluentValidationConvention : IServiceConvention
         }
 
         var types = context
-                   .AssemblyProvider.GetTypes(z => z.FromAssemblyDependenciesOf<IValidator>()
-                                                    .GetTypes(f => f.AssignableTo(typeof(AbstractValidator<>))
-                                                                    .NotInfoOf(TypeInfoFilter.GenericType, TypeInfoFilter.Abstract))
+                   .AssemblyProvider.GetTypes(
+                        z => z
+                            .FromAssemblyDependenciesOf<IValidator>()
+                            .GetTypes(
+                                 f => f
+                                     .AssignableTo(typeof(AbstractValidator<>))
+                                     .NotInfoOf(TypeInfoFilter.GenericType, TypeInfoFilter.Abstract)
+                             )
                     );
         foreach (var validator in types)
         {
-            if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType] } }) continue;
+            if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType,], }, }) continue;
             var interfaceType = typeof(IValidator<>).MakeGenericType(innerType);
-            services.Add(new ServiceDescriptor(interfaceType, validator, _options.ValidatorLifetime));
-            services.Add(new ServiceDescriptor(validator, validator, _options.ValidatorLifetime));
+            services.Add(new(interfaceType, validator, _options.ValidatorLifetime));
+            services.Add(new(validator, validator, _options.ValidatorLifetime));
         }
 
         if (_options.RegisterValidationOptionsAsHealthChecks == true
-         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue && Convert.ToBoolean(
-                context.Properties["RegisterValidationOptionsAsHealthChecks"], CultureInfo.InvariantCulture
-            ) )
+         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue
+             && Convert.ToBoolean(
+                    context.Properties["RegisterValidationOptionsAsHealthChecks"],
+                    CultureInfo.InvariantCulture
+                ) )
          || Environment.CommandLine.Contains(
                 "microsoft.extensions.apidescription.server",
                 StringComparison.OrdinalIgnoreCase

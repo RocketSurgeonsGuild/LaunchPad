@@ -14,14 +14,14 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
 
     public SqliteExtension()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection = new("DataSource=:memory:");
     }
 
     public void Reset(IServiceProvider serviceProvider)
     {
         _connection.Close();
         _connection.Open();
-         serviceProvider.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreated());
+        serviceProvider.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreated());
     }
 
     public async Task ResetAsync(IServiceProvider serviceProvider)

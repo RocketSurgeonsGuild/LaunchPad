@@ -12,16 +12,16 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var data = new Target
         {
             Type = "NotTruck",
-            TypeIgnoreCase = "nottruck"
+            TypeIgnoreCase = "nottruck",
         };
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
-#pragma warning disable CA1849
+        #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
-#pragma warning restore CA1849
+        #pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
@@ -32,20 +32,20 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
     [Fact]
     public async Task Should_Validate_CaseSensitive()
     {
-       await Init();
+        await Init();
         var data = new Target
         {
             Type = "truck",
-            TypeIgnoreCase = "truck"
+            TypeIgnoreCase = "truck",
         };
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
-#pragma warning disable CA1849
+        #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
-#pragma warning restore CA1849
+        #pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
@@ -59,16 +59,16 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var data = new Target
         {
             Type = "Truck",
-            TypeIgnoreCase = "nottruck"
+            TypeIgnoreCase = "nottruck",
         };
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
-#pragma warning disable CA1849
+        #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
-#pragma warning restore CA1849
+        #pragma warning restore CA1849
         result.Should().BeEquivalentTo(result2);
 
         result.IsValid.Should().BeFalse();
@@ -77,8 +77,11 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
 
     private class Target
     {
-        [UsedImplicitly] public string Type { get; set; } = null!;
-        [UsedImplicitly] public string TypeIgnoreCase { get; set; } = null!;
+        [UsedImplicitly]
+        public string Type { get; set; } = null!;
+
+        [UsedImplicitly]
+        public string TypeIgnoreCase { get; set; } = null!;
 
         [UsedImplicitly]
         private class Validator : AbstractValidator<Target>

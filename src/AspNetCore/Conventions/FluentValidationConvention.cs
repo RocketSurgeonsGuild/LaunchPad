@@ -1,17 +1,10 @@
-﻿using System.Reflection;
-using FluentValidation.AspNetCore;
-using FluentValidation.Validators;
-using MicroElements.OpenApi.FluentValidation;
-using MicroElements.Swashbuckle.FluentValidation;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Any;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Extensions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 

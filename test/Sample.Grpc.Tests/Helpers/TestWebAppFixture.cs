@@ -1,6 +1,4 @@
-﻿using Alba;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
+﻿using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 
 namespace Sample.Grpc.Tests.Helpers;
