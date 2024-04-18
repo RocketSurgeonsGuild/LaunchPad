@@ -11,22 +11,22 @@ using Spectre.Console.Cli;
 [assembly: ImportConventions(Namespace = "Sample.Command")]
 
 await ( await Host
-       .CreateApplicationBuilder(args)
-       .LaunchWith(
-            RocketBooster.For(Imports.Instance),
-            builder => builder
-                      .SetDefaultCommand<DefaultCommand>()
-                      .ConfigureLogging(z => z.AddConsole())
-                      .UseDryIoc()
-                      .ConfigureDryIoc(
-                           x =>
-                           {
-                               x.Use(new InstanceThing());
-                               x.Register<Dump>(Reuse.Singleton);
-                           }
-                       )
-                      .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
-        ) )
+             .CreateApplicationBuilder(args)
+             .LaunchWith(
+                  RocketBooster.For(Imports.Instance),
+                  builder => builder
+                            .SetDefaultCommand<DefaultCommand>()
+                            .ConfigureLogging(z => z.AddConsole())
+                            .UseDryIoc()
+                            .ConfigureDryIoc(
+                                 x =>
+                                 {
+                                     x.Use(new InstanceThing());
+                                     x.Register<Dump>(Reuse.Singleton);
+                                 }
+                             )
+                            .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
+              ) )
    .RunAsync();
 
 public class InstanceThing

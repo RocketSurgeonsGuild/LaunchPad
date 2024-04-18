@@ -5,8 +5,9 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.BlazorServer;
 using Sample.BlazorServer.Data;
 
-var builder = await WebApplication.CreateBuilder(args)
-                                  .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+var builder = await WebApplication
+                   .CreateBuilder(args)
+                   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();

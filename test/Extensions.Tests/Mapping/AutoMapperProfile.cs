@@ -160,14 +160,14 @@ public static class AutoMapperProfile
                 NullableInteger = 1337,
                 Decimal = 13.37M,
                 NullableDecimal = 13.37M,
-                String = "123"
+                String = "123",
             };
 
             mapper.Map(
                 new ParentModel
                 {
                     Decimal = 2.2M,
-                    NullableInteger = 123
+                    NullableInteger = 123,
                 },
                 destination
             );
@@ -199,14 +199,14 @@ public static class AutoMapperProfile
                 Decimal = 13.37M,
                 NullableDecimal = 13.37M,
                 String = "123",
-                Child = new ChildDto
+                Child = new()
                 {
                     Integer = 1337,
                     NullableInteger = 1337,
                     Decimal = 13.37M,
                     NullableDecimal = 13.37M,
-                    String = "123"
-                }
+                    String = "123",
+                },
             };
 
             mapper.Map(
@@ -214,11 +214,11 @@ public static class AutoMapperProfile
                 {
                     Decimal = 2.2M,
                     NullableInteger = 123,
-                    Child = new ChildModel
+                    Child = new()
                     {
                         NullableDecimal = 2.2M,
-                        Integer = 123
-                    }
+                        Integer = 123,
+                    },
                 },
                 destination
             );
@@ -255,29 +255,35 @@ public class AutoMapperConventionTests
                                .WithConventionsFrom(Imports.Instance)
                                .Set(AssemblyLoadContext.Default);
         var context = await ConventionContext.FromAsync(conventionBuilder);
-        var types = context.AssemblyProvider.GetTypes(
-                                x => x.FromAssemblyDependenciesOf(typeof(IMapper))
-                                      .GetTypes(f => f.AssignableToAny(typeof(IValueResolver<,,>),
-                                                    typeof(IMemberValueResolver<,,,>),
-                                                    typeof(ITypeConverter<,>),
-                                                    typeof(IValueConverter<,>),
-                                                    typeof(IMappingAction<,>)))
-                            )
-                           .ToArray();
+        var types = context
+                   .AssemblyProvider.GetTypes(
+                        x => x
+                            .FromAssemblyDependenciesOf(typeof(IMapper))
+                            .GetTypes(
+                                 f => f.AssignableToAny(
+                                     typeof(IValueResolver<,,>),
+                                     typeof(IMemberValueResolver<,,,>),
+                                     typeof(ITypeConverter<,>),
+                                     typeof(IValueConverter<,>),
+                                     typeof(IMappingAction<,>)
+                                 )
+                             )
+                    )
+                   .ToArray();
         types.Should().NotBeEmpty();
     }
 
-    class Source
+    private class Source
     {
         public string Name { get; set; }
     }
 
-    class Destination
+    private class Destination
     {
         public string Name { get; set; }
     }
 
-    class A : IValueResolver<Source, Destination, string>
+    private class A : IValueResolver<Source, Destination, string>
     {
         public string Resolve(Source source, Destination destination, string destMember, ResolutionContext context)
         {
@@ -285,7 +291,7 @@ public class AutoMapperConventionTests
         }
     }
 
-    class B : IMemberValueResolver<Source, Destination, string, string>
+    private class B : IMemberValueResolver<Source, Destination, string, string>
     {
         public string Resolve(Source source, Destination destination, string sourceMember, string destMember, ResolutionContext context)
         {
@@ -293,7 +299,7 @@ public class AutoMapperConventionTests
         }
     }
 
-    class C : ITypeConverter<Source, Destination>
+    private class C : ITypeConverter<Source, Destination>
     {
         public Destination Convert(Source source, Destination destination, ResolutionContext context)
         {
@@ -301,7 +307,7 @@ public class AutoMapperConventionTests
         }
     }
 
-    class D : IValueConverter<string, string>
+    private class D : IValueConverter<string, string>
     {
         public string Convert(string sourceMember, ResolutionContext context)
         {
@@ -309,7 +315,7 @@ public class AutoMapperConventionTests
         }
     }
 
-    class E : IMappingAction<Source, Destination>
+    private class E : IMappingAction<Source, Destination>
     {
         public void Process(Source source, Destination destination, ResolutionContext context)
         {

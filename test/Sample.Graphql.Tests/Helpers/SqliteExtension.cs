@@ -14,7 +14,7 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
 
     public SqliteExtension()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection = new("DataSource=:memory:");
     }
 
     public void Reset(IServiceProvider serviceProvider)

@@ -1,6 +1,5 @@
 using System.Runtime.Loader;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyModel;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.Extensions.Testing;
@@ -11,10 +10,11 @@ public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : A
 {
     protected async Task Init(Action<ConventionContextBuilder>? action = null)
     {
-        var conventionContextBuilder = ConventionContextBuilder.Create()
-                                                               .ForTesting(Imports.Instance, LoggerFactory)
-                                                               .Set(AssemblyLoadContext.Default)
-                                                               .WithLogger(Logger);
+        var conventionContextBuilder = ConventionContextBuilder
+                                      .Create()
+                                      .ForTesting(Imports.Instance, LoggerFactory)
+                                      .Set(AssemblyLoadContext.Default)
+                                      .WithLogger(Logger);
         action?.Invoke(conventionContextBuilder);
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
 

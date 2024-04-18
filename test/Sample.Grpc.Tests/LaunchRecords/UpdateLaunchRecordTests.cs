@@ -16,37 +16,38 @@ public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppF
     public async Task Should_Update_A_LaunchRecord()
     {
         var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
-        var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
-                                          .Invoke(
-                                               async (context, clk) =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Id = RocketId.New(),
-                                                       Type = Core.Domain.RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   context.Add(rocket);
+        var record = await ServiceProvider
+                          .WithScoped<RocketDbContext, IClock>()
+                          .Invoke(
+                               async (context, clk) =>
+                               {
+                                   var rocket = new ReadyRocket
+                                   {
+                                       Id = RocketId.New(),
+                                       Type = Core.Domain.RocketType.Falcon9,
+                                       SerialNumber = "12345678901234",
+                                   };
+                                   context.Add(rocket);
 
-                                                   var record = new LaunchRecord
-                                                   {
-                                                       Partner = "partner",
-                                                       Payload = "geo-fence-ftl",
-                                                       RocketId = rocket.Id,
-                                                       Rocket = rocket,
-                                                       ScheduledLaunchDate = clk.GetCurrentInstant().ToDateTimeOffset(),
-                                                       PayloadWeightKg = 100,
-                                                   };
-                                                   context.Add(record);
+                                   var record = new LaunchRecord
+                                   {
+                                       Partner = "partner",
+                                       Payload = "geo-fence-ftl",
+                                       RocketId = rocket.Id,
+                                       Rocket = rocket,
+                                       ScheduledLaunchDate = clk.GetCurrentInstant().ToDateTimeOffset(),
+                                       PayloadWeightKg = 100,
+                                   };
+                                   context.Add(record);
 
-                                                   await context.SaveChangesAsync();
-                                                   return record;
-                                               }
-                                           );
+                                   await context.SaveChangesAsync();
+                                   return record;
+                               }
+                           );
 
         var launchDate = record.ScheduledLaunchDate.AddSeconds(1).ToTimestamp();
         await client.EditLaunchRecordAsync(
-            new UpdateLaunchRecordRequest
+            new()
             {
                 Id = record.Id.ToString(),
                 Partner = "partner",
@@ -57,7 +58,7 @@ public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppF
             }
         );
 
-        var response = await client.GetLaunchRecordsAsync(new GetLaunchRecordRequest { Id = record.Id.ToString() });
+        var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), });
 
         response.ScheduledLaunchDate.ToDateTimeOffset().Should().BeCloseTo(launchDate.ToDateTimeOffset(), TimeSpan.FromMilliseconds(1));
         response.PayloadWeightKg.Should().Be(200);
