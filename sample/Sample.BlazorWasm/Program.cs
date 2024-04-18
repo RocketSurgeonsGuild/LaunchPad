@@ -4,14 +4,12 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Rocket.Surgery.WebAssembly.Hosting;
 using Sample.BlazorWasm;
 
-var builder = await WebAssemblyHostBuilder
-                   .CreateDefault(args)
-                   .ConfigureRocketSurgery(Imports.Instance);
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress), });
 
-await builder.Build().RunAsync();
+await ( await builder.ConfigureRocketSurgery(Imports.Instance) ).RunAsync();
 
 public static class TestHandler
 {

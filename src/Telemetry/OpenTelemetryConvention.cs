@@ -2,12 +2,12 @@ using Microsoft.Extensions.Configuration;
 using OpenTelemetry;
 using Rocket.Surgery.Conventions;
 
-namespace Rocket.Surgery.LaunchPad.Hosting.Telemetry;
+namespace Rocket.Surgery.LaunchPad.Telemetry;
 
 /// <summary>
-///     Delegate OpenTelemetryMetricsConvention
+///     Delegate OpenTelemetryConvention
 /// </summary>
 /// <param name="conventionContext"></param>
 /// <param name="configuration"></param>
 /// <param name="builder"></param>
-public delegate void OpenTelemetryConvention(IConventionContext conventionContext, IConfiguration configuration, OpenTelemetryBuilder builder);
+public delegate void OpenTelemetryConvention(IConventionContext conventionContext, IConfiguration configuration, IOpenTelemetryBuilder builder);

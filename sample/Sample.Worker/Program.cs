@@ -1,10 +1,9 @@
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Sample.Worker;
 
-var builder = await Host
-                   .CreateApplicationBuilder(args)
-                   .LaunchWith(RocketBooster.For(Imports.Instance));
+var builder = Host
+   .CreateApplicationBuilder(args);
 builder.Services.AddHostedService<BackgroundWorker>();
 
-await builder.RunAsync();
+
+await ( await builder.LaunchWith(RocketBooster.For(Imports.Instance)) ).RunAsync();

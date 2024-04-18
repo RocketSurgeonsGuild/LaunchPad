@@ -2,26 +2,30 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Hosting.Telemetry;
-using Rocket.Surgery.LaunchPad.Serilog;
+using Rocket.Surgery.LaunchPad.Telemetry;
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 /// <summary>
 ///     EnvironmentLoggingConvention.
-///     Implements the <see cref="ISerilogConvention" />
+///     Implements the <see cref="IServiceAsyncConvention" />
 /// </summary>
-/// <seealso cref="ISerilogConvention" />
+/// <seealso cref="IServiceAsyncConvention" />
 [PublicAPI]
 [ExportConvention]
-public class OpenTelemetryConvention : IServiceConvention
+public class OpenTelemetryConvention : IServiceAsyncConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public async ValueTask Register(
+        IConventionContext context,
+        IConfiguration configuration,
+        IServiceCollection services,
+        CancellationToken cancellationToken
+    )
     {
-        services
-           .AddOpenTelemetry()
-           .ApplyConventions(context)
-            ;
+        await services
+             .AddOpenTelemetry()
+             .ApplyConventionsAsync(context, cancellationToken)
+             .ConfigureAwait(false);
     }
 }

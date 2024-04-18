@@ -9,11 +9,9 @@ namespace Extensions.Tests;
 public class FakeClockConventionTests(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
 {
     [Fact]
-    public void Clock_Convention_Default()
+    public async Task Clock_Convention_Default()
     {
-        Init(
-            x => { x.Set(HostType.UnitTest); }
-        );
+        await Init(x => { x.Set(HostType.UnitTest); });
         var clock = Container.GetRequiredService<IClock>();
         clock.Should().BeOfType<FakeClock>();
         clock.GetCurrentInstant().Should().Be(Instant.FromUnixTimeSeconds(1577836800));
@@ -23,9 +21,7 @@ public class FakeClockConventionTests(ITestOutputHelper testOutputHelper) : Conv
     [Fact]
     public async Task Clock_Convention_Override()
     {
-        await Init(
-            x => { x.AppendConvention(new FakeClockConvention(0, Duration.FromMinutes(1))); }
-        );
+        await Init(x => { x.AppendConvention(new FakeClockConvention(0, Duration.FromMinutes(1))); });
 
         var clock = ServiceProvider.GetRequiredService<IClock>();
         clock.Should().BeOfType<FakeClock>();
