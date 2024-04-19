@@ -48,10 +48,7 @@ public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : Logger
 
     public virtual Task DisposeAsync()
     {
-        if (AssemblyLoadContext is IDisposable disposable)
-        {
-            Disposables.Add(disposable);
-        }
+        if (AssemblyLoadContext is IDisposable disposable) Disposables.Add(disposable);
 
         Disposables.Dispose();
         return Task.CompletedTask;

@@ -32,14 +32,10 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
     #endif
     public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         var applicationLogLevel = configuration.GetValue<LogLevel?>("ApplicationState:LogLevel");
         if (applicationLogLevel.HasValue)
-        {
             builder.AddInMemoryCollection(
                 new Dictionary<string, string?>
                 {
@@ -49,7 +45,6 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
                     },
                 }
             );
-        }
     }
 
     /// <inheritdoc />
@@ -60,10 +55,7 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
         LoggerConfiguration loggerConfiguration
     )
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         loggerConfiguration.ReadFrom.Configuration(configuration);
     }

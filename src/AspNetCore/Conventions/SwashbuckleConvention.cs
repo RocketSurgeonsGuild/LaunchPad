@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
@@ -42,10 +41,7 @@ public partial class SwashbuckleConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
 
@@ -56,10 +52,11 @@ public partial class SwashbuckleConvention : IServiceConvention
 
 //        services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, StronglyTypedIdApiDescriptionProvider>());
 
-        services.AddOptions<SwaggerGenOptions>()
-                .Configure<IOptions<JsonOptions>>(
-                     (options, mvcOptions) => options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions)
-                 );
+        services
+           .AddOptions<SwaggerGenOptions>()
+           .Configure<IOptions<JsonOptions>>(
+                (options, mvcOptions) => options.ConfigureForNodaTime(mvcOptions.Value.JsonSerializerOptions)
+            );
         services.AddSwaggerGen(
             options =>
             {
@@ -72,14 +69,14 @@ public partial class SwashbuckleConvention : IServiceConvention
                 options.OperationFilter<AuthorizeFilter>();
 
                 options.MapType<JsonElement>(
-                    () => new OpenApiSchema
+                    () => new()
                     {
                         Type = "object",
                         AdditionalPropertiesAllowed = true,
                     }
                 );
                 options.MapType<JsonElement?>(
-                    () => new OpenApiSchema
+                    () => new()
                     {
                         Type = "object",
                         AdditionalPropertiesAllowed = true,
@@ -112,7 +109,9 @@ public partial class SwashbuckleConvention : IServiceConvention
                         name = name[..name.IndexOf('`', StringComparison.Ordinal)];
                         sb.Append(name);
                         foreach (var gt in type.GetGenericArguments())
+                        {
                             sb.Append('_').Append(schemaIdSelector(gt));
+                        }
 
                         return sb.ToString();
                     }
@@ -122,16 +121,17 @@ public partial class SwashbuckleConvention : IServiceConvention
 
                 options.CustomSchemaIds(schemaIdSelector);
 
-                foreach (var item in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml")
-                                              .Where(x => File.Exists(Path.ChangeExtension(x, "dll"))))
+                foreach (var item in Directory
+                                    .EnumerateFiles(AppContext.BaseDirectory, "*.xml")
+                                    .Where(x => File.Exists(Path.ChangeExtension(x, "dll"))))
                 {
                     try
                     {
                         options.IncludeXmlComments(item, true);
                     }
-#pragma warning disable CA1031
+                    #pragma warning disable CA1031
                     catch (Exception e)
-#pragma warning restore CA1031
+                        #pragma warning restore CA1031
                     {
                         ErrorAddingXMLComments(context.Logger, e, item);
                     }

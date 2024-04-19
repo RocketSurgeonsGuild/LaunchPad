@@ -27,9 +27,7 @@ internal static class PrefixExtensions
                 var prefix = property.GetCustomAttribute<PrefixAttribute>()?.Key ?? string.Empty;
                 var value = provider.GetValue(prefix + property.Name).FirstOrDefault();
                 if (!string.IsNullOrWhiteSpace(value))
-                {
                     property.SetValue(instance, Convert.ChangeType(value, property.PropertyType, CultureInfo.InvariantCulture));
-                }
             }
         }
     }

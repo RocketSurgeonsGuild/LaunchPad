@@ -31,9 +31,7 @@ public class FluentValidationProblemDetails : ValidationProblemDetails
     /// <summary>
     ///     Construct the Fluent Validation Problem Details
     /// </summary>
-    public FluentValidationProblemDetails() : this(Array.Empty<ValidationFailure>())
-    {
-    }
+    public FluentValidationProblemDetails() : this(Array.Empty<ValidationFailure>()) { }
 
     /// <summary>
     ///     Build Fluent Validation Problem Details from a <see cref="ValidationResult" />
@@ -41,10 +39,7 @@ public class FluentValidationProblemDetails : ValidationProblemDetails
     /// <param name="result"></param>
     public FluentValidationProblemDetails(ValidationResult result) : this(result.Errors)
     {
-        if (result == null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         Rules = result.RuleSetsExecuted;
     }
@@ -55,10 +50,7 @@ public class FluentValidationProblemDetails : ValidationProblemDetails
     /// <param name="errors"></param>
     public FluentValidationProblemDetails(IEnumerable<ValidationFailure> errors)
     {
-        if (errors == null)
-        {
-            throw new ArgumentNullException(nameof(errors));
-        }
+        ArgumentNullException.ThrowIfNull(errors);
 
         ValidationErrors = errors
                           .ToLookup(x => x.PropertyName)

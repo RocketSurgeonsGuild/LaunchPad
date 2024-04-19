@@ -19,9 +19,7 @@ public sealed class NewtonsoftJsonCompositeNodaPatternConverter<T> : NodaConvert
     ///     Creates a new instance with a pattern and no validator.
     /// </summary>
     /// <param name="patterns">The patterns to use for parsing and formatting.</param>
-    public NewtonsoftJsonCompositeNodaPatternConverter(params IPattern<T>[] patterns) : this(null, patterns)
-    {
-    }
+    public NewtonsoftJsonCompositeNodaPatternConverter(params IPattern<T>[] patterns) : this(null, patterns) { }
 
     /// <summary>
     ///     Creates a new instance with a pattern and an optional validator. The validator will be called before each
@@ -45,11 +43,9 @@ public sealed class NewtonsoftJsonCompositeNodaPatternConverter<T> : NodaConvert
     protected override T ReadJsonImpl(JsonReader reader, JsonSerializer serializer)
     {
         if (reader.TokenType != JsonToken.String)
-        {
             throw new InvalidNodaDataException(
                 $"Unexpected token parsing {typeof(T).Name}. Expected String, got {reader.TokenType}."
             );
-        }
 
         var text = reader.Value?.ToString();
 

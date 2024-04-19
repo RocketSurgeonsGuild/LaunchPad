@@ -29,53 +29,57 @@ public class ProblemDetailsConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        ProblemDetailsExtensions.AddProblemDetails(services)
-                                .AddProblemDetailsConventions();
+        ProblemDetailsExtensions
+           .AddProblemDetails(services)
+           .AddProblemDetailsConventions();
 
-        services.AddOptions<ApiBehaviorOptions>()
-                .Configure(static options => options.SuppressModelStateInvalidFilter = true);
-        services.AddOptions<ProblemDetailsOptions>()
-                .Configure<IOptions<ApiBehaviorOptions>>(
-                     static (builder, apiBehaviorOptions) =>
-                     {
-                         var currentIncludeExceptionDetails = builder.IncludeExceptionDetails;
-                         builder.IncludeExceptionDetails = (httpContext, exception) =>
-                             exception is not IProblemDetailsData && currentIncludeExceptionDetails(httpContext, exception);
-                         builder.OnBeforeWriteDetails = (_, problemDetails) =>
-                         {
-                             if (
-                                 !problemDetails.Status.HasValue
-                              || !apiBehaviorOptions.Value.ClientErrorMapping.TryGetValue(problemDetails.Status.Value, out var clientErrorData)
-                             )
-                             {
-                                 return;
-                             }
+        services
+           .AddOptions<ApiBehaviorOptions>()
+           .Configure(static options => options.SuppressModelStateInvalidFilter = true);
+        services
+           .AddOptions<ProblemDetailsOptions>()
+           .Configure<IOptions<ApiBehaviorOptions>>(
+                static (builder, apiBehaviorOptions) =>
+                {
+                    var currentIncludeExceptionDetails = builder.IncludeExceptionDetails;
+                    builder.IncludeExceptionDetails = (httpContext, exception) =>
+                                                          exception is not IProblemDetailsData && currentIncludeExceptionDetails(httpContext, exception);
+                    builder.OnBeforeWriteDetails = (_, problemDetails) =>
+                                                   {
+                                                       if (
+                                                           !problemDetails.Status.HasValue
+                                                        || !apiBehaviorOptions.Value.ClientErrorMapping.TryGetValue(
+                                                               problemDetails.Status.Value,
+                                                               out var clientErrorData
+                                                           )
+                                                       )
+                                                           return;
 
-                             problemDetails.Title ??= clientErrorData.Title;
-                             problemDetails.Type ??= clientErrorData.Link;
-                         };
+                                                       problemDetails.Title ??= clientErrorData.Title;
+                                                       problemDetails.Type ??= clientErrorData.Link;
+                                                   };
 //                         builder.MapToProblemDetailsDataException<NotFoundException>(StatusCodes.Status404NotFound);
 //                         builder.MapToProblemDetailsDataException<RequestFailedException>(StatusCodes.Status400BadRequest);
 //                         builder.MapToProblemDetailsDataException<NotAuthorizedException>(StatusCodes.Status403Forbidden);
-                         builder.Map<ValidationException>(
-                             static exception => new FluentValidationProblemDetails(exception.Errors)
-                             {
-                                 Status = StatusCodes.Status422UnprocessableEntity
-                             }
-                         );
-                         builder.Map<Exception>(
-                             static (ctx, ex) => ex is not IProblemDetailsData && ctx.Items[typeof(ValidationResult)] is ValidationResult,
-                             static (ctx, _) =>
-                             {
-                                 var result = ctx.Items[typeof(ValidationResult)] as ValidationResult;
-                                 // ReSharper disable once NullableWarningSuppressionIsUsed
-                                 return new FluentValidationProblemDetails(result!.Errors)
-                                 {
-                                     Status = StatusCodes.Status422UnprocessableEntity
-                                 };
-                             }
-                         );
-                     }
-                 );
+                    builder.Map<ValidationException>(
+                        static exception => new FluentValidationProblemDetails(exception.Errors)
+                        {
+                            Status = StatusCodes.Status422UnprocessableEntity,
+                        }
+                    );
+                    builder.Map<Exception>(
+                        static (ctx, ex) => ex is not IProblemDetailsData && ctx.Items[typeof(ValidationResult)] is ValidationResult,
+                        static (ctx, _) =>
+                        {
+                            var result = ctx.Items[typeof(ValidationResult)] as ValidationResult;
+                            // ReSharper disable once NullableWarningSuppressionIsUsed
+                            return new FluentValidationProblemDetails(result!.Errors)
+                            {
+                                Status = StatusCodes.Status422UnprocessableEntity,
+                            };
+                        }
+                    );
+                }
+            );
     }
 }

@@ -275,12 +275,12 @@ public class AutoMapperConventionTests
 
     private class Source
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 
     private class Destination
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 
     private class A : IValueResolver<Source, Destination, string>

@@ -17,10 +17,10 @@ internal class FeatureFactory
     }
 
     private const int PrecisionScale = 100;
-    private static readonly PrecisionModel PM = new PrecisionModel(PrecisionScale);
-    private static readonly GeometryFactory GF = new GeometryFactory(PM, 4326);
-    private static readonly string[] RNDNames = { "Random", "Zufall", "Hasard", "Caso", "Azar" };
-    private static readonly Geometry Bounds = GF.ToGeometry(new Envelope(-BoundX, BoundX, -BoundY, BoundY));
+    private static readonly PrecisionModel PM = new(PrecisionScale);
+    private static readonly GeometryFactory GF = new(PM, 4326);
+    private static readonly string[] RNDNames = { "Random", "Zufall", "Hasard", "Caso", "Azar", };
+    private static readonly Geometry Bounds = GF.ToGeometry(new(-BoundX, BoundX, -BoundY, BoundY));
 
     private const int BoundX = 180 * PrecisionScale;
     private const int BoundY = 90 * PrecisionScale;
@@ -57,27 +57,27 @@ internal class FeatureFactory
 
     public FeatureFactory()
     {
-        _random = new Random(17);
+        _random = new(17);
     }
 
     public IAttributesTable CreateRandomAttributes(params (string, TypeCode)[] properties)
     {
         var res = new AttributesTable();
-        foreach (var (name, type) in properties)
+        foreach (( var name, var type ) in properties)
         {
             var value = type switch
-            {
-                TypeCode.Boolean => _random.NextDouble() > 0.5d,
-                TypeCode.Double  => 500d * _random.NextDouble(),
-                TypeCode.Single  => 500f * (float)_random.NextDouble(),
-                TypeCode.Empty   => null,
-                TypeCode.Int16   => _random.Next(short.MinValue, short.MaxValue),
-                TypeCode.Int32   => _random.Next(int.MinValue, int.MaxValue),
-                TypeCode.Int64   => 5L * _random.Next(int.MinValue, int.MaxValue),
-                TypeCode.String  => RandomString(),
-                TypeCode.Object  => Guid.NewGuid(),
-                _                => _random.NextDouble() > 0.5d ? RandomString() : null
-            };
+                        {
+                            TypeCode.Boolean => _random.NextDouble() > 0.5d,
+                            TypeCode.Double  => 500d * _random.NextDouble(),
+                            TypeCode.Single  => 500f * (float)_random.NextDouble(),
+                            TypeCode.Empty   => null,
+                            TypeCode.Int16   => _random.Next(short.MinValue, short.MaxValue),
+                            TypeCode.Int32   => _random.Next(int.MinValue, int.MaxValue),
+                            TypeCode.Int64   => 5L * _random.Next(int.MinValue, int.MaxValue),
+                            TypeCode.String  => RandomString(),
+                            TypeCode.Object  => Guid.NewGuid(),
+                            _                => _random.NextDouble() > 0.5d ? RandomString() : null,
+                        };
 
             res.Add(name, value);
         }
@@ -153,7 +153,7 @@ internal class FeatureFactory
             if (threeD)
                 pt = new CoordinateZ(pt.X + tmp.X, pt.Y + tmp.Y, start.Z + ( dz * pointsAt[i] ));
             else
-                pt = new Coordinate(pt.X + tmp.X, pt.Y + tmp.Y);
+                pt = new(pt.X + tmp.X, pt.Y + tmp.Y);
 
             Clamp(pt);
             PM.MakePrecise(pt);
@@ -196,7 +196,10 @@ internal class FeatureFactory
     {
         var geoms = new Point[_random.Next(2, 10)];
         for (var i = 0; i < geoms.Length; i++)
+        {
             geoms[i] = CreatePoint(threeD);
+        }
+
         return GF.CreateMultiPoint(geoms);
     }
 
@@ -204,7 +207,10 @@ internal class FeatureFactory
     {
         var geoms = new LineString[_random.Next(2, 10)];
         for (var i = 0; i < geoms.Length; i++)
+        {
             geoms[i] = CreateLineString(threeD);
+        }
+
         return GF.CreateMultiLineString(geoms);
     }
 
@@ -212,7 +218,10 @@ internal class FeatureFactory
     {
         var geoms = new Polygon[_random.Next(2, 10)];
         for (var i = 0; i < geoms.Length; i++)
+        {
             geoms[i] = CreatePolygon(threeD);
+        }
+
         return GF.CreateMultiPolygon(geoms);
     }
 
@@ -242,7 +251,10 @@ internal class FeatureFactory
     {
         var tmp = new List<double>(num);
         for (var i = 0; i < num; i++)
+        {
             tmp.Add(_random.NextDouble());
+        }
+
         tmp.Sort();
         return tmp.ToArray();
     }

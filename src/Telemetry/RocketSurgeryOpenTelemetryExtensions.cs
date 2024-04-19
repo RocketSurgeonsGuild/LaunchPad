@@ -58,15 +58,9 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, OpenTelemetryConvention @delegate)
     {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
+        ArgumentNullException.ThrowIfNull(container);
 
-        if (@delegate == null)
-        {
-            throw new ArgumentNullException(nameof(@delegate));
-        }
+        ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(@delegate);
         return container;
@@ -81,15 +75,9 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, Action<IOpenTelemetryBuilder> @delegate)
     {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
+        ArgumentNullException.ThrowIfNull(container);
 
-        if (@delegate == null)
-        {
-            throw new ArgumentNullException(nameof(@delegate));
-        }
+        ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(@delegate);
         return container;
@@ -103,15 +91,9 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, OpenTelemetryAsyncConvention @delegate)
     {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
+        ArgumentNullException.ThrowIfNull(container);
 
-        if (@delegate == null)
-        {
-            throw new ArgumentNullException(nameof(@delegate));
-        }
+        ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(@delegate);
         return container;
@@ -125,15 +107,9 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, Func<IOpenTelemetryBuilder, ValueTask> @delegate)
     {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
+        ArgumentNullException.ThrowIfNull(container);
 
-        if (@delegate == null)
-        {
-            throw new ArgumentNullException(nameof(@delegate));
-        }
+        ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, _) => @delegate(builder)));
         return container;
@@ -150,15 +126,9 @@ public static class RocketSurgeryOpenTelemetryExtensions
         Func<IOpenTelemetryBuilder, CancellationToken, ValueTask> @delegate
     )
     {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
+        ArgumentNullException.ThrowIfNull(container);
 
-        if (@delegate == null)
-        {
-            throw new ArgumentNullException(nameof(@delegate));
-        }
+        ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, token) => @delegate(builder, token)));
         return container;

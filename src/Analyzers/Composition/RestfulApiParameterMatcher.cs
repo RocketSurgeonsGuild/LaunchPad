@@ -5,7 +5,8 @@ using Microsoft.CodeAnalysis;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers.Composition;
 
-internal class RestfulApiParameterMatcher(
+internal class RestfulApiParameterMatcher
+(
     Index parameterIndex,
     ApiConventionNameMatchBehavior nameMatch,
     string[] names,
@@ -33,24 +34,15 @@ internal class RestfulApiParameterMatcher(
                 {
                     static bool CheckType(ITypeSymbol symbol, INamedTypeSymbol type)
                     {
-                        if (symbol is not INamedTypeSymbol namedTypeSymbol)
-                        {
-                            return false;
-                        }
+                        if (symbol is not INamedTypeSymbol namedTypeSymbol) return false;
 
                         return namedTypeSymbol.IsGenericType && SymbolEqualityComparer.Default.Equals(namedTypeSymbol.OriginalDefinition, type);
                     }
 
                     var parameterIs = CheckType(parameter.Type, Type);
-                    if (!parameterIs)
-                    {
-                        parameterIs = parameter.Type.AllInterfaces.Any(inter => CheckType(inter, Type));
-                    }
+                    if (!parameterIs) parameterIs = parameter.Type.AllInterfaces.Any(inter => CheckType(inter, Type));
 
-                    if (!parameterIs)
-                    {
-                        return false;
-                    }
+                    if (!parameterIs) return false;
                 }
                 else if (!actionModel.Compilation.HasImplicitConversion(parameter.Type, Type))
                 {
@@ -59,12 +51,12 @@ internal class RestfulApiParameterMatcher(
             }
 
             return NameMatch switch
-            {
-                ApiConventionNameMatchBehavior.Exact  => Names.Any(name => parameter.Name.Equals(name, StringComparison.OrdinalIgnoreCase)),
-                ApiConventionNameMatchBehavior.Prefix => Names.Any(name => parameter.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
-                ApiConventionNameMatchBehavior.Suffix => Names.Any(name => parameter.Name.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
-                _                                     => true
-            };
+                   {
+                       ApiConventionNameMatchBehavior.Exact  => Names.Any(name => parameter.Name.Equals(name, StringComparison.OrdinalIgnoreCase)),
+                       ApiConventionNameMatchBehavior.Prefix => Names.Any(name => parameter.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
+                       ApiConventionNameMatchBehavior.Suffix => Names.Any(name => parameter.Name.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
+                       _                                     => true,
+                   };
         }
 
         return false;

@@ -24,10 +24,7 @@ public static class LaunchPadLogHelpers
         diagnosticContext.Set("Scheme", request.Scheme);
 
         // Only set it if available. You're not sending sensitive data in a querystring right?!
-        if (request.QueryString.HasValue)
-        {
-            diagnosticContext.Set("QueryString", request.QueryString.Value);
-        }
+        if (request.QueryString.HasValue) diagnosticContext.Set("QueryString", request.QueryString.Value);
 
         // Set the content-type of the Response at this point
         diagnosticContext.Set("ContentType", httpContext.Response.ContentType);
@@ -35,9 +32,7 @@ public static class LaunchPadLogHelpers
         // Retrieve the IEndpointFeature selected for the request
         var endpoint = httpContext.GetEndpoint();
         if (endpoint is { }) // endpoint != null
-        {
             diagnosticContext.Set("EndpointName", endpoint.DisplayName);
-        }
     }
 
     /// <summary>
@@ -54,7 +49,7 @@ public static class LaunchPadLogHelpers
             : ctx.Response.StatusCode > 499
                 ? LogEventLevel.Error
                 : IsHealthCheckEndpoint(ctx) // Not an error, check if it was a health check
-                    ? LogEventLevel.Verbose // Was a health check, use Verbose
+                    ? LogEventLevel.Verbose  // Was a health check, use Verbose
                     : LogEventLevel.Information;
     }
 
@@ -62,9 +57,7 @@ public static class LaunchPadLogHelpers
     {
         var endpoint = ctx.GetEndpoint();
         if (endpoint is { }) // same as !(endpoint is null)
-        {
             return string.Equals(endpoint.DisplayName, "Health checks", StringComparison.Ordinal);
-        }
 
         // No endpoint, so not a health check endpoint
         return false;

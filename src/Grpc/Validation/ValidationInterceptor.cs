@@ -13,7 +13,7 @@ internal class ValidationInterceptor(IValidatorErrorMessageHandler handler, ISer
         validationMetadata.Add("title", "Unprocessable Entity");
         validationMetadata.Add("link", "https://tools.ietf.org/html/rfc4918#section-11.2");
         if (message is { }) validationMetadata.Add("message", message);
-        throw new RpcException(new Status(StatusCode.InvalidArgument, message ?? ""), validationMetadata, message ?? "");
+        throw new RpcException(new(StatusCode.InvalidArgument, message ?? ""), validationMetadata, message ?? "");
     }
 
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
@@ -26,10 +26,7 @@ internal class ValidationInterceptor(IValidatorErrorMessageHandler handler, ISer
         {
             var results = await validator.ValidateAsync(request, context.CancellationToken).ConfigureAwait(false);
 
-            if (results.IsValid || !results.Errors.Any())
-            {
-                return await continuation(request, context);
-            }
+            if (results.IsValid || !results.Errors.Any()) return await continuation(request, context);
 
             var message = await handler.HandleAsync(results.Errors);
             throw CreateException(results, message);
@@ -48,10 +45,7 @@ internal class ValidationInterceptor(IValidatorErrorMessageHandler handler, ISer
         {
             var results = validator.Validate(request);
 
-            if (results.IsValid || !results.Errors.Any())
-            {
-                return continuation(request, context);
-            }
+            if (results.IsValid || !results.Errors.Any()) return continuation(request, context);
 
             var message = handler.Handle(results.Errors);
             throw CreateException(results, message);
@@ -70,10 +64,7 @@ internal class ValidationInterceptor(IValidatorErrorMessageHandler handler, ISer
         {
             var results = validator.Validate(request);
 
-            if (results.IsValid || !results.Errors.Any())
-            {
-                return continuation(request, context);
-            }
+            if (results.IsValid || !results.Errors.Any()) return continuation(request, context);
 
             var message = handler.Handle(results.Errors);
             throw CreateException(results, message);

@@ -17,10 +17,7 @@ public static class AutoMapperHostBuilderExtensions
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder UseAutoMapper(this ConventionContextBuilder container, AutoMapperOptions? options = null)
     {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
+        ArgumentNullException.ThrowIfNull(container);
 
         container.PrependConvention<AutoMapperConvention>();
         return container;

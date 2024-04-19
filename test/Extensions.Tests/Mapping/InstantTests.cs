@@ -19,7 +19,7 @@ public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTes
 
         var foo = new Foo1
         {
-            Bar = Instant.FromDateTimeOffset(DateTimeOffset.Now)
+            Bar = Instant.FromDateTimeOffset(DateTimeOffset.Now),
         };
 
         var result = mapper.Map<Foo3>(foo).Bar;
@@ -33,7 +33,7 @@ public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTes
 
         var foo = new Foo3
         {
-            Bar = DateTime.UtcNow
+            Bar = DateTime.UtcNow,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -47,7 +47,7 @@ public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTes
 
         var foo = new Foo1
         {
-            Bar = Instant.FromDateTimeOffset(DateTimeOffset.Now)
+            Bar = Instant.FromDateTimeOffset(DateTimeOffset.Now),
         };
 
         var result = mapper.Map<Foo5>(foo).Bar;
@@ -61,7 +61,7 @@ public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTes
 
         var foo = new Foo5
         {
-            Bar = DateTimeOffset.Now
+            Bar = DateTimeOffset.Now,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -72,30 +72,25 @@ public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTes
     [ClassData(typeof(TypeConverterData<Converters>))]
     public void AutomatedTests(Type source, Type destination, object? sourceValue)
     {
-        var method = typeof(IMapperBase).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                        .First(
-                                             x => x.ContainsGenericParameters && x.IsGenericMethodDefinition &&
-                                                  x.GetGenericMethodDefinition().GetGenericArguments().Length == 2 &&
-                                                  x.GetParameters().Length == 1
-                                         );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue });
+        var method = typeof(IMapperBase)
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .First(
+                         x => x.ContainsGenericParameters
+                          && x.IsGenericMethodDefinition
+                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                          && x.GetParameters().Length == 1
+                     );
+        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
 
         if (sourceValue == null)
-        {
             result.Should().BeNull();
-        }
         else
-        {
             result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
-        }
     }
 
     protected override void Configure(IMapperConfigurationExpression expression)
     {
-        if (expression == null)
-        {
-            throw new ArgumentNullException(nameof(expression));
-        }
+        ArgumentNullException.ThrowIfNull(expression);
 
         expression.CreateMap<Foo1, Foo3>().ReverseMap();
         expression.CreateMap<Foo1, Foo5>().ReverseMap();

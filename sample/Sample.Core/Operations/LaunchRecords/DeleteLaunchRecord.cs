@@ -36,17 +36,12 @@ public static class DeleteLaunchRecord
     {
         public async Task Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.LaunchRecords.FindAsync(new object[] { request.Id }, cancellationToken);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            var rocket = await dbContext.LaunchRecords.FindAsync(new object[] { request.Id, }, cancellationToken);
+            if (rocket == null) throw new NotFoundException();
 
             // contrived for testing
-            if (rocket.Id == new LaunchRecordId(new Guid("bad361de-a6d5-425a-9cf6-f9b2dd236be6")))
-            {
+            if (rocket.Id == new LaunchRecordId(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6")))
                 throw new NotAuthorizedException("Unable to operate on given record");
-            }
 
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

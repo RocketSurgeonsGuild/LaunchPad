@@ -39,10 +39,7 @@ public class StringInValidator<T, TProperty> : PropertyValidator<T, TProperty?>,
 
         var stringValue = value is string s ? s : value.ToString();
         var result = Values.Any(n => n.Equals(stringValue, comparison));
-        if (result)
-        {
-            return result;
-        }
+        if (result) return result;
 
         context.MessageFormatter.AppendPropertyName(context.DisplayName);
         context.MessageFormatter.AppendArgument("Values", string.Join(", ", Values));

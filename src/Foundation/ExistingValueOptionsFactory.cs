@@ -44,13 +44,8 @@ public class ExistingValueOptionsFactory<TOptions> :
         foreach (var setup in _setups)
         {
             if (setup is IConfigureNamedOptions<TOptions> namedSetup)
-            {
                 namedSetup.Configure(name, options);
-            }
-            else if (name == Options.DefaultName)
-            {
-                setup.Configure(options);
-            }
+            else if (name == Options.DefaultName) setup.Configure(options);
         }
 
         foreach (var post in _postConfigures)
@@ -64,16 +59,10 @@ public class ExistingValueOptionsFactory<TOptions> :
             foreach (var validate in _validations)
             {
                 var result = validate.Validate(name, options);
-                if (result.Failed)
-                {
-                    failures.AddRange(result.Failures);
-                }
+                if (result.Failed) failures.AddRange(result.Failures);
             }
 
-            if (failures.Count > 0)
-            {
-                throw new OptionsValidationException(name, typeof(TOptions), failures);
-            }
+            if (failures.Count > 0) throw new OptionsValidationException(name, typeof(TOptions), failures);
         }
 
         return options;

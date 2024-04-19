@@ -28,10 +28,7 @@ public class FluentValidator : ComponentBase
         while (true)
         {
             var nextTokenEnd = propertyPath.IndexOfAny(_separators);
-            if (nextTokenEnd < 0)
-            {
-                return new(obj, propertyPath);
-            }
+            if (nextTokenEnd < 0) return new(obj, propertyPath);
 
             var nextToken = propertyPath.Substring(0, nextTokenEnd);
             propertyPath = propertyPath.Substring(nextTokenEnd + 1);
@@ -52,19 +49,14 @@ public class FluentValidator : ComponentBase
             {
                 // It's a regular property
                 var prop = obj.GetType().GetProperty(nextToken);
-                if (prop == null)
-                {
-                    throw new InvalidOperationException($"Could not find property named {nextToken} on object of type {obj.GetType().FullName}.");
-                }
+                if (prop == null) throw new InvalidOperationException($"Could not find property named {nextToken} on object of type {obj.GetType().FullName}.");
 
                 newObj = prop.GetValue(obj);
             }
 
             if (newObj == null)
-            {
                 // This is as far as we can go
                 return new(obj, nextToken);
-            }
 
             obj = newObj;
         }
@@ -144,13 +136,11 @@ public class FluentValidator : ComponentBase
     protected override void OnInitialized()
     {
         if (CurrentEditContext == null)
-        {
             throw new InvalidOperationException(
                 $"{nameof(FluentValidator)} requires a cascading "
               + $"parameter of type {nameof(EditContext)}. For example, you can use {nameof(FluentValidator)} "
               + $"inside an {nameof(EditForm)}."
             );
-        }
 
         AddFluentValidation(Validator, CurrentEditContext, Services);
     }

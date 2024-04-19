@@ -35,11 +35,8 @@ public static class GetRocket
     {
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken).ConfigureAwait(false);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id, }, cancellationToken).ConfigureAwait(false);
+            if (rocket == null) throw new NotFoundException();
 
             return mapper.Map<RocketModel>(rocket);
         }

@@ -426,10 +426,7 @@ public partial class Request : IRequest<RocketModel>
     public async Task Should_Generate_Record_With_Underlying_Properties_And_Create(string property, object value, PropertyTracking propertyTracking)
     {
         var valueType = value.GetType();
-        if (value.GetType().IsValueType)
-        {
-            valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
-        }
+        if (value.GetType().IsValueType) valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
 
         var result = await AddPatchRocketModel(RocketModelType.Record, propertyTracking)
                           .AddSources(
@@ -475,10 +472,7 @@ public record Request : IRequest<RocketModel>
     public async Task Should_Generate_Class_With_Underlying_Properties_And_Create(string property, object value, PropertyTracking propertyTracking)
     {
         var valueType = value.GetType();
-        if (value.GetType().IsValueType)
-        {
-            valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
-        }
+        if (value.GetType().IsValueType) valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
 
         var result = await AddPatchRocketModel(RocketModelType.Class, propertyTracking)
                           .AddSources(
@@ -528,10 +522,7 @@ public class Request : IRequest<RocketModel>
     )
     {
         var valueType = value.GetType();
-        if (value.GetType().IsValueType)
-        {
-            valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
-        }
+        if (value.GetType().IsValueType) valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
 
         var result = await AddPatchRocketModel(RocketModelType.Record, propertyTracking)
                           .AddSources(
@@ -585,10 +576,7 @@ public record Request : IRequest<RocketModel>
     )
     {
         var valueType = value.GetType();
-        if (value.GetType().IsValueType)
-        {
-            valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
-        }
+        if (value.GetType().IsValueType) valueType = typeof(Nullable<>).MakeGenericType(value.GetType());
 
         var result = await AddPatchRocketModel(modelType, propertyTracking)
                           .AddSources(

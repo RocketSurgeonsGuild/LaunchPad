@@ -24,13 +24,11 @@ public static class ListLaunchRecords
     {
         public IAsyncEnumerable<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var query = dbContext.LaunchRecords
-                                  .Include(x => x.Rocket)
-                                  .AsQueryable();
-            if (request.RocketType.HasValue)
-            {
-                query = query.Where(z => z.Rocket.Type == request.RocketType);
-            }
+            var query = dbContext
+                       .LaunchRecords
+                       .Include(x => x.Rocket)
+                       .AsQueryable();
+            if (request.RocketType.HasValue) query = query.Where(z => z.Rocket.Type == request.RocketType);
 
             return query
                   .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider)

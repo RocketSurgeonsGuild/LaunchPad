@@ -36,13 +36,11 @@ public static class GetLaunchRecord
     {
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.LaunchRecords
-                                         .Include(x => x.Rocket)
-                                         .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            var rocket = await dbContext
+                              .LaunchRecords
+                              .Include(x => x.Rocket)
+                              .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            if (rocket == null) throw new NotFoundException();
 
             return mapper.Map<LaunchRecordModel>(rocket);
         }

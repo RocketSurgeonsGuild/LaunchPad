@@ -97,20 +97,17 @@ public static class CreateLaunchRecord
         {
             var record = mapper.Map<LaunchRecord>(request);
 
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.RocketId }, cancellationToken);
-            if (rocket == null)
-            {
-                throw new RequestFailedException("Rocket not found!");
-            }
+            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.RocketId, }, cancellationToken);
+            if (rocket == null) throw new RequestFailedException("Rocket not found!");
 
             record.Rocket = rocket;
 
             await dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return new Response
+            return new()
             {
-                Id = record.Id
+                Id = record.Id,
             };
         }
     }

@@ -43,10 +43,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             ;
 
         if (!isStream)
-        {
             newSyntax = newSyntax
                .AddModifiers(Token(SyntaxKind.AsyncKeyword));
-        }
 
         var block = Block();
         var resultName = parameter.Name == "result" ? "r" : "result";
@@ -54,7 +52,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         var claimsPrincipalParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(claimsPrincipal, param.Type));
         var cancellationTokenParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(cancellationToken, param.Type));
         if (mediatorParameter is null)
-        {
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     GeneratorDiagnostics.ParameterMustExist,
@@ -64,7 +61,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     requestType.Name
                 )
             );
-        }
 
         var claimsPrincipalProperty =
             requestType
@@ -79,9 +75,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                 );
         var hasClaimsPrincipal = claimsPrincipalProperty is { };
         if (hasClaimsPrincipal)
-        {
             if (claimsPrincipalParameter is null)
-            {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         GeneratorDiagnostics.ParameterMustExist,
@@ -91,13 +85,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                         requestType.Name
                     )
                 );
-            }
-        }
 
-        if (( hasClaimsPrincipal && claimsPrincipalParameter is null ) || mediatorParameter is null)
-        {
-            return null;
-        }
+        if (( hasClaimsPrincipal && claimsPrincipalParameter is null ) || mediatorParameter is null) return null;
 
         if (!requestType.IsRecord)
         {
@@ -134,7 +123,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         {
             var expressions = new List<ExpressionSyntax>();
             if (hasClaimsPrincipal)
-            {
                 // ReSharper disable NullableWarningSuppressionIsUsed
                 expressions.Add(
                     AssignmentExpression(
@@ -143,9 +131,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                         IdentifierName(claimsPrincipalParameter!.Name)
                     )
                 );
-                // ReSharper enable NullableWarningSuppressionIsUsed
-            }
-
+            // ReSharper enable NullableWarningSuppressionIsUsed
             if (expressions.Any())
             {
                 var withExpression = WithExpression(
@@ -193,7 +179,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
 
 
         if (isUnit)
-        {
             block = block.AddStatements(
                 ExpressionStatement(sendRequestExpression),
                 ReturnStatement(
@@ -204,9 +189,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     )
                 )
             );
-        }
         else
-        {
             block = block
                .AddStatements(
                     LocalDeclarationStatement(
@@ -217,7 +200,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     ),
                     ReturnStatement(IdentifierName(resultName))
                 );
-        }
 
 
         return newSyntax
@@ -231,10 +213,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         )
         {
             var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
-            if (cancellationTokenParameter is { })
-            {
-                arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
-            }
+            if (cancellationTokenParameter is { }) arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
 
             return AwaitExpression(
                 InvocationExpression(
@@ -272,10 +251,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         )
         {
             var arguments = new List<ArgumentSyntax> { Argument(nameSyntax), };
-            if (cancellationTokenParameter is { })
-            {
-                arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
-            }
+            if (cancellationTokenParameter is { }) arguments.Add(Argument(IdentifierName(cancellationTokenParameter.Name)));
 
             return InvocationExpression(
                     MemberAccessExpression(

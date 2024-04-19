@@ -18,19 +18,14 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         Type objectType,
         FluentValidationProblemDetails? existingValue,
         bool hasExistingValue,
-        [NotNull] JsonSerializer serializer
+        [NotNull]
+        JsonSerializer serializer
     )
     {
-        if (serializer == null)
-        {
-            throw new ArgumentNullException(nameof(serializer));
-        }
+        ArgumentNullException.ThrowIfNull(serializer);
 
         var annotatedProblemDetails = serializer.Deserialize<AnnotatedProblemDetails>(reader);
-        if (annotatedProblemDetails == null)
-        {
-            return null;
-        }
+        if (annotatedProblemDetails == null) return null;
 
         var problemDetails = existingValue ?? new FluentValidationProblemDetails();
         annotatedProblemDetails.CopyTo(problemDetails);
@@ -39,20 +34,16 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
 
     /// <inheritdoc />
     public override void WriteJson(
-        [NotNull] JsonWriter writer,
+        [NotNull]
+        JsonWriter writer,
         FluentValidationProblemDetails? value,
-        [NotNull] JsonSerializer serializer
+        [NotNull]
+        JsonSerializer serializer
     )
     {
-        if (writer == null)
-        {
-            throw new ArgumentNullException(nameof(writer));
-        }
+        ArgumentNullException.ThrowIfNull(writer);
 
-        if (serializer == null)
-        {
-            throw new ArgumentNullException(nameof(serializer));
-        }
+        ArgumentNullException.ThrowIfNull(serializer);
 
         if (value == null)
         {
@@ -69,9 +60,7 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         /// <summary>
         ///     Required for JSON.NET deserialization.
         /// </summary>
-        public AnnotatedProblemDetails()
-        {
-        }
+        public AnnotatedProblemDetails() { }
 
         /// <summary>
         ///     Required for JSON.NET deserialization.
@@ -120,7 +109,8 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         public IDictionary<string, FluentValidationProblemDetail[]> Errors { get; } =
             new Dictionary<string, FluentValidationProblemDetail[]>(StringComparer.Ordinal);
 
-        [JsonProperty(PropertyName = "rules")] public IEnumerable<string> Rules { get; internal set; } = Array.Empty<string>();
+        [JsonProperty(PropertyName = "rules")]
+        public IEnumerable<string> Rules { get; internal set; } = Array.Empty<string>();
 
         public void CopyTo(FluentValidationProblemDetails problemDetails)
         {
@@ -130,13 +120,13 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
             problemDetails.Instance = Instance;
             problemDetails.Detail = Detail;
 
-            foreach (var (key, value) in Extensions)
+            foreach (( var key, var value ) in Extensions)
             {
                 problemDetails.Extensions[key] = value;
             }
 
             Rules = problemDetails.Rules;
-            foreach (var (key, value) in problemDetails.ValidationErrors)
+            foreach (( var key, var value ) in problemDetails.ValidationErrors)
             {
                 Errors[key] = value;
             }

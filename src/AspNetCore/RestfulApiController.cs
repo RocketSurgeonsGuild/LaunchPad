@@ -29,15 +29,9 @@ public abstract class RestfulApiController : ControllerBase
         Func<TResponse, Task<ActionResult<TResponse>>> success
     )
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
-        if (success is null)
-        {
-            throw new ArgumentNullException(nameof(success));
-        }
+        ArgumentNullException.ThrowIfNull(success);
 
         return await success(await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false))
            .ConfigureAwait(false);
@@ -54,15 +48,9 @@ public abstract class RestfulApiController : ControllerBase
         Func<TResponse, ActionResult<TResponse>> success
     )
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
-        if (success is null)
-        {
-            throw new ArgumentNullException(nameof(success));
-        }
+        ArgumentNullException.ThrowIfNull(success);
 
         return success(await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false));
     }
@@ -74,15 +62,9 @@ public abstract class RestfulApiController : ControllerBase
     /// <param name="success">The method to call when the request succeeds</param>
     protected async Task<ActionResult> Send<TResponse>(IRequest<TResponse> request, Func<ActionResult> success)
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
-        if (success is null)
-        {
-            throw new ArgumentNullException(nameof(success));
-        }
+        ArgumentNullException.ThrowIfNull(success);
 
         await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
         return success();
@@ -94,10 +76,7 @@ public abstract class RestfulApiController : ControllerBase
     /// <param name="request">The request model</param>
     protected async Task<ActionResult> Send(IRequest<Unit> request)
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
         return NoContent();

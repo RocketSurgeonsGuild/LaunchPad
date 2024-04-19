@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
-internal class RestfulApiParameterMatcher(
+internal class RestfulApiParameterMatcher
+(
     Index parameterIndex,
     ApiConventionNameMatchBehavior nameMatch,
     string[] names,
@@ -36,10 +37,7 @@ internal class RestfulApiParameterMatcher(
                     var parameterIs = parameter.ParameterType.IsGenericType && parameter.ParameterType.GetGenericTypeDefinition() == Type;
                     if (!parameterIs)
                         parameterIs = parameter.ParameterType.GetInterfaces().Any(inter => inter.IsGenericType && inter.GetGenericTypeDefinition() == Type);
-                    if (!parameterIs)
-                    {
-                        return false;
-                    }
+                    if (!parameterIs) return false;
                 }
                 else if (!Type.IsAssignableFrom(parameter.ParameterType))
                 {
@@ -49,12 +47,12 @@ internal class RestfulApiParameterMatcher(
 
             // ReSharper disable NullableWarningSuppressionIsUsed
             return NameMatch switch
-            {
-                ApiConventionNameMatchBehavior.Exact  => Names.Any(name => parameter.Name!.Equals(name, StringComparison.OrdinalIgnoreCase)),
-                ApiConventionNameMatchBehavior.Prefix => Names.Any(name => parameter.Name!.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
-                ApiConventionNameMatchBehavior.Suffix => Names.Any(name => parameter.Name!.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
-                _                                     => true
-            };
+                   {
+                       ApiConventionNameMatchBehavior.Exact  => Names.Any(name => parameter.Name!.Equals(name, StringComparison.OrdinalIgnoreCase)),
+                       ApiConventionNameMatchBehavior.Prefix => Names.Any(name => parameter.Name!.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
+                       ApiConventionNameMatchBehavior.Suffix => Names.Any(name => parameter.Name!.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
+                       _                                     => true,
+                   };
             // ReSharper enable NullableWarningSuppressionIsUsed
         }
 

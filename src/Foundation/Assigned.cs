@@ -55,9 +55,9 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     ///     Creates an empty Assigned that provides a default value.
     /// </summary>
     /// <param name="defaultValue">The default value.</param>
-#pragma warning disable CA1000
+    #pragma warning disable CA1000
     public static Assigned<T> Empty(T? defaultValue = default)
-#pragma warning restore CA1000
+        #pragma warning restore CA1000
     {
         return new(defaultValue, false);
     }
@@ -115,10 +115,7 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     /// </returns>
     public override bool Equals(object? obj)
     {
-        if (obj is null)
-        {
-            return !_hasValue;
-        }
+        if (obj is null) return !_hasValue;
 
         return obj is Assigned<T> n && Equals(n);
     }
@@ -146,20 +143,11 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     /// </returns>
     public bool Equals(Assigned<T>? other)
     {
-        if (other is null)
-        {
-            return !_hasValue;
-        }
+        if (other is null) return !_hasValue;
 
-        if (!_hasValue && !other._hasValue)
-        {
-            return true;
-        }
+        if (!_hasValue && !other._hasValue) return true;
 
-        if (_hasValue != other._hasValue)
-        {
-            return false;
-        }
+        if (_hasValue != other._hasValue) return false;
 
         return Equals(Value, other.Value);
     }
