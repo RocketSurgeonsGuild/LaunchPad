@@ -37,38 +37,7 @@ public class AutoMapperConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         var provider = context.AssemblyProvider;
-        var autoMapperTypes = provider.GetTypes(
-            t => t
-                .FromAssemblyDependenciesOf<IMapper>()
-                .GetTypes(
-                     f => f
-                         .AssignableToAny(
-                              typeof(IValueResolver<,,>),
-                              typeof(IMemberValueResolver<,,,>),
-                              typeof(ITypeConverter<,>),
-                              typeof(IValueConverter<,>),
-                              typeof(IMappingAction<,>)
-                          )
-                         .NotInfoOf(TypeInfoFilter.Abstract)
-                 )
-        );
-        // TODO: does not do the auto map properties
-        var profiles = provider
-                      .GetTypes(t => t.FromAssemblyDependenciesOf<IMapper>().GetTypes(f => f.AssignableTo<Profile>().NotInfoOf(TypeInfoFilter.Abstract)))
-                      .ToArray();
-        foreach (var type in autoMapperTypes)
-        {
-            services.TryAdd(new ServiceDescriptor(type, type, _options.ServiceLifetime));
-        }
-
-        services.AddAutoMapper(
-            config =>
-            {
-                foreach (var profile in profiles)
-                {
-                    config.AddProfile(profile);
-                }
-            }
-        );
+        var assemblies = provider.GetAssemblies(f => f.FromAssemblyDependenciesOf<IMapper>());
+        services.AddAutoMapper(assemblies, _options.ServiceLifetime);
     }
 }
