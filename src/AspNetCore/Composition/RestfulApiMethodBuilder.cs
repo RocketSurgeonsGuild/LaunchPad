@@ -90,10 +90,7 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterName(Index parameter, string value, params string[] values)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = defaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = defaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
@@ -116,10 +113,7 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder HasParameter(Index parameter)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = defaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = defaultMatcher(parameter);
 
         _parameters[parameter] =
             new RestfulApiParameterMatcher(
@@ -156,10 +150,7 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterPrefix(Index parameter, string value, params string[] values)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = defaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = defaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
@@ -184,10 +175,7 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterSuffix(Index parameter, string value, params string[] values)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = defaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = defaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
@@ -211,10 +199,7 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterType(Index parameter, Type type)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = defaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = defaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
@@ -247,15 +232,9 @@ public class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
             return false;
 
         var parameters = actionModel.ActionMethod.GetParameters();
-        if (_parameterCount.HasValue && parameters.Length != _parameterCount.Value)
-        {
-            return false;
-        }
+        if (_parameterCount.HasValue && parameters.Length != _parameterCount.Value) return false;
 
-        if (parameters.Length >= _parameters.Count)
-        {
-            return _parameters.Values.All(z => z.IsMatch(actionModel));
-        }
+        if (parameters.Length >= _parameters.Count) return _parameters.Values.All(z => z.IsMatch(actionModel));
 
         return false;
     }

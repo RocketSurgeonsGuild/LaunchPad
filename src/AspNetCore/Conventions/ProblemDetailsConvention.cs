@@ -47,9 +47,7 @@ public class ProblemDetailsConvention : IServiceConvention
                                  !problemDetails.Status.HasValue
                               || !apiBehaviorOptions.Value.ClientErrorMapping.TryGetValue(problemDetails.Status.Value, out var clientErrorData)
                              )
-                             {
                                  return;
-                             }
 
                              problemDetails.Title ??= clientErrorData.Title;
                              problemDetails.Type ??= clientErrorData.Link;

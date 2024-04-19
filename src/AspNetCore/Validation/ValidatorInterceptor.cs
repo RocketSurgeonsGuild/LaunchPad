@@ -16,12 +16,10 @@ internal class ValidatorInterceptor : IValidatorInterceptor
     {
         if (actionContext.ActionDescriptor.Properties.TryGetValue(typeof(CustomizeValidatorAttribute), out var value)
          && value is string[] includeProperties)
-        {
             result = new ValidationResult(
                 result.Errors
                       .Join(includeProperties, z => z.PropertyName, z => z, (a, _) => a, StringComparer.OrdinalIgnoreCase)
             );
-        }
 
         if (result.IsValid) return result;
 

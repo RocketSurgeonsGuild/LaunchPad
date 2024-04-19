@@ -33,7 +33,11 @@ public static class NetTopologySuiteSystemTextJsonSerializationExtensions
     {
         factory ??= NtsGeometryServices.Instance.CreateGeometryFactory(4326);
         var existingConverters = options.Converters.OfType<GeoJsonConverterFactory>().ToArray();
-        foreach (var converter in existingConverters) options.Converters.Remove(converter);
+        foreach (var converter in existingConverters)
+        {
+            options.Converters.Remove(converter);
+        }
+
         options.Converters.Add(new GeoJsonConverterFactory(factory));
         return options;
     }
@@ -48,7 +52,11 @@ public static class NetTopologySuiteSystemTextJsonSerializationExtensions
     {
         factory ??= NtsGeometryServices.Instance.CreateGeometryFactory(4326);
         var existingConverters = options.Converters.OfType<GeoJsonConverterFactory>().ToArray();
-        foreach (var converter in existingConverters) options.Converters.Remove(converter);
+        foreach (var converter in existingConverters)
+        {
+            options.Converters.Remove(converter);
+        }
+
         options.Converters.Add(new WktConverterFactory(factory));
         return options;
     }

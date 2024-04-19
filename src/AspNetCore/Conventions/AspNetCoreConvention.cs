@@ -27,12 +27,10 @@ public class AspNetCoreConvention : IServiceConvention
         foreach (var assembly in assemblies)
         {
             if (!seenAssemblies.Add(assembly))
-            {
                 // "assemblies" may contain duplicate values, but we want unique ApplicationPart instances.
                 // Note that we prefer using a HashSet over Distinct since the latter isn't
                 // guaranteed to preserve the original ordering.
                 continue;
-            }
 
             var partFactory = ApplicationPartFactory.GetApplicationPartFactory(assembly);
             foreach (var applicationPart in partFactory.GetApplicationParts(assembly))
@@ -99,10 +97,7 @@ public class AspNetCoreConvention : IServiceConvention
     /// TODO Edit XML Comment Template for Register
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         services
            .AddEndpointsApiExplorer()

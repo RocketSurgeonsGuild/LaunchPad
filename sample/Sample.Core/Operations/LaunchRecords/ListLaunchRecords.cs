@@ -27,10 +27,7 @@ public static class ListLaunchRecords
             var query = dbContext.LaunchRecords
                                   .Include(x => x.Rocket)
                                   .AsQueryable();
-            if (request.RocketType.HasValue)
-            {
-                query = query.Where(z => z.Rocket.Type == request.RocketType);
-            }
+            if (request.RocketType.HasValue) query = query.Where(z => z.Rocket.Type == request.RocketType);
 
             return query
                   .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider)

@@ -37,10 +37,7 @@ public class NewtonsoftJsonConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         services.WithMvcCore().AddNewtonsoftJson();
         services

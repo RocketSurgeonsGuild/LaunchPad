@@ -43,10 +43,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             ;
 
         if (!isStream)
-        {
             newSyntax = newSyntax
                .AddModifiers(Token(SyntaxKind.AsyncKeyword));
-        }
 
         var block = Block();
         var resultName = parameter.Name == "result" ? "r" : "result";
@@ -154,10 +152,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                 }
             }
 
-            if (failed)
-            {
-                return null;
-            }
+            if (failed) return null;
 
             var bindingMembers = parameterType
                                 .GetMembers()
@@ -268,11 +263,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         }
 
         if (isUnit)
-        {
             block = block.AddStatements(ExpressionStatement(sendRequestExpression));
-        }
         else
-        {
             block = block
                .AddStatements(
                     LocalDeclarationStatement(
@@ -282,7 +274,6 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                             )
                     )
                 );
-        }
 
         var knownStatusCodes = symbol
                               .GetAttributes()
@@ -319,7 +310,6 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             var newParam = declaredParam;
 
             if (matcher is { })
-            {
                 switch (matcher)
                 {
                     case { Method: RestfulApiMethod.List, }:
@@ -344,48 +334,31 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                             break;
                         }
                 }
-            }
 
             newSyntax = newSyntax.WithParameterList(newSyntax.ParameterList.ReplaceNode(declaredParam, newParam));
         }
 
-        if (!hasDefault)
-        {
-            newSyntax = newSyntax.AddAttributeLists(createSimpleAttribute("ProducesDefaultResponseType"));
-        }
+        if (!hasDefault) newSyntax = newSyntax.AddAttributeLists(createSimpleAttribute("ProducesDefaultResponseType"));
 
         var statusCode = hasSuccess ? knownStatusCodes.First(z => z is >= 200 and < 300) : StatusCodes.Status200OK;
 
         if (!hasSuccess)
         {
             if (isUnitResult)
-            {
                 statusCode = StatusCodes.Status204NoContent;
-            }
-            else if (matcher is { })
-            {
-                statusCode = statusCodeMap[matcher.Method];
-            }
+            else if (matcher is { }) statusCode = statusCodeMap[matcher.Method];
 
             newSyntax = newSyntax.AddAttributeLists(produces(statusCode));
         }
 
-        if (!knownStatusCodes.Contains(StatusCodes.Status404NotFound) && matcher?.Method != RestfulApiMethod.List)
-        {
-            newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status404NotFound, "ProblemDetails"));
-        }
+        if (!knownStatusCodes.Contains(StatusCodes.Status404NotFound) && matcher?.Method != RestfulApiMethod.List) newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status404NotFound, "ProblemDetails"));
 
-        if (!knownStatusCodes.Contains(StatusCodes.Status400BadRequest))
-        {
-            newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status400BadRequest, "ProblemDetails"));
-        }
+        if (!knownStatusCodes.Contains(StatusCodes.Status400BadRequest)) newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status400BadRequest, "ProblemDetails"));
 
         if (!knownStatusCodes.Contains(StatusCodes.Status422UnprocessableEntity))
-        {
             newSyntax = newSyntax.AddAttributeLists(
                 produces(StatusCodes.Status422UnprocessableEntity, "FluentValidationProblemDetails")
             );
-        }
 
 
         if (isStream)
@@ -546,7 +519,6 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         static AttributeListSyntax produces(int statusCode, string? responseType = null)
         {
             if (responseType is { })
-            {
                 return AttributeList(
                     SingletonSeparatedList(
                         Attribute(
@@ -563,7 +535,6 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                         )
                     )
                 );
-            }
 
             return AttributeList(
                 SingletonSeparatedList(

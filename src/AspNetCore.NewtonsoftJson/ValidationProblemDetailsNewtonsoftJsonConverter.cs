@@ -21,16 +21,10 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         [NotNull] JsonSerializer serializer
     )
     {
-        if (serializer == null)
-        {
-            throw new ArgumentNullException(nameof(serializer));
-        }
+        ArgumentNullException.ThrowIfNull(serializer);
 
         var annotatedProblemDetails = serializer.Deserialize<AnnotatedProblemDetails>(reader);
-        if (annotatedProblemDetails == null)
-        {
-            return null;
-        }
+        if (annotatedProblemDetails == null) return null;
 
         var problemDetails = existingValue ?? new FluentValidationProblemDetails();
         annotatedProblemDetails.CopyTo(problemDetails);
@@ -44,15 +38,9 @@ public sealed class ValidationProblemDetailsNewtonsoftJsonConverter : JsonConver
         [NotNull] JsonSerializer serializer
     )
     {
-        if (writer == null)
-        {
-            throw new ArgumentNullException(nameof(writer));
-        }
+        ArgumentNullException.ThrowIfNull(writer);
 
-        if (serializer == null)
-        {
-            throw new ArgumentNullException(nameof(serializer));
-        }
+        ArgumentNullException.ThrowIfNull(serializer);
 
         if (value == null)
         {

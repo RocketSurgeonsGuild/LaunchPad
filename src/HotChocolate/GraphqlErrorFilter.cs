@@ -28,11 +28,9 @@ internal class GraphqlErrorFilter : IErrorFilter
                                     .SetExtension("severity", failure.Severity);
 
                            if (!string.IsNullOrWhiteSpace(failure.PropertyName))
-                           {
                                err = err
                                     .SetExtension("field", failure.PropertyName)
                                     .SetExtension("propertyName", failure.PropertyName);
-                           }
 
                            return err;
                        }
@@ -48,20 +46,11 @@ internal class GraphqlErrorFilter : IErrorFilter
                .SetMessage(error.Exception.Message)
                .WithProblemDetails(ex);
 
-            if (error.Exception is NotFoundException)
-            {
-                builder.SetCode("NOTFOUND");
-            }
+            if (error.Exception is NotFoundException) builder.SetCode("NOTFOUND");
 
-            if (error.Exception is NotAuthorizedException)
-            {
-                builder.SetCode("NOTAUTHORIZED");
-            }
+            if (error.Exception is NotAuthorizedException) builder.SetCode("NOTAUTHORIZED");
 
-            if (error.Exception is RequestFailedException)
-            {
-                builder.SetCode("FAILED");
-            }
+            if (error.Exception is RequestFailedException) builder.SetCode("FAILED");
 
             return builder.Build();
         }

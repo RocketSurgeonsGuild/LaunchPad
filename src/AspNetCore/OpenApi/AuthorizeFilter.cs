@@ -9,7 +9,6 @@ internal class AuthorizeFilter : IOperationFilter
     {
         // enhance the 401/403 with the media response
         if (operation.Responses.TryGetValue("401", out var value))
-        {
             value.Headers.Add(
                 "www-authenticate",
                 new OpenApiHeader
@@ -19,10 +18,8 @@ internal class AuthorizeFilter : IOperationFilter
                     Description = "The error details"
                 }
             );
-        }
 
         if (operation.Responses.TryGetValue("403", out value))
-        {
             value.Headers.Add(
                 "www-authenticate",
                 new OpenApiHeader
@@ -32,6 +29,5 @@ internal class AuthorizeFilter : IOperationFilter
                     Description = "The error details"
                 }
             );
-        }
     }
 }

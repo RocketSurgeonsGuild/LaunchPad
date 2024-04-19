@@ -29,10 +29,7 @@ public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDepende
     [return: NotNullIfNotNull("type")]
     private static Type? UnwrapNullableType(Type? type)
     {
-        if (type is null)
-        {
-            return null;
-        }
+        if (type is null) return null;
 
         return Nullable.GetUnderlyingType(type) ?? type;
     }
@@ -60,7 +57,6 @@ public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDepende
             var converterType = underlyingModelType.GetNestedType("EfCoreValueConverter");
 
             if (converterType != null)
-            {
                 yield return _converters.GetOrAdd(
                     ( underlyingModelType, typeof(Guid) ),
                     _ =>
@@ -73,7 +69,6 @@ public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDepende
                         return new ValueConverterInfo(modelClrType, typeof(Guid), factory);
                     }
                 );
-            }
         }
     }
 }

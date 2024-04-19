@@ -21,13 +21,9 @@ internal class ValidationHealthCheckResults
     public void AddResult(string optionsTypeName, string optionsName, ValidationResult result)
     {
         var key = optionsTypeName;
-        if (optionsName != Options.DefaultName)
-        {
-            key += $"_{optionsName}";
-        }
+        if (optionsName != Options.DefaultName) key += $"_{optionsName}";
 
         if (result.IsValid)
-        {
             _results[key] =
                 new HealthReportEntry(
                     HealthStatus.Healthy,
@@ -43,9 +39,7 @@ internal class ValidationHealthCheckResults
                         ),
                     new[] { "options-validation", key }
                 );
-        }
         else
-        {
             _results[key] =
                 new HealthReportEntry(
                     HealthStatus.Unhealthy,
@@ -61,6 +55,5 @@ internal class ValidationHealthCheckResults
                         ),
                     new[] { "options-validation", "Options Validation", key, optionsTypeName }
                 );
-        }
     }
 }

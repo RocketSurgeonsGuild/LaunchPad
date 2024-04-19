@@ -35,9 +35,7 @@ internal class OperationIdFilter : IOperationFilter
     {
         if (string.IsNullOrWhiteSpace(operation.OperationId) &&
             context.ApiDescription.ActionDescriptor is ControllerActionDescriptor cad)
-        {
             operation.OperationId = cad.ActionName;
-        }
 
         foreach (var parameter in operation.Parameters)
         {

@@ -14,10 +14,7 @@ internal class RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> op
     {
         foreach (var controller in context.Result.Controllers)
         {
-            if (!typeof(RestfulApiController).IsAssignableFrom(controller.ControllerType))
-            {
-                return;
-            }
+            if (!typeof(RestfulApiController).IsAssignableFrom(controller.ControllerType)) return;
 
             foreach (var action in controller.Actions)
             {

@@ -239,10 +239,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         INamedTypeSymbol inheritFromSymbol
     )
     {
-        if (!compilation.HasImplicitConversion(targetSymbol, inheritFromSymbol))
-        {
-            classToInherit = classToInherit.AddMembers(members.ToArray());
-        }
+        if (!compilation.HasImplicitConversion(targetSymbol, inheritFromSymbol)) classToInherit = classToInherit.AddMembers(members.ToArray());
 
         return inheritFromSymbol
               .DeclaringSyntaxReferences.Select(z => z.GetSyntax())
@@ -607,12 +604,10 @@ public class InheritFromGenerator : IIncrementalGenerator
             // they will be named InheritFrom<InhertingType>
             // filter the members to remove excluded properties
             if (!declaration.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
-            {
-//                context.ReportDiagnostic(
-//                    Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
-//                );
+                //                context.ReportDiagnostic(
+                //                    Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
+                //                );
                 return;
-            }
 
             var classToInherit = ClassDeclaration(declaration.Identifier)
                                 .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
@@ -646,10 +641,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                     var visitor = new RuleExpressionVisitor(excludedMembers);
                     constructor.Accept(visitor);
 
-                    if (visitor is { Results: [] results, })
-                    {
-                        continue;
-                    }
+                    if (visitor is { Results: [] results, }) continue;
 
                     var parameters = constructor
                                     .ParameterList.Parameters.Where(
@@ -670,7 +662,6 @@ public class InheritFromGenerator : IIncrementalGenerator
                         .DescendantNodes()
                         .OfType<InvocationExpressionSyntax>()
                         .Any(z => z is { Expression: SimpleNameSyntax { Identifier.Text: { Length: > 0, } invocationName, }, } && invocationName == methodName))
-                    {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 GeneratorDiagnostics.ValidatorShouldCallGeneratedValidationMethod,
@@ -678,7 +669,6 @@ public class InheritFromGenerator : IIncrementalGenerator
                                 methodName
                             )
                         );
-                    }
 
                     namespaces = namespaces.AddDistinctUsingStatements(inheritFromSyntax.SyntaxTree.GetCompilationUnitRoot().Usings);
                     classToInherit = classToInherit.AddMembers(method);
@@ -786,10 +776,7 @@ internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) :
     private void HandleRuleSet(InvocationExpressionSyntax parent, ArgumentSyntax action)
     {
         // TODO: Support methods?
-        if (HandleNestedAction(action) is { } updatedAction)
-        {
-            _results.Add(parent.ReplaceNode(action, updatedAction));
-        }
+        if (HandleNestedAction(action) is { } updatedAction) _results.Add(parent.ReplaceNode(action, updatedAction));
     }
 
     private void HandleWhen(InvocationExpressionSyntax parent, ArgumentSyntax predicate, ArgumentSyntax whenAction, ArgumentSyntax? otherwiseAction)
@@ -806,10 +793,7 @@ internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) :
                                                    && expression.Identifier.Text == parameter.Identifier.Text
                                               )
                                              .Any(z => excludedMembers.Contains(z.Name.Identifier.Text));
-        if (predicateContainsExcludedMember)
-        {
-            return;
-        }
+        if (predicateContainsExcludedMember) return;
 
         if (otherwiseAction is null && HandleNestedAction(whenAction) is { } updatedWhenAction)
         {
@@ -817,10 +801,7 @@ internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) :
             return;
         }
 
-        if (otherwiseAction is null)
-        {
-            return;
-        }
+        if (otherwiseAction is null) return;
 
         switch ( HandleNestedAction(whenAction), HandleNestedAction(otherwiseAction) )
         {
@@ -867,10 +848,7 @@ internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) :
         // TODO: Support methods?
         var visitor = new RuleExpressionVisitor(excludedMembers);
         visitor.Visit(action);
-        if (visitor.Results.Length == 0)
-        {
-            return null;
-        }
+        if (visitor.Results.Length == 0) return null;
 
         var removeNodes = action
                          .DescendantNodes()

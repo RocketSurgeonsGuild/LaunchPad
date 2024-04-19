@@ -14,10 +14,7 @@ internal class ValidationPipelineBehavior<T, R>(IValidator<T>? validator = null)
             var context = new ValidationContext<T>(request);
 
             var response = await validator.ValidateAsync(context, cancellationToken).ConfigureAwait(false);
-            if (!response.IsValid)
-            {
-                throw new ValidationException(response.Errors);
-            }
+            if (!response.IsValid) throw new ValidationException(response.Errors);
         }
 
         return await next().ConfigureAwait(false);
@@ -34,12 +31,12 @@ internal class ValidationStreamPipelineBehavior<T, R>(IValidator<T>? validator =
             var context = new ValidationContext<T>(request);
 
             var response = await validator.ValidateAsync(context, cancellationToken).ConfigureAwait(false);
-            if (!response.IsValid)
-            {
-                throw new ValidationException(response.Errors);
-            }
+            if (!response.IsValid) throw new ValidationException(response.Errors);
         }
 
-        await foreach (var item in next().WithCancellation(cancellationToken)) yield return item;
+        await foreach (var item in next().WithCancellation(cancellationToken))
+        {
+            yield return item;
+        }
     }
 }

@@ -17,10 +17,7 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
     )
     {
         // If validation is explicitly disabled, return none so validation middleware won't be added
-        if (argDef.ContextData.ContainsKey(WellKnownContextData.DontValidate))
-        {
-            return new List<ValidatorDescriptor>(0);
-        }
+        if (argDef.ContextData.ContainsKey(WellKnownContextData.DontValidate)) return new List<ValidatorDescriptor>(0);
 
         var validators = new List<ValidatorDescriptor>();
 
@@ -30,30 +27,20 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
             // And if we can figure out the arg's runtime type
             var argRuntimeType = TryGetArgRuntimeType(argDef);
             if (argRuntimeType is not null)
-            {
                 if (validatorRegistry.TryGetValidator(argRuntimeType, out var validatorDescriptor))
-                {
                     validators.Add(validatorDescriptor);
-                }
-            }
         }
 
         // Include explicit validator/s (that aren't already added implicitly)
         if (argDef.ContextData.TryGetValue(WellKnownContextData.ExplicitValidatorTypes, out var explicitValidatorTypesRaw) &&
             explicitValidatorTypesRaw is IEnumerable<Type> explicitValidatorTypes)
-        {
             // TODO: Potentially check and throw if there's a validator being explicitly applied for the wrong runtime type
-
             foreach (var validatorType in explicitValidatorTypes)
             {
-                if (validators.Any(v => v.ValidatorType == validatorType))
-                {
-                    continue;
-                }
+                if (validators.Any(v => v.ValidatorType == validatorType)) continue;
 
                 validators.Add(new ValidatorDescriptor(validatorType));
             }
-        }
 
         return validators;
     }
@@ -62,15 +49,9 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
         ArgumentDefinition argDef
     )
     {
-        if (argDef.Parameter?.ParameterType is { } argRuntimeType)
-        {
-            return argRuntimeType;
-        }
+        if (argDef.Parameter?.ParameterType is { } argRuntimeType) return argRuntimeType;
 
-        if (argDef.Type is ExtendedTypeReference extTypeRef)
-        {
-            return TryGetRuntimeType(extTypeRef.Type);
-        }
+        if (argDef.Type is ExtendedTypeReference extTypeRef) return TryGetRuntimeType(extTypeRef.Type);
 
         return null;
     }
@@ -78,24 +59,15 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
     private static Type? TryGetRuntimeType(IExtendedType extType)
     {
         // It's already a runtime type, .Type(typeof(int))
-        if (extType.Kind == ExtendedTypeKind.Runtime)
-        {
-            return extType.Source;
-        }
+        if (extType.Kind == ExtendedTypeKind.Runtime) return extType.Source;
 
         // Array (though not sure what produces this scenario as seems to always be list)
         if (extType.IsArray)
         {
-            if (extType.ElementType is null)
-            {
-                return null;
-            }
+            if (extType.ElementType is null) return null;
 
             var elementRuntimeType = TryGetRuntimeType(extType.ElementType);
-            if (elementRuntimeType is null)
-            {
-                return null;
-            }
+            if (elementRuntimeType is null) return null;
 
             return Array.CreateInstance(elementRuntimeType, 0).GetType();
         }
@@ -103,16 +75,10 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
         // List
         if (extType.IsList)
         {
-            if (extType.ElementType is null)
-            {
-                return null;
-            }
+            if (extType.ElementType is null) return null;
 
             var elementRuntimeType = TryGetRuntimeType(extType.ElementType);
-            if (elementRuntimeType is null)
-            {
-                return null;
-            }
+            if (elementRuntimeType is null) return null;
 
             return typeof(List<>).MakeGenericType(elementRuntimeType);
         }
@@ -128,10 +94,7 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
                 currBaseType = currBaseType.BaseType;
             }
 
-            if (currBaseType is null)
-            {
-                return null;
-            }
+            if (currBaseType is null) return null;
 
             return currBaseType.GenericTypeArguments[0];
         }
@@ -147,16 +110,10 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
                 currBaseType = currBaseType.BaseType;
             }
 
-            if (currBaseType is null)
-            {
-                return null;
-            }
+            if (currBaseType is null) return null;
 
             var argRuntimeType = currBaseType.GenericTypeArguments[0];
-            if (argRuntimeType.IsValueType && extType.IsNullable)
-            {
-                return typeof(Nullable<>).MakeGenericType(argRuntimeType);
-            }
+            if (argRuntimeType.IsValueType && extType.IsNullable) return typeof(Nullable<>).MakeGenericType(argRuntimeType);
 
             return argRuntimeType;
         }
@@ -171,10 +128,7 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
         DefinitionBase definition
     )
     {
-        if (definition is not ObjectTypeDefinition objTypeDef)
-        {
-            return;
-        }
+        if (definition is not ObjectTypeDefinition objTypeDef) return;
 
         var validatorRegistry = completionContext.Services.GetRequiredService<ICustomValidatorRegistry>();
 
@@ -191,10 +145,7 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
                 try
                 {
                     validatorDescs = DetermineValidatorsForArg(validatorRegistry, argDef);
-                    if (validatorDescs.Count < 1)
-                    {
-                        continue;
-                    }
+                    if (validatorDescs.Count < 1) continue;
                 }
                 catch (Exception ex)
                 {
@@ -210,10 +161,7 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
                 // Cleanup context now we're done with these
                 foreach (var key in argDef.ContextData.Keys)
                 {
-                    if (key.StartsWith(WellKnownContextData.Prefix, StringComparison.OrdinalIgnoreCase))
-                    {
-                        argDef.ContextData.Remove(key);
-                    }
+                    if (key.StartsWith(WellKnownContextData.Prefix, StringComparison.OrdinalIgnoreCase)) argDef.ContextData.Remove(key);
                 }
 
                 validatorDescs.TrimExcess();
@@ -224,11 +172,9 @@ internal class CustomValidationMiddlewareInjector : TypeInterceptor
             if (needsValidationMiddleware)
             {
                 if (_validationFieldMiddlewareDef is null)
-                {
                     _validationFieldMiddlewareDef = new FieldMiddlewareDefinition(
                         FieldClassMiddlewareFactory.Create<ValidationMiddleware>()
                     );
-                }
 
                 fieldDef.MiddlewareDefinitions.Insert(0, _validationFieldMiddlewareDef);
             }

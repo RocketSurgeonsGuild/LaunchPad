@@ -31,7 +31,6 @@ internal static class NodaTimeSwashbuckleExtensions
                                }
                            } );
             if (type.IsValueType)
-            {
                 yield return ( typeof(Nullable<>).MakeGenericType(type),
                                () => new OpenApiSchema
                                {
@@ -46,7 +45,6 @@ internal static class NodaTimeSwashbuckleExtensions
                                        ["clrType"] = new OpenApiString(type.FullName)
                                    }
                                } );
-            }
         }
 
         var instant = Instant.FromUnixTimeSeconds(1573000000);
@@ -69,7 +67,10 @@ internal static class NodaTimeSwashbuckleExtensions
             PeriodUnits.AllUnits
         );
         foreach (var (type, schema) in instantSchemas)
+        {
             c.MapType(type, schema);
+        }
+
         foreach (var (type, schema) in createStringSchema(
                      typeof(LocalDate),
                      LocalDate.FromDateTime(instant.ToDateTimeUtc()),

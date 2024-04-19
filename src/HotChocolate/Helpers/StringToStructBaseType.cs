@@ -36,10 +36,7 @@ public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntime
     /// <inheritdoc />
     protected override TRuntimeType ParseLiteral(StringValueNode valueSyntax)
     {
-        if (TryDeserialize(valueSyntax.Value, out var value))
-        {
-            return value.Value;
-        }
+        if (TryDeserialize(valueSyntax.Value, out var value)) return value.Value;
 
         throw new SerializationException(
             $"Unable to deserialize string to {Name}",
@@ -56,20 +53,11 @@ public abstract class StringToStructBaseType<TRuntimeType> : ScalarType<TRuntime
     /// <inheritdoc />
     public override IValueNode ParseResult(object? resultValue)
     {
-        if (resultValue is null)
-        {
-            return NullValueNode.Default;
-        }
+        if (resultValue is null) return NullValueNode.Default;
 
-        if (resultValue is string s)
-        {
-            return new StringValueNode(s);
-        }
+        if (resultValue is string s) return new StringValueNode(s);
 
-        if (resultValue is TRuntimeType v)
-        {
-            return ParseValue(v);
-        }
+        if (resultValue is TRuntimeType v) return ParseValue(v);
 
         throw new SerializationException(
             $"Unable to deserialize string to {Name}",

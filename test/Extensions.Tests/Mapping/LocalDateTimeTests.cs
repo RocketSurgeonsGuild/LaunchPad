@@ -55,21 +55,14 @@ public class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConver
         var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue });
 
         if (sourceValue == null)
-        {
             result.Should().BeNull();
-        }
         else
-        {
             result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
-        }
     }
 
     protected override void Configure(IMapperConfigurationExpression expression)
     {
-        if (expression == null)
-        {
-            throw new ArgumentNullException(nameof(expression));
-        }
+        ArgumentNullException.ThrowIfNull(expression);
 
         expression.CreateMap<Foo1, Foo3>().ReverseMap();
     }

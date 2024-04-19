@@ -28,10 +28,7 @@ public class SerilogEnrichSpansConvention : ISerilogConvention
         LoggerConfiguration loggerConfiguration
     )
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         loggerConfiguration.Enrich.WithSpan(
             new SpanOptions

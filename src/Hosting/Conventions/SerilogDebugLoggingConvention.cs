@@ -35,10 +35,7 @@ public sealed class SerilogDebugLoggingConvention : ISerilogConvention
         LoggerConfiguration loggerConfiguration
     )
     {
-        if (configuration == null)
-        {
-            throw new ArgumentNullException(nameof(configuration));
-        }
+        ArgumentNullException.ThrowIfNull(configuration);
 
         if (!_options.EnableDebugLogging) return;
 

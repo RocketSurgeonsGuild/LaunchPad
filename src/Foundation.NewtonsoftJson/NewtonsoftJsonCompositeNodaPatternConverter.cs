@@ -45,11 +45,9 @@ public sealed class NewtonsoftJsonCompositeNodaPatternConverter<T> : NodaConvert
     protected override T ReadJsonImpl(JsonReader reader, JsonSerializer serializer)
     {
         if (reader.TokenType != JsonToken.String)
-        {
             throw new InvalidNodaDataException(
                 $"Unexpected token parsing {typeof(T).Name}. Expected String, got {reader.TokenType}."
             );
-        }
 
         var text = reader.Value?.ToString();
 

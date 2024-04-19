@@ -19,15 +19,9 @@ public static class SerilogAbstractionsHostBuilderExtensions
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureSerilog(this ConventionContextBuilder container, SerilogConvention @delegate)
     {
-        if (container == null)
-        {
-            throw new ArgumentNullException(nameof(container));
-        }
+        ArgumentNullException.ThrowIfNull(container);
 
-        if (@delegate == null)
-        {
-            throw new ArgumentNullException(nameof(@delegate));
-        }
+        ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(@delegate);
         return container;

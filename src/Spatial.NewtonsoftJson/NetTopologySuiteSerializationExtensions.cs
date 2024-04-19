@@ -107,7 +107,11 @@ public static class NetTopologySuiteSerializationExtensions
                                 .OfType<GeometryConverter>()
                                 .Cast<JsonConverter>()
                                 .ToList();
-        foreach (var converter in convertersToRemove) converters.Remove(converter);
+        foreach (var converter in convertersToRemove)
+        {
+            converters.Remove(converter);
+        }
+
         converters.Add(new GeometryConverter(factory, dimension));
         ApplyConverters(factory, dimension, converters);
     }
@@ -118,7 +122,11 @@ public static class NetTopologySuiteSerializationExtensions
                                 .OfType<GeometryConverter>()
                                 .Cast<JsonConverter>()
                                 .ToList();
-        foreach (var converter in convertersToRemove) converters.Remove(converter);
+        foreach (var converter in convertersToRemove)
+        {
+            converters.Remove(converter);
+        }
+
         converters.Add(new WktGeometryConverter(factory, dimension));
         ApplyConverters(factory, dimension, converters);
     }

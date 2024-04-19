@@ -42,10 +42,7 @@ public partial class SwashbuckleConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         services.ConfigureOptions<SwashbuckleAddAllDocumentEndpoints>();
 
@@ -112,7 +109,9 @@ public partial class SwashbuckleConvention : IServiceConvention
                         name = name[..name.IndexOf('`', StringComparison.Ordinal)];
                         sb.Append(name);
                         foreach (var gt in type.GetGenericArguments())
+                        {
                             sb.Append('_').Append(schemaIdSelector(gt));
+                        }
 
                         return sb.ToString();
                     }

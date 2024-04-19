@@ -36,10 +36,7 @@ internal class RestfulApiParameterMatcher(
                     var parameterIs = parameter.ParameterType.IsGenericType && parameter.ParameterType.GetGenericTypeDefinition() == Type;
                     if (!parameterIs)
                         parameterIs = parameter.ParameterType.GetInterfaces().Any(inter => inter.IsGenericType && inter.GetGenericTypeDefinition() == Type);
-                    if (!parameterIs)
-                    {
-                        return false;
-                    }
+                    if (!parameterIs) return false;
                 }
                 else if (!Type.IsAssignableFrom(parameter.ParameterType))
                 {

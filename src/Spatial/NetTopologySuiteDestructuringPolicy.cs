@@ -55,14 +55,14 @@ internal class NetTopologySuiteDestructuringPolicy(string? idPropertyName) : IDe
     private static LogEventPropertyValue WriteFeatureCollection(ILogEventPropertyValueFactory propertyValueFactory, FeatureCollection value)
     {
         var props = new List<LogEventProperty> { new("type", new ScalarValue("FeatureCollection")) };
-        if (WriteBBox(value.BoundingBox, null) is { } bBox)
-        {
-            props.Add(bBox);
-        }
+        if (WriteBBox(value.BoundingBox, null) is { } bBox) props.Add(bBox);
 
         var values = new List<LogEventPropertyValue>();
         foreach (var feature in value)
+        {
             values.Add(propertyValueFactory.CreatePropertyValue(feature, true));
+        }
+
         props.Add(new LogEventProperty("features", new SequenceValue(values)));
 
         return new StructureValue(props);
@@ -79,28 +79,16 @@ internal class NetTopologySuiteDestructuringPolicy(string? idPropertyName) : IDe
     {
         var props = new List<LogEventProperty> { new("type", new ScalarValue("Feature")) };
         // Add the id here if present.
-        if (value.GetOptionalId(_idPropertyName) is { } id)
-        {
-            props.Add(new LogEventProperty("id", propertyValueFactory.CreatePropertyValue(id, true)));
-        }
+        if (value.GetOptionalId(_idPropertyName) is { } id) props.Add(new LogEventProperty("id", propertyValueFactory.CreatePropertyValue(id, true)));
 
         // bbox (optional)
-        if (WriteBBox(value.BoundingBox, value.Geometry) is { } bBox)
-        {
-            props.Add(bBox);
-        }
+        if (WriteBBox(value.BoundingBox, value.Geometry) is { } bBox) props.Add(bBox);
 
         // geometry
-        if (value.Geometry != null)
-        {
-            props.Add(new LogEventProperty("geometry", propertyValueFactory.CreatePropertyValue(value.Geometry, true)));
-        }
+        if (value.Geometry != null) props.Add(new LogEventProperty("geometry", propertyValueFactory.CreatePropertyValue(value.Geometry, true)));
 
         // properties
-        if (value.Attributes != null)
-        {
-            props.Add(new LogEventProperty("properties", propertyValueFactory.CreatePropertyValue(value.Attributes, true)));
-        }
+        if (value.Attributes != null) props.Add(new LogEventProperty("properties", propertyValueFactory.CreatePropertyValue(value.Attributes, true)));
 
         return new StructureValue(props);
     }
@@ -111,10 +99,7 @@ internal class NetTopologySuiteDestructuringPolicy(string? idPropertyName) : IDe
         foreach (var propertyName in value.GetNames())
         {
             // skip id
-            if (propertyName != _idPropertyName)
-            {
-                props.Add(new LogEventProperty(propertyName, propertyValueFactory.CreatePropertyValue(value[propertyName], true)));
-            }
+            if (propertyName != _idPropertyName) props.Add(new LogEventProperty(propertyName, propertyValueFactory.CreatePropertyValue(value[propertyName], true)));
         }
 
         return new StructureValue(props);

@@ -45,9 +45,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 
         if (targetSymbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)) is not
             { TypeArguments: [INamedTypeSymbol propertyTrackingSymbol,], })
-        {
             return;
-        }
 
         var classToInherit =
             ( isRecord
@@ -191,9 +189,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             if (!SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
              && propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, }
              && typeName is not NullableTypeSyntax)
-            {
                 typeName = NullableType(typeName);
-            }
 
             addNamespacesFromPropertyType(namespaces, propertyType);
             classToInherit = classToInherit.AddMembers(
@@ -213,10 +209,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 ? namedTypeSymbol.TypeArguments[0]
                 : propertySymbol.Type;
             var type = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
-            if (propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, } && type is not NullableTypeSyntax)
-            {
-                type = NullableType(type);
-            }
+            if (propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, } && type is not NullableTypeSyntax) type = NullableType(type);
 
             addNamespacesFromPropertyType(namespaces, propertyType);
 

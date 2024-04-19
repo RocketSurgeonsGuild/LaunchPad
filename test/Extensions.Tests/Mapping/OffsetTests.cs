@@ -41,10 +41,7 @@ public class OffsetTests(ITestOutputHelper testOutputHelper) : TypeConverterTest
 
     protected override void Configure(IMapperConfigurationExpression expression)
     {
-        if (expression == null)
-        {
-            throw new ArgumentNullException(nameof(expression));
-        }
+        ArgumentNullException.ThrowIfNull(expression);
 
         expression.CreateMap<Foo1, Foo3>().ReverseMap();
     }

@@ -23,14 +23,10 @@ internal class ValidationMiddleware(
                                     .GetValidators(context, argument)
                                     .ToArray();
             if (resolvedValidators.Length > 0)
-            {
                 try
                 {
                     var value = context.ArgumentValue<object?>(argument.Name);
-                    if (value == null)
-                    {
-                        continue;
-                    }
+                    if (value == null) continue;
 
                     foreach (var resolvedValidator in resolvedValidators)
                     {
@@ -40,7 +36,6 @@ internal class ValidationMiddleware(
                             context.RequestAborted
                         );
                         if (validationResult is { IsValid: false })
-                        {
                             invalidResults.Add(
                                 new ArgumentValidationResult(
                                     argument.Name,
@@ -48,7 +43,6 @@ internal class ValidationMiddleware(
                                     validationResult
                                 )
                             );
-                        }
                     }
                 }
                 finally
@@ -58,7 +52,6 @@ internal class ValidationMiddleware(
                         resolvedValidator.Scope?.Dispose();
                     }
                 }
-            }
         }
 
         if (invalidResults.Any())

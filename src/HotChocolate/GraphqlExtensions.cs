@@ -32,10 +32,7 @@ public static class GraphqlExtensions
             error.SetExtension("instance", data.Instance);
         foreach (var property in data.Properties)
         {
-            if (property.Value is { })
-            {
-                error.SetExtension(property.Key, property.Value);
-            }
+            if (property.Value is { }) error.SetExtension(property.Key, property.Value);
         }
 
         return error;

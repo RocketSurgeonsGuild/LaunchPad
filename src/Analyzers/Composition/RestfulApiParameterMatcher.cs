@@ -33,24 +33,15 @@ internal class RestfulApiParameterMatcher(
                 {
                     static bool CheckType(ITypeSymbol symbol, INamedTypeSymbol type)
                     {
-                        if (symbol is not INamedTypeSymbol namedTypeSymbol)
-                        {
-                            return false;
-                        }
+                        if (symbol is not INamedTypeSymbol namedTypeSymbol) return false;
 
                         return namedTypeSymbol.IsGenericType && SymbolEqualityComparer.Default.Equals(namedTypeSymbol.OriginalDefinition, type);
                     }
 
                     var parameterIs = CheckType(parameter.Type, Type);
-                    if (!parameterIs)
-                    {
-                        parameterIs = parameter.Type.AllInterfaces.Any(inter => CheckType(inter, Type));
-                    }
+                    if (!parameterIs) parameterIs = parameter.Type.AllInterfaces.Any(inter => CheckType(inter, Type));
 
-                    if (!parameterIs)
-                    {
-                        return false;
-                    }
+                    if (!parameterIs) return false;
                 }
                 else if (!actionModel.Compilation.HasImplicitConversion(parameter.Type, Type))
                 {

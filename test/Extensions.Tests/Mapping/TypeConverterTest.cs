@@ -37,96 +37,42 @@ internal abstract class TypeConverterData : TheoryData<Type, Type, object?>
     private static object GetRandomValue(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
-        if (type == typeof(int))
-        {
-            return Faker.Random.Int();
-        }
+        if (type == typeof(int)) return Faker.Random.Int();
 
-        if (type == typeof(long))
-        {
-            return Faker.Random.Long();
-        }
+        if (type == typeof(long)) return Faker.Random.Long();
 
-        if (type == typeof(short))
-        {
-            return Faker.Random.Short();
-        }
+        if (type == typeof(short)) return Faker.Random.Short();
 
-        if (type == typeof(float))
-        {
-            return Faker.Random.Float();
-        }
+        if (type == typeof(float)) return Faker.Random.Float();
 
-        if (type == typeof(double))
-        {
-            return Faker.Random.Double();
-        }
+        if (type == typeof(double)) return Faker.Random.Double();
 
-        if (type == typeof(decimal))
-        {
-            return Faker.Random.Decimal();
-        }
+        if (type == typeof(decimal)) return Faker.Random.Decimal();
 
-        if (type == typeof(Duration))
-        {
-            return Duration.FromTimeSpan(Faker.Date.Timespan());
-        }
+        if (type == typeof(Duration)) return Duration.FromTimeSpan(Faker.Date.Timespan());
 
-        if (type == typeof(TimeSpan))
-        {
-            return Faker.Date.Timespan(TimeSpan.FromDays(1));
-        }
+        if (type == typeof(TimeSpan)) return Faker.Date.Timespan(TimeSpan.FromDays(1));
 
-        if (type == typeof(Instant))
-        {
-            return Instant.FromDateTimeOffset(Faker.Date.RecentOffset());
-        }
+        if (type == typeof(Instant)) return Instant.FromDateTimeOffset(Faker.Date.RecentOffset());
 
-        if (type == typeof(LocalDateTime))
-        {
-            return LocalDateTime.FromDateTime(Faker.Date.Recent());
-        }
+        if (type == typeof(LocalDateTime)) return LocalDateTime.FromDateTime(Faker.Date.Recent());
 
-        if (type == typeof(OffsetDateTime))
-        {
-            return OffsetDateTime.FromDateTimeOffset(Faker.Date.RecentOffset());
-        }
+        if (type == typeof(OffsetDateTime)) return OffsetDateTime.FromDateTimeOffset(Faker.Date.RecentOffset());
 
-        if (type == typeof(LocalTime))
-        {
-            return LocalTime.FromTicksSinceMidnight(Faker.Date.Timespan(TimeSpan.FromDays(1)).Ticks);
-        }
+        if (type == typeof(LocalTime)) return LocalTime.FromTicksSinceMidnight(Faker.Date.Timespan(TimeSpan.FromDays(1)).Ticks);
 
-        if (type == typeof(LocalDate))
-        {
-            return LocalDate.FromDateTime(Faker.Date.Recent());
-        }
+        if (type == typeof(LocalDate)) return LocalDate.FromDateTime(Faker.Date.Recent());
 
-        if (type == typeof(Offset))
-        {
-            return Offset.FromTimeSpan(Faker.Date.Timespan(TimeSpan.FromHours(12)));
-        }
+        if (type == typeof(Offset)) return Offset.FromTimeSpan(Faker.Date.Timespan(TimeSpan.FromHours(12)));
 
-        if (type == typeof(DateTime))
-        {
-            return Faker.Date.Recent();
-        }
+        if (type == typeof(DateTime)) return Faker.Date.Recent();
 
-        if (type == typeof(DateTimeOffset))
-        {
-            return Faker.Date.RecentOffset();
-        }
-#if NET6_0_OR_GREATER
-        if (type == typeof(DateOnly))
-        {
-            return Faker.Date.RecentDateOnly();
-        }
+        if (type == typeof(DateTimeOffset)) return Faker.Date.RecentOffset();
+        #if NET6_0_OR_GREATER
+        if (type == typeof(DateOnly)) return Faker.Date.RecentDateOnly();
 
-        if (type == typeof(TimeOnly))
-        {
-            return Faker.Date.RecentTimeOnly();
-        }
-#endif
+        if (type == typeof(TimeOnly)) return Faker.Date.RecentTimeOnly();
+        #endif
 
         throw new NotSupportedException($"type {type.FullName} is not supported");
     }
@@ -160,10 +106,7 @@ internal abstract class TypeConverterData : TheoryData<Type, Type, object?>
             var sourceValue = CreateValue(source, GetRandomValue(source));
             Add(sourceClass, destinationClass, sourceValue);
 
-            if (Nullable.GetUnderlyingType(source) == null)
-            {
-                continue;
-            }
+            if (Nullable.GetUnderlyingType(source) == null) continue;
 
             foreach (var item in Faker.Make(3, () => CreateValue(source, GetRandomValue(source).OrNull(Faker))))
             {

@@ -23,10 +23,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
                                 .Distinct(StringComparer.OrdinalIgnoreCase)
                                 .ToArray();
         // Not valid for actions with more than one verb
-        if (httpMethods.Length > 1)
-        {
-            return null;
-        }
+        if (httpMethods.Length > 1) return null;
 
         return httpMethods[0];
     }
@@ -124,53 +121,33 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
                         .SelectMany(z => z)
                         .Any(z => z is IApiDefaultResponseMetadataProvider);
 
-        if (!hasDefault)
-        {
-            actionModel.Filters.Add(new ProducesDefaultResponseTypeAttribute());
-        }
+        if (!hasDefault) actionModel.Filters.Add(new ProducesDefaultResponseTypeAttribute());
 
         if (!hasSuccess)
         {
             if (actionModel.ActionMethod.ReturnType == typeof(Task<ActionResult>))
-            {
                 actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status204NoContent));
-            }
             else if (match != null)
-            {
                 actionModel.Filters.Add(new ProducesResponseTypeAttribute(_options.MethodStatusCodeMap[match.Method]));
-            }
             else
-            {
                 actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status200OK));
-            }
         }
 
-        if (!providerLookup[StatusCodes.Status404NotFound].Any() && match?.Method != RestfulApiMethod.List)
-        {
-            actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
-        }
+        if (!providerLookup[StatusCodes.Status404NotFound].Any() && match?.Method != RestfulApiMethod.List) actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
 
-        if (!providerLookup[StatusCodes.Status400BadRequest].Any())
-        {
-            actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
-        }
+        if (!providerLookup[StatusCodes.Status400BadRequest].Any()) actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
 
         if (!providerLookup[_options.ValidationStatusCode].Any())
-        {
             actionModel.Filters.Add(
                 new ProducesResponseTypeAttribute(typeof(FluentValidationProblemDetails), _options.ValidationStatusCode)
             );
-        }
     }
 
     // TODO: Make a source generator for this to work without generics
     [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
     public void Apply(ActionModel action)
     {
-        if (!typeof(RestfulApiController).IsAssignableFrom(action.Controller.ControllerType))
-        {
-            return;
-        }
+        if (!typeof(RestfulApiController).IsAssignableFrom(action.Controller.ControllerType)) return;
 
         var httpMethod = GetHttpMethod(action);
         if (string.IsNullOrWhiteSpace(httpMethod))
@@ -183,13 +160,11 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         if (_propertiesToHideFromOpenApi.TryGetValue(context.Type, out var propertiesToRemove))
-        {
             foreach (var property in propertiesToRemove
                                     .Join(schema.Properties, z => z, z => z.Key, (_, b) => b.Key, StringComparer.OrdinalIgnoreCase)
                                     .ToArray())
             {
                 schema.Properties.Remove(property);
             }
-        }
     }
 }

@@ -70,7 +70,6 @@ public static class CreateRocket
             var existingRocket = await dbContext.Rockets.AsQueryable()
                                                  .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
             if (existingRocket != null)
-            {
                 throw new RequestFailedException("A Rocket already exists with that serial number!")
                 {
                     Title = "Rocket Creation Failed",
@@ -84,7 +83,6 @@ public static class CreateRocket
                         }
                     }
                 };
-            }
 
             var rocket = mapper.Map<ReadyRocket>(request);
             await dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);

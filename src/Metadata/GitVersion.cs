@@ -76,10 +76,7 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <returns>GitVersion.</returns>
     public static GitVersion For(TypeInfo typeInfo)
     {
-        if (typeInfo == null)
-        {
-            throw new ArgumentNullException(nameof(typeInfo));
-        }
+        ArgumentNullException.ThrowIfNull(typeInfo);
 
         return new GitVersion(typeInfo.Assembly);
     }

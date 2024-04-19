@@ -15,10 +15,7 @@ internal static class OnlyDefinedPropertiesMethods
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     public static bool ForStrings(PropertyMap map)
     {
-        if (map.SourceType == typeof(string) && map.DestinationType == typeof(string))
-        {
-            return true;
-        }
+        if (map.SourceType == typeof(string) && map.DestinationType == typeof(string)) return true;
 
         return false;
     }
@@ -33,10 +30,7 @@ internal static class OnlyDefinedPropertiesMethods
         expression.Condition(
             (_, _, sourceValue, _, _) =>
             {
-                if (!string.IsNullOrWhiteSpace((string)sourceValue))
-                {
-                    return true;
-                }
+                if (!string.IsNullOrWhiteSpace((string)sourceValue)) return true;
 
                 return false;
             }
@@ -50,17 +44,11 @@ internal static class OnlyDefinedPropertiesMethods
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     public static bool ForValueTypes(PropertyMap map)
     {
-        if (map.SourceType == null)
-        {
-            return false;
-        }
+        if (map.SourceType == null) return false;
 
         var source = map.SourceType.GetTypeInfo();
         var destination = map.DestinationType.GetTypeInfo();
-        if (!source.IsEnum && source.IsValueType && destination.IsValueType)
-        {
-            return true;
-        }
+        if (!source.IsEnum && source.IsValueType && destination.IsValueType) return true;
 
         return false;
     }
@@ -76,10 +64,7 @@ internal static class OnlyDefinedPropertiesMethods
         expression.Condition(
             (_, _, sourceValue, _, _) =>
             {
-                if (!Equals(defaultValue, sourceValue))
-                {
-                    return true;
-                }
+                if (!Equals(defaultValue, sourceValue)) return true;
 
                 return false;
             }
@@ -93,22 +78,13 @@ internal static class OnlyDefinedPropertiesMethods
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     public static bool ForNullableValueTypes(PropertyMap map)
     {
-        if (map.SourceType == null)
-        {
-            return false;
-        }
+        if (map.SourceType == null) return false;
 
         var source = Nullable.GetUnderlyingType(map.SourceType)?.GetTypeInfo();
         var destination = Nullable.GetUnderlyingType(map.DestinationType)?.GetTypeInfo();
-        if (source == null || destination == null)
-        {
-            return false;
-        }
+        if (source == null || destination == null) return false;
 
-        if (!source.IsEnum && source.IsValueType && destination.IsValueType)
-        {
-            return true;
-        }
+        if (!source.IsEnum && source.IsValueType && destination.IsValueType) return true;
 
         return false;
     }
@@ -123,10 +99,7 @@ internal static class OnlyDefinedPropertiesMethods
         expression.Condition(
             (_, _, sourceValue, _, _) =>
             {
-                if (sourceValue != null)
-                {
-                    return true;
-                }
+                if (sourceValue != null) return true;
 
                 return false;
             }

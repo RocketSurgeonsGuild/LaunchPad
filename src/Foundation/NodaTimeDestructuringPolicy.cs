@@ -78,15 +78,9 @@ internal class NodaTimeDestructuringPolicy : IDestructuringPolicy
         if (value is Interval interval)
         {
             var values = new List<LogEventProperty>();
-            if (interval.HasStart)
-            {
-                values.Add(new("Start", _.CreatePropertyValue(interval.Start)));
-            }
+            if (interval.HasStart) values.Add(new("Start", _.CreatePropertyValue(interval.Start)));
 
-            if (interval.HasEnd)
-            {
-                values.Add(new("End", _.CreatePropertyValue(interval.End)));
-            }
+            if (interval.HasEnd) values.Add(new("End", _.CreatePropertyValue(interval.End)));
 
             result = new StructureValue(values);
             return true;

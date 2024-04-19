@@ -33,10 +33,7 @@ public class SerilogHostingConvention : IHostApplicationConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IHostApplicationBuilder builder)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         // removes default console loggers and such
         foreach (var item in builder
@@ -64,10 +61,8 @@ public class SerilogHostingConvention : IHostApplicationConvention
             );
 
             if (context.Get<ILoggerFactory>() != null)
-            {
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
-            }
         }
     }
 }

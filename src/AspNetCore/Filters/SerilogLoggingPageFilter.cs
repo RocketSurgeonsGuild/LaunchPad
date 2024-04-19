@@ -8,10 +8,7 @@ internal class SerilogLoggingPageFilter(IDiagnosticContext diagnosticContext) : 
     public void OnPageHandlerSelected(PageHandlerSelectedContext context)
     {
         var name = context.HandlerMethod?.Name ?? context.HandlerMethod?.MethodInfo.Name;
-        if (name != null)
-        {
-            diagnosticContext.Set("RazorPageHandler", name);
-        }
+        if (name != null) diagnosticContext.Set("RazorPageHandler", name);
     }
 
     // Required by the interface

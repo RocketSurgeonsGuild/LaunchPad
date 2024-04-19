@@ -39,10 +39,7 @@ public static class GetLaunchRecord
             var rocket = await dbContext.LaunchRecords
                                          .Include(x => x.Rocket)
                                          .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            if (rocket == null) throw new NotFoundException();
 
             return mapper.Map<LaunchRecordModel>(rocket);
         }

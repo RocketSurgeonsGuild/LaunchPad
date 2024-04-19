@@ -36,14 +36,11 @@ public static class GetRocketLaunchRecords
         public async IAsyncEnumerable<LaunchRecordModel> Handle(Request request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            if (rocket == null) throw new NotFoundException();
 
             var query = dbContext.LaunchRecords.AsQueryable()
-                                  .Where(z => z.RocketId == rocket.Id)
-                                  .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider);
+                                 .Where(z => z.RocketId == rocket.Id)
+                                 .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider);
             await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
             {
                 yield return item;

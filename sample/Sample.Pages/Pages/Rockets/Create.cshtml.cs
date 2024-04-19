@@ -16,10 +16,7 @@ public class RocketCreateModel : MediatorPageModel
     [UsedImplicitly]
     public async Task<ActionResult> OnPost()
     {
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
+        if (!ModelState.IsValid) return Page();
 
         await Send(Model);
         return RedirectToPage("Index");

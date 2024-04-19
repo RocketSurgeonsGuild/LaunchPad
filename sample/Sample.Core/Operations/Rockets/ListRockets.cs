@@ -25,10 +25,7 @@ public static class ListRockets
         public IAsyncEnumerable<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var query = dbContext.Rockets.AsQueryable();
-            if (request.RocketType.HasValue)
-            {
-                query = query.Where(z => z.Type == request.RocketType);
-            }
+            if (request.RocketType.HasValue) query = query.Where(z => z.Type == request.RocketType);
 
             return query.ProjectTo<RocketModel>(mapper.ConfigurationProvider).AsAsyncEnumerable();
         }

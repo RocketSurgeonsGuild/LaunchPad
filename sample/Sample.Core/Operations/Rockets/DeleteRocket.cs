@@ -35,10 +35,7 @@ public static class DeleteRocket
         public async Task Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            if (rocket == null) throw new NotFoundException();
 
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

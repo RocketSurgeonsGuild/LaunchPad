@@ -53,10 +53,7 @@ public class GraphqlConvention : IServiceConvention
         services.TryAddSingleton<IValidatorProvider, DefaultValidatorProvider>();
         services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
 
-        if (!_rocketChocolateOptions.IncludeAssemblyInfoQuery)
-        {
-            return;
-        }
+        if (!_rocketChocolateOptions.IncludeAssemblyInfoQuery) return;
 
         services.TryAddSingleton(_foundationOptions);
         sb.AddType<AssemblyInfoQuery>();

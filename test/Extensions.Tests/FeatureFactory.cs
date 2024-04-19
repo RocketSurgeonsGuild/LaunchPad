@@ -196,7 +196,10 @@ internal class FeatureFactory
     {
         var geoms = new Point[_random.Next(2, 10)];
         for (var i = 0; i < geoms.Length; i++)
+        {
             geoms[i] = CreatePoint(threeD);
+        }
+
         return GF.CreateMultiPoint(geoms);
     }
 
@@ -204,7 +207,10 @@ internal class FeatureFactory
     {
         var geoms = new LineString[_random.Next(2, 10)];
         for (var i = 0; i < geoms.Length; i++)
+        {
             geoms[i] = CreateLineString(threeD);
+        }
+
         return GF.CreateMultiLineString(geoms);
     }
 
@@ -212,7 +218,10 @@ internal class FeatureFactory
     {
         var geoms = new Polygon[_random.Next(2, 10)];
         for (var i = 0; i < geoms.Length; i++)
+        {
             geoms[i] = CreatePolygon(threeD);
+        }
+
         return GF.CreateMultiPolygon(geoms);
     }
 
@@ -242,7 +251,10 @@ internal class FeatureFactory
     {
         var tmp = new List<double>(num);
         for (var i = 0; i < num; i++)
+        {
             tmp.Add(_random.NextDouble());
+        }
+
         tmp.Sort();
         return tmp.ToArray();
     }

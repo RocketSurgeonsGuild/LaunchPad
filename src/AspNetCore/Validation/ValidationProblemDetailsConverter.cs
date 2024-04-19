@@ -33,10 +33,7 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
         JsonSerializerOptions options
     )
     {
-        if (writer == null)
-        {
-            throw new ArgumentNullException(nameof(writer));
-        }
+        ArgumentNullException.ThrowIfNull(writer);
 
         if (value == null)
         {

@@ -27,13 +27,8 @@ public static class RocketSurgerySerilogExtensions
         foreach (var item in conventionContext.Conventions.Get<ISerilogConvention, SerilogConvention>())
         {
             if (item is ISerilogConvention convention)
-            {
                 convention.Register(conventionContext, services, configuration, configurationBuilder);
-            }
-            else if (item is SerilogConvention @delegate)
-            {
-                @delegate(conventionContext, services, configuration, configurationBuilder);
-            }
+            else if (item is SerilogConvention @delegate) @delegate(conventionContext, services, configuration, configurationBuilder);
         }
 
         return configurationBuilder;

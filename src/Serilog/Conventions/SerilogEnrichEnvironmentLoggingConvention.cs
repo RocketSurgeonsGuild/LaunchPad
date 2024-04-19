@@ -27,10 +27,7 @@ public class SerilogEnrichEnvironmentLoggingConvention : ISerilogConvention
         LoggerConfiguration loggerConfiguration
     )
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         loggerConfiguration
            .Enrich.WithEnvironmentUserName()

@@ -41,16 +41,10 @@ public static class GetRocketLaunchRecord
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id }, cancellationToken);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            if (rocket == null) throw new NotFoundException();
 
             var launchRecord = await dbContext.LaunchRecords.FindAsync(new object[] { request.LaunchRecordId }, cancellationToken);
-            if (launchRecord == null)
-            {
-                throw new NotFoundException();
-            }
+            if (launchRecord == null) throw new NotFoundException();
 
             return mapper.Map<LaunchRecordModel>(launchRecord);
         }
