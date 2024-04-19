@@ -5,7 +5,8 @@ using Microsoft.CodeAnalysis;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers.Composition;
 
-internal class RestfulApiParameterMatcher(
+internal class RestfulApiParameterMatcher
+(
     Index parameterIndex,
     ApiConventionNameMatchBehavior nameMatch,
     string[] names,
@@ -50,12 +51,12 @@ internal class RestfulApiParameterMatcher(
             }
 
             return NameMatch switch
-            {
-                ApiConventionNameMatchBehavior.Exact  => Names.Any(name => parameter.Name.Equals(name, StringComparison.OrdinalIgnoreCase)),
-                ApiConventionNameMatchBehavior.Prefix => Names.Any(name => parameter.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
-                ApiConventionNameMatchBehavior.Suffix => Names.Any(name => parameter.Name.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
-                _                                     => true
-            };
+                   {
+                       ApiConventionNameMatchBehavior.Exact  => Names.Any(name => parameter.Name.Equals(name, StringComparison.OrdinalIgnoreCase)),
+                       ApiConventionNameMatchBehavior.Prefix => Names.Any(name => parameter.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
+                       ApiConventionNameMatchBehavior.Suffix => Names.Any(name => parameter.Name.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
+                       _                                     => true,
+                   };
         }
 
         return false;

@@ -18,23 +18,24 @@ internal class GraphqlErrorFilter : IErrorFilter
         if (error.Exception is ValidationException vx)
         {
             var childErrors =
-                vx.Errors.Select(x => new FluentValidationProblemDetail(x))
-                  .Select(
-                       failure =>
-                       {
-                           var err = new Error(failure.ErrorMessage)
-                                    .WithCode(failure.ErrorCode)
-                                    .SetExtension("attemptedValue", failure.AttemptedValue)
-                                    .SetExtension("severity", failure.Severity);
+                vx
+                   .Errors.Select(x => new FluentValidationProblemDetail(x))
+                   .Select(
+                        failure =>
+                        {
+                            var err = new Error(failure.ErrorMessage)
+                                     .WithCode(failure.ErrorCode)
+                                     .SetExtension("attemptedValue", failure.AttemptedValue)
+                                     .SetExtension("severity", failure.Severity);
 
-                           if (!string.IsNullOrWhiteSpace(failure.PropertyName))
-                               err = err
-                                    .SetExtension("field", failure.PropertyName)
-                                    .SetExtension("propertyName", failure.PropertyName);
+                            if (!string.IsNullOrWhiteSpace(failure.PropertyName))
+                                err = err
+                                     .SetExtension("field", failure.PropertyName)
+                                     .SetExtension("propertyName", failure.PropertyName);
 
-                           return err;
-                       }
-                   );
+                            return err;
+                        }
+                    );
             return new AggregateError(childErrors);
         }
 

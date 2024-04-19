@@ -43,7 +43,7 @@ public sealed class SerilogDebugLoggingConvention : ISerilogConvention
             c => c.Debug(
                 LogEventLevel.Verbose,
                 _options.DebugMessageTemplate,
-                formatProvider: CultureInfo.InvariantCulture
+                CultureInfo.InvariantCulture
             )
         );
     }

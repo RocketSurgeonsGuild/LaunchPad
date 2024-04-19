@@ -31,9 +31,7 @@ public class FluentValidationProblemDetails : ValidationProblemDetails
     /// <summary>
     ///     Construct the Fluent Validation Problem Details
     /// </summary>
-    public FluentValidationProblemDetails() : this(Array.Empty<ValidationFailure>())
-    {
-    }
+    public FluentValidationProblemDetails() : this(Array.Empty<ValidationFailure>()) { }
 
     /// <summary>
     ///     Build Fluent Validation Problem Details from a <see cref="ValidationResult" />

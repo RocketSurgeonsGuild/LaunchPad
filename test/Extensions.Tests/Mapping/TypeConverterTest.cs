@@ -81,7 +81,7 @@ internal abstract class TypeConverterData : TheoryData<Type, Type, object?>
     {
         static (Type source, Type sourceClass, Type destination, Type destinationClass) GetWrappedClasses((Type source, Type destination) item)
         {
-            var (source, destination) = item;
+            ( var source, var destination ) = item;
             var sourceFoo = typeof(Foo<>).MakeGenericType(source);
             var destinationFoo = typeof(Foo<>).MakeGenericType(destination);
             return ( source, sourceFoo, destination, destinationFoo );
@@ -89,19 +89,20 @@ internal abstract class TypeConverterData : TheoryData<Type, Type, object?>
 
         static object CreateValue(Type type, object value)
         {
-            return typeof(Foo).GetMethod(nameof(Foo.Create))!.MakeGenericMethod(type).Invoke(null, new[] { value })!;
+            return typeof(Foo).GetMethod(nameof(Foo.Create))!.MakeGenericMethod(type).Invoke(null, new[] { value, })!;
         }
 
-        foreach (var (source, sourceClass, _, destinationClass) in GetValueTypePairs(typeConverterFactory())
-                                                                  .SelectMany(
-                                                                       item => new[]
-                                                                       {
-                                                                           item,
-                                                                           ( typeof(Nullable<>).MakeGenericType(item.source),
-                                                                             typeof(Nullable<>).MakeGenericType(item.destination) ),
-                                                                           ( item.source, typeof(Nullable<>).MakeGenericType(item.destination) )
-                                                                       }
-                                                                   ).Select(GetWrappedClasses))
+        foreach (( var source, var sourceClass, _, var destinationClass ) in GetValueTypePairs(typeConverterFactory())
+                                                                            .SelectMany(
+                                                                                 item => new[]
+                                                                                 {
+                                                                                     item,
+                                                                                     ( typeof(Nullable<>).MakeGenericType(item.source),
+                                                                                       typeof(Nullable<>).MakeGenericType(item.destination) ),
+                                                                                     ( item.source, typeof(Nullable<>).MakeGenericType(item.destination) ),
+                                                                                 }
+                                                                             )
+                                                                            .Select(GetWrappedClasses))
         {
             var sourceValue = CreateValue(source, GetRandomValue(source));
             Add(sourceClass, destinationClass, sourceValue);
@@ -120,7 +121,7 @@ public abstract class TypeConverterTest : AutoFakeTest
 {
     protected TypeConverterTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogEventLevel.Debug)
     {
-        Config = new MapperConfiguration(
+        Config = new(
             x =>
             {
                 x.AddProfile<NodaTimeProfile>();
@@ -142,19 +143,21 @@ public abstract class TypeConverterTest<T> : AutoFakeTest
     // TODO: Refactor this to forward parent class constructor values
     protected TypeConverterTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper, LogEventLevel.Debug)
     {
-        Config = new MapperConfiguration(
+        Config = new(
             x =>
             {
                 x.AddProfile<NodaTimeProfile>();
-                foreach (var (source, destination) in TypeConverterData.GetValueTypePairs(new T().GetTypeConverters()).SelectMany(
-                             item => new[]
-                             {
-                                 item,
-                                 ( typeof(Nullable<>).MakeGenericType(item.source),
-                                   typeof(Nullable<>).MakeGenericType(item.destination) ),
-                                 ( item.source, typeof(Nullable<>).MakeGenericType(item.destination) )
-                             }
-                         ))
+                foreach (( var source, var destination ) in TypeConverterData
+                                                           .GetValueTypePairs(new T().GetTypeConverters())
+                                                           .SelectMany(
+                                                                item => new[]
+                                                                {
+                                                                    item,
+                                                                    ( typeof(Nullable<>).MakeGenericType(item.source),
+                                                                      typeof(Nullable<>).MakeGenericType(item.destination) ),
+                                                                    ( item.source, typeof(Nullable<>).MakeGenericType(item.destination) ),
+                                                                }
+                                                            ))
                 {
                     x.CreateMap(typeof(Foo<>).MakeGenericType(source), typeof(Foo<>).MakeGenericType(destination));
                 }

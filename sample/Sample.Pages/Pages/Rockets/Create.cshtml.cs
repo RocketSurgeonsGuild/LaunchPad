@@ -6,12 +6,11 @@ namespace Sample.Pages.Pages.Rockets;
 
 public class RocketCreateModel : MediatorPageModel
 {
-    [BindProperty] public CreateRocket.Request Model { get; set; } = new();
+    [BindProperty]
+    public CreateRocket.Request Model { get; set; } = new();
 
     [UsedImplicitly]
-    public void OnGet()
-    {
-    }
+    public void OnGet() { }
 
     [UsedImplicitly]
     public async Task<ActionResult> OnPost()

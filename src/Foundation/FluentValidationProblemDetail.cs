@@ -18,7 +18,7 @@ public class FluentValidationProblemDetail
     /// <returns></returns>
     public static implicit operator ReadOnlyDictionary<string, object?>(FluentValidationProblemDetail detail)
     {
-        return new ReadOnlyDictionary<string, object?>(
+        return new(
             new Dictionary<string, object?>
             {
                 ["propertyName"] = detail.PropertyName,

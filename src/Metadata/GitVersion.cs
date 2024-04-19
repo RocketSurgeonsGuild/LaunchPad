@@ -16,7 +16,7 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <returns>GitVersion.</returns>
     public static GitVersion For(Assembly assembly)
     {
-        return new GitVersion(assembly);
+        return new(assembly);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <returns>GitVersion.</returns>
     public static GitVersion For(Type type)
     {
-        return new GitVersion(type.GetTypeInfo().Assembly);
+        return new(type.GetTypeInfo().Assembly);
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     {
         ArgumentNullException.ThrowIfNull(typeInfo);
 
-        return new GitVersion(typeInfo.Assembly);
+        return new(typeInfo.Assembly);
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <param name="assembly">The assembly.</param>
     private GitVersion(Assembly assembly)
     {
-        _assemblyMetadata = new AssemblyMetadataProvider(assembly);
+        _assemblyMetadata = new(assembly);
         _assemblyMetadata.Infer(this);
     }
 
@@ -147,7 +147,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The major.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public int Major { get; [UsedImplicitly] private set; }
+    public int Major
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the minor.
@@ -155,7 +160,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The minor.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public int Minor { get; [UsedImplicitly] private set; }
+    public int Minor
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the patch.
@@ -163,7 +173,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The patch.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public int Patch { get; [UsedImplicitly] private set; }
+    public int Patch
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the pre release tag.
@@ -171,7 +186,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The pre release tag.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? PreReleaseTag { get; [UsedImplicitly] private set; }
+    public string? PreReleaseTag
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the pre release tag with dash.
@@ -179,7 +199,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The pre release tag with dash.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? PreReleaseTagWithDash { get; [UsedImplicitly] private set; }
+    public string? PreReleaseTagWithDash
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the build meta data.
@@ -187,7 +212,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The build meta data.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? BuildMetaData { get; [UsedImplicitly] private set; }
+    public string? BuildMetaData
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the build meta data padded.
@@ -195,7 +225,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The build meta data padded.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? BuildMetaDataPadded { get; [UsedImplicitly] private set; }
+    public string? BuildMetaDataPadded
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the full build meta data.
@@ -203,7 +238,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The full build meta data.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? FullBuildMetaData { get; [UsedImplicitly] private set; }
+    public string? FullBuildMetaData
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the major minor patch.
@@ -211,7 +251,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The major minor patch.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? MajorMinorPatch { get; [UsedImplicitly] private set; }
+    public string? MajorMinorPatch
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the sem ver.
@@ -219,7 +264,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The sem ver.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? SemVer { get; [UsedImplicitly] private set; }
+    public string? SemVer
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the legacy sem ver.
@@ -227,7 +277,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The legacy sem ver.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? LegacySemVer { get; [UsedImplicitly] private set; }
+    public string? LegacySemVer
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the legacy sem ver padded.
@@ -235,7 +290,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The legacy sem ver padded.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? LegacySemVerPadded { get; [UsedImplicitly] private set; }
+    public string? LegacySemVerPadded
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the assembly sem ver.
@@ -243,7 +303,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The assembly sem ver.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? AssemblySemVer { get; [UsedImplicitly] private set; }
+    public string? AssemblySemVer
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the full sem ver.
@@ -251,7 +316,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The full sem ver.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? FullSemVer { get; [UsedImplicitly] private set; }
+    public string? FullSemVer
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the informational version.
@@ -259,7 +329,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The informational version.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? InformationalVersion { get; [UsedImplicitly] private set; }
+    public string? InformationalVersion
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the name of the branch.
@@ -267,7 +342,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The name of the branch.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? BranchName { get; [UsedImplicitly] private set; }
+    public string? BranchName
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the sha.
@@ -275,7 +355,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The sha.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? Sha { get; [UsedImplicitly] private set; }
+    public string? Sha
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the nu get version v2.
@@ -283,7 +368,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The nu get version v2.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? NuGetVersionV2 { get; [UsedImplicitly] private set; }
+    public string? NuGetVersionV2
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the nu get version.
@@ -291,7 +381,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The nu get version.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? NuGetVersion { get; [UsedImplicitly] private set; }
+    public string? NuGetVersion
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the commits since version source.
@@ -299,7 +394,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The commits since version source.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public int CommitsSinceVersionSource { get; [UsedImplicitly] private set; }
+    public int CommitsSinceVersionSource
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the commits since version source padded.
@@ -307,7 +407,12 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The commits since version source padded.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? CommitsSinceVersionSourcePadded { get; [UsedImplicitly] private set; }
+    public string? CommitsSinceVersionSourcePadded
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
     /// <summary>
     ///     Gets the commit date.
@@ -315,16 +420,26 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     /// <value>The commit date.</value>
     [Prefix("GitVersion_")]
     [UsedImplicitly]
-    public string? CommitDate { get; [UsedImplicitly] private set; }
+    public string? CommitDate
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
 
-#pragma warning disable CA1056 // Uri properties should not be strings
+    #pragma warning disable CA1056 // Uri properties should not be strings
     /// <summary>
     ///     Gets the repository url.
     /// </summary>
     /// <value>The repository URL.</value>
     [UsedImplicitly]
-    public string? RepositoryUrl { get; [UsedImplicitly] private set; }
-#pragma warning restore CA1056 // Uri properties should not be strings
+    public string? RepositoryUrl
+    {
+        get;
+        [UsedImplicitly]
+        private set;
+    }
+    #pragma warning restore CA1056 // Uri properties should not be strings
 
     /// <summary>
     ///     Determines whether the specified <see cref="System.Object" /> is equal to this instance.
@@ -366,14 +481,14 @@ public sealed class GitVersion : IEquatable<GitVersion?>
     {
         // ReSharper disable NullableWarningSuppressionIsUsed
         return other! != null!
-            && Major == other.Major
-            && Minor == other.Minor
-            && Patch == other.Patch
-            && PreReleaseTag == other.PreReleaseTag
-            && PreReleaseTagWithDash == other.PreReleaseTagWithDash
-            && InformationalVersion == other.InformationalVersion
-            && BranchName == other.BranchName
-            && Sha == other.Sha
-            && CommitDate == other.CommitDate;
+         && Major == other.Major
+         && Minor == other.Minor
+         && Patch == other.Patch
+         && PreReleaseTag == other.PreReleaseTag
+         && PreReleaseTagWithDash == other.PreReleaseTagWithDash
+         && InformationalVersion == other.InformationalVersion
+         && BranchName == other.BranchName
+         && Sha == other.Sha
+         && CommitDate == other.CommitDate;
     }
 }

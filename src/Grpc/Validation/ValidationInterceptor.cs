@@ -13,7 +13,7 @@ internal class ValidationInterceptor(IValidatorErrorMessageHandler handler, ISer
         validationMetadata.Add("title", "Unprocessable Entity");
         validationMetadata.Add("link", "https://tools.ietf.org/html/rfc4918#section-11.2");
         if (message is { }) validationMetadata.Add("message", message);
-        throw new RpcException(new Status(StatusCode.InvalidArgument, message ?? ""), validationMetadata, message ?? "");
+        throw new RpcException(new(StatusCode.InvalidArgument, message ?? ""), validationMetadata, message ?? "");
     }
 
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(

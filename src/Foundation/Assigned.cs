@@ -55,9 +55,9 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     ///     Creates an empty Assigned that provides a default value.
     /// </summary>
     /// <param name="defaultValue">The default value.</param>
-#pragma warning disable CA1000
+    #pragma warning disable CA1000
     public static Assigned<T> Empty(T? defaultValue = default)
-#pragma warning restore CA1000
+        #pragma warning restore CA1000
     {
         return new(defaultValue, false);
     }

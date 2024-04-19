@@ -5,7 +5,8 @@ using HotChocolate.Resolvers;
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 
 [UsedImplicitly]
-internal class ValidationMiddleware(
+internal class ValidationMiddleware
+(
     FieldDelegate next,
     IValidatorProvider validatorProvider,
     IValidationErrorsHandler validationErrorsHandler
@@ -35,9 +36,9 @@ internal class ValidationMiddleware(
                             validationContext,
                             context.RequestAborted
                         );
-                        if (validationResult is { IsValid: false })
+                        if (validationResult is { IsValid: false, })
                             invalidResults.Add(
-                                new ArgumentValidationResult(
+                                new(
                                     argument.Name,
                                     resolvedValidator.Validator,
                                     validationResult

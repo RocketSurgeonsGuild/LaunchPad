@@ -11,22 +11,22 @@ internal class AuthorizeFilter : IOperationFilter
         if (operation.Responses.TryGetValue("401", out var value))
             value.Headers.Add(
                 "www-authenticate",
-                new OpenApiHeader
+                new()
                 {
                     // Required = true,
-                    Schema = new OpenApiSchema { Type = "string" },
-                    Description = "The error details"
+                    Schema = new() { Type = "string", },
+                    Description = "The error details",
                 }
             );
 
         if (operation.Responses.TryGetValue("403", out value))
             value.Headers.Add(
                 "www-authenticate",
-                new OpenApiHeader
+                new()
                 {
                     // Required = true,
-                    Schema = new OpenApiSchema { Type = "string" },
-                    Description = "The error details"
+                    Schema = new() { Type = "string", },
+                    Description = "The error details",
                 }
             );
     }

@@ -49,7 +49,7 @@ public static class LaunchPadLogHelpers
             : ctx.Response.StatusCode > 499
                 ? LogEventLevel.Error
                 : IsHealthCheckEndpoint(ctx) // Not an error, check if it was a health check
-                    ? LogEventLevel.Verbose // Was a health check, use Verbose
+                    ? LogEventLevel.Verbose  // Was a health check, use Verbose
                     : LogEventLevel.Information;
     }
 

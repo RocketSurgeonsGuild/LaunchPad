@@ -49,9 +49,7 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
     [UsedImplicitly]
     internal class AnnotatedProblemDetails
     {
-        public AnnotatedProblemDetails()
-        {
-        }
+        public AnnotatedProblemDetails() { }
 
         public AnnotatedProblemDetails(FluentValidationProblemDetails problemDetails)
         {
@@ -73,15 +71,20 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
             }
         }
 
-        [JsonPropertyName("type")] public string? Type { get; set; }
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
 
-        [JsonPropertyName("title")] public string? Title { get; set; }
+        [JsonPropertyName("title")]
+        public string? Title { get; set; }
 
-        [JsonPropertyName("status")] public int? Status { get; set; }
+        [JsonPropertyName("status")]
+        public int? Status { get; set; }
 
-        [JsonPropertyName("detail")] public string? Detail { get; set; }
+        [JsonPropertyName("detail")]
+        public string? Detail { get; set; }
 
-        [JsonPropertyName("instance")] public string? Instance { get; set; }
+        [JsonPropertyName("instance")]
+        public string? Instance { get; set; }
 
         [JsonExtensionData]
         public IDictionary<string, object?> Extensions { get; } =
@@ -91,7 +94,8 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
         public IDictionary<string, FluentValidationProblemDetail[]> Errors { get; } =
             new Dictionary<string, FluentValidationProblemDetail[]>(StringComparer.Ordinal);
 
-        [JsonPropertyName("rules")] public IEnumerable<string> Rules { get; internal set; } = Array.Empty<string>();
+        [JsonPropertyName("rules")]
+        public IEnumerable<string> Rules { get; internal set; } = Array.Empty<string>();
 
         public void CopyTo(FluentValidationProblemDetails problemDetails)
         {

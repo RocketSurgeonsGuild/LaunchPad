@@ -7,7 +7,7 @@ internal class RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> op
 {
     public List<IActionModelConvention> ActionModelConventions { get; } = new()
     {
-        new RestfulApiActionModelConvention(options)
+        new RestfulApiActionModelConvention(options),
     };
 
     public void OnProvidersExecuted(ApplicationModelProviderContext context)
@@ -26,9 +26,7 @@ internal class RestfulApiApplicationModelProvider(IOptions<RestfulApiOptions> op
         }
     }
 
-    public void OnProvidersExecuting(ApplicationModelProviderContext context)
-    {
-    }
+    public void OnProvidersExecuting(ApplicationModelProviderContext context) { }
 
     public int Order => -1000;
 }

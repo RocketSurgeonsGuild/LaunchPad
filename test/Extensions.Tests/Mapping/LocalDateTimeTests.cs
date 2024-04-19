@@ -21,7 +21,7 @@ public class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConver
 
         var foo = new Foo1
         {
-            Bar = LocalDateTime.FromDateTime(DateTime.Now)
+            Bar = LocalDateTime.FromDateTime(DateTime.Now),
         };
 
         var result = mapper.Map<Foo3>(foo).Bar;
@@ -35,7 +35,7 @@ public class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConver
 
         var foo = new Foo3
         {
-            Bar = DateTime.Now
+            Bar = DateTime.Now,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -46,13 +46,15 @@ public class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConver
     [ClassData(typeof(TypeConverterData<Converters>))]
     public void AutomatedTests(Type source, Type destination, object? sourceValue)
     {
-        var method = typeof(IMapperBase).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                        .First(
-                                             x => x.ContainsGenericParameters && x.IsGenericMethodDefinition &&
-                                                  x.GetGenericMethodDefinition().GetGenericArguments().Length == 2 &&
-                                                  x.GetParameters().Length == 1
-                                         );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue });
+        var method = typeof(IMapperBase)
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .First(
+                         x => x.ContainsGenericParameters
+                          && x.IsGenericMethodDefinition
+                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                          && x.GetParameters().Length == 1
+                     );
+        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
 
         if (sourceValue == null)
             result.Should().BeNull();

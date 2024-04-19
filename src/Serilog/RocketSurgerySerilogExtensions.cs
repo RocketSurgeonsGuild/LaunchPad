@@ -19,11 +19,13 @@ public static class RocketSurgerySerilogExtensions
     /// <param name="services"></param>
     /// <returns></returns>
     public static LoggerConfiguration ApplyConventions(
-        this LoggerConfiguration configurationBuilder, IConventionContext conventionContext, IServiceProvider services
+        this LoggerConfiguration configurationBuilder,
+        IConventionContext conventionContext,
+        IServiceProvider services
     )
     {
         var configuration = conventionContext.Get<IConfiguration>()
-                         ?? throw new ArgumentException("Configuration was not found in context", nameof(conventionContext));
+         ?? throw new ArgumentException("Configuration was not found in context", nameof(conventionContext));
         foreach (var item in conventionContext.Conventions.Get<ISerilogConvention, SerilogConvention>())
         {
             if (item is ISerilogConvention convention)

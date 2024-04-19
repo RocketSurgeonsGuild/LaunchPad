@@ -14,9 +14,7 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     ///     Create the base type
     /// </summary>
     /// <param name="name"></param>
-    protected IntToStructBaseType(string name) : base(name, BindingBehavior.Implicit)
-    {
-    }
+    protected IntToStructBaseType(string name) : base(name, BindingBehavior.Implicit) { }
 
     /// <summary>
     ///     Method to try and serialize
@@ -48,7 +46,7 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     /// <inheritdoc />
     protected override IntValueNode ParseValue(TRuntimeType runtimeValue)
     {
-        if (TrySerialize(runtimeValue, out var val)) return new IntValueNode(val.Value);
+        if (TrySerialize(runtimeValue, out var val)) return new(val.Value);
 
         throw new SerializationException(
             $"Unable to deserialize integer to {Name}",

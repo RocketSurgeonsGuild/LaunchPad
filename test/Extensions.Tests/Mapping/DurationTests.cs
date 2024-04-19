@@ -17,7 +17,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
     [Fact]
     public void CanConvertDurationToMinutes()
     {
-        var foo = new Foo1 { Bar = Duration.FromMinutes(300) };
+        var foo = new Foo1 { Bar = Duration.FromMinutes(300), };
 
         var o = Mapper.Map<Foo7>(foo);
 
@@ -27,7 +27,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
     [Fact]
     public void CanConvertMinutesToDuration()
     {
-        var foo = new Foo7 { Bar = 300 };
+        var foo = new Foo7 { Bar = 300, };
 
         var o = Mapper.Map<Foo1>(foo);
 
@@ -41,7 +41,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo1
         {
-            Bar = Duration.FromDays(1)
+            Bar = Duration.FromDays(1),
         };
 
         var result = mapper.Map<Foo3>(foo).Bar;
@@ -55,7 +55,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo3
         {
-            Bar = TimeSpan.FromDays(1)
+            Bar = TimeSpan.FromDays(1),
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -69,7 +69,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo1
         {
-            Bar = Duration.FromDays(1)
+            Bar = Duration.FromDays(1),
         };
 
         var result = mapper.Map<Foo5>(foo).Bar;
@@ -83,7 +83,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo5
         {
-            Bar = 10000L
+            Bar = 10000L,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -97,7 +97,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo1
         {
-            Bar = Duration.FromDays(1)
+            Bar = Duration.FromDays(1),
         };
 
         var result = mapper.Map<Foo7>(foo).Bar;
@@ -111,7 +111,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo7
         {
-            Bar = 10000
+            Bar = 10000,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -125,7 +125,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo1
         {
-            Bar = Duration.FromDays(1)
+            Bar = Duration.FromDays(1),
         };
 
         var result = mapper.Map<Foo8>(foo).Bar;
@@ -139,7 +139,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo8
         {
-            Bar = 10000.1256d
+            Bar = 10000.1256d,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -153,7 +153,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo1
         {
-            Bar = Duration.FromDays(1)
+            Bar = Duration.FromDays(1),
         };
 
         var result = mapper.Map<Foo9>(foo).Bar;
@@ -167,7 +167,7 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
 
         var foo = new Foo9
         {
-            Bar = 10000.125M
+            Bar = 10000.125M,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -178,13 +178,15 @@ public class DurationTests(ITestOutputHelper testOutputHelper) : TypeConverterTe
     [ClassData(typeof(TypeConverterData<Converters>))]
     public void AutomatedTests(Type source, Type destination, object? sourceValue)
     {
-        var method = typeof(IMapperBase).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                        .First(
-                                             x => x.ContainsGenericParameters && x.IsGenericMethodDefinition &&
-                                                  x.GetGenericMethodDefinition().GetGenericArguments().Length == 2 &&
-                                                  x.GetParameters().Length == 1
-                                         );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue });
+        var method = typeof(IMapperBase)
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .First(
+                         x => x.ContainsGenericParameters
+                          && x.IsGenericMethodDefinition
+                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                          && x.GetParameters().Length == 1
+                     );
+        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
 
         if (sourceValue == null)
             result.Should().BeNull();

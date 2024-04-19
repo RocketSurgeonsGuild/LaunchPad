@@ -25,7 +25,7 @@ internal class ValidationHealthCheckResults
 
         if (result.IsValid)
             _results[key] =
-                new HealthReportEntry(
+                new(
                     HealthStatus.Healthy,
                     $"Options Validation {key}",
                     TimeSpan.Zero,
@@ -37,11 +37,11 @@ internal class ValidationHealthCheckResults
                             z => z.Key,
                             z => (object)z.Select(x => x.ToString()).ToArray()
                         ),
-                    new[] { "options-validation", key }
+                    new[] { "options-validation", key, }
                 );
         else
             _results[key] =
-                new HealthReportEntry(
+                new(
                     HealthStatus.Unhealthy,
                     $"Options Validation {key}",
                     TimeSpan.Zero,
@@ -53,7 +53,7 @@ internal class ValidationHealthCheckResults
                             z => z.Key,
                             z => (object)z.Select(x => x.ToString()).ToArray()
                         ),
-                    new[] { "options-validation", "Options Validation", key, optionsTypeName }
+                    new[] { "options-validation", "Options Validation", key, optionsTypeName, }
                 );
     }
 }

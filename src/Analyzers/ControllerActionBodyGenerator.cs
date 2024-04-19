@@ -351,9 +351,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             newSyntax = newSyntax.AddAttributeLists(produces(statusCode));
         }
 
-        if (!knownStatusCodes.Contains(StatusCodes.Status404NotFound) && matcher?.Method != RestfulApiMethod.List) newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status404NotFound, "ProblemDetails"));
+        if (!knownStatusCodes.Contains(StatusCodes.Status404NotFound) && matcher?.Method != RestfulApiMethod.List)
+            newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status404NotFound, "ProblemDetails"));
 
-        if (!knownStatusCodes.Contains(StatusCodes.Status400BadRequest)) newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status400BadRequest, "ProblemDetails"));
+        if (!knownStatusCodes.Contains(StatusCodes.Status400BadRequest))
+            newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status400BadRequest, "ProblemDetails"));
 
         if (!knownStatusCodes.Contains(StatusCodes.Status422UnprocessableEntity))
             newSyntax = newSyntax.AddAttributeLists(

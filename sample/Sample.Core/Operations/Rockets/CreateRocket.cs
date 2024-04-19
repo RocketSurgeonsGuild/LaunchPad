@@ -67,8 +67,9 @@ public static class CreateRocket
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            var existingRocket = await dbContext.Rockets.AsQueryable()
-                                                 .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
+            var existingRocket = await dbContext
+                                      .Rockets.AsQueryable()
+                                      .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
             if (existingRocket != null)
                 throw new RequestFailedException("A Rocket already exists with that serial number!")
                 {
@@ -79,18 +80,18 @@ public static class CreateRocket
                         {
                             id = existingRocket.Id,
                             type = existingRocket.Type,
-                            sn = existingRocket.SerialNumber
-                        }
-                    }
+                            sn = existingRocket.SerialNumber,
+                        },
+                    },
                 };
 
             var rocket = mapper.Map<ReadyRocket>(request);
             await dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return new Response
+            return new()
             {
-                Id = rocket.Id
+                Id = rocket.Id,
             };
         }
     }

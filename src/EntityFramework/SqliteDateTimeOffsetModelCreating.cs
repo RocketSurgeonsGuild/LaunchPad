@@ -19,14 +19,16 @@ internal static class SqliteDateTimeOffsetModelCreating
                 foreach (var property in entityType.ClrType.GetProperties())
                 {
                     if (property.PropertyType == typeof(DateTimeOffset) || property.PropertyType == typeof(DateTimeOffset?))
-                        modelBuilder.Entity(entityType.Name)
-                                    .Property(property.Name)
-                                    .HasConversion(new DateTimeOffsetToBinaryConverter());
+                        modelBuilder
+                           .Entity(entityType.Name)
+                           .Property(property.Name)
+                           .HasConversion(new DateTimeOffsetToBinaryConverter());
 
                     if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
-                        modelBuilder.Entity(entityType.Name)
-                                    .Property(property.Name)
-                                    .HasConversion(new DateTimeToBinaryConverter());
+                        modelBuilder
+                           .Entity(entityType.Name)
+                           .Property(property.Name)
+                           .HasConversion(new DateTimeToBinaryConverter());
                 }
             }
     }

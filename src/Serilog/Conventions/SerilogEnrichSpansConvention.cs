@@ -31,7 +31,7 @@ public class SerilogEnrichSpansConvention : ISerilogConvention
         ArgumentNullException.ThrowIfNull(context);
 
         loggerConfiguration.Enrich.WithSpan(
-            new SpanOptions
+            new()
             {
                 IncludeBaggage = true,
                 IncludeTags = true,

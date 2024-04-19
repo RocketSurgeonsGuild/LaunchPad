@@ -10,7 +10,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
 {
     private static RestfulApiParameterMatcher DefaultMatcher(Index index)
     {
-        return new RestfulApiParameterMatcher(
+        return new(
             index,
             ApiConventionNameMatchBehavior.Any,
             Array.Empty<string>(),
@@ -43,7 +43,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchSuffix(string value, params string[] values)
     {
-        _names = new[] { value }.Concat(values).ToArray();
+        _names = new[] { value, }.Concat(values).ToArray();
         _nameMatchBehavior = ApiConventionNameMatchBehavior.Suffix;
 
         return this;
@@ -57,7 +57,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchPrefix(string value, params string[] values)
     {
-        _names = new[] { value }.Concat(values).ToArray();
+        _names = new[] { value, }.Concat(values).ToArray();
         _nameMatchBehavior = ApiConventionNameMatchBehavior.Prefix;
 
         return this;
@@ -71,7 +71,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchName(string value, params string[] values)
     {
-        _names = new[] { value }.Concat(values).ToArray();
+        _names = new[] { value, }.Concat(values).ToArray();
         _nameMatchBehavior = ApiConventionNameMatchBehavior.Exact;
 
         return this;
@@ -94,7 +94,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
             ApiConventionNameMatchBehavior.Exact,
-            new[] { value }.Concat(values).ToArray(),
+            new[] { value, }.Concat(values).ToArray(),
             item.TypeMatch,
             item.Type
         );
@@ -154,7 +154,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
             ApiConventionNameMatchBehavior.Prefix,
-            new[] { value }.Concat(values).ToArray(),
+            new[] { value, }.Concat(values).ToArray(),
             item.TypeMatch,
             item.Type
         );
@@ -179,7 +179,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
             ApiConventionNameMatchBehavior.Suffix,
-            new[] { value }.Concat(values).ToArray(),
+            new[] { value, }.Concat(values).ToArray(),
             item.TypeMatch,
             item.Type
         );
@@ -219,12 +219,16 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     internal bool IsMatch(ActionModel actionModel)
     {
         var nameMatch = _nameMatchBehavior switch
-        {
-            ApiConventionNameMatchBehavior.Exact  => _names.Any(name => actionModel.ActionName.Equals(name, StringComparison.OrdinalIgnoreCase)),
-            ApiConventionNameMatchBehavior.Prefix => _names.Any(name => actionModel.ActionName.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
-            ApiConventionNameMatchBehavior.Suffix => _names.Any(name => actionModel.ActionName.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
-            _                                     => true
-        };
+                        {
+                            ApiConventionNameMatchBehavior.Exact => _names.Any(name => actionModel.ActionName.Equals(name, StringComparison.OrdinalIgnoreCase)),
+                            ApiConventionNameMatchBehavior.Prefix => _names.Any(
+                                name => actionModel.ActionName.StartsWith(name, StringComparison.OrdinalIgnoreCase)
+                            ),
+                            ApiConventionNameMatchBehavior.Suffix => _names.Any(
+                                name => actionModel.ActionName.EndsWith(name, StringComparison.OrdinalIgnoreCase)
+                            ),
+                            _ => true,
+                        };
 
         if (!nameMatch)
             return false;

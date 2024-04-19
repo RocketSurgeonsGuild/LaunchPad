@@ -19,7 +19,7 @@ public class PeriodTests(ITestOutputHelper testOutputHelper) : TypeConverterTest
 
         var foo = new Foo1
         {
-            Bar = Period.FromMonths(10)
+            Bar = Period.FromMonths(10),
         };
 
         var result = mapper.Map<Foo3>(foo).Bar;
@@ -33,7 +33,7 @@ public class PeriodTests(ITestOutputHelper testOutputHelper) : TypeConverterTest
 
         var foo = new Foo3
         {
-            Bar = "P5M"
+            Bar = "P5M",
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;

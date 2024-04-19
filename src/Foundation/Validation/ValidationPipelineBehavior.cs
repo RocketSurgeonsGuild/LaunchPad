@@ -9,7 +9,7 @@ internal class ValidationPipelineBehavior<T, R>(IValidator<T>? validator = null)
 {
     public async Task<R> Handle(T request, RequestHandlerDelegate<R> next, CancellationToken cancellationToken)
     {
-        if (validator is not null)
+        if (validator is { })
         {
             var context = new ValidationContext<T>(request);
 
@@ -26,7 +26,7 @@ internal class ValidationStreamPipelineBehavior<T, R>(IValidator<T>? validator =
 {
     public async IAsyncEnumerable<R> Handle(T request, StreamHandlerDelegate<R> next, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        if (validator is not null)
+        if (validator is { })
         {
             var context = new ValidationContext<T>(request);
 

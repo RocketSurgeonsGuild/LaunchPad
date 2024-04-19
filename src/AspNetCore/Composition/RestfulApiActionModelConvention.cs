@@ -17,11 +17,12 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
 {
     private static string? GetHttpMethod(ActionModel action)
     {
-        var httpMethods = action.Attributes
-                                .OfType<IActionHttpMethodProvider>()
-                                .SelectMany(a => a.HttpMethods)
-                                .Distinct(StringComparer.OrdinalIgnoreCase)
-                                .ToArray();
+        var httpMethods = action
+                         .Attributes
+                         .OfType<IActionHttpMethodProvider>()
+                         .SelectMany(a => a.HttpMethods)
+                         .Distinct(StringComparer.OrdinalIgnoreCase)
+                         .ToArray();
         // Not valid for actions with more than one verb
         if (httpMethods.Length > 1) return null;
 
@@ -32,11 +33,13 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
     private static void ExtractParameterDetails(ActionModel action)
     {
         var requestParameter = action.Parameters.FirstOrDefault(
-                z => z.ParameterInfo.ParameterType.GetInterfaces().Any(
-                    i => i.IsGenericType &&
-                         ( typeof(IRequest<>) == i.GetGenericTypeDefinition()
-                        || typeof(IStreamRequest<>) == i.GetGenericTypeDefinition() )
-                )
+                z => z
+                    .ParameterInfo.ParameterType.GetInterfaces()
+                    .Any(
+                         i => i.IsGenericType
+                          && ( typeof(IRequest<>) == i.GetGenericTypeDefinition()
+                              || typeof(IStreamRequest<>) == i.GetGenericTypeDefinition() )
+                     )
             )
             ;
         if (requestParameter is null) return;
@@ -46,24 +49,30 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
         {
             _propertiesToHideFromOpenApi.TryAdd(
                 requestParameter.ParameterType,
-                requestParameter.ParameterType.GetProperties().Select(z => z.Name).Except(
-                    requestParameter.Attributes.OfType<BindAttribute>().SelectMany(z => z.Include)
-                ).ToArray()
+                requestParameter
+                   .ParameterType.GetProperties()
+                   .Select(z => z.Name)
+                   .Except(
+                        requestParameter.Attributes.OfType<BindAttribute>().SelectMany(z => z.Include)
+                    )
+                   .ToArray()
             );
             return;
         }
 
         var index = action.Parameters.IndexOf(requestParameter);
         var newAttributes = requestParameter.Attributes.ToList();
-        var otherParams = action.Parameters
-                                .Except(new[] { requestParameter })
-                                .Select(z => z.ParameterName)
-                                .ToArray();
+        var otherParams = action
+                         .Parameters
+                         .Except(new[] { requestParameter, })
+                         .Select(z => z.ParameterName)
+                         .ToArray();
 
-        var propertyAndFieldNames = requestParameter.ParameterType
-                                                    .GetProperties()
-                                                    .Select(z => z.Name)
-                                                    .ToArray();
+        var propertyAndFieldNames = requestParameter
+                                   .ParameterType
+                                   .GetProperties()
+                                   .Select(z => z.Name)
+                                   .ToArray();
         var bindNames = propertyAndFieldNames
                        .Except(otherParams, StringComparer.OrdinalIgnoreCase)
                        .ToArray();
@@ -78,11 +87,11 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
             );
             _propertiesToHideFromOpenApi.TryAdd(requestParameter.ParameterType, ignoreBindings);
 
-            var model = action.Parameters[index] = new ParameterModel(requestParameter.ParameterInfo, newAttributes)
+            var model = action.Parameters[index] = new(requestParameter.ParameterInfo, newAttributes)
             {
                 Action = requestParameter.Action,
                 BindingInfo = requestParameter.BindingInfo,
-                ParameterName = requestParameter.ParameterName
+                ParameterName = requestParameter.ParameterName,
             };
             foreach (var item in requestParameter.Properties)
             {
@@ -97,7 +106,8 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
     private readonly RestfulApiOptions _options;
 
     /// <summary>
-    /// An action model convention that allows <see cref="IRequest{TResponse}"/> and <see cref="IStreamRequest{TResponse}"/> to be used as parameters to controller actions.
+    ///     An action model convention that allows <see cref="IRequest{TResponse}" /> and <see cref="IStreamRequest{TResponse}" /> to be used as parameters to
+    ///     controller actions.
     /// </summary>
     /// <param name="options"></param>
     public RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options)
@@ -110,8 +120,9 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
         ActionModel actionModel
     )
     {
-        var providerLookup = actionModel.Filters.OfType<IApiResponseMetadataProvider>()
-                                        .ToLookup(x => x.StatusCode);
+        var providerLookup = actionModel
+                            .Filters.OfType<IApiResponseMetadataProvider>()
+                            .ToLookup(x => x.StatusCode);
 
         var hasSuccess = providerLookup.Any(z => z.Key is >= 200 and < 300);
         var match = _matchers
@@ -133,9 +144,11 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
                 actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status200OK));
         }
 
-        if (!providerLookup[StatusCodes.Status404NotFound].Any() && match?.Method != RestfulApiMethod.List) actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
+        if (!providerLookup[StatusCodes.Status404NotFound].Any() && match?.Method != RestfulApiMethod.List)
+            actionModel.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
 
-        if (!providerLookup[StatusCodes.Status400BadRequest].Any()) actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
+        if (!providerLookup[StatusCodes.Status400BadRequest].Any())
+            actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
 
         if (!providerLookup[_options.ValidationStatusCode].Any())
             actionModel.Filters.Add(

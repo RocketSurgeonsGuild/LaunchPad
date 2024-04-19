@@ -19,7 +19,7 @@ public class LocalDateTests(ITestOutputHelper testOutputHelper) : TypeConverterT
 
         var foo = new Foo1
         {
-            Bar = LocalDate.FromDateTime(DateTime.Now)
+            Bar = LocalDate.FromDateTime(DateTime.Now),
         };
 
         var result = mapper.Map<Foo3>(foo).Bar;
@@ -33,7 +33,7 @@ public class LocalDateTests(ITestOutputHelper testOutputHelper) : TypeConverterT
 
         var foo = new Foo3
         {
-            Bar = DateTime.Now
+            Bar = DateTime.Now,
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;
@@ -44,13 +44,15 @@ public class LocalDateTests(ITestOutputHelper testOutputHelper) : TypeConverterT
     [ClassData(typeof(TypeConverterData<Converters>))]
     public void AutomatedTests(Type source, Type destination, object? sourceValue)
     {
-        var method = typeof(IMapperBase).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                        .First(
-                                             x => x.ContainsGenericParameters && x.IsGenericMethodDefinition &&
-                                                  x.GetGenericMethodDefinition().GetGenericArguments().Length == 2 &&
-                                                  x.GetParameters().Length == 1
-                                         );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue });
+        var method = typeof(IMapperBase)
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .First(
+                         x => x.ContainsGenericParameters
+                          && x.IsGenericMethodDefinition
+                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                          && x.GetParameters().Length == 1
+                     );
+        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
 
         if (sourceValue == null)
             result.Should().BeNull();
@@ -83,12 +85,12 @@ public class LocalDateTests(ITestOutputHelper testOutputHelper) : TypeConverterT
             yield return typeof(ITypeConverter<LocalDate?, DateTime?>);
             yield return typeof(ITypeConverter<DateTime, LocalDate>);
             yield return typeof(ITypeConverter<DateTime?, LocalDate?>);
-#if NET6_0_OR_GREATER
+            #if NET6_0_OR_GREATER
             yield return typeof(ITypeConverter<LocalDate, DateOnly>);
             yield return typeof(ITypeConverter<LocalDate?, DateOnly?>);
             yield return typeof(ITypeConverter<DateOnly, LocalDate>);
             yield return typeof(ITypeConverter<DateOnly?, LocalDate?>);
-#endif
+            #endif
         }
     }
 }

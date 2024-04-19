@@ -18,7 +18,7 @@ public class OffsetTests(ITestOutputHelper testOutputHelper) : TypeConverterTest
 
         var foo = new Foo1
         {
-            Bar = Offset.FromHours(11)
+            Bar = Offset.FromHours(11),
         };
 
         var result = mapper.Map<Foo3>(foo).Bar;
@@ -32,7 +32,7 @@ public class OffsetTests(ITestOutputHelper testOutputHelper) : TypeConverterTest
 
         var foo = new Foo3
         {
-            Bar = TimeSpan.FromHours(10)
+            Bar = TimeSpan.FromHours(10),
         };
 
         var result = mapper.Map<Foo1>(foo).Bar;

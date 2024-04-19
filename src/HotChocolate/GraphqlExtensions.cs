@@ -50,7 +50,8 @@ public static class GraphqlExtensions
     /// <typeparam name="TSchemaType"></typeparam>
     /// <returns></returns>
     public static IRequestExecutorBuilder ConfigureStronglyTypedId<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] TStrongType,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TStrongType,
         TSchemaType>(this IRequestExecutorBuilder builder)
         where TSchemaType : INamedType
     {
@@ -66,10 +67,10 @@ public static class GraphqlExtensions
                                                                .GetMethods()
                                                                .Single(
                                                                     z => z.Name == "AddTypeConverter"
-                                                                      && z.ReturnType == typeof(IRequestExecutorBuilder)
-                                                                      && z.IsGenericMethod
-                                                                      && z.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                                                                      && z.GetParameters().Length == 2
+                                                                     && z.ReturnType == typeof(IRequestExecutorBuilder)
+                                                                     && z.IsGenericMethod
+                                                                     && z.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                                                                     && z.GetParameters().Length == 2
                                                                 );
 
     [UnconditionalSuppressMessage(
@@ -78,7 +79,8 @@ public static class GraphqlExtensions
         Justification = "only working with public properties and constructors"
     )]
     private static void AddTypeConversion<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] TStrongType>(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TStrongType>(
         IRequestExecutorBuilder builder
     )
     {
@@ -89,11 +91,12 @@ public static class GraphqlExtensions
             var value = Expression.Parameter(typeof(TStrongType), "value");
             var delegateType = typeof(ChangeType<,>).MakeGenericType(typeof(TStrongType), underlyingType);
 
-            AddTypeConverterMethod.MakeGenericMethod(typeof(TStrongType), underlyingType)
-                                  .Invoke(
-                                       null,
-                                       new object[] { builder, Expression.Lambda(delegateType, Expression.Property(value, "Value"), false, value).Compile() }
-                                   );
+            AddTypeConverterMethod
+               .MakeGenericMethod(typeof(TStrongType), underlyingType)
+               .Invoke(
+                    null,
+                    new object[] { builder, Expression.Lambda(delegateType, Expression.Property(value, "Value"), false, value).Compile(), }
+                );
         }
 
         {
@@ -101,12 +104,13 @@ public static class GraphqlExtensions
             var delegateType = typeof(ChangeType<,>).MakeGenericType(underlyingType, typeof(TStrongType));
 
             // ReSharper disable once NullableWarningSuppressionIsUsed
-            var constructor = typeof(TStrongType).GetConstructor(new[] { underlyingType })!;
-            AddTypeConverterMethod.MakeGenericMethod(underlyingType, typeof(TStrongType))
-                                  .Invoke(
-                                       null,
-                                       new object[] { builder, Expression.Lambda(delegateType, Expression.New(constructor, value), false, value).Compile() }
-                                   );
+            var constructor = typeof(TStrongType).GetConstructor(new[] { underlyingType, })!;
+            AddTypeConverterMethod
+               .MakeGenericMethod(underlyingType, typeof(TStrongType))
+               .Invoke(
+                    null,
+                    new object[] { builder, Expression.Lambda(delegateType, Expression.New(constructor, value), false, value).Compile(), }
+                );
         }
     }
 }

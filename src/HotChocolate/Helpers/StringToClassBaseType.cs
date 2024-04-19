@@ -14,9 +14,7 @@ public abstract class StringToClassBaseType<TRuntimeType> : ScalarType<TRuntimeT
     ///     Create the base type
     /// </summary>
     /// <param name="name"></param>
-    protected StringToClassBaseType(string name) : base(name, BindingBehavior.Implicit)
-    {
-    }
+    protected StringToClassBaseType(string name) : base(name, BindingBehavior.Implicit) { }
 
     /// <summary>
     ///     Method to serialize
@@ -47,7 +45,7 @@ public abstract class StringToClassBaseType<TRuntimeType> : ScalarType<TRuntimeT
     /// <inheritdoc />
     protected override StringValueNode ParseValue(TRuntimeType runtimeValue)
     {
-        return new StringValueNode(Serialize(runtimeValue));
+        return new(Serialize(runtimeValue));
     }
 
     /// <inheritdoc />

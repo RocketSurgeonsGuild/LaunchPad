@@ -77,8 +77,9 @@ public static partial class EditRocket
     {
         private async Task<ReadyRocket?> GetRocket(RocketId id, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { id }, cancellationToken)
-                                         .ConfigureAwait(false);
+            var rocket = await dbContext
+                              .Rockets.FindAsync(new object[] { id, }, cancellationToken)
+                              .ConfigureAwait(false);
             if (rocket == null) throw new NotFoundException();
 
             return rocket;
