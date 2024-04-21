@@ -53,6 +53,7 @@ public class FluentValidationConvention : IServiceConvention
                                  f => f
                                      .AssignableTo(typeof(AbstractValidator<>))
                                      .NotInfoOf(TypeInfoFilter.Abstract)
+                                     .NotInfoOf(TypeInfoFilter.GenericType)
                              )
                     );
         foreach (var validator in types)
