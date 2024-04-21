@@ -46,14 +46,13 @@ public class FluentValidationConvention : IServiceConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var types = context
-                   .AssemblyProvider.GetTypes(
+        var types = context.AssemblyProvider.GetTypes(
                         z => z
                             .FromAssemblyDependenciesOf<IValidator>()
                             .GetTypes(
                                  f => f
                                      .AssignableTo(typeof(AbstractValidator<>))
-                                     .NotInfoOf(TypeInfoFilter.GenericType, TypeInfoFilter.Abstract)
+                                     .NotInfoOf(TypeInfoFilter.Abstract)
                              )
                     );
         foreach (var validator in types)

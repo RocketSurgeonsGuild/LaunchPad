@@ -1,5 +1,4 @@
 using System.Runtime.Loader;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Grpc;
@@ -7,7 +6,7 @@ using Sample.Grpc.Services;
 
 var app = await WebApplication
                .CreateBuilder(args)
-               .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+               .LaunchWith(RocketBooster.For(Imports.Instance));
 
 app.UseLaunchPadRequestLogging();
 

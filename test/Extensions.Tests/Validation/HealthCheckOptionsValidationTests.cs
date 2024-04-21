@@ -147,7 +147,6 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
                                       .ForTesting(Imports.Instance, LoggerFactory)
-                                      .Set(AssemblyLoadContext.Default)
                                       .Set(
                                            new FoundationOptions
                                            {
