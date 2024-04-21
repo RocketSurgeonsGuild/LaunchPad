@@ -13,17 +13,17 @@ var builder = Host.CreateApplicationBuilder(args);
 var host = await builder.LaunchWith(
     RocketBooster.For(Imports.Instance),
     b => b
-              .SetDefaultCommand<DefaultCommand>()
-              .ConfigureLogging(z => z.AddConsole())
-              .UseDryIoc()
-              .ConfigureDryIoc(
-                   x =>
-                   {
-                       x.Use(new InstanceThing());
-                       x.Register<Dump>(Reuse.Singleton);
-                   }
-               )
-              .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
+        .SetDefaultCommand<DefaultCommand>()
+        .ConfigureLogging(z => z.AddConsole())
+        .UseDryIoc()
+        .ConfigureDryIoc(
+             x =>
+             {
+                 x.Use(new InstanceThing());
+                 x.Register<Dump>(Reuse.Singleton);
+             }
+         )
+        .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
 );
 await host.RunAsync();
 

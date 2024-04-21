@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
 using FluentValidation;
@@ -7,7 +6,6 @@ using Hellang.Middleware.ProblemDetails;
 using Humanizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Restful;
