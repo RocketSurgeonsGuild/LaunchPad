@@ -8,26 +8,24 @@ using Rocket.Surgery.Hosting;
 using Sample.Command;
 using Spectre.Console.Cli;
 
-[assembly: ImportConventions(Namespace = "Sample.Command")]
+var builder = Host.CreateApplicationBuilder(args);
 
-await ( await Host
-             .CreateApplicationBuilder(args)
-             .LaunchWith(
-                  RocketBooster.For(Imports.Instance),
-                  builder => builder
-                            .SetDefaultCommand<DefaultCommand>()
-                            .ConfigureLogging(z => z.AddConsole())
-                            .UseDryIoc()
-                            .ConfigureDryIoc(
-                                 x =>
-                                 {
-                                     x.Use(new InstanceThing());
-                                     x.Register<Dump>(Reuse.Singleton);
-                                 }
-                             )
-                            .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
-              ) )
-   .RunAsync();
+var host = await builder.LaunchWith(
+    RocketBooster.For(Imports.Instance),
+    b => b
+        .SetDefaultCommand<DefaultCommand>()
+        .ConfigureLogging(z => z.AddConsole())
+        .UseDryIoc()
+        .ConfigureDryIoc(
+             x =>
+             {
+                 x.Use(new InstanceThing());
+                 x.Register<Dump>(Reuse.Singleton);
+             }
+         )
+        .ConfigureCommandLine((_, app) => app.AddCommand<Dump>("dump"))
+);
+await host.RunAsync();
 
 public class InstanceThing
 {

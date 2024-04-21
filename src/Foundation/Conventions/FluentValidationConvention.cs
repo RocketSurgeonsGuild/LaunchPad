@@ -46,16 +46,16 @@ public class FluentValidationConvention : IServiceConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var types = context
-                   .AssemblyProvider.GetTypes(
-                        z => z
-                            .FromAssemblyDependenciesOf<IValidator>()
-                            .GetTypes(
-                                 f => f
-                                     .AssignableTo(typeof(AbstractValidator<>))
-                                     .NotInfoOf(TypeInfoFilter.GenericType, TypeInfoFilter.Abstract)
-                             )
-                    );
+        var types = context.AssemblyProvider.GetTypes(
+            z => z
+                .FromAssemblyDependenciesOf<IValidator>()
+                .GetTypes(
+                     f => f
+                         .AssignableTo(typeof(AbstractValidator<>))
+                         .NotInfoOf(TypeInfoFilter.Abstract)
+                         .NotInfoOf(TypeInfoFilter.GenericType)
+                 )
+        );
         foreach (var validator in types)
         {
             if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType,], }, }) continue;
