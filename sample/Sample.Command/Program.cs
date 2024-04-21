@@ -5,10 +5,7 @@ using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.CommandLine;
 using Rocket.Surgery.Hosting;
-using Sample.Command;
 using Spectre.Console.Cli;
-
-[assembly: ImportConventions(Namespace = "Sample.Command")]
 
 await ( await Host
              .CreateApplicationBuilder(args)
