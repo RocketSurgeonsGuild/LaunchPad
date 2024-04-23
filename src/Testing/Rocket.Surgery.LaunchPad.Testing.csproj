@@ -13,4 +13,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Conventions\" />
+    </ItemGroup>
 </Project>
