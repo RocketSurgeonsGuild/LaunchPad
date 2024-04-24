@@ -6,7 +6,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Hosting" />
-        <PackageReference Include="Rocket.Surgery.Conventions.CommandLine" />
         <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.Debug" />
@@ -16,8 +15,5 @@
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Telemetry\" />
     </ItemGroup>
 </Project>
