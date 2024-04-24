@@ -89,7 +89,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f
+        uses: actions/checkout@8459bc0c7e3759cdf591f513d9f141a95fef0a8f
         with:
           clean: 'false'
           fetch-depth: '0'
@@ -129,7 +129,7 @@ jobs:
           dotnet nuke Pack --skip
       - name: 🏺 Publish coverage data
         if: always()
-        uses: actions/upload-artifact@v4.3.2
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: 'coverage'
           path: 'coverage/'
@@ -141,19 +141,18 @@ jobs:
           token: '${{ secrets.CODECOV_TOKEN }}'
       - name: 🏺 Publish logs
         if: always()
-        uses: actions/upload-artifact@v4.3.2
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: 'logs'
           path: 'artifacts/logs/'
       - name: 🏺 Publish test data
         if: always()
-        uses: actions/upload-artifact@v4.3.2
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: 'test data'
           path: 'artifacts/test/'
       - name: 🏺 Publish NuGet Packages
-        if: always()
-        uses: actions/upload-artifact@v4.3.2
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: 'nuget'
           path: 'artifacts/nuget/'
