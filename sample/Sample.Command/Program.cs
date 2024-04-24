@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.CommandLine;
+using Rocket.Surgery.CommandLine;
 using Rocket.Surgery.Hosting;
 using Sample.Command;
 using Spectre.Console.Cli;
