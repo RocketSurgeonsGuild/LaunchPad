@@ -5,6 +5,6 @@
     <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="StronglyTypedId.Templates" Version="1.0.0-beta07" />
+    <PackageVersion Include="StronglyTypedId.Templates" Version="1.0.0-beta08" />
   </ItemGroup>
 </Project>
