@@ -94,7 +94,7 @@
     <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.0-next.19" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.0-next.19" />
     <PackageVersion Include="Rocket.Surgery.Conventions.Attributes" Version="14.0.0-beta.1" />
-    <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.0-beta.1" />
+    <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.0-next.19" />
     <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="14.0.0-next.19" />
     <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.0-next.19" />
     <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="12.1.0" />
