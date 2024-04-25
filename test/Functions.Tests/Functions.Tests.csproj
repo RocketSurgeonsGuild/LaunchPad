@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFrameworks>net8.0</TargetFrameworks>
-    </PropertyGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\Functions\Rocket.Surgery.LaunchPad.Functions.csproj" />
-        <PackageReference Include="Newtonsoft.Json" />
-    </ItemGroup>
-</Project>

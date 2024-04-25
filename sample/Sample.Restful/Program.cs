@@ -4,18 +4,15 @@ using System.Text.Json;
 using FluentValidation;
 using Hellang.Middleware.ProblemDetails;
 using Humanizer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.Web.Hosting;
 using Sample.Restful;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-var builder = WebApplication.CreateBuilder(args)
-                            .ConfigureRocketSurgery(Imports.GetConventions);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services.AddHostedService<CustomHostedService>();
@@ -23,16 +20,17 @@ builder.Services
        .Configure<SwaggerGenOptions>(
             c => c.SwaggerDoc(
                 "v1",
-                new OpenApiInfo
+                new()
                 {
                     Version = typeof(Program).GetCustomAttribute<AssemblyVersionAttribute>()?.Version
-                           ?? typeof(Program).GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.1.0",
+                     ?? typeof(Program).GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.1.0",
                     Title = "Test Application",
                 }
             )
         );
 
-var app = builder.Build();
+var app = await builder
+   .LaunchWith(RocketBooster.For(Imports.Instance));
 app.UseProblemDetails();
 app.UseHttpsRedirection();
 
@@ -53,15 +51,16 @@ app
 
 app.UseAuthorization();
 app.MapHealthChecks(
-    "/health", new HealthCheckOptions
+    "/health",
+    new()
     {
         ResponseWriter = WriteResponse,
         ResultStatusCodes = new Dictionary<HealthStatus, int>
         {
             { HealthStatus.Healthy, StatusCodes.Status200OK },
             { HealthStatus.Degraded, StatusCodes.Status500InternalServerError },
-            { HealthStatus.Unhealthy, StatusCodes.Status503ServiceUnavailable }
-        }
+            { HealthStatus.Unhealthy, StatusCodes.Status503ServiceUnavailable },
+        },
     }
 );
 
@@ -76,7 +75,7 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
 {
     context.Response.ContentType = "application/json; charset=utf-8";
 
-    var options = new JsonWriterOptions { Indented = true };
+    var options = new JsonWriterOptions { Indented = true, };
 
     using var memoryStream = new MemoryStream();
     using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
@@ -107,7 +106,8 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
                 jsonWriter.WritePropertyName(item.Key);
 
                 JsonSerializer.Serialize(
-                    jsonWriter, item.Value,
+                    jsonWriter,
+                    item.Value,
                     item.Value.GetType()
                 );
             }

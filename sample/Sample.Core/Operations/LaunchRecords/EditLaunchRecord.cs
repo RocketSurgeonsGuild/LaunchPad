@@ -110,10 +110,7 @@ public static partial class EditLaunchRecord
                               .Include(z => z.Rocket)
                               .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
                               .ConfigureAwait(false);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            if (rocket == null) throw new NotFoundException();
 
             return rocket;
         }

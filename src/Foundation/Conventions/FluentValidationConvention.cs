@@ -44,23 +44,32 @@ public class FluentValidationConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        if (context == null)
+        ArgumentNullException.ThrowIfNull(context);
+
+        var types = context.AssemblyProvider.GetTypes(
+            z => z
+                .FromAssemblyDependenciesOf<IValidator>()
+                .GetTypes(
+                     f => f
+                         .AssignableTo(typeof(AbstractValidator<>))
+                         .NotInfoOf(TypeInfoFilter.Abstract)
+                         .NotInfoOf(TypeInfoFilter.GenericType)
+                 )
+        );
+        foreach (var validator in types)
         {
-            throw new ArgumentNullException(nameof(context));
+            if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType,], }, }) continue;
+            var interfaceType = typeof(IValidator<>).MakeGenericType(innerType);
+            services.Add(new(interfaceType, validator, _options.ValidatorLifetime));
+            services.Add(new(validator, validator, _options.ValidatorLifetime));
         }
 
-        services.AddValidatorsFromAssemblies(
-            context
-               .AssemblyCandidateFinder
-               .GetCandidateAssemblies("FluentValidation"),
-            _options.ValidatorLifetime,
-            includeInternalTypes: true
-        );
-
         if (_options.RegisterValidationOptionsAsHealthChecks == true
-         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue && Convert.ToBoolean(
-                context.Properties["RegisterValidationOptionsAsHealthChecks"], CultureInfo.InvariantCulture
-            ) )
+         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue
+             && Convert.ToBoolean(
+                    context.Properties["RegisterValidationOptionsAsHealthChecks"],
+                    CultureInfo.InvariantCulture
+                ) )
          || Environment.CommandLine.Contains(
                 "microsoft.extensions.apidescription.server",
                 StringComparison.OrdinalIgnoreCase

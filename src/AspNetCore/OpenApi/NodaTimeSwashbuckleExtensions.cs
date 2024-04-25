@@ -20,20 +20,19 @@ internal static class NodaTimeSwashbuckleExtensions
         )
         {
             yield return ( type,
-                           () => new OpenApiSchema
+                           () => new()
                            {
                                Type = "string",
                                Format = format,
                                Example = new OpenApiString(JsonSerializer.Serialize(value, settings).Trim('"')),
                                Extensions = new Dictionary<string, IOpenApiExtension>
                                {
-                                   ["clrType"] = new OpenApiString(type.FullName)
-                               }
+                                   ["clrType"] = new OpenApiString(type.FullName),
+                               },
                            } );
             if (type.IsValueType)
-            {
                 yield return ( typeof(Nullable<>).MakeGenericType(type),
-                               () => new OpenApiSchema
+                               () => new()
                                {
                                    Type = "string",
                                    Format = format,
@@ -43,10 +42,9 @@ internal static class NodaTimeSwashbuckleExtensions
                                    Nullable = true,
                                    Extensions = new Dictionary<string, IOpenApiExtension>
                                    {
-                                       ["clrType"] = new OpenApiString(type.FullName)
-                                   }
+                                       ["clrType"] = new OpenApiString(type.FullName),
+                                   },
                                } );
-            }
         }
 
         var instant = Instant.FromUnixTimeSeconds(1573000000);
@@ -68,9 +66,12 @@ internal static class NodaTimeSwashbuckleExtensions
             interval.End.InZone(dateTimeZone).LocalDateTime,
             PeriodUnits.AllUnits
         );
-        foreach (var (type, schema) in instantSchemas)
+        foreach (( var type, var schema ) in instantSchemas)
+        {
             c.MapType(type, schema);
-        foreach (var (type, schema) in createStringSchema(
+        }
+
+        foreach (( var type, var schema ) in createStringSchema(
                      typeof(LocalDate),
                      LocalDate.FromDateTime(instant.ToDateTimeUtc()),
                      "date"
@@ -79,7 +80,7 @@ internal static class NodaTimeSwashbuckleExtensions
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(
+        foreach (( var type, var schema ) in createStringSchema(
                      typeof(LocalTime),
                      LocalTime.FromSecondsSinceMidnight(86400 - 12300),
                      "time"
@@ -88,7 +89,7 @@ internal static class NodaTimeSwashbuckleExtensions
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(
+        foreach (( var type, var schema ) in createStringSchema(
                      typeof(LocalDateTime),
                      LocalDateTime.FromDateTime(instant.ToDateTimeUtc()),
                      "date-time"
@@ -97,7 +98,7 @@ internal static class NodaTimeSwashbuckleExtensions
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(
+        foreach (( var type, var schema ) in createStringSchema(
                      typeof(OffsetDateTime),
                      OffsetDateTime.FromDateTimeOffset(instant.ToDateTimeOffset()),
                      "date-time"
@@ -106,27 +107,27 @@ internal static class NodaTimeSwashbuckleExtensions
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(typeof(ZonedDateTime), zonedDateTime, "date-time"))
+        foreach (( var type, var schema ) in createStringSchema(typeof(ZonedDateTime), zonedDateTime, "date-time"))
         {
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(typeof(Offset), zonedDateTime.Offset))
+        foreach (( var type, var schema ) in createStringSchema(typeof(Offset), zonedDateTime.Offset))
         {
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(typeof(Period), period))
+        foreach (( var type, var schema ) in createStringSchema(typeof(Period), period))
         {
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(typeof(Duration), interval.Duration))
+        foreach (( var type, var schema ) in createStringSchema(typeof(Duration), interval.Duration))
         {
             c.MapType(type, schema);
         }
 
-        foreach (var (type, schema) in createStringSchema(typeof(DateTimeZone), dateTimeZone))
+        foreach (( var type, var schema ) in createStringSchema(typeof(DateTimeZone), dateTimeZone))
         {
             c.MapType(type, schema);
         }
@@ -135,20 +136,20 @@ internal static class NodaTimeSwashbuckleExtensions
             () =>
             {
                 var instantSchema = instantSchemas[0].schema();
-                return new OpenApiSchema
+                return new()
                 {
                     Type = "object",
                     Nullable = false,
                     Properties = { ["start"] = instantSchema, ["end"] = instantSchema, },
                     Extensions = new Dictionary<string, IOpenApiExtension>
                     {
-                        ["clrType"] = new OpenApiString(typeof(Interval).FullName)
-                    }
+                        ["clrType"] = new OpenApiString(typeof(Interval).FullName),
+                    },
                 };
             }
         );
         c.MapType<Interval?>(
-            () => new OpenApiSchema
+            () => new()
             {
                 Type = "object",
                 Nullable = true,
@@ -156,8 +157,8 @@ internal static class NodaTimeSwashbuckleExtensions
 
                 Extensions = new Dictionary<string, IOpenApiExtension>
                 {
-                    ["clrType"] = new OpenApiString(typeof(Interval).FullName)
-                }
+                    ["clrType"] = new OpenApiString(typeof(Interval).FullName),
+                },
             }
         );
 

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net6.0;net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
@@ -9,9 +9,11 @@
         <PackageReference Include="NodaTime.Testing" />
         <PackageReference Include="FluentAssertions" />
         <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" />
-        <PackageReference Include="Rocket.Surgery.Hosting.Abstractions" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Conventions\" />
     </ItemGroup>
 </Project>

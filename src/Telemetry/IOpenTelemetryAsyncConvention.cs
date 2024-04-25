@@ -2,14 +2,14 @@
 using OpenTelemetry;
 using Rocket.Surgery.Conventions;
 
-namespace Rocket.Surgery.LaunchPad.Hosting.Telemetry;
+namespace Rocket.Surgery.LaunchPad.Telemetry;
 
 /// <summary>
 ///     IMetricsConvention
 ///     Implements the <see cref="IConvention" />
 /// </summary>
 /// <seealso cref="IConvention" />
-public interface IOpenTelemetryConvention : IConvention
+public interface IOpenTelemetryAsyncConvention : IConvention
 {
     /// <summary>
     ///     Register metrics
@@ -17,5 +17,6 @@ public interface IOpenTelemetryConvention : IConvention
     /// <param name="conventionContext"></param>
     /// <param name="configuration"></param>
     /// <param name="builder"></param>
-    void Register(IConventionContext conventionContext, IConfiguration configuration, OpenTelemetryBuilder builder);
+    /// <param name="cancellationToken"></param>
+    ValueTask Register(IConventionContext conventionContext, IConfiguration configuration, IOpenTelemetryBuilder builder, CancellationToken cancellationToken);
 }

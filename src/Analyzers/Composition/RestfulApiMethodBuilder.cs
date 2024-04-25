@@ -10,7 +10,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
 {
     private static RestfulApiParameterMatcher DefaultMatcher(Index index)
     {
-        return new RestfulApiParameterMatcher(
+        return new(
             index,
             ApiConventionNameMatchBehavior.Any,
             Array.Empty<string>(),
@@ -43,7 +43,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchSuffix(string value, params string[] values)
     {
-        _names = new[] { value }.Concat(values).ToArray();
+        _names = new[] { value, }.Concat(values).ToArray();
         _nameMatchBehavior = ApiConventionNameMatchBehavior.Suffix;
 
         return this;
@@ -57,7 +57,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchPrefix(string value, params string[] values)
     {
-        _names = new[] { value }.Concat(values).ToArray();
+        _names = new[] { value, }.Concat(values).ToArray();
         _nameMatchBehavior = ApiConventionNameMatchBehavior.Prefix;
 
         return this;
@@ -71,7 +71,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchName(string value, params string[] values)
     {
-        _names = new[] { value }.Concat(values).ToArray();
+        _names = new[] { value, }.Concat(values).ToArray();
         _nameMatchBehavior = ApiConventionNameMatchBehavior.Exact;
 
         return this;
@@ -89,15 +89,12 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterName(Index parameter, string value, params string[] values)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = DefaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = DefaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
             ApiConventionNameMatchBehavior.Exact,
-            new[] { value }.Concat(values).ToArray(),
+            new[] { value, }.Concat(values).ToArray(),
             item.TypeMatch,
             item.Type
         );
@@ -115,10 +112,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder HasParameter(Index parameter)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = DefaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = DefaultMatcher(parameter);
 
         _parameters[parameter] =
             new RestfulApiParameterMatcher(
@@ -155,15 +149,12 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterPrefix(Index parameter, string value, params string[] values)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = DefaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = DefaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
             ApiConventionNameMatchBehavior.Prefix,
-            new[] { value }.Concat(values).ToArray(),
+            new[] { value, }.Concat(values).ToArray(),
             item.TypeMatch,
             item.Type
         );
@@ -183,15 +174,12 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterSuffix(Index parameter, string value, params string[] values)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = DefaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = DefaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
             ApiConventionNameMatchBehavior.Suffix,
-            new[] { value }.Concat(values).ToArray(),
+            new[] { value, }.Concat(values).ToArray(),
             item.TypeMatch,
             item.Type
         );
@@ -210,10 +198,7 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     /// <returns></returns>
     public RestfulApiMethodBuilder MatchParameterType(Index parameter, INamedTypeSymbol type)
     {
-        if (!_parameters.TryGetValue(parameter, out var item))
-        {
-            item = _parameters[parameter] = DefaultMatcher(parameter);
-        }
+        if (!_parameters.TryGetValue(parameter, out var item)) item = _parameters[parameter] = DefaultMatcher(parameter);
 
         _parameters[parameter] = new RestfulApiParameterMatcher(
             parameter,
@@ -234,26 +219,24 @@ internal class RestfulApiMethodBuilder : IRestfulApiMethodMatcher
     internal bool IsMatch(ActionModel actionModel)
     {
         var nameMatch = _nameMatchBehavior switch
-        {
-            ApiConventionNameMatchBehavior.Exact  => _names.Any(name => actionModel.ActionName.Equals(name, StringComparison.OrdinalIgnoreCase)),
-            ApiConventionNameMatchBehavior.Prefix => _names.Any(name => actionModel.ActionName.StartsWith(name, StringComparison.OrdinalIgnoreCase)),
-            ApiConventionNameMatchBehavior.Suffix => _names.Any(name => actionModel.ActionName.EndsWith(name, StringComparison.OrdinalIgnoreCase)),
-            _                                     => true
-        };
+                        {
+                            ApiConventionNameMatchBehavior.Exact => _names.Any(name => actionModel.ActionName.Equals(name, StringComparison.OrdinalIgnoreCase)),
+                            ApiConventionNameMatchBehavior.Prefix => _names.Any(
+                                name => actionModel.ActionName.StartsWith(name, StringComparison.OrdinalIgnoreCase)
+                            ),
+                            ApiConventionNameMatchBehavior.Suffix => _names.Any(
+                                name => actionModel.ActionName.EndsWith(name, StringComparison.OrdinalIgnoreCase)
+                            ),
+                            _ => true,
+                        };
 
         if (!nameMatch)
             return false;
 
         var parameters = actionModel.ActionMethod.Parameters;
-        if (_parameterCount.HasValue && parameters.Length != _parameterCount.Value)
-        {
-            return false;
-        }
+        if (_parameterCount.HasValue && parameters.Length != _parameterCount.Value) return false;
 
-        if (parameters.Length >= _parameters.Count)
-        {
-            return _parameters.Values.All(z => z.IsMatch(actionModel));
-        }
+        if (parameters.Length >= _parameters.Count) return _parameters.Values.All(z => z.IsMatch(actionModel));
 
         return false;
     }

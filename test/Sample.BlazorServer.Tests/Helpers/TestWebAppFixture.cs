@@ -3,4 +3,4 @@ using Sample.Core.Domain;
 
 namespace Sample.BlazorServer.Tests.Helpers;
 
-public class TestWebAppFixture() : LaunchPadWebAppFixture<Startup>(new SqliteExtension<RocketDbContext>()), IAsyncLifetime;
+public class TestWebAppFixture() : LaunchPadWebAppFixture<Program>(new SqliteExtension<RocketDbContext>()), IAsyncLifetime;

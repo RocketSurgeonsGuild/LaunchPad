@@ -14,9 +14,7 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     ///     Create the base type
     /// </summary>
     /// <param name="name"></param>
-    protected IntToStructBaseType(string name) : base(name, BindingBehavior.Implicit)
-    {
-    }
+    protected IntToStructBaseType(string name) : base(name, BindingBehavior.Implicit) { }
 
     /// <summary>
     ///     Method to try and serialize
@@ -37,10 +35,7 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     /// <inheritdoc />
     protected override TRuntimeType ParseLiteral(IntValueNode valueSyntax)
     {
-        if (TryDeserialize(valueSyntax.ToInt32(), out var value))
-        {
-            return value.Value;
-        }
+        if (TryDeserialize(valueSyntax.ToInt32(), out var value)) return value.Value;
 
         throw new SerializationException(
             $"Unable to deserialize integer to {Name}",
@@ -51,10 +46,7 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     /// <inheritdoc />
     protected override IntValueNode ParseValue(TRuntimeType runtimeValue)
     {
-        if (TrySerialize(runtimeValue, out var val))
-        {
-            return new IntValueNode(val.Value);
-        }
+        if (TrySerialize(runtimeValue, out var val)) return new(val.Value);
 
         throw new SerializationException(
             $"Unable to deserialize integer to {Name}",
@@ -65,20 +57,11 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     /// <inheritdoc />
     public override IValueNode ParseResult(object? resultValue)
     {
-        if (resultValue is null)
-        {
-            return NullValueNode.Default;
-        }
+        if (resultValue is null) return NullValueNode.Default;
 
-        if (resultValue is int s)
-        {
-            return new IntValueNode(s);
-        }
+        if (resultValue is int s) return new IntValueNode(s);
 
-        if (resultValue is TRuntimeType v)
-        {
-            return ParseValue(v);
-        }
+        if (resultValue is TRuntimeType v) return ParseValue(v);
 
         throw new SerializationException(
             $"Unable to deserialize integer to {Name}",

@@ -11,7 +11,7 @@ public class RocketDbContext(DbContextOptions<RocketDbContext>? options = null) 
     public DbSet<ReadyRocket> Rockets { get; set; } = null!;
     public DbSet<LaunchRecord> LaunchRecords { get; set; } = null!;
 
-#if NET6_0_OR_GREATER
+    #if NET6_0_OR_GREATER
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder
@@ -21,7 +21,7 @@ public class RocketDbContext(DbContextOptions<RocketDbContext>? options = null) 
            .Properties<RocketId>()
            .HaveConversion<RocketId.EfCoreValueConverter>();
     }
-#endif
+    #endif
 }
 
 public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDependencies dependencies) : ValueConverterSelector(dependencies)
@@ -29,17 +29,13 @@ public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDepende
     [return: NotNullIfNotNull("type")]
     private static Type? UnwrapNullableType(Type? type)
     {
-        if (type is null)
-        {
-            return null;
-        }
+        if (type is null) return null;
 
         return Nullable.GetUnderlyingType(type) ?? type;
     }
 
     // The dictionary in the base type is private, so we need our own one here.
-    private readonly ConcurrentDictionary<(Type ModelClrType, Type ProviderClrType), ValueConverterInfo> _converters
-        = new ConcurrentDictionary<(Type ModelClrType, Type ProviderClrType), ValueConverterInfo>();
+    private readonly ConcurrentDictionary<(Type ModelClrType, Type ProviderClrType), ValueConverterInfo> _converters = new();
 
     public override IEnumerable<ValueConverterInfo> Select(Type modelClrType, Type? providerClrType = null)
     {
@@ -60,7 +56,6 @@ public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDepende
             var converterType = underlyingModelType.GetNestedType("EfCoreValueConverter");
 
             if (converterType != null)
-            {
                 yield return _converters.GetOrAdd(
                     ( underlyingModelType, typeof(Guid) ),
                     _ =>
@@ -70,10 +65,9 @@ public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDepende
                             info => (ValueConverter)Activator.CreateInstance(converterType, info.MappingHints)!;
 
                         // Build the info for our strongly-typed ID => Guid converter
-                        return new ValueConverterInfo(modelClrType, typeof(Guid), factory);
+                        return new(modelClrType, typeof(Guid), factory);
                     }
                 );
-            }
         }
     }
 }

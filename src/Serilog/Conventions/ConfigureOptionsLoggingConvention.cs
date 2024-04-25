@@ -29,21 +29,14 @@ public class ConfigureOptionsLoggingConvention : ISerilogConvention
         LoggerConfiguration loggerConfiguration
     )
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         foreach (var setup in services.GetServices<IConfigureOptions<LoggerConfiguration>>())
         {
             if (setup is IConfigureNamedOptions<LoggerConfiguration> namedSetup)
-            {
                 namedSetup.Configure(Options.DefaultName, loggerConfiguration);
-            }
             else
-            {
                 setup.Configure(loggerConfiguration);
-            }
         }
 
         foreach (var post in services.GetServices<IPostConfigureOptions<LoggerConfiguration>>())

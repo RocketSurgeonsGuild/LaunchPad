@@ -77,12 +77,10 @@ public static partial class EditRocket
     {
         private async Task<ReadyRocket?> GetRocket(RocketId id, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { id }, cancellationToken)
-                                         .ConfigureAwait(false);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            var rocket = await dbContext
+                              .Rockets.FindAsync(new object[] { id, }, cancellationToken)
+                              .ConfigureAwait(false);
+            if (rocket == null) throw new NotFoundException();
 
             return rocket;
         }
@@ -96,10 +94,7 @@ public static partial class EditRocket
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await GetRocket(request.Id, cancellationToken);
-            if (rocket == null)
-            {
-                throw new NotFoundException();
-            }
+            if (rocket == null) throw new NotFoundException();
 
             mapper.Map(request, rocket);
             dbContext.Update(rocket);

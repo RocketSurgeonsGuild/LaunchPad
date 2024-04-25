@@ -64,11 +64,9 @@ internal static class SyntaxExtensions
                          .AddMembers(classToNest);
 
             if (!parentSyntax.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
-            {
                 context.ReportDiagnostic(
                     Diagnostic.Create(GeneratorDiagnostics.MustBePartial, parentSyntax.Identifier.GetLocation(), parentSyntax.GetFullMetadataName())
                 );
-            }
 
             parent = parentSyntax.Parent;
         }
@@ -106,10 +104,7 @@ internal static class SyntaxExtensions
 
     public static string GetFullMetadataName(this ISymbol? s)
     {
-        if (s == null || IsRootNamespace(s))
-        {
-            return string.Empty;
-        }
+        if (s == null || IsRootNamespace(s)) return string.Empty;
 
         var sb = new StringBuilder(s.MetadataName);
         var last = s;
@@ -119,13 +114,9 @@ internal static class SyntaxExtensions
         while (!IsRootNamespace(s))
         {
             if (s is ITypeSymbol && last is ITypeSymbol)
-            {
                 sb.Insert(0, '+');
-            }
             else
-            {
                 sb.Insert(0, '.');
-            }
 
             sb.Insert(0, s.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
             s = s.ContainingSymbol;

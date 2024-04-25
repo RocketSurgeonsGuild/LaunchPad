@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -34,21 +34,21 @@ public class MediatRConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
+        // TODO: Look at converting this to use the assembly type provider
+        var assemblies = context.AssemblyProvider.GetAssemblies(x => x.FromAssemblyDependenciesOf<IMediator>()).ToArray();
+        if (!assemblies.Any()) return;
+
         services.AddMediatR(
             c =>
             {
-                c.RegisterServicesFromAssemblies(
-                    context.AssemblyCandidateFinder
-                           .GetCandidateAssemblies(nameof(MediatR))
-                           .ToArray()
-                );
+                c.RegisterServicesFromAssemblies(assemblies);
                 c.Lifetime = _options switch
-                {
-                    { MediatorLifetime: ServiceLifetime.Singleton } => ServiceLifetime.Singleton,
-                    { MediatorLifetime: ServiceLifetime.Scoped }    => ServiceLifetime.Scoped,
-                    { MediatorLifetime: ServiceLifetime.Transient } => ServiceLifetime.Transient,
-                    _                                               => c.Lifetime
-                };
+                             {
+                                 { MediatorLifetime: ServiceLifetime.Singleton, } => ServiceLifetime.Singleton,
+                                 { MediatorLifetime: ServiceLifetime.Scoped, }    => ServiceLifetime.Scoped,
+                                 { MediatorLifetime: ServiceLifetime.Transient, } => ServiceLifetime.Transient,
+                                 _                                                => c.Lifetime,
+                             };
             }
         );
     }

@@ -18,7 +18,7 @@ public class FluentValidationProblemDetail
     /// <returns></returns>
     public static implicit operator ReadOnlyDictionary<string, object?>(FluentValidationProblemDetail detail)
     {
-        return new ReadOnlyDictionary<string, object?>(
+        return new(
             new Dictionary<string, object?>
             {
                 ["propertyName"] = detail.PropertyName,
@@ -35,10 +35,7 @@ public class FluentValidationProblemDetail
     /// </summary>
     public FluentValidationProblemDetail(ValidationFailure validationFailure)
     {
-        if (validationFailure == null)
-        {
-            throw new ArgumentNullException(nameof(validationFailure));
-        }
+        ArgumentNullException.ThrowIfNull(validationFailure);
 
         PropertyName = validationFailure.PropertyName;
         ErrorMessage = validationFailure.ErrorMessage;

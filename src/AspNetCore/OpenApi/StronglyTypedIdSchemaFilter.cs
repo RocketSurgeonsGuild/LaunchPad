@@ -18,9 +18,7 @@ internal static class StronglyTypedIdHelpers
         if (type?.GetMember("New", BindingFlags.Static | BindingFlags.Public).FirstOrDefault() is MethodInfo
          && type.GetMember("Empty", BindingFlags.Static | BindingFlags.Public).FirstOrDefault() is FieldInfo { }
          && type.GetMember("Value", BindingFlags.Instance | BindingFlags.Public).FirstOrDefault() is PropertyInfo propertyInfo)
-        {
             return propertyInfo.PropertyType;
-        }
 
         return null;
     }

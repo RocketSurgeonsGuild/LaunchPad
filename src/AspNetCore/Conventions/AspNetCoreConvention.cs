@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
@@ -28,12 +27,10 @@ public class AspNetCoreConvention : IServiceConvention
         foreach (var assembly in assemblies)
         {
             if (!seenAssemblies.Add(assembly))
-            {
                 // "assemblies" may contain duplicate values, but we want unique ApplicationPart instances.
                 // Note that we prefer using a HashSet over Distinct since the latter isn't
                 // guaranteed to preserve the original ordering.
                 continue;
-            }
 
             var partFactory = ApplicationPartFactory.GetApplicationPartFactory(assembly);
             foreach (var applicationPart in partFactory.GetApplicationParts(assembly))
@@ -54,10 +51,11 @@ public class AspNetCoreConvention : IServiceConvention
     {
         // Use ApplicationPartAttribute to get the closure of direct or transitive dependencies
         // that reference MVC.
-        var assembliesFromAttributes = assembly.GetCustomAttributes<ApplicationPartAttribute>()
-                                               .Select(name => Assembly.Load(name.AssemblyName))
-                                               .OrderBy(a => a.FullName, StringComparer.Ordinal)
-                                               .SelectMany(GetAssemblyClosure);
+        var assembliesFromAttributes = assembly
+                                      .GetCustomAttributes<ApplicationPartAttribute>()
+                                      .Select(name => Assembly.Load(name.AssemblyName))
+                                      .OrderBy(a => a.FullName, StringComparer.Ordinal)
+                                      .SelectMany(GetAssemblyClosure);
 
         // The SDK will not include the entry assembly as an application part. We'll explicitly list it
         // and have it appear before all other assemblies \ ApplicationParts.
@@ -69,8 +67,9 @@ public class AspNetCoreConvention : IServiceConvention
     {
         yield return assembly;
 
-        var relatedAssemblies = RelatedAssemblyAttribute.GetRelatedAssemblies(assembly, false)
-                                                        .OrderBy(a => a.FullName, StringComparer.Ordinal);
+        var relatedAssemblies = RelatedAssemblyAttribute
+                               .GetRelatedAssemblies(assembly, false)
+                               .OrderBy(a => a.FullName, StringComparer.Ordinal);
 
         foreach (var relatedAssembly in relatedAssemblies)
         {
@@ -98,24 +97,19 @@ public class AspNetCoreConvention : IServiceConvention
     /// TODO Edit XML Comment Template for Register
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         services
-#if NET6_0_OR_GREATER
            .AddEndpointsApiExplorer()
-#endif
            .AddMvcCore()
            .AddApiExplorer();
         PopulateDefaultParts(
             // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
-            context.AssemblyCandidateFinder
-                   .GetCandidateAssemblies("Rocket.Surgery.LaunchPad.AspNetCore")
-                   .Where(_options.AssemblyPartFilter)
-                   .SelectMany(GetApplicationPartAssemblies)
+            context
+               .AssemblyProvider.GetAssemblies(s => s.FromAssemblyDependenciesOf(typeof(AspNetCoreConvention)))
+               .Where(_options.AssemblyPartFilter)
+               .SelectMany(GetApplicationPartAssemblies)
         );
 
         services.Configure<MvcOptions>(
