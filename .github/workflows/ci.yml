@@ -152,6 +152,7 @@ jobs:
           name: 'test data'
           path: 'artifacts/test/'
       - name: 🏺 Publish NuGet Packages
+        if: always()
         uses: actions/upload-artifact@v4.3.3
         with:
           name: 'nuget'
