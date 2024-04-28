@@ -91,15 +91,15 @@
     <PackageVersion Include="Polly" Version="8.3.1" />
     <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-    <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.0-beta.20" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.0-beta.20" />
-    <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.0-beta.20" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="14.0.0-beta.20" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.0-beta.20" />
+    <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.0-beta.21" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.0-beta.21" />
+    <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.0-beta.21" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="14.0.0-beta.21" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.0-beta.21" />
     <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="12.1.0" />
     <PackageVersion Include="Rocket.Surgery.Extensions" Version="12.1.0" />
-    <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.0-beta.20" />
-    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.0-beta.20" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.0-beta.21" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.0-beta.21" />
     <PackageVersion Include="Scrutor" Version="4.2.2" />
     <PackageVersion Include="Serilog" Version="3.1.1" />
     <PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
@@ -144,9 +144,9 @@
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.31.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="8.0.18" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="8.0.18" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="8.0.18" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="8.1.0-next.1" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="8.1.0-next.1" />
+    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="8.1.0-next.1" />
     <PackageVersion Include="xunit" Version="2.8.0" />
     <PackageVersion Include="xunit.analyzers" Version="1.13.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.0" />
