@@ -2,18 +2,16 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Rocket.Surgery.LaunchPad.Telemetry;
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
-[ExportConvention, AfterConvention<SerilogHostingConvention>]
+[ExportConvention]
+[AfterConvention<SerilogHostingConvention>]
 internal class HostingConvention : IServiceConvention, IOpenTelemetryConvention
 {
     public void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder)

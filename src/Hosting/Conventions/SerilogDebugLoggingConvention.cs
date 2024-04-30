@@ -13,7 +13,8 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// </summary>
 /// <seealso cref="ISerilogConvention" />
 [PublicAPI]
-[ExportConvention, AfterConvention<SerilogHostingConvention>]
+[ExportConvention]
+[AfterConvention<SerilogHostingConvention>]
 public sealed class SerilogDebugLoggingConvention : ISerilogConvention
 {
     private readonly LaunchPadLoggingOptions _options;

@@ -68,14 +68,16 @@ public class SerilogHostingConvention : IHostApplicationConvention
         if (_options.WriteToProviders) return;
 
         builder.OnHostStarting(
-            provider => provider.GetServices<ILoggerProvider>().Aggregate(
-                provider.GetRequiredService<ILoggerFactory>(),
-                (factory, loggerProvider) =>
-                {
-                    factory.AddProvider(loggerProvider);
-                    return factory;
-                }
-            )
+            provider => provider
+                       .GetServices<ILoggerProvider>()
+                       .Aggregate(
+                            provider.GetRequiredService<ILoggerFactory>(),
+                            (factory, loggerProvider) =>
+                            {
+                                factory.AddProvider(loggerProvider);
+                                return factory;
+                            }
+                        )
         );
     }
 }
