@@ -13,40 +13,9 @@ using Rocket.Surgery.LaunchPad.Telemetry;
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
-[ExportConvention]
-internal class HostingConvention : IServiceConvention, IHostApplicationConvention, IOpenTelemetryConvention
+[ExportConvention, AfterConvention<SerilogHostingConvention>]
+internal class HostingConvention : IServiceConvention, IOpenTelemetryConvention
 {
-    public void Register(IConventionContext context, IHostApplicationBuilder builder)
-    {
-        if (context.GetOrAdd(() => new LaunchPadLoggingOptions()).WriteToProviders != true)
-        {
-            var providers = builder.Services.Where(z => z.ServiceType == typeof(ILoggerProvider)).ToArray();
-            builder.Logging.ClearProviders();
-            builder.OnHostStarting(
-                provider => providers.Aggregate(
-                    provider.GetRequiredService<ILoggerFactory>(),
-                    (factory, descriptor) =>
-                    {
-                        switch (descriptor)
-                        {
-                            case { ImplementationFactory: { } method, } when method(provider) is ILoggerProvider p:
-                                factory.AddProvider(p);
-                                break;
-                            case { ImplementationInstance: ILoggerProvider instance, }:
-                                factory.AddProvider(instance);
-                                break;
-                            case { ImplementationType: { } type, } when ActivatorUtilities.CreateInstance(provider, type) is ILoggerProvider instance:
-                                factory.AddProvider(instance);
-                                break;
-                        }
-
-                        return factory;
-                    }
-                )
-            );
-        }
-    }
-
     public void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder)
     {
         builder.ConfigureResource(
