@@ -22,7 +22,7 @@ builder.Services
                 }
             )
         );
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
 
 app.UseProblemDetails();
 app.UseHttpsRedirection();

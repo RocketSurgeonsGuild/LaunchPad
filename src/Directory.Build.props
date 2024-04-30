@@ -15,5 +15,6 @@
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Pages" />
         <InternalsVisibleTo Include="AspNetCore.Tests" />
         <InternalsVisibleTo Include="Extensions.Tests" />
+        <InternalsVisibleTo Include="Sample.Pages.Tests" />
     </ItemGroup>
 </Project>

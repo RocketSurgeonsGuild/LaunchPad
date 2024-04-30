@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
 
 if (builder.Environment.IsDevelopment())
 {

@@ -14,8 +14,8 @@ public interface IOpenTelemetryConvention : IConvention
     /// <summary>
     ///     Register metrics
     /// </summary>
-    /// <param name="conventionContext"></param>
+    /// <param name="context"></param>
     /// <param name="configuration"></param>
     /// <param name="builder"></param>
-    void Register(IConventionContext conventionContext, IConfiguration configuration, IOpenTelemetryBuilder builder);
+    void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder);
 }

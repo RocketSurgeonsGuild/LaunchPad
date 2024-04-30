@@ -32,15 +32,10 @@ public class LaunchPadLoggingOptions
     /// <summary>
     ///     Base option from the serilog package
     /// </summary>
-    public bool WriteToProviders { get; set; } = true;
+    public bool WriteToProviders { get; set; } = false;
 
     /// <summary>
     ///     Base option from the serilog package
     /// </summary>
     public bool PreserveStaticLogger { get; set; }
-
-    /// <summary>
-    ///     Set a custom logger factory
-    /// </summary>
-    public ILoggerFactory? LoggerFactory { get; set; }
 }

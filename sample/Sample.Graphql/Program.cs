@@ -30,7 +30,7 @@ builder
    .ModifyRequestOptions(options => options.IncludeExceptionDetails = true);
 
 var app = await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+   .LaunchWith(RocketBooster.For(Imports.Instance));
 
 app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();

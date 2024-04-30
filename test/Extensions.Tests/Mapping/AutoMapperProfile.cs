@@ -252,8 +252,7 @@ public class AutoMapperConventionTests
     public async Task ShouldRegisterAutoMapperTypes()
     {
         var conventionBuilder = new ConventionContextBuilder(new Dictionary<object, object>())
-                               .UseConventionFactory(Imports.Instance)
-                               .Set(AssemblyLoadContext.Default);
+                               .UseConventionFactory(Imports.Instance);
         var context = await ConventionContext.FromAsync(conventionBuilder);
         var types = context
                    .AssemblyProvider.GetTypes(

@@ -16,7 +16,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 public class InstrumentationConvention : IOpenTelemetryConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, IOpenTelemetryBuilder builder)
+    public void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder)
     {
         builder.WithTracing(b => b.AddHotChocolateInstrumentation());
     }
