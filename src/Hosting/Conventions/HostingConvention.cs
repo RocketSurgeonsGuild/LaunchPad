@@ -22,7 +22,7 @@ class HostingConvention : IServiceConvention, IHostApplicationConvention, IOpenT
     {
         if (context.GetOrAdd(() => new LaunchPadLoggingOptions()).WriteToProviders != true)
         {
-            var providers = builder.Services.RemoveAll<ILoggerProvider>();
+            var providers = builder.Services.Where(z => z.ServiceType == typeof(ILoggerProvider)).ToArray();
             builder.Logging.ClearProviders();
             builder.OnHostStarting(
                 provider => providers.Aggregate(
