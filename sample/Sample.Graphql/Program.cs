@@ -1,6 +1,4 @@
-using System.Runtime.Loader;
 using HotChocolate.Types.Spatial;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
@@ -30,7 +28,7 @@ builder
    .ModifyRequestOptions(options => options.IncludeExceptionDetails = true);
 
 var app = await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+   .LaunchWith(RocketBooster.For(Imports.Instance));
 
 app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();

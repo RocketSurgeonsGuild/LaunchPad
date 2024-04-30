@@ -17,9 +17,9 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 public class InstrumentationConvention : IOpenTelemetryConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext conventionContext, IConfiguration configuration, IOpenTelemetryBuilder builder)
+    public void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder)
     {
         builder.WithTracing(b => b.AddHttpClientInstrumentation(x => x.RecordException = true));
-        builder.WithMetrics(b => b.AddHttpClientInstrumentation());
+        builder.WithMetrics(b => b.AddRuntimeInstrumentation().AddHttpClientInstrumentation());
     }
 }

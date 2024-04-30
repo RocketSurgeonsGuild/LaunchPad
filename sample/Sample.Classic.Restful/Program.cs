@@ -1,7 +1,5 @@
 using System.Reflection;
-using System.Runtime.Loader;
 using Hellang.Middleware.ProblemDetails;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Classic.Restful;
@@ -22,7 +20,7 @@ builder.Services
                 }
             )
         );
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
 
 app.UseProblemDetails();
 app.UseHttpsRedirection();

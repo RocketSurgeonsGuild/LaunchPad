@@ -1,5 +1,4 @@
 #if NET6_0_OR_GREATER
-using System.Runtime.Loader;
 using DryIoc;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -93,7 +92,6 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
                                       .ForTesting(Imports.Instance, LoggerFactory)
-                                      .Set(AssemblyLoadContext.Default)
                                       .Set(
                                            new FoundationOptions
                                            {

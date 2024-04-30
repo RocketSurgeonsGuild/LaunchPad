@@ -1,9 +1,7 @@
-using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
 using Humanizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Pages;
@@ -12,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance), b => b.Set(AssemblyLoadContext.Default));
+var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
 
 if (builder.Environment.IsDevelopment())
 {
