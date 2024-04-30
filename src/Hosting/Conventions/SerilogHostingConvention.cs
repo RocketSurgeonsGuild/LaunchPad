@@ -64,5 +64,20 @@ public class SerilogHostingConvention : IHostApplicationConvention
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
         }
+
+        if (_options.WriteToProviders) return;
+
+        builder.OnHostStarting(
+            provider => provider
+                       .GetServices<ILoggerProvider>()
+                       .Aggregate(
+                            provider.GetRequiredService<ILoggerFactory>(),
+                            (factory, loggerProvider) =>
+                            {
+                                factory.AddProvider(loggerProvider);
+                                return factory;
+                            }
+                        )
+        );
     }
 }
