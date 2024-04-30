@@ -1,4 +1,3 @@
-using System.Runtime.Loader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;

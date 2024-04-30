@@ -1,9 +1,7 @@
-using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
 using Humanizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Pages;

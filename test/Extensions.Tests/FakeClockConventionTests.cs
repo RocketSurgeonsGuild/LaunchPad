@@ -1,7 +1,5 @@
-﻿using FakeItEasy;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using NodaTime.Testing;
@@ -40,20 +38,21 @@ public class AutoRegisterOptions(ITestOutputHelper testOutputHelper) : Conventio
     [Fact]
     public async Task Should_Register_Options()
     {
-        await Init(x => x.ConfigureConfiguration(builder => builder.AddInMemoryCollection([new("OptionsA:A", "B"), new("OptionsB:B", "A")])));
+        await Init(x => x.ConfigureConfiguration(builder => builder.AddInMemoryCollection([new("OptionsA:A", "B"), new("OptionsB:B", "A"),])));
         ServiceProvider.GetRequiredService<IOptions<OptionsA>>().Value.A.Should().Be("B");
         ServiceProvider.GetRequiredService<IOptions<OptionsB>>().Value.B.Should().Be("A");
     }
 
     [RegisterOptionsConfiguration("OptionsA")]
     [PublicAPI]
-    class OptionsA
+    private class OptionsA
     {
         public string A { get; set; }
     }
+
     [RegisterOptionsConfiguration("OptionsB")]
     [PublicAPI]
-    class OptionsB
+    private class OptionsB
     {
         public string B { get; set; }
     }

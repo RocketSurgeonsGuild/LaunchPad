@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 namespace Rocket.Surgery.LaunchPad.Serilog;
 
 /// <summary>

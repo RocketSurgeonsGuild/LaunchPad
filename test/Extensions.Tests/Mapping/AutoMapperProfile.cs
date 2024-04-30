@@ -1,4 +1,3 @@
-using System.Runtime.Loader;
 using AutoMapper;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing;
@@ -252,7 +251,7 @@ public class AutoMapperConventionTests
     public async Task ShouldRegisterAutoMapperTypes()
     {
         var conventionBuilder = new ConventionContextBuilder(new Dictionary<object, object>())
-                               .UseConventionFactory(Imports.Instance);
+           .UseConventionFactory(Imports.Instance);
         var context = await ConventionContext.FromAsync(conventionBuilder);
         var types = context
                    .AssemblyProvider.GetTypes(

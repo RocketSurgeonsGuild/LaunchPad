@@ -3,7 +3,6 @@ using AutoMapper;
 using FakeItEasy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Hosting;
 using Sample.Pages.Tests.Helpers;
 
@@ -14,8 +13,9 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
     [Fact]
     public void AutoMapper()
     {
-        AlbaHost.Services.GetRequiredService<IMapper>()
-                .ConfigurationProvider.AssertConfigurationIsValid();
+        AlbaHost
+           .Services.GetRequiredService<IMapper>()
+           .ConfigurationProvider.AssertConfigurationIsValid();
     }
 
     [Fact]
@@ -24,6 +24,7 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
         var response = await AlbaHost.Server.CreateClient().GetAsync("/");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
+
     [Fact]
     public async Task StartingEvents()
     {

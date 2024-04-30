@@ -2,7 +2,8 @@
 
 namespace Rocket.Surgery.LaunchPad.Hosting;
 
-class ApplicationLifecycleService(IServiceProvider serviceProvider, IEnumerable<ApplicationLifecycleRegistration> registrations) : IHostedLifecycleService
+internal class ApplicationLifecycleService
+    (IServiceProvider serviceProvider, IEnumerable<ApplicationLifecycleRegistration> registrations) : IHostedLifecycleService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {

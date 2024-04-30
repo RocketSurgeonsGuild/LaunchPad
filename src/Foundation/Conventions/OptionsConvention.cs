@@ -1,14 +1,13 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
-/// A convention that registers any options POCOs that are found with the <see cref="RegisterOptionsConfigurationAttribute"/>
+///     A convention that registers any options POCOs that are found with the <see cref="RegisterOptionsConfigurationAttribute" />
 /// </summary>
 [ExportConvention]
 public class OptionsConvention : IServiceConvention
@@ -16,13 +15,13 @@ public class OptionsConvention : IServiceConvention
     private readonly MethodInfo _configureMethod;
 
     /// <summary>
-    /// A convention that registers any options POCOs that are found with the <see cref="RegisterOptionsConfigurationAttribute"/>
+    ///     A convention that registers any options POCOs that are found with the <see cref="RegisterOptionsConfigurationAttribute" />
     /// </summary>
     public OptionsConvention()
     {
         _configureMethod = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
             nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
-            [typeof(IServiceCollection), typeof(string), typeof(IConfiguration)]
+            [typeof(IServiceCollection), typeof(string), typeof(IConfiguration),]
         )!;
     }
 

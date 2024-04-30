@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
@@ -15,9 +14,8 @@ using Rocket.Surgery.LaunchPad.Telemetry;
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 [ExportConvention]
-class HostingConvention : IServiceConvention, IHostApplicationConvention, IOpenTelemetryConvention
+internal class HostingConvention : IServiceConvention, IHostApplicationConvention, IOpenTelemetryConvention
 {
-
     public void Register(IConventionContext context, IHostApplicationBuilder builder)
     {
         if (context.GetOrAdd(() => new LaunchPadLoggingOptions()).WriteToProviders != true)
@@ -27,17 +25,17 @@ class HostingConvention : IServiceConvention, IHostApplicationConvention, IOpenT
             builder.OnHostStarting(
                 provider => providers.Aggregate(
                     provider.GetRequiredService<ILoggerFactory>(),
-                     (factory, descriptor) =>
+                    (factory, descriptor) =>
                     {
                         switch (descriptor)
                         {
-                            case { ImplementationFactory: { } method } when method(provider) is ILoggerProvider p:
+                            case { ImplementationFactory: { } method, } when method(provider) is ILoggerProvider p:
                                 factory.AddProvider(p);
                                 break;
-                            case { ImplementationInstance: ILoggerProvider instance }:
+                            case { ImplementationInstance: ILoggerProvider instance, }:
                                 factory.AddProvider(instance);
                                 break;
-                            case { ImplementationType: { } type } when ActivatorUtilities.CreateInstance(provider, type) is ILoggerProvider instance:
+                            case { ImplementationType: { } type, } when ActivatorUtilities.CreateInstance(provider, type) is ILoggerProvider instance:
                                 factory.AddProvider(instance);
                                 break;
                         }
@@ -47,11 +45,6 @@ class HostingConvention : IServiceConvention, IHostApplicationConvention, IOpenT
                 )
             );
         }
-    }
-
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-    {
-        services.AddHostedService<ApplicationLifecycleService>();
     }
 
     public void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder)
@@ -66,5 +59,10 @@ class HostingConvention : IServiceConvention, IHostApplicationConvention, IOpenT
                      serviceInstanceId: configuration["WEBSITE_SITE_NAME"]
                  )
         );
+    }
+
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    {
+        services.AddHostedService<ApplicationLifecycleService>();
     }
 }

@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Options;
-
 namespace Rocket.Surgery.LaunchPad.Foundation;
 
 /// <summary>

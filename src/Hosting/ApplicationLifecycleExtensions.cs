@@ -4,13 +4,13 @@ using Microsoft.Extensions.Hosting;
 namespace Rocket.Surgery.LaunchPad.Hosting;
 
 /// <summary>
-/// Extensions for configuring the application lifecycle
+///     Extensions for configuring the application lifecycle
 /// </summary>
 [PublicAPI]
 public static class ApplicationLifecycleExtensions
 {
     /// <summary>
-    /// Run a simple action when the host has started
+    ///     Run a simple action when the host has started
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -32,7 +32,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has started
+    ///     Run a simple action when the host has started
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -45,7 +45,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has started
+    ///     Run a simple action when the host has started
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -58,7 +58,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has starting
+    ///     Run a simple action when the host has starting
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -80,7 +80,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has starting
+    ///     Run a simple action when the host has starting
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -93,7 +93,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has starting
+    ///     Run a simple action when the host has starting
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -106,7 +106,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has stopping
+    ///     Run a simple action when the host has stopping
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -128,7 +128,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has stopping
+    ///     Run a simple action when the host has stopping
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -141,7 +141,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has stopping
+    ///     Run a simple action when the host has stopping
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -154,7 +154,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has stopped
+    ///     Run a simple action when the host has stopped
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -176,7 +176,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has stopped
+    ///     Run a simple action when the host has stopped
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -189,7 +189,7 @@ public static class ApplicationLifecycleExtensions
     }
 
     /// <summary>
-    /// Run a simple action when the host has stopped
+    ///     Run a simple action when the host has stopped
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="action"></param>
@@ -200,5 +200,4 @@ public static class ApplicationLifecycleExtensions
         builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppedAsync), action));
         return builder;
     }
-
 }

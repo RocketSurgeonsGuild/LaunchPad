@@ -6,7 +6,7 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
-/// Service conventions using service discovery
+///     Service conventions using service discovery
 /// </summary>
 [PublicAPI]
 [ExportConvention]

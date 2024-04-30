@@ -1,6 +1,4 @@
-using System.Runtime.Loader;
 using HotChocolate.Types.Spatial;
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
