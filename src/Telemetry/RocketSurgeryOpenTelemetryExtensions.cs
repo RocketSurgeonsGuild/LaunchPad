@@ -24,7 +24,7 @@ public static class RocketSurgeryOpenTelemetryExtensions
     )
     {
         // If we don't get configuration, we're probably not needing telemetry
-        if (conventionContext.Get<IConfiguration>() is not {} configuration) return builder;
+        if (conventionContext.Get<IConfiguration>() is not { } configuration) return builder;
 
         foreach (var item in conventionContext.Conventions
                                               .Get<IOpenTelemetryConvention, OpenTelemetryConvention, IOpenTelemetryAsyncConvention,

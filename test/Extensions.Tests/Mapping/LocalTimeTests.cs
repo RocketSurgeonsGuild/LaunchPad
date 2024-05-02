@@ -41,6 +41,34 @@ public class LocalTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterT
         result.Should().Be(new(502 / 60, 502 % 60));
     }
 
+    [Fact]
+    public void MapsFrom_DateTimeOffset()
+    {
+        var mapper = Config.CreateMapper();
+
+        var foo = new Foo1
+        {
+            Bar = LocalTime.FromTicksSinceMidnight(10000),
+        };
+
+        var result = mapper.Map<Foo5>(foo).Bar;
+        result.Should().Be(foo.Bar.ToTimeOnly());
+    }
+
+    [Fact]
+    public void MapsTo_DateTimeOffset()
+    {
+        var mapper = Config.CreateMapper();
+
+        var foo = new Foo5
+        {
+            Bar = TimeOnly.FromDateTime(DateTime.Now),
+        };
+
+        var result = mapper.Map<Foo1>(foo).Bar;
+        result.Should().Be(foo.Bar.ToLocalTime());
+    }
+
     [Theory]
     [ClassData(typeof(TypeConverterData<Converters>))]
     public void AutomatedTests(Type source, Type destination, object? sourceValue)
@@ -97,33 +125,5 @@ public class LocalTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterT
             yield return typeof(ITypeConverter<TimeOnly, LocalTime>);
             yield return typeof(ITypeConverter<TimeOnly?, LocalTime?>);
         }
-    }
-
-    [Fact]
-    public void MapsFrom_DateTimeOffset()
-    {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo1
-        {
-            Bar = LocalTime.FromTicksSinceMidnight(10000),
-        };
-
-        var result = mapper.Map<Foo5>(foo).Bar;
-        result.Should().Be(foo.Bar.ToTimeOnly());
-    }
-
-    [Fact]
-    public void MapsTo_DateTimeOffset()
-    {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo5
-        {
-            Bar = TimeOnly.FromDateTime(DateTime.Now),
-        };
-
-        var result = mapper.Map<Foo1>(foo).Bar;
-        result.Should().Be(foo.Bar.ToLocalTime());
     }
 }

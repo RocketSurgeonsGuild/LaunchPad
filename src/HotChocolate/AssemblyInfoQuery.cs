@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
-using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
@@ -19,11 +17,11 @@ public class AssemblyInfoQuery
     /// <param name="context"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-#pragma warning disable CA1822
+    #pragma warning disable CA1822
     public AssemblyInfo Version(IResolverContext context, CancellationToken cancellationToken)
-#pragma warning restore CA1822
+        #pragma warning restore CA1822
     {
         // ReSharper disable once NullableWarningSuppressionIsUsed
-        return new AssemblyInfo(Assembly.GetEntryAssembly()!);
+        return new(Assembly.GetEntryAssembly()!);
     }
 }

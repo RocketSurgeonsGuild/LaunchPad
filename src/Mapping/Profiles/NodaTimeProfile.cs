@@ -35,24 +35,28 @@ public class NodaTimeProfile : Profile
     private void CreateMappingsForDurationConverter()
     {
         CreateMap<decimal, Duration>().ConvertUsing(source => Duration.FromTicks((long)( source * NodaConstants.TicksPerMillisecond )));
-        CreateMap<decimal?, Duration?>().ConvertUsing(
-            source => source.HasValue ? Duration.FromTicks((long)( source.Value * NodaConstants.TicksPerMillisecond )) : default(Duration?)
-        );
+        CreateMap<decimal?, Duration?>()
+           .ConvertUsing(
+                source => source.HasValue ? Duration.FromTicks((long)( source.Value * NodaConstants.TicksPerMillisecond )) : default(Duration?)
+            );
         CreateMap<double, Duration>().ConvertUsing(source => Duration.FromTicks((long)( source * NodaConstants.TicksPerMillisecond )));
-        CreateMap<double?, Duration?>().ConvertUsing(
-            source => source.HasValue ? Duration.FromTicks((long)( source.Value * NodaConstants.TicksPerMillisecond )) : default(Duration?)
-        );
+        CreateMap<double?, Duration?>()
+           .ConvertUsing(
+                source => source.HasValue ? Duration.FromTicks((long)( source.Value * NodaConstants.TicksPerMillisecond )) : default(Duration?)
+            );
         CreateMap<Duration, decimal>().ConvertUsing(source => (decimal)source.BclCompatibleTicks / NodaConstants.TicksPerMillisecond);
         CreateMap<Duration, double>().ConvertUsing(source => (double)source.BclCompatibleTicks / NodaConstants.TicksPerMillisecond);
         CreateMap<Duration, int>().ConvertUsing(source => (int)( source.BclCompatibleTicks / NodaConstants.TicksPerSecond ));
         CreateMap<Duration, long>().ConvertUsing(source => source.BclCompatibleTicks / NodaConstants.TicksPerMillisecond);
         CreateMap<Duration, TimeSpan>().ConvertUsing(source => source.ToTimeSpan());
-        CreateMap<Duration?, decimal?>().ConvertUsing(
-            source => source.HasValue ? (decimal)source.Value.BclCompatibleTicks / NodaConstants.TicksPerMillisecond : default(decimal?)
-        );
-        CreateMap<Duration?, double?>().ConvertUsing(
-            source => source.HasValue ? (double)source.Value.BclCompatibleTicks / NodaConstants.TicksPerMillisecond : default(double?)
-        );
+        CreateMap<Duration?, decimal?>()
+           .ConvertUsing(
+                source => source.HasValue ? (decimal)source.Value.BclCompatibleTicks / NodaConstants.TicksPerMillisecond : default(decimal?)
+            );
+        CreateMap<Duration?, double?>()
+           .ConvertUsing(
+                source => source.HasValue ? (double)source.Value.BclCompatibleTicks / NodaConstants.TicksPerMillisecond : default(double?)
+            );
         CreateMap<Duration?, int?>()
            .ConvertUsing(source => source.HasValue ? (int)( source.Value.BclCompatibleTicks / NodaConstants.TicksPerSecond ) : default(int?));
         CreateMap<Duration?, long?>()
@@ -62,27 +66,30 @@ public class NodaTimeProfile : Profile
         CreateMap<int?, Duration?>()
            .ConvertUsing(source => source.HasValue ? Duration.FromTicks(source.Value * NodaConstants.TicksPerSecond) : default(Duration?));
         CreateMap<long, Duration>().ConvertUsing(source => Duration.FromTicks(source * NodaConstants.TicksPerMillisecond));
-        CreateMap<long?, Duration?>().ConvertUsing(
-            source => source.HasValue ? Duration.FromTicks(source.Value * NodaConstants.TicksPerMillisecond) : default(Duration?)
-        );
+        CreateMap<long?, Duration?>()
+           .ConvertUsing(
+                source => source.HasValue ? Duration.FromTicks(source.Value * NodaConstants.TicksPerMillisecond) : default(Duration?)
+            );
         CreateMap<TimeSpan, Duration>().ConvertUsing(source => Duration.FromTimeSpan(source));
         CreateMap<TimeSpan?, Duration?>().ConvertUsing(source => source.HasValue ? Duration.FromTimeSpan(source.Value) : default(Duration?));
     }
 
     private void CreateMappingsForInstantConvertor()
     {
-        CreateMap<DateTime, Instant>().ConvertUsing(
-            source => Instant.FromDateTimeUtc(
-                source.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(source, DateTimeKind.Utc) : source.ToUniversalTime()
-            )
-        );
-        CreateMap<DateTime?, Instant?>().ConvertUsing(
-            source => source.HasValue
-                ? Instant.FromDateTimeUtc(
-                    source.Value.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(source.Value, DateTimeKind.Utc) : source.Value.ToUniversalTime()
+        CreateMap<DateTime, Instant>()
+           .ConvertUsing(
+                source => Instant.FromDateTimeUtc(
+                    source.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(source, DateTimeKind.Utc) : source.ToUniversalTime()
                 )
-                : default
-        );
+            );
+        CreateMap<DateTime?, Instant?>()
+           .ConvertUsing(
+                source => source.HasValue
+                    ? Instant.FromDateTimeUtc(
+                        source.Value.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(source.Value, DateTimeKind.Utc) : source.Value.ToUniversalTime()
+                    )
+                    : default
+            );
         CreateMap<DateTimeOffset, Instant>().ConvertUsing(source => Instant.FromDateTimeOffset(source));
         CreateMap<DateTimeOffset?, Instant?>().ConvertUsing(source => source.HasValue ? Instant.FromDateTimeOffset(source.Value) : default(Instant?));
         CreateMap<Instant, DateTime>().ConvertUsing(source => source.ToDateTimeUtc());
@@ -115,7 +122,7 @@ public class NodaTimeProfile : Profile
         CreateMap<TimeOnly?, LocalTime?>().ConvertUsing(source => source.HasValue ? LocalTime.FromTimeOnly(source.Value) : default(LocalTime?));
         CreateMap<LocalTime, TimeOnly>().ConvertUsing(source => source.ToTimeOnly());
         CreateMap<LocalTime?, TimeOnly?>().ConvertUsing(source => source.HasValue ? source.Value.ToTimeOnly() : default(TimeOnly?));
-        CreateMap<LocalTime, TimeSpan>().ConvertUsing(source => new TimeSpan(source.TickOfDay));
+        CreateMap<LocalTime, TimeSpan>().ConvertUsing(source => new(source.TickOfDay));
         CreateMap<LocalTime?, TimeSpan?>().ConvertUsing(source => source.HasValue ? new TimeSpan(source.Value.TickOfDay) : default(TimeSpan?));
         CreateMap<TimeSpan, LocalTime>().ConvertUsing(source => LocalTime.FromTicksSinceMidnight(source.Ticks));
         CreateMap<TimeSpan?, LocalTime?>().ConvertUsing(source => source.HasValue ? LocalTime.FromTicksSinceMidnight(source.Value.Ticks) : default(LocalTime?));
