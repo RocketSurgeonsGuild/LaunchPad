@@ -1,9 +1,7 @@
 using System.Reflection;
 using AutoMapper;
 using NodaTime;
-#if NET6_0_OR_GREATER
 using NodaTime.Extensions;
-#endif
 
 namespace Extensions.Tests.Mapping;
 
@@ -43,71 +41,6 @@ public class LocalTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterT
         result.Should().Be(new(502 / 60, 502 % 60));
     }
 
-    [Theory]
-    [ClassData(typeof(TypeConverterData<Converters>))]
-    public void AutomatedTests(Type source, Type destination, object? sourceValue)
-    {
-        var method = typeof(IMapperBase)
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                    .First(
-                         x => x.ContainsGenericParameters
-                          && x.IsGenericMethodDefinition
-                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                          && x.GetParameters().Length == 1
-                     );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
-
-        if (sourceValue == null)
-            result.Should().BeNull();
-        else
-            result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
-    }
-
-    protected override void Configure(IMapperConfigurationExpression expression)
-    {
-        ArgumentNullException.ThrowIfNull(expression);
-
-        expression.CreateMap<Foo1, Foo3>().ReverseMap();
-        #if NET6_0_OR_GREATER
-        expression.CreateMap<Foo1, Foo5>().ReverseMap();
-        #endif
-    }
-
-    private class Foo1
-    {
-        public LocalTime Bar { get; set; }
-    }
-
-    private class Foo3
-    {
-        public TimeSpan Bar { get; set; }
-    }
-
-    #if NET6_0_OR_GREATER
-    private class Foo5
-    {
-        public TimeOnly Bar { get; set; }
-    }
-    #endif
-
-    public class Converters : TypeConverterFactory
-    {
-        public override IEnumerable<Type> GetTypeConverters()
-        {
-            yield return typeof(ITypeConverter<LocalTime, TimeSpan>);
-            yield return typeof(ITypeConverter<LocalTime?, TimeSpan?>);
-            yield return typeof(ITypeConverter<TimeSpan, LocalTime>);
-            yield return typeof(ITypeConverter<TimeSpan?, LocalTime?>);
-            #if NET6_0_OR_GREATER
-            yield return typeof(ITypeConverter<LocalTime, TimeOnly>);
-            yield return typeof(ITypeConverter<LocalTime?, TimeOnly?>);
-            yield return typeof(ITypeConverter<TimeOnly, LocalTime>);
-            yield return typeof(ITypeConverter<TimeOnly?, LocalTime?>);
-            #endif
-        }
-    }
-
-    #if NET6_0_OR_GREATER
     [Fact]
     public void MapsFrom_DateTimeOffset()
     {
@@ -135,5 +68,62 @@ public class LocalTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterT
         var result = mapper.Map<Foo1>(foo).Bar;
         result.Should().Be(foo.Bar.ToLocalTime());
     }
-    #endif
+
+    [Theory]
+    [ClassData(typeof(TypeConverterData<Converters>))]
+    public void AutomatedTests(Type source, Type destination, object? sourceValue)
+    {
+        var method = typeof(IMapperBase)
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .First(
+                         x => x.ContainsGenericParameters
+                          && x.IsGenericMethodDefinition
+                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                          && x.GetParameters().Length == 1
+                     );
+        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
+
+        if (sourceValue == null)
+            result.Should().BeNull();
+        else
+            result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
+    }
+
+    protected override void Configure(IMapperConfigurationExpression expression)
+    {
+        ArgumentNullException.ThrowIfNull(expression);
+
+        expression.CreateMap<Foo1, Foo3>().ReverseMap();
+        expression.CreateMap<Foo1, Foo5>().ReverseMap();
+    }
+
+    private class Foo1
+    {
+        public LocalTime Bar { get; set; }
+    }
+
+    private class Foo3
+    {
+        public TimeSpan Bar { get; set; }
+    }
+
+    private class Foo5
+    {
+        public TimeOnly Bar { get; set; }
+    }
+
+    public class Converters : TypeConverterFactory
+    {
+        public override IEnumerable<Type> GetTypeConverters()
+        {
+            yield return typeof(ITypeConverter<LocalTime, TimeSpan>);
+            yield return typeof(ITypeConverter<LocalTime?, TimeSpan?>);
+            yield return typeof(ITypeConverter<TimeSpan, LocalTime>);
+            yield return typeof(ITypeConverter<TimeSpan?, LocalTime?>);
+            yield return typeof(ITypeConverter<LocalTime, TimeOnly>);
+            yield return typeof(ITypeConverter<LocalTime?, TimeOnly?>);
+            yield return typeof(ITypeConverter<TimeOnly, LocalTime>);
+            yield return typeof(ITypeConverter<TimeOnly?, LocalTime?>);
+        }
+    }
 }

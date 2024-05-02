@@ -18,7 +18,6 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
 {
     /// <inheritdoc />
-    #if NET6_0_OR_GREATER
     [UnconditionalSuppressMessage(
         "Trimming",
         "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
@@ -29,7 +28,6 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
         "IL2066:The generic parameter of type or method has a DynamicallyAccessedMembersAttribute, but the value used for it can not be statically analyzed.",
         Justification = "The type is an enum value"
     )]
-    #endif
     public void Register(IConventionContext context, IConfiguration configuration, IConfigurationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(context);

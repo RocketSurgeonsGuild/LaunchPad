@@ -6,7 +6,7 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Web.Hosting\Rocket.Surgery.LaunchPad.Web.Hosting.csproj" />
+        <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <PackageReference Include="Humanizer.Core" />
         <PackageReference

@@ -1,4 +1,3 @@
-#if NET6_0_OR_GREATER
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
@@ -65,9 +64,9 @@ public class SerilogDestructuringTests : LoggerTest
     public async Task Should_Destructure_NewtonsoftJson_JValue()
     {
         var faker = new Faker
-                    {
-                        Random = new(17),
-                    };
+        {
+            Random = new(17),
+        };
         using var _ = CaptureLogs(out var logs);
 
         Logger.LogInformation("This is just a test {@Data}", new JValue(faker.Random.Guid()));
@@ -268,5 +267,3 @@ public class SerilogDestructuringTests : LoggerTest
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, threeD);
     }
 }
-
-#endif

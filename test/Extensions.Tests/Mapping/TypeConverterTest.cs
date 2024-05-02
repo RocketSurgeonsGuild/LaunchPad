@@ -68,11 +68,10 @@ internal abstract class TypeConverterData : TheoryData<Type, Type, object?>
         if (type == typeof(DateTime)) return Faker.Date.Recent();
 
         if (type == typeof(DateTimeOffset)) return Faker.Date.RecentOffset();
-        #if NET6_0_OR_GREATER
+
         if (type == typeof(DateOnly)) return Faker.Date.RecentDateOnly();
 
         if (type == typeof(TimeOnly)) return Faker.Date.RecentTimeOnly();
-        #endif
 
         throw new NotSupportedException($"type {type.FullName} is not supported");
     }

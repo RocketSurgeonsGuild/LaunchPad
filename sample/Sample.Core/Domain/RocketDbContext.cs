@@ -11,7 +11,6 @@ public class RocketDbContext(DbContextOptions<RocketDbContext>? options = null) 
     public DbSet<ReadyRocket> Rockets { get; set; } = null!;
     public DbSet<LaunchRecord> LaunchRecords { get; set; } = null!;
 
-    #if NET6_0_OR_GREATER
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder
@@ -21,7 +20,6 @@ public class RocketDbContext(DbContextOptions<RocketDbContext>? options = null) 
            .Properties<RocketId>()
            .HaveConversion<RocketId.EfCoreValueConverter>();
     }
-    #endif
 }
 
 public class StronglyTypedIdValueConverterSelector(ValueConverterSelectorDependencies dependencies) : ValueConverterSelector(dependencies)
