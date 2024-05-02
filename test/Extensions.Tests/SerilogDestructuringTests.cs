@@ -1,4 +1,3 @@
-#if NET6_0_OR_GREATER
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
@@ -268,5 +267,3 @@ public class SerilogDestructuringTests : LoggerTest
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, threeD);
     }
 }
-
-#endif

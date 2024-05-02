@@ -1,4 +1,3 @@
-#if NET6_0_OR_GREATER
 using DryIoc;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -92,12 +91,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
                                       .ForTesting(Imports.Instance, LoggerFactory)
-                                      .Set(
-                                           new FoundationOptions
-                                           {
-                                               RegisterValidationOptionsAsHealthChecks = false,
-                                           }
-                                       )
+                                      .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = false, })
                                       .WithLogger(Logger);
 
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
@@ -109,4 +103,3 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         return Task.CompletedTask;
     }
 }
-#endif

@@ -9,8 +9,8 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate;
 /// <summary>
 ///     Returns assembly information for the given application
 /// </summary>
-[ExtendObjectType(OperationTypeNames.Query)]
 [PublicAPI]
+[ExtendObjectType(OperationTypeNames.Query)]
 public class AssemblyInfoQuery
 {
     /// <summary>
@@ -23,8 +23,7 @@ public class AssemblyInfoQuery
     public AssemblyInfo Version(IResolverContext context, CancellationToken cancellationToken)
 #pragma warning restore CA1822
     {
-        return new AssemblyInfo(
-            context.Services.GetService<FoundationOptions>()?.EntryAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()
-        );
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        return new AssemblyInfo(Assembly.GetEntryAssembly()!);
     }
 }

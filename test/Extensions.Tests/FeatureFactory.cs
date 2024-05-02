@@ -1,5 +1,4 @@
 #pragma warning disable CA5394
-#if NET6_0_OR_GREATER
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Mathematics;
@@ -259,4 +258,3 @@ internal class FeatureFactory
         return tmp.ToArray();
     }
 }
-#endif

@@ -47,13 +47,13 @@ public class AutoRegisterOptions(ITestOutputHelper testOutputHelper) : Conventio
     [PublicAPI]
     private class OptionsA
     {
-        public string A { get; set; }
+        public required string A { get; set; }
     }
 
     [RegisterOptionsConfiguration("OptionsB")]
     [PublicAPI]
     private class OptionsB
     {
-        public string B { get; set; }
+        public required string B { get; set; }
     }
 }

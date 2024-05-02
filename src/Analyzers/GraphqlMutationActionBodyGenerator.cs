@@ -315,10 +315,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                                                          methodSymbol
                                                             .Parameters.SelectMany(
                                                                  p => p.Type.AllInterfaces.Select(
-                                                                     static i => i is INamedTypeSymbol
-                                                                     {
-                                                                         MetadataName: "IOptionalTracking`1", TypeArguments: [var requestType,],
-                                                                     }
+                                                                     static i => i is { MetadataName: "IOptionalTracking`1", TypeArguments: [var requestType,], }
                                                                          ? requestType
                                                                          : null
                                                                  ),

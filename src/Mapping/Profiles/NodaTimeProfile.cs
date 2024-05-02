@@ -97,12 +97,10 @@ public class NodaTimeProfile : Profile
         CreateMap<DateTime?, LocalDate?>().ConvertUsing(source => source.HasValue ? LocalDate.FromDateTime(source.Value) : default(LocalDate?));
         CreateMap<LocalDate, DateTime>().ConvertUsing(source => source.AtMidnight().ToDateTimeUnspecified());
         CreateMap<LocalDate?, DateTime?>().ConvertUsing(source => source.HasValue ? source.Value.AtMidnight().ToDateTimeUnspecified() : default(DateTime?));
-#if NET6_0_OR_GREATER
         CreateMap<DateOnly, LocalDate>().ConvertUsing(source => LocalDate.FromDateOnly(source));
         CreateMap<DateOnly?, LocalDate?>().ConvertUsing(source => source.HasValue ? LocalDate.FromDateOnly(source.Value) : default(LocalDate?));
         CreateMap<LocalDate, DateOnly>().ConvertUsing(source => source.ToDateOnly());
         CreateMap<LocalDate?, DateOnly?>().ConvertUsing(source => source.HasValue ? source.Value.ToDateOnly() : default(DateOnly?));
-#endif
     }
 
     private void CreateMappingsForLocalDateTimeConverter()
@@ -113,12 +111,10 @@ public class NodaTimeProfile : Profile
 
     private void CreateMappingsForLocalTimeConverter()
     {
-#if NET6_0_OR_GREATER
         CreateMap<TimeOnly, LocalTime>().ConvertUsing(source => LocalTime.FromTimeOnly(source));
         CreateMap<TimeOnly?, LocalTime?>().ConvertUsing(source => source.HasValue ? LocalTime.FromTimeOnly(source.Value) : default(LocalTime?));
         CreateMap<LocalTime, TimeOnly>().ConvertUsing(source => source.ToTimeOnly());
         CreateMap<LocalTime?, TimeOnly?>().ConvertUsing(source => source.HasValue ? source.Value.ToTimeOnly() : default(TimeOnly?));
-#endif
         CreateMap<LocalTime, TimeSpan>().ConvertUsing(source => new TimeSpan(source.TickOfDay));
         CreateMap<LocalTime?, TimeSpan?>().ConvertUsing(source => source.HasValue ? new TimeSpan(source.Value.TickOfDay) : default(TimeSpan?));
         CreateMap<TimeSpan, LocalTime>().ConvertUsing(source => LocalTime.FromTicksSinceMidnight(source.Ticks));

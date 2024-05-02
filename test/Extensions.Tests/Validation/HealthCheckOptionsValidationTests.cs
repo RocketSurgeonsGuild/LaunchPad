@@ -1,4 +1,3 @@
-#if NET6_0_OR_GREATER
 using DryIoc;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -163,4 +162,3 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
         return Task.CompletedTask;
     }
 }
-#endif
