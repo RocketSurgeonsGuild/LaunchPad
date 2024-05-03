@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Serilog;
 
@@ -13,4 +12,9 @@ namespace Rocket.Surgery.LaunchPad.Serilog;
 /// <param name="services">The services.</param>
 /// <param name="loggerConfiguration">The logger configuration.</param>
 [PublicAPI]
-public delegate void SerilogConvention(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration);
+public delegate void SerilogConvention(
+    IConventionContext context,
+    IConfiguration configuration,
+    IServiceProvider services,
+    LoggerConfiguration loggerConfiguration
+);

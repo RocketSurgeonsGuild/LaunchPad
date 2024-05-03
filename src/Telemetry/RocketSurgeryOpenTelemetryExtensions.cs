@@ -27,8 +27,8 @@ public static class RocketSurgeryOpenTelemetryExtensions
         if (context.Get<IConfiguration>() is not { } configuration) return builder;
 
         foreach (var item in context.Conventions
-                                              .Get<IOpenTelemetryConvention, OpenTelemetryConvention, IOpenTelemetryAsyncConvention,
-                                                   OpenTelemetryAsyncConvention>())
+                                    .Get<IOpenTelemetryConvention, OpenTelemetryConvention, IOpenTelemetryAsyncConvention,
+                                         OpenTelemetryAsyncConvention>())
         {
             switch (item)
             {
