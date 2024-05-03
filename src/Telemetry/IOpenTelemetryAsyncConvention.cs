@@ -14,9 +14,9 @@ public interface IOpenTelemetryAsyncConvention : IConvention
     /// <summary>
     ///     Register metrics
     /// </summary>
-    /// <param name="conventionContext"></param>
+    /// <param name="context"></param>
     /// <param name="configuration"></param>
     /// <param name="builder"></param>
     /// <param name="cancellationToken"></param>
-    ValueTask Register(IConventionContext conventionContext, IConfiguration configuration, IOpenTelemetryBuilder builder, CancellationToken cancellationToken);
+    ValueTask Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder, CancellationToken cancellationToken);
 }

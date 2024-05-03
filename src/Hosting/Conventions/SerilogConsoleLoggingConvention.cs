@@ -32,8 +32,8 @@ public sealed class SerilogConsoleLoggingConvention : ISerilogConvention
     /// <inheritdoc />
     public void Register(
         IConventionContext context,
-        IServiceProvider services,
         IConfiguration configuration,
+        IServiceProvider services,
         LoggerConfiguration loggerConfiguration
     )
     {

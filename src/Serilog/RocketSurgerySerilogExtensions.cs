@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
@@ -15,22 +16,22 @@ public static class RocketSurgerySerilogExtensions
     ///     Apply configuration conventions
     /// </summary>
     /// <param name="configurationBuilder"></param>
-    /// <param name="conventionContext"></param>
+    /// <param name="context"></param>
+    /// <param name="configuration"></param>
     /// <param name="services"></param>
     /// <returns></returns>
     public static LoggerConfiguration ApplyConventions(
         this LoggerConfiguration configurationBuilder,
-        IConventionContext conventionContext,
+        IConventionContext context,
+        IConfiguration configuration,
         IServiceProvider services
     )
     {
-        var configuration = conventionContext.Get<IConfiguration>()
-         ?? throw new ArgumentException("Configuration was not found in context", nameof(conventionContext));
-        foreach (var item in conventionContext.Conventions.Get<ISerilogConvention, SerilogConvention>())
+        foreach (var item in context.Conventions.Get<ISerilogConvention, SerilogConvention>())
         {
             if (item is ISerilogConvention convention)
-                convention.Register(conventionContext, services, configuration, configurationBuilder);
-            else if (item is SerilogConvention @delegate) @delegate(conventionContext, services, configuration, configurationBuilder);
+                convention.Register(context, configuration, services, configurationBuilder);
+            else if (item is SerilogConvention @delegate) @delegate(context, configuration, services, configurationBuilder);
         }
 
         return configurationBuilder;

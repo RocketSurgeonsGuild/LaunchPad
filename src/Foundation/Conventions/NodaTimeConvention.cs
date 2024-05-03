@@ -30,7 +30,7 @@ public class NodaTimeConvention : IServiceConvention, ISerilogConvention
     }
 
     /// <inheritdoc />
-    public void Register(IConventionContext context, IServiceProvider services, IConfiguration configuration, LoggerConfiguration loggerConfiguration)
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration)
     {
         loggerConfiguration.Destructure.NodaTimeTypes(services.GetRequiredService<IDateTimeZoneProvider>());
     }

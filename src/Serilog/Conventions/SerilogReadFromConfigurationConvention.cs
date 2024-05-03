@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Configuration;
@@ -48,8 +49,8 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
     /// <inheritdoc />
     public void Register(
         IConventionContext context,
-        IServiceProvider services,
         IConfiguration configuration,
+        IServiceProvider services,
         LoggerConfiguration loggerConfiguration
     )
     {

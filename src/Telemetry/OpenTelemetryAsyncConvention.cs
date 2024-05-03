@@ -7,12 +7,12 @@ namespace Rocket.Surgery.LaunchPad.Telemetry;
 /// <summary>
 ///     Delegate OpenTelemetryAsyncConvention
 /// </summary>
-/// <param name="conventionContext"></param>
+/// <param name="context"></param>
 /// <param name="configuration"></param>
 /// <param name="builder"></param>
 /// <param name="cancellationToken"></param>
 public delegate ValueTask OpenTelemetryAsyncConvention(
-    IConventionContext conventionContext,
+    IConventionContext context,
     IConfiguration configuration,
     IOpenTelemetryBuilder builder,
     CancellationToken cancellationToken
