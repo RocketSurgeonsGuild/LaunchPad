@@ -1,9 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Logging;
 using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
@@ -47,4 +45,3 @@ public class ConfigureOptionsLoggingConvention : ISerilogConvention
         }
     }
 }
-
