@@ -63,11 +63,11 @@ public class SerilogHostingConvention : IHostApplicationConvention
                 _options.PreserveStaticLogger,
                 _options.WriteToProviders
             );
-
-            if (context.Get<ILoggerFactory>() != null)
-                // ReSharper disable once NullableWarningSuppressionIsUsed
-                builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
         }
+
+        if (context.Get<ILoggerFactory>() != null)
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
 
         if (_options.WriteToProviders) return;
 

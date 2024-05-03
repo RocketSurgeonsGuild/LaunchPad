@@ -3,6 +3,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog;
 /// <summary>
 ///     RocketSerilogOptions.
 /// </summary>
+[PublicAPI]
 public class LaunchPadLoggingOptions
 {
     /// <summary>
@@ -30,7 +31,7 @@ public class LaunchPadLoggingOptions
     /// <summary>
     ///     Base option from the serilog package
     /// </summary>
-    public bool WriteToProviders { get; set; } = false;
+    public bool WriteToProviders { get; set; }
 
     /// <summary>
     ///     Base option from the serilog package
