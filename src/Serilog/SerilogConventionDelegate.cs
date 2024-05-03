@@ -8,10 +8,13 @@ namespace Rocket.Surgery.LaunchPad.Serilog;
 ///     Delegate SerilogConventionDelegate
 /// </summary>
 /// <param name="context">The context.</param>
-/// <param name="services">The services.</param>
 /// <param name="configuration">The configuration.</param>
+/// <param name="services">The services.</param>
 /// <param name="loggerConfiguration">The logger configuration.</param>
 [PublicAPI]
 public delegate void SerilogConvention(
-    IConventionContext context, IServiceProvider services, IConfiguration configuration, LoggerConfiguration loggerConfiguration
+    IConventionContext context,
+    IConfiguration configuration,
+    IServiceProvider services,
+    LoggerConfiguration loggerConfiguration
 );

@@ -15,8 +15,8 @@ public interface ISerilogConvention : IConvention
     ///     A serilog convention
     /// </summary>
     /// <param name="context"></param>
-    /// <param name="services"></param>
     /// <param name="configuration"></param>
+    /// <param name="services"></param>
     /// <param name="loggerConfiguration"></param>
-    void Register(IConventionContext context, IServiceProvider services, IConfiguration configuration, LoggerConfiguration loggerConfiguration);
+    void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration);
 }

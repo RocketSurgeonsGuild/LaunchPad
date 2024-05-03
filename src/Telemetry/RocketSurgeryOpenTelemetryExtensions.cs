@@ -14,35 +14,35 @@ public static class RocketSurgeryOpenTelemetryExtensions
     ///     Apply configuration conventions
     /// </summary>
     /// <param name="builder"></param>
-    /// <param name="conventionContext"></param>
+    /// <param name="context"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static async ValueTask<IOpenTelemetryBuilder> ApplyConventionsAsync(
         this IOpenTelemetryBuilder builder,
-        IConventionContext conventionContext,
+        IConventionContext context,
         CancellationToken cancellationToken = default
     )
     {
         // If we don't get configuration, we're probably not needing telemetry
-        if (conventionContext.Get<IConfiguration>() is not { } configuration) return builder;
+        if (context.Get<IConfiguration>() is not { } configuration) return builder;
 
-        foreach (var item in conventionContext.Conventions
-                                              .Get<IOpenTelemetryConvention, OpenTelemetryConvention, IOpenTelemetryAsyncConvention,
-                                                   OpenTelemetryAsyncConvention>())
+        foreach (var item in context.Conventions
+                                    .Get<IOpenTelemetryConvention, OpenTelemetryConvention, IOpenTelemetryAsyncConvention,
+                                         OpenTelemetryAsyncConvention>())
         {
             switch (item)
             {
                 case IOpenTelemetryConvention convention:
-                    convention.Register(conventionContext, configuration, builder);
+                    convention.Register(context, configuration, builder);
                     break;
                 case OpenTelemetryConvention @delegate:
-                    @delegate(conventionContext, configuration, builder);
+                    @delegate(context, configuration, builder);
                     break;
                 case IOpenTelemetryAsyncConvention convention:
-                    await convention.Register(conventionContext, configuration, builder, cancellationToken);
+                    await convention.Register(context, configuration, builder, cancellationToken);
                     break;
                 case OpenTelemetryAsyncConvention @delegate:
-                    await @delegate(conventionContext, configuration, builder, cancellationToken);
+                    await @delegate(context, configuration, builder, cancellationToken);
                     break;
             }
         }

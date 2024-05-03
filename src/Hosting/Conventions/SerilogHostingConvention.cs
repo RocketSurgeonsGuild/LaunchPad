@@ -39,8 +39,12 @@ public class SerilogHostingConvention : IHostApplicationConvention
         foreach (var item in builder
                             .Services
                             .Where(
-                                 x => x.ImplementationType?.FullName?.StartsWith("Microsoft.Extensions.Logging", StringComparison.Ordinal) == true
-                                  && x.ImplementationType?.FullName.EndsWith("Provider", StringComparison.Ordinal) == true
+                                 x =>
+                                 {
+                                     var type = x.IsKeyedService ? x.KeyedImplementationType : x.ImplementationType;
+                                     return type?.FullName?.StartsWith("Microsoft.Extensions.Logging", StringComparison.Ordinal) == true
+                                      && type.FullName.EndsWith("Provider", StringComparison.Ordinal);
+                                 }
                              )
                             .ToArray()
                 )
@@ -55,7 +59,7 @@ public class SerilogHostingConvention : IHostApplicationConvention
         else
         {
             builder.Services.AddSerilog(
-                (services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, services),
+                (services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, builder.Configuration, services),
                 _options.PreserveStaticLogger,
                 _options.WriteToProviders
             );

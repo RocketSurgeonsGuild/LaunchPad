@@ -24,8 +24,8 @@ public class EnvironmentLoggingConvention : ISerilogConvention
     /// <param name="loggerConfiguration"></param>
     public void Register(
         IConventionContext context,
-        IServiceProvider services,
         IConfiguration configuration,
+        IServiceProvider services,
         LoggerConfiguration loggerConfiguration
     )
     {

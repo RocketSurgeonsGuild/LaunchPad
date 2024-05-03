@@ -17,13 +17,13 @@ public class SerilogEnrichEnvironmentLoggingConvention : ISerilogConvention
     ///     Registers the specified context.
     /// </summary>
     /// <param name="context">The context.</param>
-    /// <param name="services"></param>
     /// <param name="configuration"></param>
+    /// <param name="services"></param>
     /// <param name="loggerConfiguration"></param>
     public void Register(
         IConventionContext context,
-        IServiceProvider services,
         IConfiguration configuration,
+        IServiceProvider services,
         LoggerConfiguration loggerConfiguration
     )
     {

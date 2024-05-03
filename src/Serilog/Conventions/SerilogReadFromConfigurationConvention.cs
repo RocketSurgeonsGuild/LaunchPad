@@ -48,8 +48,8 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
     /// <inheritdoc />
     public void Register(
         IConventionContext context,
-        IServiceProvider services,
         IConfiguration configuration,
+        IServiceProvider services,
         LoggerConfiguration loggerConfiguration
     )
     {

@@ -7,7 +7,7 @@ namespace Rocket.Surgery.LaunchPad.Telemetry;
 /// <summary>
 ///     Delegate OpenTelemetryMetricsConvention
 /// </summary>
-/// <param name="conventionContext"></param>
+/// <param name="context"></param>
 /// <param name="configuration"></param>
 /// <param name="builder"></param>
-public delegate void OpenTelemetryMetricsConvention(IConventionContext conventionContext, IConfiguration configuration, MeterProviderBuilder builder);
+public delegate void OpenTelemetryMetricsConvention(IConventionContext context, IConfiguration configuration, MeterProviderBuilder builder);
