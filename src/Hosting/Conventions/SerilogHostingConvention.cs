@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
+using Rocket.Surgery.Conventions.Logging;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
@@ -63,11 +64,11 @@ public class SerilogHostingConvention : IHostApplicationConvention
                 _options.PreserveStaticLogger,
                 _options.WriteToProviders
             );
-
-            if (context.Get<ILoggerFactory>() != null)
-                // ReSharper disable once NullableWarningSuppressionIsUsed
-                builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
         }
+
+        if (context.Get<ILoggerFactory>() != null)
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
 
         if (_options.WriteToProviders) return;
 
