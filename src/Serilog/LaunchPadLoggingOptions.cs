@@ -27,14 +27,4 @@ public class LaunchPadLoggingOptions
     ///     Enable or disable debug logging, defaults to enabled
     /// </summary>
     public bool EnableDebugLogging { get; set; } = true;
-
-    /// <summary>
-    ///     Base option from the serilog package
-    /// </summary>
-    public bool WriteToProviders { get; set; }
-
-    /// <summary>
-    ///     Base option from the serilog package
-    /// </summary>
-    public bool PreserveStaticLogger { get; set; }
 }
