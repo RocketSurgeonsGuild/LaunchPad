@@ -3,9 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
+using Rocket.Surgery.Conventions.Hosting;
 using Rocket.Surgery.Hosting;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Extensions.Hosting;
+using Serilog.Extensions.Logging;
 using ILogger = Serilog.ILogger;
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
@@ -17,17 +21,33 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// <seealso cref="IHostApplicationConvention" />
 [PublicAPI]
 [ExportConvention]
-public class SerilogHostingConvention : IHostApplicationConvention
+public class SerilogHostingConvention : IHostApplicationConvention, IHostCreatedConvention<IHost>
 {
-    private readonly LaunchPadLoggingOptions _options;
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="SerilogHostingConvention" /> class.
-    /// </summary>
-    /// <param name="options">The options.</param>
-    public SerilogHostingConvention(LaunchPadLoggingOptions? options = null)
+    private void CustomAddSerilog(
+        IServiceCollection collection,
+        Action<IServiceProvider, LoggerConfiguration> configureLogger
+    )
     {
-        _options = options ?? new LaunchPadLoggingOptions();
+        collection.AddSingleton(new LoggerProviderCollection());
+        collection.AddSingleton(
+            services =>
+            {
+                var loggerConfiguration = new LoggerConfiguration();
+                loggerConfiguration.WriteTo.Providers(services.GetRequiredService<LoggerProviderCollection>());
+                configureLogger(services, loggerConfiguration);
+                return loggerConfiguration.CreateLogger();
+            }
+        );
+        collection.AddSingleton<ILogger>(services => services.GetRequiredService<Logger>().ForContext(new NullEnricher()));
+        collection.AddSingleton<ILoggerFactory>(
+            services => new SerilogLoggerFactory(
+                services.GetRequiredService<Logger>(),
+                true,
+                services.GetRequiredService<LoggerProviderCollection>()
+            )
+        );
+        collection.AddSingleton(services => new DiagnosticContext(services.GetRequiredService<Logger>()));
+        collection.AddSingleton<IDiagnosticContext>(services => services.GetRequiredService<DiagnosticContext>());
     }
 
     /// <inheritdoc />
@@ -58,30 +78,35 @@ public class SerilogHostingConvention : IHostApplicationConvention
         }
         else
         {
-            builder.Services.AddSerilog(
-                (services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, builder.Configuration, services),
-                _options.PreserveStaticLogger,
-                _options.WriteToProviders
+            CustomAddSerilog(
+                builder.Services,
+                (services, loggerConfiguration) => loggerConfiguration.ApplyConventions(context, builder.Configuration, services)
             );
         }
 
         if (context.Get<ILoggerFactory>() != null)
             // ReSharper disable once NullableWarningSuppressionIsUsed
             builder.Services.AddSingleton(context.Get<ILoggerFactory>()!);
+    }
 
-        if (_options.WriteToProviders) return;
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IHost host)
+    {
+        host
+           .Services
+           .GetServices<ILoggerProvider>()
+           .Aggregate(
+                host.Services.GetRequiredService<LoggerProviderCollection>(),
+                (factory, loggerProvider) =>
+                {
+                    factory.AddProvider(loggerProvider);
+                    return factory;
+                }
+            );
+    }
 
-        builder.OnHostStarting(
-            provider => provider
-                       .GetServices<ILoggerProvider>()
-                       .Aggregate(
-                            provider.GetRequiredService<ILoggerFactory>(),
-                            (factory, loggerProvider) =>
-                            {
-                                factory.AddProvider(loggerProvider);
-                                return factory;
-                            }
-                        )
-        );
+    private class NullEnricher : ILogEventEnricher
+    {
+        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory) { }
     }
 }
