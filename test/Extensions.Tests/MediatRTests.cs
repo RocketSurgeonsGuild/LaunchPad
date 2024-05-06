@@ -89,9 +89,9 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
 
         public IEnumerable<Assembly> GetAssemblies(
             Action<IAssemblyProviderAssemblySelector> action,
+            int lineNumber = 0,
             string filePath = "",
-            string memberName = "",
-            int lineNumber = 0
+            string argumentExpression = ""
         )
         {
             return new[]
@@ -103,9 +103,9 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
 
         public IEnumerable<Type> GetTypes(
             Func<ITypeProviderAssemblySelector, IEnumerable<Type>> selector,
+            int lineNumber = 0,
             string filePath = "",
-            string memberName = "",
-            int lineNumber = 0
+            string argumentExpression = ""
         )
         {
             return Enumerable.Empty<Type>();
