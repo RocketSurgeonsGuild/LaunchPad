@@ -2,7 +2,7 @@
 <Project>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.4.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.0-preview.6.24214.1" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.0-preview.7.24251.11" />
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
