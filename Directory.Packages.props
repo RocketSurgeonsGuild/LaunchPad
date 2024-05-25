@@ -151,9 +151,9 @@
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="8.1.0-next.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="8.1.0-next.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="8.1.0-next.1" />
-    <PackageVersion Include="xunit" Version="2.8.0" />
-    <PackageVersion Include="xunit.analyzers" Version="1.13.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.0" />
+    <PackageVersion Include="xunit" Version="2.8.1" />
+    <PackageVersion Include="xunit.analyzers" Version="1.14.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.1" />
     <PackageVersion Include="Verify.Xunit" Version="24.2.0" />
     <PackageVersion Include="Verify.NodaTime" Version="2.1.0" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
