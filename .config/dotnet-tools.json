@@ -31,7 +31,7 @@
             "commands": ["docfx"]
         },
         "strawberryshake.tools": {
-            "version": "14.0.0-p.102",
+            "version": "14.0.0-p.103",
             "commands": ["dotnet-graphql"]
         },
         "dotnet-outdated-tool": {
