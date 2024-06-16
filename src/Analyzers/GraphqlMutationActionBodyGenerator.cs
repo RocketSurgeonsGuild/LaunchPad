@@ -389,20 +389,17 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     .AddDistinctUsingStatements(additionalUsings.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
-                     List<ExternAliasDirectiveSyntax>(),
-                     List(usings),
-                     List<AttributeListSyntax>(),
-                     SingletonList<MemberDeclarationSyntax>(
-                         symbol.ContainingNamespace.IsGlobalNamespace
-                             ? newClass.ReparentDeclaration(context, syntax)
-                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                                .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
-                     )
-                 )
-                .WithLeadingTrivia()
-                .WithTrailingTrivia()
-                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
-                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
+                List<ExternAliasDirectiveSyntax>(),
+                List(usings),
+                List<AttributeListSyntax>(),
+                SingletonList<MemberDeclarationSyntax>(
+                    symbol.ContainingNamespace.IsGlobalNamespace
+                        ? newClass.ReparentDeclaration(context, syntax)
+                        : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
+                )
+            )
+           .AddSharedTrivia();
 
         context.AddSourceRelativeTo(syntax, "Mutations", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
 

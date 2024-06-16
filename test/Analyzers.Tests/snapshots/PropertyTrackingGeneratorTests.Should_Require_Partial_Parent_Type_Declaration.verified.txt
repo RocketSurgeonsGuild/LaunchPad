@@ -15,7 +15,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input1_PublicClass_PatchRocket_PropertyTracking.cs: (5,24)-(5,35),
+      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input1_PublicClass_PatchRocket_PropertyTracking.cs: (6,24)-(6,35),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0101),
       MessageFormat: The namespace '{1}' already contains a definition for '{0}',
       Message: The namespace 'Sample.Core.Operations.Rockets' already contains a definition for 'PublicClass',

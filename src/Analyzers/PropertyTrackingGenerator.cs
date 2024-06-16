@@ -76,13 +76,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         var changesRecord = RecordDeclaration(Token(SyntaxKind.RecordKeyword), "Changes")
                            .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
                            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
-                           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-                           .WithLeadingTrivia(
-                                Trivia(
-                                    PragmaWarningDirectiveTrivia(Token(SyntaxKind.DisableKeyword), true)
-                                       .WithErrorCodes(SingletonSeparatedList<ExpressionSyntax>(IdentifierName("CA1034")))
-                                )
-                            );
+                           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken));
 
         var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
         var applyChangesBody = Block();
@@ -378,18 +372,17 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
 
         var cu = CompilationUnit(
-                     List<ExternAliasDirectiveSyntax>(),
-                     List(usings),
-                     List<AttributeListSyntax>(),
-                     SingletonList<MemberDeclarationSyntax>(
-                         symbol.ContainingNamespace.IsGlobalNamespace
-                             ? classToInherit.ReparentDeclaration(context, declaration)
-                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                                .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
-                     )
-                 )
-                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
-                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
+                List<ExternAliasDirectiveSyntax>(),
+                List(usings),
+                List<AttributeListSyntax>(),
+                SingletonList<MemberDeclarationSyntax>(
+                    symbol.ContainingNamespace.IsGlobalNamespace
+                        ? classToInherit.ReparentDeclaration(context, declaration)
+                        : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                )
+            )
+           .AddSharedTrivia();
 
         context.AddSourceRelativeTo(declaration, "PropertyTracking", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
         return;

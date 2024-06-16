@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input2_Save2Rocket_PatchRequest_PropertyTracking.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using System;
 using System.Security.Claims;
 
@@ -20,7 +21,6 @@ namespace TestNamespace
             public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> Other { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
 
             [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
-#pragma warning disable CA1034
             public record Changes
             {
                 public bool Sn { get; init; }
@@ -96,4 +96,5 @@ namespace TestNamespace
         }
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

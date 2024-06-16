@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/Input2_Save2Rocket_TrackingRequest_Optionals.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using System;
 
 namespace TestNamespace
@@ -43,4 +44,5 @@ namespace TestNamespace
         }
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

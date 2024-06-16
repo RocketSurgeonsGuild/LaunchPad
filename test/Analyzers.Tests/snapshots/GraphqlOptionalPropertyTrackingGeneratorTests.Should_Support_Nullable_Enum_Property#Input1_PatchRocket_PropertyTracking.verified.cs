@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input1_PatchRocket_PropertyTracking.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using System;
 using Sample.Core.Operations.Rockets;
 using NodaTime;
@@ -19,7 +20,6 @@ namespace Sample.Core.Operations.Rockets
         public Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant?> PlannedDate { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<Instant?>.Empty(default);
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
-#pragma warning disable CA1034
         public record Changes
         {
             public bool SerialNumber { get; init; }
@@ -94,4 +94,5 @@ namespace Sample.Core.Operations.Rockets
         };
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

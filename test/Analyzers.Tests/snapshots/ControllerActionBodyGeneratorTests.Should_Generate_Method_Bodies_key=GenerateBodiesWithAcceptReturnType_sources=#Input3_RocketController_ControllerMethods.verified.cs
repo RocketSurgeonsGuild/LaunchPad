@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.ControllerActionBodyGenerator/Input3_RocketController_ControllerMethods.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Rocket.Surgery.LaunchPad.AspNetCore;
@@ -36,4 +37,5 @@ namespace MyNamespace.Controllers
         }
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

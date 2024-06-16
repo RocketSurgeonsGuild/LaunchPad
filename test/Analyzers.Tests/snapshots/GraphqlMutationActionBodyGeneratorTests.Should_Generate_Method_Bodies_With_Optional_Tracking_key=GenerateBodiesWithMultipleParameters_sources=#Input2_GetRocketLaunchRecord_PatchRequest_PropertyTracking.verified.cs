@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input2_GetRocketLaunchRecord_PatchRequest_PropertyTracking.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 namespace TestNamespace
 {
     public static partial class GetRocketLaunchRecord
@@ -8,7 +9,6 @@ namespace TestNamespace
         public partial record PatchRequest
         {
             [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
-#pragma warning disable CA1034
             public record Changes
             {
             }
@@ -48,4 +48,5 @@ namespace TestNamespace
         }
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

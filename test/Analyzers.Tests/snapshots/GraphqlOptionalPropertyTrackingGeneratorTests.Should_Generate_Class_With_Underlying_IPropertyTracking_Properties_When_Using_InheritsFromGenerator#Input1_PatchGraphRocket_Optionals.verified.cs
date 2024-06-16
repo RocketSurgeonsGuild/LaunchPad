@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/Input1_PatchGraphRocket_Optionals.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using System;
 using NodaTime;
 
@@ -52,4 +53,5 @@ public partial record PatchGraphRocket
         return value;
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

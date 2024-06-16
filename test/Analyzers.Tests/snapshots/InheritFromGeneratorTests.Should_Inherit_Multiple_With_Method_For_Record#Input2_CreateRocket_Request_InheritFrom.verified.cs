@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator/Input2_CreateRocket_Request_InheritFrom.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using System;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -29,4 +30,5 @@ namespace Sample.Core.Operations.Rockets
         }
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

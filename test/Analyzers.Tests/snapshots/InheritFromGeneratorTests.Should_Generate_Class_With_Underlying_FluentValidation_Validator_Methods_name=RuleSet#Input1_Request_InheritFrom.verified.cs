@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator/Input1_Request_InheritFrom.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -18,4 +19,5 @@ public partial class Request
         Something = value.Something
     };
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

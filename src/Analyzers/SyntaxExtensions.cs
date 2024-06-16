@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -45,6 +46,27 @@ internal static class SyntaxExtensions
             parent = parentSymbol.ContainingType;
         }
     }
+
+    public static CompilationUnitSyntax AddSharedTrivia(this CompilationUnitSyntax source)
+    {
+        return source
+              .WithLeadingTrivia(
+                   Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)),
+                   Trivia(
+                       PragmaWarningDirectiveTrivia(Token(SyntaxKind.DisableKeyword), true)
+                          .WithErrorCodes(SeparatedList(List(DisabledWarnings.Value)))
+                   )
+               )
+              .WithTrailingTrivia(
+                   Trivia(
+                       PragmaWarningDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)
+                          .WithErrorCodes(SeparatedList(List(DisabledWarnings.Value)))
+                   ),
+                   Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)),
+                   CarriageReturnLineFeed
+               );
+    }
+
 
     public static TypeDeclarationSyntax ReparentDeclaration(
         this TypeDeclarationSyntax classToNest,
@@ -225,6 +247,14 @@ internal static class SyntaxExtensions
         var names = GetNames(attributePrefixes);
         return attributeSyntax.Name.GetSyntaxName() is { } n && names.Contains(n);
     }
+
+    private static readonly string[] _disabledWarnings = { "CS0105", "CA1002", "CA1034", };
+
+    private static readonly Lazy<ImmutableArray<ExpressionSyntax>> DisabledWarnings = new(
+        () => _disabledWarnings
+             .Select(z => (ExpressionSyntax)IdentifierName(z))
+             .ToImmutableArray()
+    );
 
     private static readonly ConcurrentDictionary<string, HashSet<string>> AttributeNames = new();
 
