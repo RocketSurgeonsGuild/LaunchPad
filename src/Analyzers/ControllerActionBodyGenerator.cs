@@ -730,10 +730,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                 .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
                      )
                  )
-                .WithLeadingTrivia()
-                .WithTrailingTrivia()
-                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
-                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
+                .AddSharedTrivia();
 
         context.AddSourceRelativeTo(syntax, "ControllerMethods", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
     }

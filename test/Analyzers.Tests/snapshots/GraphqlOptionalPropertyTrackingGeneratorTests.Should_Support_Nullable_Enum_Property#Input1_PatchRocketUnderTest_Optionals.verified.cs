@@ -1,5 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/Input1_PatchRocketUnderTest_Optionals.cs
 #nullable enable
+#pragma warning disable CS0105, CA1002, CA1034
 using System;
 using Sample.Core.Operations.Rockets;
 using NodaTime;
@@ -56,4 +57,5 @@ namespace Sample.Core.Operations.Rockets
         }
     }
 }
+#pragma warning restore CS0105, CA1002, CA1034
 #nullable restore

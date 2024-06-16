@@ -253,10 +253,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                 .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
                      )
                  )
-                .WithLeadingTrivia()
-                .WithTrailingTrivia()
-                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
-                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
+                .AddSharedTrivia();
 
         context.AddSourceRelativeTo(declaration, "Optionals", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
         return;

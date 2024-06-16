@@ -399,10 +399,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                                 .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
                      )
                  )
-                .WithLeadingTrivia()
-                .WithTrailingTrivia()
-                .WithLeadingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true)))
-                .WithTrailingTrivia(Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true)), CarriageReturnLineFeed);
+                .AddSharedTrivia();
 
         context.AddSourceRelativeTo(syntax, "Mutations", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
 
