@@ -720,17 +720,17 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                     .AddDistinctUsingStatements(additionalUsings.Where(z => !string.IsNullOrWhiteSpace(z)));
 
         var cu = CompilationUnit(
-                     List<ExternAliasDirectiveSyntax>(),
-                     List(usings),
-                     List<AttributeListSyntax>(),
-                     SingletonList<MemberDeclarationSyntax>(
-                         symbol.ContainingNamespace.IsGlobalNamespace
-                             ? newClass.ReparentDeclaration(context, syntax)
-                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                                .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
-                     )
-                 )
-                .AddSharedTrivia();
+                List<ExternAliasDirectiveSyntax>(),
+                List(usings),
+                List<AttributeListSyntax>(),
+                SingletonList<MemberDeclarationSyntax>(
+                    symbol.ContainingNamespace.IsGlobalNamespace
+                        ? newClass.ReparentDeclaration(context, syntax)
+                        : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(newClass.ReparentDeclaration(context, syntax)))
+                )
+            )
+           .AddSharedTrivia();
 
         context.AddSourceRelativeTo(syntax, "ControllerMethods", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
     }

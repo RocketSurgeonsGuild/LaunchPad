@@ -124,7 +124,8 @@ internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) :
                 parent = parent.ReplaceNodes(
                     [whenAction, otherwiseAction,],
                     (syntax, argumentSyntax) => syntax == otherwiseAction
-                        ? HandleNestedAction(otherwiseAction) ?? argumentSyntax.WithExpression(SyntaxFactory.ParenthesizedLambdaExpression().WithBlock(SyntaxFactory.Block()))
+                        ? HandleNestedAction(otherwiseAction)
+                     ?? argumentSyntax.WithExpression(SyntaxFactory.ParenthesizedLambdaExpression().WithBlock(SyntaxFactory.Block()))
                         : syntax == whenAction
                             ? argumentSyntax.WithExpression(SyntaxFactory.ParenthesizedLambdaExpression().WithBlock(SyntaxFactory.Block()))
                             : argumentSyntax
@@ -137,9 +138,11 @@ internal class RuleExpressionVisitor(ImmutableHashSet<string> excludedMembers) :
                     (syntax, argumentSyntax) =>
                     {
                         if (syntax == otherwiseAction)
-                            return HandleNestedAction(otherwiseAction) ?? argumentSyntax.WithExpression(SyntaxFactory.ParenthesizedLambdaExpression().WithBlock(SyntaxFactory.Block()));
+                            return HandleNestedAction(otherwiseAction)
+                             ?? argumentSyntax.WithExpression(SyntaxFactory.ParenthesizedLambdaExpression().WithBlock(SyntaxFactory.Block()));
                         if (syntax == whenAction)
-                            return HandleNestedAction(whenAction) ?? argumentSyntax.WithExpression(SyntaxFactory.ParenthesizedLambdaExpression().WithBlock(SyntaxFactory.Block()));
+                            return HandleNestedAction(whenAction)
+                             ?? argumentSyntax.WithExpression(SyntaxFactory.ParenthesizedLambdaExpression().WithBlock(SyntaxFactory.Block()));
                         return argumentSyntax;
                     }
                 );

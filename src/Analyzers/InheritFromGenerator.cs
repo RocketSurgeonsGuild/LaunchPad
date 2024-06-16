@@ -189,17 +189,17 @@ public class InheritFromGenerator : IIncrementalGenerator
         }
 
         var cu = CompilationUnit(
-                     List<ExternAliasDirectiveSyntax>(),
-                     List(namespaces),
-                     List<AttributeListSyntax>(),
-                     SingletonList<MemberDeclarationSyntax>(
-                         targetSymbol.ContainingNamespace.IsGlobalNamespace
-                             ? classToInherit.ReparentDeclaration(context, declaration)
-                             : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
-                                .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
-                     )
-                 )
-                .AddSharedTrivia();
+                List<ExternAliasDirectiveSyntax>(),
+                List(namespaces),
+                List<AttributeListSyntax>(),
+                SingletonList<MemberDeclarationSyntax>(
+                    targetSymbol.ContainingNamespace.IsGlobalNamespace
+                        ? classToInherit.ReparentDeclaration(context, declaration)
+                        : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                )
+            )
+           .AddSharedTrivia();
 
         context.AddSourceRelativeTo(declaration, "InheritFrom", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
     }
@@ -676,17 +676,17 @@ public class InheritFromGenerator : IIncrementalGenerator
                 classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
 
             var cu = CompilationUnit(
-                         List<ExternAliasDirectiveSyntax>(),
-                         namespaces,
-                         List<AttributeListSyntax>(),
-                         SingletonList<MemberDeclarationSyntax>(
-                             targetSymbol.ContainingNamespace.IsGlobalNamespace
-                                 ? classToInherit.ReparentDeclaration(context, declaration)
-                                 : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
-                                    .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
-                         )
-                     )
-                    .AddSharedTrivia();
+                    List<ExternAliasDirectiveSyntax>(),
+                    namespaces,
+                    List<AttributeListSyntax>(),
+                    SingletonList<MemberDeclarationSyntax>(
+                        targetSymbol.ContainingNamespace.IsGlobalNamespace
+                            ? classToInherit.ReparentDeclaration(context, declaration)
+                            : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
+                               .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                    )
+                )
+               .AddSharedTrivia();
 
             context.AddSourceRelativeTo(declaration, "InheritFrom_Validator", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
         }

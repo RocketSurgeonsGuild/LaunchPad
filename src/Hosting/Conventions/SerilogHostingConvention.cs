@@ -16,7 +16,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 /// <summary>
 ///     SerilogHostingConvention.
-///     Implements the <see cref="IHostCreatedConvention&lt;IHost&gt;" />
+///     Implements the <see cref="IHostCreatedConvention{IHost}" />
 /// </summary>
 /// <seealso cref="IHostCreatedConvention&lt;IHost&gt;" />
 [PublicAPI]

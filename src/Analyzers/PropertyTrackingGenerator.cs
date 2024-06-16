@@ -372,17 +372,17 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
 
         var cu = CompilationUnit(
-                     List<ExternAliasDirectiveSyntax>(),
-                     List(usings),
-                     List<AttributeListSyntax>(),
-                     SingletonList<MemberDeclarationSyntax>(
-                         symbol.ContainingNamespace.IsGlobalNamespace
-                             ? classToInherit.ReparentDeclaration(context, declaration)
-                             : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                                .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
-                     )
-                 )
-                .AddSharedTrivia();
+                List<ExternAliasDirectiveSyntax>(),
+                List(usings),
+                List<AttributeListSyntax>(),
+                SingletonList<MemberDeclarationSyntax>(
+                    symbol.ContainingNamespace.IsGlobalNamespace
+                        ? classToInherit.ReparentDeclaration(context, declaration)
+                        : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                )
+            )
+           .AddSharedTrivia();
 
         context.AddSourceRelativeTo(declaration, "PropertyTracking", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
         return;
