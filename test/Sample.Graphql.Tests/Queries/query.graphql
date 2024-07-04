@@ -1,5 +1,5 @@
 ﻿query GetLaunchRecords {
-    launchRecords {
+    launchRecords(first: 50) {
         nodes {
             id
             rocket {
@@ -16,7 +16,7 @@
 }
 
 query GetFilteredLaunchRecords($rocketType: RocketType!) {
-    launchRecords(where: { rocket: { type: { eq: $rocketType } } }) {
+    launchRecords(where: { rocket: { type: { eq: $rocketType } } }, first: 50) {
         nodes {
             id
             rocket {
@@ -32,7 +32,7 @@ query GetFilteredLaunchRecords($rocketType: RocketType!) {
     }
 }
 query GetLaunchRecord($id: UUID) {
-    launchRecords(where: { id: { eq: $id } }) {
+    launchRecords(where: { id: { eq: $id } }, first: 1) {
         nodes {
             id
             rocket {
@@ -50,7 +50,7 @@ query GetLaunchRecord($id: UUID) {
 }
 
 query GetRockets {
-    rockets {
+    rockets(first: 50) {
         nodes {
             id
             serialNumber
@@ -63,7 +63,7 @@ query GetRockets {
 }
 
 query GetFilteredRockets($rocketType: RocketType) {
-    rockets(where: {type: { eq: $rocketType } }) {
+    rockets(where: {type: { eq: $rocketType } }, first: 50) {
         nodes {
             id
             serialNumber
@@ -76,7 +76,7 @@ query GetFilteredRockets($rocketType: RocketType) {
 }
 
 query GetRocket($id: UUID) {
-    rockets(where: { id: { eq: $id } }) {
+    rockets(where: { id: { eq: $id } }, first: 1) {
         nodes {
             id
             serialNumber
