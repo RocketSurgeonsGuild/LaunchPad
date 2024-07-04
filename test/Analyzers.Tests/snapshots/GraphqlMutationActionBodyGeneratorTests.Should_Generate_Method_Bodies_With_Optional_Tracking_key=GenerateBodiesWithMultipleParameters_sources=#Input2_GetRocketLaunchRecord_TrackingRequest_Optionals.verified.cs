@@ -1,6 +1,6 @@
 ﻿//HintName: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator/Input2_GetRocketLaunchRecord_TrackingRequest_Optionals.cs
 #nullable enable
-#pragma warning disable CS0105, CA1002, CA1034
+#pragma warning disable CA1002, CA1034, CA1822, CS0105, CS1573, CS8602, CS8603, CS8618, CS8669
 namespace TestNamespace
 {
     public static partial class GetRocketLaunchRecord
@@ -20,5 +20,5 @@ namespace TestNamespace
         }
     }
 }
-#pragma warning restore CS0105, CA1002, CA1034
+#pragma warning restore CA1002, CA1034, CA1822, CS0105, CS1573, CS8602, CS8603, CS8618, CS8669
 #nullable restore
