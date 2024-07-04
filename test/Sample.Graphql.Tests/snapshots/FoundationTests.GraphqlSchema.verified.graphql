@@ -603,7 +603,7 @@ directive @listSize("The `assumedSize` argument can be used to statically define
 scalar Coordinates
 
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
-scalar DateTime # @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
 
 """
 Represents a time zone - a mapping between UTC and local time.
@@ -658,7 +658,7 @@ scalar Period
 "A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
 scalar Position
 
-scalar UUID # @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
+scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
 
 scalar Void
 
