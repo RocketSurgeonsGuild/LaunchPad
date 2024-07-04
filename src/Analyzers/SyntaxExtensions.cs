@@ -248,7 +248,17 @@ internal static class SyntaxExtensions
         return attributeSyntax.Name.GetSyntaxName() is { } n && names.Contains(n);
     }
 
-    private static readonly string[] _disabledWarnings = { "CS0105", "CA1002", "CA1034", };
+    private static readonly string[] _disabledWarnings = {
+        "CA1002",
+        "CA1034",
+        "CA1822",
+        "CS0105",
+        "CS1573",
+        "CS8602",
+        "CS8603",
+        "CS8618",
+        "CS8669",
+    };
 
     private static readonly Lazy<ImmutableArray<ExpressionSyntax>> DisabledWarnings = new(
         () => _disabledWarnings
