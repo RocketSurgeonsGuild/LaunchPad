@@ -248,7 +248,8 @@ internal static class SyntaxExtensions
         return attributeSyntax.Name.GetSyntaxName() is { } n && names.Contains(n);
     }
 
-    private static readonly string[] _disabledWarnings = {
+    private static readonly string[] _disabledWarnings =
+    {
         "CA1002",
         "CA1034",
         "CA1822",
