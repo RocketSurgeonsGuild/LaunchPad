@@ -25,6 +25,7 @@ builder
    .AddExecutableTypes()
    .AddQueryType()
    .AddMutationType()
+   .AddDirectiveType<SpecifiedByDirectiveType>()
    .ModifyRequestOptions(options => options.IncludeExceptionDetails = true);
 
 var app = await builder
