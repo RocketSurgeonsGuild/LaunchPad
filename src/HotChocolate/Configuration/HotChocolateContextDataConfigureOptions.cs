@@ -13,10 +13,10 @@ internal class HotChocolateContextDataConfigureOptions : IConfigureNamedOptions<
     public void Configure(string? name, RequestExecutorSetup options)
     {
         options.OnConfigureSchemaBuilderHooks.Add(
-            new OnConfigureSchemaBuilderAction((context, _) => context.SchemaBuilder.SetContextData("SchemaName", name))
+            new((context, _) => context.SchemaBuilder.SetContextData("SchemaName", name))
         );
         options.OnConfigureSchemaBuilderHooks.Add(
-            new OnConfigureSchemaBuilderAction((context, _) => context.SchemaBuilder.TryAddTypeInterceptor(typeof(NestedTypeNameTypeInterceptor)))
+            new((context, _) => context.SchemaBuilder.TryAddTypeInterceptor(typeof(NestedTypeNameTypeInterceptor)))
         );
     }
 }

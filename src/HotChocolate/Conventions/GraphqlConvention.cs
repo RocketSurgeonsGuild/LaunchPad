@@ -1,5 +1,4 @@
-﻿using FairyBread;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -59,3 +58,4 @@ public class GraphqlConvention : IServiceConvention
         sb.AddType<AssemblyInfoQuery>();
     }
 }
+

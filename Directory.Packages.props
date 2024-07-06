@@ -26,7 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="13.0.1" />
-    <PackageVersion Include="FairyBread" Version="10.0.0" />
     <PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.11.1" />
     <PackageVersion Include="FluentValidation" Version="11.9.2" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -34,27 +33,27 @@
     <PackageVersion Include="Grpc.AspNetCore" Version="2.63.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
     <PackageVersion Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
-    <PackageVersion Include="HotChocolate" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Abstractions" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.AspNetCore" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Data" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="14.0.0-p.122" />
-    <PackageVersion Include="HotChocolate.Types.Spatial" Version="14.0.0-p.122" />
-    <PackageVersion Include="StrawberryShake.Transport.Http" Version="14.0.0-p.122" />
-    <PackageVersion Include="StrawberryShake" Version="14.0.0-p.122" />
-    <PackageVersion Include="StrawberryShake.Core" Version="14.0.0-p.122" />
-    <PackageVersion Include="StrawberryShake.Server" Version="14.0.0-p.122" />
-    <PackageVersion Include="StrawberryShake.Maui" Version="14.0.0-p.122" />
-    <PackageVersion Include="StrawberryShake.Blazor" Version="14.0.0-p.122" />
-    <PackageVersion Include="StrawberryShake.Razor" Version="14.0.0-p.122" />
+    <PackageVersion Include="HotChocolate" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Abstractions" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Data" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Data.AutoMapper" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="14.0.0-p.124" />
+    <PackageVersion Include="HotChocolate.Types.Spatial" Version="14.0.0-p.124" />
+    <PackageVersion Include="StrawberryShake.Transport.Http" Version="14.0.0-p.124" />
+    <PackageVersion Include="StrawberryShake" Version="14.0.0-p.124" />
+    <PackageVersion Include="StrawberryShake.Core" Version="14.0.0-p.124" />
+    <PackageVersion Include="StrawberryShake.Server" Version="14.0.0-p.124" />
+    <PackageVersion Include="StrawberryShake.Maui" Version="14.0.0-p.124" />
+    <PackageVersion Include="StrawberryShake.Blazor" Version="14.0.0-p.124" />
+    <PackageVersion Include="StrawberryShake.Razor" Version="14.0.0-p.124" />
     <PackageVersion Include="MediatR" Version="12.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />

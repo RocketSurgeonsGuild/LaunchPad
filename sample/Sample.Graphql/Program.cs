@@ -1,3 +1,4 @@
+using HotChocolate.Configuration;
 using HotChocolate.Types.Spatial;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
@@ -25,8 +26,20 @@ builder
    .AddExecutableTypes()
    .AddQueryType()
    .AddMutationType()
-   .AddDirectiveType<SpecifiedByDirectiveType>()
-   .ModifyRequestOptions(options => options.IncludeExceptionDetails = true);
+   .ModifyOptions(options =>
+                  {
+                      options.RemoveUnreachableTypes = false;
+                      options.EnableDirectiveIntrospection = true;
+                      options.EnableTrueNullability = true;
+                      options.DefaultDirectiveVisibility = DirectiveVisibility.Public;
+                      options.RemoveUnusedTypeSystemDirectives = false;
+                  }
+    )
+   .ModifyRequestOptions(options =>
+                         {
+                             options.IncludeExceptionDetails = true;
+                         }
+    );
 
 var app = await builder
    .LaunchWith(RocketBooster.For(Imports.Instance));

@@ -16,7 +16,6 @@
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Humanizer.Core" />
 <!--        <PackageReference Include="AppAny.HotChocolate.FluentValidation" />-->
-        <PackageReference Include="FairyBread" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
