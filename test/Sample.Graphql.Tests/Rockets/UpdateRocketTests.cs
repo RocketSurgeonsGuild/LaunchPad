@@ -146,14 +146,11 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
         u.Data!.PatchRocket.SerialNumber.Should().Be("12345678901234");
     }
 
-    private static readonly Faker Faker = new();
-
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
     public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
-        request = request with { Id = Guid.NewGuid(), };
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
 
@@ -164,20 +161,42 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     {
         public ShouldValidateUsersRequiredFieldData()
         {
+            var faker = new Faker()
+            {
+                Random = new(1234567)
+            };
             Add(
-                new() { Type = RocketType.Falcon9, },
+                new()
+                {
+                    Id = faker.Random.Guid(),
+                    Type = RocketType.Falcon9,
+                },
                 nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new() { SerialNumber = Faker.Random.String2(0, 9), Type = RocketType.FalconHeavy, },
+                new()
+                {
+                    Id = faker.Random.Guid(),
+                    SerialNumber = faker.Random.String2(0, 9),
+                    Type = RocketType.FalconHeavy,
+                },
                 nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new() { SerialNumber = Faker.Random.String2(600, 800), Type = RocketType.AtlasV, },
+                new()
+                {
+                    Id = faker.Random.Guid(),
+                    SerialNumber = faker.Random.String2(600, 800),
+                    Type = RocketType.AtlasV,
+                },
                 nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new() { SerialNumber = Faker.Random.String2(11), },
+                new()
+                {
+                    Id = faker.Random.Guid(),
+                    SerialNumber = faker.Random.String2(11),
+                },
                 nameof(EditRocketRequest.Type)
             );
         }
