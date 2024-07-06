@@ -1,0 +1,36 @@
+﻿{
+  DataFactory: {},
+  Errors: [
+    {
+      Message: The length of 'Serial Number' must be 30 characters or fewer. You entered 725 characters.,
+      Code: FairyBread_ValidationError,
+      Path: [
+        editRocket
+      ],
+      Locations: [
+        {
+          Line: 1,
+          Column: 51
+        }
+      ],
+      Extensions: {
+        argumentName: request,
+        attemptedValue: maditjvoorlcjrmrksezkzcoxewnriqvvfigfsrkmtixkmljisqwzrfmxplomiwgbqgdiflsaumrqfdktnfzruvezvjqgdyewcwufhbcgywfeowslbvzcxogubdmwvlxvhuojjellcstxpzlzqefhzbzopzedoglnzkxthjcwknaevjebsmfqgpwfvztjahwwhgyfcrrhcjwlbutgvclcavgjnryiptvcqdwokyzauxowtlebgnnywuvmzpsltjsjnuuxxevxckhchkqcmwbbfxgwhkpvfohlfejyqgdbsqvlntfpzqywiqdqnypnpzrodwwcarlgtzjobvjofawppkcpbslsrqmszhirwdohesdigpospahodbysthaiftocmrpunrsbmolxhuimdtdqiyoyipypcgckdawpaufxifcpqblyyoemqyuocqmxtdzgmathysmjofhcvzigdzqnbpufghnjihdfgwdpieagcvykqrsdiftumlewgobqfdagccwzwsyzyklgrjoookacnjsvrgitdkazurinvthqhuwczyexzmbvcytskbhpjewnjmlaabtudjutnpvtcluqifwwypdumrgcyitnmewytgrsdafvfnmykffdppclxzildsvfwhhypvxbndsxkiozeisscpxwblauygplfayyfoiphdpmxeapkjgvzccgjlweuddhohskjptqzclzalzx,
+        code: FairyBread_ValidationError,
+        errorCode: MaximumLengthValidator,
+        errorMessage: The length of 'Serial Number' must be 30 characters or fewer. You entered 725 characters.,
+        formattedMessagePlaceholderValues: {
+          MaxLength: 30,
+          MinLength: 0,
+          PropertyName: Serial Number,
+          PropertyPath: SerialNumber,
+          PropertyValue: maditjvoorlcjrmrksezkzcoxewnriqvvfigfsrkmtixkmljisqwzrfmxplomiwgbqgdiflsaumrqfdktnfzruvezvjqgdyewcwufhbcgywfeowslbvzcxogubdmwvlxvhuojjellcstxpzlzqefhzbzopzedoglnzkxthjcwknaevjebsmfqgpwfvztjahwwhgyfcrrhcjwlbutgvclcavgjnryiptvcqdwokyzauxowtlebgnnywuvmzpsltjsjnuuxxevxckhchkqcmwbbfxgwhkpvfohlfejyqgdbsqvlntfpzqywiqdqnypnpzrodwwcarlgtzjobvjofawppkcpbslsrqmszhirwdohesdigpospahodbysthaiftocmrpunrsbmolxhuimdtdqiyoyipypcgckdawpaufxifcpqblyyoemqyuocqmxtdzgmathysmjofhcvzigdzqnbpufghnjihdfgwdpieagcvykqrsdiftumlewgobqfdagccwzwsyzyklgrjoookacnjsvrgitdkazurinvthqhuwczyexzmbvcytskbhpjewnjmlaabtudjutnpvtcluqifwwypdumrgcyitnmewytgrsdafvfnmykffdppclxzildsvfwhhypvxbndsxkiozeisscpxwblauygplfayyfoiphdpmxeapkjgvzccgjlweuddhohskjptqzclzalzx,
+          TotalLength: 725
+        },
+        propertyName: SerialNumber,
+        severity: Error,
+        validatorName: RequestValidator
+      }
+    }
+  ]
+}
