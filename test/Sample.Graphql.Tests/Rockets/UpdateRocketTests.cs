@@ -161,9 +161,9 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     {
         public ShouldValidateUsersRequiredFieldData()
         {
-            var faker = new Faker()
+            var faker = new Faker
             {
-                Random = new(1234567)
+                Random = new(1234567),
             };
             Add(
                 new()
