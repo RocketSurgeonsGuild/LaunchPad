@@ -1,0 +1,40 @@
+﻿{
+  Errors: [
+    {
+      Message: 'Some Integer' must be equal to '1'.,
+      Code: FairyBread_ValidationError,
+      Path: {
+        Name: read,
+        Parent: {
+          IsRoot: true
+        },
+        Length: 1,
+        IsRoot: false
+      },
+      Locations: [
+        {
+          Line: 1,
+          Column: 9
+        }
+      ],
+      Extensions: {
+        argumentName: foo,
+        attemptedValue: -1,
+        code: FairyBread_ValidationError,
+        errorCode: EqualValidator,
+        errorMessage: 'Some Integer' must be equal to '1'.,
+        formattedMessagePlaceholderValues: {
+          ComparisonProperty: ,
+          ComparisonValue: 1,
+          PropertyName: Some Integer,
+          PropertyPath: SomeInteger,
+          PropertyValue: -1
+        },
+        propertyName: SomeInteger,
+        severity: Error,
+        validatorName: FooInputDtoValidator
+      }
+    }
+  ],
+  IsDataSet: true
+}

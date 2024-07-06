@@ -1,4 +1,4 @@
-﻿namespace FairyBread;
+﻿namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
 /// Maintains a registry of implicit validators
@@ -6,5 +6,11 @@
 /// </summary>
 public interface IValidatorRegistry
 {
-    Dictionary<Type, List<ValidatorDescriptor>> Cache { get; }
+    /// <summary>
+    ///     Try and get the validator descriptor for the specified type.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="descriptor"></param>
+    /// <returns></returns>
+    bool TryGetValidator(Type type, [NotNullWhen(true)] out ValidatorDescriptor? descriptor);
 }

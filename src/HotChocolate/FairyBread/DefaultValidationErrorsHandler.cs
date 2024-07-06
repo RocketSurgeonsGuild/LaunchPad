@@ -1,4 +1,9 @@
-﻿namespace FairyBread;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using HotChocolate;
+using HotChocolate.Resolvers;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public class DefaultValidationErrorsHandler : IValidationErrorsHandler
 {

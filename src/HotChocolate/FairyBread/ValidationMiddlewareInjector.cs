@@ -1,4 +1,13 @@
-﻿namespace FairyBread;
+﻿using HotChocolate;
+using HotChocolate.Configuration;
+using HotChocolate.Internal;
+using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using HotChocolate.Types.Descriptors;
+using HotChocolate.Types.Descriptors.Definitions;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 internal class ValidationMiddlewareInjector : TypeInterceptor
 {
@@ -6,7 +15,8 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
 
     public override void OnBeforeCompleteType(
         ITypeCompletionContext completionContext,
-        DefinitionBase definition)
+        DefinitionBase definition
+    )
     {
         if (definition is not ObjectTypeDefinition objTypeDef)
         {
@@ -14,9 +24,9 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         }
 
         var options = completionContext.Services
-            .GetRequiredService<IFairyBreadOptions>();
+                                       .GetRequiredService<IFairyBreadOptions>();
         var validatorRegistry = completionContext.Services
-            .GetRequiredService<IValidatorRegistry>();
+                                                 .GetRequiredService<IValidatorRegistry>();
 
         foreach (var fieldDef in objTypeDef.Fields)
         {
@@ -26,7 +36,7 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
 
             foreach (var argDef in fieldDef.Arguments)
             {
-                var argCoord = new FieldCoordinate(objTypeDef.Name, fieldDef.Name, argDef.Name);
+                var argCoord = new SchemaCoordinate(objTypeDef.Name, fieldDef.Name, argDef.Name);
 
                 // 2. the argument should be validated according to options func
                 if (!options.ShouldValidateArgument(objTypeDef, fieldDef, argDef))
@@ -47,9 +57,9 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
                 catch (Exception ex)
                 {
                     throw new Exception(
-                        $"Problem getting runtime type for argument '{argDef.Name}' " +
-                        $"in field '{fieldDef.Name}' on object type '{objTypeDef.Name}'.",
-                        ex);
+                        $"Problem getting runtime type for argument '{argDef.Name}' " + $"in field '{fieldDef.Name}' on object type '{objTypeDef.Name}'.",
+                        ex
+                    );
                 }
 
                 // Cleanup context now we're done with these
@@ -71,7 +81,8 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
                 if (_validationFieldMiddlewareDef is null)
                 {
                     _validationFieldMiddlewareDef = new FieldMiddlewareDefinition(
-                        FieldClassMiddlewareFactory.Create<ValidationMiddleware>());
+                        FieldClassMiddlewareFactory.Create<ValidationMiddleware>()
+                    );
                 }
 
                 fieldDef.MiddlewareDefinitions.Insert(0, _validationFieldMiddlewareDef);
@@ -81,7 +92,8 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
 
     private static List<ValidatorDescriptor> DetermineValidatorsForArg(
         IValidatorRegistry validatorRegistry,
-        ArgumentDefinition argDef)
+        ArgumentDefinition argDef
+    )
     {
         // If validation is explicitly disabled, return none so validation middleware won't be added
         if (argDef.ContextData.ContainsKey(WellKnownContextData.DontValidate))
@@ -92,23 +104,16 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         var validators = new List<ValidatorDescriptor>();
 
         // Include implicit validator/s first (if allowed)
-        if (!argDef.ContextData.ContainsKey(WellKnownContextData.DontValidateImplicitly))
+        if (!argDef.ContextData.ContainsKey(WellKnownContextData.DontValidateImplicitly)
+         && TryGetArgRuntimeType(argDef) is { } argRuntimeType
+         && validatorRegistry.TryGetValidator(argRuntimeType, out var implicitValidators))
         {
-            // And if we can figure out the arg's runtime type
-            var argRuntimeType = TryGetArgRuntimeType(argDef);
-            if (argRuntimeType is not null)
-            {
-                if (validatorRegistry.Cache.TryGetValue(argRuntimeType, out var implicitValidators) &&
-                    implicitValidators is not null)
-                {
-                    validators.AddRange(implicitValidators);
-                }
-            }
+            validators.Add(implicitValidators);
         }
 
         // Include explicit validator/s (that aren't already added implicitly)
-        if (argDef.ContextData.TryGetValue(WellKnownContextData.ExplicitValidatorTypes, out var explicitValidatorTypesRaw) &&
-            explicitValidatorTypesRaw is IEnumerable<Type> explicitValidatorTypes)
+        if (argDef.ContextData.TryGetValue(WellKnownContextData.ExplicitValidatorTypes, out var explicitValidatorTypesRaw)
+         && explicitValidatorTypesRaw is IEnumerable<Type> explicitValidatorTypes)
         {
             // TODO: Potentially check and throw if there's a validator being explicitly applied for the wrong runtime type
 
@@ -127,7 +132,8 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
     }
 
     private static Type? TryGetArgRuntimeType(
-        ArgumentDefinition argDef)
+        ArgumentDefinition argDef
+    )
     {
         if (argDef.Parameter?.ParameterType is { } argRuntimeType)
         {
@@ -188,9 +194,7 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         if (typeof(InputObjectType).IsAssignableFrom(extType))
         {
             var currBaseType = extType.Type.BaseType;
-            while (currBaseType is not null &&
-                   (!currBaseType.IsGenericType ||
-                    currBaseType.GetGenericTypeDefinition() != typeof(InputObjectType<>)))
+            while (currBaseType is not null && ( !currBaseType.IsGenericType || currBaseType.GetGenericTypeDefinition() != typeof(InputObjectType<>) ))
             {
                 currBaseType = currBaseType.BaseType;
             }
@@ -207,9 +211,7 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         if (typeof(ScalarType).IsAssignableFrom(extType))
         {
             var currBaseType = extType.Type.BaseType;
-            while (currBaseType is not null &&
-                   (!currBaseType.IsGenericType ||
-                    currBaseType.GetGenericTypeDefinition() != typeof(ScalarType<>)))
+            while (currBaseType is not null && ( !currBaseType.IsGenericType || currBaseType.GetGenericTypeDefinition() != typeof(ScalarType<>) ))
             {
                 currBaseType = currBaseType.BaseType;
             }

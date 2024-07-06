@@ -1,4 +1,9 @@
-﻿namespace FairyBread;
+﻿using System.Reflection;
+using FluentValidation;
+using HotChocolate.Types;
+using HotChocolate.Types.Descriptors;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
 /// Instructs FairyBread to add the given validator/s for the annotated argument.

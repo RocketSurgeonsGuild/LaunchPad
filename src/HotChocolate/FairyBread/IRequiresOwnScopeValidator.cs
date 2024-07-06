@@ -1,4 +1,6 @@
-﻿namespace FairyBread;
+﻿using FluentValidation;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
 /// Marker interface for validators that should be resolved

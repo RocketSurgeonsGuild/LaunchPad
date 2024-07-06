@@ -1,4 +1,4 @@
-﻿namespace FairyBread;
+﻿namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
 /// Marker interface for indicating that a validator

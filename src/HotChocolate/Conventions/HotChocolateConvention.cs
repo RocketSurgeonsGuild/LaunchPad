@@ -8,6 +8,7 @@ using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
+using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 

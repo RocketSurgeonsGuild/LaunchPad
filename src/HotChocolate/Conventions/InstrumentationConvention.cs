@@ -3,6 +3,7 @@ using OpenTelemetry;
 using OpenTelemetry.Trace;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Telemetry;
+using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 

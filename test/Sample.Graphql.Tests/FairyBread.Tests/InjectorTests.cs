@@ -1,6 +1,13 @@
+using FluentValidation;
+using HotChocolate.Data;
+using HotChocolate.Execution;
+using HotChocolate.Types;
+using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.HotChocolate;
+using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
+
 namespace FairyBread.Tests;
 
-[UsesVerify]
 public class InjectorTests
 {
     private static async Task<IRequestExecutor> GetRequestExecutorAsync(
@@ -85,7 +92,7 @@ public class InjectorTests
         // Assert
         var verifySettings = new VerifySettings();
         verifySettings.UseParameters(registerValidators);
-        await Verifier.Verify(result, verifySettings);
+        await Verify(result, verifySettings);
     }
 
     [Theory]
@@ -121,7 +128,7 @@ public class InjectorTests
         var result = await executor.ExecuteAsync(query);
 
         // Assert
-        await Verifier.Verify(result).UseParameters(valid);
+        await Verify(result).UseParameters(valid);
     }
 
     [Theory]
@@ -157,7 +164,7 @@ public class InjectorTests
         var result = await executor.ExecuteAsync(query);
 
         // Assert
-        await Verifier.Verify(result).UseParameters(valid);
+        await Verify(result).UseParameters(valid);
     }
 
 #pragma warning disable CA1822 // Mark members as static

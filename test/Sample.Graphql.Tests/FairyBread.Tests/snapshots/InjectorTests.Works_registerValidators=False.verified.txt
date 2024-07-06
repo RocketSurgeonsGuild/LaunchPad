@@ -1,0 +1,31 @@
+﻿{
+  Data: {
+    arrayArgA: 0, 0,
+    filterSortAndPagingArgs: {
+      nodes: [
+        {
+          a: A
+        }
+      ]
+    },
+    listArgA: 0, 0,
+    listArgB: 0,0,
+    listArgC: hello,
+    listArgD: hello,
+    listOfListArgC: hello,
+    noArgs: foo,
+    nullableScalarArgsA: 0 | False,
+    nullableScalarArgsB: 0 | False,
+    nullableScalarArgsC: hello,
+    nullableScalarArgsD: hello,
+    objectArgA: 0 | False,
+    objectArgB: 0 | False,
+    objectArgC: hello,
+    objectArgD: hello,
+    scalarArgsA: 0 | False,
+    scalarArgsB: 0 | False,
+    scalarArgsC: hello,
+    scalarArgsD: hello
+  },
+  IsDataSet: true
+}

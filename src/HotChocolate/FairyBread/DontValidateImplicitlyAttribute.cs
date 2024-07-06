@@ -1,4 +1,8 @@
-﻿namespace FairyBread;
+﻿using System.Reflection;
+using HotChocolate.Types;
+using HotChocolate.Types.Descriptors;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
 /// Instructs FairyBread to not run any validators that

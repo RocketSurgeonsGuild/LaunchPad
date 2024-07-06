@@ -1,4 +1,9 @@
-﻿namespace FairyBread;
+﻿using FluentValidation;
+using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public class DefaultValidatorProvider : IValidatorProvider
 {

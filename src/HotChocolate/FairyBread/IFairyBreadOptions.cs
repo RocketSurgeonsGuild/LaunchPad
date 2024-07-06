@@ -1,4 +1,6 @@
-﻿namespace FairyBread;
+﻿using HotChocolate.Types.Descriptors.Definitions;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public interface IFairyBreadOptions
 {

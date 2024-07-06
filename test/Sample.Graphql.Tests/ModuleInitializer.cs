@@ -4,6 +4,7 @@ using NodaTime;
 using Argon.NodaTime;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using Path = System.IO.Path;
 
 namespace Sample.Graphql.Tests;
 

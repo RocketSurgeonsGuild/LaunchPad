@@ -1,4 +1,7 @@
-﻿namespace FairyBread;
+﻿using FluentValidation;
+using FluentValidation.Results;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public record ArgumentValidationResult
 {

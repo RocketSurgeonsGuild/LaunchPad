@@ -20,4 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="FairyBread\" />
+    </ItemGroup>
 </Project>
