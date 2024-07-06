@@ -1,6 +1,12 @@
+using FluentValidation;
+using HotChocolate.Execution;
+using HotChocolate.Types;
+using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.HotChocolate;
+using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
+
 namespace FairyBread.Tests;
 
-[UsesVerify]
 public class GeneralTests
 {
     static GeneralTests()
@@ -54,7 +60,7 @@ public class GeneralTests
         // Assert
         var verifySettings = new VerifySettings();
         verifySettings.UseParameters(caseData);
-        await Verifier.Verify(result, verifySettings);
+        await Verify(result, verifySettings);
     }
 
     [Theory]
@@ -72,7 +78,7 @@ public class GeneralTests
         // Assert
         var verifySettings = new VerifySettings();
         verifySettings.UseParameters(caseData);
-        await Verifier.Verify(result, verifySettings);
+        await Verify(result, verifySettings);
     }
 
     [Fact]
@@ -94,7 +100,7 @@ public class GeneralTests
 
 
         // Assert
-        await Verifier.Verify(new { result1, result2, result3 });
+        await Verify(new { result1, result2, result3 });
     }
 
     [Fact]
@@ -111,7 +117,7 @@ public class GeneralTests
 
         // Assert
         var verifySettings = new VerifySettings();
-        await Verifier.Verify(result, verifySettings);
+        await Verify(result, verifySettings);
     }
 
     [Fact]
@@ -127,7 +133,7 @@ public class GeneralTests
 
         // Assert
         Assert.False(Query.WasFieldResolverCalled);
-        await Verifier.Verify(result);
+        await Verify(result);
     }
 
     [Fact]
@@ -149,7 +155,7 @@ public class GeneralTests
         var result = await executor.ExecuteAsync(query);
 
         // Assert
-        await Verifier.Verify(result);
+        await Verify(result);
     }
 
     // TODO: Unit tests for:
@@ -210,7 +216,7 @@ public class GeneralTests
         // Assert
         var verifySettings = new VerifySettings();
         verifySettings.UseParameters(caseData.CaseId);
-        await Verifier.Verify(result, verifySettings);
+        await Verify(result, verifySettings);
     }
 
     [Theory]
@@ -228,7 +234,7 @@ public class GeneralTests
         // Assert
         var verifySettings = new VerifySettings();
         verifySettings.UseParameters(caseData.CaseId);
-        await Verifier.Verify(result, verifySettings);
+        await Verify(result, verifySettings);
     }
 
     public static IEnumerable<object[]> CollectionCases()

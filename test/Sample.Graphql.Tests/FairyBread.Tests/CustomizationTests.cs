@@ -1,6 +1,16 @@
-﻿namespace FairyBread.Tests;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using HotChocolate;
+using HotChocolate.Execution;
+using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.HotChocolate;
+using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
+using IOperationResult = HotChocolate.Execution.IOperationResult;
 
-[UsesVerify]
+namespace FairyBread.Tests;
+
 public class CustomizationTests
 {
     private const string Query = @"query { read(foo: { someInteger: 1, someString: ""hello"" }) }";
@@ -30,7 +40,7 @@ public class CustomizationTests
         });
 
         // Act
-        var result = await executor.ExecuteAsync(Query) as IQueryResult;
+        var result = await executor.ExecuteAsync(Query) as IOperationResult;
 
         // Assert
         Assert.NotNull(result);
@@ -59,7 +69,7 @@ public class CustomizationTests
         var result = await executor.ExecuteAsync(Query);
 
         // Assert
-        await Verifier.Verify(result);
+        await Verify(result);
     }
 
     public class CustomValidatorProvider : DefaultValidatorProvider

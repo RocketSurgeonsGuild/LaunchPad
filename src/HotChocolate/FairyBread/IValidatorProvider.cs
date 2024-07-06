@@ -1,4 +1,7 @@
-﻿namespace FairyBread;
+﻿using HotChocolate.Resolvers;
+using HotChocolate.Types;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
 /// Resolves validators at query execution time.

@@ -1,53 +1,35 @@
-﻿namespace FairyBread;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public class DefaultValidatorRegistry : IValidatorRegistry
 {
-    public DefaultValidatorRegistry(IServiceCollection services, IFairyBreadOptions options)
+    private readonly IServiceProvider _serviceProvider;
+
+    private readonly Dictionary<Type, ValidatorDescriptor> _cache = new();
+
+    public DefaultValidatorRegistry(IServiceProvider serviceProvider)
     {
-        var validatorResults = new List<AssemblyScanner.AssemblyScanResult>();
-        var objectValidatorInterface = typeof(IValidator<object>);
-        var underlyingValidatorType = objectValidatorInterface.GetGenericTypeDefinition().UnderlyingSystemType;
-
-        foreach (var service in services)
-        {
-            if (!service.ServiceType.IsGenericType ||
-                service.ServiceType.Name != objectValidatorInterface.Name ||
-                service.ServiceType.GetGenericTypeDefinition() != underlyingValidatorType)
-            {
-                continue;
-            }
-
-            validatorResults.Add(
-                new AssemblyScanner.AssemblyScanResult(
-                    service.ServiceType,
-                    service.ImplementationType));
-        }
-
-        if (!validatorResults.Any() && options.ThrowIfNoValidatorsFound)
-        {
-            throw new Exception($"No validators were found by FairyBread. " +
-                                $"Ensure you're registering your FluentValidation validators for DI.");
-        }
-
-        foreach (var validatorResult in validatorResults)
-        {
-            var validatorType = validatorResult.ValidatorType;
-
-            var validatedType = validatorResult.InterfaceType.GenericTypeArguments.Single();
-            if (!Cache.TryGetValue(validatedType, out var validatorsForType))
-            {
-                Cache[validatedType] = validatorsForType = new List<ValidatorDescriptor>();
-            }
-
-            var validatorDescriptor = new ValidatorDescriptor(validatorType);
-
-            if (!validatorDescriptor.ExplicitUsageOnly)
-            {
-                validatorsForType.Add(validatorDescriptor);
-            }
-        }
+        _serviceProvider = serviceProvider;
     }
 
-    public Dictionary<Type, List<ValidatorDescriptor>> Cache { get; } = new();
+    public bool TryGetValidator(Type type, [NotNullWhen(true)] out ValidatorDescriptor? descriptor)
+    {
+        if (_cache.TryGetValue(type, out var validator))
+        {
+            descriptor = validator;
+            return true;
+        }
 
+        var validatorType = typeof(IValidator<>).MakeGenericType(type);
+        if (_serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) is { })
+        {
+            descriptor = _cache[type] = new ValidatorDescriptor(validatorType);
+            return true;
+        }
+
+        descriptor = null;
+        return false;
+    }
 }

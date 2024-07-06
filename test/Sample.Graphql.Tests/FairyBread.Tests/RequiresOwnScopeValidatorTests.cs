@@ -1,6 +1,14 @@
-﻿namespace FairyBread.Tests;
+﻿using FakeItEasy;
+using FluentValidation;
+using HotChocolate.Execution;
+using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.HotChocolate;
+using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
-[UsesVerify]
+namespace FairyBread.Tests;
+
 public class RequiresOwnScopeValidatorTests
 {
     private const string Query = @"query { read(foo: { someInteger: 1, someString: ""hello"" }) }";
@@ -37,28 +45,28 @@ public class RequiresOwnScopeValidatorTests
         var result = await executor.ExecuteAsync(Query);
 
         // Assert
-        await Verifier.Verify(result);
+        await Verify(result);
     }
 
     [Fact]
     public async Task OwnScopes_Are_Disposed()
     {
         // Arrange
-        var scopeMock = new Mock<IServiceScope>();
-        scopeMock.Setup(x => x.Dispose());
+        var scopeMock = A.Fake<IServiceScope>();
+        A.CallTo(() => scopeMock.Dispose()).DoesNothing();
 
         var executor = await GetRequestExecutorAsync(services =>
         {
             services.AddScoped<IValidatorProvider>(sp =>
-                new ScopeMockingValidatorProvider(sp.GetRequiredService<IValidatorRegistry>(), scopeMock.Object));
+                new ScopeMockingValidatorProvider(sp.GetRequiredService<IValidatorRegistry>(), scopeMock));
         });
 
         // Act
         var result = await executor.ExecuteAsync(Query);
 
         // Assert
-        scopeMock.Verify(x => x.Dispose(), Times.Once);
-        await Verifier.Verify(result);
+        A.CallTo(() => scopeMock.Dispose()).MustHaveHappenedOnceExactly();
+        await Verify(result);
     }
 
     public class AssertingScopageValidatorProvider : DefaultValidatorProvider

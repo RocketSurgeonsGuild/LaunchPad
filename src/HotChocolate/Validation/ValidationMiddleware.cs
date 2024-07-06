@@ -1,6 +1,6 @@
-﻿using FairyBread;
-using FluentValidation;
+﻿using FluentValidation;
 using HotChocolate.Resolvers;
+using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 

@@ -1,4 +1,4 @@
-﻿namespace FairyBread;
+﻿namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
 /// Description of a validator configuration to be stored in the validator descriptor cache.

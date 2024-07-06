@@ -1,4 +1,8 @@
-﻿namespace Microsoft.Extensions.DependencyInjection;
+﻿using HotChocolate.Execution.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public static class IRequestExecutorBuilderExtensions
 {
@@ -11,12 +15,10 @@ public static class IRequestExecutorBuilderExtensions
 
         var options = new DefaultFairyBreadOptions();
         configureOptions?.Invoke(options);
+
         services.TryAddSingleton<IFairyBreadOptions>(options);
-
-        services.TryAddSingleton<IValidatorRegistry>(sp =>
-            new DefaultValidatorRegistry(services, sp.GetRequiredService<IFairyBreadOptions>()));
+        services.TryAddSingleton<IValidatorRegistry, DefaultValidatorRegistry>();
         services.TryAddSingleton<IValidatorProvider, DefaultValidatorProvider>();
-
         services.TryAddSingleton<IValidationErrorsHandler, DefaultValidationErrorsHandler>();
 
         // Executor builder

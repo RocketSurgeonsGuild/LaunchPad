@@ -1,21 +1,16 @@
-﻿namespace FairyBread;
+﻿using FluentValidation;
+using HotChocolate.Resolvers;
 
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
+
+[UsedImplicitly]
 internal class ValidationMiddleware
+(
+    FieldDelegate next,
+    IValidatorProvider validatorProvider,
+    IValidationErrorsHandler validationErrorsHandler
+)
 {
-    private readonly FieldDelegate _next;
-    private readonly IValidatorProvider _validatorProvider;
-    private readonly IValidationErrorsHandler _validationErrorsHandler;
-
-    public ValidationMiddleware(
-        FieldDelegate next,
-        IValidatorProvider validatorProvider,
-        IValidationErrorsHandler validationErrorsHandler)
-    {
-        _next = next;
-        _validatorProvider = validatorProvider;
-        _validationErrorsHandler = validationErrorsHandler;
-    }
-
     public async Task InvokeAsync(IMiddlewareContext context)
     {
         var arguments = context.Selection.Field.Arguments;
@@ -24,39 +19,30 @@ internal class ValidationMiddleware
 
         foreach (var argument in arguments)
         {
-            if (argument == null)
-            {
-                continue;
-            }
-
-            var resolvedValidators = _validatorProvider
-                .GetValidators(context, argument)
-                .ToArray();
+            var resolvedValidators = validatorProvider
+                                    .GetValidators(context, argument)
+                                    .ToArray();
             if (resolvedValidators.Length > 0)
-            {
                 try
                 {
                     var value = context.ArgumentValue<object?>(argument.Name);
-                    if (value == null)
-                    {
-                        continue;
-                    }
+                    if (value == null) continue;
 
                     foreach (var resolvedValidator in resolvedValidators)
                     {
                         var validationContext = new ValidationContext<object?>(value);
                         var validationResult = await resolvedValidator.Validator.ValidateAsync(
                             validationContext,
-                            context.RequestAborted);
-                        if (validationResult != null &&
-                            !validationResult.IsValid)
-                        {
+                            context.RequestAborted
+                        );
+                        if (validationResult is { IsValid: false, })
                             invalidResults.Add(
-                                new ArgumentValidationResult(
+                                new(
                                     argument.Name,
                                     resolvedValidator.Validator,
-                                    validationResult));
-                        }
+                                    validationResult
+                                )
+                            );
                     }
                 }
                 finally
@@ -66,15 +52,14 @@ internal class ValidationMiddleware
                         resolvedValidator.Scope?.Dispose();
                     }
                 }
-            }
         }
 
         if (invalidResults.Any())
         {
-            _validationErrorsHandler.Handle(context, invalidResults);
+            validationErrorsHandler.Handle(context, invalidResults);
             return;
         }
 
-        await _next(context);
+        await next(context);
     }
 }

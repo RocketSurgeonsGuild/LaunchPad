@@ -1,4 +1,6 @@
-﻿namespace FairyBread;
+﻿using HotChocolate.Resolvers;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public interface IValidationErrorsHandler
 {

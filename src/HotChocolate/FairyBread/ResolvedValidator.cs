@@ -1,4 +1,7 @@
-﻿namespace FairyBread;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public struct ResolvedValidator
 {
