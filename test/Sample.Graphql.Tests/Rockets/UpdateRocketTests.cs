@@ -154,11 +154,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
 
-        var extensionKey = response.Errors[0].Extensions!.ContainsKey("propertyName") ? "propertyName" : "field";
-
-        response.Errors[0].Extensions![extensionKey]
-                .As<string>().Split('.').Last()
-                .Pascalize().Should().Be(propertyName);
+        await Verify(response).UseHashedParameters(request, propertyName);
     }
 
     private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>
