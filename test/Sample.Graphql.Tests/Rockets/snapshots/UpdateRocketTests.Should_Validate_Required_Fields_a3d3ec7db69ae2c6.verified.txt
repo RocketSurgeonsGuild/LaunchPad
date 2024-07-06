@@ -1,0 +1,36 @@
+﻿{
+  DataFactory: {},
+  Errors: [
+    {
+      Message: The length of 'Serial Number' must be at least 10 characters. You entered 9 characters.,
+      Code: FairyBread_ValidationError,
+      Path: [
+        editRocket
+      ],
+      Locations: [
+        {
+          Line: 1,
+          Column: 51
+        }
+      ],
+      Extensions: {
+        argumentName: request,
+        attemptedValue: costuarst,
+        code: FairyBread_ValidationError,
+        errorCode: MinimumLengthValidator,
+        errorMessage: The length of 'Serial Number' must be at least 10 characters. You entered 9 characters.,
+        formattedMessagePlaceholderValues: {
+          MaxLength: -1,
+          MinLength: 10,
+          PropertyName: Serial Number,
+          PropertyPath: SerialNumber,
+          PropertyValue: costuarst,
+          TotalLength: 9
+        },
+        propertyName: SerialNumber,
+        severity: Error,
+        validatorName: RequestValidator
+      }
+    }
+  ]
+}
