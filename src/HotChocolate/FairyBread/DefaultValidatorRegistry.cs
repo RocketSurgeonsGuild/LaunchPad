@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
@@ -25,7 +24,7 @@ public class DefaultValidatorRegistry : IValidatorRegistry
         var validatorType = typeof(IValidator<>).MakeGenericType(type);
         if (_serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) is { })
         {
-            descriptor = _cache[type] = new ValidatorDescriptor(validatorType);
+            descriptor = _cache[type] = new(validatorType);
             return true;
         }
 

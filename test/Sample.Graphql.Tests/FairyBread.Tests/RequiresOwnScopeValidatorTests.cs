@@ -4,42 +4,17 @@ using HotChocolate.Execution;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 namespace FairyBread.Tests;
 
 public class RequiresOwnScopeValidatorTests
 {
-    private const string Query = @"query { read(foo: { someInteger: 1, someString: ""hello"" }) }";
-
-    private static async Task<IRequestExecutor> GetRequestExecutorAsync(Action<IServiceCollection> preBuildProviderAction)
-    {
-        var services = new ServiceCollection();
-
-        services.AddValidator<StandardValidator, FooInputDto>();
-        services.AddValidator<AnotherStandardValidator, FooInputDto>();
-        services.AddValidator<RequiresOwnScopeValidator, FooInputDto>();
-        services.AddValidator<AnotherRequiresOwnScopeValidator, FooInputDto>();
-
-        preBuildProviderAction?.Invoke(services);
-
-        return await services
-            .AddGraphQL()
-            .AddQueryType<QueryType>()
-            .AddMutationType<MutationType>()
-            .AddFairyBread()
-            .BuildRequestExecutorAsync();
-    }
-
     [Fact]
     public async Task OwnScopes_Work()
     {
         // Arrange
-        var executor = await GetRequestExecutorAsync(services =>
-        {
-            services.AddScoped<IValidatorProvider, AssertingScopageValidatorProvider>();
-        });
+        var executor = await GetRequestExecutorAsync(services => { services.AddScoped<IValidatorProvider, AssertingScopageValidatorProvider>(); });
 
         // Act
         var result = await executor.ExecuteAsync(Query);
@@ -55,11 +30,15 @@ public class RequiresOwnScopeValidatorTests
         var scopeMock = A.Fake<IServiceScope>();
         A.CallTo(() => scopeMock.Dispose()).DoesNothing();
 
-        var executor = await GetRequestExecutorAsync(services =>
-        {
-            services.AddScoped<IValidatorProvider>(sp =>
-                new ScopeMockingValidatorProvider(sp.GetRequiredService<IValidatorRegistry>(), scopeMock));
-        });
+        var executor = await GetRequestExecutorAsync(
+            services =>
+            {
+                services.AddScoped<IValidatorProvider>(
+                    sp =>
+                        new ScopeMockingValidatorProvider(sp.GetRequiredService<IValidatorRegistry>(), scopeMock)
+                );
+            }
+        );
 
         // Act
         var result = await executor.ExecuteAsync(Query);
@@ -67,6 +46,27 @@ public class RequiresOwnScopeValidatorTests
         // Assert
         A.CallTo(() => scopeMock.Dispose()).MustHaveHappenedOnceExactly();
         await Verify(result);
+    }
+
+    private const string Query = @"query { read(foo: { someInteger: 1, someString: ""hello"" }) }";
+
+    private static async Task<IRequestExecutor> GetRequestExecutorAsync(Action<IServiceCollection> preBuildProviderAction)
+    {
+        var services = new ServiceCollection();
+
+        services.AddValidator<StandardValidator, FooInputDto>();
+        services.AddValidator<AnotherStandardValidator, FooInputDto>();
+        services.AddValidator<RequiresOwnScopeValidator, FooInputDto>();
+        services.AddValidator<AnotherRequiresOwnScopeValidator, FooInputDto>();
+
+        preBuildProviderAction?.Invoke(services);
+
+        return await services
+                    .AddGraphQL()
+                    .AddQueryType<QueryType>()
+                    .AddMutationType<MutationType>()
+                    .AddFairyBread()
+                    .BuildRequestExecutorAsync();
     }
 
     public class AssertingScopageValidatorProvider : DefaultValidatorProvider
@@ -104,30 +104,39 @@ public class RequiresOwnScopeValidatorTests
 
         public ScopeMockingValidatorProvider(
             IValidatorRegistry validatorRegistry,
-            IServiceScope mockScope)
+            IServiceScope mockScope
+        )
             : base(validatorRegistry)
         {
             _mockScope = mockScope;
         }
 
         public override IEnumerable<ResolvedValidator> GetValidators(
-            IMiddlewareContext context, IInputField argument)
+            IMiddlewareContext context,
+            IInputField argument
+        )
         {
-            yield return new ResolvedValidator(
+            yield return new(
                 new RequiresOwnScopeValidator(),
-                _mockScope);
+                _mockScope
+            );
         }
     }
-
-#pragma warning disable CA1822 // Mark members as static
+    #pragma warning disable CA1822 // Mark members as static
     public class QueryType
     {
-        public string Read(FooInputDto foo) => $"{foo};";
+        public string Read(FooInputDto foo)
+        {
+            return $"{foo};";
+        }
     }
 
     public class MutationType
     {
-        public string Write(FooInputDto foo) => $"{foo};";
+        public string Write(FooInputDto foo)
+        {
+            return $"{foo};";
+        }
     }
 
     public class FooInputDto
@@ -136,9 +145,10 @@ public class RequiresOwnScopeValidatorTests
 
         public string SomeString { get; set; } = "";
 
-        public override string ToString() =>
-            $"SomeInteger: {SomeInteger}, " +
-            $"SomeString: {SomeString}";
+        public override string ToString()
+        {
+            return $"SomeInteger: {SomeInteger}, " + $"SomeString: {SomeString}";
+        }
     }
 
     public class StandardValidator : AbstractValidator<FooInputDto>
@@ -146,7 +156,7 @@ public class RequiresOwnScopeValidatorTests
         public StandardValidator()
         {
             RuleFor(x => x.SomeInteger)
-                .GreaterThanOrEqualTo(50);
+               .GreaterThanOrEqualTo(50);
         }
     }
 
@@ -155,7 +165,7 @@ public class RequiresOwnScopeValidatorTests
         public AnotherStandardValidator()
         {
             RuleFor(x => x.SomeInteger)
-                .GreaterThanOrEqualTo(100);
+               .GreaterThanOrEqualTo(100);
         }
     }
 
@@ -165,7 +175,7 @@ public class RequiresOwnScopeValidatorTests
         public RequiresOwnScopeValidator()
         {
             RuleFor(x => x.SomeInteger)
-                .GreaterThanOrEqualTo(999);
+               .GreaterThanOrEqualTo(999);
         }
     }
 
@@ -175,7 +185,7 @@ public class RequiresOwnScopeValidatorTests
         public AnotherRequiresOwnScopeValidator()
         {
             RuleFor(x => x.SomeInteger)
-                .GreaterThanOrEqualTo(9999);
+               .GreaterThanOrEqualTo(9999);
         }
     }
 }

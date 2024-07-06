@@ -8,7 +8,8 @@ public static class IRequestExecutorBuilderExtensions
 {
     public static IRequestExecutorBuilder AddFairyBread(
         this IRequestExecutorBuilder requestExecutorBuilder,
-        Action<IFairyBreadOptions>? configureOptions = null)
+        Action<IFairyBreadOptions>? configureOptions = null
+    )
     {
         // Services
         var services = requestExecutorBuilder.Services;

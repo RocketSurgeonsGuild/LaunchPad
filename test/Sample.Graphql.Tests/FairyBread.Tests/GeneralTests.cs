@@ -2,85 +2,12 @@ using FluentValidation;
 using HotChocolate.Execution;
 using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 namespace FairyBread.Tests;
 
 public class GeneralTests
 {
-    static GeneralTests()
-    {
-        VerifierSettings.NameForParameter<CaseData>(_ => _.CaseId);
-    }
-
-    private static async Task<IRequestExecutor> GetRequestExecutorAsync(
-        Action<IFairyBreadOptions>? configureOptions = null,
-        Action<IServiceCollection>? configureServices = null,
-        bool registerValidators = true)
-    {
-        var services = new ServiceCollection();
-        configureServices?.Invoke(services);
-
-        if (registerValidators)
-        {
-            services.AddValidator<FooInputDtoValidator, FooInputDto>();
-            services.AddValidator<ArrayOfFooInputDtoValidator, FooInputDto[]>();
-            services.AddValidator<ListOfFooInputDtoValidator, List<FooInputDto>>();
-            services.AddValidator<BarInputDtoValidator, BarInputDto>();
-            services.AddValidator<BarInputDtoAsyncValidator, BarInputDto>();
-            services.AddValidator<NullableIntValidator, int?>();
-        }
-
-        var builder = services
-            .AddGraphQL()
-            .AddQueryType<Query>()
-            .AddMutationType<Mutation>()
-            .AddFairyBread(options =>
-            {
-                configureOptions?.Invoke(options);
-            });
-
-        return await builder
-            .BuildRequestExecutorAsync();
-    }
-
-    [Theory]
-    [MemberData(nameof(Cases))]
-    public async Task Query_Works(CaseData caseData)
-    {
-        // Arrange
-        var executor = await GetRequestExecutorAsync();
-
-        var query = "query { read(foo: " + caseData.FooInput + ", bar: " + caseData.BarInput + ") }";
-
-        // Act
-        var result = await executor.ExecuteAsync(query);
-
-        // Assert
-        var verifySettings = new VerifySettings();
-        verifySettings.UseParameters(caseData);
-        await Verify(result, verifySettings);
-    }
-
-    [Theory]
-    [MemberData(nameof(Cases))]
-    public async Task Mutation_Works(CaseData caseData)
-    {
-        // Arrange
-        var executor = await GetRequestExecutorAsync();
-
-        var query = "mutation { write(foo: " + caseData.FooInput + ", bar: " + caseData.BarInput + ") }";
-
-        // Act
-        var result = await executor.ExecuteAsync(query);
-
-        // Assert
-        var verifySettings = new VerifySettings();
-        verifySettings.UseParameters(caseData);
-        await Verify(result, verifySettings);
-    }
-
     [Fact]
     public async Task Multi_TopLevelFields_And_MultiRuns_Works()
     {
@@ -100,7 +27,7 @@ public class GeneralTests
 
 
         // Assert
-        await Verify(new { result1, result2, result3 });
+        await Verify(new { result1, result2, result3, });
     }
 
     [Fact]
@@ -140,11 +67,13 @@ public class GeneralTests
     public async Task Should_Respect_ShouldValidateArgument_Option()
     {
         // Arrange
-        var executor = await GetRequestExecutorAsync(options =>
-        {
-            options.ShouldValidateArgument = (o, t, a)
-                => a.Parameter is { } p && p.ParameterType != typeof(FooInputDto);
-        });
+        var executor = await GetRequestExecutorAsync(
+            options =>
+            {
+                options.ShouldValidateArgument = (o, t, a)
+                                                     => a.Parameter is { } p && p.ParameterType != typeof(FooInputDto);
+            }
+        );
 
         var query = @"mutation {
                 write(
@@ -158,6 +87,76 @@ public class GeneralTests
         await Verify(result);
     }
 
+    static GeneralTests()
+    {
+        VerifierSettings.NameForParameter<CaseData>(_ => _.CaseId);
+    }
+
+    private static async Task<IRequestExecutor> GetRequestExecutorAsync(
+        Action<IFairyBreadOptions>? configureOptions = null,
+        Action<IServiceCollection>? configureServices = null,
+        bool registerValidators = true
+    )
+    {
+        var services = new ServiceCollection();
+        configureServices?.Invoke(services);
+
+        if (registerValidators)
+        {
+            services.AddValidator<FooInputDtoValidator, FooInputDto>();
+            services.AddValidator<ArrayOfFooInputDtoValidator, FooInputDto[]>();
+            services.AddValidator<ListOfFooInputDtoValidator, List<FooInputDto>>();
+            services.AddValidator<BarInputDtoValidator, BarInputDto>();
+            services.AddValidator<BarInputDtoAsyncValidator, BarInputDto>();
+            services.AddValidator<NullableIntValidator, int?>();
+        }
+
+        var builder = services
+                     .AddGraphQL()
+                     .AddQueryType<Query>()
+                     .AddMutationType<Mutation>()
+                     .AddFairyBread(options => { configureOptions?.Invoke(options); });
+
+        return await builder
+           .BuildRequestExecutorAsync();
+    }
+
+    [Theory]
+    [MemberData(nameof(Cases))]
+    public async Task Query_Works(CaseData caseData)
+    {
+        // Arrange
+        var executor = await GetRequestExecutorAsync();
+
+        var query = "query { read(foo: " + caseData.FooInput + ", bar: " + caseData.BarInput + ") }";
+
+        // Act
+        var result = await executor.ExecuteAsync(query);
+
+        // Assert
+        var verifySettings = new VerifySettings();
+        verifySettings.UseParameters(caseData);
+        await Verify(result, verifySettings);
+    }
+
+    [Theory]
+    [MemberData(nameof(Cases))]
+    public async Task Mutation_Works(CaseData caseData)
+    {
+        // Arrange
+        var executor = await GetRequestExecutorAsync();
+
+        var query = "mutation { write(foo: " + caseData.FooInput + ", bar: " + caseData.BarInput + ") }";
+
+        // Act
+        var result = await executor.ExecuteAsync(query);
+
+        // Assert
+        var verifySettings = new VerifySettings();
+        verifySettings.UseParameters(caseData);
+        await Verify(result, verifySettings);
+    }
+
     // TODO: Unit tests for:
     // - cancellation
     // - does adding validators after fairybread still work ok?
@@ -168,37 +167,37 @@ public class GeneralTests
         yield return new object[]
         {
             // Happy days
-            new CaseData(caseId++, @"{ someInteger: 1, someString: ""hello"" }", @"{ emailAddress: ""ben@lol.com"" }")
+            new CaseData(caseId++, @"{ someInteger: 1, someString: ""hello"" }", @"{ emailAddress: ""ben@lol.com"" }"),
         };
         yield return new object[]
         {
             // Sync error
-            new CaseData(caseId++, @"{ someInteger: -1, someString: ""hello"" }", @"{ emailAddress: ""ben@lol.com"" }")
+            new CaseData(caseId++, @"{ someInteger: -1, someString: ""hello"" }", @"{ emailAddress: ""ben@lol.com"" }"),
         };
         yield return new object[]
         {
             // Async error
-            new CaseData(caseId++, @"{ someInteger: 1, someString: ""hello"" }", @"{ emailAddress: ""-1"" }")
+            new CaseData(caseId++, @"{ someInteger: 1, someString: ""hello"" }", @"{ emailAddress: ""-1"" }"),
         };
         yield return new object[]
         {
             // Multiple sync errors and async error
-            new CaseData(caseId++, @"{ someInteger: -1, someString: ""-1"" }", @"{ emailAddress: ""-1"" }")
+            new CaseData(caseId++, @"{ someInteger: -1, someString: ""-1"" }", @"{ emailAddress: ""-1"" }"),
         };
     }
 
     public class CaseData
     {
-        public string CaseId { get; set; }
-        public string FooInput { get; set; }
-        public string BarInput { get; set; }
-
         public CaseData(int caseId, string fooInput, string barInput)
         {
             CaseId = caseId.ToString();
             FooInput = fooInput;
             BarInput = barInput;
         }
+
+        public string CaseId { get; set; }
+        public string FooInput { get; set; }
+        public string BarInput { get; set; }
     }
 
     [Theory]
@@ -243,48 +242,47 @@ public class GeneralTests
         yield return new object[]
         {
             // Happy days, implied array
-            new CollectionCaseData(caseId++, @"{ someInteger: 1, someString: ""hello"" }")
+            new CollectionCaseData(caseId++, @"{ someInteger: 1, someString: ""hello"" }"),
         };
         yield return new object[]
         {
             // Happy days, explicit array
-            new CollectionCaseData(caseId++, @"[{ someInteger: 1, someString: ""hello"" }]")
+            new CollectionCaseData(caseId++, @"[{ someInteger: 1, someString: ""hello"" }]"),
         };
         yield return new object[]
         {
             // Happy days, multiple items
-            new CollectionCaseData(caseId++, @"[{ someInteger: 1, someString: ""hello"" }, { someInteger: 1, someString: ""hello"" }]")
+            new CollectionCaseData(caseId++, @"[{ someInteger: 1, someString: ""hello"" }, { someInteger: 1, someString: ""hello"" }]"),
         };
         yield return new object[]
         {
             // Error, implied array
-            new CollectionCaseData(caseId++, @"{ someInteger: -1, someString: ""hello"" }")
+            new CollectionCaseData(caseId++, @"{ someInteger: -1, someString: ""hello"" }"),
         };
         yield return new object[]
         {
             // Error, explicit array
-            new CollectionCaseData(caseId++, @"[{ someInteger: -1, someString: ""hello"" }]")
+            new CollectionCaseData(caseId++, @"[{ someInteger: -1, someString: ""hello"" }]"),
         };
         yield return new object[]
         {
             // Error, multiple items
-            new CollectionCaseData(caseId++, @"[{ someInteger: -1, someString: ""hello"" }, { someInteger: -1, someString: ""hello"" }]")
+            new CollectionCaseData(caseId++, @"[{ someInteger: -1, someString: ""hello"" }, { someInteger: -1, someString: ""hello"" }]"),
         };
     }
 
     public class CollectionCaseData
     {
-        public string CaseId { get; set; }
-        public string FoosInput { get; set; }
-
         public CollectionCaseData(int caseId, string foosInput)
         {
             CaseId = caseId.ToString();
             FoosInput = foosInput;
         }
-    }
 
-#pragma warning disable CA1822 // Mark members as static
+        public string CaseId { get; set; }
+        public string FoosInput { get; set; }
+    }
+    #pragma warning disable CA1822 // Mark members as static
     public class Query
     {
         public static bool WasFieldResolverCalled { get; private set; }
@@ -323,7 +321,10 @@ public class GeneralTests
 
     public class Mutation
     {
-        public string Write(FooInputDto foo, BarInputDto bar) => $"{foo}; {bar}";
+        public string Write(FooInputDto foo, BarInputDto bar)
+        {
+            return $"{foo}; {bar}";
+        }
     }
 
     public class MyInput : InputObjectType<FooInputDto>
@@ -340,9 +341,10 @@ public class GeneralTests
 
         public string SomeString { get; set; } = "";
 
-        public override string ToString() =>
-            $"SomeInteger: {SomeInteger}, " +
-            $"SomeString: {SomeString}";
+        public override string ToString()
+        {
+            return $"SomeInteger: {SomeInteger}, " + $"SomeString: {SomeString}";
+        }
     }
 
     public class FooInputDtoValidator : AbstractValidator<FooInputDto>
@@ -375,7 +377,9 @@ public class GeneralTests
         public string EmailAddress { get; set; } = "";
 
         public override string ToString()
-            => $"EmailAddress: {EmailAddress}";
+        {
+            return $"EmailAddress: {EmailAddress}";
+        }
     }
 
     public abstract class BarInputDtoValidatorBase : AbstractValidator<BarInputDto>
@@ -386,10 +390,7 @@ public class GeneralTests
         }
     }
 
-    public class BarInputDtoValidator : BarInputDtoValidatorBase
-    {
-
-    }
+    public class BarInputDtoValidator : BarInputDtoValidatorBase { }
 
     public class BarInputDtoAsyncValidator : AbstractValidator<BarInputDto>
     {
@@ -397,7 +398,7 @@ public class GeneralTests
         {
             RuleFor(x => x.EmailAddress)
                 // TODO: Cancellation unit test
-                .MustAsync((val, _) => Task.FromResult(val == "ben@lol.com"));
+               .MustAsync((val, _) => Task.FromResult(val == "ben@lol.com"));
         }
     }
 
@@ -407,7 +408,8 @@ public class GeneralTests
         {
             RuleFor(x => x)
                 //.Null()
-                .GreaterThan(0).When(x => x is not null);
+               .GreaterThan(0)
+               .When(x => x is { });
         }
     }
 }

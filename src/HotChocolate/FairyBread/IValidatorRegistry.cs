@@ -1,8 +1,8 @@
 ﻿namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 /// <summary>
-/// Maintains a registry of implicit validators
-/// keyed by the target runtime type for validation.
+///     Maintains a registry of implicit validators
+///     keyed by the target runtime type for validation.
 /// </summary>
 public interface IValidatorRegistry
 {

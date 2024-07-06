@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
@@ -15,28 +14,29 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = CoreRocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
+        var rocket = await ServiceProvider
+                          .WithScoped<RocketDbContext>()
+                          .Invoke(
+                               async z =>
+                               {
+                                   var rocket = new ReadyRocket
+                                   {
+                                       Type = CoreRocketType.Falcon9,
+                                       SerialNumber = "12345678901234",
+                                   };
+                                   z.Add(rocket);
 
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+                                   await z.SaveChangesAsync();
+                                   return rocket;
+                               }
+                           );
 
         var u = await client.UpdateRocket.ExecuteAsync(
-            new EditRocketRequest
+            new()
             {
                 Id = rocket.Id.Value,
                 Type = RocketType.FalconHeavy,
-                SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
+                SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
             }
         );
         u.IsSuccessResult().Should().Be(true);
@@ -47,27 +47,28 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = CoreRocketType.AtlasV,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
+        var rocket = await ServiceProvider
+                          .WithScoped<RocketDbContext>()
+                          .Invoke(
+                               async z =>
+                               {
+                                   var rocket = new ReadyRocket
+                                   {
+                                       Type = CoreRocketType.AtlasV,
+                                       SerialNumber = "12345678901234",
+                                   };
+                                   z.Add(rocket);
 
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+                                   await z.SaveChangesAsync();
+                                   return rocket;
+                               }
+                           );
 
         var u = await client.PatchRocket.ExecuteAsync(
             new()
             {
                 Id = rocket.Id.Value,
-                SerialNumber = "123456789012345"
+                SerialNumber = "123456789012345",
             }
         );
         u.EnsureNoErrors();
@@ -81,28 +82,29 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = CoreRocketType.AtlasV,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
+        var rocket = await ServiceProvider
+                          .WithScoped<RocketDbContext>()
+                          .Invoke(
+                               async z =>
+                               {
+                                   var rocket = new ReadyRocket
+                                   {
+                                       Type = CoreRocketType.AtlasV,
+                                       SerialNumber = "12345678901234",
+                                   };
+                                   z.Add(rocket);
 
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+                                   await z.SaveChangesAsync();
+                                   return rocket;
+                               }
+                           );
 
 
         var u = await client.PatchRocket.ExecuteAsync(
             new()
             {
                 Id = rocket.Id.Value,
-                SerialNumber = null
+                SerialNumber = null,
             }
         );
 
@@ -115,27 +117,28 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = CoreRocketType.AtlasV,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
+        var rocket = await ServiceProvider
+                          .WithScoped<RocketDbContext>()
+                          .Invoke(
+                               async z =>
+                               {
+                                   var rocket = new ReadyRocket
+                                   {
+                                       Type = CoreRocketType.AtlasV,
+                                       SerialNumber = "12345678901234",
+                                   };
+                                   z.Add(rocket);
 
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+                                   await z.SaveChangesAsync();
+                                   return rocket;
+                               }
+                           );
 
         var u = await client.PatchRocket.ExecuteAsync(
             new()
             {
                 Id = rocket.Id.Value,
-                Type = RocketType.FalconHeavy
+                Type = RocketType.FalconHeavy,
             }
         );
 
@@ -150,7 +153,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
-        request = request with { Id = Guid.NewGuid() };
+        request = request with { Id = Guid.NewGuid(), };
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
 
@@ -162,19 +165,19 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
         public ShouldValidateUsersRequiredFieldData()
         {
             Add(
-                new EditRocketRequest { Type = RocketType.Falcon9 },
+                new() { Type = RocketType.Falcon9, },
                 nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new EditRocketRequest { SerialNumber = Faker.Random.String2(0, 9), Type = RocketType.FalconHeavy },
+                new() { SerialNumber = Faker.Random.String2(0, 9), Type = RocketType.FalconHeavy, },
                 nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new EditRocketRequest { SerialNumber = Faker.Random.String2(600, 800), Type = RocketType.AtlasV },
+                new() { SerialNumber = Faker.Random.String2(600, 800), Type = RocketType.AtlasV, },
                 nameof(EditRocketRequest.SerialNumber)
             );
             Add(
-                new EditRocketRequest { SerialNumber = Faker.Random.String2(11) },
+                new() { SerialNumber = Faker.Random.String2(11), },
                 nameof(EditRocketRequest.Type)
             );
         }

@@ -46,9 +46,12 @@ public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest(te
             new SqliteExtension<RocketDbContext>()
         );
         var exeuctor = await host.Services.GetRequestExecutorAsync();
-        await Verify(exeuctor.Schema.Print()
-          // for some reason @specifiedBy is not working for me at the moment
-         .Replace("@specifiedBy", "# @specifiedBy")
-          , "graphql");
+        await Verify(
+            exeuctor
+               .Schema.Print()
+                // for some reason @specifiedBy is not working for me at the moment
+               .Replace("@specifiedBy", "# @specifiedBy"),
+            "graphql"
+        );
     }
 }
