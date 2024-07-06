@@ -11,85 +11,6 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 internal class ValidationMiddlewareInjector : TypeInterceptor
 {
-    private FieldMiddlewareDefinition? _validationFieldMiddlewareDef;
-
-    public override void OnBeforeCompleteType(
-        ITypeCompletionContext completionContext,
-        DefinitionBase definition
-    )
-    {
-        if (definition is not ObjectTypeDefinition objTypeDef)
-        {
-            return;
-        }
-
-        var options = completionContext.Services
-                                       .GetRequiredService<IFairyBreadOptions>();
-        var validatorRegistry = completionContext.Services
-                                                 .GetRequiredService<IValidatorRegistry>();
-
-        foreach (var fieldDef in objTypeDef.Fields)
-        {
-            // Don't add validation middleware unless:
-            // 1. we have args
-            var needsValidationMiddleware = false;
-
-            foreach (var argDef in fieldDef.Arguments)
-            {
-                var argCoord = new SchemaCoordinate(objTypeDef.Name, fieldDef.Name, argDef.Name);
-
-                // 2. the argument should be validated according to options func
-                if (!options.ShouldValidateArgument(objTypeDef, fieldDef, argDef))
-                {
-                    continue;
-                }
-
-                // 3. there's validators for it
-                List<ValidatorDescriptor> validatorDescs;
-                try
-                {
-                    validatorDescs = DetermineValidatorsForArg(validatorRegistry, argDef);
-                    if (validatorDescs.Count < 1)
-                    {
-                        continue;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(
-                        $"Problem getting runtime type for argument '{argDef.Name}' " + $"in field '{fieldDef.Name}' on object type '{objTypeDef.Name}'.",
-                        ex
-                    );
-                }
-
-                // Cleanup context now we're done with these
-                foreach (var key in argDef.ContextData.Keys)
-                {
-                    if (key.StartsWith(WellKnownContextData.Prefix))
-                    {
-                        argDef.ContextData.Remove(key);
-                    }
-                }
-
-                validatorDescs.TrimExcess();
-                needsValidationMiddleware = true;
-                argDef.ContextData[WellKnownContextData.ValidatorDescriptors] = validatorDescs.AsReadOnly();
-            }
-
-            if (needsValidationMiddleware)
-            {
-                if (_validationFieldMiddlewareDef is null)
-                {
-                    _validationFieldMiddlewareDef = new FieldMiddlewareDefinition(
-                        FieldClassMiddlewareFactory.Create<ValidationMiddleware>()
-                    );
-                }
-
-                fieldDef.MiddlewareDefinitions.Insert(0, _validationFieldMiddlewareDef);
-            }
-        }
-    }
-
     private static List<ValidatorDescriptor> DetermineValidatorsForArg(
         IValidatorRegistry validatorRegistry,
         ArgumentDefinition argDef
@@ -98,7 +19,7 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         // If validation is explicitly disabled, return none so validation middleware won't be added
         if (argDef.ContextData.ContainsKey(WellKnownContextData.DontValidate))
         {
-            return new List<ValidatorDescriptor>(0);
+            return new(0);
         }
 
         var validators = new List<ValidatorDescriptor>();
@@ -124,7 +45,7 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
                     continue;
                 }
 
-                validators.Add(new ValidatorDescriptor(validatorType));
+                validators.Add(new(validatorType));
             }
         }
 
@@ -194,7 +115,7 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         if (typeof(InputObjectType).IsAssignableFrom(extType))
         {
             var currBaseType = extType.Type.BaseType;
-            while (currBaseType is not null && ( !currBaseType.IsGenericType || currBaseType.GetGenericTypeDefinition() != typeof(InputObjectType<>) ))
+            while (currBaseType is { } && ( !currBaseType.IsGenericType || currBaseType.GetGenericTypeDefinition() != typeof(InputObjectType<>) ))
             {
                 currBaseType = currBaseType.BaseType;
             }
@@ -211,7 +132,7 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         if (typeof(ScalarType).IsAssignableFrom(extType))
         {
             var currBaseType = extType.Type.BaseType;
-            while (currBaseType is not null && ( !currBaseType.IsGenericType || currBaseType.GetGenericTypeDefinition() != typeof(ScalarType<>) ))
+            while (currBaseType is { } && ( !currBaseType.IsGenericType || currBaseType.GetGenericTypeDefinition() != typeof(ScalarType<>) ))
             {
                 currBaseType = currBaseType.BaseType;
             }
@@ -231,5 +152,84 @@ internal class ValidationMiddlewareInjector : TypeInterceptor
         }
 
         return null;
+    }
+
+    private FieldMiddlewareDefinition? _validationFieldMiddlewareDef;
+
+    public override void OnBeforeCompleteType(
+        ITypeCompletionContext completionContext,
+        DefinitionBase definition
+    )
+    {
+        if (definition is not ObjectTypeDefinition objTypeDef)
+        {
+            return;
+        }
+
+        var options = completionContext.Services
+                                       .GetRequiredService<IFairyBreadOptions>();
+        var validatorRegistry = completionContext.Services
+                                                 .GetRequiredService<IValidatorRegistry>();
+
+        foreach (var fieldDef in objTypeDef.Fields)
+        {
+            // Don't add validation middleware unless:
+            // 1. we have args
+            var needsValidationMiddleware = false;
+
+            foreach (var argDef in fieldDef.Arguments)
+            {
+                var argCoord = new SchemaCoordinate(objTypeDef.Name, fieldDef.Name, argDef.Name);
+
+                // 2. the argument should be validated according to options func
+                if (!options.ShouldValidateArgument(objTypeDef, fieldDef, argDef))
+                {
+                    continue;
+                }
+
+                // 3. there's validators for it
+                List<ValidatorDescriptor> validatorDescs;
+                try
+                {
+                    validatorDescs = DetermineValidatorsForArg(validatorRegistry, argDef);
+                    if (validatorDescs.Count < 1)
+                    {
+                        continue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new(
+                        $"Problem getting runtime type for argument '{argDef.Name}' " + $"in field '{fieldDef.Name}' on object type '{objTypeDef.Name}'.",
+                        ex
+                    );
+                }
+
+                // Cleanup context now we're done with these
+                foreach (var key in argDef.ContextData.Keys)
+                {
+                    if (key.StartsWith(WellKnownContextData.Prefix))
+                    {
+                        argDef.ContextData.Remove(key);
+                    }
+                }
+
+                validatorDescs.TrimExcess();
+                needsValidationMiddleware = true;
+                argDef.ContextData[WellKnownContextData.ValidatorDescriptors] = validatorDescs.AsReadOnly();
+            }
+
+            if (needsValidationMiddleware)
+            {
+                if (_validationFieldMiddlewareDef is null)
+                {
+                    _validationFieldMiddlewareDef = new(
+                        FieldClassMiddlewareFactory.Create<ValidationMiddleware>()
+                    );
+                }
+
+                fieldDef.MiddlewareDefinitions.Insert(0, _validationFieldMiddlewareDef);
+            }
+        }
     }
 }

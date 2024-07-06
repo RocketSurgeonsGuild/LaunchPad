@@ -1,9 +1,9 @@
 using System.Runtime.CompilerServices;
-using DiffEngine;
-using NodaTime;
 using Argon.NodaTime;
+using DiffEngine;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using NodaTime;
 using Path = System.IO.Path;
 
 namespace Sample.Graphql.Tests;
@@ -35,13 +35,13 @@ public static class ModuleInitializer
         );
     }
 
-    class GeometryConverter : WriteOnlyJsonConverter
+    private class GeometryConverter : WriteOnlyJsonConverter
     {
         private readonly WKTWriter _writer;
 
         public GeometryConverter()
         {
-            _writer = new WKTWriter();
+            _writer = new();
         }
 
         public override bool CanConvert(Type type)

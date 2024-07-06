@@ -10,7 +10,8 @@ public class DefaultValidatorProvider : IValidatorProvider
     protected readonly IValidatorRegistry ValidatorRegistry;
 
     public DefaultValidatorProvider(
-        IValidatorRegistry validatorRegistry)
+        IValidatorRegistry validatorRegistry
+    )
     {
         ValidatorRegistry = validatorRegistry;
     }
@@ -19,8 +20,9 @@ public class DefaultValidatorProvider : IValidatorProvider
     {
         if (!argument.ContextData.TryGetValue(
                 WellKnownContextData.ValidatorDescriptors,
-                out var validatorDescriptorsRaw) ||
-            validatorDescriptorsRaw is not IEnumerable<ValidatorDescriptor> validatorDescriptors)
+                out var validatorDescriptorsRaw
+            )
+         || validatorDescriptorsRaw is not IEnumerable<ValidatorDescriptor> validatorDescriptors)
         {
             yield break;
         }
@@ -31,12 +33,12 @@ public class DefaultValidatorProvider : IValidatorProvider
             {
                 var scope = context.Services.CreateScope(); // disposed by middleware
                 var validator = (IValidator)scope.ServiceProvider.GetRequiredService(validatorDescriptor.ValidatorType);
-                yield return new ResolvedValidator(validator, scope);
+                yield return new(validator, scope);
             }
             else
             {
                 var validator = (IValidator)context.Services.GetRequiredService(validatorDescriptor.ValidatorType);
-                yield return new ResolvedValidator(validator);
+                yield return new(validator);
             }
         }
     }

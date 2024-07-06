@@ -7,7 +7,6 @@ using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 using Rocket.Surgery.LaunchPad.HotChocolate.Types;
-using Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;

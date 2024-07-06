@@ -26,19 +26,18 @@ builder
    .AddExecutableTypes()
    .AddQueryType()
    .AddMutationType()
-   .ModifyOptions(options =>
-                  {
-                      options.RemoveUnreachableTypes = false;
-                      options.EnableDirectiveIntrospection = true;
-                      options.EnableTrueNullability = true;
-                      options.DefaultDirectiveVisibility = DirectiveVisibility.Public;
-                      options.RemoveUnusedTypeSystemDirectives = false;
-                  }
+   .ModifyOptions(
+        options =>
+        {
+            options.RemoveUnreachableTypes = false;
+            options.EnableDirectiveIntrospection = true;
+            options.EnableTrueNullability = true;
+            options.DefaultDirectiveVisibility = DirectiveVisibility.Public;
+            options.RemoveUnusedTypeSystemDirectives = false;
+        }
     )
-   .ModifyRequestOptions(options =>
-                         {
-                             options.IncludeExceptionDetails = true;
-                         }
+   .ModifyRequestOptions(
+        options => { options.IncludeExceptionDetails = true; }
     );
 
 var app = await builder

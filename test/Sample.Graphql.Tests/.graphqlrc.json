@@ -1,28 +1,28 @@
 {
-  "schema": "snapshots/FoundationTests.GraphqlSchema.verified.graphql",
-  "extensions": {
-    "strawberryShake": {
-      "name": "RocketClient",
-      "url": "https://localhost:5001/graphql/",
-      "dependencyInjection": false,
-      "strictSchemaValidation": false,
-      "hashAlgorithm": "md5",
-      "useSingleFile": false,
-      "requestStrategy": "Default",
-      "outputDirectoryName": "Generated",
-      "noStore": false,
-      "emitGeneratedCode": true,
-      "razorComponents": false,
-      "records": {
-        "inputs": true,
-        "entities": true
-      },
-      "transportProfiles": [
-        {
-          "default": "Http",
-          "subscription": "WebSocket"
+    "schema": "snapshots/FoundationTests.GraphqlSchema.verified.graphql",
+    "extensions": {
+        "strawberryShake": {
+            "name": "RocketClient",
+            "url": "https://localhost:5001/graphql/",
+            "dependencyInjection": false,
+            "strictSchemaValidation": false,
+            "hashAlgorithm": "md5",
+            "useSingleFile": false,
+            "requestStrategy": "Default",
+            "outputDirectoryName": "Generated",
+            "noStore": false,
+            "emitGeneratedCode": true,
+            "razorComponents": false,
+            "records": {
+                "inputs": true,
+                "entities": true
+            },
+            "transportProfiles": [
+                {
+                    "default": "Http",
+                    "subscription": "WebSocket"
+                }
+            ]
         }
-      ]
     }
-  }
 }

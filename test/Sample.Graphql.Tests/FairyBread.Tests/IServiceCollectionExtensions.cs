@@ -13,7 +13,7 @@ public static class IServiceCollectionExtensions
         // but instantiate it directly from the provider
         // https://github.com/FluentValidation/FluentValidation/blob/0e45f4efbab956d84f425b0b7d207ada516720bd/src/FluentValidation.DependencyInjectionExtensions/ServiceCollectionExtensions.cs#L90
         return services
-            .AddTransient<IValidator<TValidatee>, TValidator>()
-            .AddTransient<TValidator>();
+              .AddTransient<IValidator<TValidatee>, TValidator>()
+              .AddTransient<TValidator>();
     }
 }

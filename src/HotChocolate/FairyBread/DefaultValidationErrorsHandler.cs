@@ -7,9 +7,39 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public class DefaultValidationErrorsHandler : IValidationErrorsHandler
 {
+    protected virtual IErrorBuilder CreateErrorBuilder(
+        IMiddlewareContext context,
+        string argumentName,
+        IValidator validator,
+        ValidationFailure failure
+    )
+    {
+        var builder = ErrorBuilder
+                     .New()
+                     .SetPath(context.Path)
+                     .SetMessage(failure.ErrorMessage)
+                     .SetCode("FairyBread_ValidationError")
+                     .SetExtension("argumentName", argumentName)
+                     .SetExtension("validatorName", validator.GetType().Name)
+                     .SetExtension("errorCode", failure.ErrorCode)
+                     .SetExtension("errorMessage", failure.ErrorMessage)
+                     .SetExtension("attemptedValue", failure.AttemptedValue)
+                     .SetExtension("severity", failure.Severity)
+                     .SetExtension("formattedMessagePlaceholderValues", failure.FormattedMessagePlaceholderValues);
+
+        if (!string.IsNullOrWhiteSpace(failure.PropertyName))
+        {
+            builder = builder
+               .SetExtension("propertyName", failure.PropertyName);
+        }
+
+        return builder;
+    }
+
     public virtual void Handle(
         IMiddlewareContext context,
-        IEnumerable<ArgumentValidationResult> invalidResults)
+        IEnumerable<ArgumentValidationResult> invalidResults
+    )
     {
         foreach (var invalidResult in invalidResults)
         {
@@ -20,32 +50,5 @@ public class DefaultValidationErrorsHandler : IValidationErrorsHandler
                 context.ReportError(error);
             }
         }
-    }
-
-    protected virtual IErrorBuilder CreateErrorBuilder(
-        IMiddlewareContext context,
-        string argumentName,
-        IValidator validator,
-        ValidationFailure failure)
-    {
-        var builder = ErrorBuilder.New()
-            .SetPath(context.Path)
-            .SetMessage(failure.ErrorMessage)
-            .SetCode("FairyBread_ValidationError")
-            .SetExtension("argumentName", argumentName)
-            .SetExtension("validatorName", validator.GetType().Name)
-            .SetExtension("errorCode", failure.ErrorCode)
-            .SetExtension("errorMessage", failure.ErrorMessage)
-            .SetExtension("attemptedValue", failure.AttemptedValue)
-            .SetExtension("severity", failure.Severity)
-            .SetExtension("formattedMessagePlaceholderValues", failure.FormattedMessagePlaceholderValues);
-
-        if (!string.IsNullOrWhiteSpace(failure.PropertyName))
-        {
-            builder = builder
-                .SetExtension("propertyName", failure.PropertyName);
-        }
-
-        return builder;
     }
 }

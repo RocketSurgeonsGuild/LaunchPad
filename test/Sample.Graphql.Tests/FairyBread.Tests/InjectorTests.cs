@@ -3,7 +3,6 @@ using HotChocolate.Data;
 using HotChocolate.Execution;
 using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 namespace FairyBread.Tests;
@@ -13,7 +12,8 @@ public class InjectorTests
     private static async Task<IRequestExecutor> GetRequestExecutorAsync(
         Action<IFairyBreadOptions>? configureOptions = null,
         Action<IServiceCollection>? configureServices = null,
-        bool registerValidators = true)
+        bool registerValidators = true
+    )
     {
         var services = new ServiceCollection();
         configureServices?.Invoke(services);
@@ -33,18 +33,15 @@ public class InjectorTests
         }
 
         var builder = services
-            .AddGraphQL()
-            .AddQueryType<QueryIType>()
-            .AddType<TestInputType>()
-            .AddSorting()
-            .AddFiltering()
-            .AddFairyBread(options =>
-            {
-                configureOptions?.Invoke(options);
-            });
+                     .AddGraphQL()
+                     .AddQueryType<QueryIType>()
+                     .AddType<TestInputType>()
+                     .AddSorting()
+                     .AddFiltering()
+                     .AddFairyBread(options => { configureOptions?.Invoke(options); });
 
         return await builder
-            .BuildRequestExecutorAsync();
+           .BuildRequestExecutorAsync();
     }
 
     [Theory]
@@ -56,35 +53,36 @@ public class InjectorTests
         var executor = await GetRequestExecutorAsync(
             registerValidators: registerValidators,
             configureOptions: options =>
-            {
-                if (!registerValidators)
-                {
-                    options.ThrowIfNoValidatorsFound = false;
-                }
-            });
+                              {
+                                  if (!registerValidators)
+                                  {
+                                      options.ThrowIfNoValidatorsFound = false;
+                                  }
+                              }
+        );
 
-        var query = "query { " +
-                    "noArgs " +
-                    "scalarArgsA(a: 0, b: false) " +
-                    "scalarArgsB(a: 0, b: false) " +
-                    "scalarArgsC(a: 0, b: false) " +
-                    "scalarArgsD(a: 0, b: false) " +
-                    "nullableScalarArgsA(a: 0, b: false) " +
-                    "nullableScalarArgsB(a: 0, b: false) " +
-                    "nullableScalarArgsC(a: 0, b: false) " +
-                    "nullableScalarArgsD(a: 0, b: false) " +
-                    "objectArgA(input: { a: 0, b: false }) " +
-                    "objectArgB(input: { a: 0, b: false }) " +
-                    "objectArgC(input: { a: 0, b: false }) " +
-                    "objectArgD(input: { a: 0, b: false }) " +
-                    "arrayArgA(items: [0, 0]) " +
-                    "listArgA(items: [0, 0]) " +
-                    "listArgB(items: [0, 0]) " +
-                    "listArgC(items: [0, 0]) " +
-                    "listArgD(items: [0, 0]) " +
-                    "listOfListArgC(items: [[0, 0], [0, 0]]) " +
-                    "filterSortAndPagingArgs(first: 10) { nodes { a } }" +
-                    "}";
+        var query = "query { "
+          + "noArgs "
+          + "scalarArgsA(a: 0, b: false) "
+          + "scalarArgsB(a: 0, b: false) "
+          + "scalarArgsC(a: 0, b: false) "
+          + "scalarArgsD(a: 0, b: false) "
+          + "nullableScalarArgsA(a: 0, b: false) "
+          + "nullableScalarArgsB(a: 0, b: false) "
+          + "nullableScalarArgsC(a: 0, b: false) "
+          + "nullableScalarArgsD(a: 0, b: false) "
+          + "objectArgA(input: { a: 0, b: false }) "
+          + "objectArgB(input: { a: 0, b: false }) "
+          + "objectArgC(input: { a: 0, b: false }) "
+          + "objectArgD(input: { a: 0, b: false }) "
+          + "arrayArgA(items: [0, 0]) "
+          + "listArgA(items: [0, 0]) "
+          + "listArgB(items: [0, 0]) "
+          + "listArgC(items: [0, 0]) "
+          + "listArgD(items: [0, 0]) "
+          + "listOfListArgC(items: [[0, 0], [0, 0]]) "
+          + "filterSortAndPagingArgs(first: 10) { nodes { a } }"
+          + "}";
 
         // Act
         var result = await executor.ExecuteAsync(query);
@@ -121,7 +119,9 @@ public class InjectorTests
 
         var query = @"
                 query {
-                    readWithExplicitValidation(" + args + @")
+                    readWithExplicitValidation("
+          + args
+          + @")
                 }";
 
         // Act
@@ -157,7 +157,9 @@ public class InjectorTests
 
         var query = @"
                 query {
-                    readWithExplicitValidationFluent(" + args + @")
+                    readWithExplicitValidationFluent("
+          + args
+          + @")
                 }";
 
         // Act
@@ -166,53 +168,67 @@ public class InjectorTests
         // Assert
         await Verify(result).UseParameters(valid);
     }
-
-#pragma warning disable CA1822 // Mark members as static
+    #pragma warning disable CA1822 // Mark members as static
     public class QueryI
     {
         public string NoArgs => "foo";
 
-        public string ScalarArgsA(int a, bool b) => $"{a} | {b}";
+        public string ScalarArgsA(int a, bool b)
+        {
+            return $"{a} | {b}";
+        }
 
-        public string NullableScalarArgsA(int? a, bool? b) => $"{a} | {b}";
+        public string NullableScalarArgsA(int? a, bool? b)
+        {
+            return $"{a} | {b}";
+        }
 
-        public string ObjectArgA(TestInput input) => input.ToString();
+        public string ObjectArgA(TestInput input)
+        {
+            return input.ToString();
+        }
 
-        public string ArrayArgA(int?[] items) => string.Join(", ", items);
+        public string ArrayArgA(int?[] items)
+        {
+            return string.Join(", ", items);
+        }
 
-        public string ListArgA(List<int?> items) => string.Join(", ", items);
+        public string ListArgA(List<int?> items)
+        {
+            return string.Join(", ", items);
+        }
 
         [UsePaging]
         [UseFiltering]
         [UseSorting]
-        public IEnumerable<FooI> GetFilterSortAndPagingArgs() => new FooI[] { new FooI() };
+        public IEnumerable<FooI> GetFilterSortAndPagingArgs()
+        {
+            return new FooI[] { new(), };
+        }
 
         public string ReadWithExplicitValidation(
             // Should validate explicitly
             [Validate(typeof(PositiveIntValidator))]
             int fooInt,
             // Shouldn't validate implicitly
-            [Validate(typeof(PositiveIntValidator))]
-            [DontValidateImplicitly]
+            [Validate(typeof(PositiveIntValidator))] [DontValidateImplicitly]
             int barInt,
             // Shouldn't validate
-            [Validate(typeof(PositiveIntValidator))]
-            [DontValidate]
+            [Validate(typeof(PositiveIntValidator))] [DontValidate]
             int lolInt,
             // Should validate explicitly
             [Validate(typeof(TestInputExplicitValidator))]
             TestInput fooInput,
             // Shouldn't validate implicitly
-            [Validate(typeof(TestInputExplicitValidator))]
-            [DontValidateImplicitly]
+            [Validate(typeof(TestInputExplicitValidator))] [DontValidateImplicitly]
             TestInput barInput,
             // Shouldn't validate
-            [Validate(typeof(TestInputExplicitValidator))]
-            [DontValidate]
+            [Validate(typeof(TestInputExplicitValidator))] [DontValidate]
             TestInput lolInput,
             // Shouldn't add an implicitly added validator again
             [Validate(typeof(TestInputValidator))]
-            TestInput dblInput)
+            TestInput dblInput
+        )
         {
             return $"{fooInt} {barInt} {lolInt} {fooInput} {barInput} {lolInput}";
         }
@@ -224,112 +240,137 @@ public class InjectorTests
         protected override void Configure(IObjectTypeDescriptor<QueryI> descriptor)
         {
             descriptor
-                .Field("scalarArgsB")
-                .Argument("a", arg => arg.Type<NonNullType<IntType>>())
-                .Argument("b", arg => arg.Type<NonNullType<BooleanType>>())
-                .Type<StringType>()
-                .ResolveWith<QueryIType>(x => x.ScalarArgsBResolver(default, default));
+               .Field("scalarArgsB")
+               .Argument("a", arg => arg.Type<NonNullType<IntType>>())
+               .Argument("b", arg => arg.Type<NonNullType<BooleanType>>())
+               .Type<StringType>()
+               .ResolveWith<QueryIType>(x => x.ScalarArgsBResolver(default, default));
 
             descriptor
-                .Field("scalarArgsC")
-                .Argument("a", arg => arg.Type<NonNullType<IntType>>())
-                .Argument("b", arg => arg.Type<NonNullType<BooleanType>>())
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("scalarArgsC")
+               .Argument("a", arg => arg.Type<NonNullType<IntType>>())
+               .Argument("b", arg => arg.Type<NonNullType<BooleanType>>())
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("scalarArgsD")
-                .Argument("a", arg => arg.Type(typeof(int)))
-                .Argument("b", arg => arg.Type(typeof(bool)))
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("scalarArgsD")
+               .Argument("a", arg => arg.Type(typeof(int)))
+               .Argument("b", arg => arg.Type(typeof(bool)))
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("nullableScalarArgsB")
-                .Argument("a", arg => arg.Type<IntType>())
-                .Argument("b", arg => arg.Type<BooleanType>())
-                .Type<StringType>()
-                .ResolveWith<QueryIType>(x => x.NullableScalarArgsBResolver(default, default));
+               .Field("nullableScalarArgsB")
+               .Argument("a", arg => arg.Type<IntType>())
+               .Argument("b", arg => arg.Type<BooleanType>())
+               .Type<StringType>()
+               .ResolveWith<QueryIType>(x => x.NullableScalarArgsBResolver(default, default));
 
             descriptor
-                .Field("nullableScalarArgsC")
-                .Argument("a", arg => arg.Type<IntType>())
-                .Argument("b", arg => arg.Type<BooleanType>())
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("nullableScalarArgsC")
+               .Argument("a", arg => arg.Type<IntType>())
+               .Argument("b", arg => arg.Type<BooleanType>())
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("nullableScalarArgsD")
-                .Argument("a", arg => arg.Type(typeof(int?)))
-                .Argument("b", arg => arg.Type(typeof(bool?)))
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("nullableScalarArgsD")
+               .Argument("a", arg => arg.Type(typeof(int?)))
+               .Argument("b", arg => arg.Type(typeof(bool?)))
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("objectArgB")
-                .Argument("input", arg => arg.Type<TestInputType>())
-                .Type<StringType>()
-                .ResolveWith<QueryIType>(x => x.ObjArgResolver(default!));
+               .Field("objectArgB")
+               .Argument("input", arg => arg.Type<TestInputType>())
+               .Type<StringType>()
+               .ResolveWith<QueryIType>(x => x.ObjArgResolver(default!));
 
             descriptor
-                .Field("objectArgC")
-                .Argument("input", arg => arg.Type<TestInputType>())
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("objectArgC")
+               .Argument("input", arg => arg.Type<TestInputType>())
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("objectArgD")
-                .Argument("input", arg => arg.Type(typeof(TestInput)))
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("objectArgD")
+               .Argument("input", arg => arg.Type(typeof(TestInput)))
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("listArgB")
-                .Argument("items", arg => arg.Type<NonNullType<ListType<IntType>>>())
-                .Type<StringType>()
-                .ResolveWith<QueryIType>(x => x.ListArgResolver(default!));
+               .Field("listArgB")
+               .Argument("items", arg => arg.Type<NonNullType<ListType<IntType>>>())
+               .Type<StringType>()
+               .ResolveWith<QueryIType>(x => x.ListArgResolver(default!));
 
             descriptor
-                .Field("listArgC")
-                .Argument("items", arg => arg.Type<NonNullType<ListType<IntType>>>())
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("listArgC")
+               .Argument("items", arg => arg.Type<NonNullType<ListType<IntType>>>())
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("listArgD")
-                .Argument("items", arg => arg.Type(typeof(List<int?>)))
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("listArgD")
+               .Argument("items", arg => arg.Type(typeof(List<int?>)))
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("listOfListArgC")
-                .Argument("items", arg => arg.Type<NonNullType<ListType<NonNullType<ListType<IntType>>>>>())
-                .Type<StringType>()
-                .Resolve(ctx => "hello");
+               .Field("listOfListArgC")
+               .Argument("items", arg => arg.Type<NonNullType<ListType<NonNullType<ListType<IntType>>>>>())
+               .Type<StringType>()
+               .Resolve(ctx => "hello");
 
             descriptor
-                .Field("readWithExplicitValidationFluent")
+               .Field("readWithExplicitValidationFluent")
                 // Should validate explicitly
-                .Argument("fooInt", arg => arg.Type<IntType>().ValidateWith<PositiveIntValidator>())
+               .Argument("fooInt", arg => arg.Type<IntType>().ValidateWith<PositiveIntValidator>())
                 // Shouldn't validate implicitly
-                .Argument("barInt", arg => arg.Type<IntType>().ValidateWith<PositiveIntValidator>().DontValidateImplicitly())
+               .Argument("barInt", arg => arg.Type<IntType>().ValidateWith<PositiveIntValidator>().DontValidateImplicitly())
                 // Shouldn't validate
-                .Argument("lolInt", arg => arg.Type<IntType>().ValidateWith<PositiveIntValidator>().DontValidate())
+               .Argument("lolInt", arg => arg.Type<IntType>().ValidateWith<PositiveIntValidator>().DontValidate())
                 // Should validate explicitly
-                .Argument("fooInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputExplicitValidator>())
+               .Argument("fooInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputExplicitValidator>())
                 // Shouldn't validate implicitly
-                .Argument("barInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputExplicitValidator>().DontValidateImplicitly())
+               .Argument("barInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputExplicitValidator>().DontValidateImplicitly())
                 // Shouldn't validate
-                .Argument("lolInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputExplicitValidator>().DontValidate())
+               .Argument("lolInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputExplicitValidator>().DontValidate())
                 // Shouldn't add an implicitly added validator again
-                .Argument("dblInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputValidator>())
-                .ResolveWith<QueryI>(q => q.ReadWithExplicitValidation(default, default, default, default!, default!, default!, default!));
+               .Argument("dblInput", arg => arg.Type<TestInputType>().ValidateWith<TestInputValidator>())
+               .ResolveWith<QueryI>(
+                    q => q.ReadWithExplicitValidation(
+                        default,
+                        default,
+                        default,
+                        default!,
+                        default!,
+                        default!,
+                        default!
+                    )
+                );
         }
 
-        public string ScalarArgsBResolver(int a, bool b) => $"{a} | {b}";
-        public string NullableScalarArgsBResolver(int? a, bool? b) => $"{a?.ToString() ?? "null"} | {b?.ToString() ?? "null"}";
-        public string ObjArgResolver(TestInput input) => input.ToString();
-        public string ListArgResolver(List<int> items) => string.Join(",", items);
+        public string ScalarArgsBResolver(int a, bool b)
+        {
+            return $"{a} | {b}";
+        }
+
+        public string NullableScalarArgsBResolver(int? a, bool? b)
+        {
+            return $"{a?.ToString() ?? "null"} | {b?.ToString() ?? "null"}";
+        }
+
+        public string ObjArgResolver(TestInput input)
+        {
+            return input.ToString();
+        }
+
+        public string ListArgResolver(List<int> items)
+        {
+            return string.Join(",", items);
+        }
     }
 
     public class FooI
@@ -343,13 +384,13 @@ public class InjectorTests
 
         public bool B { get; set; }
 
-        public override string ToString() => $"{A} | {B}";
+        public override string ToString()
+        {
+            return $"{A} | {B}";
+        }
     }
 
-    public class TestInputType : InputObjectType<TestInput>
-    {
-
-    }
+    public class TestInputType : InputObjectType<TestInput> { }
 
     public class IntValidator : AbstractValidator<int>
     {
@@ -419,10 +460,11 @@ public class InjectorTests
     public class ListOfListOfNullableIntValidator : AbstractValidator<List<List<int?>>>
     {
         public ListOfListOfNullableIntValidator(
-            ListOfNullableIntValidator innerValidator)
+            ListOfNullableIntValidator innerValidator
+        )
         {
             RuleForEach(x => x)
-                .SetValidator(innerValidator);
+               .SetValidator(innerValidator);
         }
     }
 

@@ -4,10 +4,10 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 
 public class DefaultFairyBreadOptions : IFairyBreadOptions
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual bool ThrowIfNoValidatorsFound { get; set; } = true;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Func<ObjectTypeDefinition, ObjectFieldDefinition, ArgumentDefinition, bool> ShouldValidateArgument { get; set; }
         = (o, f, a) => true;
 }
