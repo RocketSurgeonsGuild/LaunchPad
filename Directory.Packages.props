@@ -139,7 +139,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Alba" Version="7.4.1" />
+    <PackageVersion Include="Alba" Version="8.0.0" />
     <PackageVersion Include="Bogus" Version="35.6.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="FakeItEasy" Version="8.3.0" />
