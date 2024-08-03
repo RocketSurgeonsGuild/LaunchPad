@@ -599,6 +599,9 @@ directive @cost("The `weight` argument defines what value to add to the overall 
 "The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
 directive @listSize("The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field." assumedSize: Int "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments." slicingArguments: [String!] "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields." sizedFields: [String!] "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error." requireOneSlicingArgument: Boolean! = true) on FIELD_DEFINITION
 
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
 """
 The @tag directive is used to apply arbitrary string
 metadata to a schema location. Custom tooling can use
@@ -617,7 +620,7 @@ directive @tag("The name of the tag." name: String!) repeatable on SCHEMA | SCAL
 scalar Coordinates
 
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
-scalar DateTime # @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
 
 """
 Represents a time zone - a mapping between UTC and local time.
@@ -672,7 +675,7 @@ scalar Period
 "A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
 scalar Position
 
-scalar UUID # @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
+scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
 
 scalar Void
 
