@@ -18,7 +18,7 @@
     <PackageVersion Include="Roslynator.Refactorings" Version="4.12.4" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="GitVersion.Tool" Version="6.0.1" />
+    <PackageVersion Include="GitVersion.Tool" Version="6.0.2" />
     <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2024.1.5" />
     <PackageVersion Include="Nuke.Common" Version="8.0.0" />
     <PackageVersion Include="ReportGenerator" Version="5.3.8" />
