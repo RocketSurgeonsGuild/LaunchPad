@@ -53,14 +53,7 @@ public class SystemJsonTextConvention : IServiceConvention
            .Configure<IServiceProvider>(
                 (options, provider) => ActivatorUtilities
                                       .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.SerializerOptions)
-                                      .Create(nameof(MvcJsonOptions))
-            );
-        services
-           .AddOptions<HttpJsonOptions>()
-           .Configure<IServiceProvider>(
-                (options, provider) => ActivatorUtilities
-                                      .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.SerializerOptions)
-                                      .Create(nameof(JsonOptions))
+                                      .Create(nameof(HttpJsonOptions))
             );
     }
 }
