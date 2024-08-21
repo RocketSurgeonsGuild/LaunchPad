@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
@@ -47,14 +46,14 @@ public class SystemJsonTextConvention : IServiceConvention
            .Configure<IServiceProvider>(
                 (options, provider) => ActivatorUtilities
                                       .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.JsonSerializerOptions)
-                                      .Create(nameof(JsonOptions))
+                                      .Create(nameof(MvcJsonOptions))
             );
         services
            .AddOptions<HttpJsonOptions>()
            .Configure<IServiceProvider>(
                 (options, provider) => ActivatorUtilities
                                       .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.SerializerOptions)
-                                      .Create(nameof(JsonOptions))
+                                      .Create(nameof(MvcJsonOptions))
             );
     }
 }

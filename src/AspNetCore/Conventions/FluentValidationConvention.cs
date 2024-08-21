@@ -45,7 +45,7 @@ public partial class FluentValidationConvention : IServiceConvention
                         var propertyType = ruleContext?.PropertyInfo?.DeclaringType;
                         if (propertyType == typeof(string))
                         {
-                            (context.Schema.Properties[context.PropertyKey] ??= new ()).MinLength = 1;
+                            ( context.Schema.Properties[context.PropertyKey] ??= new() ).MinLength = 1;
                         }
                     }
                 )
@@ -66,7 +66,7 @@ public partial class FluentValidationConvention : IServiceConvention
                         if (propertyType != null && ( ( propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null ) || propertyType.IsEnum ))
                         {
                             context.Schema.Required.Add(context.PropertyKey);
-                            (context.Schema.Properties[context.PropertyKey] ??= new ()).Nullable = false;
+                            ( context.Schema.Properties[context.PropertyKey] ??= new() ).Nullable = false;
                         }
                     }
                 )
@@ -83,7 +83,7 @@ public partial class FluentValidationConvention : IServiceConvention
                                                                   .First(z => z.PropertyType == typeof(ValidationRuleContext))
                                                                   .GetValue(context)! )
                            .GetReflectionContext();
-                        (context.Schema.Properties[context.PropertyKey] ??= new ()).Nullable =
+                        ( context.Schema.Properties[context.PropertyKey] ??= new() ).Nullable =
                             context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)
                          || ( ruleContext is { PropertyInfo: FieldInfo fi, } && getNullableValue(fi.GetNullability(), fi.FieldType) )
                             ;
@@ -109,7 +109,7 @@ public partial class FluentValidationConvention : IServiceConvention
                     context =>
                     {
                         var validator = context.PropertyValidator as IStringInValidator;
-                        (context.Schema.Properties[context.PropertyKey] ??= new ()).Enum =
+                        ( context.Schema.Properties[context.PropertyKey] ??= new() ).Enum =
                             // ReSharper disable once NullableWarningSuppressionIsUsed
                             validator!.Values.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
                     }
