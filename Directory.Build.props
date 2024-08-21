@@ -17,13 +17,18 @@
         <NukeTelemetryVersion>1</NukeTelemetryVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <ImplicitUsings>enable</ImplicitUsings>
-        <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsTrimmable>
+        <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+            true</IsTrimmable>
         <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
         <NoWarn>$(NoWarn);0436;CA1014;CA1062</NoWarn>
         <AnalysisLevel>latest</AnalysisLevel>
         <!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
-<!--                <WarningsAsErrors>RS0017</WarningsAsErrors>-->
         <!--        <WarningsNotAsErrors></WarningsNotAsErrors>-->
+        <WarningsAsErrors>RS0017</WarningsAsErrors>
+
+        <NuGetAudit>true</NuGetAudit>
+        <NuGetAuditMode>all</NuGetAuditMode>
+        <NuGetAuditLevel>moderate</NuGetAuditLevel>
     </PropertyGroup>
     <ItemGroup>
         <None
