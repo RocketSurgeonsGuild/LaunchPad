@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using StronglyTypedIds;
 
@@ -32,12 +33,11 @@ public record RocketModel
     /// </summary>
     public RocketType Type { get; init; }
 
-    private class Mapper : Profile
+    [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    internal static partial class Mapper
     {
-        public Mapper()
-        {
-            CreateMap<ReadyRocket, RocketModel>()
-               .ForMember(z => z.Sn, x => x.MapFrom(z => z.SerialNumber));
-        }
+        [MapProperty(nameof(@ReadyRocket.SerialNumber), nameof(@RocketModel.Sn))]
+        public static partial RocketModel Map(ReadyRocket launchRecord);
     }
 }

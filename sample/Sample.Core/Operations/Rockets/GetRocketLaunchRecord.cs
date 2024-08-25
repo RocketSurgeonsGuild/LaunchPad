@@ -1,4 +1,3 @@
-using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Rocket.Surgery.LaunchPad.Foundation;

@@ -20,15 +20,4 @@
             ReferenceOutputAssembly="false"
         />
     </ItemGroup>
-    <ItemGroup>
-      <Compile Remove="Mapping\JsonElementConverterTests.cs" />
-      <Compile Remove="Mapping\JTokenConverterTests.cs" />
-      <Compile Remove="Mapping\LocalDateTests.cs" />
-      <Compile Remove="Mapping\LocalDateTimeTests.cs" />
-      <Compile Remove="Mapping\LocalTimeTests.cs" />
-      <Compile Remove="Mapping\OffsetDateTimeTests.cs" />
-      <Compile Remove="Mapping\OffsetTests.cs" />
-      <Compile Remove="Mapping\PeriodTests.cs" />
-      <Compile Remove="Mapping\SystemTextJsonTests.cs" />
-    </ItemGroup>
 </Project>

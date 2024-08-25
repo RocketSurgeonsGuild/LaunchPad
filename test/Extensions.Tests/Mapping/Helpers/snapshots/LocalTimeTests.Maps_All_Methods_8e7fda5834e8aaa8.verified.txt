@@ -1,0 +1,6 @@
+﻿{
+  Input: {},
+  Result: {
+    Bar: 12:00 AM
+  }
+}

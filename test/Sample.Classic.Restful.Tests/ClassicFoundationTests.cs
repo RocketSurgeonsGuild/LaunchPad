@@ -1,5 +1,4 @@
 using System.Net;
-using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Sample.Classic.Restful.Tests.Helpers;
@@ -11,13 +10,6 @@ namespace Sample.Classic.Restful.Tests;
 public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture fixture)
     : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, fixture)
 {
-    [Fact]
-    public void AutoMapper()
-    {
-        ServiceProvider.GetRequiredService<IMapper>()
-                .ConfigurationProvider.AssertConfigurationIsValid();
-    }
-
     [Fact]
     public async Task Starts()
     {

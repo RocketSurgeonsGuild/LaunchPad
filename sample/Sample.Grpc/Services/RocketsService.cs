@@ -1,4 +1,3 @@
-using AutoMapper;
 using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;

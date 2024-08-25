@@ -1,88 +1,65 @@
-using System.Reflection;
-using AutoMapper;
+using Microsoft.Extensions.Time.Testing;
 using NodaTime;
-using Rocket.Surgery.Extensions.Testing;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class LocalDateTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
+public partial class LocalDateTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-
-    [Fact]
-    public void MapsFrom()
+    [Mapper]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    private partial class Mapper
     {
 
-        var foo = new Foo1
-        {
-            Bar = LocalDate.FromDateTime(DateTime.Now),
-        };
+        public partial Foo1 MapFoo1(Foo2 foo);
+        public partial Foo1 MapFoo1(Foo5 foo);
+        public partial Foo1 MapFoo1(Foo6 foo);
 
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(foo.Bar.ToDateTimeUnspecified());
-    }
+        public partial Foo2 MapFoo2(Foo1 foo);
+        public partial Foo2 MapFoo2(Foo5 foo);
+        public partial Foo2 MapFoo2(Foo6 foo);
 
-    [Fact]
-    public void MapsTo()
-    {
+        public partial Foo5 MapFoo5(Foo1 foo);
+        public partial Foo5 MapFoo5(Foo2 foo);
+        public partial Foo5 MapFoo5(Foo6 foo);
 
-        var foo = new Foo3
-        {
-            Bar = DateTime.Now,
-        };
-
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(LocalDate.FromDateTime(foo.Bar));
-    }
-
-    [Theory]
-    [ClassData(typeof(TypeConverterData<Converters>))]
-    public void AutomatedTests(Type source, Type destination, object? sourceValue)
-    {
-        var method = typeof(IMapperBase)
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                    .First(
-                         x => x.ContainsGenericParameters
-                          && x.IsGenericMethodDefinition
-                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                          && x.GetParameters().Length == 1
-                     );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
-
-        if (sourceValue == null)
-            result.Should().BeNull();
-        else
-            result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
-    }
-
-    protected override void Configure(IMapperConfigurationExpression expression)
-    {
-        ArgumentNullException.ThrowIfNull(expression);
-
-        expression.CreateMap<Foo1, Foo3>().ReverseMap();
+        public partial Foo6 MapFoo6(Foo1 foo);
+        public partial Foo6 MapFoo6(Foo2 foo);
+        public partial Foo6 MapFoo6(Foo5 foo);
     }
 
     private class Foo1
     {
         public LocalDate Bar { get; set; }
     }
-
-    private class Foo3
+    private class Foo2
     {
-        public DateTime Bar { get; set; }
+        public LocalDate? Bar { get; set; }
     }
 
-    public class Converters : TypeConverterFactory
+    private class Foo5
     {
-        public override IEnumerable<Type> GetTypeConverters()
-        {
-            yield return typeof(ITypeConverter<LocalDate, DateTime>);
-            yield return typeof(ITypeConverter<LocalDate?, DateTime?>);
-            yield return typeof(ITypeConverter<DateTime, LocalDate>);
-            yield return typeof(ITypeConverter<DateTime?, LocalDate?>);
-            yield return typeof(ITypeConverter<LocalDate, DateOnly>);
-            yield return typeof(ITypeConverter<LocalDate?, DateOnly?>);
-            yield return typeof(ITypeConverter<DateOnly, LocalDate>);
-            yield return typeof(ITypeConverter<DateOnly?, LocalDate?>);
-        }
+        public DateOnly Bar { get; set; }
+    }
+    private class Foo6
+    {
+        public DateOnly? Bar { get; set; }
+    }
+
+    FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory, MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetLocalNow().DateTime,
+                DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
+                LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+            )
+           .UseHashedParameters(result.ToString());
     }
 }

@@ -1,92 +1,34 @@
 using System.Reflection;
-using AutoMapper;
+using Microsoft.Extensions.Time.Testing;
 using NodaTime;
 using NodaTime.Extensions;
-using Rocket.Surgery.Extensions.Testing;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
+public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-
-    [Fact]
-    public void MapsFrom_DateTime()
+    [Mapper]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    private partial class Mapper
     {
+        public partial Foo1 MapFoo1(Foo2 foo);
+        public partial Foo1 MapFoo1(Foo5 foo);
+        public partial Foo1 MapFoo1(Foo6 foo);
 
-        var foo = new Foo1
-        {
-            Bar = LocalTime.FromTicksSinceMidnight(10000),
-        };
+        public partial Foo2 MapFoo2(Foo1 foo);
+        public partial Foo2 MapFoo2(Foo5 foo);
+        public partial Foo2 MapFoo2(Foo6 foo);
 
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(new(foo.Bar.TickOfDay));
-    }
+        public partial Foo5 MapFoo5(Foo1 foo);
+        public partial Foo5 MapFoo5(Foo2 foo);
+        public partial Foo5 MapFoo5(Foo6 foo);
 
-    [Fact]
-    public void MapsTo_DateTime()
-    {
-
-        var foo = new Foo3
-        {
-            Bar = TimeSpan.FromMinutes(502),
-        };
-
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(new(502 / 60, 502 % 60));
-    }
-
-    [Fact]
-    public void MapsFrom_DateTimeOffset()
-    {
-
-        var foo = new Foo1
-        {
-            Bar = LocalTime.FromTicksSinceMidnight(10000),
-        };
-
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(foo.Bar.ToTimeOnly());
-    }
-
-    [Fact]
-    public void MapsTo_DateTimeOffset()
-    {
-
-        var foo = new Foo5
-        {
-            Bar = TimeOnly.FromDateTime(DateTime.Now),
-        };
-
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(foo.Bar.ToLocalTime());
-    }
-
-    [Theory]
-    [ClassData(typeof(TypeConverterData<Converters>))]
-    public void AutomatedTests(Type source, Type destination, object? sourceValue)
-    {
-        var method = typeof(IMapperBase)
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                    .First(
-                         x => x.ContainsGenericParameters
-                          && x.IsGenericMethodDefinition
-                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                          && x.GetParameters().Length == 1
-                     );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
-
-        if (sourceValue == null)
-            result.Should().BeNull();
-        else
-            result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
-    }
-
-    protected override void Configure(IMapperConfigurationExpression expression)
-    {
-        ArgumentNullException.ThrowIfNull(expression);
-
-        expression.CreateMap<Foo1, Foo3>().ReverseMap();
-        expression.CreateMap<Foo1, Foo5>().ReverseMap();
+        public partial Foo6 MapFoo6(Foo1 foo);
+        public partial Foo6 MapFoo6(Foo2 foo);
+        public partial Foo6 MapFoo6(Foo5 foo);
     }
 
     private class Foo1
@@ -94,9 +36,9 @@ public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : AutoFa
         public LocalTime Bar { get; set; }
     }
 
-    private class Foo3
+    private class Foo2
     {
-        public TimeSpan Bar { get; set; }
+        public LocalTime? Bar { get; set; }
     }
 
     private class Foo5
@@ -104,18 +46,23 @@ public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : AutoFa
         public TimeOnly Bar { get; set; }
     }
 
-    public class Converters : TypeConverterFactory
+    private class Foo6
     {
-        public override IEnumerable<Type> GetTypeConverters()
-        {
-            yield return typeof(ITypeConverter<LocalTime, TimeSpan>);
-            yield return typeof(ITypeConverter<LocalTime?, TimeSpan?>);
-            yield return typeof(ITypeConverter<TimeSpan, LocalTime>);
-            yield return typeof(ITypeConverter<TimeSpan?, LocalTime?>);
-            yield return typeof(ITypeConverter<LocalTime, TimeOnly>);
-            yield return typeof(ITypeConverter<LocalTime?, TimeOnly?>);
-            yield return typeof(ITypeConverter<TimeOnly, LocalTime>);
-            yield return typeof(ITypeConverter<TimeOnly?, LocalTime?>);
-        }
+        public TimeOnly? Bar { get; set; }
+    }
+
+    FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory, MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetLocalNow().DateTime,
+                TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
+                LocalTime.FromTimeOnly(TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime))
+            )
+           .UseHashedParameters(result.ToString());
     }
 }

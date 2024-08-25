@@ -11,8 +11,10 @@ public class MapperDataAttribute<TMapper> : DataAttribute
         var methods = typeof(TMapper).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         foreach (var method in methods)
         {
+            if (method.IsGenericMethodDefinition) continue;
             var parameters = method.GetParameters();
-            if (parameters is [{ ParameterType.IsClass: true }]) yield return [new MethodResult(method)];
+            if (parameters is not [{ ParameterType.IsClass: true }]) continue;
+            yield return [new MethodResult(method)];
         }
     }
 }

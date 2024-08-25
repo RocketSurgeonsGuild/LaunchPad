@@ -1,43 +1,33 @@
-using AutoMapper;
+using Microsoft.Extensions.Time.Testing;
 using NodaTime;
-using Rocket.Surgery.Extensions.Testing;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class OffsetTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
+public partial class OffsetTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-
-    [Fact]
-    public void MapsFrom()
+    [Mapper]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
+    private partial class Mapper
     {
+        public partial Foo1 MapFoo1(Foo2 foo);
+        public partial Foo1 MapFoo1(Foo3 foo);
+        public partial Foo1 MapFoo1(Foo4 foo);
 
-        var foo = new Foo1
-        {
-            Bar = Offset.FromHours(11),
-        };
+        public partial Foo2 MapFoo2(Foo1 foo);
+        public partial Foo2 MapFoo2(Foo3 foo);
+        public partial Foo2 MapFoo2(Foo4 foo);
 
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(foo.Bar.ToTimeSpan());
-    }
+        public partial Foo3 MapFoo3(Foo1 foo);
+        public partial Foo3 MapFoo3(Foo2 foo);
+        public partial Foo3 MapFoo3(Foo4 foo);
 
-    [Fact]
-    public void MapsTo()
-    {
-
-        var foo = new Foo3
-        {
-            Bar = TimeSpan.FromHours(10),
-        };
-
-        var result = Mapper.Map(foo).Bar;
-        result.Should().Be(Offset.FromTimeSpan(foo.Bar));
-    }
-
-    protected override void Configure(IMapperConfigurationExpression expression)
-    {
-        ArgumentNullException.ThrowIfNull(expression);
-
-        expression.CreateMap<Foo1, Foo3>().ReverseMap();
+        public partial Foo4 MapFoo4(Foo1 foo);
+        public partial Foo4 MapFoo4(Foo2 foo);
+        public partial Foo4 MapFoo4(Foo3 foo);
     }
 
     private class Foo1
@@ -45,19 +35,32 @@ public partial class OffsetTests(ITestOutputHelper testOutputHelper) : AutoFakeT
         public Offset Bar { get; set; }
     }
 
+    private class Foo2
+    {
+        public Offset? Bar { get; set; }
+    }
+
     private class Foo3
     {
         public TimeSpan Bar { get; set; }
     }
 
-    public class Converters : TypeConverterFactory
+    private class Foo4
     {
-        public override IEnumerable<Type> GetTypeConverters()
-        {
-            yield return typeof(ITypeConverter<Offset, TimeSpan>);
-            yield return typeof(ITypeConverter<Offset?, TimeSpan?>);
-            yield return typeof(ITypeConverter<TimeSpan, Offset>);
-            yield return typeof(ITypeConverter<TimeSpan?, Offset?>);
-        }
+        public TimeSpan? Bar { get; set; }
+    }
+
+    FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory, MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                Offset.FromHours(11),
+                TimeSpan.FromHours(10)
+            )
+           .UseHashedParameters(result.ToString());
     }
 }

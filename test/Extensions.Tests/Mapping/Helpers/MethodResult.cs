@@ -22,6 +22,33 @@ public class MethodResult(MethodInfo methodInfo)
         return new(source,  methodInfo.Invoke(mapper, [source]));
     }
 
+    public IEnumerable<MapResult> MapEach(object mapper, params object[] instances)
+    {
+        var parameterType = methodInfo.GetParameters()[0].ParameterType;
+        var instanceLookup = instances.ToLookup(x => Nullable.GetUnderlyingType(x.GetType()) ?? x.GetType());
+        var propertyLookup = parameterType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                                          .ToDictionary(z => Nullable.GetUnderlyingType(z.PropertyType) ?? z.PropertyType);
+
+        return instanceLookup.Join(
+            propertyLookup,
+            z => z.Key,
+            z => z.Key,
+            (instances, properties) =>
+            {
+                var propertyInfo = properties.Value;
+                return instances.Select(
+                    instance =>
+                    {
+                        var source = Activator.CreateInstance(parameterType);
+                        propertyInfo.SetValue(source, instance);
+                        return source;
+                    }
+                );
+            }
+        )
+       .SelectMany(sources => sources, (_, source) => new MapResult(source,  methodInfo.Invoke(mapper, [source])));
+    }
+
     public override string ToString()
     {
         return $"{methodInfo.Name}({methodInfo.GetParameters()[0].ParameterType.Name} -> {methodInfo.ReturnType.Name})";

@@ -1,18 +1,42 @@
-using System.Reflection;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 
 namespace Extensions.Tests.Mapping;
 
-public partial class DurationTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
+public partial class DurationTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
+    [Mapper, PublicAPI]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    private partial class Mapper
+    {
+        public partial Foo1 MapFoo1(Foo2 source);
+        public partial Foo1 MapFoo1(Foo3 source);
+        public partial Foo1 MapFoo1(Foo4 source);
+
+        public partial Foo2 MapFoo2(Foo1 source);
+        public partial Foo2 MapFoo2(Foo3 source);
+        public partial Foo2 MapFoo2(Foo4 source);
+
+        public partial Foo3 MapFoo3(Foo1 source);
+        public partial Foo3 MapFoo3(Foo2 source);
+        public partial Foo3 MapFoo3(Foo4 source);
+
+        public partial Foo4 MapFoo4(Foo1 source);
+        public partial Foo4 MapFoo4(Foo2 source);
+        public partial Foo4 MapFoo4(Foo3 source);
+    }
+
     private class Foo1
     {
         public Duration Bar { get; set; }
+    }
+
+    private class Foo2
+    {
+        public Duration? Bar { get; set; }
     }
 
     private class Foo3
@@ -20,21 +44,15 @@ public partial class DurationTests(ITestOutputHelper testOutputHelper) : AutoFak
         public TimeSpan Bar { get; set; }
     }
 
-    [Theory, MapperData<Mapper>]
-    public Task TestsMapper(MethodResult result)
+    private class Foo4
     {
-        return Verify(result.Map(
-            new Mapper(),
-            TimeSpan.FromHours(2),
-            Duration.FromMinutes(44)
-        )).UseHashedParameters(result.ToString());
+        public TimeSpan? Bar { get; set; }
     }
 
-    [Mapper]
-    [UseStaticMapper(typeof(NodaTimeMapper))]
-    private partial class Mapper
+    [Theory, MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
     {
-        public  partial Foo1 Map(Foo3 source);
-        public  partial Foo3 Map(Foo1 source);
+        return VerifyMethod(result, new Mapper(), TimeSpan.FromHours(1), Duration.FromMinutes(44))
+           .UseHashedParameters(result.ToString());
     }
 }

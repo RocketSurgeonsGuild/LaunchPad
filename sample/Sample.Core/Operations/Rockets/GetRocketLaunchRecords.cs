@@ -1,6 +1,4 @@
 using System.Runtime.CompilerServices;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

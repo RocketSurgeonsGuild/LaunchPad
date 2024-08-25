@@ -1,59 +1,13 @@
-using Extensions.Tests.Mapping.Helpers;
 using Microsoft.Extensions.Time.Testing;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Mapping;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class InstantTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
+public partial class InstantTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-    FakeTimeProvider _fakeTimeProvider = new ();
-
-    private class Foo1
-    {
-        public Instant Bar { get; set; }
-    }
-
-    private class Foo2
-    {
-        public Instant? Bar { get; set; }
-    }
-
-    private class Foo3
-    {
-        public DateTime Bar { get; set; }
-    }
-
-    private class Foo4
-    {
-        public DateTime? Bar { get; set; }
-    }
-
-    private class Foo5
-    {
-        public DateTimeOffset Bar { get; set; }
-    }
-
-    private class Foo6
-    {
-        public DateTimeOffset? Bar { get; set; }
-    }
-
-    [Theory, MapperData<Mapper>]
-    public Task TestsMapper(MethodResult result)
-    {
-        return Verify(result.Map(
-            new Mapper(),
-            _fakeTimeProvider.GetUtcNow(),
-            _fakeTimeProvider.GetUtcNow().UtcDateTime,
-            Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
-        )).UseHashedParameters(result.ToString())
-          .DontScrubDateTimes();
-    }
-
     [Mapper, PublicAPI]
     [UseStaticMapper(typeof(DateTimeMapper))]
     [UseStaticMapper(typeof(NodaTimeMapper))]
@@ -95,5 +49,50 @@ public partial class InstantTests(ITestOutputHelper testOutputHelper) : AutoFake
         public partial Foo6 MapFoo6(Foo3 source);
         public partial Foo6 MapFoo6(Foo4 source);
         public partial Foo6 MapFoo6(Foo5 source);
+    }
+
+    private class Foo1
+    {
+        public Instant Bar { get; set; }
+    }
+
+    private class Foo2
+    {
+        public Instant? Bar { get; set; }
+    }
+
+    private class Foo3
+    {
+        public DateTime Bar { get; set; }
+    }
+
+    private class Foo4
+    {
+        public DateTime? Bar { get; set; }
+    }
+
+    private class Foo5
+    {
+        public DateTimeOffset Bar { get; set; }
+    }
+
+    private class Foo6
+    {
+        public DateTimeOffset? Bar { get; set; }
+    }
+
+        FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory, MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetUtcNow(),
+                _fakeTimeProvider.GetUtcNow().UtcDateTime,
+                Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
+            )
+           .UseHashedParameters(result.ToString());
     }
 }

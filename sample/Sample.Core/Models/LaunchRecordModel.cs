@@ -1,5 +1,6 @@
-﻿using AutoMapper;
-using NodaTime;
+﻿using NodaTime;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using StronglyTypedIds;
 
@@ -16,7 +17,7 @@ public partial struct LaunchRecordId { }
 /// <summary>
 ///     The launch record details
 /// </summary>
-public record LaunchRecordModel
+public partial record LaunchRecordModel
 {
     /// <summary>
     ///     The launch record id
@@ -61,11 +62,11 @@ public record LaunchRecordModel
     /// </summary>
     public RocketType RocketType { get; init; }
 
-    private class Mapper : Profile
+    [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    internal static partial class Mapper
     {
-        public Mapper()
-        {
-            CreateMap<LaunchRecord, LaunchRecordModel>();
-        }
+        public static partial LaunchRecordModel Map(LaunchRecord launchRecord);
     }
 }
+

@@ -1,4 +1,3 @@
-using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
 using NodaTime;
 using Duration = NodaTime.Duration;
