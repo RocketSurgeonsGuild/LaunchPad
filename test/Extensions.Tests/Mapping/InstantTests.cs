@@ -1,99 +1,68 @@
 using System.Reflection;
 using AutoMapper;
+using Microsoft.Extensions.Time.Testing;
 using NodaTime;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.Extensions.Testing;
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<InstantTests.Converters>(testOutputHelper)
+public partial class InstantTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
-    {
-        Config.AssertConfigurationIsValid();
-    }
+    FakeTimeProvider _fakeTimeProvider = new ();
 
     [Fact]
     public void MapsFrom_DateTime()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo1
         {
-            Bar = Instant.FromDateTimeOffset(DateTimeOffset.Now),
+            Bar = Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow()),
         };
 
-        var result = mapper.Map<Foo3>(foo).Bar;
-        result.Should().Be(foo.Bar.ToDateTimeOffset().UtcDateTime);
+        var result = Mapper.Map(foo).Bar;
+        result.Should().Be(_fakeTimeProvider.GetUtcNow());
     }
 
     [Fact]
     public void MapsTo_DateTime()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo3
         {
             Bar = DateTime.UtcNow,
         };
 
-        var result = mapper.Map<Foo1>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(Instant.FromDateTimeUtc(foo.Bar));
     }
 
     [Fact]
     public void MapsFrom_DateTimeOffset()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo1
         {
             Bar = Instant.FromDateTimeOffset(DateTimeOffset.Now),
         };
 
-        var result = mapper.Map<Foo5>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(foo.Bar.ToDateTimeOffset());
     }
 
     [Fact]
     public void MapsTo_DateTimeOffset()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo5
         {
             Bar = DateTimeOffset.Now,
         };
 
-        var result = mapper.Map<Foo1>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(Instant.FromDateTimeOffset(foo.Bar));
-    }
-
-    [Theory]
-    [ClassData(typeof(TypeConverterData<Converters>))]
-    public void AutomatedTests(Type source, Type destination, object? sourceValue)
-    {
-        var method = typeof(IMapperBase)
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                    .First(
-                         x => x.ContainsGenericParameters
-                          && x.IsGenericMethodDefinition
-                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                          && x.GetParameters().Length == 1
-                     );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
-
-        if (sourceValue == null)
-            result.Should().BeNull();
-        else
-            result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
-    }
-
-    protected override void Configure(IMapperConfigurationExpression expression)
-    {
-        ArgumentNullException.ThrowIfNull(expression);
-
-        expression.CreateMap<Foo1, Foo3>().ReverseMap();
-        expression.CreateMap<Foo1, Foo5>().ReverseMap();
     }
 
     private class Foo1
@@ -101,9 +70,19 @@ public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTes
         public Instant Bar { get; set; }
     }
 
+    private class Foo2
+    {
+        public Instant? Bar { get; set; }
+    }
+
     private class Foo3
     {
         public DateTime Bar { get; set; }
+    }
+
+    private class Foo4
+    {
+        public DateTime? Bar { get; set; }
     }
 
     private class Foo5
@@ -111,18 +90,63 @@ public class InstantTests(ITestOutputHelper testOutputHelper) : TypeConverterTes
         public DateTimeOffset Bar { get; set; }
     }
 
-    public class Converters : TypeConverterFactory
+    private class Foo6
     {
-        public override IEnumerable<Type> GetTypeConverters()
+        public DateTimeOffset? Bar { get; set; }
+    }
+
+    public record MethodResult(MethodInfo MethodInfo, string Name, Type Source, Type Destination)
+    {
+        public override string ToString()
         {
-            yield return typeof(ITypeConverter<Instant, DateTime>);
-            yield return typeof(ITypeConverter<Instant?, DateTime?>);
-            yield return typeof(ITypeConverter<Instant, DateTimeOffset>);
-            yield return typeof(ITypeConverter<Instant?, DateTimeOffset?>);
-            yield return typeof(ITypeConverter<DateTime, Instant>);
-            yield return typeof(ITypeConverter<DateTime?, Instant?>);
-            yield return typeof(ITypeConverter<DateTimeOffset, Instant>);
-            yield return typeof(ITypeConverter<DateTimeOffset?, Instant?>);
+            return $"{Name}({Source.Name} -> {Destination.Name})";
         }
+    }
+
+    class A : CombinatorialMemberDataAttribute
+    {
+
+    }
+
+    [Mapper, PublicAPI]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
+    private static partial class Mapper
+    {
+        public static partial Foo1 MapFoo1(Foo2 source);
+        public static partial Foo1 MapFoo1(Foo3 source);
+        public static partial Foo1 MapFoo1(Foo4 source);
+        public static partial Foo1 MapFoo1(Foo5 source);
+        public static partial Foo1 MapFoo1(Foo6 source);
+
+        public static partial Foo2 MapFoo2(Foo1 source);
+        public static partial Foo2 MapFoo2(Foo3 source);
+        public static partial Foo2 MapFoo2(Foo4 source);
+        public static partial Foo2 MapFoo2(Foo5 source);
+        public static partial Foo2 MapFoo2(Foo6 source);
+
+        public static partial Foo3 MapFoo3(Foo1 source);
+        public static partial Foo3 MapFoo3(Foo2 source);
+        public static partial Foo3 MapFoo3(Foo4 source);
+        public static partial Foo3 MapFoo3(Foo5 source);
+        public static partial Foo3 MapFoo3(Foo6 source);
+
+        public static partial Foo4 MapFoo4(Foo1 source);
+        public static partial Foo4 MapFoo4(Foo2 source);
+        public static partial Foo4 MapFoo4(Foo3 source);
+        public static partial Foo4 MapFoo4(Foo5 source);
+        public static partial Foo4 MapFoo4(Foo6 source);
+
+        public static partial Foo5 MapFoo5(Foo1 source);
+        public static partial Foo5 MapFoo5(Foo2 source);
+        public static partial Foo5 MapFoo5(Foo3 source);
+        public static partial Foo5 MapFoo5(Foo4 source);
+        public static partial Foo5 MapFoo5(Foo6 source);
+
+        public static partial Foo6 MapFoo6(Foo1 source);
+        public static partial Foo6 MapFoo6(Foo2 source);
+        public static partial Foo6 MapFoo6(Foo3 source);
+        public static partial Foo6 MapFoo6(Foo4 source);
+        public static partial Foo6 MapFoo6(Foo5 source);
     }
 }

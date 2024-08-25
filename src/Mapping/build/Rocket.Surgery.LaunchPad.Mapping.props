@@ -1,0 +1,6 @@
+﻿<Project>
+    <ItemGroup>
+        <Using Include="Riok.Mapperly" />
+        <Using Include="Riok.Mapperly.Abstractions" />
+    </ItemGroup>
+</Project>

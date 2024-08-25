@@ -1,17 +1,13 @@
 ﻿using System.Text.Json;
 using AutoMapper;
 using Newtonsoft.Json.Linq;
+using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : TypeConverterTest(testOutputHelper)
+public partial class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
-    {
-        Config.AssertConfigurationIsValid();
-    }
 
     [Fact]
     public void ShouldMap_From_Nullable_JsonElement_To_JToken_Null()
@@ -20,7 +16,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -31,7 +27,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -42,7 +38,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -53,7 +49,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -64,7 +60,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = default
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -75,7 +71,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = default
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -86,7 +82,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
     }
 
@@ -97,7 +93,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
     }
 
@@ -108,7 +104,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -119,7 +115,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -130,7 +126,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -141,7 +137,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -152,7 +148,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = default
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -163,7 +159,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = default
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -174,7 +170,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
     }
 
@@ -185,7 +181,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
     }
 
@@ -196,7 +192,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -207,7 +203,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -218,7 +214,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -229,7 +225,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -240,7 +236,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = default
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -251,7 +247,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = default
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeNull();
     }
 
@@ -262,7 +258,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
     }
 
@@ -273,7 +269,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = null
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(JsonValueKind.Undefined);
     }
 
@@ -287,7 +283,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JsonDocument.Parse(json).RootElement
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeOfType(type);
     }
 
@@ -299,7 +295,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JToken.Parse(json)
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().NotBeNull();
         result.Bar!.Value.ValueKind.Should().Be(kind);
     }
@@ -314,7 +310,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JsonDocument.Parse(json).RootElement
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeOfType(type);
     }
 
@@ -326,7 +322,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JToken.Parse(json)
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(kind);
     }
 
@@ -339,7 +335,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JsonDocument.Parse(json).RootElement
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeOfType(type);
     }
 
@@ -351,7 +347,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JArray.Parse(json)
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().NotBeNull();
         result.Bar!.Value.ValueKind.Should().Be(kind);
     }
@@ -364,7 +360,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JsonDocument.Parse(json).RootElement
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeOfType(type);
     }
 
@@ -376,7 +372,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JArray.Parse(json)
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(kind);
     }
 
@@ -389,7 +385,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JsonDocument.Parse(json).RootElement
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeOfType(type);
     }
 
@@ -401,7 +397,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JObject.Parse(json)
         };
-        var result = Mapper.Map<JsonElementA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().NotBeNull();
         result.Bar!.Value.ValueKind.Should().Be(kind);
     }
@@ -414,7 +410,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JsonDocument.Parse(json).RootElement
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
         result.Bar.Should().BeOfType(type);
     }
 
@@ -426,7 +422,7 @@ public class SystemTextJsonWithNewtonsoftJsonTests(ITestOutputHelper testOutputH
         {
             Bar = JObject.Parse(json)
         };
-        var result = Mapper.Map<JsonElementB>(item);
+        var result = Mapper.Map(item);
         result.Bar.ValueKind.Should().Be(kind);
     }
 

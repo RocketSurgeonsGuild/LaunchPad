@@ -1,11 +1,12 @@
 ﻿using System.Text;
 using AutoMapper;
 using Newtonsoft.Json.Linq;
+using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConverterTest(testOutputHelper)
+public partial class JTokenConverterTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
     [Fact]
     public void ShouldMap_StringValue_To_JObject()
@@ -14,7 +15,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = "{}"
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -27,7 +28,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = "{\"a\": \"123\"}"
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -40,7 +41,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -52,7 +53,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = string.Empty
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -64,7 +65,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = new JObject()
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().Be("{}");
@@ -77,7 +78,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JObject.Parse("{\"a\": \"123\"}")
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().Be("{\"a\":\"123\"}");
@@ -90,7 +91,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -103,7 +104,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = "[]"
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -116,7 +117,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = "[1234,5678]"
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -129,7 +130,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -141,7 +142,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = string.Empty
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -153,7 +154,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = new JArray()
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().Be("[]");
@@ -166,7 +167,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JArray.Parse("[1234,5678]")
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().Be("[1234,5678]");
@@ -179,7 +180,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -191,7 +192,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -203,7 +204,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = string.Empty
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -215,7 +216,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = "null"
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar!.Type.Should().Be(JTokenType.Null);
@@ -228,7 +229,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JValue.CreateNull()
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().Be("null");
@@ -241,7 +242,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -253,7 +254,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes("{}")
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -266,7 +267,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes("{\"a\": \"123\"}")
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -279,7 +280,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -291,7 +292,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes(string.Empty)
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -303,7 +304,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = new JObject()
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         Encoding.UTF8.GetString(result.Bar!).Should().Be("{}");
@@ -316,7 +317,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JObject.Parse("{\"a\": \"123\"}")
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         Encoding.UTF8.GetString(result.Bar!).Should().Be("{\"a\":\"123\"}");
@@ -329,7 +330,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -341,7 +342,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JObject.Parse("{}")
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -354,7 +355,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JObject.Parse("{\"a\": \"123\"}")
         };
-        var result = Mapper.Map<JObjectA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -367,7 +368,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes("[]")
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -380,7 +381,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes("[1234,5678]")
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -393,7 +394,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -405,7 +406,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes(string.Empty)
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -417,7 +418,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = new JArray()
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         Encoding.UTF8.GetString(result.Bar!).Should().Be("[]");
@@ -430,7 +431,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JArray.Parse("[1234,5678]")
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         Encoding.UTF8.GetString(result.Bar!).Should().Be("[1234,5678]");
@@ -443,7 +444,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -455,7 +456,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = new JArray()
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -468,7 +469,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = new JArray { 1234, 5678 }
         };
-        var result = Mapper.Map<JArrayA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -481,7 +482,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -493,7 +494,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes(string.Empty)
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -505,7 +506,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes("null")
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar!.Type.Should().Be(JTokenType.Null);
@@ -518,7 +519,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JValue.CreateNull()
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         Encoding.UTF8.GetString(result.Bar!).Should().Be("null");
@@ -531,7 +532,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = null
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().BeNull();
     }
@@ -543,7 +544,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JToken.Parse("null")
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar!.Type.Should().Be(JTokenType.Null);
@@ -586,7 +587,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = value
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -601,7 +602,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = value
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -616,7 +617,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JToken.Parse(value)
         };
-        var result = Mapper.Map<StringValue>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().Be(value);
@@ -658,7 +659,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes(value)
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -673,7 +674,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = Encoding.UTF8.GetBytes(value)
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();
@@ -688,7 +689,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JToken.Parse(value)
         };
-        var result = Mapper.Map<ByteArray>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         Encoding.UTF8.GetString(result.Bar!).Should().Be(value);
@@ -706,7 +707,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JToken.Parse(value)
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().BeEmpty();
@@ -721,7 +722,7 @@ public class JTokenConverterTests(ITestOutputHelper testOutputHelper) : TypeConv
         {
             Bar = JToken.Parse(value)
         };
-        var result = Mapper.Map<JTokenA>(item);
+        var result = Mapper.Map(item);
 
         result.Bar.Should().NotBeNull();
         result.Bar.Should().NotBeEmpty();

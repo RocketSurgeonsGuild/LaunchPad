@@ -1,44 +1,38 @@
 using System.Reflection;
 using AutoMapper;
 using NodaTime;
+using Rocket.Surgery.Extensions.Testing;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 
 namespace Extensions.Tests.Mapping;
 
-public class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<LocalDateTimeTests.Converters>(testOutputHelper)
+public partial class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
-    {
-        Config.AssertConfigurationIsValid();
-    }
 
     [Fact]
     public void MapsFrom()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo1
         {
             Bar = LocalDateTime.FromDateTime(DateTime.Now),
         };
 
-        var result = mapper.Map<Foo3>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(foo.Bar.ToDateTimeUnspecified());
     }
 
     [Fact]
     public void MapsTo()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo3
         {
             Bar = DateTime.Now,
         };
 
-        var result = mapper.Map<Foo1>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(LocalDateTime.FromDateTime(foo.Bar));
     }
 

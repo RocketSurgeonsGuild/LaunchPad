@@ -1,42 +1,36 @@
 using AutoMapper;
 using NodaTime;
 using NodaTime.Text;
+using Rocket.Surgery.Extensions.Testing;
 
 namespace Extensions.Tests.Mapping;
 
-public class PeriodTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<PeriodTests.Converters>(testOutputHelper)
+public partial class PeriodTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
-    {
-        Config.AssertConfigurationIsValid();
-    }
 
     [Fact]
     public void MapsFrom()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo1
         {
             Bar = Period.FromMonths(10),
         };
 
-        var result = mapper.Map<Foo3>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be("P10M");
     }
 
     [Fact]
     public void MapsTo()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo3
         {
             Bar = "P5M",
         };
 
-        var result = mapper.Map<Foo1>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result!.Should().Be(PeriodPattern.Roundtrip.Parse(foo.Bar).Value);
     }
 

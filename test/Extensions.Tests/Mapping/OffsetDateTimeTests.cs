@@ -1,42 +1,36 @@
 using System.Reflection;
 using AutoMapper;
 using NodaTime;
+using Rocket.Surgery.Extensions.Testing;
 
 namespace Extensions.Tests.Mapping;
 
-public class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<OffsetDateTimeTests.Converters>(testOutputHelper)
+public partial class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
-    {
-        Config.AssertConfigurationIsValid();
-    }
 
     [Fact]
     public void MapsFrom()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo1
         {
             Bar = OffsetDateTime.FromDateTimeOffset(DateTimeOffset.Now),
         };
 
-        var result = mapper.Map<Foo3>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(foo.Bar.ToDateTimeOffset());
     }
 
     [Fact]
     public void MapsTo()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo3
         {
             Bar = DateTimeOffset.Now,
         };
 
-        var result = mapper.Map<Foo1>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(OffsetDateTime.FromDateTimeOffset(foo.Bar));
     }
 

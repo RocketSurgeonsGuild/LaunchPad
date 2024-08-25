@@ -29,7 +29,7 @@ public class SystemTextJsonConvention : IServiceConvention, ISerilogConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.AddTransient<IConfigureOptions<JsonSerializerOptions>>(
+        services.AddSingleton<IConfigureOptions<JsonSerializerOptions>>(
             _ =>
                 new ConfigureNamedOptions<JsonSerializerOptions>(
                     null,
@@ -40,7 +40,7 @@ public class SystemTextJsonConvention : IServiceConvention, ISerilogConvention
                     }
                 )
         );
-        services.AddTransient<IPostConfigureOptions<JsonSerializerOptions>>(
+        services.AddSingleton<IPostConfigureOptions<JsonSerializerOptions>>(
             sp =>
                 new PostConfigureOptions<JsonSerializerOptions, IDateTimeZoneProvider>(
                     null,

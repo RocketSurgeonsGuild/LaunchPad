@@ -2,70 +2,62 @@ using System.Reflection;
 using AutoMapper;
 using NodaTime;
 using NodaTime.Extensions;
+using Rocket.Surgery.Extensions.Testing;
 
 namespace Extensions.Tests.Mapping;
 
-public class LocalTimeTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<LocalTimeTests.Converters>(testOutputHelper)
+public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
-    {
-        Config.AssertConfigurationIsValid();
-    }
 
     [Fact]
     public void MapsFrom_DateTime()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo1
         {
             Bar = LocalTime.FromTicksSinceMidnight(10000),
         };
 
-        var result = mapper.Map<Foo3>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(new(foo.Bar.TickOfDay));
     }
 
     [Fact]
     public void MapsTo_DateTime()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo3
         {
             Bar = TimeSpan.FromMinutes(502),
         };
 
-        var result = mapper.Map<Foo1>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(new(502 / 60, 502 % 60));
     }
 
     [Fact]
     public void MapsFrom_DateTimeOffset()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo1
         {
             Bar = LocalTime.FromTicksSinceMidnight(10000),
         };
 
-        var result = mapper.Map<Foo5>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(foo.Bar.ToTimeOnly());
     }
 
     [Fact]
     public void MapsTo_DateTimeOffset()
     {
-        var mapper = Config.CreateMapper();
 
         var foo = new Foo5
         {
             Bar = TimeOnly.FromDateTime(DateTime.Now),
         };
 
-        var result = mapper.Map<Foo1>(foo).Bar;
+        var result = Mapper.Map(foo).Bar;
         result.Should().Be(foo.Bar.ToLocalTime());
     }
 
