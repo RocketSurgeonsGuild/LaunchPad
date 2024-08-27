@@ -1,12 +1,17 @@
 ﻿using FluentValidation;
 using MediatR;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
-[PublicAPI]
+[PublicAPI, Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+[UseStaticMapper(typeof(ModelMapper))]
+[UseStaticMapper(typeof(StandardMapper))]
 public static partial class EditRocket
 {
     /// <summary>
@@ -38,20 +43,6 @@ public static partial class EditRocket
         public RocketId Id { get; init; }
     }
 
-    private class Mapper : Profile
-    {
-        public Mapper()
-        {
-            CreateMap<Request, ReadyRocket>()
-               .ForMember(x => x.Id, x => x.Ignore())
-               .ForMember(x => x.LaunchRecords, x => x.Ignore())
-                ;
-            CreateMap<RocketModel, Request>()
-               .ForMember(x => x.SerialNumber, x => x.MapFrom(z => z.Sn))
-                ;
-        }
-    }
-
     private class RequestValidator : AbstractValidator<Request>
     {
         public RequestValidator()
@@ -71,35 +62,43 @@ public static partial class EditRocket
         }
     }
 
-    private class RequestHandler(RocketDbContext dbContext, IMapper mapper, IMediator mediator)
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial ReadyRocket Map(Request request);
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    public static partial Request MapRequest(ReadyRocket model);
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    [MapProperty(nameof(@RocketModel.Sn), nameof(@Request.SerialNumber))]
+    public static partial Request MapRequest(RocketModel model);
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial void Map(Request request, ReadyRocket record);
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static Request Map(PatchRequest request, ReadyRocket rocket) => request.ApplyChanges(MapRequest(rocket));
+
+    private class RequestHandler(RocketDbContext dbContext, IMediator mediator)
         : PatchRequestHandler<Request, PatchRequest, RocketModel>(mediator), IRequestHandler<Request, RocketModel>
     {
-        private async Task<ReadyRocket?> GetRocket(RocketId id, CancellationToken cancellationToken)
+        private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext
-                              .Rockets.FindAsync(new object[] { id, }, cancellationToken)
-                              .ConfigureAwait(false);
-            if (rocket == null) throw new NotFoundException();
-
-            return rocket;
+            return await dbContext
+                        .Rockets.FindAsync([id,], cancellationToken)
+                        .ConfigureAwait(false)
+             ?? throw new NotFoundException();
         }
 
         protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
-        {
-            var rocket = await GetRocket(patchRequest.Id, cancellationToken);
-            return mapper.Map<Request>(mapper.Map<RocketModel>(rocket));
-        }
+            => Map(patchRequest, await GetRocket(patchRequest.Id, cancellationToken));
 
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await GetRocket(request.Id, cancellationToken);
             if (rocket == null) throw new NotFoundException();
 
-            mapper.Map(request, rocket);
+            Map(request, rocket);
             dbContext.Update(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return mapper.Map<RocketModel>(rocket);
+            return ModelMapper.Map(rocket);
         }
     }
 }

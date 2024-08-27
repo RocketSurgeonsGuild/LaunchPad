@@ -1,14 +1,19 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
-[PublicAPI]
-public static class CreateRocket
+[PublicAPI, Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+[UseStaticMapper(typeof(ModelMapper))]
+[UseStaticMapper(typeof(StandardMapper))]
+public static partial class CreateRocket
 {
     /// <summary>
     ///     The operation to create a new rocket record
@@ -37,17 +42,6 @@ public static class CreateRocket
         public RocketId Id { get; init; }
     }
 
-    private class Mapper : Profile
-    {
-        public Mapper()
-        {
-            CreateMap<Request, ReadyRocket>()
-               .ForMember(x => x.Id, x => x.Ignore())
-               .ForMember(x => x.LaunchRecords, x => x.Ignore())
-                ;
-        }
-    }
-
     private class Validator : AbstractValidator<Request>
     {
         public Validator()
@@ -62,7 +56,9 @@ public static class CreateRocket
         }
     }
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, Response>
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial ReadyRocket Map(Request request);
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
@@ -84,7 +80,7 @@ public static class CreateRocket
                     },
                 };
 
-            var rocket = mapper.Map<ReadyRocket>(request);
+            var rocket = Map(request);
             await dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 

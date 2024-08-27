@@ -15,11 +15,9 @@ public partial class Edit : ComponentBase
 
     [Inject] private IMediator Mediator { get; set; } = null!;
 
-    [Inject] private IMapper Mapper { get; set; } = null!;
-
     protected override async Task OnInitializedAsync()
     {
-        Model = Mapper.Map<EditRocket.Request>(await Mediator.Send(new GetRocket.Request { Id = Id }));
+        Model = EditRocket.MapRequest(await Mediator.Send(new GetRocket.Request { Id = Id }));
     }
 
     public async Task Save()

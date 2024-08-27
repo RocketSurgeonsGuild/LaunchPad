@@ -1,14 +1,19 @@
 ﻿using FluentValidation;
 using MediatR;
 using NodaTime;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
-[PublicAPI]
-public static class CreateLaunchRecord
+[PublicAPI, Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Source)]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+[UseStaticMapper(typeof(ModelMapper))]
+[UseStaticMapper(typeof(StandardMapper))]
+public static partial class CreateLaunchRecord
 {
     /// <summary>
     ///     Create a launch record
@@ -57,18 +62,6 @@ public static class CreateLaunchRecord
         public LaunchRecordId Id { get; init; }
     }
 
-    private class Mapper : Profile
-    {
-        public Mapper()
-        {
-            CreateMap<Request, LaunchRecord>()
-               .ForMember(x => x.RocketId, x => x.Ignore())
-               .ForMember(x => x.Rocket, x => x.Ignore())
-               .ForMember(x => x.Id, x => x.Ignore())
-                ;
-        }
-    }
-
     private class Validator : AbstractValidator<Request>
     {
         public Validator()
@@ -90,11 +83,13 @@ public static class CreateLaunchRecord
         }
     }
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, Response>
+    private static partial LaunchRecord Map(Request request);
+
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            var record = mapper.Map<LaunchRecord>(request);
+            var record = Map(request);
 
             var rocket = await dbContext.Rockets.FindAsync(new object[] { request.RocketId, }, cancellationToken);
             if (rocket == null) throw new RequestFailedException("Rocket not found!");

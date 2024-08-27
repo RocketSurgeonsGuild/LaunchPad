@@ -1,13 +1,18 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
-[PublicAPI]
-public static class ListLaunchRecords
+[PublicAPI, Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+[UseStaticMapper(typeof(ModelMapper))]
+[UseStaticMapper(typeof(StandardMapper))]
+public static partial class ListLaunchRecords
 {
     /// <summary>
     ///     The launch record search
@@ -18,7 +23,8 @@ public static class ListLaunchRecords
 
     private class Validator : AbstractValidator<Request>;
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IStreamRequestHandler<Request, LaunchRecordModel>
+    private static partial IQueryable<LaunchRecordModel> Project(IQueryable<LaunchRecord> queryable);
+    private class Handler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
         public IAsyncEnumerable<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
@@ -28,9 +34,7 @@ public static class ListLaunchRecords
                        .AsQueryable();
             if (request.RocketType.HasValue) query = query.Where(z => z.Rocket.Type == request.RocketType);
 
-            return query
-                  .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider)
-                  .ToAsyncEnumerable();
+            return Project(query).ToAsyncEnumerable();
         }
     }
 }

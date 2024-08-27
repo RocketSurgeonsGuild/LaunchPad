@@ -32,12 +32,11 @@ public record RocketModel
     ///     The type of the rocket
     /// </summary>
     public RocketType Type { get; init; }
+}
 
-    [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-    [UseStaticMapper(typeof(NodaTimeMapper))]
-    internal static partial class Mapper
-    {
-        [MapProperty(nameof(@ReadyRocket.SerialNumber), nameof(@RocketModel.Sn))]
-        public static partial RocketModel Map(ReadyRocket launchRecord);
-    }
+internal static partial class ModelMapper
+{
+    [MapProperty(nameof(@ReadyRocket.SerialNumber), nameof(@RocketModel.Sn))]
+    public static partial RocketModel Map(ReadyRocket rocket);
+    public static partial IQueryable<RocketModel> ProjectTo(IQueryable<ReadyRocket> rocket);
 }

@@ -1,13 +1,16 @@
 ﻿using FluentValidation;
 using MediatR;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
-[PublicAPI]
-public static class GetRocket
+[PublicAPI, Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+public static partial class GetRocket
 {
     /// <summary>
     ///     Request to fetch information about a rocket
@@ -30,14 +33,9 @@ public static class GetRocket
         }
     }
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, RocketModel>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>
     {
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
-        {
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id, }, cancellationToken).ConfigureAwait(false);
-            if (rocket == null) throw new NotFoundException();
-
-            return mapper.Map<RocketModel>(rocket);
-        }
+            => ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id,], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
     }
 }

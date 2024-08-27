@@ -1,6 +1,5 @@
 ﻿using NodaTime;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using StronglyTypedIds;
 
@@ -61,12 +60,11 @@ public partial record LaunchRecordModel
     ///     The kind of rocket that will be launching
     /// </summary>
     public RocketType RocketType { get; init; }
-
-    [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-    [UseStaticMapper(typeof(NodaTimeMapper))]
-    internal static partial class Mapper
-    {
-        public static partial LaunchRecordModel Map(LaunchRecord launchRecord);
-    }
 }
 
+internal static partial class ModelMapper
+{
+    [MapperIgnoreSource(nameof(LaunchRecord.RocketId))]
+    public static partial LaunchRecordModel Map(LaunchRecord launchRecord);
+    public static partial IQueryable<LaunchRecordModel> ProjectTo(IQueryable<LaunchRecord> rocket);
+}
