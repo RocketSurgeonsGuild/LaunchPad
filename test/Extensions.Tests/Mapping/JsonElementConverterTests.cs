@@ -8,7 +8,49 @@ namespace Extensions.Tests.Mapping;
 
 public partial class JsonElementConverterTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-    [Mapper, PublicAPI]
+//    private class JsonElementB
+//    {
+//        public JsonElement? Bar { get; set; }
+//    }
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        var stub = A.Fake<IOptionsMonitor<JsonSerializerOptions>>();
+        A.CallTo(() => stub.CurrentValue).Returns(new());
+        return VerifyEachMethod(
+                result,
+                new Mapper(stub),
+                string.Empty,
+                "null",
+                "[]",
+                "{}",
+                "\"1234\"",
+                "1234",
+                "[1234,5678]",
+                "{\"a\":1234}",
+                ""u8.ToArray(),
+                "null"u8.ToArray(),
+                "[]"u8.ToArray(),
+                "{}"u8.ToArray(),
+                "\"1234\""u8.ToArray(),
+                "1234"u8.ToArray(),
+                "[1234,5678]"u8.ToArray(),
+                "{\"a\":1234}"u8.ToArray(),
+                JsonDocument.Parse("null").RootElement,
+                JsonDocument.Parse("[]").RootElement,
+                JsonDocument.Parse("{}").RootElement,
+                JsonDocument.Parse("\"1234\"").RootElement,
+                JsonDocument.Parse("1234").RootElement,
+                JsonDocument.Parse("[1234,5678]").RootElement,
+                JsonDocument.Parse("{\"a\":1234}").RootElement
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
+    [Mapper]
+    [PublicAPI]
     private partial class Mapper(IOptionsMonitor<JsonSerializerOptions> options)
     {
         [UseMapper]
@@ -17,6 +59,7 @@ public partial class JsonElementConverterTests(ITestOutputHelper testOutputHelpe
         public partial JsonElementA MapToJsonElementA(StringValue source);
         public partial StringValue MapToStringValue(JsonElementA source);
         public partial JsonElementA MapToJsonElementA(ByteArray source);
+
         public partial ByteArray MapToByteArray(JsonElementA source);
 //        public partial JsonElementB MapToJsonElementB(StringValue source);
 //        public partial StringValue MapToStringValue(JsonElementB source);
@@ -39,47 +82,5 @@ public partial class JsonElementConverterTests(ITestOutputHelper testOutputHelpe
     private class JsonElementA
     {
         public JsonElement Bar { get; set; }
-    }
-
-//    private class JsonElementB
-//    {
-//        public JsonElement? Bar { get; set; }
-//    }
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        var stub = A.Fake<IOptionsMonitor<JsonSerializerOptions>>();
-        A.CallTo(() => stub.CurrentValue).Returns(new());
-        return VerifyEachMethod(
-                result,
-                new Mapper(stub),
-                string.Empty,
-                "null",
-                "[]",
-                "{}",
-                "\"1234\"",
-                "1234",
-                "[1234,5678]",
-                "{\"a\":1234}",
-
-                ""u8.ToArray(),
-                "null"u8.ToArray(),
-                "[]"u8.ToArray(),
-                "{}"u8.ToArray(),
-                "\"1234\""u8.ToArray(),
-                "1234"u8.ToArray(),
-                "[1234,5678]"u8.ToArray(),
-                "{\"a\":1234}"u8.ToArray(),
-
-                JsonDocument.Parse("null").RootElement,
-                JsonDocument.Parse("[]").RootElement,
-                JsonDocument.Parse("{}").RootElement,
-                JsonDocument.Parse("\"1234\"").RootElement,
-                JsonDocument.Parse("1234").RootElement,
-                JsonDocument.Parse("[1234,5678]").RootElement,
-                JsonDocument.Parse("{\"a\":1234}").RootElement
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

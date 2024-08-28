@@ -1,7 +1,3 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿namespace Sample.Core.Tests;
 
-namespace Sample.Core.Tests;
-
-public class FoundationTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper)
-{
-}
+public class FoundationTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper) { }

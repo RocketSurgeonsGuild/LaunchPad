@@ -9,12 +9,15 @@ using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
-[PublicAPI, Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Source)]
+[PublicAPI]
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Source)]
 [UseStaticMapper(typeof(NodaTimeMapper))]
 [UseStaticMapper(typeof(ModelMapper))]
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class CreateLaunchRecord
 {
+    private static partial LaunchRecord Map(Request request);
+
     /// <summary>
     ///     Create a launch record
     /// </summary>
@@ -82,8 +85,6 @@ public static partial class CreateLaunchRecord
                .GreaterThanOrEqualTo(0d);
         }
     }
-
-    private static partial LaunchRecord Map(Request request);
 
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
     {

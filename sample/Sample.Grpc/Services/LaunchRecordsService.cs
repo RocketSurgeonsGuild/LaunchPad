@@ -13,11 +13,23 @@ namespace Sample.Grpc.Services;
 [UseStaticMapper(typeof(WellKnownGrpcTypesMapper))]
 public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.LaunchRecordsBase
 {
+    public static partial CreateLaunchRecord.Request Map(CreateLaunchRecordRequest request);
+    public static partial CreateLaunchRecordResponse Map(CreateLaunchRecord.Response request);
+    public static partial GetLaunchRecord.Request Map(GetLaunchRecordRequest request);
+    public static partial EditLaunchRecord.Request Map(UpdateLaunchRecordRequest request);
+    public static partial ListLaunchRecords.Request Map(ListLaunchRecordsRequest request);
+    public static partial DeleteLaunchRecord.Request Map(DeleteLaunchRecordRequest request);
+    public static partial LaunchRecordModel Map(Core.Models.LaunchRecordModel request);
+
     public override async Task<CreateLaunchRecordResponse> CreateLaunchRecord(CreateLaunchRecordRequest request, ServerCallContext context)
-        => Map(await mediator.Send(Map(request), context.CancellationToken));
+    {
+        return Map(await mediator.Send(Map(request), context.CancellationToken));
+    }
 
     public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context)
-        => Map(await mediator.Send(Map(request), context.CancellationToken));
+    {
+        return Map(await mediator.Send(Map(request), context.CancellationToken));
+    }
 
     public override async Task<Empty> DeleteLaunchRecord(DeleteLaunchRecordRequest request, ServerCallContext context)
     {
@@ -26,7 +38,9 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
     }
 
     public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context)
-        => Map(await mediator.Send(Map(request), context.CancellationToken));
+    {
+        return Map(await mediator.Send(Map(request), context.CancellationToken));
+    }
 
     public override async Task ListLaunchRecords(
         ListLaunchRecordsRequest request,
@@ -39,14 +53,6 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
             await responseStream.WriteAsync(Map(item));
         }
     }
-
-    public static partial CreateLaunchRecord.Request Map(CreateLaunchRecordRequest request);
-    public static partial CreateLaunchRecordResponse Map(CreateLaunchRecord.Response request);
-    public static partial GetLaunchRecord.Request Map(GetLaunchRecordRequest request);
-    public static partial EditLaunchRecord.Request Map(UpdateLaunchRecordRequest request);
-    public static partial ListLaunchRecords.Request Map(ListLaunchRecordsRequest request);
-    public static partial DeleteLaunchRecord.Request Map(DeleteLaunchRecordRequest request);
-    public static partial LaunchRecordModel Map(Core.Models.LaunchRecordModel request);
 
     [UsedImplicitly]
     private class CreateLaunchRecordRequestValidator : AbstractValidator<CreateLaunchRecordRequest>

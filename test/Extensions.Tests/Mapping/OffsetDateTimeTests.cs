@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.Extensions.Time.Testing;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
@@ -9,12 +8,26 @@ namespace Extensions.Tests.Mapping;
 
 public partial class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetLocalNow(),
+                OffsetDateTime.FromDateTimeOffset(_fakeTimeProvider.GetLocalNow())
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
     private partial class Mapper
     {
-
         public partial Foo1 MapFoo1(Foo2 foo);
         public partial Foo1 MapFoo1(Foo3 foo);
         public partial Foo1 MapFoo1(Foo4 foo);
@@ -36,6 +49,7 @@ public partial class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : M
     {
         public OffsetDateTime Bar { get; set; }
     }
+
     private class Foo2
     {
         public OffsetDateTime? Bar { get; set; }
@@ -45,22 +59,9 @@ public partial class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : M
     {
         public DateTimeOffset Bar { get; set; }
     }
+
     private class Foo4
     {
         public DateTimeOffset? Bar { get; set; }
-    }
-
-    FakeTimeProvider _fakeTimeProvider = new();
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                result,
-                new Mapper(),
-                _fakeTimeProvider.GetLocalNow(),
-                OffsetDateTime.FromDateTimeOffset(_fakeTimeProvider.GetLocalNow())
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

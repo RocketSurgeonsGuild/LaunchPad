@@ -1,15 +1,28 @@
-using System.Reflection;
 using Microsoft.Extensions.Time.Testing;
 using NodaTime;
-using NodaTime.Extensions;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
 public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetLocalNow().DateTime,
+                TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
+                LocalTime.FromTimeOnly(TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime))
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     private partial class Mapper
@@ -49,20 +62,5 @@ public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : Mapper
     private class Foo6
     {
         public TimeOnly? Bar { get; set; }
-    }
-
-    FakeTimeProvider _fakeTimeProvider = new();
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                result,
-                new Mapper(),
-                _fakeTimeProvider.GetLocalNow().DateTime,
-                TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
-                LocalTime.FromTimeOnly(TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime))
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

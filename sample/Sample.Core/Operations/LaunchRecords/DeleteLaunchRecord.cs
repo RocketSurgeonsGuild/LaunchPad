@@ -8,7 +8,8 @@ using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
-[PublicAPI, Mapper]
+[PublicAPI]
+[Mapper]
 [UseStaticMapper(typeof(NodaTimeMapper))]
 public static partial class DeleteLaunchRecord
 {

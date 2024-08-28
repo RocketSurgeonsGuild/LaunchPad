@@ -8,7 +8,24 @@ namespace Extensions.Tests.Mapping;
 
 public partial class InstantTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-    [Mapper, PublicAPI]
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetUtcNow(),
+                _fakeTimeProvider.GetUtcNow().UtcDateTime,
+                Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
+    [Mapper]
+    [PublicAPI]
     [UseStaticMapper(typeof(DateTimeMapper))]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
@@ -79,20 +96,5 @@ public partial class InstantTests(ITestOutputHelper testOutputHelper) : MapperTe
     private class Foo6
     {
         public DateTimeOffset? Bar { get; set; }
-    }
-
-        FakeTimeProvider _fakeTimeProvider = new();
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                result,
-                new Mapper(),
-                _fakeTimeProvider.GetUtcNow(),
-                _fakeTimeProvider.GetUtcNow().UtcDateTime,
-                Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

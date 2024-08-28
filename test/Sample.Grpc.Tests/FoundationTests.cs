@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Microsoft.Extensions.DependencyInjection;
 using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests;

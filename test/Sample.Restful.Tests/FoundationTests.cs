@@ -20,8 +20,11 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
     [ClassData(typeof(OpenApiDocuments))]
     public void OpenApiDocument(string document)
     {
-        AlbaHost.Services.GetRequiredService<ISwaggerProvider>()
-                .GetSwagger(document).Should().NotBeNull();
+        AlbaHost
+           .Services.GetRequiredService<ISwaggerProvider>()
+           .GetSwagger(document)
+           .Should()
+           .NotBeNull();
     }
 
     private sealed class OpenApiDocuments : TheoryData<string>

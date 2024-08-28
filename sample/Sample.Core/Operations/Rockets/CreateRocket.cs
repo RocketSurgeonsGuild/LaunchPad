@@ -9,12 +9,16 @@ using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
-[PublicAPI, Mapper]
+[PublicAPI]
+[Mapper]
 [UseStaticMapper(typeof(NodaTimeMapper))]
 [UseStaticMapper(typeof(ModelMapper))]
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class CreateRocket
 {
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial ReadyRocket Map(Request request);
+
     /// <summary>
     ///     The operation to create a new rocket record
     /// </summary>
@@ -56,8 +60,6 @@ public static partial class CreateRocket
         }
     }
 
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static partial ReadyRocket Map(Request request);
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)

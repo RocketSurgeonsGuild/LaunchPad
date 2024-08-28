@@ -8,7 +8,16 @@ namespace Extensions.Tests.Mapping;
 
 public partial class DurationTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-    [Mapper, PublicAPI]
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(result, new Mapper(), TimeSpan.FromHours(1), Duration.FromMinutes(44))
+           .UseHashedParameters(result.ToString());
+    }
+
+    [Mapper]
+    [PublicAPI]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     private partial class Mapper
     {
@@ -47,12 +56,5 @@ public partial class DurationTests(ITestOutputHelper testOutputHelper) : MapperT
     private class Foo4
     {
         public TimeSpan? Bar { get; set; }
-    }
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(result, new Mapper(), TimeSpan.FromHours(1), Duration.FromMinutes(44))
-           .UseHashedParameters(result.ToString());
     }
 }

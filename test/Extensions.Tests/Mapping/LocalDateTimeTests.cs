@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.Extensions.Time.Testing;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
@@ -11,6 +10,21 @@ namespace Extensions.Tests.Mapping;
 
 public partial class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetLocalNow().DateTime,
+                LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
@@ -51,19 +65,5 @@ public partial class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : Ma
     private class Foo4
     {
         public DateTime? Bar { get; set; }
-    }
-
-    FakeTimeProvider _fakeTimeProvider = new();
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                result,
-                new Mapper(),
-                _fakeTimeProvider.GetLocalNow().DateTime,
-                LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

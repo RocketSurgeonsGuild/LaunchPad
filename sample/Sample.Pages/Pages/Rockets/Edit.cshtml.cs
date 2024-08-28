@@ -5,7 +5,8 @@ namespace Sample.Pages.Pages.Rockets;
 
 public class RocketEditModel : RocketViewModel
 {
-    [BindProperty] public EditRocket.Request Model { get; set; } = new();
+    [BindProperty]
+    public EditRocket.Request Model { get; set; } = new();
 
     public override async Task OnGet()
     {
@@ -21,7 +22,7 @@ public class RocketEditModel : RocketViewModel
             return Page();
         }
 
-        await Send(Model with { Id = Id });
+        await Send(Model with { Id = Id, });
         return RedirectToPage("Index");
     }
 }

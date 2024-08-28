@@ -1,5 +1,4 @@
 ﻿using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using StronglyTypedIds;
 
@@ -36,7 +35,8 @@ public record RocketModel
 
 internal static partial class ModelMapper
 {
-    [MapProperty(nameof(@ReadyRocket.SerialNumber), nameof(@RocketModel.Sn))]
+    [MapProperty(nameof(ReadyRocket.SerialNumber), nameof(RocketModel.Sn))]
     public static partial RocketModel Map(ReadyRocket rocket);
+
     public static partial IQueryable<RocketModel> ProjectTo(IQueryable<ReadyRocket> rocket);
 }

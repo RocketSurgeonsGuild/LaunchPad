@@ -13,8 +13,8 @@ public class MapperDataAttribute<TMapper> : DataAttribute
         {
             if (method.IsGenericMethodDefinition) continue;
             var parameters = method.GetParameters();
-            if (parameters is not [{ ParameterType.IsClass: true }]) continue;
-            yield return [new MethodResult(method)];
+            if (parameters is not [{ ParameterType.IsClass: true, },]) continue;
+            yield return [new MethodResult(method),];
         }
     }
 }

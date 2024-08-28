@@ -8,6 +8,21 @@ namespace Extensions.Tests.Mapping;
 
 public partial class OffsetTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                Offset.FromHours(11),
+                TimeSpan.FromHours(10)
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
@@ -48,19 +63,5 @@ public partial class OffsetTests(ITestOutputHelper testOutputHelper) : MapperTes
     private class Foo4
     {
         public TimeSpan? Bar { get; set; }
-    }
-
-    FakeTimeProvider _fakeTimeProvider = new();
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                result,
-                new Mapper(),
-                Offset.FromHours(11),
-                TimeSpan.FromHours(10)
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

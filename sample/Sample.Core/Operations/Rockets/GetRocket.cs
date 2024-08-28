@@ -8,7 +8,8 @@ using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
-[PublicAPI, Mapper]
+[PublicAPI]
+[Mapper]
 [UseStaticMapper(typeof(NodaTimeMapper))]
 public static partial class GetRocket
 {
@@ -36,6 +37,8 @@ public static partial class GetRocket
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>
     {
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
-            => ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id,], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
+        {
+            return ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id,], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
+        }
     }
 }

@@ -21,11 +21,15 @@ public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebA
     public void OpenApiDocument()
     {
         var docs = ServiceProvider
-                           .GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value.SwaggerDocs.Keys;
+                  .GetRequiredService<IOptions<SwaggerGeneratorOptions>>()
+                  .Value.SwaggerDocs.Keys;
         foreach (var document in docs)
         {
-            ServiceProvider.GetRequiredService<ISwaggerProvider>()
-                    .GetSwagger(document).Should().NotBeNull();
+            ServiceProvider
+               .GetRequiredService<ISwaggerProvider>()
+               .GetSwagger(document)
+               .Should()
+               .NotBeNull();
         }
     }
 }

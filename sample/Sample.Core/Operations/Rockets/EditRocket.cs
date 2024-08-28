@@ -8,12 +8,32 @@ using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
-[PublicAPI, Mapper]
+[PublicAPI]
+[Mapper]
 [UseStaticMapper(typeof(NodaTimeMapper))]
 [UseStaticMapper(typeof(ModelMapper))]
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class EditRocket
 {
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    public static partial Request MapRequest(ReadyRocket model);
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
+    [MapProperty(nameof(RocketModel.Sn), nameof(Request.SerialNumber))]
+    public static partial Request MapRequest(RocketModel model);
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial ReadyRocket Map(Request request);
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial void Map(Request request, ReadyRocket record);
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static Request Map(PatchRequest request, ReadyRocket rocket)
+    {
+        return request.ApplyChanges(MapRequest(rocket));
+    }
+
     /// <summary>
     ///     The edit operation to update a rocket
     /// </summary>
@@ -62,19 +82,6 @@ public static partial class EditRocket
         }
     }
 
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static partial ReadyRocket Map(Request request);
-    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
-    public static partial Request MapRequest(ReadyRocket model);
-    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
-    [MapProperty(nameof(@RocketModel.Sn), nameof(@Request.SerialNumber))]
-    public static partial Request MapRequest(RocketModel model);
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static partial void Map(Request request, ReadyRocket record);
-
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static Request Map(PatchRequest request, ReadyRocket rocket) => request.ApplyChanges(MapRequest(rocket));
-
     private class RequestHandler(RocketDbContext dbContext, IMediator mediator)
         : PatchRequestHandler<Request, PatchRequest, RocketModel>(mediator), IRequestHandler<Request, RocketModel>
     {
@@ -87,7 +94,9 @@ public static partial class EditRocket
         }
 
         protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
-            => Map(patchRequest, await GetRocket(patchRequest.Id, cancellationToken));
+        {
+            return Map(patchRequest, await GetRocket(patchRequest.Id, cancellationToken));
+        }
 
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {

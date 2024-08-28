@@ -1,18 +1,32 @@
 using Microsoft.Extensions.Time.Testing;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
 public partial class LocalDateTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetLocalNow().DateTime,
+                DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
+                LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     private partial class Mapper
     {
-
         public partial Foo1 MapFoo1(Foo2 foo);
         public partial Foo1 MapFoo1(Foo5 foo);
         public partial Foo1 MapFoo1(Foo6 foo);
@@ -34,6 +48,7 @@ public partial class LocalDateTests(ITestOutputHelper testOutputHelper) : Mapper
     {
         public LocalDate Bar { get; set; }
     }
+
     private class Foo2
     {
         public LocalDate? Bar { get; set; }
@@ -43,23 +58,9 @@ public partial class LocalDateTests(ITestOutputHelper testOutputHelper) : Mapper
     {
         public DateOnly Bar { get; set; }
     }
+
     private class Foo6
     {
         public DateOnly? Bar { get; set; }
-    }
-
-    FakeTimeProvider _fakeTimeProvider = new();
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                result,
-                new Mapper(),
-                _fakeTimeProvider.GetLocalNow().DateTime,
-                DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
-                LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

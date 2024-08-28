@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Time.Testing;
 using NodaTime;
-using NodaTime.Text;
 using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Mapping;
 using Rocket.Surgery.LaunchPad.Mapping.Profiles;
@@ -9,6 +8,21 @@ namespace Extensions.Tests.Mapping;
 
 public partial class PeriodTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
+    {
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                Period.FromMonths(10),
+                "P5M"
+            )
+           .UseHashedParameters(result.ToString());
+    }
+
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]
     [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
@@ -26,19 +40,5 @@ public partial class PeriodTests(ITestOutputHelper testOutputHelper) : MapperTes
     private class Foo3
     {
         public string? Bar { get; set; }
-    }
-
-    FakeTimeProvider _fakeTimeProvider = new();
-
-    [Theory, MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                result,
-                new Mapper(),
-                Period.FromMonths(10),
-                "P5M"
-            )
-           .UseHashedParameters(result.ToString());
     }
 }

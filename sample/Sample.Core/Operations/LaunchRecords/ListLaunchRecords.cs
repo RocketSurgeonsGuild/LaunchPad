@@ -8,12 +8,15 @@ using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
-[PublicAPI, Mapper]
+[PublicAPI]
+[Mapper]
 [UseStaticMapper(typeof(NodaTimeMapper))]
 [UseStaticMapper(typeof(ModelMapper))]
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class ListLaunchRecords
 {
+    private static partial IQueryable<LaunchRecordModel> Project(IQueryable<LaunchRecord> queryable);
+
     /// <summary>
     ///     The launch record search
     /// </summary>
@@ -23,7 +26,6 @@ public static partial class ListLaunchRecords
 
     private class Validator : AbstractValidator<Request>;
 
-    private static partial IQueryable<LaunchRecordModel> Project(IQueryable<LaunchRecord> queryable);
     private class Handler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
         public IAsyncEnumerable<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)

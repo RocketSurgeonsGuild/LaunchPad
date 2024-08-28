@@ -66,5 +66,6 @@ internal static partial class ModelMapper
 {
     [MapperIgnoreSource(nameof(LaunchRecord.RocketId))]
     public static partial LaunchRecordModel Map(LaunchRecord launchRecord);
+
     public static partial IQueryable<LaunchRecordModel> ProjectTo(IQueryable<LaunchRecord> rocket);
 }
