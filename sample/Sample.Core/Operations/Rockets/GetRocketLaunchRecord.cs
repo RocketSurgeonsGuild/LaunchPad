@@ -1,14 +1,17 @@
-using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
 [PublicAPI]
-public static class GetRocketLaunchRecord
+[Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+public static partial class GetRocketLaunchRecord
 {
     public record Request : IRequest<LaunchRecordModel>
     {
@@ -36,17 +39,11 @@ public static class GetRocketLaunchRecord
         }
     }
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
     {
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id, }, cancellationToken);
-            if (rocket == null) throw new NotFoundException();
-
-            var launchRecord = await dbContext.LaunchRecords.FindAsync(new object[] { request.LaunchRecordId, }, cancellationToken);
-            if (launchRecord == null) throw new NotFoundException();
-
-            return mapper.Map<LaunchRecordModel>(launchRecord);
+            return ModelMapper.Map(await dbContext.LaunchRecords.FindAsync([request.LaunchRecordId,], cancellationToken) ?? throw new NotFoundException());
         }
     }
 }

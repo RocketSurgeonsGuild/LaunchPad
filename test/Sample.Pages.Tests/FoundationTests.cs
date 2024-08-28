@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using AutoMapper;
 using FakeItEasy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,14 +9,6 @@ namespace Sample.Pages.Tests;
 
 public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
 {
-    [Fact]
-    public void AutoMapper()
-    {
-        AlbaHost
-           .Services.GetRequiredService<IMapper>()
-           .ConfigurationProvider.AssertConfigurationIsValid();
-    }
-
     [Fact]
     public async Task Starts()
     {

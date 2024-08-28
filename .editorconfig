@@ -3099,6 +3099,8 @@ dotnet_diagnostic.rcs9010.severity = none
 # Specify ExportCodeFixProviderAttribute.Name
 dotnet_diagnostic.rcs9011.severity = none
 
+dotnet_diagnostic.RMG012.severity = error # Unmapped target member
+dotnet_diagnostic.RMG020.severity = error # Unmapped source member
 
 # Refactorings
 

@@ -1,15 +1,17 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
 [PublicAPI]
-public static class ListRockets
+[Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+public static partial class ListRockets
 {
     // TODO: Paging model!
     /// <summary>
@@ -20,14 +22,13 @@ public static class ListRockets
 
     private class Validator : AbstractValidator<Request>;
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IStreamRequestHandler<Request, RocketModel>
+    private class Handler(RocketDbContext dbContext) : IStreamRequestHandler<Request, RocketModel>
     {
         public IAsyncEnumerable<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var query = dbContext.Rockets.AsQueryable();
             if (request.RocketType.HasValue) query = query.Where(z => z.Type == request.RocketType);
-
-            return query.ProjectTo<RocketModel>(mapper.ConfigurationProvider).AsAsyncEnumerable();
+            return ModelMapper.ProjectTo(query).AsAsyncEnumerable();
         }
     }
 }

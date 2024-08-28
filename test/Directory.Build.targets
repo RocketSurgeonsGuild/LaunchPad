@@ -14,6 +14,10 @@
         <PackageReference Include="xunit.runner.visualstudio" />
         <PackageReference Include="Verify.Xunit" />
         <PackageReference Include="Verify.NodaTime" />
+        <PackageReference Include="Verify.SystemJson" />
+        <PackageReference Include="Verify.NewtonsoftJson" />
+      <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+      <PackageReference Include="Xunit.Combinatorial" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />
@@ -22,6 +26,5 @@
         <Using Include="Xunit" />
         <Using Include="Xunit.Abstractions" />
     </ItemGroup>
-    <Import
-        Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 </Project>

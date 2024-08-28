@@ -10,6 +10,7 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <None Include="build/*.*" Pack="true" PackagePath="build" />
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
+        <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />

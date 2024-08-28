@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using NodaTime;
+﻿using NodaTime;
+using Riok.Mapperly.Abstractions;
 using Sample.Core.Domain;
 using StronglyTypedIds;
 
@@ -16,7 +16,7 @@ public partial struct LaunchRecordId { }
 /// <summary>
 ///     The launch record details
 /// </summary>
-public record LaunchRecordModel
+public partial record LaunchRecordModel
 {
     /// <summary>
     ///     The launch record id
@@ -60,12 +60,12 @@ public record LaunchRecordModel
     ///     The kind of rocket that will be launching
     /// </summary>
     public RocketType RocketType { get; init; }
+}
 
-    private class Mapper : Profile
-    {
-        public Mapper()
-        {
-            CreateMap<LaunchRecord, LaunchRecordModel>();
-        }
-    }
+internal static partial class ModelMapper
+{
+    [MapperIgnoreSource(nameof(LaunchRecord.RocketId))]
+    public static partial LaunchRecordModel Map(LaunchRecord launchRecord);
+
+    public static partial IQueryable<LaunchRecordModel> ProjectTo(IQueryable<LaunchRecord> rocket);
 }

@@ -1,15 +1,18 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
 [PublicAPI]
-public static class GetLaunchRecord
+[Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+public static partial class GetLaunchRecord
 {
     /// <summary>
     ///     The request to get a launch record
@@ -32,7 +35,7 @@ public static class GetLaunchRecord
         }
     }
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
     {
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
@@ -42,7 +45,7 @@ public static class GetLaunchRecord
                               .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
             if (rocket == null) throw new NotFoundException();
 
-            return mapper.Map<LaunchRecordModel>(rocket);
+            return ModelMapper.Map(rocket);
         }
     }
 }

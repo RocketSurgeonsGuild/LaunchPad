@@ -1,17 +1,19 @@
 using System.Runtime.CompilerServices;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
 [PublicAPI]
-public static class GetRocketLaunchRecords
+[Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+public static partial class GetRocketLaunchRecords
 {
     public record Request : IStreamRequest<LaunchRecordModel>
     {
@@ -31,17 +33,14 @@ public static class GetRocketLaunchRecords
         }
     }
 
-    private class Handler(RocketDbContext dbContext, IMapper mapper) : IStreamRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
         public async IAsyncEnumerable<LaunchRecordModel> Handle(Request request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.Id, }, cancellationToken);
+            var rocket = await dbContext.Rockets.FindAsync([request.Id,], cancellationToken);
             if (rocket == null) throw new NotFoundException();
 
-            var query = dbContext
-                       .LaunchRecords.AsQueryable()
-                       .Where(z => z.RocketId == rocket.Id)
-                       .ProjectTo<LaunchRecordModel>(mapper.ConfigurationProvider);
+            var query = ModelMapper.ProjectTo(dbContext.LaunchRecords.Where(z => z.RocketId == rocket.Id));
             await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
             {
                 yield return item;

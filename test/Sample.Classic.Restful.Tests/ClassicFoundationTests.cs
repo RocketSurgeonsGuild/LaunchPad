@@ -1,5 +1,4 @@
 using System.Net;
-using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Sample.Classic.Restful.Tests.Helpers;
@@ -12,13 +11,6 @@ public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebA
     : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, fixture)
 {
     [Fact]
-    public void AutoMapper()
-    {
-        ServiceProvider.GetRequiredService<IMapper>()
-                .ConfigurationProvider.AssertConfigurationIsValid();
-    }
-
-    [Fact]
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/");
@@ -29,11 +21,15 @@ public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebA
     public void OpenApiDocument()
     {
         var docs = ServiceProvider
-                           .GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value.SwaggerDocs.Keys;
+                  .GetRequiredService<IOptions<SwaggerGeneratorOptions>>()
+                  .Value.SwaggerDocs.Keys;
         foreach (var document in docs)
         {
-            ServiceProvider.GetRequiredService<ISwaggerProvider>()
-                    .GetSwagger(document).Should().NotBeNull();
+            ServiceProvider
+               .GetRequiredService<ISwaggerProvider>()
+               .GetSwagger(document)
+               .Should()
+               .NotBeNull();
         }
     }
 }

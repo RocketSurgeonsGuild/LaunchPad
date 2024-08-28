@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Sample.Restful.Tests.Helpers;
@@ -11,13 +10,6 @@ namespace Sample.Restful.Tests;
 public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
 {
     [Fact]
-    public void AutoMapper()
-    {
-        AlbaHost.Services.GetRequiredService<IMapper>()
-                .ConfigurationProvider.AssertConfigurationIsValid();
-    }
-
-    [Fact]
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/");
@@ -28,8 +20,11 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
     [ClassData(typeof(OpenApiDocuments))]
     public void OpenApiDocument(string document)
     {
-        AlbaHost.Services.GetRequiredService<ISwaggerProvider>()
-                .GetSwagger(document).Should().NotBeNull();
+        AlbaHost
+           .Services.GetRequiredService<ISwaggerProvider>()
+           .GetSwagger(document)
+           .Should()
+           .NotBeNull();
     }
 
     private sealed class OpenApiDocuments : TheoryData<string>

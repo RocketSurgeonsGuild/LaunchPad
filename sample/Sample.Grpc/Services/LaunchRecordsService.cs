@@ -1,65 +1,56 @@
-using AutoMapper;
 using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Grpc.Services;
 
-public class LaunchRecordsService(IMediator mediator, IMapper mapper) : LaunchRecords.LaunchRecordsBase
+[Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+[UseStaticMapper(typeof(WellKnownGrpcTypesMapper))]
+public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.LaunchRecordsBase
 {
+    public static partial CreateLaunchRecord.Request Map(CreateLaunchRecordRequest request);
+    public static partial CreateLaunchRecordResponse Map(CreateLaunchRecord.Response request);
+    public static partial GetLaunchRecord.Request Map(GetLaunchRecordRequest request);
+    public static partial EditLaunchRecord.Request Map(UpdateLaunchRecordRequest request);
+    public static partial ListLaunchRecords.Request Map(ListLaunchRecordsRequest request);
+    public static partial DeleteLaunchRecord.Request Map(DeleteLaunchRecordRequest request);
+    public static partial LaunchRecordModel Map(Core.Models.LaunchRecordModel request);
+
     public override async Task<CreateLaunchRecordResponse> CreateLaunchRecord(CreateLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = mapper.Map<CreateLaunchRecord.Request>(request);
-        var response = await mediator.Send(mRequest, context.CancellationToken);
-        return mapper.Map<CreateLaunchRecordResponse>(response);
+        return Map(await mediator.Send(Map(request), context.CancellationToken));
     }
 
     public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = mapper.Map<EditLaunchRecord.Request>(request);
-        var response = await mediator.Send(mRequest, context.CancellationToken);
-        return mapper.Map<LaunchRecordModel>(response);
+        return Map(await mediator.Send(Map(request), context.CancellationToken));
     }
 
     public override async Task<Empty> DeleteLaunchRecord(DeleteLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = mapper.Map<DeleteLaunchRecord.Request>(request);
-        await mediator.Send(mRequest, context.CancellationToken);
-        return new Empty();
+        await mediator.Send(Map(request), context.CancellationToken);
+        return new();
     }
 
     public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context)
     {
-        var mRequest = mapper.Map<GetLaunchRecord.Request>(request);
-        var response = await mediator.Send(mRequest, context.CancellationToken);
-        return mapper.Map<LaunchRecordModel>(response);
+        return Map(await mediator.Send(Map(request), context.CancellationToken));
     }
 
     public override async Task ListLaunchRecords(
-        ListLaunchRecordsRequest request, IServerStreamWriter<LaunchRecordModel> responseStream, ServerCallContext context
+        ListLaunchRecordsRequest request,
+        IServerStreamWriter<LaunchRecordModel> responseStream,
+        ServerCallContext context
     )
     {
-        var mRequest = mapper.Map<ListLaunchRecords.Request>(request);
-        await foreach (var item in mediator.CreateStream(mRequest, context.CancellationToken))
+        await foreach (var item in mediator.CreateStream(Map(request), context.CancellationToken))
         {
-            await responseStream.WriteAsync(mapper.Map<LaunchRecordModel>(item));
-        }
-    }
-
-    [UsedImplicitly]
-    private class Mapper : Profile
-    {
-        public Mapper()
-        {
-            CreateMap<CreateLaunchRecordRequest, CreateLaunchRecord.Request>();
-            CreateMap<CreateLaunchRecord.Response, CreateLaunchRecordResponse>();
-            CreateMap<GetLaunchRecordRequest, GetLaunchRecord.Request>();
-            CreateMap<UpdateLaunchRecordRequest, EditLaunchRecord.Request>();
-            CreateMap<ListLaunchRecordsRequest, ListLaunchRecords.Request>();
-            CreateMap<DeleteLaunchRecordRequest, DeleteLaunchRecord.Request>();
-            CreateMap<Core.Models.LaunchRecordModel, LaunchRecordModel>();
+            await responseStream.WriteAsync(Map(item));
         }
     }
 

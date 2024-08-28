@@ -1,13 +1,17 @@
 ﻿using FluentValidation;
 using MediatR;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
 [PublicAPI]
-public static class DeleteLaunchRecord
+[Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+public static partial class DeleteLaunchRecord
 {
     /// <summary>
     ///     The request to delete a launch record

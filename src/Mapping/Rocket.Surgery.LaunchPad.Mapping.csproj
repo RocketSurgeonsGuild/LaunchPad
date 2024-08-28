@@ -6,9 +6,14 @@
         <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="AutoMapper" />
+        <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
         <PackageReference Include="System.Text.Json" />
         <PackageReference Include="NodaTime" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="build/*.*" Pack="true" PackagePath="build" />
+        <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
+        <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
 </Project>

@@ -1,70 +1,47 @@
-using System.Reflection;
-using AutoMapper;
+using Microsoft.Extensions.Time.Testing;
 using NodaTime;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class LocalDateTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<LocalDateTests.Converters>(testOutputHelper)
+public partial class LocalDateTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
-    {
-        Config.AssertConfigurationIsValid();
-    }
-
-    [Fact]
-    public void MapsFrom()
-    {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo1
-        {
-            Bar = LocalDate.FromDateTime(DateTime.Now),
-        };
-
-        var result = mapper.Map<Foo3>(foo).Bar;
-        result.Should().Be(foo.Bar.ToDateTimeUnspecified());
-    }
-
-    [Fact]
-    public void MapsTo()
-    {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo3
-        {
-            Bar = DateTime.Now,
-        };
-
-        var result = mapper.Map<Foo1>(foo).Bar;
-        result.Should().Be(LocalDate.FromDateTime(foo.Bar));
-    }
+    private FakeTimeProvider _fakeTimeProvider = new();
 
     [Theory]
-    [ClassData(typeof(TypeConverterData<Converters>))]
-    public void AutomatedTests(Type source, Type destination, object? sourceValue)
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
     {
-        var method = typeof(IMapperBase)
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                    .First(
-                         x => x.ContainsGenericParameters
-                          && x.IsGenericMethodDefinition
-                          && x.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                          && x.GetParameters().Length == 1
-                     );
-        var result = method.MakeGenericMethod(source, destination).Invoke(Mapper, new[] { sourceValue, });
-
-        if (sourceValue == null)
-            result.Should().BeNull();
-        else
-            result.Should().BeOfType(Nullable.GetUnderlyingType(destination) ?? destination).And.NotBeNull();
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                _fakeTimeProvider.GetLocalNow().DateTime,
+                DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
+                LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+            )
+           .UseHashedParameters(result.ToString());
     }
 
-    protected override void Configure(IMapperConfigurationExpression expression)
+    [Mapper]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    private partial class Mapper
     {
-        ArgumentNullException.ThrowIfNull(expression);
+        public partial Foo1 MapFoo1(Foo2 foo);
+        public partial Foo1 MapFoo1(Foo5 foo);
+        public partial Foo1 MapFoo1(Foo6 foo);
 
-        expression.CreateMap<Foo1, Foo3>().ReverseMap();
+        public partial Foo2 MapFoo2(Foo1 foo);
+        public partial Foo2 MapFoo2(Foo5 foo);
+        public partial Foo2 MapFoo2(Foo6 foo);
+
+        public partial Foo5 MapFoo5(Foo1 foo);
+        public partial Foo5 MapFoo5(Foo2 foo);
+        public partial Foo5 MapFoo5(Foo6 foo);
+
+        public partial Foo6 MapFoo6(Foo1 foo);
+        public partial Foo6 MapFoo6(Foo2 foo);
+        public partial Foo6 MapFoo6(Foo5 foo);
     }
 
     private class Foo1
@@ -72,23 +49,18 @@ public class LocalDateTests(ITestOutputHelper testOutputHelper) : TypeConverterT
         public LocalDate Bar { get; set; }
     }
 
-    private class Foo3
+    private class Foo2
     {
-        public DateTime Bar { get; set; }
+        public LocalDate? Bar { get; set; }
     }
 
-    public class Converters : TypeConverterFactory
+    private class Foo5
     {
-        public override IEnumerable<Type> GetTypeConverters()
-        {
-            yield return typeof(ITypeConverter<LocalDate, DateTime>);
-            yield return typeof(ITypeConverter<LocalDate?, DateTime?>);
-            yield return typeof(ITypeConverter<DateTime, LocalDate>);
-            yield return typeof(ITypeConverter<DateTime?, LocalDate?>);
-            yield return typeof(ITypeConverter<LocalDate, DateOnly>);
-            yield return typeof(ITypeConverter<LocalDate?, DateOnly?>);
-            yield return typeof(ITypeConverter<DateOnly, LocalDate>);
-            yield return typeof(ITypeConverter<DateOnly?, LocalDate?>);
-        }
+        public DateOnly Bar { get; set; }
+    }
+
+    private class Foo6
+    {
+        public DateOnly? Bar { get; set; }
     }
 }

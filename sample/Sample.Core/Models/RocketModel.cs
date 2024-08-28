@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Riok.Mapperly.Abstractions;
 using Sample.Core.Domain;
 using StronglyTypedIds;
 
@@ -31,13 +31,12 @@ public record RocketModel
     ///     The type of the rocket
     /// </summary>
     public RocketType Type { get; init; }
+}
 
-    private class Mapper : Profile
-    {
-        public Mapper()
-        {
-            CreateMap<ReadyRocket, RocketModel>()
-               .ForMember(z => z.Sn, x => x.MapFrom(z => z.SerialNumber));
-        }
-    }
+internal static partial class ModelMapper
+{
+    [MapProperty(nameof(ReadyRocket.SerialNumber), nameof(RocketModel.Sn))]
+    public static partial RocketModel Map(ReadyRocket rocket);
+
+    public static partial IQueryable<RocketModel> ProjectTo(IQueryable<ReadyRocket> rocket);
 }

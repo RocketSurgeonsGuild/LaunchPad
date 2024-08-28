@@ -1,50 +1,35 @@
-using AutoMapper;
+using Microsoft.Extensions.Time.Testing;
 using NodaTime;
-using NodaTime.Text;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 
 namespace Extensions.Tests.Mapping;
 
-public class PeriodTests(ITestOutputHelper testOutputHelper) : TypeConverterTest<PeriodTests.Converters>(testOutputHelper)
+public partial class PeriodTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-    [Fact]
-    public void ValidateMapping()
+    private FakeTimeProvider _fakeTimeProvider = new();
+
+    [Theory]
+    [MapperData<Mapper>]
+    public Task Maps_All_Methods(MethodResult result)
     {
-        Config.AssertConfigurationIsValid();
+        return VerifyMethod(
+                result,
+                new Mapper(),
+                Period.FromMonths(10),
+                "P5M"
+            )
+           .UseHashedParameters(result.ToString());
     }
 
-    [Fact]
-    public void MapsFrom()
+    [Mapper]
+    [UseStaticMapper(typeof(NodaTimeMapper))]
+    [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
+    private partial class Mapper
     {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo1
-        {
-            Bar = Period.FromMonths(10),
-        };
-
-        var result = mapper.Map<Foo3>(foo).Bar;
-        result.Should().Be("P10M");
-    }
-
-    [Fact]
-    public void MapsTo()
-    {
-        var mapper = Config.CreateMapper();
-
-        var foo = new Foo3
-        {
-            Bar = "P5M",
-        };
-
-        var result = mapper.Map<Foo1>(foo).Bar;
-        result!.Should().Be(PeriodPattern.Roundtrip.Parse(foo.Bar).Value);
-    }
-
-    protected override void Configure(IMapperConfigurationExpression expression)
-    {
-        ArgumentNullException.ThrowIfNull(expression);
-
-        expression.CreateMap<Foo1, Foo3>().ReverseMap();
+        public partial Foo1 MapFoo1(Foo3 foo);
+        public partial Foo3 MapFoo3(Foo1 foo);
     }
 
     private class Foo1
@@ -55,14 +40,5 @@ public class PeriodTests(ITestOutputHelper testOutputHelper) : TypeConverterTest
     private class Foo3
     {
         public string? Bar { get; set; }
-    }
-
-    public class Converters : TypeConverterFactory
-    {
-        public override IEnumerable<Type> GetTypeConverters()
-        {
-            yield return typeof(ITypeConverter<Period, string>);
-            yield return typeof(ITypeConverter<string, Period>);
-        }
     }
 }

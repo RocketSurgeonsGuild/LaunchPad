@@ -1,13 +1,17 @@
 ﻿using FluentValidation;
 using MediatR;
+using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
 namespace Sample.Core.Operations.Rockets;
 
 [PublicAPI]
-public static class DeleteRocket
+[Mapper]
+[UseStaticMapper(typeof(NodaTimeMapper))]
+public static partial class DeleteRocket
 {
     /// <summary>
     ///     The request to remove a rocket from the system

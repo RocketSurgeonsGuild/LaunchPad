@@ -1,0 +1,68 @@
+﻿[
+  {
+    Input: {
+      Bar: null
+    },
+    Result: {
+      Bar: null
+    }
+  },
+  {
+    Input: {
+      Bar: []
+    },
+    Result: {
+      Bar: []
+    }
+  },
+  {
+    Input: {
+      Bar: {}
+    },
+    Result: {
+      Bar: {}
+    }
+  },
+  {
+    Input: {
+      Bar: 1234
+    },
+    Result: {
+      Bar: 1234
+    }
+  },
+  {
+    Input: {
+      Bar: 1234.0
+    },
+    Result: {
+      Bar: 1234.0
+    }
+  },
+  {
+    Input: {
+      Bar: [
+        1234.0,
+        5678.0
+      ]
+    },
+    Result: {
+      Bar: [
+        1234.0,
+        5678.0
+      ]
+    }
+  },
+  {
+    Input: {
+      Bar: {
+        a: 1234.0
+      }
+    },
+    Result: {
+      Bar: {
+        a: 1234.0
+      }
+    }
+  }
+]

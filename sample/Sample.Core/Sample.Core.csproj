@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" />
       <PackageReference Include="StronglyTypedId" />
       <PackageReference Include="StronglyTypedId.Templates" />
+        <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
 
   </ItemGroup>
 

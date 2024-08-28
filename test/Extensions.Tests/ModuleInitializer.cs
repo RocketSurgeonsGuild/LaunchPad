@@ -9,6 +9,11 @@ public static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
+
+        VerifierSettings.DontScrubDateTimes();
+        VerifySystemJson.Initialize();
+        VerifyNewtonsoftJson.Initialize();
+
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {

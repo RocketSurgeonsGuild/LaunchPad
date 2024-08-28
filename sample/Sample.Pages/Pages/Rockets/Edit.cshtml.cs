@@ -1,17 +1,17 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Pages.Pages.Rockets;
 
-public class RocketEditModel(IMapper mapper) : RocketViewModel
+public class RocketEditModel : RocketViewModel
 {
-    [BindProperty] public EditRocket.Request Model { get; set; } = new();
+    [BindProperty]
+    public EditRocket.Request Model { get; set; } = new();
 
     public override async Task OnGet()
     {
         await base.OnGet();
-        Model = mapper.Map<EditRocket.Request>(Rocket);
+        Model = EditRocket.MapRequest(Rocket);
     }
 
     public async Task<ActionResult> OnPost()
@@ -22,7 +22,7 @@ public class RocketEditModel(IMapper mapper) : RocketViewModel
             return Page();
         }
 
-        await Send(Model with { Id = Id });
+        await Send(Model with { Id = Id, });
         return RedirectToPage("Index");
     }
 }
