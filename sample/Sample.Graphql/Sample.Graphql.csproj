@@ -15,7 +15,6 @@
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
-    <PackageReference Include="HotChocolate.Data.AutoMapper" />
     <PackageReference Include="HotChocolate.AspNetCore" />
     <PackageReference Include="HotChocolate.Types.CursorPagination" />
     <PackageReference Include="HotChocolate.Types.OffsetPagination" />
