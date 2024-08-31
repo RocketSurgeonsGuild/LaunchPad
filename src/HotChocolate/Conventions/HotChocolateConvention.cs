@@ -28,8 +28,9 @@ public class HotChocolateConvention : IServiceConvention
             dateTimeZoneProvider = new DateTimeZoneCache(context.Get<FoundationOptions>()?.DateTimeZoneSource ?? TzdbDateTimeZoneSource.Default);
 
         services
-           .ConfigureOptions<HotChocolateContextDataConfigureOptions>()
-           .AddGraphQL()
+           .ConfigureOptions<HotChocolateContextDataConfigureOptions>();
+        context
+           .GetOrAdd(() => services.AddGraphQL())
            .ConfigureSchema(sb => sb.AddNodaTime(dateTimeZoneProvider))
            .AddInstrumentation();
     }

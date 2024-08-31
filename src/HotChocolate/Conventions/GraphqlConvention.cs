@@ -39,8 +39,8 @@ public class GraphqlConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        var sb = services
-                .AddGraphQL()
+        var sb = context
+                .GetOrAdd(() => services.AddGraphQL())
                 .AddFairyBread()
                 .AddErrorFilter<GraphqlErrorFilter>()
                 .BindRuntimeType<Unit, VoidType>();
