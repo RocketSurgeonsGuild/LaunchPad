@@ -10,12 +10,11 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="4.6.0" PrivateAssets="all" />
-        <PackageReference
-            Include="Polyfill"
-            IncludeAssets="runtime;build;buildMultitargeting;buildTransitive;native;contentfiles;analyzers"
-            PrivateAssets="All"
-        />
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="4.6.0"
+            PrivateAssets="all" />
+
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />

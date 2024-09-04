@@ -6,12 +6,9 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
-        <PackageReference
-            Include="Polyfill"
-            IncludeAssets="runtime;build;buildMultitargeting;buildTransitive;native;contentfiles;analyzers"
-            PrivateAssets="All"
-        />
         <ProjectReference
             Include="../Analyzers.roslyn4.6/Rocket.Surgery.LaunchPad.Analyzers.roslyn4.6.csproj"
             PrivateAssets="all"
@@ -25,7 +22,8 @@
             PackagePath="analyzers/dotnet/roslyn4.6/cs"
             Visible="false"
         />
-        <None Include="bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.9/cs" Visible="false" />
+        <None Include="bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll" Pack="true"
+            PackagePath="analyzers/dotnet/roslyn4.9/cs" Visible="false" />
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
