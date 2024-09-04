@@ -9,7 +9,6 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageTags />
         <LangVersion>preview</LangVersion>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <Features>strict</Features>
         <Nullable>enable</Nullable>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
@@ -17,7 +16,7 @@
         <NukeTelemetryVersion>1</NukeTelemetryVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <ImplicitUsings>enable</ImplicitUsings>
-        <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsTrimmable>
+        <IsTrimmable>true</IsTrimmable>
         <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
         <NoWarn>$(NoWarn);0436;CA1014;CA1062</NoWarn>
         <AnalysisLevel>latest</AnalysisLevel>
