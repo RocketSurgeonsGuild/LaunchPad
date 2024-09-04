@@ -8,14 +8,13 @@
     <IsPackable>False</IsPackable>
     <NoWarn>CS0649;CS0169</NoWarn>
     <NukeTelemetryVersion>1</NukeTelemetryVersion>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Nuke.Common" />
     <PackageReference Include="GitVersion.Tool" ExcludeAssets="All" />
     <PackageReference Include="ReportGenerator" ExcludeAssets="All" />
-    <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
     <PackageReference Include="Rocket.Surgery.Nuke" />
     <PackageReference Include="Polly" />
   </ItemGroup>

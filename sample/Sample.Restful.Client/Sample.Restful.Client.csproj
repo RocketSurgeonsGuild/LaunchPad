@@ -7,11 +7,12 @@
         <PackageReference
             Include="Microsoft.Extensions.ApiDescription.Client"
             PrivateAssets="all"
-            IncludeAssets="build;contentfiles;analyzers;buildtransitive"
+            IncludeAssets="runtime;build;contentfiles;analyzers;buildtransitive"
         />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="NSwag.ApiDescription.Client" />
-        <PackageReference Include="System.ComponentModel.Annotations" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+        <PackageReference Include="System.ComponentModel.Annotations"
+            Condition="'$(TargetFramework)' == 'netstandard2.1'" />
     </ItemGroup>
     <ItemGroup>
         <OpenApiProjectReference
@@ -73,12 +74,12 @@
         <NSwagResponseClass>Response</NSwagResponseClass>
         <NSwagNamespace />
         <NSwagRequiredPropertiesMustBeDefined>true</NSwagRequiredPropertiesMustBeDefined>
-<!--        <NSwagDateType>NodaTime.LocalDate</NSwagDateType>-->
+        <!--        <NSwagDateType>NodaTime.LocalDate</NSwagDateType>-->
         <NSwagJsonConverters />
         <NSwagAnyType />
-<!--        <NSwagDateTimeType>NodaTime.LocalDateTime</NSwagDateTimeType>-->
-<!--        <NSwagTimeType>NodaTime.LocalTime</NSwagTimeType>-->
-<!--        <NSwagTimeSpanType>NodaTime.Duration</NSwagTimeSpanType>-->
+        <!--        <NSwagDateTimeType>NodaTime.LocalDateTime</NSwagDateTimeType>-->
+        <!--        <NSwagTimeType>NodaTime.LocalTime</NSwagTimeType>-->
+        <!--        <NSwagTimeSpanType>NodaTime.Duration</NSwagTimeSpanType>-->
         <NSwagArrayType>System.Collections.ObjectModel.Collection</NSwagArrayType>
         <NSwagArrayInstanceType>System.Collections.ObjectModel.Collection</NSwagArrayInstanceType>
         <NSwagDictionaryType>System.Collections.Generic.IDictionary</NSwagDictionaryType>
