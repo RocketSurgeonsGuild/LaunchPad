@@ -7,17 +7,22 @@
         <AssemblyName>Analyzers.Tests</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Polyfill" PrivateAssets="all" />
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
-        <ProjectReference Include="..\..\src\Analyzers.$(_Analyzer_Roslyn_Version_)\Rocket.Surgery.LaunchPad.Analyzers.$(_Analyzer_Roslyn_Version_).csproj" />
+        <ProjectReference
+            Include="..\..\src\Analyzers.$(_Analyzer_Roslyn_Version_)\Rocket.Surgery.LaunchPad.Analyzers.$(_Analyzer_Roslyn_Version_).csproj" />
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
-        <ProjectReference Include="..\..\src\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
+        <ProjectReference
+            Include="..\..\src\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <PackageReference Include="Verify.SourceGenerators" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
-        <ProjectReference Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
+        <ProjectReference
+            Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
         <Compile Include="..\Analyzers.Tests\**\*.cs" Exclude="..\Analyzers.Tests\obj\**\*.cs" />
     </ItemGroup>
 </Project>
