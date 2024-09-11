@@ -160,7 +160,7 @@
         <PackageVersion Include="Verify.NodaTime" Version="2.1.0" />
         <PackageVersion Include="Verify.SystemJson" Version="1.2.0" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />
-        <PackageVersion Include="Verify.SourceGenerators" Version="2.4.0" />
+        <PackageVersion Include="Verify.SourceGenerators" Version="2.4.1" />
     </ItemGroup>
     <Import
         Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
