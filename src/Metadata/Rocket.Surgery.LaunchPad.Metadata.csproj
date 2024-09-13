@@ -5,6 +5,5 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
     </ItemGroup>
 </Project>

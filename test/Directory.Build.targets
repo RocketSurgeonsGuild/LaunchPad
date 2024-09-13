@@ -18,6 +18,10 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />
+
+        <PackageReference Include="FakeItEasy.Analyzer.CSharp"  />
+        <PackageReference Include="FluentAssertions.Analyzers"  />
+        <PackageReference Include="xunit.analyzers"  />
         <Using Include="Bogus" />
         <Using Include="FluentAssertions" />
         <Using Include="Xunit" />
