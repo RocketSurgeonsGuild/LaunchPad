@@ -13,15 +13,15 @@
         <PackageReference Include="Verify.NodaTime" />
         <PackageReference Include="Verify.SystemJson" />
         <PackageReference Include="Verify.NewtonsoftJson" />
-      <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
-      <PackageReference Include="Xunit.Combinatorial" />
+        <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+        <PackageReference Include="Xunit.Combinatorial" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />
 
-        <PackageReference Include="FakeItEasy.Analyzer.CSharp"  />
-        <PackageReference Include="FluentAssertions.Analyzers"  />
-        <PackageReference Include="xunit.analyzers"  />
+        <PackageReference Include="FakeItEasy.Analyzer.CSharp" />
+        <PackageReference Include="FluentAssertions.Analyzers" />
+        <PackageReference Include="xunit.analyzers" />
         <Using Include="Bogus" />
         <Using Include="FluentAssertions" />
         <Using Include="Xunit" />

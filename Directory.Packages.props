@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
+
 <Project>
     <PropertyGroup>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
@@ -65,8 +66,7 @@
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer"
-            Version="8.0.8" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" />
         <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
         <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.4.1" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
@@ -76,14 +76,11 @@
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-            Version="8.0.1" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
         <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.8" />
-        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions"
-            Version="8.0.8" />
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="8.0.8" />
         <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
-        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions"
-            Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.10.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.10.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.10.0" />
@@ -105,8 +102,7 @@
         <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.1-beta.12" />
         <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.1-beta.12" />
         <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.12" />
-        <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel"
-            Version="14.0.1-beta.12" />
+        <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="14.0.1-beta.12" />
         <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.12" />
         <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="12.2.0" />
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="12.2.0" />
@@ -130,8 +126,7 @@
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.7.3" />
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="6.7.3" />
-        <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime"
-            Version="8.0.1" />
+        <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="8.0.1" />
         <PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
         <PackageVersion Include="System.Interactive" Version="6.0.1" />
         <PackageVersion Include="System.Interactive.Async" Version="6.0.1" />
@@ -155,11 +150,9 @@
         <PackageVersion Include="FakeItEasy" Version="8.3.0" />
         <PackageVersion Include="FluentAssertions" Version="6.12.1" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy"
-            Version="8.1.0-next.1" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="8.1.0-next.1" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="8.1.0-next.1" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators"
-            Version="8.1.0-next.1" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="8.1.0-next.1" />
         <PackageVersion Include="xunit" Version="2.9.0" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
         <PackageVersion Include="Verify.Xunit" Version="26.4.5" />
@@ -170,7 +163,5 @@
     </ItemGroup>
     <Import
         Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
-        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
-    />
+        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')" />
 </Project>
-
