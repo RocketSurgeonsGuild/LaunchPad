@@ -56,6 +56,9 @@ jobs:
         id: commit-message
         run: |
           echo "message=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
+      - name: npm ci --ignore-scripts
+        run: |
+          npm ci --ignore-scripts
       - name: 🔨 Use .NET Core 8.0 SDK
         uses: actions/setup-dotnet@v4
         with:
@@ -67,10 +70,6 @@ jobs:
       - name: ⚒️ dotnet tool restore
         run: |
           dotnet tool restore
-      - name: 🎁 Restore
-        id: restore
-        run: |
-          dotnet nuke DotnetCoreRestore Restore --skip
       - name: Lint
         id: lint
         run: |
