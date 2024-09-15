@@ -32,7 +32,7 @@
         <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2024.2.4" />
         <PackageVersion Include="Nuke.Common" Version="8.1.0" />
         <PackageVersion Include="ReportGenerator" Version="5.3.9" />
-        <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.8.108" />
+        <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.8.109" />
         <PackageVersion Include="AutoMapper" Version="13.0.1" />
         <PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.11.2" />
         <PackageVersion Include="FluentValidation" Version="11.9.2" />
