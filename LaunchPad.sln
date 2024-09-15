@@ -4,26 +4,26 @@ VisualStudioVersion = 16.0.29006.145
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8FFDF555-DB50-45F9-9A2D-6410F39151C3}"
 	ProjectSection(SolutionItems) = preProject
-		src/Directory.Build.props = src/Directory.Build.props
-		src/Directory.Build.targets = src/Directory.Build.targets
-		src/.editorconfig = src/.editorconfig
+		Directory.Build.props = src\Directory.Build.props
+		Directory.Build.targets = src\Directory.Build.targets
+		.editorconfig = src\.editorconfig
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DF33E0FB-9790-4654-B60F-8AB22E0CC3D1}"
 	ProjectSection(SolutionItems) = preProject
-		test/Directory.Build.props = test/Directory.Build.props
-		test/Directory.Build.targets = test/Directory.Build.targets
-		test/.editorconfig = test/.editorconfig
+		Directory.Build.props = test\Directory.Build.props
+		Directory.Build.targets = test\Directory.Build.targets
+		.editorconfig = test\.editorconfig
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = ".build", ".build\.build.csproj", "{166F1873-4CAE-4F54-88B6-5FE79678846B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{5D11C19B-E8E4-4CE3-9C8A-1D368578EBCB}"
 	ProjectSection(SolutionItems) = preProject
-		sample/Directory.Packages.props = sample/Directory.Packages.props
-		sample/Directory.Build.props = sample/Directory.Build.props
-		sample/Directory.Build.targets = sample/Directory.Build.targets
-		sample/.editorconfig = sample/.editorconfig
+		Directory.Build.props = sample\Directory.Build.props
+		Directory.Packages.props = sample\Directory.Packages.props
+		Directory.Build.targets = sample\Directory.Build.targets
+		.editorconfig = sample\.editorconfig
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Command", "sample\Sample.Command\Sample.Command.csproj", "{9C03CA0E-4A3B-48F3-9DDD-DE1B325936A9}"
@@ -44,7 +44,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions.Tests", "test\Ex
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{D65A8130-6A58-4693-A96C-8C1DFA3CA355}"
 	ProjectSection(SolutionItems) = preProject
-		.config/dotnet-tools.json = .config/dotnet-tools.json
+		.config\dotnet-tools.json = .config\dotnet-tools.json
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		Directory.Packages.support.props = Directory.Packages.support.props
@@ -66,6 +66,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{D65A81
 		.prettierrc = .prettierrc
 		NuGet.config = NuGet.config
 		package.json = package.json
+		dotnet-tools.json = .config\dotnet-tools.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.LaunchPad.Hosting", "src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj", "{8BBD24E1-DE43-414A-A0F3-5B8CC125D97F}"
@@ -148,35 +149,35 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.LaunchPad.St
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{C3A456FA-D2FE-4109-8DC3-E8191F878C1E}"
 	ProjectSection(SolutionItems) = preProject
-		.github/labels.yml = .github/labels.yml
-		.github/release.yml = .github/release.yml
-		.github/renovate.json = .github/renovate.json
+		labels.yml = .github\labels.yml
+		release.yml = .github\release.yml
+		renovate.json = .github\renovate.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{3B269B1C-0BE2-485C-AFB7-BB24ACF0B178}"
 	ProjectSection(SolutionItems) = preProject
-		.github/workflows/ci-ignore.yml = .github/workflows/ci-ignore.yml
-		.github/workflows/ci.yml = .github/workflows/ci.yml
-		.github/workflows/close-milestone.yml = .github/workflows/close-milestone.yml
-		.github/workflows/dependabot-merge.yml = .github/workflows/dependabot-merge.yml
-		.github/workflows/draft-release.yml = .github/workflows/draft-release.yml
-		.github/workflows/publish-docs.yml = .github/workflows/publish-docs.yml
-		.github/workflows/sync-labels.yml = .github/workflows/sync-labels.yml
-		.github/workflows/update-milestone.yml = .github/workflows/update-milestone.yml
-		.github/workflows/lint.yml = .github/workflows/lint.yml
+		ci-ignore.yml = .github\workflows\ci-ignore.yml
+		ci.yml = .github\workflows\ci.yml
+		close-milestone.yml = .github\workflows\close-milestone.yml
+		dependabot-merge.yml = .github\workflows\dependabot-merge.yml
+		draft-release.yml = .github\workflows\draft-release.yml
+		lint.yml = .github\workflows\lint.yml
+		publish-docs.yml = .github\workflows\publish-docs.yml
+		sync-labels.yml = .github\workflows\sync-labels.yml
+		update-milestone.yml = .github\workflows\update-milestone.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".husky", ".husky", "{3F3EA1F9-1174-40B6-95DB-4C85FA611BBB}"
 	ProjectSection(SolutionItems) = preProject
-		.husky/pre-commit = .husky/pre-commit
-		.husky/task-runner.json = .husky/task-runner.json
+		pre-commit = .husky\pre-commit
+		task-runner.json = .husky\task-runner.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".vscode", ".vscode", "{2EB0A486-E55F-424C-9EA3-0ABBC10D0257}"
 	ProjectSection(SolutionItems) = preProject
-		.vscode/launch.json = .vscode/launch.json
-		.vscode/settings.json = .vscode/settings.json
-		.vscode/tasks.json = .vscode/tasks.json
+		launch.json = .vscode\launch.json
+		settings.json = .vscode\settings.json
+		tasks.json = .vscode\tasks.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rocket.Surgery.LaunchPad.Analyzers.roslyn4.6", "src\Analyzers.roslyn4.6\Rocket.Surgery.LaunchPad.Analyzers.roslyn4.6.csproj", "{9E08CB1A-1352-40FA-8CEB-0EBCA52689A6}"
