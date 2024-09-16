@@ -12,7 +12,7 @@
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
         <PackageReference Include="Polyfill" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="4.6.0"
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="4.11.0"
             PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
