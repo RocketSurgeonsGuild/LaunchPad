@@ -19,7 +19,6 @@
       <ProjectReference Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
       <ProjectReference Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
         <Using Include="StrawberryShake" />
-        <Compile Include="obj\$(Configuration)\$(TargetFramework)\berry\*.cs" />
     </ItemGroup>
     <Target Name="DeleteGraphqlSchema" BeforeTargets="_GenerateGraphQLCode">
         <Delete
