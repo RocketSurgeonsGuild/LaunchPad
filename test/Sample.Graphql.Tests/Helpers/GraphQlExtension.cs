@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Alba;
 using HotChocolate;
 using HotChocolate.AspNetCore.Instrumentation;
@@ -13,9 +14,7 @@ namespace Sample.Graphql.Tests.Helpers;
 
 internal class GraphQlExtension : IAlbaExtension
 {
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 
     public ValueTask DisposeAsync()
     {
@@ -29,22 +28,22 @@ internal class GraphQlExtension : IAlbaExtension
 
     public IHostBuilder Configure(IHostBuilder builder)
     {
-        builder.ConfigureServices(
+        _ = builder.ConfigureServices(
             z => z
                 .AddW3CLogging(_ => { })
                 .AddHttpLogging(_ => { })
                 .AddGraphQL()
                 .AddDiagnosticEventListener<TestServerDiagnosticEventListener>()
                 .ModifyRequestOptions(
-                     opt => { opt.IncludeExceptionDetails = true; }
+                     opt => opt.IncludeExceptionDetails = true
                  )
         );
-        builder.ConfigureServices(
+        _ = builder.ConfigureServices(
             s =>
             {
-                s.AddHttpClient();
-//                s.AddRocketClient();
-                s.ConfigureOptions<CO>();
+                _ = s.AddHttpClient();
+                //                s.AddRocketClient();
+                _ = s.ConfigureOptions<CO>();
             }
         );
 
@@ -60,14 +59,18 @@ internal class GraphQlExtension : IAlbaExtension
             );
 
             options.HttpClientActions.Add(
-                client => client.BaseAddress = new Uri(testServer.BaseAddress + "graphql/")
+                client => client.BaseAddress = new(testServer.BaseAddress + "graphql/")
             );
         }
     }
 }
 
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class TestServerDiagnosticEventListener(ILogger<TestServerDiagnosticEventListener> logger) : ServerDiagnosticEventListener
 {
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay => ToString();
+
     public override void HttpRequestError(HttpContext context, Exception exception)
     {
         logger.LogError(exception, "HttpRequestError");
