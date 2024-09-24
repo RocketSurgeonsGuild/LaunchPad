@@ -43,7 +43,7 @@ internal class GraphQlExtension : IAlbaExtension
             s =>
             {
                 s.AddHttpClient();
-                s.AddRocketClient();
+//                s.AddRocketClient();
                 s.ConfigureOptions<CO>();
             }
         );
