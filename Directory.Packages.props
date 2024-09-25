@@ -104,8 +104,8 @@
         <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.13" />
         <PackageVersion Include="Rocket.Surgery.Conventions.DependencyModel" Version="14.0.1-beta.13" />
         <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.13" />
-        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="12.2.0" />
-        <PackageVersion Include="Rocket.Surgery.Extensions" Version="12.2.0" />
+        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="12.2.1" />
+        <PackageVersion Include="Rocket.Surgery.Extensions" Version="12.2.1" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.13" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.13" />
         <PackageVersion Include="Scrutor" Version="4.2.2" />
