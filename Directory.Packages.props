@@ -24,7 +24,7 @@
         <PackageVersion Include="JetBrains.Annotations" Version="2024.2.0" />
         <PackageVersion Include="JetBrains.ExternalAnnotations" Version="10.2.153" />
         <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.9.1" />
-        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.2.0" />
+        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.2.1" />
         <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.9.1" />
         <PackageVersion Include="Xunit.Combinatorial" Version="1.6.24" />
         <PackageVersion Include="Polyfill" Version="6.10.0" />
