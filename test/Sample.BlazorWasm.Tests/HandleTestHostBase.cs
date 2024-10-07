@@ -21,7 +21,7 @@ public abstract class HandleTestHostBase(ITestOutputHelper outputHelper, LogLeve
             await ConventionContext.FromAsync(
                 ConventionContextBuilder
                    .Create()
-                   .ForTesting(AppDomain.CurrentDomain, LoggerFactory)
+                   .ForTesting(Imports.Instance, LoggerFactory)
                    .WithLogger(Logger)
             );
         ExcludeSourceContext(nameof(WebAssemblyHostBuilder));
