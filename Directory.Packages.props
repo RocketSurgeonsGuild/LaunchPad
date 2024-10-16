@@ -45,7 +45,7 @@
         <PackageVersion Include="HotChocolate.Abstractions" Version="14.0.0-rc.2" />
         <PackageVersion Include="HotChocolate.AspNetCore" Version="14.0.0-rc.2" />
         <PackageVersion Include="HotChocolate.Data" Version="14.0.0-rc.2" />
-        <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0-rc.2" />
+        <PackageVersion Include="HotChocolate.Diagnostics" Version="14.0.0" />
         <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.0.0-rc.2" />
         <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.0.0-rc.2" />
         <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.0.0-rc.2" />
