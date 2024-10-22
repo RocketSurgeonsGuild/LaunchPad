@@ -28,6 +28,5 @@ public class DefaultConvention : IServiceConvention
            .AddOptions()
            .AddLogging()
            .AddExecuteScopedServices();
-        services.TryAddSingleton(TimeProvider.System);
     }
 }

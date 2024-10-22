@@ -15,7 +15,7 @@ public static class ModuleInitializer
     {
         DiffRunner.Disabled = true;
         VerifierSettings.DontScrubDateTimes();
-        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
+//        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
         VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new GeometryConverter()));
 
         VerifierSettings.DisableRequireUniquePrefix();
