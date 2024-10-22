@@ -56,9 +56,12 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, OpenTelemetryConvention @delegate,
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        OpenTelemetryConvention @delegate,
         int priority = 0,
-        ConventionCategory? category = null)
+        ConventionCategory? category = null
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
 
@@ -75,9 +78,12 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, Action<IOpenTelemetryBuilder> @delegate,
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        Action<IOpenTelemetryBuilder> @delegate,
         int priority = 0,
-        ConventionCategory? category = null)
+        ConventionCategory? category = null
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
 
@@ -93,9 +99,12 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, OpenTelemetryAsyncConvention @delegate,
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        OpenTelemetryAsyncConvention @delegate,
         int priority = 0,
-        ConventionCategory? category = null)
+        ConventionCategory? category = null
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
 
@@ -111,9 +120,12 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, Func<IOpenTelemetryBuilder, ValueTask> @delegate,
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        Func<IOpenTelemetryBuilder, ValueTask> @delegate,
         int priority = 0,
-        ConventionCategory? category = null)
+        ConventionCategory? category = null
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
 

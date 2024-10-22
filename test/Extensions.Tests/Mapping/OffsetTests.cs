@@ -15,12 +15,13 @@ public partial class OffsetTests(ITestOutputHelper testOutputHelper) : MapperTes
     public Task Maps_All_Methods(MethodResult result)
     {
         return VerifyMethod(
-                result,
-                new Mapper(),
-                Offset.FromHours(11),
-                TimeSpan.FromHours(10)
-            )
-           .UseParameters(result.ToString()).HashParameters();
+                   result,
+                   new Mapper(),
+                   Offset.FromHours(11),
+                   TimeSpan.FromHours(10)
+               )
+              .UseParameters(result.ToString())
+              .HashParameters();
     }
 
     [Mapper]

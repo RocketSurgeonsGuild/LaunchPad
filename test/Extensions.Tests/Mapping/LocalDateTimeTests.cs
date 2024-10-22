@@ -17,12 +17,13 @@ public partial class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : Ma
     public Task Maps_All_Methods(MethodResult result)
     {
         return VerifyMethod(
-                result,
-                new Mapper(),
-                _fakeTimeProvider.GetLocalNow().DateTime,
-                LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
-            )
-           .UseParameters(result.ToString()).HashParameters();
+                   result,
+                   new Mapper(),
+                   _fakeTimeProvider.GetLocalNow().DateTime,
+                   LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+               )
+              .UseParameters(result.ToString())
+              .HashParameters();
     }
 
     [Mapper]

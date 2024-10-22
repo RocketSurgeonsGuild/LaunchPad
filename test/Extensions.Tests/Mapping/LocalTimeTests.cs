@@ -14,13 +14,14 @@ public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : Mapper
     public Task Maps_All_Methods(MethodResult result)
     {
         return VerifyMethod(
-                result,
-                new Mapper(),
-                _fakeTimeProvider.GetLocalNow().DateTime,
-                TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
-                LocalTime.FromTimeOnly(TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime))
-            )
-           .UseParameters(result.ToString()).HashParameters();
+                   result,
+                   new Mapper(),
+                   _fakeTimeProvider.GetLocalNow().DateTime,
+                   TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
+                   LocalTime.FromTimeOnly(TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime))
+               )
+              .UseParameters(result.ToString())
+              .HashParameters();
     }
 
     [Mapper]

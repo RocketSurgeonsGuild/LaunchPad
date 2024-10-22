@@ -15,12 +15,13 @@ public partial class PeriodTests(ITestOutputHelper testOutputHelper) : MapperTes
     public Task Maps_All_Methods(MethodResult result)
     {
         return VerifyMethod(
-                result,
-                new Mapper(),
-                Period.FromMonths(10),
-                "P5M"
-            )
-           .UseParameters(result.ToString()).HashParameters();
+                   result,
+                   new Mapper(),
+                   Period.FromMonths(10),
+                   "P5M"
+               )
+              .UseParameters(result.ToString())
+              .HashParameters();
     }
 
     [Mapper]

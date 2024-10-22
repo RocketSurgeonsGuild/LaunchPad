@@ -20,6 +20,7 @@ public class ServiceDiscoveryCoreConvention : IServiceConvention
         services.ConfigureHttpClientDefaults(http => http.AddServiceDiscovery());
     }
 }
+
 /// <summary>
 ///     Service conventions using service discovery
 /// </summary>

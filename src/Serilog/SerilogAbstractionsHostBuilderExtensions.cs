@@ -21,9 +21,12 @@ public static class SerilogAbstractionsHostBuilderExtensions
     /// <param name="priority"></param>
     /// <param name="category"></param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureSerilog(this ConventionContextBuilder container, Action<LoggerConfiguration> @delegate,
+    public static ConventionContextBuilder ConfigureSerilog(
+        this ConventionContextBuilder container,
+        Action<LoggerConfiguration> @delegate,
         int priority = 0,
-        ConventionCategory? category = null)
+        ConventionCategory? category = null
+    )
     {
         return ConfigureSerilog(container, (_, _, _, logger) => @delegate(logger), priority, category);
     }
@@ -72,7 +75,12 @@ public static class SerilogAbstractionsHostBuilderExtensions
     /// <param name="priority"></param>
     /// <param name="category"></param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureSerilog(this ConventionContextBuilder container, SerilogConvention @delegate, int priority = 0, ConventionCategory? category = null)
+    public static ConventionContextBuilder ConfigureSerilog(
+        this ConventionContextBuilder container,
+        SerilogConvention @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
         ArgumentNullException.ThrowIfNull(@delegate);
