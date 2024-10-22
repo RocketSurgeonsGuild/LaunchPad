@@ -7,8 +7,8 @@
       WarningLevel: 0,
       Location: Input2.cs: (11,64)-(11,75),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0751),
-      MessageFormat: A partial method must be declared within a partial type,
-      Message: A partial method must be declared within a partial type,
+      MessageFormat: A partial member must be declared within a partial type,
+      Message: A partial member must be declared within a partial type,
       Category: Compiler,
       CustomTags: [
         Compiler,
@@ -39,8 +39,8 @@
       WarningLevel: 0,
       Location: Input2.cs: (14,51)-(14,60),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0751),
-      MessageFormat: A partial method must be declared within a partial type,
-      Message: A partial method must be declared within a partial type,
+      MessageFormat: A partial member must be declared within a partial type,
+      Message: A partial member must be declared within a partial type,
       Category: Compiler,
       CustomTags: [
         Compiler,

@@ -10,6 +10,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 ///     A convention that registers any options POCOs that are found with the <see cref="RegisterOptionsConfigurationAttribute" />
 /// </summary>
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class OptionsConvention : IServiceConvention
 {
     private readonly MethodInfo _configureMethod;

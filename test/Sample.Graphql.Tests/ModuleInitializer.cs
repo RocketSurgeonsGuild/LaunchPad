@@ -1,9 +1,7 @@
 using System.Runtime.CompilerServices;
-using Argon.NodaTime;
 using DiffEngine;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
-using NodaTime;
 using Path = System.IO.Path;
 
 namespace Sample.Graphql.Tests;
@@ -15,7 +13,7 @@ public static class ModuleInitializer
     {
         DiffRunner.Disabled = true;
         VerifierSettings.DontScrubDateTimes();
-        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
+//        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
         VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new GeometryConverter()));
 
         VerifierSettings.DisableRequireUniquePrefix();

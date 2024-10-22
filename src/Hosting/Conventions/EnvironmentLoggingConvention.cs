@@ -13,6 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// <seealso cref="ISerilogConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class EnvironmentLoggingConvention : ISerilogConvention
 {
     /// <summary>

@@ -17,6 +17,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 [PublicAPI]
 [ExportConvention]
 [BeforeConvention(typeof(HotChocolateConvention))]
+[ConventionCategory(ConventionCategory.Application)]
 public class GraphqlConvention : IServiceConvention
 {
     private readonly FoundationOptions _foundationOptions;

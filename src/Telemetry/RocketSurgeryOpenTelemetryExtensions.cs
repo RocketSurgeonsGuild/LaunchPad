@@ -56,13 +56,18 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, OpenTelemetryConvention @delegate)
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        OpenTelemetryConvention @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
 
         ArgumentNullException.ThrowIfNull(@delegate);
 
-        container.AppendDelegate(@delegate);
+        container.AppendDelegate(@delegate, priority, category);
         return container;
     }
 
@@ -73,45 +78,18 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
     /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, Action<IOpenTelemetryBuilder> @delegate)
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        Action<IOpenTelemetryBuilder> @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
 
         ArgumentNullException.ThrowIfNull(@delegate);
 
-        container.AppendDelegate(@delegate);
-        return container;
-    }
-
-    /// <summary>
-    ///     Configure the serilog delegate to the convention scanner
-    /// </summary>
-    /// <param name="container">The container.</param>
-    /// <param name="delegate">The delegate.</param>
-    /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, OpenTelemetryAsyncConvention @delegate)
-    {
-        ArgumentNullException.ThrowIfNull(container);
-
-        ArgumentNullException.ThrowIfNull(@delegate);
-
-        container.AppendDelegate(@delegate);
-        return container;
-    }
-
-    /// <summary>
-    ///     Configure the serilog delegate to the convention scanner
-    /// </summary>
-    /// <param name="container">The container.</param>
-    /// <param name="delegate">The delegate.</param>
-    /// <returns>IConventionHostBuilder.</returns>
-    public static ConventionContextBuilder ConfigureOpenTelemetry(this ConventionContextBuilder container, Func<IOpenTelemetryBuilder, ValueTask> @delegate)
-    {
-        ArgumentNullException.ThrowIfNull(container);
-
-        ArgumentNullException.ThrowIfNull(@delegate);
-
-        container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, _) => @delegate(builder)));
+        container.AppendDelegate(@delegate, priority, category);
         return container;
     }
 
@@ -123,14 +101,58 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(
         this ConventionContextBuilder container,
-        Func<IOpenTelemetryBuilder, CancellationToken, ValueTask> @delegate
+        OpenTelemetryAsyncConvention @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
     )
     {
         ArgumentNullException.ThrowIfNull(container);
 
         ArgumentNullException.ThrowIfNull(@delegate);
 
-        container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, token) => @delegate(builder, token)));
+        container.AppendDelegate(@delegate, priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        Func<IOpenTelemetryBuilder, ValueTask> @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+
+        ArgumentNullException.ThrowIfNull(@delegate);
+
+        container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, _) => @delegate(builder)), priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetry(
+        this ConventionContextBuilder container,
+        Func<IOpenTelemetryBuilder, CancellationToken, ValueTask> @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+
+        ArgumentNullException.ThrowIfNull(@delegate);
+
+        container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, token) => @delegate(builder, token)), priority, category);
         return container;
     }
 }

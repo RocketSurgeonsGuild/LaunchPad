@@ -14,6 +14,7 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Application)]
 public class GrpcConvention : IServiceConvention
 {
     /// <inheritdoc />

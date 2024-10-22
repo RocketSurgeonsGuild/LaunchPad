@@ -16,6 +16,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention<SerilogHostingConvention>]
+[ConventionCategory(ConventionCategory.Core)]
 public sealed class SerilogConsoleLoggingConvention : ISerilogConvention
 {
     private readonly LaunchPadLoggingOptions _options;

@@ -1,13 +1,13 @@
 ﻿{
   Data: {
     NodaTimeTest: {
-      Duration: 1:00:00
+      Duration: 0:01:00:00
     }
   },
   DataInfo: {
     NodaTimeTest: {
       __typename: NodaTimeOutputs,
-      Duration: 1:00:00
+      Duration: 0:01:00:00
     },
     Version: 1
   },

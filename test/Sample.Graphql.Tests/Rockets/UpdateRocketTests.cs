@@ -154,7 +154,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
         var response = await client.UpdateRocket.ExecuteAsync(request);
         response.IsErrorResult().Should().BeTrue();
 
-        await Verify(response).UseHashedParameters(request, propertyName);
+        await Verify(response).UseParameters(request, propertyName).HashParameters();
     }
 
     private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>

@@ -18,6 +18,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(AspNetCoreConvention))]
+[ConventionCategory(ConventionCategory.Application)]
 public class SystemJsonTextConvention : IServiceConvention
 {
     private readonly FoundationOptions _options;

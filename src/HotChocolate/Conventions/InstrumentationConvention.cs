@@ -14,6 +14,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 /// <seealso cref="IOpenTelemetryConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Application)]
 public class InstrumentationConvention : IOpenTelemetryConvention
 {
     /// <inheritdoc />

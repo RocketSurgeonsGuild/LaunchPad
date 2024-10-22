@@ -13,6 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// <seealso cref="IServiceAsyncConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class OpenTelemetryConvention : IServiceAsyncConvention
 {
     /// <inheritdoc />

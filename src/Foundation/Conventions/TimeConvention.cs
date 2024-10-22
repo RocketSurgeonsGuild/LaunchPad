@@ -16,7 +16,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
-public class NodaTimeConvention : IServiceConvention, ISerilogConvention
+[ConventionCategory(ConventionCategory.Core)]
+public class TimeConvention : IServiceConvention, ISerilogConvention
 {
     private readonly FoundationOptions _options;
 
@@ -24,7 +25,7 @@ public class NodaTimeConvention : IServiceConvention, ISerilogConvention
     ///     Create the NodaTime convention
     /// </summary>
     /// <param name="options"></param>
-    public NodaTimeConvention(FoundationOptions? options = null)
+    public TimeConvention(FoundationOptions? options = null)
     {
         _options = options ?? new FoundationOptions();
     }
@@ -45,6 +46,7 @@ public class NodaTimeConvention : IServiceConvention, ISerilogConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
+        services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IClock>(SystemClock.Instance);
         services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
     }

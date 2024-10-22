@@ -21,6 +21,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// <seealso cref="IHostCreatedConvention&lt;IHost&gt;" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class SerilogHostingConvention : IHostApplicationConvention<IHostApplicationBuilder>, IHostCreatedConvention<IHost>
 {
     private void CustomAddSerilog(

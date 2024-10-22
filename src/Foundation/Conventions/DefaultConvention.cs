@@ -12,6 +12,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class DefaultConvention : IServiceConvention
 {
     /// <summary>

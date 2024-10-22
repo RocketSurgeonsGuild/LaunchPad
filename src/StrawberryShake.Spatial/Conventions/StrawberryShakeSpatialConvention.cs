@@ -11,6 +11,7 @@ namespace Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.Conventions;
 /// </summary>
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class StrawberryShakeSpatialConvention : IServiceConvention
 {
     /// <inheritdoc />

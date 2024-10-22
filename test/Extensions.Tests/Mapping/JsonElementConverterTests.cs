@@ -20,33 +20,34 @@ public partial class JsonElementConverterTests(ITestOutputHelper testOutputHelpe
         var stub = A.Fake<IOptionsMonitor<JsonSerializerOptions>>();
         A.CallTo(() => stub.CurrentValue).Returns(new());
         return VerifyEachMethod(
-                result,
-                new Mapper(stub),
-                string.Empty,
-                "null",
-                "[]",
-                "{}",
-                "\"1234\"",
-                "1234",
-                "[1234,5678]",
-                "{\"a\":1234}",
-                ""u8.ToArray(),
-                "null"u8.ToArray(),
-                "[]"u8.ToArray(),
-                "{}"u8.ToArray(),
-                "\"1234\""u8.ToArray(),
-                "1234"u8.ToArray(),
-                "[1234,5678]"u8.ToArray(),
-                "{\"a\":1234}"u8.ToArray(),
-                JsonDocument.Parse("null").RootElement,
-                JsonDocument.Parse("[]").RootElement,
-                JsonDocument.Parse("{}").RootElement,
-                JsonDocument.Parse("\"1234\"").RootElement,
-                JsonDocument.Parse("1234").RootElement,
-                JsonDocument.Parse("[1234,5678]").RootElement,
-                JsonDocument.Parse("{\"a\":1234}").RootElement
-            )
-           .UseHashedParameters(result.ToString());
+                   result,
+                   new Mapper(stub),
+                   string.Empty,
+                   "null",
+                   "[]",
+                   "{}",
+                   "\"1234\"",
+                   "1234",
+                   "[1234,5678]",
+                   "{\"a\":1234}",
+                   ""u8.ToArray(),
+                   "null"u8.ToArray(),
+                   "[]"u8.ToArray(),
+                   "{}"u8.ToArray(),
+                   "\"1234\""u8.ToArray(),
+                   "1234"u8.ToArray(),
+                   "[1234,5678]"u8.ToArray(),
+                   "{\"a\":1234}"u8.ToArray(),
+                   JsonDocument.Parse("null").RootElement,
+                   JsonDocument.Parse("[]").RootElement,
+                   JsonDocument.Parse("{}").RootElement,
+                   JsonDocument.Parse("\"1234\"").RootElement,
+                   JsonDocument.Parse("1234").RootElement,
+                   JsonDocument.Parse("[1234,5678]").RootElement,
+                   JsonDocument.Parse("{\"a\":1234}").RootElement
+               )
+              .UseParameters(result.ToString())
+              .HashParameters();
     }
 
     [Mapper]

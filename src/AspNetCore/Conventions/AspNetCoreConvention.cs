@@ -15,6 +15,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Application)]
 public class AspNetCoreConvention : IServiceConvention
 {
     internal static void PopulateDefaultParts(

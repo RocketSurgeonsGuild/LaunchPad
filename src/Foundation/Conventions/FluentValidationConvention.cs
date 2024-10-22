@@ -23,6 +23,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ExportConvention]
 [AfterConvention(typeof(MediatRConvention))]
 [AfterConvention(typeof(HealthChecksConvention))]
+[ConventionCategory(ConventionCategory.Core)]
 public class FluentValidationConvention : IServiceConvention
 {
     private readonly FoundationOptions _options;

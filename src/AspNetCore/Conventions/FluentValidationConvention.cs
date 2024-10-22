@@ -26,6 +26,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(AspNetCoreConvention))]
+[ConventionCategory(ConventionCategory.Application)]
 public partial class FluentValidationConvention : IServiceConvention
 {
     private static void AddFluentValidationRules(IServiceCollection services)
