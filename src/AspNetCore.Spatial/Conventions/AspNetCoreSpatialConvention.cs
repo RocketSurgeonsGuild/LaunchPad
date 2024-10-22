@@ -12,6 +12,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// </summary>
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Application)]
 public class AspNetCoreSpatialConvention : IServiceConvention
 {
     /// <inheritdoc />

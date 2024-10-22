@@ -13,6 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <seealso cref="ISerilogConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class HealthChecksConvention : IServiceConvention
 {
     /// <inheritdoc />

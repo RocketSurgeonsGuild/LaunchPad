@@ -15,6 +15,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 [PublicAPI]
 [LiveConvention]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfigurationConvention
 {
     /// <inheritdoc />

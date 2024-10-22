@@ -16,6 +16,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class NodaTimeConvention : IServiceConvention, ISerilogConvention
 {
     private readonly FoundationOptions _options;

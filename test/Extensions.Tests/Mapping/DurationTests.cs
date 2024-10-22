@@ -13,7 +13,7 @@ public partial class DurationTests(ITestOutputHelper testOutputHelper) : MapperT
     public Task Maps_All_Methods(MethodResult result)
     {
         return VerifyMethod(result, new Mapper(), TimeSpan.FromHours(1), Duration.FromMinutes(44))
-           .UseHashedParameters(result.ToString());
+           .UseParameters(result.ToString()).HashParameters();
     }
 
     [Mapper]

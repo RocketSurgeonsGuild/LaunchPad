@@ -21,7 +21,7 @@ public partial class InstantTests(ITestOutputHelper testOutputHelper) : MapperTe
                 _fakeTimeProvider.GetUtcNow().UtcDateTime,
                 Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
             )
-           .UseHashedParameters(result.ToString());
+           .UseParameters(result.ToString()).HashParameters();
     }
 
     [Mapper]

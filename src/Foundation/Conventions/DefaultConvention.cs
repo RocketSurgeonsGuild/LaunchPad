@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 
@@ -12,6 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class DefaultConvention : IServiceConvention
 {
     /// <summary>
@@ -26,5 +28,6 @@ public class DefaultConvention : IServiceConvention
            .AddOptions()
            .AddLogging()
            .AddExecuteScopedServices();
+        services.TryAddSingleton(TimeProvider.System);
     }
 }

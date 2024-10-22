@@ -16,6 +16,7 @@ namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
 /// </summary>
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class SpatialConvention : IServiceConvention, ISerilogConvention
 {
     /// <inheritdoc />

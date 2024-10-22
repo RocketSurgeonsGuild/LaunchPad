@@ -20,7 +20,7 @@ public partial class OffsetTests(ITestOutputHelper testOutputHelper) : MapperTes
                 Offset.FromHours(11),
                 TimeSpan.FromHours(10)
             )
-           .UseHashedParameters(result.ToString());
+           .UseParameters(result.ToString()).HashParameters();
     }
 
     [Mapper]

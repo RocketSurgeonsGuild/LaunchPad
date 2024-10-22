@@ -20,7 +20,7 @@ public partial class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : M
                 _fakeTimeProvider.GetLocalNow(),
                 OffsetDateTime.FromDateTimeOffset(_fakeTimeProvider.GetLocalNow())
             )
-           .UseHashedParameters(result.ToString());
+           .UseParameters(result.ToString()).HashParameters();
     }
 
     [Mapper]

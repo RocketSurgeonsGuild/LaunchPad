@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using NodaTime;
+using NodaTime.Extensions;
 using NodaTime.Testing;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -15,6 +17,7 @@ namespace Rocket.Surgery.LaunchPad.Testing;
 [UnitTestConvention]
 [ExportConvention]
 [BeforeConvention(typeof(NodaTimeConvention))]
+[ConventionCategory(ConventionCategory.Core)]
 public class FakeClockConvention : IServiceConvention
 {
     private readonly int _unixTimeSeconds;
@@ -34,7 +37,7 @@ public class FakeClockConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.AddSingleton(new FakeClock(Instant.FromUnixTimeSeconds(_unixTimeSeconds), _advanceBy));
-        services.AddSingleton<IClock>(provider => provider.GetRequiredService<FakeClock>());
+        services.AddSingleton<TimeProvider>(new FakeTimeProvider(DateTimeOffset.FromUnixTimeSeconds(_unixTimeSeconds)) { AutoAdvanceAmount = _advanceBy.ToTimeSpan() });
+        services.AddSingleton(s => s.GetRequiredService<TimeProvider>().ToClock());
     }
 }

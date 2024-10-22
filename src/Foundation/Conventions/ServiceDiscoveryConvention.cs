@@ -10,19 +10,27 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// </summary>
 [PublicAPI]
 [ExportConvention]
-public class ServiceDiscoveryConvention : IServiceConvention
+[ConventionCategory(ConventionCategory.Core)]
+public class ServiceDiscoveryCoreConvention : IServiceConvention
 {
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services.AddServiceDiscovery();
-
-        services.ConfigureHttpClientDefaults(
-            http =>
-            {
-                http.AddStandardResilienceHandler();
-                http.AddServiceDiscovery();
-            }
-        );
+        services.ConfigureHttpClientDefaults(http => http.AddServiceDiscovery());
+    }
+}
+/// <summary>
+///     Service conventions using service discovery
+/// </summary>
+[PublicAPI]
+[ExportConvention]
+[ConventionCategory(ConventionCategory.Application)]
+public class ServiceDiscoveryConvention : IServiceConvention
+{
+    /// <inheritdoc />
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    {
+        services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler());
     }
 }

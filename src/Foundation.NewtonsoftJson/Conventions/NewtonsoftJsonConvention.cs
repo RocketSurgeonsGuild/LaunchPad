@@ -17,6 +17,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// </summary>
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Core)]
 public class NewtonsoftJsonConvention : IServiceConvention, ISerilogConvention
 {
     /// <inheritdoc />

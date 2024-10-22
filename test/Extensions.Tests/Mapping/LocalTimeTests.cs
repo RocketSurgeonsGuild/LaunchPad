@@ -20,7 +20,7 @@ public partial class LocalTimeTests(ITestOutputHelper testOutputHelper) : Mapper
                 TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
                 LocalTime.FromTimeOnly(TimeOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime))
             )
-           .UseHashedParameters(result.ToString());
+           .UseParameters(result.ToString()).HashParameters();
     }
 
     [Mapper]

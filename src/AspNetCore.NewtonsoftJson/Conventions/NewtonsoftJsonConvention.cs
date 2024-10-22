@@ -16,6 +16,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
+[ConventionCategory(ConventionCategory.Application)]
 public class NewtonsoftJsonConvention : IServiceConvention
 {
     private readonly FoundationOptions _options;

@@ -24,6 +24,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(AspNetCoreConvention))]
+[ConventionCategory(ConventionCategory.Application)]
 public class ProblemDetailsConvention : IServiceConvention
 {
     /// <inheritdoc />

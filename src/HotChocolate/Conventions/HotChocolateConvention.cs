@@ -18,6 +18,7 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(NodaTimeConvention))]
+[ConventionCategory(ConventionCategory.Application)]
 public class HotChocolateConvention : IServiceConvention
 {
     /// <inheritdoc />

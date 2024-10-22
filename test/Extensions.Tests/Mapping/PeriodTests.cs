@@ -20,7 +20,7 @@ public partial class PeriodTests(ITestOutputHelper testOutputHelper) : MapperTes
                 Period.FromMonths(10),
                 "P5M"
             )
-           .UseHashedParameters(result.ToString());
+           .UseParameters(result.ToString()).HashParameters();
     }
 
     [Mapper]

@@ -16,7 +16,7 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
     public async Task Test1()
     {
         #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        var builder = new ConventionContextBuilder(new Dictionary<object, object>())
+        var builder = new ConventionContextBuilder(new Dictionary<object, object>(), [])
             #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
            .UseConventionFactory(Imports.Instance);
         var context = await ConventionContext.FromAsync(builder);
@@ -43,7 +43,7 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
     public async Task Test2()
     {
         #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        var builder = new ConventionContextBuilder(new Dictionary<object, object>())
+        var builder = new ConventionContextBuilder(new Dictionary<object, object>(), [])
             #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
            .UseConventionFactory(Imports.Instance);
         var context = await ConventionContext.FromAsync(builder);

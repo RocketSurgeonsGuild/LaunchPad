@@ -13,6 +13,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [PublicAPI]
 [ExportConvention]
 [BeforeConvention(typeof(Foundation.Conventions.FluentValidationConvention))]
+[ConventionCategory(ConventionCategory.Application)]
 public class AspNetCoreValidationBehaviorConvention : ISetupConvention
 {
     /// <inheritdoc />
