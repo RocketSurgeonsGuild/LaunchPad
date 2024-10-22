@@ -46,7 +46,6 @@ public class TimeConvention : IServiceConvention, ISerilogConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        services.RemoveAll<TimeProvider>();
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IClock>(SystemClock.Instance);
         services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
