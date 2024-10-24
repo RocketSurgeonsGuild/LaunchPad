@@ -21,7 +21,7 @@
         <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
         <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1" />
         <PackageVersion Include="xunit.analyzers" Version="1.16.0" />
-        <PackageVersion Include="JetBrains.Annotations" Version="2024.2.0" />
+        <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0" />
         <PackageVersion Include="JetBrains.ExternalAnnotations" Version="10.2.153" />
         <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
         <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.2.1" />
