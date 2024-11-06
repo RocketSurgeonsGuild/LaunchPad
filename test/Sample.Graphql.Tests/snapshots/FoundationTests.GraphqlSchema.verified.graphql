@@ -225,8 +225,8 @@ type PageInfo {
 }
 
 type Query {
-  launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput @cost(weight: "10") order: [LaunchRecordSortInput!] @cost(weight: "10")): LaunchRecordsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
-  rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput @cost(weight: "10") order: [ReadyRocketSortInput!] @cost(weight: "10")): RocketsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
+  launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput @cost(weight: "10") order: [LaunchRecordSortInput!] @cost(weight: "10")): LaunchRecordsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput @cost(weight: "10") order: [ReadyRocketSortInput!] @cost(weight: "10")): RocketsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
   nodaTimeTest(inputs: NodaTimeInputsInput!): NodaTimeOutputs!
   geometryTest(inputs: GeometryInputsInput!): GeometryOutputs!
 }
@@ -625,10 +625,22 @@ scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time"
 """
 Represents a time zone - a mapping between UTC and local time.
 A time zone maps UTC instants to local times - or, equivalently, to the offset from UTC at any particular instant.
+
+Example: `Europe/Zurich`
 """
 scalar DateTimeZone
 
-"Represents a fixed (and calendar-independent) length of time."
+"""
+Represents a fixed (and calendar-independent) length of time.
+
+Allowed patterns:
+- `-hh:mm:ss.sssssssss`
+- `-D:hh:mm:ss.sssssssss`
+
+Examples:
+- `-44:00:00.999999999`
+- `-1:20:00:00.999999999`
+"""
 scalar Duration
 
 scalar Geometry
@@ -642,13 +654,45 @@ Equates the days of the week with their numerical value according to ISO-8601.
 """
 scalar IsoDayOfWeek
 
-"LocalDate is an immutable struct representing a date within the calendar, with no reference to a particular time zone or time of day."
+"""
+LocalDate represents a date within the calendar, with no reference to a particular time zone or time of day.
+
+Allowed patterns:
+- `YYYY-MM-DD`
+- `YYYY-MM-DD (calendar)`
+
+Examples:
+- `2000-01-01`
+- `2000-01-01 (ISO)`
+"""
 scalar LocalDate
 
-"A date and time in a particular calendar system."
+"""
+A date and time in a particular calendar system.
+
+Allowed patterns:
+- `YYYY-MM-DDThh:mm:ss`
+- `YYYY-MM-DDThh:mm:ss.sssssssss`
+- `YYYY-MM-DDThh:mm:ss.sssssss`
+
+Examples:
+- `2000-01-01T20:00:00`
+- `2000-01-01T20:00:00.999`
+- `2000-01-01T20:00:00.9999999`
+"""
 scalar LocalDateTime
 
-"LocalTime is an immutable struct representing a time of day, with no reference to a particular calendar, time zone or date."
+"""
+LocalTime represents a time of day, with no reference to a particular calendar, time zone, or date.
+
+Allowed patterns:
+- `hh:mm:ss.sssssssss`
+- `hh:mm:ss`
+
+Examples:
+- `20:00:00.999`
+- `20:00:00`
+"""
 scalar LocalTime
 
 "The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
@@ -657,19 +701,64 @@ scalar Long
 """
 An offset from UTC in seconds.
  A positive value means that the local time is ahead of UTC (e.g. for Europe); a negative value means that the local time is behind UTC (e.g. for America).
+
+Allowed patterns:
+- `±hh:mm:ss`
+- `Z`
+
+Examples:
+- `+02:30:00`
+- `Z`
 """
 scalar Offset
 
-"A combination of a LocalDate and an Offset, to represent a date at a specific offset from UTC but without any time-of-day information."
+"""
+A combination of a LocalDate and an Offset, to represent a date at a specific offset from UTC but without any time-of-day information.
+
+Allowed patterns:
+- `YYYY-MM-DD±hh:mm`
+- `YYYY-MM-DD±hh:mm (calendar)`
+
+Examples:
+- `2000-01-01Z`
+- `2000-01-01Z (ISO)`
+"""
 scalar OffsetDate
 
-"A local date and time in a particular calendar system, combined with an offset from UTC."
+"""
+A local date and time in a particular calendar system, combined with an offset from UTC.
+
+Allowed patterns:
+- `YYYY-MM-DDThh:mm:ss±hh:mm`
+- `YYYY-MM-DDThh:mm:ss.sssssssss±hh:mm (calendar)`
+
+Examples:
+- `2000-01-01T20:00:00Z`
+- `2000-01-01T20:00:00.999Z (ISO)`
+"""
 scalar OffsetDateTime
 
-"A combination of a LocalTime and an Offset, to represent a time-of-day at a specific offset from UTC but without any date information."
+"""
+A combination of a LocalTime and an Offset, to represent a time-of-day at a specific offset from UTC but without any date information.
+
+Allowed patterns:
+- `hh:mm:ss.sssssssss±hh:mm`
+- `hh:mm:ss±hh:mm`
+- `hh:mm:ss.sssssssss±hh:mm`
+
+Examples:
+- `20:00:00.999999999Z`
+- `20:00:00Z`
+- `20:00:00.999Z`
+"""
 scalar OffsetTime
 
-"Represents a period of time expressed in human chronological terms: hours, days, weeks, months and so on."
+"""
+Represents a period of time expressed in human chronological terms: hours, days, weeks, months and so on.
+
+Pattern: `PnYnMnDTnHnMnS`
+Example: `P3Y6M4DT12H30M5S`
+"""
 scalar Period
 
 "A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
