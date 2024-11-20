@@ -133,7 +133,7 @@
         <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.0.1" />
         <PackageVersion Include="System.Text.Json" Version="8.0.5" />
         <PackageVersion Include="System.Net.Http.Json" Version="8.0.1" />
-        <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.1.0" />
+        <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.2.0" />
         <PackageVersion Include="Riok.Mapperly" Version="4.1.1" />
         <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.11" />
         <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="8.0.11" />
