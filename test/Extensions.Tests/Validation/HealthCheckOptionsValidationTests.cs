@@ -4,13 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Extensions.Tests.Validation;
 
-public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper), IAsyncLifetime
+public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper)), IAsyncLifetime
 {
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
@@ -142,16 +141,17 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
 
     public async Task InitializeAsync()
     {
+        var loggerFactory = CreateLoggerFactory();
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create()
-                                      .ForTesting(Imports.Instance, LoggerFactory)
+                                      .ForTesting(Imports.Instance, loggerFactory)
                                       .Set(
                                            new FoundationOptions
                                            {
                                                RegisterValidationOptionsAsHealthChecks = true,
                                            }
                                        )
-                                      .WithLogger(Logger);
+                                      .WithLogger(loggerFactory.CreateLogger("Test"));
 
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
         Populate(await new ServiceCollection().ApplyConventionsAsync(context));

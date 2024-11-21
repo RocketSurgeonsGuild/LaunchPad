@@ -1,9 +1,8 @@
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests;
 
-public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
+public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
 {
     [Fact]
     public void ShouldTrackChanges_For_Classes()

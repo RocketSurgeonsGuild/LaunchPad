@@ -1,12 +1,12 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
+using Serilog.Events;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class RemoveRocketsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
+public class RemoveRocketsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Remove_Rocket()

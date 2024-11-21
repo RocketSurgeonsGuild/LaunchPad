@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Bogus" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
-      <PackageReference Include="StronglyTypedId" />
-      <PackageReference Include="StronglyTypedId.Templates" />
-        <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
+    <PackageReference Include="StronglyTypedId" />
+    <PackageReference Include="StronglyTypedId.Templates" />
+    <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
 
   </ItemGroup>
 

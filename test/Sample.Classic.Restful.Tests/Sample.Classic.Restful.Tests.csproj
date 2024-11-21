@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
         <PackageReference Include="System.Net.Http.Json" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\sample\Sample.Restful.Client\Sample.Restful.Client.csproj" />
-      <ProjectReference Include="..\..\sample\Sample.Classic.Restful\Sample.Classic.Restful.csproj" />
-      <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+        <ProjectReference Include="..\..\sample\Sample.Restful.Client\Sample.Restful.Client.csproj" />
+        <ProjectReference Include="..\..\sample\Sample.Classic.Restful\Sample.Classic.Restful.csproj" />
+        <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
     </ItemGroup>
 </Project>

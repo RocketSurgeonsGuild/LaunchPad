@@ -108,7 +108,7 @@ public class AspNetCoreConvention : IServiceConvention
             // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
             context
-               .AssemblyProvider.GetAssemblies(s => s.FromAssemblyDependenciesOf(typeof(AspNetCoreConvention)))
+               .TypeProvider.GetAssemblies(s => s.FromAssemblyDependenciesOf(typeof(AspNetCoreConvention)))
                .Where(_options.AssemblyPartFilter)
                .SelectMany(GetApplicationPartAssemblies)
         );

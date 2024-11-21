@@ -2,13 +2,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
 namespace AspNetCore.Tests.Restful;
 
-public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
+public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
 {
     [Fact]
     public void Should_Have_Method()

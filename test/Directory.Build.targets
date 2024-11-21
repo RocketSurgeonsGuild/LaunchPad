@@ -4,7 +4,7 @@
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.XUnit" />
         <PackageReference Include="Bogus" />
-        <PackageReference Include="coverlet.collector" />
+        <PackageReference Include="Microsoft.CodeCoverage" />
         <PackageReference Include="FakeItEasy" />
         <PackageReference Include="FluentAssertions" />
         <PackageReference Include="xunit" />
@@ -18,10 +18,10 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />
-
         <PackageReference Include="FakeItEasy.Analyzer.CSharp" />
         <PackageReference Include="FluentAssertions.Analyzers" />
         <PackageReference Include="xunit.analyzers" />
+        <Using Include="Rocket.Surgery.Extensions.Testing" />
         <Using Include="Bogus" />
         <Using Include="FluentAssertions" />
         <Using Include="Xunit" />

@@ -1,11 +1,10 @@
 using Newtonsoft.Json;
 using NodaTime;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests;
 
-public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
+public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     private JsonSerializerSettings _settings = new JsonSerializerSettings()
        .ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);

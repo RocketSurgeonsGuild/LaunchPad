@@ -1,31 +1,22 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.Extensions.Testing;
 using Sample.Core.Domain;
+using Serilog.Events;
 
 namespace Sample.Core.Tests;
 
-public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
+public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyncLifetime
 {
-    private readonly ConventionContextBuilder _context;
+    private ConventionContextBuilder? _context;
     private SqliteConnection? _connection;
 
-    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : base(
-        outputHelper,
-        logLevel,
-        "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
-    )
+    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : base(XUnitTestContext.Create(outputHelper, logLevel))
     {
-        _context =
-            ConventionContextBuilder
-               .Create()
-               .ForTesting(Imports.Instance, LoggerFactory)
-               .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)));
+        var factory = CreateLoggerFactory();
         ExcludeSourceContext(nameof(AutoFakeTest));
     }
 
@@ -33,8 +24,11 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     {
         _connection = new("DataSource=:memory:");
         await _connection.OpenAsync();
-
-        _context
+        var factory = CreateLoggerFactory();
+        _context = ConventionContextBuilder
+                  .Create()
+                  .ForTesting(Imports.Instance, factory)
+                  .WithLogger(factory.CreateLogger(nameof(AutoFakeTest)))
            .ConfigureServices(
                 (_, services) =>
                 {

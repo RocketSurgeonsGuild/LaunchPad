@@ -1,16 +1,17 @@
 using Alba;
 using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Serilog;
 using Serilog.Events;
 
 namespace Sample.Classic.Restful.Tests.Helpers;
 
-public abstract class WebAppFixtureTest<TAppFixture> : LoggerTest, IClassFixture<TAppFixture>, IAsyncLifetime
+public abstract class WebAppFixtureTest<TAppFixture>
+    (ITestOutputHelper outputHelper, TAppFixture rocketSurgeryWebAppFixture)
+    : LoggerTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper)), IClassFixture<TAppFixture>, IAsyncLifetime
     where TAppFixture : class, ILaunchPadWebAppFixture
 {
-    private readonly ILaunchPadWebAppFixture _rocketSurgeryWebAppFixture;
+    private readonly ILaunchPadWebAppFixture _rocketSurgeryWebAppFixture = rocketSurgeryWebAppFixture;
     protected IAlbaHost AlbaHost => _rocketSurgeryWebAppFixture.AlbaHost;
 
     /// <summary>
@@ -18,41 +19,9 @@ public abstract class WebAppFixtureTest<TAppFixture> : LoggerTest, IClassFixture
     /// </summary>
     protected IServiceProvider ServiceProvider => AlbaHost.Services;
 
-    protected WebAppFixtureTest(
-        ITestOutputHelper outputHelper,
-        TAppFixture rocketSurgeryWebAppFixture,
-        string? logFormat = null,
-        Action<LoggerConfiguration>? configureLogger = null
-    ) : base(outputHelper, logFormat, configureLogger)
-    {
-        _rocketSurgeryWebAppFixture = rocketSurgeryWebAppFixture;
-    }
-
-    protected WebAppFixtureTest(
-        ITestOutputHelper outputHelper,
-        TAppFixture rocketSurgeryWebAppFixture,
-        LogLevel minLevel,
-        string? logFormat = null,
-        Action<LoggerConfiguration>? configureLogger = null
-    ) : base(outputHelper, minLevel, logFormat, configureLogger)
-    {
-        _rocketSurgeryWebAppFixture = rocketSurgeryWebAppFixture;
-    }
-
-    protected WebAppFixtureTest(
-        ITestOutputHelper outputHelper,
-        TAppFixture rocketSurgeryWebAppFixture,
-        LogEventLevel minLevel,
-        string? logFormat = null,
-        Action<LoggerConfiguration>? configureLogger = null
-    ) : base(outputHelper, minLevel, logFormat, configureLogger)
-    {
-        _rocketSurgeryWebAppFixture = rocketSurgeryWebAppFixture;
-    }
-
     public virtual Task InitializeAsync()
     {
-        _rocketSurgeryWebAppFixture.SetLoggerFactory(LoggerFactory);
+        _rocketSurgeryWebAppFixture.SetLoggerFactory(CreateLoggerFactory());
         return _rocketSurgeryWebAppFixture.ResetAsync();
     }
 

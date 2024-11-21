@@ -1,10 +1,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
-using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 
 namespace Analyzers.Tests.Helpers;
@@ -22,12 +19,8 @@ internal sealed class CollectibleTestAssemblyLoadContext() : AssemblyLoadContext
     }
 }
 
-public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper, LogLevel.Trace), IAsyncLifetime
+public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper)), IAsyncLifetime
 {
-    private readonly HashSet<MetadataReference> _metadataReferences = new(ReferenceEqualityComparer.Instance);
-    private readonly HashSet<Type> _generators = new();
-    private readonly List<string> _sources = new();
-
     public AssemblyLoadContext AssemblyLoadContext { get; } = new CollectibleTestAssemblyLoadContext();
     protected GeneratorTestContextBuilder Builder { get; set; } = null!;
 

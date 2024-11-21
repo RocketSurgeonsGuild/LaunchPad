@@ -1,14 +1,14 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
+using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
+public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Remove_LaunchRecord()

@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-      <GraphQLStrictSchemaValidation>true</GraphQLStrictSchemaValidation>
-      <GraphQLClientStore>enable</GraphQLClientStore>
-      <GraphQLRazorComponents>enable</GraphQLRazorComponents>
+        <GraphQLStrictSchemaValidation>true</GraphQLStrictSchemaValidation>
+        <GraphQLClientStore>enable</GraphQLClientStore>
+        <GraphQLRazorComponents>enable</GraphQLRazorComponents>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.Net.Http.Json" />
@@ -14,10 +14,10 @@
         <PackageReference Include="StrawberryShake.Server" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
-      <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
-      <ProjectReference Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
-      <ProjectReference Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
+        <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
+        <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+        <ProjectReference Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
+        <ProjectReference Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
         <Using Include="StrawberryShake" />
     </ItemGroup>
     <Target Name="DeleteGraphqlSchema" BeforeTargets="_GenerateGraphQLCode">

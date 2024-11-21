@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-        <PackageReference Include="System.Net.Http.Json" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\sample\Sample.Restful.Client\Sample.Restful.Client.csproj" />
-      <ProjectReference Include="..\..\sample\Sample.Restful\Sample.Restful.csproj" />
-      <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Compile Remove="LaunchRecords\*.cs" />
-      <Compile Remove="Rockets\*.cs" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="System.Net.Http.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\sample\Sample.Restful.Client\Sample.Restful.Client.csproj" />
+    <ProjectReference Include="..\..\sample\Sample.Restful\Sample.Restful.csproj" />
+    <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="LaunchRecords\*.cs" />
+    <Compile Remove="Rockets\*.cs" />
+  </ItemGroup>
 </Project>

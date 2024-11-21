@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <DefineConstants>$(DefineConstants);ROSLYN_CURRENT;ROSLYN4_8</DefineConstants>
     </PropertyGroup>
     <ItemGroup>

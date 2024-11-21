@@ -29,7 +29,7 @@ public class OptionsConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        var classes = context.AssemblyProvider.GetTypes(
+        var classes = context.TypeProvider.GetTypes(
             s => s.FromAssemblyDependenciesOf<RegisterOptionsConfigurationAttribute>().GetTypes(f => f.WithAttribute<RegisterOptionsConfigurationAttribute>())
         );
         foreach (var options in classes)

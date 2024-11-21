@@ -1,14 +1,14 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using Serilog.Events;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
+public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Get_A_Rocket()

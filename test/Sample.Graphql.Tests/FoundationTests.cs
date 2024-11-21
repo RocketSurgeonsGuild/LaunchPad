@@ -1,20 +1,19 @@
 ﻿using System.Net;
 using Alba;
 using HotChocolate.Execution;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
+public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
 {
     [Fact]
     public async Task Starts()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -26,7 +25,7 @@ public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest(te
     public async Task GraphqlSchema()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );

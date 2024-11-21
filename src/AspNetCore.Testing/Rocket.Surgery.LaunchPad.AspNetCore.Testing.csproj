@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
@@ -15,8 +15,8 @@
         <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
-      <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
-      <ProjectReference Include="..\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
+        <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
+        <ProjectReference Include="..\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
     </ItemGroup>
 </Project>

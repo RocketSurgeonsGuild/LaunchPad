@@ -8,7 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
@@ -47,7 +47,7 @@ public class FluentValidationConvention : IServiceConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var types = context.AssemblyProvider.GetTypes(
+        var types = context.TypeProvider.GetTypes(
             z => z
                 .FromAssemblyDependenciesOf<IValidator>()
                 .GetTypes(
