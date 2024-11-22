@@ -43,8 +43,8 @@ public class ProblemDetailsConvention : IServiceConvention
                 static (builder, apiBehaviorOptions) =>
                 {
                     var currentIncludeExceptionDetails = builder.IncludeExceptionDetails;
-                    builder.IncludeExceptionDetails = (httpContext, exception) =>
-                                                          exception is not IProblemDetailsData && currentIncludeExceptionDetails(httpContext, exception);
+                    builder.IncludeExceptionDetails = new((httpContext, exception) =>
+                                                              exception is not IProblemDetailsData && currentIncludeExceptionDetails(httpContext, exception));
                     builder.OnBeforeWriteDetails = (_, problemDetails) =>
                                                    {
                                                        if (

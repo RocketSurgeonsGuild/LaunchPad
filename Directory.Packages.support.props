@@ -6,8 +6,6 @@
         <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
         <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
         <PackageVersion Update="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.11" />
-        <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
-        <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="8.0.11" />
 <!--        <PackageVersion Update="Microsoft.Extensions.Configuration" Version="8.0.0" />-->
 <!--        <PackageVersion Update="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />-->
 <!--        <PackageVersion Update="Microsoft.Extensions.Hosting" Version="8.0.1" />-->

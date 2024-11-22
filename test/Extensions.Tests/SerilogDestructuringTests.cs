@@ -5,6 +5,8 @@ using NetTopologySuite.Geometries;
 using Newtonsoft.Json.Linq;
 using NodaTime;
 using NodaTime.Testing;
+using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Spatial;
 using Serilog.Context;
 using Serilog.Events;
 
@@ -183,15 +185,18 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    public SerilogDestructuringTests(ITestOutputHelper outputHelper) : base(XUnitTestContext.Create(outputHelper, LogEventLevel.Information))
-        outputHelper,
-        LogEventLevel.Information,
-        configureLogger: configuration => configuration
-                                         .Destructure.NewtonsoftJsonTypes()
-                                         .Destructure.SystemTextJsonTypes()
-                                         .Destructure.NetTopologySuiteTypes()
-                                         .Destructure.NodaTimeTypes(DateTimeZoneProviders.Tzdb)
+    public SerilogDestructuringTests(ITestOutputHelper outputHelper) : base(
+        XUnitTestContext.Create(
+            outputHelper,
+            LogEventLevel.Information,
+            configureLogger: (_, configuration) => configuration
+                                                  .Destructure.NewtonsoftJsonTypes()
+                                                  .Destructure.SystemTextJsonTypes()
+                                                  .Destructure.NetTopologySuiteTypes()
+                                                  .Destructure.NodaTimeTypes(DateTimeZoneProviders.Tzdb)
+        )
     )
+
     {
         LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
         _clock = new(

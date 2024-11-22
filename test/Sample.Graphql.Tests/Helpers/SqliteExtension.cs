@@ -41,9 +41,11 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
         return _connection.DisposeAsync();
     }
 
-    public Task Start(IAlbaHost host)
+    public async Task Start(IAlbaHost host)
     {
-        return Task.CompletedTask;
+        await _connection.CloseAsync();
+        await _connection.OpenAsync();
+        await host.Services.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreatedAsync());
     }
 
     public IHostBuilder Configure(IHostBuilder builder)

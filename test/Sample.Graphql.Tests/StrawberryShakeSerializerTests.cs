@@ -43,6 +43,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
             new SqliteExtension<RocketDbContext>()
         );
         var clock = host.Services.GetRequiredService<IClock>();
+        var timeProvider = host.Services.GetRequiredService<TimeProvider>();
         var client = host.Services.GetRequiredService<IRocketClient>();
 
 
