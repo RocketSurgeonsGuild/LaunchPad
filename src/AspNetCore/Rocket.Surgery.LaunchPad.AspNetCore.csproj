@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFramework>net9.0</TargetFramework>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -13,17 +13,18 @@
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />
-        <PackageReference Include="Swashbuckle.AspNetCore" />
-        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />
+<!--        <PackageReference Include="Swashbuckle.AspNetCore" />-->
+<!--        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />-->
         <PackageReference Include="Hellang.Middleware.ProblemDetails" />
         <PackageReference Include="Rocket.Surgery.Extensions" />
         <PackageReference Include="Rocket.Surgery.Hosting" />
-        <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />
+<!--        <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />-->
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
     </ItemGroup>
 </Project>

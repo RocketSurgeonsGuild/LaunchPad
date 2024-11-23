@@ -57,13 +57,16 @@ public class FluentValidationConvention : IServiceConvention
                          .NotInfoOf(TypeInfoFilter.GenericType)
                  )
         );
-        foreach (var validator in types)
-        {
-            if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType,], }, }) continue;
-            var interfaceType = typeof(IValidator<>).MakeGenericType(innerType);
-            services.Add(new(interfaceType, validator, _options.ValidatorLifetime));
-            services.Add(new(validator, validator, _options.ValidatorLifetime));
-        }
+
+        context.TypeProvider
+               .Scan(
+                    services,
+                    z => z
+                        .FromAssemblyDependenciesOf<IValidator>()
+                        .AddClasses(t => t.AssignableTo<IValidator>())
+                        .AsSelfWithInterfaces()
+                        .WithTransientLifetime()
+                );
 
         if (_options.RegisterValidationOptionsAsHealthChecks == true
          || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue

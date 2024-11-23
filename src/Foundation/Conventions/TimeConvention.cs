@@ -33,7 +33,7 @@ public class TimeConvention : IServiceConvention, ISerilogConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration)
     {
-        loggerConfiguration.Destructure.NodaTimeTypes(services.GetRequiredService<IDateTimeZoneProvider>());
+        loggerConfiguration.Destructure.NodaTimeTypes();
     }
 
     /// <summary>
@@ -46,8 +46,9 @@ public class TimeConvention : IServiceConvention, ISerilogConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
+        // Try add so that unit tests can insert fakes
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IClock>(SystemClock.Instance);
-        services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
+        services.TryAddSingleton(DateTimeZoneProviders.Tzdb);
     }
 }

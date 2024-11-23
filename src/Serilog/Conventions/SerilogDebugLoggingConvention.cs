@@ -1,31 +1,29 @@
 using System.Globalization;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 
-namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
+namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 
 /// <summary>
-///     SerilogConsoleLoggingConvention.
+///     SerilogDebugLoggingConvention.
 ///     Implements the <see cref="ISerilogConvention" />
 /// </summary>
 /// <seealso cref="ISerilogConvention" />
 [PublicAPI]
 [ExportConvention]
-[AfterConvention<SerilogHostingConvention>]
+[AfterConvention<LoggerConvention>]
 [ConventionCategory(ConventionCategory.Core)]
-public sealed class SerilogConsoleLoggingConvention : ISerilogConvention
+public sealed class SerilogDebugLoggingConvention : ISerilogConvention
 {
     private readonly LaunchPadLoggingOptions _options;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SerilogConsoleLoggingConvention" /> class.
+    ///     Initializes a new instance of the <see cref="SerilogDebugLoggingConvention" /> class.
     /// </summary>
     /// <param name="options">The options.</param>
-    public SerilogConsoleLoggingConvention(LaunchPadLoggingOptions? options = null)
+    public SerilogDebugLoggingConvention(LaunchPadLoggingOptions? options = null)
     {
         _options = options ?? new LaunchPadLoggingOptions();
     }
@@ -40,14 +38,13 @@ public sealed class SerilogConsoleLoggingConvention : ISerilogConvention
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
-        if (!_options.EnableConsoleLogging) return;
+        if (!_options.EnableDebugLogging) return;
 
         loggerConfiguration.WriteTo.Async(
-            c => c.Console(
+            c => c.Debug(
                 LogEventLevel.Verbose,
-                _options.ConsoleMessageTemplate,
-                theme: AnsiConsoleTheme.Literate,
-                formatProvider: CultureInfo.InvariantCulture
+                _options.DebugMessageTemplate,
+                CultureInfo.InvariantCulture
             )
         );
     }

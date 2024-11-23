@@ -9,6 +9,7 @@ namespace Rocket.Surgery.LaunchPad.Telemetry;
 ///     Implements the <see cref="IConvention" />
 /// </summary>
 /// <seealso cref="IConvention" />
+[PublicAPI]
 public interface IOpenTelemetryAsyncConvention : IConvention
 {
     /// <summary>

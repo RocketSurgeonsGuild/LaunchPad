@@ -1,11 +1,10 @@
-using System.Globalization;
+﻿using System.Globalization;
 using Microsoft.Extensions.Configuration;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 using Serilog.Events;
 
-namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
+namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 
 /// <summary>
 ///     SerilogDebugLoggingConvention.
@@ -14,20 +13,11 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// <seealso cref="ISerilogConvention" />
 [PublicAPI]
 [ExportConvention]
-[AfterConvention<SerilogHostingConvention>]
+[AfterConvention<LoggerConvention>]
 [ConventionCategory(ConventionCategory.Core)]
-public sealed class SerilogDebugLoggingConvention : ISerilogConvention
+public sealed class SerilogTraceLoggingConvention(LaunchPadLoggingOptions? options = null) : ISerilogConvention
 {
-    private readonly LaunchPadLoggingOptions _options;
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="SerilogDebugLoggingConvention" /> class.
-    /// </summary>
-    /// <param name="options">The options.</param>
-    public SerilogDebugLoggingConvention(LaunchPadLoggingOptions? options = null)
-    {
-        _options = options ?? new LaunchPadLoggingOptions();
-    }
+    private readonly LaunchPadLoggingOptions _options = options ?? new LaunchPadLoggingOptions();
 
     /// <inheritdoc />
     public void Register(
@@ -39,12 +29,12 @@ public sealed class SerilogDebugLoggingConvention : ISerilogConvention
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
-        if (!_options.EnableDebugLogging) return;
+        if (!_options.EnableTraceLogging) return;
 
         loggerConfiguration.WriteTo.Async(
-            c => c.Debug(
+            c => c.Trace(
                 LogEventLevel.Verbose,
-                _options.DebugMessageTemplate,
+                _options.TraceMessageTemplate,
                 CultureInfo.InvariantCulture
             )
         );

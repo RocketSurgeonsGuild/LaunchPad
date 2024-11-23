@@ -7,5 +7,7 @@
     <ItemGroup>
         <PackageReference Include="OpenTelemetry" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Serilog.Sinks.OpenTelemetry" />
+        <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     </ItemGroup>
 </Project>

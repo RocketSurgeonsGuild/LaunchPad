@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Serilog;
 using Serilog.Exceptions;
@@ -33,6 +34,7 @@ public class SerilogEnrichLoggingConvention : ISerilogConvention
 
         loggerConfiguration
            .Enrich.FromLogContext()
-           .Enrich.WithExceptionDetails();
+           .Enrich.WithExceptionDetails()
+           .Enrich.WithDemystifiedStackTraces();
     }
 }

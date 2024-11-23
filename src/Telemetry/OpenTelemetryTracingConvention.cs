@@ -10,4 +10,5 @@ namespace Rocket.Surgery.LaunchPad.Telemetry;
 /// <param name="context"></param>
 /// <param name="configuration"></param>
 /// <param name="builder"></param>
+[PublicAPI]
 public delegate void OpenTelemetryTracingConvention(IConventionContext context, IConfiguration configuration, TracerProviderBuilder builder);

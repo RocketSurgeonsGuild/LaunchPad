@@ -193,7 +193,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
                                                   .Destructure.NewtonsoftJsonTypes()
                                                   .Destructure.SystemTextJsonTypes()
                                                   .Destructure.NetTopologySuiteTypes()
-                                                  .Destructure.NodaTimeTypes(DateTimeZoneProviders.Tzdb)
+                                                  .Destructure.NodaTimeTypes()
         )
     )
 

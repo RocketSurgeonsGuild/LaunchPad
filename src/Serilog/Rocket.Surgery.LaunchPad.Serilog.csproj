@@ -5,6 +5,8 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Serilog.Enrichers.AssemblyName" />
+        <PackageReference Include="Serilog.Enrichers.Demystifier" />
         <PackageReference Include="Serilog.Settings.Configuration" />
         <PackageReference Include="Serilog.Sinks.Async" />
         <PackageReference Include="Serilog.Sinks.Observable" />
@@ -14,6 +16,9 @@
         <PackageReference Include="Serilog.Exceptions" />
         <PackageReference Include="Serilog.Enrichers.Span" />
         <PackageReference Include="Serilog.Extensions.Logging" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Serilog.Sinks.Trace" />
     </ItemGroup>
 </Project>

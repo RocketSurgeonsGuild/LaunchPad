@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
-internal class RestfulApiActionModelConvention : IActionModelConvention, ISchemaFilter
+internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenApiSchemaTransformer
 {
     private static string? GetHttpMethod(ActionModel action)
     {
@@ -170,14 +170,17 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
         ExtractParameterDetails(action);
     }
 
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (_propertiesToHideFromOpenApi.TryGetValue(context.Type, out var propertiesToRemove))
+        if (_propertiesToHideFromOpenApi.TryGetValue(context.JsonTypeInfo.Type, out var propertiesToRemove))
             foreach (var property in propertiesToRemove
                                     .Join(schema.Properties, z => z, z => z.Key, (_, b) => b.Key, StringComparer.OrdinalIgnoreCase)
-                                    .ToArray())
+                                    .ToArray()
+                    )
             {
                 schema.Properties.Remove(property);
             }
+
+        return Task.CompletedTask;
     }
 }

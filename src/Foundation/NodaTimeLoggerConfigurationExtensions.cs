@@ -13,9 +13,8 @@ public static class NodaTimeLoggerConfigurationExtensions
     ///     Enable destructuring of JSON.NET dynamic objects.
     /// </summary>
     /// <param name="configuration">The logger configuration to apply configuration to.</param>
-    /// <param name="provider"></param>
     /// <returns>An object allowing configuration to continue.</returns>
-    public static LoggerConfiguration NodaTimeTypes(this LoggerDestructuringConfiguration configuration, IDateTimeZoneProvider provider)
+    public static LoggerConfiguration NodaTimeTypes(this LoggerDestructuringConfiguration configuration)
     {
         return configuration
               .AsScalar<Offset>()
