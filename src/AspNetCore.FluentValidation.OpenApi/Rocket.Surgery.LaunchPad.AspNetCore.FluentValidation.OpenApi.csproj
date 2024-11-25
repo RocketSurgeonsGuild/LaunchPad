@@ -9,5 +9,6 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <InternalsVisibleTo Include="AspNetCore.FluentValidation.OpenApi.Tests" />
     </ItemGroup>
 </Project>

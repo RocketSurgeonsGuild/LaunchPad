@@ -21,6 +21,9 @@
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost">
+      <Version>9.0.0</Version>
+    </PackageVersion>
     <PackageVersion Include="Serilog.Enrichers.AssemblyName" Version="2.0.0" />
     <PackageVersion Include="Serilog.Enrichers.Demystifier" Version="1.0.3" />
     <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
@@ -111,8 +114,8 @@
     <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.1-beta.24" />
     <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.24" />
     <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.24" />
-    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.5" />
-    <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.5" />
+    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.6" />
+    <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.6" />
     <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.24" />
     <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.24" />
     <PackageVersion Include="Scrutor" Version="5.0.2" />
