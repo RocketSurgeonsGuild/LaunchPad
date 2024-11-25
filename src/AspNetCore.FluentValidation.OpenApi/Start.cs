@@ -21,8 +21,20 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddFluentValidationOpenApi(this IServiceCollection services)
     {
-        services.AddFluentValidation();
-        services.TryAddSingleton<IOpenApiSchemaTransformer, FluentValidationOpenApiSchemaTransformer>();
+        services.AddOpenApi();
+        services.AddFluentValidationAutoValidation();
+        services.Configure<OpenApiOptions>(
+            options =>
+            {
+options.AddSchemaTransformer<FluentValidationOpenApiSchemaTransformer>();
+            }
+        );
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, RequiredPropertyRule>());
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, NotEmptyPropertyRule>());
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, LengthPropertyRule>());
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, RegularExpressionPropertyRule>());
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, ComparisonPropertyRule>());
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, BetweenPropertyRule>());
         return services;
     }
 }
