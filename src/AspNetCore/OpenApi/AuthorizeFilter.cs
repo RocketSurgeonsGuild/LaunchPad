@@ -1,11 +1,11 @@
-﻿using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-internal class AuthorizeFilter : IOperationFilter
+internal class AuthorizeFilter : IOpenApiOperationTransformer
 {
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
         // enhance the 401/403 with the media response
         if (operation.Responses.TryGetValue("401", out var value))
@@ -29,5 +29,7 @@ internal class AuthorizeFilter : IOperationFilter
                     Description = "The error details",
                 }
             );
+
+        return Task.CompletedTask;
     }
 }

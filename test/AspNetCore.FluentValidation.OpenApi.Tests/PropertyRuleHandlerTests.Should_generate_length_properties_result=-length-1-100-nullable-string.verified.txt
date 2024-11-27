@@ -1,0 +1,15 @@
+﻿{
+  schemas: {
+    NullableStringContainer: {
+      type: object,
+      properties: {
+        value: {
+          maxLength: 100,
+          minLength: 1,
+          type: string,
+          nullable: true
+        }
+      }
+    }
+  }
+}

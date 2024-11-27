@@ -1,6 +1,50 @@
+using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
+
+/// <summary>
+/// Helper methods for creating <see cref="ExistingValueOptionsFactory{TOptions}"/> instances.
+/// </summary>
+public static class ExistingValueOptions
+{
+    /// <summary>
+    /// Applys all of the <see cref="IConfigureOptions{TOptions}"/>, <see cref="IPostConfigureOptions{TOptions}"/>, and <see cref="IValidateOptions{TOptions}"/> instances to the options instance.
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <param name="options"></param>
+    /// <param name="name"></param>
+    /// <typeparam name="TOptions"></typeparam>
+    /// <exception cref="OptionsValidationException"></exception>
+    public static void Apply<TOptions>(IServiceProvider serviceProvider, TOptions options, string name) where TOptions : class, new()
+    {
+        var setups = serviceProvider.GetServices<IConfigureOptions<TOptions>>();
+        var postConfigures = serviceProvider.GetServices<IPostConfigureOptions<TOptions>>();
+        var validations = serviceProvider.GetServices<IValidateOptions<TOptions>>();
+
+        foreach (var setup in setups)
+        {
+            if (setup is IConfigureNamedOptions<TOptions> namedSetup)
+                namedSetup.Configure(name, options);
+            else if (name == Options.DefaultName) setup.Configure(options);
+        }
+
+        foreach (var post in postConfigures)
+        {
+            post.PostConfigure(name, options);
+        }
+
+        var failures = new List<string>();
+        foreach (var validate in validations)
+        {
+            var result = validate.Validate(name, options);
+            if (result.Failed) failures.AddRange(result.Failures);
+        }
+
+        if (failures.Count > 0) throw new OptionsValidationException(name, typeof(TOptions), failures);
+    }
+}
 
 /// <summary>
 ///     Implementation of <see cref="IOptionsFactory{TOptions}" />.
@@ -53,17 +97,15 @@ public class ExistingValueOptionsFactory<TOptions> :
             post.PostConfigure(name, options);
         }
 
-        if (_validations != null)
+        if (_validations is null) return options;
+        var failures = new List<string>();
+        foreach (var validate in _validations)
         {
-            var failures = new List<string>();
-            foreach (var validate in _validations)
-            {
-                var result = validate.Validate(name, options);
-                if (result.Failed) failures.AddRange(result.Failures);
-            }
-
-            if (failures.Count > 0) throw new OptionsValidationException(name, typeof(TOptions), failures);
+            var result = validate.Validate(name, options);
+            if (result.Failed) failures.AddRange(result.Failures);
         }
+
+        if (failures.Count > 0) throw new OptionsValidationException(name, typeof(TOptions), failures);
 
         return options;
     }

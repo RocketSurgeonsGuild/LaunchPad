@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    StringContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: string,
+          format: email
+        }
+      }
+    }
+  }
+}

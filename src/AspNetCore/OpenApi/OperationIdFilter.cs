@@ -1,12 +1,12 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-internal class OperationIdFilter : IOperationFilter
+internal class OperationIdFilter : IOpenApiOperationTransformer
 {
     /// <summary>
     ///     By default, pascalize converts strings to UpperCamelCase also removing underscores
@@ -31,14 +31,15 @@ internal class OperationIdFilter : IOperationFilter
         #pragma warning restore CA1308
     }
 
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(operation.OperationId) && context.ApiDescription.ActionDescriptor is ControllerActionDescriptor cad)
+        if (string.IsNullOrWhiteSpace(operation.OperationId) && context.Description.ActionDescriptor is ControllerActionDescriptor cad)
             operation.OperationId = cad.ActionName;
 
         foreach (var parameter in operation.Parameters)
         {
             parameter.Name = Camelize(parameter.Name);
         }
+        return Task.CompletedTask;
     }
 }

@@ -1,22 +1,24 @@
-﻿using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-internal class OperationMediaTypesFilter : IOperationFilter
-{
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    internal class OperationMediaTypesFilter : IOpenApiOperationTransformer
+    {
+        public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
         var contentCollections =
-            operation.Responses.Values.Select(x => x.Content ?? new Dictionary<string, OpenApiMediaType>())
-                     .Concat(new[] { operation.RequestBody?.Content ?? new Dictionary<string, OpenApiMediaType>() })
-                     .Where(x => x.ContainsKey("text/plain"))
-                     .ToArray();
+            operation
+               .Responses.Values.Select(x => x.Content ?? new Dictionary<string, OpenApiMediaType>())
+               .Concat([operation.RequestBody?.Content ?? new Dictionary<string, OpenApiMediaType>()])
+               .Where(x => x.ContainsKey("text/plain"))
+               .ToArray();
         var patchCollections =
-            operation.Responses.Values.Select(x => x.Content ?? new Dictionary<string, OpenApiMediaType>())
-                     .Concat(new[] { operation.RequestBody?.Content ?? new Dictionary<string, OpenApiMediaType>() })
-                     .Where(x => x.Keys.Any(z => z.Contains("patch", StringComparison.OrdinalIgnoreCase)))
-                     .ToArray();
+            operation
+               .Responses.Values.Select(x => x.Content ?? new Dictionary<string, OpenApiMediaType>())
+               .Concat([operation.RequestBody?.Content ?? new Dictionary<string, OpenApiMediaType>()])
+               .Where(x => x.Keys.Any(z => z.Contains("patch", StringComparison.OrdinalIgnoreCase)))
+               .ToArray();
 
         foreach (var item in contentCollections)
         {
@@ -31,5 +33,7 @@ internal class OperationMediaTypesFilter : IOperationFilter
                 item.Remove(p.Key);
             }
         }
+
+        return Task.CompletedTask;
     }
 }

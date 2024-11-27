@@ -1,1 +1,17 @@
-﻿
+﻿{
+  schemas: {
+    NullableDecimalContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: number,
+          format: double,
+          nullable: true
+        }
+      }
+    }
+  }
+}

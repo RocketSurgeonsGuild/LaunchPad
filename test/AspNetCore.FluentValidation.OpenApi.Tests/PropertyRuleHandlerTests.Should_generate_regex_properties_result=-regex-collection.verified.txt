@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    CollectionContainer: {
+      type: object,
+      properties: {
+        value: {
+          pattern: ^[a-zA-Z0-9]*$,
+          type: array,
+          items: {
+            type: string
+          }
+        }
+      }
+    }
+  }
+}

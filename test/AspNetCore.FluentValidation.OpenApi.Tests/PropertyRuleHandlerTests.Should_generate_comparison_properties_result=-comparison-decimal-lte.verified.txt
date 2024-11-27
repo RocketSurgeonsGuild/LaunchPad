@@ -1,0 +1,14 @@
+﻿{
+  schemas: {
+    DecimalContainer: {
+      type: object,
+      properties: {
+        value: {
+          maximum: 1.1,
+          type: number,
+          format: double
+        }
+      }
+    }
+  }
+}

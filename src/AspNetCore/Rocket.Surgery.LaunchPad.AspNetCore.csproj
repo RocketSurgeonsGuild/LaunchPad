@@ -4,7 +4,6 @@
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
-        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -13,18 +12,17 @@
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Humanizer.Core" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <ProjectReference Include="..\AspNetCore.FluentValidation.OpenApi\Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />
-<!--        <PackageReference Include="Swashbuckle.AspNetCore" />-->
-<!--        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />-->
-        <PackageReference Include="Hellang.Middleware.ProblemDetails" />
         <PackageReference Include="Rocket.Surgery.Extensions" />
         <PackageReference Include="Rocket.Surgery.Hosting" />
-<!--        <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />-->
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+        <Analyzer Include="C:\Users\David\Development\RocketSurgeonsGuild\Extensions\src\DependencyInjection.Analyzers\bin\Debug\netstandard2.0\Rocket.Surgery.DependencyInjection.Analyzers.dll" />
     </ItemGroup>
 </Project>

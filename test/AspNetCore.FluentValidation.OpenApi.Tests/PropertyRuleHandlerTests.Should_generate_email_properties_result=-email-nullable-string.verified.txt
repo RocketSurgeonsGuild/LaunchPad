@@ -1,0 +1,14 @@
+﻿{
+  schemas: {
+    NullableStringContainer: {
+      type: object,
+      properties: {
+        value: {
+          type: string,
+          format: email,
+          nullable: true
+        }
+      }
+    }
+  }
+}

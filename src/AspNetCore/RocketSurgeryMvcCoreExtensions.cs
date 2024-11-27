@@ -40,8 +40,8 @@ public static class RocketSurgeryMvcCoreExtensions
         return app.UseSerilogRequestLogging(
             x =>
             {
-                x.GetLevel = LaunchPadLogHelpers.DefaultGetLevel;
-                x.EnrichDiagnosticContext = LaunchPadLogHelpers.DefaultEnrichDiagnosticContext;
+                x.GetLevel = LaunchPadHelpers.DefaultGetLevel;
+                x.EnrichDiagnosticContext = LaunchPadHelpers.DefaultEnrichDiagnosticContext;
             }
         );
     }

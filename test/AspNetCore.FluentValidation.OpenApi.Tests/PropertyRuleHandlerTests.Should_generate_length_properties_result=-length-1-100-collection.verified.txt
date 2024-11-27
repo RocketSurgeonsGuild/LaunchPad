@@ -1,0 +1,17 @@
+﻿{
+  schemas: {
+    CollectionContainer: {
+      type: object,
+      properties: {
+        value: {
+          maxItems: 50,
+          minItems: 5,
+          type: array,
+          items: {
+            type: string
+          }
+        }
+      }
+    }
+  }
+}

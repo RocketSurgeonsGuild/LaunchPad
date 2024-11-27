@@ -1,1 +1,17 @@
-﻿
+﻿{
+  schemas: {
+    NullableIntegerContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: integer,
+          format: int32,
+          nullable: true
+        }
+      }
+    }
+  }
+}

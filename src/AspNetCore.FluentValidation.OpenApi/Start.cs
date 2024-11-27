@@ -24,17 +24,16 @@ public static class ServiceCollectionExtensions
         services.AddOpenApi();
         services.AddFluentValidationAutoValidation();
         services.Configure<OpenApiOptions>(
-            options =>
-            {
-options.AddSchemaTransformer<FluentValidationOpenApiSchemaTransformer>();
-            }
+            "v1",
+            options => { options.AddSchemaTransformer<FluentValidationOpenApiSchemaTransformer>(); }
         );
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, RequiredPropertyRule>());
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, NotEmptyPropertyRule>());
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, LengthPropertyRule>());
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, RegularExpressionPropertyRule>());
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, ComparisonPropertyRule>());
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, BetweenPropertyRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, RequiredPropertyRuleHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, NotEmptyPropertyRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, LengthPropertyRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, RegularExpressionPropertyRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, ComparisonPropertyRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, BetweenPropertyRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IPropertyRuleHandler, EmailPropertyRule>());
         return services;
     }
 }
@@ -58,23 +57,31 @@ public interface IPropertyRuleHandler
 [Experimental(Constants.ExperimentalId)]
 public class FluentValidationOpenApiSchemaTransformer(IEnumerable<IPropertyRuleHandler> ruleDefinitionHandlers) : IOpenApiSchemaTransformer
 {
+    private OpenApiSchema? _parent;
+
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (context.JsonPropertyInfo is not { } propertyInfo) return;
-        var validatorType = typeof(IValidator<>).MakeGenericType(context.JsonTypeInfo.Type);
+        if (context.JsonPropertyInfo is not { } propertyInfo)
+        {
+            _parent = schema;
+            return;
+        }
+
+        var validatorType = typeof(IValidator<>).MakeGenericType(propertyInfo.DeclaringType);
         if (context.ApplicationServices.GetService(validatorType) is not IValidator validator) return;
+        if (_parent is null) return;
 
         var descriptor = validator.CreateDescriptor();
         foreach (var member in descriptor.GetMembersWithValidators())
         {
             foreach (var (propertyValidator, component) in member)
             {
-                if (!schema.Properties.TryGetValue(member.Key, out var property)) continue;
+                if (!_parent.Properties.TryGetValue(propertyInfo.Name, out var property)) continue;
 
                 foreach (var item in ruleDefinitionHandlers)
                 {
                     var ctx = new OpenApiValidationContext(
-                        schema,
+                        _parent,
                         property,
                         context,
                         propertyValidator,
@@ -89,12 +96,11 @@ public class FluentValidationOpenApiSchemaTransformer(IEnumerable<IPropertyRuleH
 }
 
 [Experimental(Constants.ExperimentalId)]
-public sealed class RequiredPropertyRule : IPropertyRuleHandler
+public sealed class RequiredPropertyRuleHandler : IPropertyRuleHandler
 {
     Task IPropertyRuleHandler.HandleAsync(OpenApiValidationContext context, CancellationToken cancellationToken)
     {
-        if (context.PropertyValidator is not INotNullValidator or INotEmptyValidator) return Task.CompletedTask;
-
+        if (context.PropertyValidator is not (INotNullValidator or INotEmptyValidator)) return Task.CompletedTask;
         context.TypeSchema.Required.Add(context.PropertyInfo.Name);
         return Task.CompletedTask;
     }

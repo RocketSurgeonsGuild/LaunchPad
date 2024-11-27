@@ -19,7 +19,7 @@ public class ValidationExceptionFilter : IExceptionFilter, IAsyncExceptionFilter
     /// <inheritdoc />
     public void OnException(ExceptionContext context)
     {
-        if (!( context.Exception is ValidationException validationException )) return;
+        if (context.Exception is not ValidationException validationException) return;
         context.ExceptionHandled = true;
         context.Result = new UnprocessableEntityObjectResult(new FluentValidationProblemDetails(validationException.Errors));
     }
