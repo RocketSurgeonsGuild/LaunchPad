@@ -45,9 +45,9 @@
     <PackageVersion Include="Polyfill" Version="7.5.0" />
     <PackageVersion Include="GitVersion.Tool" Version="6.0.5" />
     <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2024.3.0" />
-    <PackageVersion Include="Nuke.Common" Version="8.1.4" />
+    <PackageVersion Include="Nuke.Common" Version="9.0.1" />
     <PackageVersion Include="ReportGenerator" Version="5.4.1" />
-    <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.8.119" />
+    <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.9.1" />
     <PackageVersion Include="AutoMapper" Version="13.0.1" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -99,7 +99,6 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.11.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.11.0" />
     <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.1" />
-    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NetTopologySuite" Version="2.5.0" />
     <PackageVersion Include="NetTopologySuite.Features" Version="2.2.0" />
@@ -109,7 +108,7 @@
     <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.1.0" />
     <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.2.0" />
     <PackageVersion Include="NodaTime.Testing" Version="3.2.0" />
-    <PackageVersion Include="Polly" Version="8.4.2" />
+    <PackageVersion Include="Polly" Version="8.5.0" />
     <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
     <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.1-beta.27" />
@@ -136,7 +135,6 @@
     <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
     <PackageVersion Include="Serilog.Sinks.Observable" Version="3.0.0" />
     <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.0.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="7.1.0" />
     <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="8.0.1" />
     <PackageVersion Include="System.Collections.Immutable" Version="9.0.0" />
@@ -153,7 +151,7 @@
     <PackageVersion Include="OpenTelemetry" Version="1.10.0" />
     <PackageVersion Include="OpenTelemetry.Api" Version="1.9.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
     <PackageVersion Include="Alba" Version="8.1.0" />
