@@ -1397,6 +1397,7 @@
   components: {
     schemas: {
       AssignedOfdouble: {
+        minimum: 0,
         required: [
           value
         ],
@@ -1405,10 +1406,14 @@
           value: {
             type: number,
             format: double
+          },
+          hasValue: {
+            type: boolean
           }
         }
       },
       AssignedOfInstant: {
+        minimum: 0,
         required: [
           value
         ],
@@ -1416,10 +1421,14 @@
         properties: {
           value: {
             $ref: #/components/schemas/RocketId2
+          },
+          hasValue: {
+            type: boolean
           }
         }
       },
       AssignedOfNullableOfInstant: {
+        minimum: 0,
         required: [
           value
         ],
@@ -1427,10 +1436,14 @@
         properties: {
           value: {
             $ref: #/components/schemas/RocketId2
+          },
+          hasValue: {
+            type: boolean
           }
         }
       },
       AssignedOfRocketId: {
+        minimum: 0,
         required: [
           value
         ],
@@ -1438,10 +1451,15 @@
         properties: {
           value: {
             $ref: #/components/schemas/RocketId2
+          },
+          hasValue: {
+            type: boolean
           }
         }
       },
       AssignedOfRocketType: {
+        maxLength: 30,
+        minLength: 10,
         required: [
           value
         ],
@@ -1449,10 +1467,14 @@
         properties: {
           value: {
             $ref: #/components/schemas/RocketType
+          },
+          hasValue: {
+            type: boolean
           }
         }
       },
       AssignedOfstring: {
+        minimum: 0,
         required: [
           value
         ],
@@ -1461,6 +1483,26 @@
           value: {
             type: string,
             nullable: true
+          },
+          hasValue: {
+            type: boolean
+          }
+        }
+      },
+      AssignedOfstring2: {
+        maxLength: 30,
+        minLength: 10,
+        required: [
+          value
+        ],
+        type: object,
+        properties: {
+          value: {
+            type: string,
+            nullable: true
+          },
+          hasValue: {
+            type: boolean
           }
         }
       },
@@ -1538,7 +1580,13 @@
       },
       EditLaunchRecordPatchRequest: {
         required: [
-          id
+          id,
+          partner,
+          payload,
+          payloadWeightKg,
+          actualLaunchDate,
+          scheduledLaunchDate,
+          rocketId
         ],
         type: object,
         properties: {
@@ -1600,10 +1648,14 @@
         }
       },
       EditRocketPatchRequest: {
+        required: [
+          serialNumber,
+          type
+        ],
         type: object,
         properties: {
           serialNumber: {
-            $ref: #/components/schemas/AssignedOfstring
+            $ref: #/components/schemas/AssignedOfstring2
           },
           type: {
             $ref: #/components/schemas/AssignedOfRocketType
