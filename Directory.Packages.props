@@ -99,7 +99,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.11.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.11.0" />
     <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.1" />
-    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
+    <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="6.1.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NetTopologySuite" Version="2.5.0" />
     <PackageVersion Include="NetTopologySuite.Features" Version="2.2.0" />
