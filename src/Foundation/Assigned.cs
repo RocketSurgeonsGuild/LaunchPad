@@ -87,13 +87,9 @@ public class Assigned<T> : IEquatable<Assigned<T>>
     public T? Value { get; }
 
     /// <summary>
-    ///     <c>true</c> if the Assigned was explicitly set.
+    ///    <c>true</c> if the Assigned was explicitly set.
     /// </summary>
-    /// <returns></returns>
-    public bool HasBeenSet()
-    {
-        return _hasValue;
-    }
+    public bool HasValue    => _hasValue;
 
     /// <summary>
     ///     Provides the name string.

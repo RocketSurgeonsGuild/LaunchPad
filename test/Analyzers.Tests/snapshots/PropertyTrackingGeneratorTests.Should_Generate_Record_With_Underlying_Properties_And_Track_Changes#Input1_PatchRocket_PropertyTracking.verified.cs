@@ -28,16 +28,16 @@ public partial record PatchRocket
     {
         return new Changes()
         {
-            Id = Id.HasBeenSet(),
-            SerialNumber = SerialNumber.HasBeenSet(),
-            Type = Type.HasBeenSet()
+            Id = Id.HasValue,
+            SerialNumber = SerialNumber.HasValue,
+            Type = Type.HasValue
         };
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public global::Request ApplyChanges(global::Request state)
     {
-        if (Id.HasBeenSet())
+        if (Id.HasValue)
         {
             state = state with
             {
@@ -45,7 +45,7 @@ public partial record PatchRocket
             };
         }
 
-        if (SerialNumber.HasBeenSet())
+        if (SerialNumber.HasValue)
         {
             state = state with
             {
@@ -53,7 +53,7 @@ public partial record PatchRocket
             };
         }
 
-        if (Type.HasBeenSet())
+        if (Type.HasValue)
         {
             state = state with
             {

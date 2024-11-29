@@ -39,7 +39,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
             }
         );
-        u.IsSuccessResult().Should().Be(true);
+        await Verify(u);
     }
 
     [Fact]
@@ -73,8 +73,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
         );
         u.EnsureNoErrors();
 
-        u.Data!.PatchRocket.Type.Should().Be(RocketType.AtlasV);
-        u.Data!.PatchRocket.SerialNumber.Should().Be("123456789012345");
+        await Verify(u);
     }
 
     [Fact]
@@ -107,9 +106,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
                 SerialNumber = null,
             }
         );
-
-        u.IsErrorResult().Should().BeTrue();
-        u.Errors[0].Message.Should().Be("'Serial Number' must not be empty.");
+        await Verify(u);
     }
 
     [Fact]
@@ -142,8 +139,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
             }
         );
 
-        u.Data!.PatchRocket.Type.Should().Be(RocketType.FalconHeavy);
-        u.Data!.PatchRocket.SerialNumber.Should().Be("12345678901234");
+        await Verify(u);
     }
 
     [Theory]

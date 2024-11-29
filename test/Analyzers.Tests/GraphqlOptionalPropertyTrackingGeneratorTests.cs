@@ -681,22 +681,22 @@ namespace Sample.Core.Operations.Rockets
         public Changes GetChangedState()
         {
             return new Changes()
-            {SerialNumber = SerialNumber.HasBeenSet(), Type = Type.HasBeenSet(), PlannedDate = PlannedDate.HasBeenSet()};
+            {SerialNumber = SerialNumber.HasValue, Type = Type.HasValue, PlannedDate = PlannedDate.HasValue};
         }
 
         public Request ApplyChanges(Request value)
         {
-            if (SerialNumber.HasBeenSet())
+            if (SerialNumber.HasValue)
             {
                 value = value with {SerialNumber = SerialNumber};
             }
 
-            if (Type.HasBeenSet())
+            if (Type.HasValue)
             {
                 value = value with {Type = Type};
             }
 
-            if (PlannedDate.HasBeenSet())
+            if (PlannedDate.HasValue)
             {
                 value.PlannedDate = PlannedDate;
             }
@@ -749,22 +749,22 @@ namespace Sample.Core.Operations.Rockets
         public Changes GetChangedState()
         {
             return new Changes()
-            {SerialNumber = SerialNumber.HasBeenSet(), Type = Type.HasBeenSet(), PlannedDate = PlannedDate.HasBeenSet()};
+            {SerialNumber = SerialNumber.HasValue, Type = Type.HasValue, PlannedDate = PlannedDate.HasValue};
         }
 
         public Request ApplyChanges(Request value)
         {
-            if (SerialNumber.HasBeenSet())
+            if (SerialNumber.HasValue)
             {
                 value.SerialNumber = SerialNumber;
             }
 
-            if (Type.HasBeenSet())
+            if (Type.HasValue)
             {
                 value.Type = Type;
             }
 
-            if (PlannedDate.HasBeenSet())
+            if (PlannedDate.HasValue)
             {
                 value.PlannedDate = PlannedDate;
             }

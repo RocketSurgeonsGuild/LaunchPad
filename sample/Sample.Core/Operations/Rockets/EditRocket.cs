@@ -82,6 +82,27 @@ public static partial class EditRocket
         }
     }
 
+    private class PatchRequestValidator : AbstractValidator<PatchRequest>
+    {
+        public PatchRequestValidator()
+        {
+            RuleFor(x => x.Id)
+               .NotEmpty()
+               .NotNull();
+
+            RuleFor(x => x.Type.Value)
+               .NotNull()
+               .IsInEnum()
+               .When(z => z.Type.HasValue);
+
+            RuleFor(x => x.SerialNumber.Value)
+               .NotNull()
+               .MinimumLength(10)
+               .MaximumLength(30)
+               .When(z => z.SerialNumber.HasValue);
+        }
+    }
+
     private class RequestHandler(RocketDbContext dbContext, IMediator mediator)
         : PatchRequestHandler<Request, PatchRequest, RocketModel>(mediator), IRequestHandler<Request, RocketModel>
     {

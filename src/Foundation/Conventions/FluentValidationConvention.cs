@@ -64,7 +64,8 @@ public class FluentValidationConvention : IServiceConvention
                     z => z
                         .FromAssemblyDependenciesOf<IValidator>()
                         .AddClasses(t => t.AssignableTo<IValidator>().NotAssignableTo(typeof(CompositeValidator<>)))
-                        .AsImplementedInterfaces(a => a.AssignableTo(typeof(IValidator<>)))
+                        .AsSelf()
+                        .AsImplementedInterfaces(a => a.AssignableTo<IValidator>())
                         .WithTransientLifetime()
                 );
 

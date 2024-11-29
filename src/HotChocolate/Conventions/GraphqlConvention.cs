@@ -1,4 +1,8 @@
-﻿using MediatR;
+﻿using FairyBread;
+using FluentValidation;
+using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -43,16 +47,49 @@ public class GraphqlConvention : IServiceConvention
                 .GetOrAdd(() => services.AddGraphQL())
 //                .AddMutationConventions()
                 .AddFairyBread(
-                     options =>
-                     {
-                         options.ThrowIfNoValidatorsFound = false;
-                     })
+                     options => { options.ThrowIfNoValidatorsFound = false; }
+                 )
                 .AddErrorFilter<GraphqlErrorFilter>()
                 .BindRuntimeType<Unit, VoidType>();
+        services.Replace(ServiceDescriptor.Singleton<IValidatorRegistry, LaunchPadValidatorRegistry>());
 
         if (!_rocketChocolateOptions.IncludeAssemblyInfoQuery) return;
 
         services.TryAddSingleton(_foundationOptions);
         sb.AddType<AssemblyInfoQuery>();
     }
+}
+
+//class LaunchPadValidatorProvider : IValidatorProvider
+//{
+//    public IEnumerable<ResolvedValidator> GetValidators(IMiddlewareContext context, IInputField argument)
+//    {
+//        yield break;
+//    }
+//}
+
+class LaunchPadValidatorRegistry(IServiceProvider serviceProvider) : IValidatorRegistry
+{
+    private readonly Lazy<Dictionary<Type, List<ValidatorDescriptor>>> _cache = new(
+        () =>
+        {
+            var dictionary = new Dictionary<Type, List<ValidatorDescriptor>>();
+            var scope = serviceProvider.CreateScope();
+            var validators = scope.ServiceProvider.GetServices<IValidator>();
+            foreach (var validator in validators)
+            {
+                var type = validator.GetType().GetInterfaces().First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IValidator<>)).GetGenericArguments()[0];
+                if (!dictionary.TryGetValue(type, out var list))
+                {
+                    list = new ();
+                    dictionary[type] = list;
+                }
+
+                list.Add(new (validator.GetType()));
+            }
+            return dictionary;
+        }
+    );
+
+    public Dictionary<Type, List<ValidatorDescriptor>> Cache => _cache.Value;
 }

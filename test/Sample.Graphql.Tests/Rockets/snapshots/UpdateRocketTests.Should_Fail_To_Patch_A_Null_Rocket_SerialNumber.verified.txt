@@ -1,0 +1,32 @@
+﻿{
+  Errors: [
+    {
+      Message: 'Serial Number Value' must not be empty.,
+      Code: FairyBread_ValidationError,
+      Path: [
+        patchRocket
+      ],
+      Locations: [
+        {
+          Line: 1,
+          Column: 60
+        }
+      ],
+      Extensions: {
+        argumentName: request,
+        attemptedValue: null,
+        code: FairyBread_ValidationError,
+        errorCode: NotNullValidator,
+        errorMessage: 'Serial Number Value' must not be empty.,
+        formattedMessagePlaceholderValues: {
+          PropertyName: Serial Number Value,
+          PropertyPath: SerialNumber.Value,
+          PropertyValue: null
+        },
+        propertyName: SerialNumber.Value,
+        severity: Error,
+        validatorName: Validator
+      }
+    }
+  ]
+}

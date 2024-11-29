@@ -25,14 +25,14 @@ namespace TestNamespace
             {
                 return new Changes()
                 {
-                    Name = Name.HasBeenSet()
+                    Name = Name.HasValue
                 };
             }
 
             [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public global::TestNamespace.GetRocket.Request ApplyChanges(global::TestNamespace.GetRocket.Request state)
             {
-                if (Name.HasBeenSet())
+                if (Name.HasValue)
                 {
                     state = state with
                     {

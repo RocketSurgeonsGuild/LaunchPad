@@ -31,16 +31,16 @@ namespace Sample.Core.Operations.Rockets
         {
             return new Changes()
             {
-                SerialNumber = SerialNumber.HasBeenSet(),
-                Type = Type.HasBeenSet(),
-                PlannedDate = PlannedDate.HasBeenSet()
+                SerialNumber = SerialNumber.HasValue,
+                Type = Type.HasValue,
+                PlannedDate = PlannedDate.HasValue
             };
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
         public global::Sample.Core.Operations.Rockets.Request ApplyChanges(global::Sample.Core.Operations.Rockets.Request state)
         {
-            if (SerialNumber.HasBeenSet())
+            if (SerialNumber.HasValue)
             {
                 state = state with
                 {
@@ -48,7 +48,7 @@ namespace Sample.Core.Operations.Rockets
                 };
             }
 
-            if (Type.HasBeenSet())
+            if (Type.HasValue)
             {
                 state = state with
                 {
@@ -56,7 +56,7 @@ namespace Sample.Core.Operations.Rockets
                 };
             }
 
-            if (PlannedDate.HasBeenSet())
+            if (PlannedDate.HasValue)
             {
                 state = state with
                 {

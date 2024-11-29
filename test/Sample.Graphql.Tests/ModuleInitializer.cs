@@ -15,6 +15,8 @@ public static class ModuleInitializer
         VerifierSettings.DontScrubDateTimes();
 //        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
         VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new GeometryConverter()));
+        VerifierSettings.IgnoreMember<IOperationResult>(z => z.DataInfo);
+        VerifierSettings.IgnoreMember<IOperationResult>(z => z.DataFactory);
 
         VerifierSettings.DisableRequireUniquePrefix();
         DerivePathInfo(

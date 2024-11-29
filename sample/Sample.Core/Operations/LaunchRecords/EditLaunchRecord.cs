@@ -108,6 +108,39 @@ public static partial class EditLaunchRecord
         }
     }
 
+    private class PatchRequestValidator : AbstractValidator<PatchRequest>
+    {
+        public PatchRequestValidator()
+        {
+            RuleFor(x => x.Id)
+               .NotEmpty()
+               .NotNull();
+
+            RuleFor(x => x.Partner.Value)
+               .NotEmpty()
+               .NotNull()
+               .When(x => x.Partner.HasValue);
+
+            RuleFor(x => x.RocketId.Value)
+               .NotEmpty()
+               .NotNull()
+               .When(x => x.RocketId.HasValue);
+
+            RuleFor(x => x.Payload.Value)
+               .NotEmpty()
+               .NotNull()
+               .When(x => x.Payload.HasValue);
+
+            RuleFor(x => x.ScheduledLaunchDate.Value)
+               .NotNull()
+               .When(x => x.ScheduledLaunchDate.HasValue);
+
+            RuleFor(x => x.PayloadWeightKg.Value)
+               .GreaterThanOrEqualTo(0d)
+               .When(x => x.PayloadWeightKg.HasValue);
+        }
+    }
+
     private class Handler(RocketDbContext dbContext, IMediator mediator)
         : PatchRequestHandler<Request, PatchRequest, LaunchRecordModel>(mediator), IRequestHandler<Request, LaunchRecordModel>
     {

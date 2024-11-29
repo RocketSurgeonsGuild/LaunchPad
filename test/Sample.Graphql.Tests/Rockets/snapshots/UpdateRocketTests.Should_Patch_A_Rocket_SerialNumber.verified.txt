@@ -1,0 +1,9 @@
+﻿{
+  Data: {
+    PatchRocket: {
+      Id: Guid_1,
+      Type: AtlasV,
+      SerialNumber: 123456789012345
+    }
+  }
+}
