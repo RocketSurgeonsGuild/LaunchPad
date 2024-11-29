@@ -18,24 +18,24 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
         INamedTypeSymbol mediator,
         INamedTypeSymbol claimsPrincipal,
         INamedTypeSymbol cancellationToken,
-        MethodDeclarationSyntax syntax,
-        IMethodSymbol symbol,
-        IParameterSymbol parameter,
+        MethodDeclarationSyntax methodSyntax,
+        IMethodSymbol methodSymbol,
+        IParameterSymbol requestParameter,
         ITypeSymbol requestType,
         ExpressionSyntax requestExpression
     )
     {
-        var otherParams = symbol.Parameters.Remove(parameter);
+        var otherParams = methodSymbol.Parameters.Remove(requestParameter);
         var isUnit = requestType.AllInterfaces.Any(z => z.MetadataName == "IRequest");
-        var returnsMediatorUnit = symbol.ReturnType is INamedTypeSymbol { MetadataName: "Task`1", TypeArguments: [{ MetadataName: "Unit", },], };
+        var returnsMediatorUnit = methodSymbol.ReturnType is INamedTypeSymbol { MetadataName: "Task`1", TypeArguments: [{ MetadataName: "Unit", },], };
         isUnit = returnsMediatorUnit || isUnit;
-        var isStream = symbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
+        var isStream = methodSymbol.ReturnType.MetadataName == "IAsyncEnumerable`1";
 
-        var newSyntax = syntax
+        var newSyntax = methodSyntax
                        .WithParameterList(
                             // ReSharper disable once NullableWarningSuppressionIsUsed
-                            syntax.ParameterList.RemoveNodes(
-                                syntax.ParameterList.Parameters.SelectMany(z => z.AttributeLists),
+                            methodSyntax.ParameterList.RemoveNodes(
+                                methodSyntax.ParameterList.Parameters.SelectMany(z => z.AttributeLists),
                                 SyntaxRemoveOptions.KeepNoTrivia
                             )!
                         )
@@ -47,7 +47,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                .AddModifiers(Token(SyntaxKind.AsyncKeyword));
 
         var block = Block();
-        var resultName = parameter.Name == "result" ? "r" : "result";
+        var resultName = requestParameter.Name == "result" ? "r" : "result";
         var mediatorParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(mediator, param.Type));
         var claimsPrincipalParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(claimsPrincipal, param.Type));
         var cancellationTokenParameter = otherParams.FirstOrDefault(param => SymbolEqualityComparer.Default.Equals(cancellationToken, param.Type));
@@ -55,8 +55,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     GeneratorDiagnostics.ParameterMustExist,
-                    parameter.Locations.First(),
-                    parameter.Locations.Skip(1),
+                    requestParameter.Locations.First(),
+                    requestParameter.Locations.Skip(1),
                     mediator,
                     requestType.Name
                 )
@@ -79,8 +79,8 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         GeneratorDiagnostics.ParameterMustExist,
-                        parameter.Locations.First(),
-                        parameter.Locations.Skip(1),
+                        requestParameter.Locations.First(),
+                        requestParameter.Locations.Skip(1),
                         claimsPrincipal,
                         requestType.Name
                     )
@@ -95,10 +95,10 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     VariableDeclaration(
                             IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList()))
                         )
-                       .WithVariables(SingletonSeparatedList(VariableDeclarator("_" + parameter.Name).WithInitializer(EqualsValueClause(requestExpression))))
+                       .WithVariables(SingletonSeparatedList(VariableDeclarator("_" + requestParameter.Name).WithInitializer(EqualsValueClause(requestExpression))))
                 )
             );
-            requestExpression = IdentifierName("_" + parameter.Name);
+            requestExpression = IdentifierName("_" + requestParameter.Name);
         }
 
         var sendRequestExpression = isStream
@@ -118,7 +118,6 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                           )
             );
         }
-
         if (requestType.IsRecord)
         {
             var expressions = new List<ExpressionSyntax>();
@@ -167,7 +166,7 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                             SyntaxKind.SimpleAssignmentExpression,
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName("_" + parameter.Name),
+                                IdentifierName("_" + requestParameter.Name),
                                 IdentifierName(claimsPrincipalProperty!.Name)
                             ),
                             IdentifierName(claimsPrincipalParameter!.Name)
@@ -201,6 +200,20 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     ReturnStatement(IdentifierName(resultName))
                 );
 
+//        if (compilation.GetTypeByMetadataName("FluentValidation.ValidationException") is { })
+//        {
+//            newSyntax = newSyntax.AddAttributeLists(GetErrorAttribute("FluentValidation.ValidationException"));
+//        }
+//
+//        if (compilation.GetTypeByMetadataName("Rocket.Surgery.LaunchPad.Foundation.NotFoundException") is { })
+//        {
+//            newSyntax = newSyntax.AddAttributeLists(GetErrorAttribute("Rocket.Surgery.LaunchPad.Foundation.NotFoundException"));
+//        }
+//
+//        if (compilation.GetTypeByMetadataName("Rocket.Surgery.LaunchPad.Foundation.RequestFailedException") is { })
+//        {
+//            newSyntax = newSyntax.AddAttributeLists(GetErrorAttribute("Rocket.Surgery.LaunchPad.Foundation.RequestFailedException"));
+//        }
 
         return newSyntax
               .WithBody(block.NormalizeWhitespace())
@@ -261,6 +274,30 @@ public class GraphqlMutationActionBodyGenerator : IIncrementalGenerator
                     )
                 )
                .WithArgumentList(ArgumentList(SeparatedList(arguments)));
+        }
+
+        static AttributeListSyntax GetErrorAttribute(string exceptionType)
+        {
+            return AttributeList(
+                SingletonSeparatedList(
+                    Attribute(
+                        QualifiedName(
+                            QualifiedName(
+                                IdentifierName("HotChocolate"),
+                                IdentifierName("Types")
+                            ),
+                            GenericName(
+                                    Identifier("Error")
+                                )
+                               .WithTypeArgumentList(
+                                    TypeArgumentList(
+                                        SingletonSeparatedList<TypeSyntax>(ParseName(exceptionType))
+                                    )
+                                )
+                        )
+                    )
+                )
+            );
         }
     }
 

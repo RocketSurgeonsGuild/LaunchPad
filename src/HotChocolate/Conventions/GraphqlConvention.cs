@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.HotChocolate.FairyBread;
 using Rocket.Surgery.LaunchPad.HotChocolate.Types;
 using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
@@ -42,7 +41,12 @@ public class GraphqlConvention : IServiceConvention
     {
         var sb = context
                 .GetOrAdd(() => services.AddGraphQL())
-                .AddFairyBread()
+//                .AddMutationConventions()
+                .AddFairyBread(
+                     options =>
+                     {
+                         options.ThrowIfNoValidatorsFound = false;
+                     })
                 .AddErrorFilter<GraphqlErrorFilter>()
                 .BindRuntimeType<Unit, VoidType>();
 

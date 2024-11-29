@@ -12,25 +12,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 public class FluentValidationProblemDetail
 {
     /// <summary>
-    ///     Convert the problem details into a dictionary of information in graphql
-    /// </summary>
-    /// <param name="detail"></param>
-    /// <returns></returns>
-    public static implicit operator ReadOnlyDictionary<string, object?>(FluentValidationProblemDetail detail)
-    {
-        return new(
-            new Dictionary<string, object?>
-            {
-                ["propertyName"] = detail.PropertyName,
-                ["errorMessage"] = detail.ErrorMessage,
-                ["attemptedValue"] = detail.AttemptedValue,
-                ["severity"] = detail.Severity,
-                ["errorCode"] = detail.ErrorCode,
-            }
-        );
-    }
-
-    /// <summary>
     ///     A validation error problem
     /// </summary>
     public FluentValidationProblemDetail(ValidationFailure validationFailure)
@@ -63,15 +44,6 @@ public class FluentValidationProblemDetail
     /// <summary>Gets or sets the error code.</summary>
     [JsonPropertyName("errorCode")]
     public string ErrorCode { get; set; }
-
-    /// <summary>
-    ///     Convert the problem details into a dictionary of information in graphql
-    /// </summary>
-    /// <returns></returns>
-    public ReadOnlyDictionary<string, object?> ToReadOnlyDictionary()
-    {
-        return this;
-    }
 
     internal class Validator : AbstractValidator<FluentValidationProblemDetail>
     {

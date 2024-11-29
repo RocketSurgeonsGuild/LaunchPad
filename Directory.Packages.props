@@ -19,6 +19,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Curryfy" Version="3.1.0" />
+    <PackageVersion Include="FairyBread">
+      <Version>11.0.0-rc.1</Version>
+    </PackageVersion>
     <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
@@ -46,32 +49,31 @@
     <PackageVersion Include="ReportGenerator" Version="5.4.1" />
     <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.8.119" />
     <PackageVersion Include="AutoMapper" Version="13.0.1" />
-    <PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.11.2" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.67.0" />
     <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
-    <PackageVersion Include="HotChocolate" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Abstractions" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.AspNetCore" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Data" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="14.2.0-p.2" />
-    <PackageVersion Include="HotChocolate.Types.Spatial" Version="14.2.0-p.2" />
-    <PackageVersion Include="StrawberryShake.Transport.Http" Version="14.2.0-p.2" />
-    <PackageVersion Include="StrawberryShake" Version="14.2.0-p.2" />
-    <PackageVersion Include="StrawberryShake.Core" Version="14.2.0-p.2" />
-    <PackageVersion Include="StrawberryShake.Server" Version="14.2.0-p.2" />
-    <PackageVersion Include="StrawberryShake.Maui" Version="14.2.0-p.2" />
-    <PackageVersion Include="StrawberryShake.Blazor" Version="14.2.0-p.2" />
-    <PackageVersion Include="StrawberryShake.Razor" Version="14.2.0-p.2" />
+    <PackageVersion Include="HotChocolate" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Abstractions" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Data" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Diagnostics" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Data.EntityFramework" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Data.Spatial" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Types.Analyzers" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Types.NodaTime" Version="14.2.0-p.4" />
+    <PackageVersion Include="HotChocolate.Types.Spatial" Version="14.2.0-p.4" />
+    <PackageVersion Include="StrawberryShake.Transport.Http" Version="14.2.0-p.4" />
+    <PackageVersion Include="StrawberryShake" Version="14.2.0-p.4" />
+    <PackageVersion Include="StrawberryShake.Core" Version="14.2.0-p.4" />
+    <PackageVersion Include="StrawberryShake.Server" Version="14.2.0-p.4" />
+    <PackageVersion Include="StrawberryShake.Maui" Version="14.2.0-p.4" />
+    <PackageVersion Include="StrawberryShake.Blazor" Version="14.2.0-p.4" />
+    <PackageVersion Include="StrawberryShake.Razor" Version="14.2.0-p.4" />
     <PackageVersion Include="MediatR" Version="12.4.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
@@ -110,14 +112,14 @@
     <PackageVersion Include="Polly" Version="8.4.2" />
     <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
     <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-    <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.1-beta.26" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.1-beta.26" />
-    <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.26" />
-    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.26" />
-    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.14" />
-    <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.14" />
-    <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.26" />
-    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.26" />
+    <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.1-beta.27" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.1-beta.27" />
+    <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.27" />
+    <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.27" />
+    <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.17" />
+    <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.17" />
+    <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.27" />
+    <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.27" />
     <PackageVersion Include="Scrutor" Version="5.0.2" />
     <PackageVersion Include="Serilog" Version="4.1.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />

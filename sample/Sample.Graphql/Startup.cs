@@ -1,9 +1,11 @@
-﻿using HotChocolate.Data;
+﻿using FluentValidation;
+using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 using MediatR;
 using NetTopologySuite.Geometries;
 using NodaTime;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Domain;
 using Sample.Core.Models;
@@ -26,8 +28,10 @@ public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunc
 public partial class RocketMutation
 {
     [UseRequestScope]
+    [Error<RequestFailedException>]
+    [Error<NotFoundException>]
+    [Error<ValidationException>]
     public partial Task<CreateRocket.Response> CreateRocket(
-        [Service]
         IMediator mediator,
         CreateRocket.Request request,
         CancellationToken cancellationToken

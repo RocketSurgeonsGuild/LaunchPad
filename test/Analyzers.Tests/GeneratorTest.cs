@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.Loader;
+using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
@@ -33,7 +34,8 @@ public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : Logger
                  .AddReferences(
                       typeof(ActivatorUtilities).Assembly,
                       typeof(ConventionContext).Assembly,
-                      typeof(IConventionContext).Assembly
+                      typeof(IConventionContext).Assembly,
+                      typeof(ErrorAttribute<>).Assembly
                   );
 
         return Task.CompletedTask;

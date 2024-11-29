@@ -8,54 +8,74 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
 internal class GraphqlErrorFilter : IErrorFilter
 {
-    protected virtual ReadOnlyDictionary<string, object?> FormatFailure(ValidationFailure failure)
+    /*
+     protected virtual IErrorBuilder FormatFailure(ValidationFailure failure)
+
     {
-        return new FluentValidationProblemDetail(failure);
+        var builder = ErrorBuilder
+                     .New()
+                     .SetMessage(failure.ErrorMessage)
+                     .SetCode(failure.ErrorCode)
+                     .SetExtension("errorCode", failure.ErrorCode)
+                     .SetExtension("errorMessage", failure.ErrorMessage)
+                     .SetExtension("attemptedValue", failure.AttemptedValue)
+                     .SetExtension("severity", failure.Severity);
+
+        if (!string.IsNullOrWhiteSpace(failure.PropertyName))
+        {
+            builder = builder
+                     .SetExtension("field", failure.PropertyName)
+                     .SetExtension("propertyName", failure.PropertyName);
+        }
+
+        return builder;
     }
+    */
 
     public IError OnError(IError error)
     {
+        /*
         if (error.Exception is ValidationException vx)
         {
             var childErrors =
                 vx
-                   .Errors.Select(x => new FluentValidationProblemDetail(x))
-                   .Select(
-                        failure =>
-                        {
-                            var err = new Error(failure.ErrorMessage)
-                                     .WithCode(failure.ErrorCode)
-                                     .SetExtension("attemptedValue", failure.AttemptedValue)
-                                     .SetExtension("severity", failure.Severity);
-
-                            if (!string.IsNullOrWhiteSpace(failure.PropertyName))
-                                err = err
-                                     .SetExtension("field", failure.PropertyName)
-                                     .SetExtension("propertyName", failure.PropertyName);
-
-                            return err;
-                        }
-                    );
-            return new AggregateError(childErrors);
+                   .Errors
+                   .Select(failure => FormatFailure(failure).Build());
+            error = new AggregateError(childErrors);
+            error.WithCode("VALIDATION");
         }
+        */
+
+        var builder = ErrorBuilder.FromError(error);
+
+        if (error.Exception is { })
+        {
+            builder
+               .SetException(error.Exception)
+               .SetMessage(error.Exception?.Message ?? error.Message)
+               .SetCode(error.Code ?? "UNKNOWN");
+        }
+
 
         if (error.Exception is IProblemDetailsData ex)
         {
-            var builder = ErrorBuilder.FromError(error);
-            builder
-               .SetException(error.Exception)
-               .SetMessage(error.Exception.Message)
-               .WithProblemDetails(ex);
-
-            if (error.Exception is NotFoundException) builder.SetCode("NOTFOUND");
-
-            if (error.Exception is NotAuthorizedException) builder.SetCode("NOTAUTHORIZED");
-
-            if (error.Exception is RequestFailedException) builder.SetCode("FAILED");
-
-            return builder.Build();
+            builder.WithProblemDetails(ex);
         }
 
-        return error;
+        switch (error.Exception)
+        {
+            case NotFoundException:
+                builder.SetCode("NOTFOUND");
+                break;
+            case NotAuthorizedException:
+                builder.SetCode("NOTAUTHORIZED");
+                break;
+            case RequestFailedException:
+                builder.SetCode("FAILED");
+                break;
+        }
+
+        return builder.Build();
+
     }
 }

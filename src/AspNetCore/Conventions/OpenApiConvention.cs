@@ -2,10 +2,12 @@
 using System.Text.Json;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
@@ -46,6 +48,7 @@ public partial class OpenApiConvention : IServiceConvention
         services.AddOpenApi(
             options =>
             {
+                options.AddSchemaTransformer<NestedTypeSchemaFilter>();
                 options.AddSchemaTransformer<RestfulApiActionModelConvention>();
                 options.AddSchemaTransformer<ProblemDetailsSchemaFilter>();
                 options.AddSchemaTransformer<StronglyTypedIdSchemaFilter>();
@@ -56,5 +59,15 @@ public partial class OpenApiConvention : IServiceConvention
 
             });
         services.AddFluentValidationOpenApi();
+    }
+}
+
+internal class NestedTypeSchemaFilter : IOpenApiSchemaTransformer
+{
+    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
+    {
+        if (context is not {  JsonTypeInfo.Type.DeclaringType: {} }) return Task.CompletedTask;
+        schema.Annotations["x-schema-id"] = $"{context.JsonTypeInfo.Type.DeclaringType.Name}{context.JsonTypeInfo.Type.Name}";
+        return Task.CompletedTask;
     }
 }

@@ -41,7 +41,8 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// </summary>
     public async Task InitializeAsync()
     {
-        _host = await Alba.AlbaHost.For<TEntryPoint>(_extensions);
+        _host = await Alba.AlbaHost.For<TEntryPoint>([.._extensions]);
+        await ResetAsync();
     }
 
     /// <summary>

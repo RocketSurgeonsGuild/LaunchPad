@@ -1,7 +1,8 @@
 using System.Runtime.CompilerServices;
 using DiffEngine;
+using Path = System.IO.Path;
 
-namespace Extensions.Tests;
+namespace Sample.BlazorServer.Tests;
 
 public static class ModuleInitializer
 {
@@ -9,11 +10,8 @@ public static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
-
         VerifierSettings.DontScrubDateTimes();
-        VerifySystemJson.Initialize();
-        VerifyNewtonsoftJson.Initialize();
-
+        VerifierSettings.DisableRequireUniquePrefix();
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {
@@ -24,7 +22,8 @@ public static class ModuleInitializer
 
                 var typeName = GetTypeName(type);
 
-                return new(Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots"), typeName, method.Name);
+                var path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots");
+                return new(path, typeName, method.Name);
             }
         );
     }

@@ -31,6 +31,7 @@ app.UseSerilogRequestLogging(
 
 app.UseRouting();
 
+app.MapOpenApi();
 app
    .UseSwaggerUI()
    .UseReDoc();

@@ -5,6 +5,7 @@
     <PackageTags>$(PackageTags)</PackageTags>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FairyBread" />
     <PackageReference Include="HotChocolate" />
     <PackageReference Include="HotChocolate.Data" />
     <PackageReference Include="HotChocolate.Diagnostics" />
@@ -15,12 +16,8 @@
     <!--        <PackageReference Include="Scrutor" />-->
     <PackageReference Include="Rocket.Surgery.Conventions" />
     <PackageReference Include="Humanizer.Core" />
-    <!--        <PackageReference Include="AppAny.HotChocolate.FluentValidation" />-->
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FairyBread\" />
   </ItemGroup>
 </Project>

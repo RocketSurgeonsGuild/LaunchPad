@@ -24,7 +24,7 @@ public interface IThing
         public string? Thing { get; set; }
     }
 
-    private class AModel : IThing
+    public class AModel : IThing
     {
         [UsedImplicitly] public string? Id { get; set; }
         [UsedImplicitly] public string? Other { get; set; }

@@ -17,6 +17,7 @@ public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebA
     public async Task OpenApiDocument()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json");
-        await VerifyJson(response.Content.ReadAsStreamAsync());
+        var document = await response.Content.ReadAsStringAsync();
+        await VerifyJson(document);
     }
 }

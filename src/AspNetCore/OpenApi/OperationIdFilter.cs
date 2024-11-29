@@ -36,6 +36,7 @@ internal class OperationIdFilter : IOpenApiOperationTransformer
         if (string.IsNullOrWhiteSpace(operation.OperationId) && context.Description.ActionDescriptor is ControllerActionDescriptor cad)
             operation.OperationId = cad.ActionName;
 
+        if (operation.Parameters is null) return Task.CompletedTask;
         foreach (var parameter in operation.Parameters)
         {
             parameter.Name = Camelize(parameter.Name);
