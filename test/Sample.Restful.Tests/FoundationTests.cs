@@ -19,6 +19,6 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json");
         var document = await response.Content.ReadAsStringAsync();
-        await VerifyJson(document);
+        await Verify(document, extension: "json");
     }
 }

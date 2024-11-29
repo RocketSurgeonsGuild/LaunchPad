@@ -26,7 +26,8 @@ internal class StronglyTypedIdSchemaFilter : IOpenApiSchemaTransformer
 {
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (StronglyTypedIdHelpers.GetStronglyTypedIdType(context.JsonTypeInfo.Type) is not { } type) return Task.CompletedTask;
+        if (StronglyTypedIdHelpers.GetStronglyTypedIdType(context.JsonPropertyInfo?.PropertyType) is not { } type) return Task.CompletedTask;
+// TODO: Solve this
         return Task.CompletedTask;
     }
 }

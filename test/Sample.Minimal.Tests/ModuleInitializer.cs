@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using DiffEngine;
 using Path = System.IO.Path;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Minimal.Tests;
 
 internal static class ModuleInitializer
 {

@@ -7,7 +7,7 @@ public class RocketDeleteModel : RocketViewModel
 {
     public async Task<ActionResult> OnPost()
     {
-        await Send(new DeleteRocket.Request { Id = Id });
+        await Send(new DeleteRocket.Request(Id));
         return RedirectToPage("Index");
     }
 }

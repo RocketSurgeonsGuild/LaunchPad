@@ -2,7 +2,7 @@
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Minimal.Tests;
 
 internal sealed class SqliteConnectionService(IServiceProvider serviceProvider) : IHostedService
 {

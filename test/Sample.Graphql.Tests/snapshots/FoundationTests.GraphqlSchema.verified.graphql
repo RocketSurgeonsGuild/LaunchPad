@@ -308,13 +308,13 @@ input DateTimeOperationFilterInput {
 
 "The request to delete a launch record"
 input DeleteLaunchRecordRequest {
-  "The launch record to delete"
+  "The id of the record to delete"
   id: UUID!
 }
 
 "The request to remove a rocket from the system"
 input DeleteRocketRequest {
-  "The rocket id"
+  "The id of the rocket to remove"
   id: UUID!
 }
 

@@ -16,13 +16,8 @@ public static partial class DeleteRocket
     /// <summary>
     ///     The request to remove a rocket from the system
     /// </summary>
-    public record Request : IRequest
-    {
-        /// <summary>
-        ///     The rocket id
-        /// </summary>
-        public RocketId Id { get; init; }
-    }
+    /// <param name="Id">The id of the rocket to remove</param>
+    public record Request(RocketId Id) : IRequest;
 
     private class Validator : AbstractValidator<Request>
     {

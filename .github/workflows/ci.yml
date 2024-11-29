@@ -140,18 +140,6 @@ jobs:
         id: default
         run: |
           dotnet .build/bin/Debug/.build.dll --target Default --skip Restore Build Test Pack
-      - name: 🏺 Publish coverage data
-        if: always()
-        uses: actions/upload-artifact@v4.4.3
-        with:
-          name: 'coverage'
-          path: 'coverage/'
-      - name: 📫 Publish Coverage
-        if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_target') || ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.pull_request.user.login != 'renovate[bot]' && github.event.pull_request.user.login != 'dependabot[bot]')
-        uses: codecov/codecov-action@v5.0.7
-        with:
-          name: 'actions-${{ matrix.os }}'
-          token: '${{ secrets.CODECOV_TOKEN }}'
       - name: 🏺 Publish logs
         if: always()
         uses: actions/upload-artifact@v4.4.3
@@ -184,7 +172,7 @@ jobs:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
       - name: 📫 Publish Codecov Coverage
         if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_target') || ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.pull_request.user.login != 'renovate[bot]' && github.event.pull_request.user.login != 'dependabot[bot]')
-        uses: codecov/codecov-action@v5.0.3
+        uses: codecov/codecov-action@v5.0.7
         with:
           name: 'actions'
           token: '${{ secrets.CODECOV_TOKEN }}'

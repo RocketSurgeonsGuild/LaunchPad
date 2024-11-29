@@ -15,6 +15,6 @@ public class RocketViewModel : MediatorPageModel
 
     public virtual async Task OnGet()
     {
-        Rocket = await Send(new GetRocket.Request { Id = Id });
+        Rocket = await Send(new GetRocket.Request(Id));
     }
 }

@@ -14,8 +14,8 @@
         <PackageReference Include="System.ComponentModel.Annotations" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
     </ItemGroup>
     <ItemGroup>
-        <OpenApiProjectReference
-            Include="../../test/Sample.Restful.Tests/snapshots/path.json"
+        <OpenApiReference
+            Include="../../test/Sample.Restful.Tests/snapshots/FoundationTests.OpenApiDocument.verified.json"
             ClassName="{controller}Client"
             CodeGenerator="NSwagCSharp"
             Namespace="$(RootNamespace)"

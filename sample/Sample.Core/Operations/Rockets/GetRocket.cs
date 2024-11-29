@@ -16,13 +16,8 @@ public static partial class GetRocket
     /// <summary>
     ///     Request to fetch information about a rocket
     /// </summary>
-    public record Request : IRequest<RocketModel>
-    {
-        /// <summary>
-        ///     The rocket id
-        /// </summary>
-        public RocketId Id { get; set; }
-    }
+    /// <param name="Id">The id of the rocket</param>
+    public record Request(RocketId Id) : IRequest<RocketModel>;
 
     private class Validator : AbstractValidator<Request>
     {

@@ -23,6 +23,5 @@
         <PackageReference Include="Rocket.Surgery.Extensions" />
         <PackageReference Include="Rocket.Surgery.Hosting" />
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
-        <Analyzer Include="C:\Users\David\Development\RocketSurgeonsGuild\Extensions\src\DependencyInjection.Analyzers\bin\Debug\netstandard2.0\Rocket.Surgery.DependencyInjection.Analyzers.dll" />
     </ItemGroup>
 </Project>

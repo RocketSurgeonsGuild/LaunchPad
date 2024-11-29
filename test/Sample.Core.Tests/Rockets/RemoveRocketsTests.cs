@@ -25,7 +25,7 @@ public class RemoveRocketsTests(ITestOutputHelper outputHelper) : HandleTestHost
                                        );
 
         await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new DeleteRocket.Request { Id = id })
+            mediator => mediator.Send(new DeleteRocket.Request(id))
         );
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());

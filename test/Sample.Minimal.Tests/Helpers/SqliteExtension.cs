@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
-namespace Sample.Restful.Tests.Helpers;
+namespace Sample.Minimal.Tests.Helpers;
 
 public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where TDbContext : DbContext
 {

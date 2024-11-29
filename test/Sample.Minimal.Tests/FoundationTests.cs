@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Sample.Restful.Tests.Helpers;
+using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Restful.Tests;
 
@@ -19,6 +19,6 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json");
         var document = await response.Content.ReadAsStringAsync();
-        await VerifyJson(document);
+        await Verify(document, extension: "json");
     }
 }

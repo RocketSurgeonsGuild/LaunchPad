@@ -20,7 +20,7 @@ public partial class Edit : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Model = EditRocket.MapRequest(await Mediator.Send(new GetRocket.Request { Id = Id, }));
+        Model = EditRocket.MapRequest(await Mediator.Send(new GetRocket.Request(Id)));
     }
 
     public async Task Save()

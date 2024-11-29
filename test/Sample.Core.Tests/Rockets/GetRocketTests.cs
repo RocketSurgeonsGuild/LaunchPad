@@ -30,7 +30,7 @@ public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase
                                            );
 
         var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new GetRocket.Request { Id = rocket })
+            mediator => mediator.Send(new GetRocket.Request(rocket))
         );
 
         response.Type.Should().Be(RocketType.Falcon9);
@@ -41,7 +41,7 @@ public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase
     public async Task Should_Not_Get_A_Missing_Rocket()
     {
         Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new GetRocket.Request { Id = RocketId.New() })
+            mediator => mediator.Send(new GetRocket.Request(RocketId.New()))
         );
 
         await action.Should().ThrowAsync<NotFoundException>();

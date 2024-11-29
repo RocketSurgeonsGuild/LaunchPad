@@ -3,13 +3,5 @@
     GeometryTest: {
       Geometry: POINT (3 4)
     }
-  },
-  DataInfo: {
-    GeometryTest: {
-      __typename: GeometryOutputs,
-      Geometry: POINT (3 4)
-    },
-    Version: 1
-  },
-  DataFactory: {}
+  }
 }

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Minimal.Tests;
 
 internal sealed class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
     where T : class, ILaunchPadWebAppFixture, IAsyncLifetime, new()
