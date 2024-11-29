@@ -1,1 +1,0 @@
-﻿namespace Rocket.Surgery.LaunchPad.Telemetry;

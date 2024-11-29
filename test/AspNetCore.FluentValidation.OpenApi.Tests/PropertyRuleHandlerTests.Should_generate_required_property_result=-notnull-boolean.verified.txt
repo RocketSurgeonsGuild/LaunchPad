@@ -1,0 +1,15 @@
+﻿{
+  schemas: {
+    BooleanContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: boolean
+        }
+      }
+    }
+  }
+}

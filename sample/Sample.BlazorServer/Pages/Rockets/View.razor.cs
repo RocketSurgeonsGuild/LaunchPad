@@ -14,6 +14,6 @@ public partial class View : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Model = await Mediator.Send(new GetRocket.Request { Id = Id });
+        Model = await Mediator.Send(new GetRocket.Request(Id));
     }
 }

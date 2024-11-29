@@ -215,13 +215,11 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 AssignmentExpression(
                     SyntaxKind.SimpleAssignmentExpression,
                     IdentifierName(propertySymbol.Name),
-                    InvocationExpression(
                         MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             IdentifierName(propertySymbol.Name),
-                            IdentifierName("HasBeenSet")
+                            IdentifierName("HasValue")
                         )
-                    )
                 )
             );
             createMethodInitializer = createMethodInitializer.AddExpressions(
@@ -405,13 +403,11 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
     )
     {
         return IfStatement(
-            InvocationExpression(
                 MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     IdentifierName(propertySymbol.Name),
-                    IdentifierName("HasBeenSet")
-                )
-            ),
+                    IdentifierName("HasValue")
+                ),
             Block(
                 SingletonList<StatementSyntax>(
                     ExpressionStatement(

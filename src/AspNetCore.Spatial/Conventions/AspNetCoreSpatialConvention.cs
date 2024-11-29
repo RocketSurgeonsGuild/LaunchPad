@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -18,6 +17,6 @@ public class AspNetCoreSpatialConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services.Configure<SwaggerGenOptions>(o => o.ConfigureForNetTopologySuite());
+//        services.Configure<SwaggerGenOptions>(o => o.ConfigureForNetTopologySuite());
     }
 }

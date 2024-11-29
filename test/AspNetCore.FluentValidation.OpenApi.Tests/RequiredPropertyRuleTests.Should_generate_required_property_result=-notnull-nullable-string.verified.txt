@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    NullableStringContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: string,
+          nullable: true
+        }
+      }
+    }
+  }
+}

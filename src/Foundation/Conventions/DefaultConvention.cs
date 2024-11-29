@@ -27,5 +27,7 @@ public class DefaultConvention : IServiceConvention
            .AddOptions()
            .AddLogging()
            .AddExecuteScopedServices();
+
+        services.AddCompiledServiceRegistrations(context.TypeProvider);
     }
 }

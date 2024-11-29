@@ -1,8 +1,6 @@
-﻿using Rocket.Surgery.Extensions.Testing;
+﻿namespace Extensions.Tests.Mapping.Helpers;
 
-namespace Extensions.Tests.Mapping.Helpers;
-
-public abstract class MapperTestBase(ITestOutputHelper testOutputHelper) : AutoFakeTest(testOutputHelper)
+public abstract class MapperTestBase(ITestOutputHelper testOutputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
 {
     protected SettingsTask VerifyMethod(MethodResult result, object mapper, params object[] instances)
     {

@@ -33,16 +33,16 @@ namespace TestNamespace
             {
                 return new Changes()
                 {
-                    Sn = Sn.HasBeenSet(),
-                    ClaimsPrincipal = ClaimsPrincipal.HasBeenSet(),
-                    Other = Other.HasBeenSet()
+                    Sn = Sn.HasValue,
+                    ClaimsPrincipal = ClaimsPrincipal.HasValue,
+                    Other = Other.HasValue
                 };
             }
 
             [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public global::TestNamespace.Save2Rocket.Request ApplyChanges(global::TestNamespace.Save2Rocket.Request state)
             {
-                if (Sn.HasBeenSet())
+                if (Sn.HasValue)
                 {
                     state = state with
                     {
@@ -50,7 +50,7 @@ namespace TestNamespace
                     };
                 }
 
-                if (ClaimsPrincipal.HasBeenSet())
+                if (ClaimsPrincipal.HasValue)
                 {
                     state = state with
                     {
@@ -58,7 +58,7 @@ namespace TestNamespace
                     };
                 }
 
-                if (Other.HasBeenSet())
+                if (Other.HasValue)
                 {
                     state = state with
                     {

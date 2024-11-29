@@ -1,15 +1,15 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
+using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
+public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
@@ -42,7 +42,7 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHo
                                            );
 
         var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new GetLaunchRecord.Request { Id = record.Id })
+            mediator => mediator.Send(new GetLaunchRecord.Request( record.Id))
         );
 
         response.Partner.Should().Be("partner");
@@ -56,7 +56,7 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHo
     public async Task Should_Not_Get_A_Missing_Launch_Record()
     {
         Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new GetLaunchRecord.Request { Id = LaunchRecordId.New() })
+            mediator => mediator.Send(new GetLaunchRecord.Request (LaunchRecordId.New()))
         );
 
         await action.Should().ThrowAsync<NotFoundException>();

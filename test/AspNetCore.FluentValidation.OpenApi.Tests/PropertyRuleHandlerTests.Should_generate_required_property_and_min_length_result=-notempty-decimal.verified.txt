@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    DecimalContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: number,
+          format: double
+        }
+      }
+    }
+  }
+}

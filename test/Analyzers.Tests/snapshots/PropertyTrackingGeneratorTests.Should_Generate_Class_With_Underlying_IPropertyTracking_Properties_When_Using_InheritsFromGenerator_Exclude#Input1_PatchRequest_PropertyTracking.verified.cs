@@ -24,20 +24,20 @@ public partial class PatchRequest
     {
         return new Changes()
         {
-            Type = Type.HasBeenSet(),
-            Something = Something.HasBeenSet()
+            Type = Type.HasValue,
+            Something = Something.HasValue
         };
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public global::Request ApplyChanges(global::Request state)
     {
-        if (Type.HasBeenSet())
+        if (Type.HasValue)
         {
             state.Type = Type!;
         }
 
-        if (Something.HasBeenSet())
+        if (Something.HasValue)
         {
             state.Something = Something!;
         }

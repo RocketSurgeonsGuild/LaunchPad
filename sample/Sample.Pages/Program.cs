@@ -36,7 +36,7 @@ app.MapHealthChecks(
     "/health",
     new()
     {
-        ResponseWriter = WriteResponse,
+        ResponseWriter = LaunchPadHelpers.DefaultResponseWriter,
         ResultStatusCodes = new Dictionary<HealthStatus, int>
         {
             { HealthStatus.Healthy, StatusCodes.Status200OK },

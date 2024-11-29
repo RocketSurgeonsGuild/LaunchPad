@@ -1,26 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="HotChocolate" />
-        <PackageReference Include="HotChocolate.Data" />
-        <PackageReference Include="HotChocolate.Diagnostics" />
-        <PackageReference Include="HotChocolate.Execution.Abstractions" />
-        <PackageReference Include="HotChocolate.Types.NodaTime" />
-        <PackageReference Include="FluentValidation" />
-        <PackageReference Include="NodaTime" />
-<!--        <PackageReference Include="Scrutor" />-->
-        <PackageReference Include="Rocket.Surgery.Conventions" />
-        <PackageReference Include="Humanizer.Core" />
-<!--        <PackageReference Include="AppAny.HotChocolate.FluentValidation" />-->
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="FairyBread\" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <PackageDescription />
+    <PackageTags>$(PackageTags)</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FairyBread" />
+    <PackageReference Include="HotChocolate" />
+    <PackageReference Include="HotChocolate.Data" />
+    <PackageReference Include="HotChocolate.Diagnostics" />
+    <PackageReference Include="HotChocolate.Execution.Abstractions" />
+    <PackageReference Include="HotChocolate.Types.NodaTime" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="NodaTime" />
+    <!--        <PackageReference Include="Scrutor" />-->
+    <PackageReference Include="Rocket.Surgery.Conventions" />
+    <PackageReference Include="Humanizer.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,10 +1,9 @@
 using FluentValidation;
-using Microsoft.Extensions.Logging;
-using Rocket.Surgery.Extensions.Testing;
+using Serilog.Events;
 
 namespace Extensions.Tests.Validation;
 
-public class ValidatorFactoryTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper, LogLevel.Information)
+public class ValidatorFactoryTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper, LogEventLevel.Information))
 {
 //    [Fact]
 //    public void Should_Aggregate_Validators()
@@ -25,7 +24,7 @@ public interface IThing
         public string? Thing { get; set; }
     }
 
-    private class AModel : IThing
+    public class AModel : IThing
     {
         [UsedImplicitly] public string? Id { get; set; }
         [UsedImplicitly] public string? Other { get; set; }

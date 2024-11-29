@@ -35,9 +35,8 @@ public class MediatRConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        // TODO: Look at converting this to use the assembly type provider
-        var assemblies = context.AssemblyProvider.GetAssemblies(x => x.FromAssemblyDependenciesOf<IMediator>()).ToArray();
-        if (!assemblies.Any()) return;
+        var assemblies = context.TypeProvider.GetAssemblies(x => x.FromAssemblyDependenciesOf<IMediator>()).ToArray();
+        if (!assemblies.Any()) throw new ArgumentException("No assemblies found that reference MediatR");
 
         services.AddMediatR(
             c =>

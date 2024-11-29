@@ -27,4 +27,15 @@ public class LaunchPadLoggingOptions
     ///     Enable or disable debug logging, defaults to enabled
     /// </summary>
     public bool EnableDebugLogging { get; set; } = true;
+
+    /// <summary>
+    ///     The default debug message template
+    /// </summary>
+    public string TraceMessageTemplate { get; set; } =
+        "[{Timestamp:HH:mm:ss} {Level:w4}] {Message}{NewLine}{Exception}";
+
+    /// <summary>
+    ///     Enable or disable debug logging, defaults to enabled
+    /// </summary>
+    public bool EnableTraceLogging { get; set; } = true;
 }

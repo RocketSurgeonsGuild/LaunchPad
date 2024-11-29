@@ -1,0 +1,15 @@
+﻿{
+  schemas: {
+    NullableDecimalContainer: {
+      type: object,
+      properties: {
+        value: {
+          maximum: 1.1,
+          type: number,
+          format: double,
+          nullable: true
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,6 @@
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.CI.GitHubActions.Configuration;
 using Rocket.Surgery.Nuke.ContinuousIntegration;
-using Rocket.Surgery.Nuke.DotNetCore;
 using Rocket.Surgery.Nuke.GithubActions;
 
 #pragma warning disable CA1050
@@ -62,7 +61,7 @@ public partial class Pipeline
                  .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
                  .First(z => z.Name.Equals("build", StringComparison.OrdinalIgnoreCase));
         job
-           .UseDotNetSdks("8.0")
+           .UseDotNetSdks("8.0", "9.0")
            .ConfigureStep<CheckoutStep>(step => step.FetchDepth = 0)
            .PublishLogs<Pipeline>();
 
@@ -74,7 +73,7 @@ public partial class Pipeline
         configuration
            .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
            .First(z => z.Name.Equals("Build", StringComparison.OrdinalIgnoreCase))
-           .UseDotNetSdks("8.0");
+           .UseDotNetSdks("8.0", "9.0");
 
         return configuration;
     }

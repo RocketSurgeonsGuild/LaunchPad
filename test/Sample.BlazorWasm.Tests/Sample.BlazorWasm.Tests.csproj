@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0-browser</TargetFramework>
+        <TargetFramework>net9.0-browser</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\sample\Sample.BlazorWasm\Sample.BlazorWasm.csproj" />

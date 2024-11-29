@@ -1,0 +1,15 @@
+﻿{
+  schemas: {
+    NullableIntegerContainer: {
+      type: object,
+      properties: {
+        value: {
+          maximum: 1,
+          type: integer,
+          format: int32,
+          nullable: true
+        }
+      }
+    }
+  }
+}

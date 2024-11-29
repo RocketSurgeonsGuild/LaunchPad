@@ -1,14 +1,14 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
+using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogLevel.Trace)
+public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Remove_LaunchRecord()
@@ -29,7 +29,7 @@ public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTe
                                        );
 
         await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new DeleteLaunchRecord.Request { Id = id })
+            mediator => mediator.Send(new DeleteLaunchRecord.Request(id))
         );
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
@@ -56,7 +56,7 @@ public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTe
                               );
 
         Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new DeleteLaunchRecord.Request { Id = id })
+            mediator => mediator.Send(new DeleteLaunchRecord.Request(id))
         );
         await action.Should().ThrowAsync<NotAuthorizedException>();
     }

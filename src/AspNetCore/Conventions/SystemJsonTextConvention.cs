@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -44,17 +45,9 @@ public class SystemJsonTextConvention : IServiceConvention
 
         services
            .AddOptions<MvcJsonOptions>()
-           .Configure<IServiceProvider>(
-                (options, provider) => ActivatorUtilities
-                                      .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.JsonSerializerOptions)
-                                      .Create(nameof(MvcJsonOptions))
-            );
+           .Configure<IServiceProvider>((options, provider) => ExistingValueOptions.Apply(provider, options.JsonSerializerOptions, Options.DefaultName));
         services
            .AddOptions<HttpJsonOptions>()
-           .Configure<IServiceProvider>(
-                (options, provider) => ActivatorUtilities
-                                      .CreateInstance<ExistingValueOptionsFactory<JsonSerializerOptions>>(provider, options.SerializerOptions)
-                                      .Create(nameof(HttpJsonOptions))
-            );
+           .Configure<IServiceProvider>((options, provider) => ExistingValueOptions.Apply(provider, options.SerializerOptions, Options.DefaultName));
     }
 }

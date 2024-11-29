@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    NullableBooleanContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: boolean,
+          nullable: true
+        }
+      }
+    }
+  }
+}

@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-      <TargetFramework>net8.0</TargetFramework>
-      <AssemblyName>Sample.Graphql.Executable</AssemblyName>
-      <GraphQLStrictSchemaValidation>disable</GraphQLStrictSchemaValidation>
-      <GraphQLClientStore>enable</GraphQLClientStore>
-      <GraphQLRazorComponents>enable</GraphQLRazorComponents>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>Sample.Graphql.Executable</AssemblyName>
+    <GraphQLStrictSchemaValidation>disable</GraphQLStrictSchemaValidation>
+    <GraphQLClientStore>enable</GraphQLClientStore>
+    <GraphQLRazorComponents>enable</GraphQLRazorComponents>
   </PropertyGroup>
 
   <ItemGroup>

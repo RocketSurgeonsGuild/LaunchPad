@@ -2,20 +2,19 @@
 using Microsoft.Extensions.DependencyInjection;
 using NetTopologySuite.IO;
 using NodaTime;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
+public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
 {
     [Fact]
     public async Task Should_Roundtrip_Instant()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -39,11 +38,12 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_LocalDate()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
         var clock = host.Services.GetRequiredService<IClock>();
+        var timeProvider = host.Services.GetRequiredService<TimeProvider>();
         var client = host.Services.GetRequiredService<IRocketClient>();
 
 
@@ -63,7 +63,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_LocalTime()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -87,7 +87,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_LocalDateTime()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -111,7 +111,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_OffsetDateTime()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -135,7 +135,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_OffsetTime()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -159,7 +159,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
 //    [Fact]
 //    public async Task Should_Roundtrip_ZonedDateTime()
 //    {
-//        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
+//        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
 //        var clock = host.Services.GetRequiredService<IClock>();
 //        var client = host.Services.GetRequiredService<IRocketClient>();
 //
@@ -180,7 +180,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_Period()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -203,7 +203,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_Duration()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -226,7 +226,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_Offset()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -249,7 +249,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_IsoDayOfWeek()
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -276,7 +276,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
     public async Task Should_Roundtrip_Geometry(string wkt)
     {
         await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(LoggerFactory),
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
@@ -299,7 +299,7 @@ public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) 
 //    public async Task Should_Roundtrip_Point()
 //    {
 //        await using var host = await AlbaHost.For<Program>(
-//            new LaunchPadExtension<FoundationTests>(LoggerFactory), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
+//            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
 //        );
 //
 //        var client = host.Services.GetRequiredService<IRocketClient>();

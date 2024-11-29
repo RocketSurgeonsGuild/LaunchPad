@@ -16,13 +16,8 @@ public static partial class DeleteLaunchRecord
     /// <summary>
     ///     The request to delete a launch record
     /// </summary>
-    public record Request : IRequest
-    {
-        /// <summary>
-        ///     The launch record to delete
-        /// </summary>
-        public LaunchRecordId Id { get; init; }
-    }
+    /// <param name="Id">The id of the record to delete</param>
+    public record Request(LaunchRecordId Id) : IRequest;
 
     [UsedImplicitly]
     private class Validator : AbstractValidator<Request>

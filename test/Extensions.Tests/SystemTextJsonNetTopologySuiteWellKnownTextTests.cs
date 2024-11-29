@@ -1,12 +1,11 @@
 using System.Text.Json;
 using FluentAssertions.Primitives;
 using NetTopologySuite.Geometries;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class SystemTextJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
+public class SystemTextJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     private static T DeserializeObject<T>(string geom, JsonSerializerOptions settings)
     {

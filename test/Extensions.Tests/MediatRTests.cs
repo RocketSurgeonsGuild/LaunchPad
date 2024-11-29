@@ -4,13 +4,11 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Reflection;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 namespace Extensions.Tests;
 
-public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
+public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     [Fact]
     public async Task Test1()
@@ -74,42 +72,6 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputH
         A
            .CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
            .MustHaveHappenedOnceExactly();
-    }
-
-    private class TestAssemblyProvider : IAssemblyProvider
-    {
-        public IEnumerable<Assembly> GetAssemblies()
-        {
-            return new[]
-            {
-                typeof(TestAssemblyProvider).GetTypeInfo().Assembly,
-                typeof(MediatRConvention).GetTypeInfo().Assembly,
-            };
-        }
-
-        public IEnumerable<Assembly> GetAssemblies(
-            Action<IAssemblyProviderAssemblySelector> action,
-            int lineNumber = 0,
-            string filePath = "",
-            string argumentExpression = ""
-        )
-        {
-            return new[]
-            {
-                typeof(TestAssemblyProvider).GetTypeInfo().Assembly,
-                typeof(MediatRConvention).GetTypeInfo().Assembly,
-            };
-        }
-
-        public IEnumerable<Type> GetTypes(
-            Func<ITypeProviderAssemblySelector, IEnumerable<Type>> selector,
-            int lineNumber = 0,
-            string filePath = "",
-            string argumentExpression = ""
-        )
-        {
-            return Enumerable.Empty<Type>();
-        }
     }
 
     public class Request : IRequest;

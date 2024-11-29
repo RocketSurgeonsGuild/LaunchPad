@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
-internal class RestfulApiActionModelConvention : IActionModelConvention, ISchemaFilter
+internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenApiSchemaTransformer
 {
     private static string? GetHttpMethod(ActionModel action)
     {
@@ -157,7 +157,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
     }
 
     // TODO: Make a source generator for this to work without generics
-    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
     public void Apply(ActionModel action)
     {
         if (!typeof(RestfulApiController).IsAssignableFrom(action.Controller.ControllerType)) return;
@@ -170,14 +170,18 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, ISchema
         ExtractParameterDetails(action);
     }
 
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (_propertiesToHideFromOpenApi.TryGetValue(context.Type, out var propertiesToRemove))
-            foreach (var property in propertiesToRemove
-                                    .Join(schema.Properties, z => z, z => z.Key, (_, b) => b.Key, StringComparer.OrdinalIgnoreCase)
-                                    .ToArray())
-            {
-                schema.Properties.Remove(property);
-            }
+        if (!_propertiesToHideFromOpenApi.TryGetValue(context.JsonTypeInfo.Type, out var propertiesToRemove)) return Task.CompletedTask;
+
+        foreach (var property in propertiesToRemove
+                                .Join(schema.Properties, z => z, z => z.Key, (_, b) => b.Key, StringComparer.OrdinalIgnoreCase)
+                                .ToArray()
+                )
+        {
+            schema.Properties.Remove(property);
+        }
+
+        return Task.CompletedTask;
     }
 }

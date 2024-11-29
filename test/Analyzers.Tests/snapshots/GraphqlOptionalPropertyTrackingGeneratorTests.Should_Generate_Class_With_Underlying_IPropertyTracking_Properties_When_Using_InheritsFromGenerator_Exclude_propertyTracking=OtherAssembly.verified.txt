@@ -23,6 +23,7 @@
   },
   References: [
     HotChocolate.Abstractions.dll,
+    HotChocolate.Types.Errors.dll,
     MediatR.Contracts.dll,
     MediatR.dll,
     Microsoft.Extensions.DependencyInjection.Abstractions.dll,

@@ -24,14 +24,14 @@ namespace TestNamespace
             {
                 return new Changes()
                 {
-                    LaunchRecordId = LaunchRecordId.HasBeenSet()
+                    LaunchRecordId = LaunchRecordId.HasValue
                 };
             }
 
             [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
             public global::TestNamespace.GetRocketLaunchRecord.Request ApplyChanges(global::TestNamespace.GetRocketLaunchRecord.Request state)
             {
-                if (LaunchRecordId.HasBeenSet())
+                if (LaunchRecordId.HasValue)
                 {
                     state = state with
                     {

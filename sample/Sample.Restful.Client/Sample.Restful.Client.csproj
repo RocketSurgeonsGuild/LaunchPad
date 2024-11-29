@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <OpenApiGenerateCodeOnBuild>true</OpenApiGenerateCodeOnBuild>
     </PropertyGroup>
     <ItemGroup>
@@ -11,12 +11,11 @@
         />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="NSwag.ApiDescription.Client" />
-        <PackageReference Include="System.ComponentModel.Annotations"
-            Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+        <PackageReference Include="System.ComponentModel.Annotations" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
     </ItemGroup>
     <ItemGroup>
-        <OpenApiProjectReference
-            Include="../Sample.Restful/Sample.Restful.csproj"
+        <OpenApiReference
+            Include="../../test/Sample.Restful.Tests/snapshots/FoundationTests.OpenApiDocument.verified.json"
             ClassName="{controller}Client"
             CodeGenerator="NSwagCSharp"
             Namespace="$(RootNamespace)"

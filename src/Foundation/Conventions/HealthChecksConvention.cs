@@ -8,9 +8,9 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 /// <summary>
 ///     EnvironmentLoggingConvention.
-///     Implements the <see cref="ISerilogConvention" />
+///     Implements the <see cref="IServiceConvention" />
 /// </summary>
-/// <seealso cref="ISerilogConvention" />
+/// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]

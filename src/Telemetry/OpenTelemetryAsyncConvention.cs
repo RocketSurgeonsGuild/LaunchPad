@@ -11,6 +11,7 @@ namespace Rocket.Surgery.LaunchPad.Telemetry;
 /// <param name="configuration"></param>
 /// <param name="builder"></param>
 /// <param name="cancellationToken"></param>
+[PublicAPI]
 public delegate ValueTask OpenTelemetryAsyncConvention(
     IConventionContext context,
     IConfiguration configuration,

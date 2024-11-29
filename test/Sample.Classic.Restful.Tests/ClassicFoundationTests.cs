@@ -1,9 +1,5 @@
 using System.Net;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Sample.Classic.Restful.Tests.Helpers;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Sample.Classic.Restful.Tests;
 
@@ -18,18 +14,10 @@ public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebA
     }
 
     [Fact]
-    public void OpenApiDocument()
+    public async Task OpenApiDocument()
     {
-        var docs = ServiceProvider
-                  .GetRequiredService<IOptions<SwaggerGeneratorOptions>>()
-                  .Value.SwaggerDocs.Keys;
-        foreach (var document in docs)
-        {
-            ServiceProvider
-               .GetRequiredService<ISwaggerProvider>()
-               .GetSwagger(document)
-               .Should()
-               .NotBeNull();
-        }
+        var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json");
+        var document = await response.Content.ReadAsStringAsync();
+        await Verify(document, extension: "json");
     }
 }

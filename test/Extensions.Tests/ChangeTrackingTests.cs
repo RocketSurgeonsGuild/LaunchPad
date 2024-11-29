@@ -1,17 +1,16 @@
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests;
 
-public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : LoggerTest(testOutputHelper)
+public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
 {
     [Fact]
     public void ShouldTrackChanges_For_Classes()
     {
         var tracking = new ClassWithTracking(1);
-        tracking.Name.HasBeenSet().Should().BeFalse();
+        tracking.Name.HasValue.Should().BeFalse();
         tracking.Name = "Test";
-        tracking.Name.HasBeenSet().Should().BeTrue();
+        tracking.Name.HasValue.Should().BeTrue();
     }
 
     [Fact]
@@ -22,7 +21,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
             Name = "Test",
         };
         tracking.ResetChanges();
-        tracking.Name.HasBeenSet().Should().BeFalse();
+        tracking.Name.HasValue.Should().BeFalse();
     }
 
     [Fact]
@@ -51,8 +50,8 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         };
         var tracking = ClassWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
-        tracking.Name.HasBeenSet().Should().BeFalse();
-        tracking.Description.HasBeenSet().Should().BeTrue();
+        tracking.Name.HasValue.Should().BeFalse();
+        tracking.Description.HasValue.Should().BeTrue();
         tracking.ApplyChanges(instance);
 
         instance.Name.Should().Be("MyName");
@@ -63,9 +62,9 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
     public void ShouldTrackChanges_For_Records()
     {
         var tracking = new RecordWithTracking(1);
-        tracking.Name.HasBeenSet().Should().BeFalse();
+        tracking.Name.HasValue.Should().BeFalse();
         tracking.Name = "Test";
-        tracking.Name.HasBeenSet().Should().BeTrue();
+        tracking.Name.HasValue.Should().BeTrue();
     }
 
     [Fact]
@@ -76,7 +75,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
             Name = "Test",
         };
         tracking.ResetChanges();
-        tracking.Name.HasBeenSet().Should().BeFalse();
+        tracking.Name.HasValue.Should().BeFalse();
     }
 
     [Fact]
@@ -101,8 +100,8 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         };
         var tracking = RecordWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
-        tracking.Name.HasBeenSet().Should().BeFalse();
-        tracking.Description.HasBeenSet().Should().BeTrue();
+        tracking.Name.HasValue.Should().BeFalse();
+        tracking.Description.HasValue.Should().BeTrue();
         instance = tracking.ApplyChanges(instance);
 
         instance.Name.Should().Be("MyName");

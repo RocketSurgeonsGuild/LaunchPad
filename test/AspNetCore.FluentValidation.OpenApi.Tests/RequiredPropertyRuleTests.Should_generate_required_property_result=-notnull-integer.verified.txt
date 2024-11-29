@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    IntegerContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          type: integer,
+          format: int32
+        }
+      }
+    }
+  }
+}

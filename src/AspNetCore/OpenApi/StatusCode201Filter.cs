@@ -1,15 +1,15 @@
-﻿using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-internal class StatusCode201Filter : IOperationFilter
+internal class StatusCode201Filter : IOpenApiOperationTransformer
 {
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
         // enhance the 201 with the response header
         if (!operation.Responses.TryGetValue("201", out var value))
-            return;
+            return Task.CompletedTask;
         value.Headers.Add(
             "location",
             new OpenApiHeader
@@ -19,5 +19,6 @@ internal class StatusCode201Filter : IOperationFilter
                 Description = "The location of the entity that was created"
             }
         );
+        return Task.CompletedTask;
     }
 }

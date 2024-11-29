@@ -8,7 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.Conventions.Reflection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
@@ -47,7 +47,7 @@ public class FluentValidationConvention : IServiceConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var types = context.AssemblyProvider.GetTypes(
+        var types = context.TypeProvider.GetTypes(
             z => z
                 .FromAssemblyDependenciesOf<IValidator>()
                 .GetTypes(
@@ -57,13 +57,17 @@ public class FluentValidationConvention : IServiceConvention
                          .NotInfoOf(TypeInfoFilter.GenericType)
                  )
         );
-        foreach (var validator in types)
-        {
-            if (validator is not { BaseType: { IsGenericType: true, GenericTypeArguments: [var innerType,], }, }) continue;
-            var interfaceType = typeof(IValidator<>).MakeGenericType(innerType);
-            services.Add(new(interfaceType, validator, _options.ValidatorLifetime));
-            services.Add(new(validator, validator, _options.ValidatorLifetime));
-        }
+
+        context.TypeProvider
+               .Scan(
+                    services,
+                    z => z
+                        .FromAssemblyDependenciesOf<IValidator>()
+                        .AddClasses(t => t.AssignableTo<IValidator>().NotAssignableTo(typeof(CompositeValidator<>)))
+                        .AsSelf()
+                        .AsImplementedInterfaces(a => a.AssignableTo<IValidator>())
+                        .WithTransientLifetime()
+                );
 
         if (_options.RegisterValidationOptionsAsHealthChecks == true
          || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue

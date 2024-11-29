@@ -1,23 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-internal class ProblemDetailsSchemaFilter : ISchemaFilter
+internal class ProblemDetailsSchemaFilter : IOpenApiSchemaTransformer
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (typeof(ProblemDetails).IsAssignableFrom(context.Type))
+        if (true) return Task.CompletedTask;
+        if (!typeof(ProblemDetails).IsAssignableFrom(context.JsonTypeInfo.Type)) return Task.CompletedTask;
+        schema.AdditionalPropertiesAllowed = true;
+        schema.Properties.Remove(nameof(ProblemDetails.Extensions));
+        schema.Properties.Remove("extensions");
+        if (schema.Properties.TryGetValue("validationErrors", out var v))
         {
-            schema.AdditionalPropertiesAllowed = true;
-            schema.Properties.Remove(nameof(ProblemDetails.Extensions));
-            schema.Properties.Remove("extensions");
-            if (schema.Properties.TryGetValue("validationErrors", out var v))
-            {
-                schema.Properties["errors"] = v;
-                schema.Properties.Remove("validationErrors");
-            }
+            schema.Properties["errors"] = v;
+            schema.Properties.Remove("validationErrors");
         }
+        return Task.CompletedTask;
     }
 }

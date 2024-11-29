@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
     <PropertyGroup>
-        <TargetFramework>net8.0-browser</TargetFramework>
+        <TargetFramework>net9.0-browser</TargetFramework>
         <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
         <ImportConventions>true</ImportConventions>
     </PropertyGroup>

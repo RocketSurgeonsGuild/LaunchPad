@@ -27,9 +27,19 @@
             "commands": ["jb"],
             "rollForward": false
         },
-        "nukeeper": {
-            "version": "0.35.0",
-            "commands": ["nukeeper"],
+        "jetbrains.dotcover.commandlinetools": {
+            "version": "2024.3.0",
+            "commands": ["dotnet-dotCover"],
+            "rollForward": false
+        },
+        "jetbrains.dottrace.globaltools": {
+            "version": "2024.3.0",
+            "commands": ["dottrace"],
+            "rollForward": false
+        },
+        "dotnet-coverage": {
+            "version": "17.12.6",
+            "commands": ["dotnet-coverage"],
             "rollForward": false
         },
         "docfx": {
@@ -38,7 +48,7 @@
             "rollForward": false
         },
         "strawberryshake.tools": {
-            "version": "14.0.0-rc.2",
+            "version": "14.2.0-p.4",
             "commands": ["dotnet-graphql"],
             "rollForward": false
         },
@@ -55,11 +65,6 @@
         "husky": {
             "version": "0.7.1",
             "commands": ["husky"],
-            "rollForward": false
-        },
-        "liquidtestreports.cli": {
-            "version": "2.0.0-beta.6",
-            "commands": ["liquid"],
             "rollForward": false
         }
     }

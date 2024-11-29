@@ -17,13 +17,8 @@ public static partial class GetLaunchRecord
     /// <summary>
     ///     The request to get a launch record
     /// </summary>
-    public record Request : IRequest<LaunchRecordModel>
-    {
-        /// <summary>
-        ///     The launch record to find
-        /// </summary>
-        public LaunchRecordId Id { get; init; }
-    }
+    /// <param name="Id">The id of the launch record</param>
+    public record Request(LaunchRecordId Id) : IRequest<LaunchRecordModel>;
 
     private class Validator : AbstractValidator<Request>
     {

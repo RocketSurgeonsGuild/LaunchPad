@@ -1,12 +1,11 @@
 using System.Text.Json;
 using FluentAssertions.Primitives;
 using NetTopologySuite.Geometries;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
+public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     private readonly JsonSerializerOptions _settings = new JsonSerializerOptions().ConfigureGeoJsonForLaunchPad(null);
 

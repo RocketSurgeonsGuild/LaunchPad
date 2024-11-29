@@ -3,13 +3,5 @@
     NodaTimeTest: {
       LocalDateTime: 2020-01-01T00:00:00
     }
-  },
-  DataInfo: {
-    NodaTimeTest: {
-      __typename: NodaTimeOutputs,
-      LocalDateTime: 2020-01-01T00:00:00
-    },
-    Version: 1
-  },
-  DataFactory: {}
+  }
 }

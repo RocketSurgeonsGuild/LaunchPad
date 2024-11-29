@@ -21,14 +21,14 @@ public partial class PatchRequest
     {
         return new Changes()
         {
-            Name = Name.HasBeenSet()
+            Name = Name.HasValue
         };
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public global::Request ApplyChanges(global::Request state)
     {
-        if (Name.HasBeenSet())
+        if (Name.HasValue)
         {
             state.Name = Name!;
         }

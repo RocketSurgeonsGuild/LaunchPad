@@ -1,0 +1,19 @@
+﻿{
+  schemas: {
+    CollectionContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          minLength: 1,
+          type: array,
+          items: {
+            type: string
+          }
+        }
+      }
+    }
+  }
+}

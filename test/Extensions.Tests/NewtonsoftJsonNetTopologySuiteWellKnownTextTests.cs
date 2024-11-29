@@ -1,12 +1,11 @@
 using FluentAssertions.Primitives;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : LoggerTest(outputHelper)
+public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     private static T DeserializeObject<T>(string geom, JsonSerializerSettings settings)
     {

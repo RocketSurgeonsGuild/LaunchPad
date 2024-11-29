@@ -11,6 +11,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// </summary>
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods)]
 public class OptionsConvention : IServiceConvention
 {
     private readonly MethodInfo _configureMethod;
@@ -20,22 +21,28 @@ public class OptionsConvention : IServiceConvention
     /// </summary>
     public OptionsConvention()
     {
-        _configureMethod = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
-            nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
-            [typeof(IServiceCollection), typeof(string), typeof(IConfiguration),]
-        )!;
+        _configureMethod = GetType().GetMethod(nameof(Configure), BindingFlags.NonPublic | BindingFlags.Static)!;
     }
 
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        var classes = context.AssemblyProvider.GetTypes(
+        var classes = context.TypeProvider.GetTypes(
             s => s.FromAssemblyDependenciesOf<RegisterOptionsConfigurationAttribute>().GetTypes(f => f.WithAttribute<RegisterOptionsConfigurationAttribute>())
         );
         foreach (var options in classes)
         {
             var attribute = options.GetCustomAttribute<RegisterOptionsConfigurationAttribute>()!;
+            #pragma warning disable IL2060
             _configureMethod.MakeGenericMethod(options).Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey),]);
+            #pragma warning restore IL2060
         }
+    }
+
+    [RequiresUnreferencedCode("Calls Microsoft.Extensions.DependencyInjection.OptionsConfigurationServiceCollectionExtensions.Configure<TOptions>(String, IConfiguration)")]
+    private static IServiceCollection Configure<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TOptions>(IServiceCollection services, string? name, IConfiguration config)
+        where TOptions : class
+    {
+        return services.Configure<TOptions>(name, config);
     }
 }

@@ -3,13 +3,5 @@
     NodaTimeTest: {
       Duration: 0:01:00:00
     }
-  },
-  DataInfo: {
-    NodaTimeTest: {
-      __typename: NodaTimeOutputs,
-      Duration: 0:01:00:00
-    },
-    Version: 1
-  },
-  DataFactory: {}
+  }
 }

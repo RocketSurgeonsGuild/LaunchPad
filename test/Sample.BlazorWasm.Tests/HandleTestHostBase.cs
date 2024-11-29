@@ -3,26 +3,23 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
-using Rocket.Surgery.Extensions.Testing;
+using Serilog.Events;
 
 namespace Sample.BlazorWasm.Tests;
 
-public abstract class HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : AutoFakeTest(
-    outputHelper,
-    logLevel,
-    "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
-), IAsyncLifetime
+public abstract class HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : AutoFakeTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper, logLevel)), IAsyncLifetime
 {
     private IConventionContext _hostBuilder = null!;
 
     public async Task InitializeAsync()
     {
+        var loggerFactory = CreateLoggerFactory();
         _hostBuilder =
             await ConventionContext.FromAsync(
                 ConventionContextBuilder
                    .Create()
-                   .ForTesting(Imports.Instance, LoggerFactory)
-                   .WithLogger(Logger)
+                   .ForTesting(Imports.Instance, loggerFactory)
+                   .WithLogger(loggerFactory.CreateLogger("Test"))
             );
         ExcludeSourceContext(nameof(WebAssemblyHostBuilder));
         ExcludeSourceContext(nameof(WebAssemblyHost));

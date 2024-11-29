@@ -3,13 +3,5 @@
     NodaTimeTest: {
       Instant: 2020-01-01T00:00:00Z
     }
-  },
-  DataInfo: {
-    NodaTimeTest: {
-      __typename: NodaTimeOutputs,
-      Instant: 2020-01-01T00:00:00Z
-    },
-    Version: 1
-  },
-  DataFactory: {}
+  }
 }

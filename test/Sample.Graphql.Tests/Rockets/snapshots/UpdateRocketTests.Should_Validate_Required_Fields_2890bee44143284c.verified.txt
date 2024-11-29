@@ -1,5 +1,4 @@
 ﻿{
-  DataFactory: {},
   Errors: [
     {
       Message: The length of 'Serial Number' must be at least 10 characters. You entered 2 characters.,

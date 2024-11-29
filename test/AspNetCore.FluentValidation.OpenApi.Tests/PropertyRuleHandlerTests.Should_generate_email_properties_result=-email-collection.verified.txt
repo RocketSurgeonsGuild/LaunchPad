@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    CollectionContainer: {
+      type: object,
+      properties: {
+        value: {
+          type: array,
+          items: {
+            type: string
+          },
+          format: email
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Serilog;
 
@@ -35,6 +36,10 @@ public class SerilogEnrichEnvironmentLoggingConvention : ISerilogConvention
            .Enrich.WithMachineName()
            .Enrich.WithProcessId()
            .Enrich.WithProcessName()
-           .Enrich.WithThreadId();
+           .Enrich.WithThreadId()
+           .Enrich.WithAssemblyInformationalVersion()
+           .Enrich.WithAssemblyName()
+           .Enrich.WithAssemblyVersion()
+            ;
     }
 }

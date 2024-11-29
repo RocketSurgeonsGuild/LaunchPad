@@ -13,7 +13,6 @@ public static class ModuleInitializer
     public static void Init()
     {
         VerifyGeneratorTextContext.Initialize(DiagnosticSeverity.Error, Customizers.Empty);
-
         DiffRunner.Disabled = true;
         DerivePathInfo(
             (sourceFile, _, type, method) =>

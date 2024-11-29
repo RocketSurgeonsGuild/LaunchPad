@@ -1,10 +1,9 @@
 using System.Reflection;
-using Rocket.Surgery.Extensions.Testing;
 using Rocket.Surgery.LaunchPad.Metadata;
 
 namespace Metadata.Tests;
 
-public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest(outputHelper)
+public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     [Fact(Skip = "Disabled for CI")]
     public void ReturnsInformationForVersionedAssembly()

@@ -27,20 +27,20 @@ namespace Sample.Core.Operations.Rockets
         {
             return new Changes()
             {
-                PlannedDate = PlannedDate.HasBeenSet(),
-                Type = Type.HasBeenSet()
+                PlannedDate = PlannedDate.HasValue,
+                Type = Type.HasValue
             };
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
         public global::Request ApplyChanges(global::Request state)
         {
-            if (PlannedDate.HasBeenSet())
+            if (PlannedDate.HasValue)
             {
                 state.PlannedDate = PlannedDate!;
             }
 
-            if (Type.HasBeenSet())
+            if (Type.HasValue)
             {
                 state.Type = Type!;
             }

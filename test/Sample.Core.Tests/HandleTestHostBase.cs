@@ -1,31 +1,25 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using DryIoc;
+using DryIoc.Microsoft.DependencyInjection;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.Extensions.Testing;
 using Sample.Core.Domain;
+using Serilog.Events;
 
 namespace Sample.Core.Tests;
 
-public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
+public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyncLifetime
 {
-    private readonly ConventionContextBuilder _context;
+    private ConventionContextBuilder? _context;
     private SqliteConnection? _connection;
 
-    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogLevel logLevel = LogLevel.Information) : base(
-        outputHelper,
-        logLevel,
-        "[{Timestamp:HH:mm:ss} {Level:w4}] {Message} <{SourceContext}>{NewLine}{Exception}"
+    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : base(
+        XUnitTestContext.Create(outputHelper, logLevel)
     )
     {
-        _context =
-            ConventionContextBuilder
-               .Create()
-               .ForTesting(Imports.Instance, LoggerFactory)
-               .WithLogger(LoggerFactory.CreateLogger(nameof(AutoFakeTest)));
         ExcludeSourceContext(nameof(AutoFakeTest));
     }
 
@@ -33,29 +27,28 @@ public abstract class HandleTestHostBase : AutoFakeTest, IAsyncLifetime
     {
         _connection = new("DataSource=:memory:");
         await _connection.OpenAsync();
+        var factory = CreateLoggerFactory();
+        _context = ConventionContextBuilder
+                  .Create()
+                  .ForTesting(Imports.Instance, factory)
+                  .WithLogger(factory.CreateLogger(GetType().Name));
 
-        _context
-           .ConfigureServices(
-                (_, services) =>
-                {
-                    services.AddDbContextPool<RocketDbContext>(
-                        z => z
-                            .EnableDetailedErrors()
-                            .EnableSensitiveDataLogging()
-                            .UseSqlite(
-                                 _connection
+        var services = await new ServiceCollection()
+                            .AddDbContextPool<RocketDbContext>(
+                                 z => z
+                                     .EnableDetailedErrors()
+                                     .EnableSensitiveDataLogging()
+                                     .UseSqlite(_connection)
                              )
-                    );
-                }
-            );
-
-        Populate(await new ServiceCollection().ApplyConventionsAsync(await ConventionContext.FromAsync(_context)));
-
-        await ServiceProvider.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
+           .ApplyConventionsAsync(await ConventionContext.FromAsync(_context));
+        Populate(services);
+        await Container.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
     }
 
     public async Task DisposeAsync()
     {
         await _connection!.DisposeAsync();
     }
+
+    protected override IContainer BuildContainer(IContainer container) => container.WithDependencyInjectionAdapter().Container;
 }

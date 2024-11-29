@@ -24,20 +24,20 @@ public partial class PatchRocket
     {
         return new Changes()
         {
-            SerialNumber = SerialNumber.HasBeenSet(),
-            Type = Type.HasBeenSet()
+            SerialNumber = SerialNumber.HasValue,
+            Type = Type.HasValue
         };
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
     public global::Request ApplyChanges(global::Request state)
     {
-        if (SerialNumber.HasBeenSet())
+        if (SerialNumber.HasValue)
         {
             state.SerialNumber = SerialNumber!;
         }
 
-        if (Type.HasBeenSet())
+        if (Type.HasValue)
         {
             state.Type = Type!;
         }

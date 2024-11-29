@@ -1,5 +1,4 @@
 ﻿{
-  DataFactory: {},
   Errors: [
     {
       Message: The required input field `type` is missing.,

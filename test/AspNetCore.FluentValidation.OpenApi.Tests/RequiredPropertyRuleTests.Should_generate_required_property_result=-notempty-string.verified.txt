@@ -1,0 +1,16 @@
+﻿{
+  schemas: {
+    StringContainer: {
+      required: [
+        value
+      ],
+      type: object,
+      properties: {
+        value: {
+          minLength: 1,
+          type: string
+        }
+      }
+    }
+  }
+}

@@ -39,10 +39,10 @@ public static class RocketSurgeryOpenTelemetryExtensions
                     @delegate(context, configuration, builder);
                     break;
                 case IOpenTelemetryAsyncConvention convention:
-                    await convention.Register(context, configuration, builder, cancellationToken);
+                    await convention.Register(context, configuration, builder, cancellationToken).ConfigureAwait(false);
                     break;
                 case OpenTelemetryAsyncConvention @delegate:
-                    await @delegate(context, configuration, builder, cancellationToken);
+                    await @delegate(context, configuration, builder, cancellationToken).ConfigureAwait(false);
                     break;
             }
         }
@@ -55,6 +55,8 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// </summary>
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(
         this ConventionContextBuilder container,
@@ -77,6 +79,8 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// </summary>
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(
         this ConventionContextBuilder container,
@@ -98,6 +102,8 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// </summary>
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(
         this ConventionContextBuilder container,
@@ -119,6 +125,8 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// </summary>
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(
         this ConventionContextBuilder container,
@@ -140,6 +148,8 @@ public static class RocketSurgeryOpenTelemetryExtensions
     /// </summary>
     /// <param name="container">The container.</param>
     /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
     /// <returns>IConventionHostBuilder.</returns>
     public static ConventionContextBuilder ConfigureOpenTelemetry(
         this ConventionContextBuilder container,
