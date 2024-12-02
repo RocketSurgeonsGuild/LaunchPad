@@ -25,10 +25,7 @@ public class TimeConvention : IServiceConvention, ISerilogConvention
     ///     Create the NodaTime convention
     /// </summary>
     /// <param name="options"></param>
-    public TimeConvention(FoundationOptions? options = null)
-    {
-        _options = options ?? new FoundationOptions();
-    }
+    public TimeConvention(FoundationOptions? options = null) => _options = options ?? new FoundationOptions();
 
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration)

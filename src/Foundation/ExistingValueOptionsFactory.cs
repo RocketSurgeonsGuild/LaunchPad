@@ -1,16 +1,16 @@
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
 
 /// <summary>
-/// Helper methods for creating <see cref="ExistingValueOptionsFactory{TOptions}"/> instances.
+///     Helper methods for creating <see cref="ExistingValueOptionsFactory{TOptions}" /> instances.
 /// </summary>
 public static class ExistingValueOptions
 {
     /// <summary>
-    /// Applys all of the <see cref="IConfigureOptions{TOptions}"/>, <see cref="IPostConfigureOptions{TOptions}"/>, and <see cref="IValidateOptions{TOptions}"/> instances to the options instance.
+    ///     Applys all of the <see cref="IConfigureOptions{TOptions}" />, <see cref="IPostConfigureOptions{TOptions}" />, and <see cref="IValidateOptions{TOptions}" />
+    ///     instances to the options instance.
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <param name="options"></param>
@@ -49,10 +49,8 @@ public class ExistingValueOptionsFactory<TOptions> : OptionsFactory<TOptions>
         IEnumerable<IConfigureOptions<TOptions>> setups,
         IEnumerable<IPostConfigureOptions<TOptions>> postConfigures,
         IEnumerable<IValidateOptions<TOptions>> validations
-    ) : base(setups, postConfigures, validations)
-    {
+    ) : base(setups, postConfigures, validations) =>
         _instance = instance;
-    }
 
     /// <inheritdoc />
     protected override TOptions CreateInstance(string name) => _instance;

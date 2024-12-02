@@ -11,7 +11,7 @@ public class AutoRegisterOptions(ITestOutputHelper testOutputHelper) : Conventio
     [Fact]
     public async Task Should_Register_Options()
     {
-        await Init(x => x.ConfigureConfiguration(builder => builder.AddInMemoryCollection([new("OptionsA:A", "B"), new("OptionsB:B", "A"),])));
+        await Init(x => x.ConfigureConfiguration(builder => builder.AddInMemoryCollection([new("OptionsA:A", "B"), new("OptionsB:B", "A")])));
         ServiceProvider.GetRequiredService<IOptions<OptionsA>>().Value.A.Should().Be("B");
         ServiceProvider.GetRequiredService<IOptions<OptionsB>>().Value.B.Should().Be("A");
     }
