@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 
@@ -30,6 +31,7 @@ public class OptionsConvention : IServiceConvention
         var classes = context.TypeProvider.GetTypes(
             s => s.FromAssemblyDependenciesOf<RegisterOptionsConfigurationAttribute>().GetTypes(f => f.WithAttribute<RegisterOptionsConfigurationAttribute>())
         );
+
         foreach (var options in classes)
         {
             var attribute = options.GetCustomAttribute<RegisterOptionsConfigurationAttribute>()!;

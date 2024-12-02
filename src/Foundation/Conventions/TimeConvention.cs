@@ -49,6 +49,6 @@ public class TimeConvention : IServiceConvention, ISerilogConvention
         // Try add so that unit tests can insert fakes
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IClock>(SystemClock.Instance);
-        services.TryAddSingleton(DateTimeZoneProviders.Tzdb);
+        services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
     }
 }

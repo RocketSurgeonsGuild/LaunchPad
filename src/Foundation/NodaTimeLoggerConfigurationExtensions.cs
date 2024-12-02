@@ -18,9 +18,7 @@ public static class NodaTimeLoggerConfigurationExtensions
     {
         return configuration
               .AsScalar<Offset>()
-              .Destructure
-              .AsScalar<CalendarSystem>()
-              .Destructure
-              .With(new NodaTimeDestructuringPolicy());
+              .Destructure.AsScalar<CalendarSystem>()
+              .Destructure.With(new NodaTimeDestructuringPolicy());
     }
 }
