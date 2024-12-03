@@ -188,14 +188,14 @@ type LaunchRecordsEdge {
 }
 
 type Mutation {
-  createRocket(request: CreateRocketRequest!): CreateRocketResponse! @cost(weight: "10")
-  editRocket(request: EditRocketRequest!): RocketModel! @cost(weight: "10")
-  patchRocket(request: EditRocketPatchRequestInput!): RocketModel! @cost(weight: "10")
-  deleteRocket(request: DeleteRocketRequest!): Void! @cost(weight: "10")
   createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse! @cost(weight: "10")
   editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel! @cost(weight: "10")
   patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel! @cost(weight: "10")
   deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void! @cost(weight: "10")
+  createRocket(request: CreateRocketRequest!): CreateRocketResponse! @cost(weight: "10")
+  editRocket(request: EditRocketRequest!): RocketModel! @cost(weight: "10")
+  patchRocket(request: EditRocketPatchRequestInput!): RocketModel! @cost(weight: "10")
+  deleteRocket(request: DeleteRocketRequest!): Void! @cost(weight: "10")
 }
 
 type NodaTimeOutputs {
@@ -225,10 +225,10 @@ type PageInfo {
 }
 
 type Query {
-  launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput @cost(weight: "10") order: [LaunchRecordSortInput!] @cost(weight: "10")): LaunchRecordsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
-  rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput @cost(weight: "10") order: [ReadyRocketSortInput!] @cost(weight: "10")): RocketsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
   nodaTimeTest(inputs: NodaTimeInputsInput!): NodaTimeOutputs!
   geometryTest(inputs: GeometryInputsInput!): GeometryOutputs!
+  launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput @cost(weight: "10") order: [LaunchRecordSortInput!] @cost(weight: "10")): LaunchRecordsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput @cost(weight: "10") order: [ReadyRocketSortInput!] @cost(weight: "10")): RocketsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
 }
 
 "A rocket in inventory"
