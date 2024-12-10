@@ -33,7 +33,7 @@
         <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.1.1" />
         <PackageVersion Include="Serilog.Sinks.Spectre" Version="0.5.0" />
         <PackageVersion Include="Serilog.Sinks.Trace" Version="4.0.0" />
-        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.1.0" />
+        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
         <PackageVersion Include="xunit.analyzers" Version="1.17.0" />
         <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0" />
         <PackageVersion Include="JetBrains.dotCover.CommandLineTools" Version="2024.3.1" />
@@ -135,7 +135,7 @@
         <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
         <PackageVersion Include="Serilog.Sinks.Observable" Version="3.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
-        <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="7.1.0" />
+        <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="7.2.0" />
         <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="8.0.1" />
         <PackageVersion Include="System.Collections.Immutable" Version="9.0.0" />
         <PackageVersion Include="System.Interactive" Version="6.0.1" />
