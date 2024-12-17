@@ -165,7 +165,7 @@
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="9.0.2" />
         <PackageVersion Include="xunit" Version="2.9.2" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
-        <PackageVersion Include="Verify.Xunit" Version="28.5.0" />
+        <PackageVersion Include="Verify.Xunit" Version="28.6.0" />
         <PackageVersion Include="Verify.NodaTime" Version="2.2.0" />
         <PackageVersion Include="Verify.SystemJson" Version="1.4.1" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />
