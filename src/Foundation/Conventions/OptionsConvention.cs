@@ -12,6 +12,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods)]
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class OptionsConvention : IServiceConvention
 {
     [RequiresUnreferencedCode(
@@ -22,8 +23,10 @@ public class OptionsConvention : IServiceConvention
         string? name,
         IConfiguration config
     )
-        where TOptions : class =>
-        services.Configure<TOptions>(name, config);
+        where TOptions : class
+    {
+        return services.Configure<TOptions>(name, config);
+    }
 
     private readonly MethodInfo _configureMethod;
 
@@ -32,19 +35,23 @@ public class OptionsConvention : IServiceConvention
     /// </summary>
     public OptionsConvention() => _configureMethod = GetType().GetMethod(nameof(Configure), BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay => ToString();
+
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         var classes = context.TypeProvider.GetTypes(
-            s => s.FromAssemblyDependenciesOf<RegisterOptionsConfigurationAttribute>().GetTypes(f => f.WithAttribute<RegisterOptionsConfigurationAttribute>())
+            s => s.FromAssemblies()
+                  .GetTypes(z => z.WithAttribute<RegisterOptionsConfigurationAttribute>())
         );
 
         foreach (var options in classes)
         {
             var attribute = options.GetCustomAttribute<RegisterOptionsConfigurationAttribute>()!;
-            #pragma warning disable IL2060
-            _configureMethod.MakeGenericMethod(options).Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
-            #pragma warning restore IL2060
+#pragma warning disable IL2060
+            _ = _configureMethod.MakeGenericMethod(options).Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
+#pragma warning restore IL2060
         }
     }
 }
