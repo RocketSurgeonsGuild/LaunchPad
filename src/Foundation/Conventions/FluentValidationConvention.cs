@@ -8,7 +8,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.DependencyInjection.Compiled;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
@@ -19,23 +18,22 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// </summary>
 /// <seealso cref="IServiceConvention" />
 /// <seealso cref="IServiceConvention" />
+/// <remarks>
+///     Create the fluent validation convention
+/// </remarks>
+/// <param name="options"></param>
 [PublicAPI]
 [ExportConvention]
 [AfterConvention(typeof(MediatRConvention))]
 [AfterConvention(typeof(HealthChecksConvention))]
 [ConventionCategory(ConventionCategory.Core)]
-public class FluentValidationConvention : IServiceConvention
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+public class FluentValidationConvention(FoundationOptions? options = null) : IServiceConvention
 {
-    private readonly FoundationOptions _options;
+    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 
-    /// <summary>
-    ///     Create the fluent validation convention
-    /// </summary>
-    /// <param name="options"></param>
-    public FluentValidationConvention(FoundationOptions? options = null)
-    {
-        _options = options ?? new FoundationOptions();
-    }
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay => ToString();
 
     /// <summary>
     ///     Registers the specified context.
@@ -47,18 +45,7 @@ public class FluentValidationConvention : IServiceConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var types = context.TypeProvider.GetTypes(
-            z => z
-                .FromAssemblyDependenciesOf<IValidator>()
-                .GetTypes(
-                     f => f
-                         .AssignableTo(typeof(AbstractValidator<>))
-                         .NotInfoOf(TypeInfoFilter.Abstract)
-                         .NotInfoOf(TypeInfoFilter.GenericType)
-                 )
-        );
-
-        context.TypeProvider
+        _ = context.TypeProvider
                .Scan(
                     services,
                     z => z
@@ -81,13 +68,13 @@ public class FluentValidationConvention : IServiceConvention
             ))
         {
             // need to do validations using ValidateOnStart
-            services.Decorate<HealthCheckService, CustomHealthCheckService>();
-            services.AddSingleton<ValidationHealthCheckResults>();
-            services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
+            _ = services.Decorate<HealthCheckService, CustomHealthCheckService>();
+            _ = services.AddSingleton<ValidationHealthCheckResults>();
+            _ = services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
         }
         else
         {
-            services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
+            _ = services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
         }
 
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));

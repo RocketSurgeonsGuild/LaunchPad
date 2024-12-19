@@ -3,9 +3,11 @@
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions"/>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
-    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing"/>
-    <ProjectReference Include="..\..\src\AspNetCore.FluentValidation.OpenApi\Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" IncludeAssets="all"/>
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+    <ProjectReference
+            Include="..\..\src\AspNetCore.FluentValidation.OpenApi\Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj"
+            IncludeAssets="all"
+        />
   </ItemGroup>
 </Project>
