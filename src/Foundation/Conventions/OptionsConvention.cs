@@ -42,7 +42,7 @@ public class OptionsConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         var classes = context.TypeProvider.GetTypes(
-            s => s.FromAssemblies()
+            s => s.FromAssemblyDependenciesOf<RegisterOptionsConfigurationAttribute>()
                   .GetTypes(z => z.WithAttribute<RegisterOptionsConfigurationAttribute>())
         );
 
