@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +14,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods)]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class OptionsConvention : IServiceConvention
 {
     [RequiresUnreferencedCode(
@@ -24,10 +25,8 @@ public class OptionsConvention : IServiceConvention
         string? name,
         IConfiguration config
     )
-        where TOptions : class
-    {
-        return services.Configure<TOptions>(name, config);
-    }
+        where TOptions : class =>
+        services.Configure<TOptions>(name, config);
 
     private readonly MethodInfo _configureMethod;
 
@@ -36,7 +35,7 @@ public class OptionsConvention : IServiceConvention
     /// </summary>
     public OptionsConvention() => _configureMethod = GetType().GetMethod(nameof(Configure), BindingFlags.NonPublic | BindingFlags.Static)!;
 
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string DebuggerDisplay => ToString();
 
     /// <inheritdoc />
