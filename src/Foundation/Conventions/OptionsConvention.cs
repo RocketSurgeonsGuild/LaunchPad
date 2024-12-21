@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -12,7 +14,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods)]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class OptionsConvention : IServiceConvention
 {
     [RequiresUnreferencedCode(
@@ -23,10 +25,8 @@ public class OptionsConvention : IServiceConvention
         string? name,
         IConfiguration config
     )
-        where TOptions : class
-    {
-        return services.Configure<TOptions>(name, config);
-    }
+        where TOptions : class =>
+        services.Configure<TOptions>(name, config);
 
     private readonly MethodInfo _configureMethod;
 
@@ -35,23 +35,32 @@ public class OptionsConvention : IServiceConvention
     /// </summary>
     public OptionsConvention() => _configureMethod = GetType().GetMethod(nameof(Configure), BindingFlags.NonPublic | BindingFlags.Static)!;
 
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string DebuggerDisplay => ToString();
 
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        var classes = context.TypeProvider.GetTypes(
-            s => s.FromAssemblies()
-                  .GetTypes(z => z.WithAttribute<RegisterOptionsConfigurationAttribute>())
-        );
+        var classes = context
+                     .TypeProvider
+                     .GetTypes(
+                          s => s
+                              .FromAssemblies()
+                              .GetTypes(
+                                   z => z
+                                       .NotInfoOf(TypeInfoFilter.Abstract, TypeInfoFilter.Static, TypeInfoFilter.GenericType)
+                                       .WithAnyAttribute(typeof(RegisterOptionsConfigurationAttribute))
+                               )
+                      );
 
         foreach (var options in classes)
         {
             var attribute = options.GetCustomAttribute<RegisterOptionsConfigurationAttribute>()!;
-#pragma warning disable IL2060
-            _ = _configureMethod.MakeGenericMethod(options).Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
-#pragma warning restore IL2060
+            #pragma warning disable IL2060
+            _ = _configureMethod
+               .MakeGenericMethod(options)
+               .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
+            #pragma warning restore IL2060
         }
     }
 }

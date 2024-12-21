@@ -7,7 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
         <ProjectReference
             Include="../Analyzers.roslyn4.6/Rocket.Surgery.LaunchPad.Analyzers.roslyn4.6.csproj"
             PrivateAssets="all"
