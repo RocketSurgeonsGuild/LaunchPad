@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -41,17 +42,26 @@ public class OptionsConvention : IServiceConvention
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        var classes = context.TypeProvider.GetTypes(
-            s => s.FromAssemblyDependenciesOf<RegisterOptionsConfigurationAttribute>()
-                  .GetTypes(z => z.WithAttribute<RegisterOptionsConfigurationAttribute>())
-        );
+        var classes = context
+                     .TypeProvider
+                     .GetTypes(
+                          s => s
+                              .FromAssemblies()
+                              .GetTypes(
+                                   z => z
+                                       .NotInfoOf(TypeInfoFilter.Abstract, TypeInfoFilter.Static, TypeInfoFilter.GenericType)
+                                       .WithAnyAttribute(typeof(RegisterOptionsConfigurationAttribute))
+                               )
+                      );
 
         foreach (var options in classes)
         {
             var attribute = options.GetCustomAttribute<RegisterOptionsConfigurationAttribute>()!;
-#pragma warning disable IL2060
-            _ = _configureMethod.MakeGenericMethod(options).Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
-#pragma warning restore IL2060
+            #pragma warning disable IL2060
+            _ = _configureMethod
+               .MakeGenericMethod(options)
+               .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
+            #pragma warning restore IL2060
         }
     }
 }
