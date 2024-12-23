@@ -120,7 +120,7 @@
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.26" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.37" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.37" />
-        <PackageVersion Include="Scrutor" Version="5.0.2" />
+        <PackageVersion Include="Scrutor" Version="5.0.3" />
         <PackageVersion Include="Serilog" Version="4.2.0" />
         <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Demystify" Version="1.0.0-dev-00019" />
