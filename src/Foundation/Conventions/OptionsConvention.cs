@@ -57,7 +57,7 @@ public class OptionsConvention : IServiceConvention
         {
             var attribute = options.GetCustomAttribute<RegisterOptionsConfigurationAttribute>()!;
             #pragma warning disable IL2060
-            _ = _configureMethod
+            _configureMethod
                .MakeGenericMethod(options)
                .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
             #pragma warning restore IL2060
