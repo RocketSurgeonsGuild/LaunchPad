@@ -28,7 +28,7 @@ internal class GraphQlExtension : IAlbaExtension
 
     public IHostBuilder Configure(IHostBuilder builder)
     {
-        _ = builder.ConfigureServices(
+        builder.ConfigureServices(
             z => z
                 .AddW3CLogging(_ => { })
                 .AddHttpLogging(_ => { })
@@ -38,12 +38,12 @@ internal class GraphQlExtension : IAlbaExtension
                      opt => opt.IncludeExceptionDetails = true
                  )
         );
-        _ = builder.ConfigureServices(
+        builder.ConfigureServices(
             s =>
             {
-                _ = s.AddHttpClient();
-                _ = s.AddRocketClient();
-                _ = s.ConfigureOptions<CO>();
+                s.AddHttpClient();
+                s.AddRocketClient();
+                s.ConfigureOptions<CO>();
             }
         );
 
