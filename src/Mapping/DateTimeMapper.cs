@@ -31,8 +31,10 @@ public partial class DateTimeMapper
     {
         return source switch
                {
-                   { Kind: DateTimeKind.Unspecified or DateTimeKind.Local, } => new(source.ToUniversalTime(), TimeSpan.Zero),
-                   { Kind: DateTimeKind.Utc, }                               => new(source, TimeSpan.Zero),
+                   { Kind: DateTimeKind.Unspecified } => new(source.ToUniversalTime(), TimeSpan.Zero),
+                   { Kind: DateTimeKind.Local }       => new(source.ToUniversalTime(), TimeSpan.Zero),
+                   { Kind: DateTimeKind.Utc, }        => new(source, TimeSpan.Zero),
+                   _                                  => new (source),
                };
     }
 }

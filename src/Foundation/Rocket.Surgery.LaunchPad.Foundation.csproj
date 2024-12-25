@@ -38,6 +38,7 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
         <ProjectReference Include="..\Telemetry\Rocket.Surgery.LaunchPad.Telemetry.csproj" />
         <ProjectReference Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" IncludeAssets="analyzers" ExcludeAssets="compile;runtime;native" PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive" OutputItemType="Analyzer" />
         <PackageReference Include="Polyfill" IncludeAssets="runtime;build;buildMultitargeting;buildTransitive;native;contentfiles;analyzers" PrivateAssets="All" Condition="'$(TargetFramework)' == 'netstandard2.1'" />

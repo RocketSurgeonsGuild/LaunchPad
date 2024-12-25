@@ -132,6 +132,7 @@
                 <ModulePath>.*Microsoft\.CodeAnalysis\.Analyzers\.dll</ModulePath>
                 <ModulePath>.*Microsoft\.CodeAnalysis\.BannedApiAnalyzers\.dll</ModulePath>
                 <ModulePath>.*Microsoft\.CodeAnalysis\.Common\.dll</ModulePath>
+                <ModulePath>.*Microsoft\.CodeAnalysis\.CSharp\.dll</ModulePath>
                 <ModulePath>.*Microsoft\.CodeAnalysis\.CSharp\.Workspaces\.dll</ModulePath>
                 <ModulePath>.*Microsoft\.CodeAnalysis\.Features\.dll</ModulePath>
                 <ModulePath>.*Microsoft\.CodeAnalysis\.Workspaces\.Common\.dll</ModulePath>
