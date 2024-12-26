@@ -49,18 +49,16 @@ public class OptionsConvention : IServiceConvention
                               .GetTypes(
                                    z => z
                                        .NotInfoOf(TypeInfoFilter.Abstract, TypeInfoFilter.Static, TypeInfoFilter.GenericType)
-                                       .WithAnyAttribute(typeof(RegisterOptionsConfigurationAttribute))
+                                       .KindOf(TypeKindFilter.Class)
+                                       .WithAttribute<RegisterOptionsConfigurationAttribute>()
                                )
                       );
 
-        foreach (var options in classes)
+        foreach (( var options, var attribute ) in classes.SelectMany(z => z.GetCustomAttributes<RegisterOptionsConfigurationAttribute>(), (type, attribute) => ( type, attribute )))
         {
-            var attribute = options.GetCustomAttribute<RegisterOptionsConfigurationAttribute>()!;
-            #pragma warning disable IL2060
-            _configureMethod
+            _ = _configureMethod
                .MakeGenericMethod(options)
                .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
-            #pragma warning restore IL2060
         }
     }
 }
