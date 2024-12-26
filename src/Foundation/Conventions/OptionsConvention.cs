@@ -54,9 +54,9 @@ public class OptionsConvention : IServiceConvention
                                )
                       );
 
-        foreach (var (options, attribute) in classes.SelectMany(z => z.GetCustomAttributes<RegisterOptionsConfigurationAttribute>(), (type, attribute) => (type, attribute)))
+        foreach (( var options, var attribute ) in classes.SelectMany(z => z.GetCustomAttributes<RegisterOptionsConfigurationAttribute>(), (type, attribute) => ( type, attribute )))
         {
-            _configureMethod
+            _ = _configureMethod
                .MakeGenericMethod(options)
                .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
         }
