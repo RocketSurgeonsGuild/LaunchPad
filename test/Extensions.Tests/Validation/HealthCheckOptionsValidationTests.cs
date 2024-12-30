@@ -3,27 +3,36 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Extensions.Tests.Validation;
 
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper)), IAsyncLifetime
 {
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
-        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
+        _ = a.Should().NotThrow();
+        _ = await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
     [Fact]
     public async Task Should_Validate_Options_And_Pass()
     {
         var services = new ServiceCollection();
-        services
+        _ = services
            .AddOptions<Options>()
            .Configure(
                 options =>
@@ -36,15 +45,15 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
-        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
+        _ = a.Should().NotThrow();
+        _ = await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
     [Fact]
     public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds()
     {
         var services = new ServiceCollection();
-        services
+        _ = services
            .AddOptions<Options>()
            .Configure(
                 options =>
@@ -57,8 +66,8 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
-        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
+        _ = a.Should().NotThrow();
+        _ = await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
 
     [Fact]
@@ -70,7 +79,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
                       .Should()
                       .Throw<OptionsValidationException>()
                       .Which.Failures;
-        await Verify(failures);
+        _ = await Verify(failures);
     }
 
     [Fact]
@@ -78,7 +87,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     {
         Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
         var services = new ServiceCollection();
-        services
+        _ = services
            .AddOptions<Options>()
            .Configure(
                 options =>
@@ -91,7 +100,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
+        _ = a.Should().NotThrow();
     }
 
     [Fact]
@@ -99,7 +108,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     {
         Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
         var services = new ServiceCollection();
-        services
+        _ = services
            .AddOptions<Options>()
            .Configure(
                 options =>
@@ -116,7 +125,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
                       .Should()
                       .Throw<OptionsValidationException>()
                       .Which.Failures;
-        await Verify(failures);
+        _ = await Verify(failures);
     }
 
     private class Options
@@ -131,34 +140,23 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
         {
             public Validator()
             {
-                RuleFor(z => z.String).NotEmpty().NotNull();
-                RuleFor(z => z.Int).GreaterThan(0).LessThanOrEqualTo(100);
-                RuleFor(z => z.Bool).NotEqual(false);
-                RuleFor(z => z.Double).GreaterThanOrEqualTo(-100d).LessThanOrEqualTo(0d);
+                _ = RuleFor(z => z.String).NotEmpty().NotNull();
+                _ = RuleFor(z => z.Int).GreaterThan(0).LessThanOrEqualTo(100);
+                _ = RuleFor(z => z.Bool).NotEqual(false);
+                _ = RuleFor(z => z.Double).GreaterThanOrEqualTo(-100d).LessThanOrEqualTo(0d);
             }
         }
     }
 
     public async Task InitializeAsync()
     {
-        var loggerFactory = CreateLoggerFactory();
         var conventionContextBuilder = ConventionContextBuilder
-                                      .Create()
-                                      .ForTesting(Imports.Instance, loggerFactory)
-                                      .Set(
-                                           new FoundationOptions
-                                           {
-                                               RegisterValidationOptionsAsHealthChecks = true,
-                                           }
-                                       )
-                                      .WithLogger(loggerFactory.CreateLogger("Test"));
+                                      .Create(Imports.Instance)
+                                      .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = true, });
 
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
         Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
 
-    public Task DisposeAsync()
-    {
-        return Task.CompletedTask;
-    }
+    public Task DisposeAsync() => Task.CompletedTask;
 }

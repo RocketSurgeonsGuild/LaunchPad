@@ -1,6 +1,5 @@
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.BlazorServer;
 using Sample.BlazorServer.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,17 +8,17 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
+var app = await builder.ConfigureRocketSurgery();
 
 if (builder.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    _ = app.UseDeveloperExceptionPage();
 }
 else
 {
-    app.UseExceptionHandler("/Error");
+    _ = app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    _ = app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -34,4 +33,15 @@ app.MapFallbackToPage("/_Host");
 
 await app.RunAsync();
 
-public partial class Program;
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+public partial class Program
+{
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+}

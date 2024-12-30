@@ -42,7 +42,7 @@ public class OptionsConvention : IServiceConvention
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         var classes = context
-                     .TypeProvider
+                     .Assembly.GetCompiledTypeProvider()
                      .GetTypes(
                           s => s
                               .FromAssemblies()
@@ -54,7 +54,7 @@ public class OptionsConvention : IServiceConvention
                                )
                       );
 
-        foreach (( var options, var attribute ) in classes.SelectMany(z => z.GetCustomAttributes<RegisterOptionsConfigurationAttribute>(), (type, attribute) => ( type, attribute )))
+        foreach ((var options, var attribute) in classes.SelectMany(z => z.GetCustomAttributes<RegisterOptionsConfigurationAttribute>(), (type, attribute) => (type, attribute)))
         {
             _ = _configureMethod
                .MakeGenericMethod(options)

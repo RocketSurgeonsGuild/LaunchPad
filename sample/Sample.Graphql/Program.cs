@@ -4,7 +4,6 @@ using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Models;
-using Sample.Graphql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,11 +36,11 @@ builder
         }
     )
    .ModifyRequestOptions(
-        options => { options.IncludeExceptionDetails = true; }
+        options => options.IncludeExceptionDetails = true
     );
 
 var app = await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance));
+   .ConfigureRocketSurgery();
 
 app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();
@@ -52,4 +51,15 @@ app.MapGraphQL();
 
 app.Run();
 
-public partial class Program;
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+public partial class Program
+{
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+}

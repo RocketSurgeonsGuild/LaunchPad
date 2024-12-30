@@ -2,6 +2,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.Conventions.Setup;
+using Rocket.Surgery.DependencyInjection.Compiled;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -13,8 +15,18 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [PublicAPI]
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
-public class DefaultConvention : IServiceConvention
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+public class DefaultConvention : IServiceConvention, ISetupConvention
 {
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -23,11 +35,13 @@ public class DefaultConvention : IServiceConvention
     /// <param name="services"></param>
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
-        services
+        _ = services
            .AddOptions()
            .AddLogging()
            .AddExecuteScopedServices();
 
-        services.AddCompiledServiceRegistrations(context.TypeProvider);
+        _ = services.AddCompiledServiceRegistrations(context.Assembly.GetCompiledTypeProvider());
     }
+
+    void ISetupConvention.Register(IConventionContext context) => context.AddIfMissing("ExecutingAssembly", context.Require<LoadConventions>().Method.Module.Assembly);
 }

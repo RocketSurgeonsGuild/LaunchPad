@@ -1,13 +1,8 @@
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
 using FluentValidation;
-using Humanizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Restful;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +11,7 @@ builder.Services.AddControllers().AddControllersAsServices();
 builder.Services.AddHostedService<CustomHostedService>();
 
 var app = await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance));
+   .ConfigureRocketSurgery();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
@@ -55,7 +50,18 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program;
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+public partial class Program
+{
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+}
 
 internal class CustomHostedServiceOptions
 {
@@ -64,10 +70,7 @@ internal class CustomHostedServiceOptions
     [UsedImplicitly]
     private sealed class Validator : AbstractValidator<CustomHostedServiceOptions>
     {
-        public Validator()
-        {
-            RuleFor(z => z.A).NotNull();
-        }
+        public Validator() => _ = RuleFor(z => z.A).NotNull();
     }
 }
 
@@ -76,7 +79,7 @@ internal class CustomHostedService(IOptions<CustomHostedServiceOptions> options)
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // ReSharper disable once UnusedVariable
-        var v = options.Value.A;
+        _ = options.Value.A;
         return Task.CompletedTask;
     }
 }

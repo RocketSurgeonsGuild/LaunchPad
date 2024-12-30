@@ -1,11 +1,10 @@
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Grpc;
 using Sample.Grpc.Services;
 
 var app = await WebApplication
                .CreateBuilder(args)
-               .LaunchWith(RocketBooster.For(Imports.Instance));
+               .ConfigureRocketSurgery();
 
 app.UseLaunchPadRequestLogging();
 
@@ -23,4 +22,15 @@ app.MapGet(
 
 await app.RunAsync();
 
-public partial class Program;
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+public partial class Program
+{
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+}

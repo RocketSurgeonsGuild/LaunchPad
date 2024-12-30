@@ -6,4 +6,4 @@ var builder = Host
 builder.Services.AddHostedService<BackgroundWorker>();
 
 
-await ( await builder.LaunchWith(RocketBooster.For(Imports.Instance)) ).RunAsync();
+await ( await builder.ConfigureRocketSurgery() ).RunAsync();

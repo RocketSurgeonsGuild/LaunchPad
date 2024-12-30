@@ -4,23 +4,22 @@ using Humanizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
+var app = await builder.ConfigureRocketSurgery();
 
 if (builder.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    _ = app.UseDeveloperExceptionPage();
 }
 else
 {
-    app.UseExceptionHandler("/Error");
+    _ = app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    _ = app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -49,14 +48,14 @@ app.MapRazorPages();
 
 await app.RunAsync();
 
-static Task WriteResponse(HttpContext context, HealthReport healthReport)
+static async Task WriteResponse(HttpContext context, HealthReport healthReport)
 {
     context.Response.ContentType = "application/json; charset=utf-8";
 
     var options = new JsonWriterOptions { Indented = true, };
 
-    using var memoryStream = new MemoryStream();
-    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+    await using var memoryStream = new MemoryStream();
+    await using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
     {
         jsonWriter.WriteStartObject();
         jsonWriter.WriteString("status", healthReport.Status.ToString());
@@ -103,7 +102,7 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
                 jsonWriter.WriteEndArray();
             }
 
-            if (healthReportEntry.Value.Exception != null)
+            if (healthReportEntry.Value.Exception is not null)
             {
                 var ex = healthReportEntry.Value.Exception;
                 jsonWriter.WriteStartObject("exception");
@@ -120,9 +119,20 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
         jsonWriter.WriteEndObject();
     }
 
-    return context.Response.WriteAsync(
+    await context.Response.WriteAsync(
         Encoding.UTF8.GetString(memoryStream.ToArray())
     );
 }
 
-public partial class Program;
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+public partial class Program
+{
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+}

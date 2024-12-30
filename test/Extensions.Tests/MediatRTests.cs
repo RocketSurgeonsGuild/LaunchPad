@@ -1,4 +1,3 @@
-using System.Reflection;
 using FakeItEasy;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -8,31 +7,38 @@ using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 namespace Extensions.Tests;
 
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+
     [Fact]
     public async Task Test1()
     {
-        #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        var builder = new ConventionContextBuilder(new Dictionary<object, object>(), [])
-            #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-           .UseConventionFactory(Imports.Instance);
+        var builder = ConventionContextBuilder.Create(Imports.Instance, new Dictionary<object, object>(), []);
         var context = await ConventionContext.FromAsync(builder);
         var services = new ServiceCollection();
         new MediatRConvention().Register(context, new ConfigurationBuilder().Build(), services);
 
         var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
-        services.AddSingleton(sub);
+        _ = services.AddSingleton(sub);
 
-        services.Should().Contain(x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient);
+        _ = services.Should().Contain(x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient);
 
         var r = services.BuildServiceProvider();
         var mediator = r.GetRequiredService<IMediator>();
 
         await mediator.Send(new Request());
 
-        A
+        _ = A
            .CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
            .MustHaveHappenedOnceExactly();
     }
@@ -40,10 +46,7 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
     [Fact]
     public async Task Test2()
     {
-        #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        var builder = new ConventionContextBuilder(new Dictionary<object, object>(), [])
-            #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-           .UseConventionFactory(Imports.Instance);
+        var builder = ConventionContextBuilder.Create(Imports.Instance, new Dictionary<object, object>(), []);
         var context = await ConventionContext.FromAsync(builder);
         var services = new ServiceCollection();
         new MediatRConvention(
@@ -55,9 +58,9 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
 
         var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
-        services.AddSingleton(sub);
+        _ = services.AddSingleton(sub);
 
-        services
+        _ = services
            .Should()
            .Contain(
                 x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Singleton
@@ -69,18 +72,26 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
 
         await mediator.Send(new Request());
 
-        A
+        _ = A
            .CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
            .MustHaveHappenedOnceExactly();
     }
 
-    public class Request : IRequest;
+    [System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+    public class Request : IRequest
+    {
+        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+        {
+            get
+            {
+                return ToString();
+            }
+        }
+    }
 
     private class TestHandler : IRequestHandler<Request>
     {
-        public Task Handle(Request message, CancellationToken token)
-        {
-            return Task.FromResult(Unit.Value);
-        }
+        public Task Handle(Request message, CancellationToken token) => Task.FromResult(Unit.Value);
     }
 }

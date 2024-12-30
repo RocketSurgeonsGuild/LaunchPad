@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
@@ -45,7 +46,7 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        context.TypeProvider
+        _ = context.Assembly.GetCompiledTypeProvider()
                .Scan(
                     services,
                     z => z
@@ -68,13 +69,13 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
             ))
         {
             // need to do validations using ValidateOnStart
-            services.Decorate<HealthCheckService, CustomHealthCheckService>();
-            services.AddSingleton<ValidationHealthCheckResults>();
-            services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
+            _ = services.Decorate<HealthCheckService, CustomHealthCheckService>();
+            _ = services.AddSingleton<ValidationHealthCheckResults>();
+            _ = services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
         }
         else
         {
-            services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
+            _ = services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
         }
 
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
