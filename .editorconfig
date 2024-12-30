@@ -2259,11 +2259,11 @@ dotnet_diagnostic.IDE0057.severity = warning
 # Options: csharp_style_prefer_range_operator
 
 # IDE0058: Remove unnecessary expression value
-dotnet_diagnostic.IDE0058.severity = warning
+dotnet_diagnostic.IDE0058.severity = none
 # Options: csharp_style_unused_value_expression_statement_preference, visual_basic_style_unused_value_expression_statement_preference
 
 # IDE0059: Remove unnecessary value assignment
-dotnet_diagnostic.IDE0059.severity = warning
+dotnet_diagnostic.IDE0059.severity = none
 # Options: csharp_style_unused_value_assignment_preference, visual_basic_style_unused_value_assignment_preference
 
 # IDE0060: Remove unused parameter
@@ -2485,7 +2485,7 @@ roslynator_accessor_braces_style = single_line_when_expression_is_on_single_line
 # Default: multi_line
 # Applicable to: rcs0020
 
-roslynator_array_creation_type_style = implicit_when_type_is_obvious
+roslynator_array_creation_type_style = implicit
 # Applicable to: rcs1014
 
 roslynator_arrow_token_new_line = after
@@ -2562,7 +2562,7 @@ roslynator_null_conditional_operator_new_line = after
 roslynator_object_creation_parentheses_style = omit
 # Applicable to: rcs1050
 
-roslynator_object_creation_type_style = implicit_when_type_is_obvious
+roslynator_object_creation_type_style = implicit
 # Applicable to: rcs1250
 
 roslynator_prefix_field_identifier_with_underscore = true
@@ -2580,10 +2580,10 @@ roslynator_unity_code_analysis.enabled = false
 roslynator_use_anonymous_function_or_method_group = method_group
 # Applicable to: rcs1207
 
-roslynator_use_block_body_when_declaration_spans_over_multiple_lines = true
+roslynator_use_block_body_when_declaration_spans_over_multiple_lines = false
 # Applicable to: rcs1016
 
-roslynator_use_block_body_when_expression_spans_over_multiple_lines = true
+roslynator_use_block_body_when_expression_spans_over_multiple_lines = false
 # Applicable to: rcs1016
 
 roslynator_use_collection_expression = true
@@ -3200,7 +3200,7 @@ dotnet_diagnostic.rcs1211.severity = silent
 dotnet_diagnostic.rcs1212.severity = suggestion
 
 # Remove unused member declaration
-dotnet_diagnostic.rcs1213.severity = suggestion
+dotnet_diagnostic.rcs1213.severity = none
 # Options: roslynator_unity_code_analysis.enabled
 
 # Unnecessary interpolated string
@@ -3228,7 +3228,7 @@ dotnet_diagnostic.rcs1221.severity = suggestion
 dotnet_diagnostic.rcs1222.severity = suggestion
 
 # Mark publicly visible type with DebuggerDisplay attribute
-dotnet_diagnostic.rcs1223.severity = suggestion
+dotnet_diagnostic.rcs1223.severity = none
 
 # Make method an extension method
 dotnet_diagnostic.rcs1224.severity = suggestion
@@ -3304,7 +3304,7 @@ dotnet_diagnostic.rcs1248.severity = suggestion
 dotnet_diagnostic.rcs1249.severity = suggestion
 
 # Use implicit/explicit object creation
-dotnet_diagnostic.rcs1250.severity = suggestion
+dotnet_diagnostic.rcs1250.severity = none
 # Options: roslynator_object_creation_type_style, roslynator_use_collection_expression, roslynator_use_var_instead_of_implicit_object_creation
 
 # Remove unnecessary braces from record declaration
@@ -3338,7 +3338,7 @@ dotnet_diagnostic.rcs1258.severity = suggestion
 dotnet_diagnostic.rcs1259.severity = suggestion
 
 # Add/remove trailing comma
-dotnet_diagnostic.rcs1260.severity = none
+dotnet_diagnostic.rcs1260.severity = suggestion
 # Options: roslynator_trailing_comma_style
 
 # Resource can be disposed asynchronously
@@ -3578,7 +3578,7 @@ roslynator_refactoring.use_coalesce_expression_instead_of_if.enabled = true
 roslynator_refactoring.use_constant_instead_of_readonly_field.enabled = true
 roslynator_refactoring.use_element_access_instead_of_linq_method.enabled = true
 roslynator_refactoring.use_enumerator_explicitly.enabled = true
-roslynator_refactoring.use_explicit_type.enabled = true
+roslynator_refactoring.use_explicit_type.enabled = false
 roslynator_refactoring.use_implicit_type.enabled = true
 roslynator_refactoring.use_index_initializer.enabled = true
 roslynator_refactoring.use_lambda_instead_of_anonymous_method.enabled = true
@@ -4979,7 +4979,7 @@ resharper_T4_max_line_length = 200
 resharper_T4_wrap_lines = true
 resharper_toplevel_function_declaration_return_type_style = do_not_change
 resharper_toplevel_function_definition_return_type_style = do_not_change
-resharper_trailing_comma_in_multiline_lists = true
+resharper_trailing_comma_in_multiline_lists = false
 resharper_trailing_comma_in_singleline_lists = false
 resharper_use_continuous_indent_inside_initializer_braces = true
 resharper_use_continuous_indent_inside_parens = true
