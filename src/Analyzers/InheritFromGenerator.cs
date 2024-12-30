@@ -12,21 +12,13 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 ///     A generator that is used to copy properties, fields and methods from one type onto another.
 /// </summary>
 [Generator]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class InheritFromGenerator : IIncrementalGenerator
 {
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 
     internal static ImmutableHashSet<string> GetExcludedMembers(INamedTypeSymbol targetSymbol, AttributeData attribute)
     {
-        _ = targetSymbol
+        targetSymbol
            .GetMembers()
            .Where(z => z.GetAttribute("ExcludeFromGenerationAttribute") is { } || z.GetAttribute("GenerationIgnoreAttribute") is { });
 
@@ -37,7 +29,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                     .GetMembers()
                     .Where(z => z.GetAttribute("ExcludeFromGenerationAttribute") is { } || z.GetAttribute("GenerationIgnoreAttribute") is { }))
         {
-            _ = builder.Add(item.Name);
+            builder.Add(item.Name);
         }
 
         return builder.ToImmutable();
@@ -58,8 +50,8 @@ public class InheritFromGenerator : IIncrementalGenerator
             .GetAttributes()
             .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
             .Select(
-                 attribute => ( GetInheritingSymbol(attribute) is not { } inheritFromSymbol )
-                     ? []
+                 attribute => GetInheritingSymbol(attribute) is not { } inheritFromSymbol
+                     ? ImmutableArray<IPropertySymbol>.Empty
                      : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
              )
             .Aggregate(
@@ -127,7 +119,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         var excludeMembers = GetExcludedMembers(inheritFromSymbol, attribute);
         foreach (var excludedProperty in excludeMembers)
         {
-            _ = excludedProperties.Add(excludedProperty);
+            excludedProperties.Add(excludedProperty);
         }
 
         return inheritFromSymbol

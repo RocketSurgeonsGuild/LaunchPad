@@ -10,17 +10,9 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests.Validation;
 
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper)), IAsyncLifetime
 {
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
@@ -30,14 +22,14 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
                       .Should()
                       .Throw<OptionsValidationException>()
                       .Which.Failures;
-        _ = await Verify(failures);
+        await Verify(failures);
     }
 
     [Fact]
     public void Should_Validate_Options_And_Pass()
     {
         var services = new ServiceCollection();
-        _ = services
+        services
            .AddOptions<Options>()
            .Configure(
                 options =>
@@ -50,14 +42,14 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
             );
         Populate(services);
         Func<Options> a = () => Container.Resolve<IOptions<Options>>().Value;
-        _ = a.Should().NotThrow();
+        a.Should().NotThrow();
     }
 
     [Fact]
     public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds()
     {
         var services = new ServiceCollection();
-        _ = services
+        services
            .AddOptions<Options>()
            .Configure(
                 options =>
@@ -74,7 +66,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
                       .Should()
                       .Throw<OptionsValidationException>()
                       .Which.Failures;
-        _ = await Verify(failures);
+        await Verify(failures);
     }
 
     private class Options
@@ -89,10 +81,10 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         {
             public Validator()
             {
-                _ = RuleFor(z => z.String).NotEmpty().NotNull();
-                _ = RuleFor(z => z.Int).GreaterThan(0).LessThanOrEqualTo(100);
-                _ = RuleFor(z => z.Bool).NotEqual(false);
-                _ = RuleFor(z => z.Double).GreaterThanOrEqualTo(-100d).LessThanOrEqualTo(0d);
+                RuleFor(z => z.String).NotEmpty().NotNull();
+                RuleFor(z => z.Int).GreaterThan(0).LessThanOrEqualTo(100);
+                RuleFor(z => z.Bool).NotEqual(false);
+                RuleFor(z => z.Double).GreaterThanOrEqualTo(-100d).LessThanOrEqualTo(0d);
             }
         }
     }

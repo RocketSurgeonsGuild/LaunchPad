@@ -41,7 +41,7 @@ public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyn
                              )
            .ApplyConventionsAsync(await ConventionContext.FromAsync(_context));
         Populate(services);
-        _ = await Container.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
+        await Container.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
     }
 
     public async Task DisposeAsync() => await _connection!.DisposeAsync();

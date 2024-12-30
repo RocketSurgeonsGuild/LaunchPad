@@ -15,7 +15,7 @@ public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : A
 
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
         var configuration = await new ConfigurationBuilder().ApplyConventionsAsync(context);
-        _ = context.Set<IConfiguration>(configuration.Build());
+        context.Set<IConfiguration>(configuration.Build());
 
         Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }

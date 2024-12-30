@@ -23,7 +23,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [PublicAPI]
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Application)]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceConvention
 {
     internal static void PopulateDefaultParts(
@@ -90,15 +90,6 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
 
     private readonly AspNetCoreOptions _options = options ?? new AspNetCoreOptions();
 
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -106,12 +97,11 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
     /// <param name="configuration"></param>
     /// <param name="services"></param>
     /// TODO Edit XML Comment Template for Register
-    [RequiresUnreferencedCode()]
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        _ = services
+        services
            .AddEndpointsApiExplorer()
            .AddMvcCore()
            .AddApiExplorer();
@@ -121,17 +111,17 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
             context
                .Assembly.GetCompiledTypeProvider().GetAssemblies(s => s.FromAssemblyDependenciesOf<AspNetCoreConvention>())
                .Where(_options.AssemblyPartFilter)
-               .SelectMany(f => GetApplicationPartAssemblies(f))
+               .SelectMany(GetApplicationPartAssemblies)
         );
 
-        _ = services.Configure<MvcOptions>(
+        services.Configure<MvcOptions>(
             options =>
             {
-                _ = options.Filters.Add<NotFoundExceptionFilter>();
-                _ = options.Filters.Add<NotAuthorizedExceptionFilter>();
-                _ = options.Filters.Add<RequestFailedExceptionFilter>();
-                _ = options.Filters.Add<SerilogLoggingActionFilter>(0);
-                _ = options.Filters.Add<SerilogLoggingPageFilter>(0);
+                options.Filters.Add<NotFoundExceptionFilter>();
+                options.Filters.Add<NotAuthorizedExceptionFilter>();
+                options.Filters.Add<RequestFailedExceptionFilter>();
+                options.Filters.Add<SerilogLoggingActionFilter>(0);
+                options.Filters.Add<SerilogLoggingPageFilter>(0);
             }
         );
     }

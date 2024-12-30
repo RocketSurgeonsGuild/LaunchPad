@@ -15,7 +15,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods)]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class OptionsConvention : IServiceConvention
 {
     [RequiresUnreferencedCode(
@@ -38,15 +38,6 @@ public class OptionsConvention : IServiceConvention
     /// </summary>
     public OptionsConvention() => _configureMethod = GetType().GetMethod(nameof(Configure), BindingFlags.NonPublic | BindingFlags.Static)!;
 
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
-
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
@@ -65,7 +56,7 @@ public class OptionsConvention : IServiceConvention
 
         foreach ((var options, var attribute) in classes.SelectMany(z => z.GetCustomAttributes<RegisterOptionsConfigurationAttribute>(), (type, attribute) => (type, attribute)))
         {
-            _ = _configureMethod
+            _configureMethod
                .MakeGenericMethod(options)
                .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
         }

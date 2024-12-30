@@ -16,13 +16,13 @@ var app = await builder.ConfigureRocketSurgery();
 
 if (builder.Environment.IsDevelopment())
 {
-    _ = app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
-    _ = app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    _ = app.UseHsts();
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();

@@ -15,33 +15,19 @@ await ( await builder.ConfigureRocketSurgery() ).RunAsync();
 
 public static class TestHandler
 {
-    [System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
     public record Request : IRequest<Response>
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
 
-        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-        {
-            get
-            {
-                return ToString();
-            }
-        }
+
     }
 
-    [System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
     public record Response(string FullName)
     {
-        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-        {
-            get
-            {
-                return ToString();
-            }
-        }
+
     }
 
     [UsedImplicitly]
@@ -49,11 +35,11 @@ public static class TestHandler
     {
         public RequestValidator()
         {
-            _ = RuleFor(x => x.FirstName)
+            RuleFor(x => x.FirstName)
                .NotEmpty()
                .MinimumLength(1)
                .MaximumLength(20);
-            _ = RuleFor(x => x.LastName)
+            RuleFor(x => x.LastName)
                .NotEmpty()
                .MinimumLength(1)
                .MaximumLength(50);

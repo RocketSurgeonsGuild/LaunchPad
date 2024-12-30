@@ -21,19 +21,10 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [PublicAPI]
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class MediatRConvention(FoundationOptions? options = null) : IServiceConvention
 {
     private readonly FoundationOptions _options = options ?? new FoundationOptions();
-
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 
     /// <summary>
     ///     Registers the specified context.
@@ -49,10 +40,10 @@ public class MediatRConvention(FoundationOptions? options = null) : IServiceConv
             throw new ArgumentException("No assemblies found that reference MediatR");
         }
 
-        _ = services.AddMediatR(
+        services.AddMediatR(
             c =>
             {
-                _ = c.RegisterServicesFromAssemblies(assemblies);
+                c.RegisterServicesFromAssemblies(assemblies);
                 c.Lifetime = _options switch
                 {
                     { MediatorLifetime: ServiceLifetime.Singleton, } => ServiceLifetime.Singleton,

@@ -1,0 +1,4 @@
+[*]
+dotnet_style_prefer_collection_expression = false
+roslynator_use_collection_expression = false
+resharper_use_collection_expression_highlighting = none

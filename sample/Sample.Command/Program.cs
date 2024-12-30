@@ -28,34 +28,17 @@ var host = await builder.ConfigureRocketSurgery(
 );
 await host.RunAsync();
 
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class InstanceThing
 {
     public string From => "DryIoc";
-
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 }
 
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
+
 public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceThing instanceThing)
     : Command<AppSettings>
 {
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 
     public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
     {
@@ -72,14 +55,6 @@ public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceTh
 
 public class DefaultCommand(ILogger<DefaultCommand> logger) : Command<AppSettings>
 {
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 
     public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
     {

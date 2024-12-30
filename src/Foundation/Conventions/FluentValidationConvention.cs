@@ -32,19 +32,10 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [AfterConvention(typeof(MediatRConvention))]
 [AfterConvention(typeof(HealthChecksConvention))]
 [ConventionCategory(ConventionCategory.Core)]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class FluentValidationConvention(FoundationOptions? options = null) : IServiceConvention
 {
     private readonly FoundationOptions _options = options ?? new FoundationOptions();
-
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 
     /// <summary>
     ///     Registers the specified context.
@@ -56,7 +47,7 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        _ = context.Assembly.GetCompiledTypeProvider()
+        context.Assembly.GetCompiledTypeProvider()
                .Scan(
                     services,
                     z => z
@@ -79,13 +70,13 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
             ))
         {
             // need to do validations using ValidateOnStart
-            _ = services.Decorate<HealthCheckService, CustomHealthCheckService>();
-            _ = services.AddSingleton<ValidationHealthCheckResults>();
-            _ = services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
+            services.Decorate<HealthCheckService, CustomHealthCheckService>();
+            services.AddSingleton<ValidationHealthCheckResults>();
+            services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
         }
         else
         {
-            _ = services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
+            services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
         }
 
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));

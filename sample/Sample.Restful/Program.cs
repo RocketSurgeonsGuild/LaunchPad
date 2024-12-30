@@ -69,7 +69,7 @@ internal class CustomHostedService(IOptions<CustomHostedServiceOptions> options)
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // ReSharper disable once UnusedVariable
-        _ = options.Value.A;
+        options.Value.A;
         return Task.CompletedTask;
     }
 }

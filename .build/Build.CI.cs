@@ -63,7 +63,7 @@ internal partial class Pipeline
                  .ExcludeRepositoryConfigurationFiles()
                  .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
                  .First(z => z.Name.Equals("build", StringComparison.OrdinalIgnoreCase));
-        _ = job
+        job
            .UseDotNetSdks("8.0", "9.0")
            .ConfigureStep<CheckoutStep>(step => step.FetchDepth = 0)
            .PublishLogs<Pipeline>();
@@ -73,7 +73,7 @@ internal partial class Pipeline
 
     public static RocketSurgeonGitHubActionsConfiguration LintStagedMiddleware(RocketSurgeonGitHubActionsConfiguration configuration)
     {
-        _ = configuration
+        configuration
            .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
            .First(z => z.Name.Equals("Build", StringComparison.OrdinalIgnoreCase))
            .UseDotNetSdks("8.0", "9.0");

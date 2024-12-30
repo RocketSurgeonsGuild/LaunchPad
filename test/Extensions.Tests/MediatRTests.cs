@@ -10,17 +10,9 @@ using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 namespace Extensions.Tests;
 
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
 public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 
     [Fact]
     public async Task Test1()
@@ -32,16 +24,16 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
 
         var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
-        _ = services.AddSingleton(sub);
+        services.AddSingleton(sub);
 
-        _ = services.Should().Contain(x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient);
+        services.Should().Contain(x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient);
 
         var r = services.BuildServiceProvider();
         var mediator = r.GetRequiredService<IMediator>();
 
         await mediator.Send(new Request());
 
-        _ = A
+        A
            .CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
            .MustHaveHappenedOnceExactly();
     }
@@ -61,9 +53,9 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
 
         var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
-        _ = services.AddSingleton(sub);
+        services.AddSingleton(sub);
 
-        _ = services
+        services
            .Should()
            .Contain(
                 x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Singleton
@@ -75,22 +67,15 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
 
         await mediator.Send(new Request());
 
-        _ = A
+        A
            .CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
            .MustHaveHappenedOnceExactly();
     }
 
-    [System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+
     public class Request : IRequest
     {
-        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-        {
-            get
-            {
-                return ToString();
-            }
-        }
+
     }
 
     private class TestHandler : IRequestHandler<Request>
