@@ -1,4 +1,5 @@
 using Nuke.Common.CI.GitHubActions;
+
 using Rocket.Surgery.Nuke.ContinuousIntegration;
 using Rocket.Surgery.Nuke.GithubActions;
 using Rocket.Surgery.Nuke.Jobs;
@@ -41,12 +42,8 @@ using Rocket.Surgery.Nuke.Jobs;
 [UploadLogs]
 [TitleEvents]
 [ContinuousIntegrationConventions]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 internal partial class Pipeline
 {
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay => ToString();
-
     public static RocketSurgeonGitHubActionsConfiguration CiIgnoreMiddleware(RocketSurgeonGitHubActionsConfiguration configuration)
     {
         ( (RocketSurgeonsGithubActionsJob)configuration.Jobs[0] ).Steps =
@@ -66,7 +63,7 @@ internal partial class Pipeline
                  .ExcludeRepositoryConfigurationFiles()
                  .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
                  .First(z => z.Name.Equals("build", StringComparison.OrdinalIgnoreCase));
-        job
+        _ = job
            .UseDotNetSdks("8.0", "9.0")
            .ConfigureStep<CheckoutStep>(step => step.FetchDepth = 0)
            .PublishLogs<Pipeline>();
@@ -76,7 +73,7 @@ internal partial class Pipeline
 
     public static RocketSurgeonGitHubActionsConfiguration LintStagedMiddleware(RocketSurgeonGitHubActionsConfiguration configuration)
     {
-        configuration
+        _ = configuration
            .Jobs.OfType<RocketSurgeonsGithubActionsJob>()
            .First(z => z.Name.Equals("Build", StringComparison.OrdinalIgnoreCase))
            .UseDotNetSdks("8.0", "9.0");

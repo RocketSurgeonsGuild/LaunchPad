@@ -1,8 +1,10 @@
 using System.Reflection;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection.Compiled;
@@ -49,9 +51,12 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
         }
     }
 
-    private static T? GetServiceFromCollection<T>(IServiceCollection services) => (T?)services
-                  .LastOrDefault(d => d.ServiceType == typeof(T))
-                 ?.ImplementationInstance;
+    private static T? GetServiceFromCollection<T>(IServiceCollection services)
+    {
+        return (T?)services
+            .LastOrDefault(d => d.ServiceType == typeof(T))
+            ?.ImplementationInstance;
+    }
 
     private static IEnumerable<Assembly> GetApplicationPartAssemblies(Assembly assembly)
     {
@@ -61,7 +66,7 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
                                       .GetCustomAttributes<ApplicationPartAttribute>()
                                       .Select(name => Assembly.Load(name.AssemblyName))
                                       .OrderBy(a => a.FullName, StringComparer.Ordinal)
-                                      .SelectMany(GetAssemblyClosure);
+                                      .SelectMany(f => GetAssemblyClosure(f));
 
         // The SDK will not include the entry assembly as an application part. We'll explicitly list it
         // and have it appear before all other assemblies \ ApplicationParts.
@@ -116,7 +121,7 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
             context
                .Assembly.GetCompiledTypeProvider().GetAssemblies(s => s.FromAssemblyDependenciesOf<AspNetCoreConvention>())
                .Where(_options.AssemblyPartFilter)
-               .SelectMany(GetApplicationPartAssemblies)
+               .SelectMany(f => GetApplicationPartAssemblies(f))
         );
 
         _ = services.Configure<MvcOptions>(

@@ -1,8 +1,10 @@
 using HotChocolate.Configuration;
 using HotChocolate.Types.Spatial;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
+
 using Sample.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,16 +52,3 @@ app.UseRouting();
 app.MapGraphQL();
 
 app.Run();
-
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
-public partial class Program
-{
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
-}

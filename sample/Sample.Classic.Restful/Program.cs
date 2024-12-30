@@ -23,16 +23,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 await app.RunAsync();
-
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
-public partial class Program
-{
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
-}

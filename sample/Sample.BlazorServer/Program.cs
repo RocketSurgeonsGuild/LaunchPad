@@ -1,5 +1,6 @@
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+
 using Sample.BlazorServer.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,16 +33,3 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 await app.RunAsync();
-
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
-public partial class Program
-{
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
-}

@@ -1,11 +1,15 @@
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.DependencyInjection;
+
 using Sample.Core.Domain;
+
 using Serilog.Events;
 
 namespace Sample.Core.Tests;
@@ -17,7 +21,10 @@ public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyn
 
     protected HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : base(
         XUnitTestContext.Create(outputHelper, logLevel)
-    ) => ExcludeSourceContext(nameof(AutoFakeTest));
+    )
+    {
+        ExcludeSourceContext(nameof(AutoFakeTest));
+    }
 
     public async Task InitializeAsync()
     {

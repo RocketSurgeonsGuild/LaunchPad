@@ -1,10 +1,13 @@
 using DryIoc;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 using Rocket.Surgery.CommandLine;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
+
 using Spectre.Console.Cli;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -41,6 +44,7 @@ public class InstanceThing
 }
 
 [System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceThing instanceThing)
     : Command<AppSettings>
 {
@@ -66,7 +70,6 @@ public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceTh
     }
 }
 
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class DefaultCommand(ILogger<DefaultCommand> logger) : Command<AppSettings>
 {
     [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]

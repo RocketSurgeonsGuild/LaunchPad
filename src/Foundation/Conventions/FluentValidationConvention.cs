@@ -1,11 +1,15 @@
 using System.Globalization;
+
 using FluentValidation;
+
 using MediatR;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection.Compiled;
@@ -34,7 +38,13 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
     private readonly FoundationOptions _options = options ?? new FoundationOptions();
 
     [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay => ToString();
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
 
     /// <summary>
     ///     Registers the specified context.

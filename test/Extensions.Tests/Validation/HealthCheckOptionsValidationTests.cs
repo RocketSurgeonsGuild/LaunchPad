@@ -1,7 +1,10 @@
 using DryIoc;
+
 using FluentValidation;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
@@ -23,7 +26,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
     {
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        Func<Options> a = () => Container.Resolve<IOptions<Options>>().Value;
         _ = a.Should().NotThrow();
         _ = await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
@@ -44,7 +47,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
                 }
             );
         Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        Func<Options> a = () => Container.Resolve<IOptions<Options>>().Value;
         _ = a.Should().NotThrow();
         _ = await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
@@ -65,7 +68,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
                 }
             );
         Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        Func<Options> a = () => Container.Resolve<IOptions<Options>>().Value;
         _ = a.Should().NotThrow();
         _ = await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
     }
@@ -74,7 +77,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     public async Task Should_Validate_Options_And_Throw_After_Application_Has_Started()
     {
         Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        Func<Options> a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
                       .Should()
                       .Throw<OptionsValidationException>()
@@ -99,7 +102,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
                 }
             );
         Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        Func<Options> a = () => Container.Resolve<IOptions<Options>>().Value;
         _ = a.Should().NotThrow();
     }
 
@@ -120,7 +123,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
                 }
             );
         Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        Func<Options> a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
                       .Should()
                       .Throw<OptionsValidationException>()

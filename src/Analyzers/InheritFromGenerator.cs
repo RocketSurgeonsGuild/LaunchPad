@@ -1,5 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Text;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,11 +12,21 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 ///     A generator that is used to copy properties, fields and methods from one type onto another.
 /// </summary>
 [Generator]
+[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class InheritFromGenerator : IIncrementalGenerator
 {
+    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay
+    {
+        get
+        {
+            return ToString();
+        }
+    }
+
     internal static ImmutableHashSet<string> GetExcludedMembers(INamedTypeSymbol targetSymbol, AttributeData attribute)
     {
-        targetSymbol
+        _ = targetSymbol
            .GetMembers()
            .Where(z => z.GetAttribute("ExcludeFromGenerationAttribute") is { } || z.GetAttribute("GenerationIgnoreAttribute") is { });
 
@@ -26,7 +37,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                     .GetMembers()
                     .Where(z => z.GetAttribute("ExcludeFromGenerationAttribute") is { } || z.GetAttribute("GenerationIgnoreAttribute") is { }))
         {
-            builder.Add(item.Name);
+            _ = builder.Add(item.Name);
         }
 
         return builder.ToImmutable();
@@ -34,56 +45,61 @@ public class InheritFromGenerator : IIncrementalGenerator
         static ImmutableHashSet<string> getExcludedMembers(AttributeData attribute)
         {
             return ImmutableHashSet.CreateRange(
-                attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], }
+                ( attribute is { NamedArguments: [{ Key: "Exclude", Value: { Kind: TypedConstantKind.Array, Values: { Length: > 0, } values, }, },], } )
                     ? values.Select(z => (string)z.Value!).ToArray()
-                    : Array.Empty<string>()
-            );
+                    : []
+                );
         }
     }
 
     internal static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(INamedTypeSymbol targetSymbol, HashSet<string> excludedProperties)
     {
         return targetSymbol
-              .GetAttributes()
-              .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
-              .Select(
-                   attribute => GetInheritingSymbol(attribute) is not { } inheritFromSymbol
-                       ? ImmutableArray<IPropertySymbol>.Empty
-                       : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
-               )
-              .Aggregate(
-                   ImmutableArray.CreateBuilder<IPropertySymbol>(),
-                   (a, b) =>
-                   {
-                       a.AddRange(b);
-                       return a;
-                   }
-               )
-              .ToImmutable();
+            .GetAttributes()
+            .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
+            .Select(
+                 attribute => ( GetInheritingSymbol(attribute) is not { } inheritFromSymbol )
+                     ? []
+                     : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
+             )
+            .Aggregate(
+                 ImmutableArray.CreateBuilder<IPropertySymbol>(),
+                 (a, b) =>
+                 {
+                     a.AddRange(b);
+                     return a;
+                 }
+             )
+            .ToImmutable();
     }
 
     private static INamedTypeSymbol? GetInheritingSymbol(SourceProductionContext context, AttributeData attribute, string otherSymbolName)
     {
         var inheritFromSymbol = attribute switch
-                                {
-                                    { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
-                                    { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
-                                        constructorArgumentSymbol,
-                                    _ => null,
-                                };
+        {
+            { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
+            { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
+                constructorArgumentSymbol,
+            _ => null,
+        };
         switch (inheritFromSymbol)
         {
             case { DeclaringSyntaxReferences.Length: 0, }:
-                // TODO: Support generation from another assembly
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        GeneratorDiagnostics.TypeMustLiveInSameProject,
-                        attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation(),
-                        inheritFromSymbol.Name,
-                        otherSymbolName
-                    )
-                );
-                return null;
+                {
+                    // TODO: Support generation from another assembly
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            GeneratorDiagnostics.TypeMustLiveInSameProject,
+                            attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation(),
+                            inheritFromSymbol.Name,
+                            otherSymbolName
+                        )
+                    );
+                    return null;
+                }
+
+            default:
+                break;
         }
 
         return inheritFromSymbol;
@@ -92,12 +108,12 @@ public class InheritFromGenerator : IIncrementalGenerator
     private static INamedTypeSymbol? GetInheritingSymbol(AttributeData attribute)
     {
         var inheritFromSymbol = attribute switch
-                                {
-                                    { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
-                                    { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
-                                        constructorArgumentSymbol,
-                                    _ => null,
-                                };
+        {
+            { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
+            { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
+                constructorArgumentSymbol,
+            _ => null,
+        };
 
         return inheritFromSymbol;
     }
@@ -111,7 +127,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         var excludeMembers = GetExcludedMembers(inheritFromSymbol, attribute);
         foreach (var excludedProperty in excludeMembers)
         {
-            excludedProperties.Add(excludedProperty);
+            _ = excludedProperties.Add(excludedProperty);
         }
 
         return inheritFromSymbol
@@ -152,8 +168,16 @@ public class InheritFromGenerator : IIncrementalGenerator
         foreach (var attribute in attributes)
         {
             var inheritFromSymbol = GetInheritingSymbol(context, attribute, classToInherit.Identifier.Text);
-            if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], }) continue;
-            if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax) continue;
+            if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], })
+            {
+                continue;
+            }
+
+            if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax)
+            {
+                continue;
+            }
+
             namespaces = namespaces.AddDistinctUsingStatements(inheritFromSyntax.SyntaxTree.GetCompilationUnitRoot().Usings);
 
             var inheritableMembers = GetInheritableMembers(attribute, inheritFromSymbol);
@@ -170,20 +194,28 @@ public class InheritFromGenerator : IIncrementalGenerator
             switch (classToInherit)
             {
                 case ClassDeclarationSyntax classDeclarationSyntax:
-                    classToInherit = AddWithMethod(
-                        classDeclarationSyntax,
-                        declaration,
-                        inheritableMembers,
-                        inheritFromSymbol.Name
-                    );
-                    break;
+                    {
+                        classToInherit = AddWithMethod(
+                                            classDeclarationSyntax,
+                                            declaration,
+                                            inheritableMembers,
+                                            inheritFromSymbol.Name
+                                        );
+                        break;
+                    }
+
                 case RecordDeclarationSyntax recordDeclarationSyntax:
-                    classToInherit = AddWithMethod(
-                        recordDeclarationSyntax,
-                        declaration,
-                        inheritableMembers,
-                        inheritFromSymbol.Name
-                    );
+                    {
+                        classToInherit = AddWithMethod(
+                                            recordDeclarationSyntax,
+                                            declaration,
+                                            inheritableMembers,
+                                            inheritFromSymbol.Name
+                                        );
+                        break;
+                    }
+
+                default:
                     break;
             }
         }
@@ -193,7 +225,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                 List(namespaces),
                 List<AttributeListSyntax>(),
                 SingletonList<MemberDeclarationSyntax>(
-                    targetSymbol.ContainingNamespace.IsGlobalNamespace
+                    ( targetSymbol.ContainingNamespace.IsGlobalNamespace )
                         ? classToInherit.ReparentDeclaration(context, declaration)
                         : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
                            .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
@@ -236,7 +268,10 @@ public class InheritFromGenerator : IIncrementalGenerator
         INamedTypeSymbol inheritFromSymbol
     )
     {
-        if (!compilation.HasImplicitConversion(targetSymbol, inheritFromSymbol)) classToInherit = classToInherit.AddMembers(members.ToArray());
+        if (!compilation.HasImplicitConversion(targetSymbol, inheritFromSymbol))
+        {
+            classToInherit = classToInherit.AddMembers([.. members]);
+        }
 
         return inheritFromSymbol
               .DeclaringSyntaxReferences.Select(z => z.GetSyntax())
@@ -329,7 +364,6 @@ public class InheritFromGenerator : IIncrementalGenerator
                                     .Cast<ExpressionSyntax>()
                                     .ToArray();
 
-
         return classToInherit.AddMembers(
             MethodDeclaration(IdentifierName(declaration.Identifier.Text), Identifier("With"))
                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
@@ -395,7 +429,6 @@ public class InheritFromGenerator : IIncrementalGenerator
                                     .Cast<ExpressionSyntax>()
                                     .ToArray();
 
-
         return syntax.AddMembers(
             MethodDeclaration(IdentifierName(syntax.Identifier.Text), Identifier("With"))
                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
@@ -424,7 +457,7 @@ public class InheritFromGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        #if ROSLYN4_4
+#if ROSLYN4_4
         var values = context
                     .SyntaxProvider.ForAttributeWithMetadataName(
                          "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute",
@@ -468,7 +501,7 @@ public class InheritFromGenerator : IIncrementalGenerator
             // ReSharper disable once NullableWarningSuppressionIsUsed
             static (productionContext, tuple) => GenerateInheritance(productionContext, tuple.compilation, tuple.syntax, tuple.symbol, tuple.attributes!)
         );
-        #else
+#else
         var values = context
                     .SyntaxProvider
                     .CreateSyntaxProvider(
@@ -506,7 +539,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                          )
                      )
                     .Where(x => !( x.symbol is null || x.attributes is null or { Length: 0, } ));
-        #endif
+#endif
 
         context.RegisterSourceOutput(
             values,
@@ -518,44 +551,41 @@ public class InheritFromGenerator : IIncrementalGenerator
                                      .SyntaxProvider.CreateSyntaxProvider(
                                           static (node, _) => node is ClassDeclarationSyntax
                                           {
-                                              BaseList:
-                                              {
-                                                  Types:
+                                              BaseList.Types:
                                                   [
+                                                  {
+                                                      Type: GenericNameSyntax
                                                       {
-                                                          Type: GenericNameSyntax
-                                                          {
-                                                              TypeArgumentList.Arguments: [SimpleNameSyntax,],
-                                                              Identifier.Text: "AbstractValidator",
-                                                          },
+                                                          TypeArgumentList.Arguments: [SimpleNameSyntax,],
+                                                          Identifier.Text: "AbstractValidator",
                                                       },
+                                                  },
                                                   ],
-                                              },
                                           },
                                           static (syntaxContext, _) => (
                                               declaration: (ClassDeclarationSyntax)syntaxContext.Node,
                                               semanticModel: syntaxContext.SemanticModel,
                                               targetSymbol: syntaxContext.SemanticModel.GetDeclaredSymbol((ClassDeclarationSyntax)syntaxContext.Node, _)!,
-                                              relatedType: syntaxContext.Node is ClassDeclarationSyntax
+                                              relatedType: ( syntaxContext.Node is ClassDeclarationSyntax
                                               {
                                                   BaseList.Types:
                                                   [
+                                                  {
+                                                      Type: GenericNameSyntax
                                                       {
-                                                          Type: GenericNameSyntax
-                                                          {
-                                                              TypeArgumentList.Arguments: [SimpleNameSyntax arg,],
-                                                              Identifier.Text: "AbstractValidator",
-                                                          },
+                                                          TypeArgumentList.Arguments: [SimpleNameSyntax arg,],
+                                                          Identifier.Text: "AbstractValidator",
                                                       },
+                                                  },
                                                   ],
-                                              }
+                                              } )
                                                   ? arg
                                                   : null
                                           )
                                       )
                                      .Select(
-                                          (z, _) => ( z.declaration, z.targetSymbol, z.semanticModel,
-                                                      relatedTypeSymbol: z.semanticModel.GetSymbolInfo(z.relatedType!).Symbol! )
+                                          (z, t) => (z.declaration, z.targetSymbol, z.semanticModel,
+                                                      relatedTypeSymbol: z.semanticModel.GetSymbolInfo(z.relatedType!, t).Symbol!)
                                       )
                                      .Where(z => z is { targetSymbol: { }, relatedTypeSymbol: { }, })
                                      .Select(
@@ -576,7 +606,7 @@ public class InheritFromGenerator : IIncrementalGenerator
             validatorSyntaxProvider,
             static (context, syntaxContext) =>
             {
-                ( var declaration, var targetSymbol, var semanticModel, var relatedTypeSymbol, var attributes ) = syntaxContext;
+                (var declaration, var targetSymbol, var semanticModel, var relatedTypeSymbol, var attributes) = syntaxContext;
                 AddFluentValidationMethod(
                     context,
                     declaration,
@@ -601,10 +631,12 @@ public class InheritFromGenerator : IIncrementalGenerator
             // they will be named InheritFrom<InhertingType>
             // filter the members to remove excluded properties
             if (!declaration.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
+            {
                 //                context.ReportDiagnostic(
                 //                    Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
                 //                );
                 return;
+            }
 
             var classToInherit = ClassDeclaration(declaration.Identifier)
                                 .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
@@ -616,8 +648,15 @@ public class InheritFromGenerator : IIncrementalGenerator
             foreach (var attribute in attributes)
             {
                 var inheritFromSymbol = GetInheritingSymbol(context, attribute, classToInherit.Identifier.Text);
-                if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], }) continue;
-                if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax) continue;
+                if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], })
+                {
+                    continue;
+                }
+
+                if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax)
+                {
+                    continue;
+                }
 
                 var excludedMembers = GetExcludedMembers(inheritFromSymbol, attribute);
 
@@ -631,14 +670,28 @@ public class InheritFromGenerator : IIncrementalGenerator
                                           )
                         )
                 {
-                    if (validator is not { DeclaringSyntaxReferences: [var syntaxReference,], }) continue;
-                    if (syntaxReference.GetSyntax() is not ClassDeclarationSyntax validatorSyntax) continue;
-                    if (validatorSyntax.Members.OfType<ConstructorDeclarationSyntax>().FirstOrDefault() is not { } constructor) continue;
+                    if (validator is not { DeclaringSyntaxReferences: [var syntaxReference,], })
+                    {
+                        continue;
+                    }
+
+                    if (syntaxReference.GetSyntax() is not ClassDeclarationSyntax validatorSyntax)
+                    {
+                        continue;
+                    }
+
+                    if (validatorSyntax.Members.OfType<ConstructorDeclarationSyntax>().FirstOrDefault() is not { } constructor)
+                    {
+                        continue;
+                    }
 
                     var visitor = new RuleExpressionVisitor(excludedMembers);
                     constructor.Accept(visitor);
 
-                    if (visitor is { Results: [] results, }) continue;
+                    if (visitor is { Results: [] results, })
+                    {
+                        continue;
+                    }
 
                     var parameters = constructor
                                     .ParameterList.Parameters.Where(
@@ -649,16 +702,17 @@ public class InheritFromGenerator : IIncrementalGenerator
                                     .ToList();
 
                     var methodName =
-                        $"InheritFrom{string.Join("", inheritFromSyntax.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}";
+                        $"InheritFrom{string.Concat(inheritFromSyntax.GetParentDeclarationsWithSelf().Reverse().Select(z => z.Identifier.Text))}";
                     var method = MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), Identifier(methodName))
                                 .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
                                 .WithParameterList(ParameterList(SeparatedList(parameters)))
-                                .WithBody(Block(results.Select(ExpressionStatement)));
+                                .WithBody(Block(results.Select(f => ExpressionStatement(f))));
 
                     if (!declaration
                         .DescendantNodes()
                         .OfType<InvocationExpressionSyntax>()
                         .Any(z => z is { Expression: SimpleNameSyntax { Identifier.Text: { Length: > 0, } invocationName, }, } && invocationName == methodName))
+                    {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 GeneratorDiagnostics.ValidatorShouldCallGeneratedValidationMethod,
@@ -666,6 +720,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                                 methodName
                             )
                         );
+                    }
 
                     namespaces = namespaces.AddDistinctUsingStatements(inheritFromSyntax.SyntaxTree.GetCompilationUnitRoot().Usings);
                     classToInherit = classToInherit.AddMembers(method);
@@ -680,7 +735,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                     namespaces,
                     List<AttributeListSyntax>(),
                     SingletonList<MemberDeclarationSyntax>(
-                        targetSymbol.ContainingNamespace.IsGlobalNamespace
+                        ( targetSymbol.ContainingNamespace.IsGlobalNamespace )
                             ? classToInherit.ReparentDeclaration(context, declaration)
                             : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
                                .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))

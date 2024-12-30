@@ -1,6 +1,9 @@
 using FluentValidation;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
 using Rocket.Surgery.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -60,14 +63,17 @@ public static class TestHandler
     [UsedImplicitly]
     private class ResponseValidator : AbstractValidator<Response>
     {
-        public ResponseValidator() => _ = RuleFor(z => z.FullName).NotEmpty();
+        public ResponseValidator() => RuleFor(z => z.FullName).NotEmpty();
     }
 
     [UsedImplicitly]
     private class Handler : IRequestHandler<Request, Response>
     {
-        public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
+        public Task<Response> Handle(Request request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(
                 new Response(request.FirstName + " " + request.LastName)
-            );
+                );
+        }
     }
 }

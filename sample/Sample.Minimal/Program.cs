@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +19,8 @@ app.UseHttpsRedirection();
 app.UseSerilogRequestLogging(
     x =>
     {
-        x.GetLevel = LaunchPadHelpers.DefaultGetLevel;
-        x.EnrichDiagnosticContext = LaunchPadHelpers.DefaultEnrichDiagnosticContext;
+        x.GetLevel = (f, f2, f3) => LaunchPadHelpers.DefaultGetLevel(f, f2, f3);
+        x.EnrichDiagnosticContext = (f, f2) => LaunchPadHelpers.DefaultEnrichDiagnosticContext(f, f2);
     }
 );
 
@@ -36,7 +38,7 @@ app.MapHealthChecks(
     "/health",
     new()
     {
-        ResponseWriter = LaunchPadHelpers.DefaultResponseWriter,
+        ResponseWriter = (f, f2) => LaunchPadHelpers.DefaultResponseWriter(f, f2),
         ResultStatusCodes = new Dictionary<HealthStatus, int>
         {
             { HealthStatus.Healthy, StatusCodes.Status200OK },
@@ -47,16 +49,3 @@ app.MapHealthChecks(
 );
 
 app.Run();
-
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
-public partial class Program
-{
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
-}

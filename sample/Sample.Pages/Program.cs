@@ -1,7 +1,10 @@
 using System.Text;
 using System.Text.Json;
+
 using Humanizer;
+
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 
@@ -35,7 +38,7 @@ app.MapHealthChecks(
     "/health",
     new()
     {
-        ResponseWriter = LaunchPadHelpers.DefaultResponseWriter,
+        ResponseWriter = (f, f2) => LaunchPadHelpers.DefaultResponseWriter(f, f2),
         ResultStatusCodes = new Dictionary<HealthStatus, int>
         {
             { HealthStatus.Healthy, StatusCodes.Status200OK },
@@ -122,17 +125,4 @@ static async Task WriteResponse(HttpContext context, HealthReport healthReport)
     await context.Response.WriteAsync(
         Encoding.UTF8.GetString(memoryStream.ToArray())
     );
-}
-
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
-public partial class Program
-{
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay
-    {
-        get
-        {
-            return ToString();
-        }
-    }
 }

@@ -1,7 +1,10 @@
 using FakeItEasy;
+
 using MediatR;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
