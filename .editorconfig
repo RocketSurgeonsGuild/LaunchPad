@@ -46,8 +46,12 @@ dotnet_diagnostic.RMG012.severity = error # Unmapped target member
 dotnet_diagnostic.RMG020.severity = error # Unmapped source member
 ##
 
+###################################################################################################################
+####            This block is generated off the microsoft documentation (not sure if there is a better place to get all the metadata needed, wtb)
+####   Reference: https://github.com/david-driscoll/scripts/blob/main/EditorConfigGenerator.linq
+###################################################################################################################
 # style options
-csharp_prefer_braces = true
+csharp_prefer_braces = when_multiline
 # Applicable to: IDE0011
 # true, false, when_multiline
 
@@ -83,35 +87,35 @@ csharp_style_deconstructed_variable_declaration = true
 # Applicable to: IDE0042
 # true, false
 
-csharp_style_expression_bodied_accessors = true
+csharp_style_expression_bodied_accessors = when_on_single_line
 # Applicable to: IDE0027
 # true, when_on_single_line, false
 
-csharp_style_expression_bodied_constructors = true
+csharp_style_expression_bodied_constructors = when_on_single_line
 # Applicable to: IDE0021
 # true, when_on_single_line, false
 
-csharp_style_expression_bodied_indexers = true
+csharp_style_expression_bodied_indexers = when_on_single_line
 # Applicable to: IDE0026
 # true, when_on_single_line, false
 
-csharp_style_expression_bodied_lambdas = true
+csharp_style_expression_bodied_lambdas = when_on_single_line
 # Applicable to: IDE0053
 # true, when_on_single_line, false
 
-csharp_style_expression_bodied_local_functions = true
+csharp_style_expression_bodied_local_functions = when_on_single_line
 # Applicable to: IDE0061
 # true, when_on_single_line, false
 
-csharp_style_expression_bodied_methods = true
+csharp_style_expression_bodied_methods = when_on_single_line
 # Applicable to: IDE0022
 # true, when_on_single_line, false
 
-csharp_style_expression_bodied_operators = true
+csharp_style_expression_bodied_operators = when_on_single_line
 # Applicable to: IDE0023, IDE0024
 # true, when_on_single_line, false
 
-csharp_style_expression_bodied_properties = true
+csharp_style_expression_bodied_properties = when_on_single_line
 # Applicable to: IDE0025
 # true, when_on_single_line, false
 
@@ -223,7 +227,7 @@ csharp_using_directive_placement = outside_namespace
 # Applicable to: IDE0065
 # outside_namespace, inside_namespace
 
-dotnet_code_quality_unused_parameters = non_public
+dotnet_code_quality_unused_parameters = all
 # Applicable to: IDE0060
 # all, non_public
 
@@ -267,7 +271,7 @@ dotnet_style_parentheses_in_other_operators = never_if_unnecessary
 # Applicable to: IDE0047, IDE0048
 # always_for_clarity, never_if_unnecessary
 
-dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary
 # Applicable to: IDE0047, IDE0048
 # always_for_clarity, never_if_unnecessary
 
@@ -2223,7 +2227,7 @@ dotnet_diagnostic.IDE0047.severity = warning
 # Options: dotnet_style_parentheses_in_arithmetic_binary_operators, dotnet_style_parentheses_in_relational_binary_operators, dotnet_style_parentheses_in_other_binary_operators, dotnet_style_parentheses_in_other_operators
 
 # IDE0048: Add parentheses for clarity
-dotnet_diagnostic.IDE0048.severity = warning
+dotnet_diagnostic.IDE0048.severity = none
 # Options: dotnet_style_parentheses_in_arithmetic_binary_operators, dotnet_style_parentheses_in_relational_binary_operators, dotnet_style_parentheses_in_other_binary_operators, dotnet_style_parentheses_in_other_operators
 
 # IDE0049: Use language keywords instead of framework type names for type references
@@ -2516,7 +2520,7 @@ roslynator_block_braces_style = single_line_when_empty
 roslynator_body_style = expression
 # Applicable to: rcs1016
 
-roslynator_conditional_operator_condition_parentheses_style = omit_when_condition_is_single_token
+roslynator_conditional_operator_condition_parentheses_style = omit
 # Applicable to: rcs1051
 
 roslynator_conditional_operator_new_line = after
@@ -2757,13 +2761,13 @@ dotnet_diagnostic.rcs0061.severity = none
 # Options: roslynator_blank_line_between_switch_sections
 
 # Add braces (when expression spans over multiple lines)
-dotnet_diagnostic.rcs1001.severity = suggestion
+dotnet_diagnostic.rcs1001.severity = none
 
 # Remove braces
 dotnet_diagnostic.rcs1002.severity = none
 
 # Add braces to if-else (when expression spans over multiple lines)
-dotnet_diagnostic.rcs1003.severity = suggestion
+dotnet_diagnostic.rcs1003.severity = none
 
 # Remove braces from if-else
 dotnet_diagnostic.rcs1004.severity = none
@@ -3338,7 +3342,7 @@ dotnet_diagnostic.rcs1258.severity = suggestion
 dotnet_diagnostic.rcs1259.severity = suggestion
 
 # Add/remove trailing comma
-dotnet_diagnostic.rcs1260.severity = suggestion
+dotnet_diagnostic.rcs1260.severity = none
 # Options: roslynator_trailing_comma_style
 
 # Resource can be disposed asynchronously
@@ -4777,7 +4781,7 @@ resharper_outdent_binary_pattern_ops = true
 resharper_outdent_namespace_member = false
 resharper_outdent_statement_labels = true
 resharper_outdent_ternary_ops = false
-resharper_parentheses_non_obvious_operations = none, shift, bitwise_and, bitwise_exclusive_or, bitwise_inclusive_or, bitwise
+resharper_parentheses_non_obvious_operations = shift, bitwise_and, bitwise_exclusive_or, bitwise_inclusive_or, bitwise
 resharper_parentheses_redundancy_style = remove_if_not_clarifies_precedence
 resharper_parentheses_same_type_operations = true
 resharper_pi_attributes_indent = align_by_first_attribute
@@ -4979,7 +4983,7 @@ resharper_T4_max_line_length = 200
 resharper_T4_wrap_lines = true
 resharper_toplevel_function_declaration_return_type_style = do_not_change
 resharper_toplevel_function_definition_return_type_style = do_not_change
-resharper_trailing_comma_in_multiline_lists = false
+resharper_trailing_comma_in_multiline_lists = true
 resharper_trailing_comma_in_singleline_lists = false
 resharper_use_continuous_indent_inside_initializer_braces = true
 resharper_use_continuous_indent_inside_parens = true
