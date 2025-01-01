@@ -23,6 +23,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [PublicAPI]
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Application)]
+[RequiresUnreferencedCode("Registering the MVC services requires access to the application's compiled assemblies.")]
 public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceConvention
 {
     internal static void PopulateDefaultParts(
@@ -91,7 +92,6 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
     /// <param name="configuration"></param>
     /// <param name="services"></param>
     /// TODO Edit XML Comment Template for Register
-    [RequiresUnreferencedCode()]
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
