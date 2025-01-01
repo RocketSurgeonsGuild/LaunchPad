@@ -27,13 +27,9 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [AfterConvention(typeof(MediatRConvention))]
 [AfterConvention(typeof(HealthChecksConvention))]
 [ConventionCategory(ConventionCategory.Core)]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class FluentValidationConvention(FoundationOptions? options = null) : IServiceConvention
 {
     private readonly FoundationOptions _options = options ?? new FoundationOptions();
-
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay => ToString();
 
     /// <summary>
     ///     Registers the specified context.

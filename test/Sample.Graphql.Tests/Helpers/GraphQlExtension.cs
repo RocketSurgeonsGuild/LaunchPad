@@ -65,12 +65,8 @@ internal class GraphQlExtension : IAlbaExtension
     }
 }
 
-[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class TestServerDiagnosticEventListener(ILogger<TestServerDiagnosticEventListener> logger) : ServerDiagnosticEventListener
 {
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay => ToString();
-
     public override void HttpRequestError(HttpContext context, Exception exception)
     {
         logger.LogError(exception, "HttpRequestError");

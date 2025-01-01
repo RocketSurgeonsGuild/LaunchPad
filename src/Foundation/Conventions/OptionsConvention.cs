@@ -14,7 +14,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Core)]
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods)]
-[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class OptionsConvention : IServiceConvention
 {
     [RequiresUnreferencedCode(
@@ -34,9 +33,6 @@ public class OptionsConvention : IServiceConvention
     ///     A convention that registers any options POCOs that are found with the <see cref="RegisterOptionsConfigurationAttribute" />
     /// </summary>
     public OptionsConvention() => _configureMethod = GetType().GetMethod(nameof(Configure), BindingFlags.NonPublic | BindingFlags.Static)!;
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay => ToString();
 
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
