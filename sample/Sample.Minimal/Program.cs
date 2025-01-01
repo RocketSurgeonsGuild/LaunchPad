@@ -1,11 +1,8 @@
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using Humanizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Minimal;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services.AddHostedService<CustomHostedService>();
 
-var app = await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance));
+var app = await builder.ConfigureRocketSurgery();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 

@@ -1,12 +1,15 @@
-﻿using DryIoc;
+using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.DependencyInjection;
+
 using Sample.Core.Domain;
+
 using Serilog.Events;
 
 namespace Sample.Core.Tests;
@@ -18,20 +21,15 @@ public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyn
 
     protected HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : base(
         XUnitTestContext.Create(outputHelper, logLevel)
-    )
-    {
-        ExcludeSourceContext(nameof(AutoFakeTest));
-    }
+    ) => ExcludeSourceContext(nameof(AutoFakeTest));
 
     public async Task InitializeAsync()
     {
         _connection = new("DataSource=:memory:");
         await _connection.OpenAsync();
-        var factory = CreateLoggerFactory();
         _context = ConventionContextBuilder
-                  .Create()
-                  .ForTesting(Imports.Instance, factory)
-                  .WithLogger(factory.CreateLogger(GetType().Name));
+                  .Create(Imports.Instance)
+                  .UseLogger(Logger);
 
         var services = await new ServiceCollection()
                             .AddDbContextPool<RocketDbContext>(
@@ -45,10 +43,7 @@ public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyn
         await Container.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
     }
 
-    public async Task DisposeAsync()
-    {
-        await _connection!.DisposeAsync();
-    }
+    public async Task DisposeAsync() => await _connection!.DisposeAsync();
 
     protected override IContainer BuildContainer(IContainer container) => container.WithDependencyInjectionAdapter().Container;
 }

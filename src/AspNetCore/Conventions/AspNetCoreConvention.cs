@@ -1,10 +1,13 @@
 using System.Reflection;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
@@ -13,10 +16,14 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 ///     Class MvcConvention.
 /// </summary>
 /// <seealso cref="IServiceConvention" />
+/// <remarks>
+///     Builds the aspnet core convention
+/// </remarks>
+/// <param name="options"></param>
 [PublicAPI]
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Application)]
-public class AspNetCoreConvention : IServiceConvention
+public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceConvention
 {
     internal static void PopulateDefaultParts(
         ApplicationPartManager manager,
@@ -41,12 +48,9 @@ public class AspNetCoreConvention : IServiceConvention
         }
     }
 
-    private static T? GetServiceFromCollection<T>(IServiceCollection services)
-    {
-        return (T?)services
-                  .LastOrDefault(d => d.ServiceType == typeof(T))
-                 ?.ImplementationInstance;
-    }
+    private static T? GetServiceFromCollection<T>(IServiceCollection services) => (T?)services
+        .LastOrDefault(d => d.ServiceType == typeof(T))
+        ?.ImplementationInstance;
 
     private static IEnumerable<Assembly> GetApplicationPartAssemblies(Assembly assembly)
     {
@@ -78,16 +82,7 @@ public class AspNetCoreConvention : IServiceConvention
         }
     }
 
-    private readonly AspNetCoreOptions _options;
-
-    /// <summary>
-    ///     Builds the aspnet core convention
-    /// </summary>
-    /// <param name="options"></param>
-    public AspNetCoreConvention(AspNetCoreOptions? options = null)
-    {
-        _options = options ?? new AspNetCoreOptions();
-    }
+    private readonly AspNetCoreOptions _options = options ?? new AspNetCoreOptions();
 
     /// <summary>
     ///     Registers the specified context.
@@ -96,6 +91,7 @@ public class AspNetCoreConvention : IServiceConvention
     /// <param name="configuration"></param>
     /// <param name="services"></param>
     /// TODO Edit XML Comment Template for Register
+    [RequiresUnreferencedCode()]
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -108,7 +104,7 @@ public class AspNetCoreConvention : IServiceConvention
             // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
             context
-               .TypeProvider.GetAssemblies(s => s.FromAssemblyDependenciesOf(typeof(AspNetCoreConvention)))
+               .Assembly.GetCompiledTypeProvider().GetAssemblies(s => s.FromAssemblyDependenciesOf<AspNetCoreConvention>())
                .Where(_options.AssemblyPartFilter)
                .SelectMany(GetApplicationPartAssemblies)
         );

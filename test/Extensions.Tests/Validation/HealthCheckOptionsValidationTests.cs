@@ -1,9 +1,11 @@
 using DryIoc;
+
 using FluentValidation;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.Testing;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
@@ -141,24 +143,19 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
 
     public async Task InitializeAsync()
     {
-        var loggerFactory = CreateLoggerFactory();
         var conventionContextBuilder = ConventionContextBuilder
-                                      .Create()
-                                      .ForTesting(Imports.Instance, loggerFactory)
+                                      .Create(Imports.Instance)
                                       .Set(
                                            new FoundationOptions
                                            {
                                                RegisterValidationOptionsAsHealthChecks = true,
                                            }
                                        )
-                                      .WithLogger(loggerFactory.CreateLogger("Test"));
+                                      .UseLogger(Logger);
 
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
         Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
 
-    public Task DisposeAsync()
-    {
-        return Task.CompletedTask;
-    }
+    public Task DisposeAsync() => Task.CompletedTask;
 }

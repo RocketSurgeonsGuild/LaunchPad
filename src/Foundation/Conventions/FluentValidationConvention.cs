@@ -1,13 +1,18 @@
 using System.Globalization;
+
 using FluentValidation;
+
 using MediatR;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
@@ -41,7 +46,7 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        context.TypeProvider
+        context.Assembly.GetCompiledTypeProvider()
                .Scan(
                     services,
                     z => z

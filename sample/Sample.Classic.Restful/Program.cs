@@ -1,12 +1,10 @@
-using System.Reflection;
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Classic.Restful;
 
 var builder = WebApplication
    .CreateBuilder(args);
 builder.Services.AddControllers().AddControllersAsServices();
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
+var app = await builder.ConfigureRocketSurgery();
 
 app.UseExceptionHandler();
 app.UseHttpsRedirection();

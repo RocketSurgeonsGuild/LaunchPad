@@ -1,10 +1,11 @@
 using HotChocolate.Configuration;
 using HotChocolate.Types.Spatial;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
+
 using Sample.Core.Models;
-using Sample.Graphql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,11 +38,10 @@ builder
         }
     )
    .ModifyRequestOptions(
-        options => { options.IncludeExceptionDetails = true; }
+        options => options.IncludeExceptionDetails = true
     );
 
-var app = await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance));
+var app = await builder.ConfigureRocketSurgery();
 
 app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();

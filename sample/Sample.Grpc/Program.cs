@@ -1,11 +1,10 @@
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Grpc;
+
 using Sample.Grpc.Services;
 
 var app = await WebApplication
-               .CreateBuilder(args)
-               .LaunchWith(RocketBooster.For(Imports.Instance));
+               .CreateBuilder(args).ConfigureRocketSurgery();
 
 app.UseLaunchPadRequestLogging();
 
