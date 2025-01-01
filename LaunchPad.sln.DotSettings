@@ -247,7 +247,6 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Public Properties" Priority="100"&gt;&#xD;
@@ -264,7 +263,6 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Public Members" Priority="100"&gt;&#xD;
@@ -276,7 +274,6 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Public Types" Priority="100"&gt;&#xD;
@@ -288,7 +285,6 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="All other members"&gt;&#xD;
@@ -300,7 +296,6 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access Is="0" /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Protected Methods" Priority="100"&gt;&#xD;
@@ -323,7 +318,6 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access Is="0" /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Protected Properties" Priority="100"&gt;&#xD;
@@ -346,7 +340,6 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access Is="0" /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Protected Members" Priority="100"&gt;&#xD;
@@ -364,7 +357,6 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access Is="0" /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Internal Types" Priority="100"&gt;&#xD;
@@ -377,7 +369,6 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access Is="0" /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Private Methods" Priority="100"&gt;&#xD;
@@ -397,7 +388,6 @@
         &lt;Access Is="0" /&gt;&#xD;
         &lt;ImplementsInterface /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Private Members" Priority="100"&gt;&#xD;
@@ -411,7 +401,6 @@
         &lt;Access Is="0" /&gt;&#xD;
         &lt;ImplementsInterface /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Private Fields" Priority="100"&gt;&#xD;
@@ -425,7 +414,6 @@
         &lt;Access Is="0" /&gt;&#xD;
         &lt;ImplementsInterface /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Nested Types"&gt;&#xD;
@@ -435,17 +423,12 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access Is="0" /&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="File Local" Priority="100"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;Access Is="FileLocal" /&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-      &lt;Entry.SortBy&gt;&#xD;
-        &lt;Name Is="%FILENAME%" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
-      &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
   &lt;/TypePattern&gt;&#xD;
 &lt;/Patterns&gt;</s:String>
