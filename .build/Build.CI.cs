@@ -1,4 +1,5 @@
 using Nuke.Common.CI.GitHubActions;
+
 using Rocket.Surgery.Nuke.ContinuousIntegration;
 using Rocket.Surgery.Nuke.GithubActions;
 using Rocket.Surgery.Nuke.Jobs;
@@ -41,20 +42,16 @@ using Rocket.Surgery.Nuke.Jobs;
 [UploadLogs]
 [TitleEvents]
 [ContinuousIntegrationConventions]
-[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
 internal partial class Pipeline
 {
-    [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-    private string DebuggerDisplay => ToString();
-
     public static RocketSurgeonGitHubActionsConfiguration CiIgnoreMiddleware(RocketSurgeonGitHubActionsConfiguration configuration)
     {
         ( (RocketSurgeonsGithubActionsJob)configuration.Jobs[0] ).Steps =
         [
             new RunStep("N/A")
             {
-                Run = "echo \"No build required\""
-            }
+                Run = "echo \"No build required\"",
+            },
         ];
 
         return configuration.IncludeRepositoryConfigurationFiles();

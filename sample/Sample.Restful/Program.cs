@@ -1,13 +1,11 @@
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
 using FluentValidation;
-using Humanizer;
+
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Restful;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddControllersAsServices();
 builder.Services.AddHostedService<CustomHostedService>();
 
-var app = await builder
-   .LaunchWith(RocketBooster.For(Imports.Instance));
+var app = await builder.ConfigureRocketSurgery();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
@@ -64,10 +61,7 @@ internal class CustomHostedServiceOptions
     [UsedImplicitly]
     private sealed class Validator : AbstractValidator<CustomHostedServiceOptions>
     {
-        public Validator()
-        {
-            RuleFor(z => z.A).NotNull();
-        }
+        public Validator() => RuleFor(z => z.A).NotNull();
     }
 }
 

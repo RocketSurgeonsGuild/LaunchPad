@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
+using Rocket.Surgery.DependencyInjection.Compiled;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -28,6 +30,6 @@ public class DefaultConvention : IServiceConvention
            .AddLogging()
            .AddExecuteScopedServices();
 
-        services.AddCompiledServiceRegistrations(context.TypeProvider);
+        services.AddCompiledServiceRegistrations(context.Assembly.GetCompiledTypeProvider());
     }
 }

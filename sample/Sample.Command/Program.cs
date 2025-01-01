@@ -1,17 +1,18 @@
-﻿using DryIoc;
+using DryIoc;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 using Rocket.Surgery.CommandLine;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
-using Sample.Command;
+
 using Spectre.Console.Cli;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-var host = await builder.LaunchWith(
-    RocketBooster.For(Imports.Instance),
+var host = await builder.ConfigureRocketSurgery(
     b => b
         .SetDefaultCommand<DefaultCommand>()
         .ConfigureLogging(z => z.AddConsole())
@@ -32,7 +33,6 @@ public class InstanceThing
     public string From => "DryIoc";
 }
 
-
 public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceThing instanceThing)
     : Command<AppSettings>
 {
@@ -42,7 +42,7 @@ public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceTh
         logger.LogInformation(instanceThing.From);
         foreach (var item in configuration.AsEnumerable().Reverse())
         {
-            logger.LogInformation("{Key}: {Value}", item.Key, item.Value ?? string.Empty);
+            logger.LogInformation("{Key}: {Value}", item.Key, item.Value ?? "");
         }
 
         return 1;

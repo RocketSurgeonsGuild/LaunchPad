@@ -1,16 +1,18 @@
 using System.Text;
 using System.Text.Json;
+
 using Humanizer;
+
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Sample.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-var app = await builder.LaunchWith(RocketBooster.For(Imports.Instance));
+var app = await builder.ConfigureRocketSurgery();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -49,14 +51,14 @@ app.MapRazorPages();
 
 await app.RunAsync();
 
-static Task WriteResponse(HttpContext context, HealthReport healthReport)
+static async Task WriteResponse(HttpContext context, HealthReport healthReport)
 {
     context.Response.ContentType = "application/json; charset=utf-8";
 
-    var options = new JsonWriterOptions { Indented = true, };
+    var options = new JsonWriterOptions { Indented = true };
 
-    using var memoryStream = new MemoryStream();
-    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+    await using var memoryStream = new MemoryStream();
+    await using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
     {
         jsonWriter.WriteStartObject();
         jsonWriter.WriteString("status", healthReport.Status.ToString());
@@ -103,7 +105,7 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
                 jsonWriter.WriteEndArray();
             }
 
-            if (healthReportEntry.Value.Exception != null)
+            if (healthReportEntry.Value.Exception is { })
             {
                 var ex = healthReportEntry.Value.Exception;
                 jsonWriter.WriteStartObject("exception");
@@ -120,7 +122,7 @@ static Task WriteResponse(HttpContext context, HealthReport healthReport)
         jsonWriter.WriteEndObject();
     }
 
-    return context.Response.WriteAsync(
+    await context.Response.WriteAsync(
         Encoding.UTF8.GetString(memoryStream.ToArray())
     );
 }

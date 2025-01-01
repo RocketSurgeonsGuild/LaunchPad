@@ -1,15 +1,17 @@
 using FluentValidation;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
 using Rocket.Surgery.WebAssembly.Hosting;
-using Sample.BlazorWasm;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
-builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress), });
+builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress) });
 
-await ( await builder.ConfigureRocketSurgery(Imports.Instance) ).RunAsync();
+await ( await builder.ConfigureRocketSurgery() ).RunAsync();
 
 public static class TestHandler
 {
@@ -40,20 +42,14 @@ public static class TestHandler
     [UsedImplicitly]
     private class ResponseValidator : AbstractValidator<Response>
     {
-        public ResponseValidator()
-        {
-            RuleFor(z => z.FullName).NotEmpty();
-        }
+        public ResponseValidator() => RuleFor(z => z.FullName).NotEmpty();
     }
 
     [UsedImplicitly]
     private class Handler : IRequestHandler<Request, Response>
     {
-        public Task<Response> Handle(Request request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(
-                new Response(request.FirstName + " " + request.LastName)
-            );
-        }
+        public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
+            new Response(request.FirstName + " " + request.LastName)
+        );
     }
 }
