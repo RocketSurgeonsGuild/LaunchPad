@@ -1,4 +1,5 @@
 using Nuke.Common.CI.GitHubActions;
+
 using Rocket.Surgery.Nuke.ContinuousIntegration;
 using Rocket.Surgery.Nuke.GithubActions;
 using Rocket.Surgery.Nuke.Jobs;
@@ -49,8 +50,8 @@ internal partial class Pipeline
         [
             new RunStep("N/A")
             {
-                Run = "echo \"No build required\""
-            }
+                Run = "echo \"No build required\"",
+            },
         ];
 
         return configuration.IncludeRepositoryConfigurationFiles();

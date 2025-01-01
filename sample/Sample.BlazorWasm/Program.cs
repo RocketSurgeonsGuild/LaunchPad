@@ -9,7 +9,7 @@ using Rocket.Surgery.WebAssembly.Hosting;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
-builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress), });
+builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress) });
 
 await ( await builder.ConfigureRocketSurgery() ).RunAsync();
 
@@ -50,6 +50,6 @@ public static class TestHandler
     {
         public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
             new Response(request.FirstName + " " + request.LastName)
-            );
+        );
     }
 }

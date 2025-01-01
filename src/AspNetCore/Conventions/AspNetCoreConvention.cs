@@ -26,6 +26,43 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [RequiresUnreferencedCode("Registering the MVC services requires access to the application's compiled assemblies.")]
 public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceConvention
 {
+    /// <summary>
+    ///     Registers the specified context.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="configuration"></param>
+    /// <param name="services"></param>
+    /// TODO Edit XML Comment Template for Register
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        services
+           .AddEndpointsApiExplorer()
+           .AddMvcCore()
+           .AddApiExplorer();
+        PopulateDefaultParts(
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            GetServiceFromCollection<ApplicationPartManager>(services)!,
+            context
+               .Assembly.GetCompiledTypeProvider()
+               .GetAssemblies(s => s.FromAssemblyDependenciesOf<AspNetCoreConvention>())
+               .Where(_options.AssemblyPartFilter)
+               .SelectMany(GetApplicationPartAssemblies)
+        );
+
+        services.Configure<MvcOptions>(
+            options =>
+            {
+                options.Filters.Add<NotFoundExceptionFilter>();
+                options.Filters.Add<NotAuthorizedExceptionFilter>();
+                options.Filters.Add<RequestFailedExceptionFilter>();
+                options.Filters.Add<SerilogLoggingActionFilter>(0);
+                options.Filters.Add<SerilogLoggingPageFilter>(0);
+            }
+        );
+    }
+
     internal static void PopulateDefaultParts(
         ApplicationPartManager manager,
         IEnumerable<Assembly> assemblies
@@ -50,8 +87,8 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
     }
 
     private static T? GetServiceFromCollection<T>(IServiceCollection services) => (T?)services
-        .LastOrDefault(d => d.ServiceType == typeof(T))
-        ?.ImplementationInstance;
+                                                                                     .LastOrDefault(d => d.ServiceType == typeof(T))
+                                                                                    ?.ImplementationInstance;
 
     private static IEnumerable<Assembly> GetApplicationPartAssemblies(Assembly assembly)
     {
@@ -84,40 +121,4 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
     }
 
     private readonly AspNetCoreOptions _options = options ?? new AspNetCoreOptions();
-
-    /// <summary>
-    ///     Registers the specified context.
-    /// </summary>
-    /// <param name="context">The context.</param>
-    /// <param name="configuration"></param>
-    /// <param name="services"></param>
-    /// TODO Edit XML Comment Template for Register
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
-    {
-        ArgumentNullException.ThrowIfNull(context);
-
-        services
-           .AddEndpointsApiExplorer()
-           .AddMvcCore()
-           .AddApiExplorer();
-        PopulateDefaultParts(
-            // ReSharper disable once NullableWarningSuppressionIsUsed
-            GetServiceFromCollection<ApplicationPartManager>(services)!,
-            context
-               .Assembly.GetCompiledTypeProvider().GetAssemblies(s => s.FromAssemblyDependenciesOf<AspNetCoreConvention>())
-               .Where(_options.AssemblyPartFilter)
-               .SelectMany(GetApplicationPartAssemblies)
-        );
-
-        services.Configure<MvcOptions>(
-            options =>
-            {
-                options.Filters.Add<NotFoundExceptionFilter>();
-                options.Filters.Add<NotAuthorizedExceptionFilter>();
-                options.Filters.Add<RequestFailedExceptionFilter>();
-                options.Filters.Add<SerilogLoggingActionFilter>(0);
-                options.Filters.Add<SerilogLoggingPageFilter>(0);
-            }
-        );
-    }
 }

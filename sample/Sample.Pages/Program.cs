@@ -55,7 +55,7 @@ static async Task WriteResponse(HttpContext context, HealthReport healthReport)
 {
     context.Response.ContentType = "application/json; charset=utf-8";
 
-    var options = new JsonWriterOptions { Indented = true, };
+    var options = new JsonWriterOptions { Indented = true };
 
     await using var memoryStream = new MemoryStream();
     await using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
@@ -105,7 +105,7 @@ static async Task WriteResponse(HttpContext context, HealthReport healthReport)
                 jsonWriter.WriteEndArray();
             }
 
-            if (healthReportEntry.Value.Exception is not null)
+            if (healthReportEntry.Value.Exception is { })
             {
                 var ex = healthReportEntry.Value.Exception;
                 jsonWriter.WriteStartObject("exception");

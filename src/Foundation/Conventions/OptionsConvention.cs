@@ -17,19 +17,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods)]
 public class OptionsConvention : IServiceConvention
 {
-    [RequiresUnreferencedCode(
-        "Calls Microsoft.Extensions.DependencyInjection.OptionsConfigurationServiceCollectionExtensions.Configure<TOptions>(String, IConfiguration)"
-    )]
-    private static IServiceCollection Configure<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TOptions>(
-        IServiceCollection services,
-        string? name,
-        IConfiguration config
-    )
-        where TOptions : class =>
-        services.Configure<TOptions>(name, config);
-
-    private readonly MethodInfo _configureMethod;
-
     /// <summary>
     ///     A convention that registers any options POCOs that are found with the <see cref="RegisterOptionsConfigurationAttribute" />
     /// </summary>
@@ -58,4 +45,17 @@ public class OptionsConvention : IServiceConvention
                .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
         }
     }
+
+    [RequiresUnreferencedCode(
+        "Calls Microsoft.Extensions.DependencyInjection.OptionsConfigurationServiceCollectionExtensions.Configure<TOptions>(String, IConfiguration)"
+    )]
+    private static IServiceCollection Configure<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TOptions>(
+        IServiceCollection services,
+        string? name,
+        IConfiguration config
+    )
+        where TOptions : class =>
+        services.Configure<TOptions>(name, config);
+
+    private readonly MethodInfo _configureMethod;
 }

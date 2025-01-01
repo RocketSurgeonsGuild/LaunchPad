@@ -91,7 +91,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create(Imports.Instance)
-                                      .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = false, })
+                                      .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = false })
                                       .UseLogger(Logger);
 
         var context = await ConventionContext.FromAsync(conventionContextBuilder);

@@ -34,8 +34,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ConventionCategory(ConventionCategory.Core)]
 public class FluentValidationConvention(FoundationOptions? options = null) : IServiceConvention
 {
-    private readonly FoundationOptions _options = options ?? new FoundationOptions();
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -46,16 +44,17 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        context.Assembly.GetCompiledTypeProvider()
-               .Scan(
-                    services,
-                    z => z
-                        .FromAssemblyDependenciesOf<IValidator>()
-                        .AddClasses(t => t.AssignableTo<IValidator>().NotAssignableTo(typeof(CompositeValidator<>)))
-                        .AsSelf()
-                        .AsImplementedInterfaces(a => a.AssignableTo<IValidator>())
-                        .WithTransientLifetime()
-                );
+        context
+           .Assembly.GetCompiledTypeProvider()
+           .Scan(
+                services,
+                z => z
+                    .FromAssemblyDependenciesOf<IValidator>()
+                    .AddClasses(t => t.AssignableTo<IValidator>().NotAssignableTo(typeof(CompositeValidator<>)))
+                    .AsSelf()
+                    .AsImplementedInterfaces(a => a.AssignableTo<IValidator>())
+                    .WithTransientLifetime()
+            );
 
         if (_options.RegisterValidationOptionsAsHealthChecks == true
          || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue
@@ -83,4 +82,6 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
             ServiceDescriptor.Describe(typeof(IStreamPipelineBehavior<,>), typeof(ValidationStreamPipelineBehavior<,>), _options.MediatorLifetime)
         );
     }
+
+    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

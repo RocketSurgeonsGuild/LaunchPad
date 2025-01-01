@@ -16,13 +16,6 @@ namespace Sample.Core.Tests;
 
 public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyncLifetime
 {
-    private ConventionContextBuilder? _context;
-    private SqliteConnection? _connection;
-
-    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : base(
-        XUnitTestContext.Create(outputHelper, logLevel)
-    ) => ExcludeSourceContext(nameof(AutoFakeTest));
-
     public async Task InitializeAsync()
     {
         _connection = new("DataSource=:memory:");
@@ -38,12 +31,18 @@ public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyn
                                      .EnableSensitiveDataLogging()
                                      .UseSqlite(_connection)
                              )
-           .ApplyConventionsAsync(await ConventionContext.FromAsync(_context));
+                            .ApplyConventionsAsync(await ConventionContext.FromAsync(_context));
         Populate(services);
         await Container.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
     }
 
     public async Task DisposeAsync() => await _connection!.DisposeAsync();
 
+    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : base(
+        XUnitTestContext.Create(outputHelper, logLevel)
+    ) => ExcludeSourceContext(nameof(AutoFakeTest));
+
     protected override IContainer BuildContainer(IContainer container) => container.WithDependencyInjectionAdapter().Container;
+    private ConventionContextBuilder? _context;
+    private SqliteConnection? _connection;
 }

@@ -23,8 +23,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 [ConventionCategory(ConventionCategory.Core)]
 public class MediatRConvention(FoundationOptions? options = null) : IServiceConvention
 {
-    private readonly FoundationOptions _options = options ?? new FoundationOptions();
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -42,12 +40,14 @@ public class MediatRConvention(FoundationOptions? options = null) : IServiceConv
                 c.RegisterServicesFromAssemblies(assemblies);
                 c.Lifetime = _options switch
                 {
-                    { MediatorLifetime: ServiceLifetime.Singleton, } => ServiceLifetime.Singleton,
-                    { MediatorLifetime: ServiceLifetime.Scoped, } => ServiceLifetime.Scoped,
-                    { MediatorLifetime: ServiceLifetime.Transient, } => ServiceLifetime.Transient,
+                    { MediatorLifetime: ServiceLifetime.Singleton } => ServiceLifetime.Singleton,
+                    { MediatorLifetime: ServiceLifetime.Scoped } => ServiceLifetime.Scoped,
+                    { MediatorLifetime: ServiceLifetime.Transient } => ServiceLifetime.Transient,
                     _ => c.Lifetime,
                 };
             }
         );
     }
+
+    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

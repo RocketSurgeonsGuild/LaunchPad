@@ -4,7 +4,8 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Grpc.Services;
 
 var app = await WebApplication
-               .CreateBuilder(args).ConfigureRocketSurgery();
+               .CreateBuilder(args)
+               .ConfigureRocketSurgery();
 
 app.UseLaunchPadRequestLogging();
 

@@ -7,10 +7,9 @@ using Serilog.Events;
 
 namespace Sample.BlazorWasm.Tests;
 
-public abstract class HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : AutoFakeTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper, logLevel)), IAsyncLifetime
+public abstract class HandleTestHostBase
+    (ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : AutoFakeTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper, logLevel)), IAsyncLifetime
 {
-    private IConventionContext _hostBuilder = null!;
-
     public async Task InitializeAsync()
     {
         _hostBuilder =
@@ -25,4 +24,5 @@ public abstract class HandleTestHostBase(ITestOutputHelper outputHelper, LogEven
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
+    private IConventionContext _hostBuilder = null!;
 }

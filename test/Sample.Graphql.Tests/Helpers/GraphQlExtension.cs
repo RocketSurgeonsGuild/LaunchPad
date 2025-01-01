@@ -1,7 +1,8 @@
-using System.Diagnostics;
 using Alba;
+
 using HotChocolate;
 using HotChocolate.AspNetCore.Instrumentation;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,15 +17,9 @@ internal class GraphQlExtension : IAlbaExtension
 {
     public void Dispose() { }
 
-    public ValueTask DisposeAsync()
-    {
-        return ValueTask.CompletedTask;
-    }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
-    public Task Start(IAlbaHost host)
-    {
-        return Task.CompletedTask;
-    }
+    public Task Start(IAlbaHost host) => Task.CompletedTask;
 
     public IHostBuilder Configure(IHostBuilder builder)
     {
@@ -67,13 +62,7 @@ internal class GraphQlExtension : IAlbaExtension
 
 public class TestServerDiagnosticEventListener(ILogger<TestServerDiagnosticEventListener> logger) : ServerDiagnosticEventListener
 {
-    public override void HttpRequestError(HttpContext context, Exception exception)
-    {
-        logger.LogError(exception, "HttpRequestError");
-    }
+    public override void HttpRequestError(HttpContext context, Exception exception) => logger.LogError(exception, "HttpRequestError");
 
-    public override void HttpRequestError(HttpContext context, IError error)
-    {
-        logger.LogError(error.Exception, "HttpRequestError");
-    }
+    public override void HttpRequestError(HttpContext context, IError error) => logger.LogError(error.Exception, "HttpRequestError");
 }
