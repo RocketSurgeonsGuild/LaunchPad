@@ -19,11 +19,11 @@ internal class FluentValidationOptions<T>(IValidator<T>? validator = null)
         if (validator is null) return ValidateOptionsResult.Skip;
 
         var result = validator.Validate(options);
-        return  result.IsValid 
-            ?  ValidateOptionsResult.Success 
-            :  ValidateOptionsResult.Fail(
-            new[] { $"Failure while validating {typeof(T).GetNestedTypeName()}{( name == Options.DefaultName ? "" : $" (Name: {name})" )}." }
-               .Concat(result.Errors.Select(z => z.ToString()))
-        );
+        return result.IsValid
+            ? ValidateOptionsResult.Success
+            : ValidateOptionsResult.Fail(
+                new[] { $"Failure while validating {typeof(T).GetNestedTypeName()}{( name == Options.DefaultName ? "" : $" (Name: {name})" )}." }
+                   .Concat(result.Errors.Select(z => z.ToString()))
+            );
     }
 }

@@ -8,7 +8,7 @@ using Serilog;
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 /// <summary>
-/// Defines serilog telemetry configuration
+///     Defines serilog telemetry configuration
 /// </summary>
 [PublicAPI]
 [ExportConvention]
