@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Configuration;
+
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Telemetry;
 
@@ -21,6 +23,11 @@ public class InstrumentationConvention : IOpenTelemetryConvention
     public void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder)
     {
         builder.WithTracing(b => b.AddHttpClientInstrumentation(x => x.RecordException = true));
-        builder.WithMetrics(b => b.AddRuntimeInstrumentation().AddHttpClientInstrumentation());
+        builder.WithMetrics(
+            b => b
+                .AddHttpClientInstrumentation()
+                .AddRuntimeInstrumentation()
+                .AddProcessInstrumentation()
+        );
     }
 }

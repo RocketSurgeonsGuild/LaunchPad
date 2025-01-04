@@ -9,6 +9,8 @@
         <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+        <PackageReference Include="Serilog.Sinks.ApplicationInsights" />
+        <PackageReference Include="Serilog.Sinks.OpenTelemetry" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
