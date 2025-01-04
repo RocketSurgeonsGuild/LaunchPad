@@ -16,6 +16,7 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 public partial class SerilogTelemetryConvention : ISerilogConvention
 {
     /// <inheritdoc />
-    [RequiresUnreferencedCode()]
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration) => loggerConfiguration.WriteTo.OpenTelemetry(_ => { }, configuration.GetValue<string>);
+    [RequiresUnreferencedCode("Serilog")]
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
+        loggerConfiguration.WriteTo.OpenTelemetry(_ => { }, configuration.GetValue<string>);
 }

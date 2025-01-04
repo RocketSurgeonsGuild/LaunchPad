@@ -1,7 +1,4 @@
-using FluentValidation;
-
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
@@ -11,7 +8,6 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddControllersAsServices();
-builder.Services.AddHostedService<CustomHostedService>();
 
 var app = await builder.ConfigureRocketSurgery();
 app.UseExceptionHandler();
@@ -53,24 +49,3 @@ app.MapControllers();
 app.Run();
 
 public partial class Program;
-
-internal class CustomHostedServiceOptions
-{
-    public string? A { get; set; }
-
-    [UsedImplicitly]
-    private sealed class Validator : AbstractValidator<CustomHostedServiceOptions>
-    {
-        public Validator() => RuleFor(z => z.A).NotNull();
-    }
-}
-
-internal class CustomHostedService(IOptions<CustomHostedServiceOptions> options) : BackgroundService
-{
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        // ReSharper disable once UnusedVariable
-        var v = options.Value.A;
-        return Task.CompletedTask;
-    }
-}

@@ -7,39 +7,17 @@ using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Extensions.Tests.Validation;
 
 public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper)), IAsyncLifetime
 {
     [Fact]
-    public async Task Should_Validate_Options_And_Throw()
+    public Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
-        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
-    }
-
-    [Fact]
-    public async Task Should_Validate_Options_And_Pass()
-    {
-        var services = new ServiceCollection();
-        services
-           .AddOptions<Options>()
-           .Configure(
-                options =>
-                {
-                    options.Bool = true;
-                    options.Double = -50;
-                    options.Int = 50;
-                    options.String = "Hello";
-                }
-            );
-        Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
-        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
+        a.Should().Throw<OptionsValidationException>();
+        return Task.CompletedTask;
     }
 
     [Fact]
@@ -59,14 +37,12 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
-        await Verify(Container.Resolve<ValidationHealthCheckResults>().Results);
+        a.Should().Throw<OptionsValidationException>();
     }
 
     [Fact]
     public async Task Should_Validate_Options_And_Throw_After_Application_Has_Started()
     {
-        Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
                       .Should()
@@ -78,7 +54,6 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     [Fact]
     public void Should_Validate_Options_And_Pass_After_Application_Has_Started()
     {
-        Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
         var services = new ServiceCollection();
         services
            .AddOptions<Options>()
@@ -99,7 +74,6 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     [Fact]
     public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds_After_Application_Has_Started()
     {
-        Container.Resolve<ValidationHealthCheckResults>().ApplicationHasStarted = true;
         var services = new ServiceCollection();
         services
            .AddOptions<Options>()
