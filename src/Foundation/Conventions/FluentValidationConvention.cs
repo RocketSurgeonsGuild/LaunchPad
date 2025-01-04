@@ -1,5 +1,3 @@
-using System.Globalization;
-
 using FluentValidation;
 
 using MediatR;
@@ -7,7 +5,6 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.Conventions;
@@ -56,31 +53,9 @@ public class FluentValidationConvention(FoundationOptions? options = null) : ISe
                     .WithTransientLifetime()
             );
 
-        if (_options.RegisterValidationOptionsAsHealthChecks == true
-         || ( !_options.RegisterValidationOptionsAsHealthChecks.HasValue
-             && Convert.ToBoolean(
-                    context.Properties["RegisterValidationOptionsAsHealthChecks"],
-                    CultureInfo.InvariantCulture
-                ) )
-         || Environment.CommandLine.Contains(
-                "microsoft.extensions.apidescription.server",
-                StringComparison.OrdinalIgnoreCase
-            ))
-        {
-            // need to do validations using ValidateOnStart
-            services.Decorate<HealthCheckService, CustomHealthCheckService>();
-            services.AddSingleton<ValidationHealthCheckResults>();
-            services.AddSingleton(typeof(IValidateOptions<>), typeof(HealthCheckFluentValidationOptions<>));
-        }
-        else
-        {
-            services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
-        }
-
+        services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
         services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
-        services.TryAddEnumerable(
-            ServiceDescriptor.Describe(typeof(IStreamPipelineBehavior<,>), typeof(ValidationStreamPipelineBehavior<,>), _options.MediatorLifetime)
-        );
+        services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IStreamPipelineBehavior<,>), typeof(ValidationStreamPipelineBehavior<,>), _options.MediatorLifetime));
     }
 
     private readonly FoundationOptions _options = options ?? new FoundationOptions();

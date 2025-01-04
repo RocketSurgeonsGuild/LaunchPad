@@ -1,13 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
+
 using Serilog;
 
-namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 /// <summary>
-/// Defines serilog telemetry configuration
+///     Defines serilog telemetry configuration
 /// </summary>
 [PublicAPI]
 [ExportConvention]
@@ -15,8 +16,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 public partial class SerilogTelemetryConvention : ISerilogConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration)
-    {
+    [RequiresUnreferencedCode("Serilog")]
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
         loggerConfiguration.WriteTo.OpenTelemetry(_ => { }, configuration.GetValue<string>);
-    }
 }

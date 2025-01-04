@@ -8,7 +8,6 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddControllersAsServices();
-builder.Services.AddHostedService<CustomHostedService>();
 
 var app = await builder.ConfigureRocketSurgery();
 app.UseExceptionHandler();

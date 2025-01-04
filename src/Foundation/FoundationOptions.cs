@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+
 using NodaTime.TimeZones;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
