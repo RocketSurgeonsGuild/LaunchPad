@@ -1,7 +1,8 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
+
 using Serilog;
 
 // ReSharper disable once CheckNamespace
@@ -27,11 +28,41 @@ public static class RocketSurgerySerilogExtensions
         IServiceProvider services
     )
     {
-        foreach (var item in context.Conventions.Get<ISerilogConvention, SerilogConvention>())
+        foreach (var item in context.Conventions.GetAll())
         {
-            if (item is ISerilogConvention convention)
-                convention.Register(context, configuration, services, configurationBuilder);
-            else if (item is SerilogConvention @delegate) @delegate(context, configuration, services, configurationBuilder);
+            switch (item)
+            {
+                case ISerilogConvention convention:
+                    {
+                        try
+                        {
+                            convention.Register(context, configuration, services, configurationBuilder);
+                        }
+                        catch (Exception ex) when (!context.Require<ConventionExceptionPolicyDelegate>()(ex))
+                        {
+                            throw;
+                        }
+
+                        break;
+                    }
+
+                case SerilogConvention @delegate:
+                    {
+                        try
+                        {
+                            @delegate(context, configuration, services, configurationBuilder);
+                        }
+                        catch (Exception ex) when (!context.Require<ConventionExceptionPolicyDelegate>()(ex))
+                        {
+                            throw;
+                        }
+
+                        break;
+                    }
+
+                default:
+                    break;
+            }
         }
 
         return configurationBuilder;

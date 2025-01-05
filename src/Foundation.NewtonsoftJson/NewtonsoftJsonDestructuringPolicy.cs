@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+
 using Serilog.Core;
 using Serilog.Events;
 
@@ -6,13 +7,11 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 
 internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
 {
-    private static LogEventPropertyValue Destructure(JValue jv, ILogEventPropertyValueFactory propertyValueFactory)
-    {
+    private static LogEventPropertyValue Destructure(JValue jv, ILogEventPropertyValueFactory propertyValueFactory) =>
         // ReSharper disable once NullableWarningSuppressionIsUsed
-        return propertyValueFactory.CreatePropertyValue(jv.Value!, true);
-    }
+        propertyValueFactory.CreatePropertyValue(jv.Value, true);
 
-    private static LogEventPropertyValue Destructure(JArray ja, ILogEventPropertyValueFactory propertyValueFactory)
+    public static LogEventPropertyValue Destructure(JArray ja, ILogEventPropertyValueFactory propertyValueFactory)
     {
         var elems = ja.Select(t => propertyValueFactory.CreatePropertyValue(t, true));
         return new SequenceValue(elems);
@@ -44,7 +43,7 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
         return new StructureValue(props, typeTag);
     }
 
-    private static LogEventPropertyValue DestructureToDictionaryValue(JObject jo, ILogEventPropertyValueFactory propertyValueFactory)
+    public static LogEventPropertyValue DestructureToDictionaryValue(JObject jo, ILogEventPropertyValueFactory propertyValueFactory)
     {
         var elements = jo.Properties().Select(
             prop =>
@@ -61,14 +60,25 @@ internal class NewtonsoftJsonDestructuringPolicy : IDestructuringPolicy
         switch (value)
         {
             case JObject jo:
-                result = Destructure(jo, propertyValueFactory);
-                return true;
+                {
+                    result = Destructure(jo, propertyValueFactory);
+                    return true;
+                }
+
             case JArray ja:
-                result = Destructure(ja, propertyValueFactory);
-                return true;
+                {
+                    result = Destructure(ja, propertyValueFactory);
+                    return true;
+                }
+
             case JValue jv:
-                result = Destructure(jv, propertyValueFactory);
-                return true;
+                {
+                    result = Destructure(jv, propertyValueFactory);
+                    return true;
+                }
+
+            default:
+                break;
         }
 
         result = null;

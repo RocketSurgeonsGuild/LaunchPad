@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="build/*.*" Pack="true" PackagePath="build" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="OpenTelemetry" />
+        <PackageReference Include="Rocket.Surgery.WebAssembly.Hosting" />
+        <PackageReference Include="Serilog.Sinks.BrowserConsole" />
+        <PackageReference Include="Serilog.Sinks.Observable" />
+        <PackageReference Include="Serilog.Sinks.ApplicationInsights" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+        <AdditionalFiles Include="build/BannedSymbols.Rocket.Surgery.LaunchPad.WebAssembly.Hosting.txt" />
+        <GlobalAnalyzerConfigFiles Include="build/banned_symbols.globalconfig" />
+    </ItemGroup>
+</Project>

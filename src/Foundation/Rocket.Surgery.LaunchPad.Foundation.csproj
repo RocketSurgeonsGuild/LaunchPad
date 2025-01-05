@@ -16,7 +16,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
-        <ProjectReference Include="..\Telemetry\Rocket.Surgery.LaunchPad.Telemetry.csproj" />
         <ProjectReference
             Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj"
             IncludeAssets="analyzers"

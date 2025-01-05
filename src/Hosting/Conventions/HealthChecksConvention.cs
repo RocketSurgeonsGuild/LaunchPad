@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 
-namespace Rocket.Surgery.LaunchPad.Primitives.Conventions;
+namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 
 /// <summary>
 ///     EnvironmentLoggingConvention.

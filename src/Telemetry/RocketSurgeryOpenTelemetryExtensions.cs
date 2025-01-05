@@ -1,5 +1,8 @@
-using Microsoft.Extensions.Configuration;
 using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+
 using Rocket.Surgery.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.Telemetry;
@@ -10,46 +13,6 @@ namespace Rocket.Surgery.LaunchPad.Telemetry;
 [PublicAPI]
 public static class RocketSurgeryOpenTelemetryExtensions
 {
-    /// <summary>
-    ///     Apply configuration conventions
-    /// </summary>
-    /// <param name="builder"></param>
-    /// <param name="context"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static async ValueTask<IOpenTelemetryBuilder> ApplyConventionsAsync(
-        this IOpenTelemetryBuilder builder,
-        IConventionContext context,
-        CancellationToken cancellationToken = default
-    )
-    {
-        // If we don't get configuration, we're probably not needing telemetry
-        if (context.Get<IConfiguration>() is not { } configuration) return builder;
-
-        foreach (var item in context.Conventions
-                                    .Get<IOpenTelemetryConvention, OpenTelemetryConvention, IOpenTelemetryAsyncConvention,
-                                         OpenTelemetryAsyncConvention>())
-        {
-            switch (item)
-            {
-                case IOpenTelemetryConvention convention:
-                    convention.Register(context, configuration, builder);
-                    break;
-                case OpenTelemetryConvention @delegate:
-                    @delegate(context, configuration, builder);
-                    break;
-                case IOpenTelemetryAsyncConvention convention:
-                    await convention.Register(context, configuration, builder, cancellationToken).ConfigureAwait(false);
-                    break;
-                case OpenTelemetryAsyncConvention @delegate:
-                    await @delegate(context, configuration, builder, cancellationToken).ConfigureAwait(false);
-                    break;
-            }
-        }
-
-        return builder;
-    }
-
     /// <summary>
     ///     Configure the serilog delegate to the convention scanner
     /// </summary>
@@ -66,13 +29,11 @@ public static class RocketSurgeryOpenTelemetryExtensions
     )
     {
         ArgumentNullException.ThrowIfNull(container);
-
         ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(@delegate, priority, category);
         return container;
     }
-
 
     /// <summary>
     ///     Configure the serilog delegate to the convention scanner
@@ -90,7 +51,138 @@ public static class RocketSurgeryOpenTelemetryExtensions
     )
     {
         ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(@delegate);
 
+        container.AppendDelegate(@delegate, priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetryLogging(
+        this ConventionContextBuilder container,
+        OpenTelemetryLoggingConvention @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(@delegate);
+
+        container.AppendDelegate(@delegate, priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetryLogging(
+        this ConventionContextBuilder container,
+        Action<LoggerProviderBuilder> @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(@delegate);
+
+        container.AppendDelegate(@delegate, priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetryMetrics(
+        this ConventionContextBuilder container,
+        OpenTelemetryMetricsConvention @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(@delegate);
+
+        container.AppendDelegate(@delegate, priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetryMetrics(
+        this ConventionContextBuilder container,
+        Action<MeterProviderBuilder> @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(@delegate);
+
+        container.AppendDelegate(@delegate, priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetryTracing(
+        this ConventionContextBuilder container,
+        OpenTelemetryTracingConvention @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(@delegate);
+
+        container.AppendDelegate(@delegate, priority, category);
+        return container;
+    }
+
+    /// <summary>
+    ///     Configure the serilog delegate to the convention scanner
+    /// </summary>
+    /// <param name="container">The container.</param>
+    /// <param name="delegate">The delegate.</param>
+    /// <param name="priority"></param>
+    /// <param name="category"></param>
+    /// <returns>IConventionHostBuilder.</returns>
+    public static ConventionContextBuilder ConfigureOpenTelemetryTracing(
+        this ConventionContextBuilder container,
+        Action<TracerProviderBuilder> @delegate,
+        int priority = 0,
+        ConventionCategory? category = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
         ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(@delegate, priority, category);
@@ -113,7 +205,6 @@ public static class RocketSurgeryOpenTelemetryExtensions
     )
     {
         ArgumentNullException.ThrowIfNull(container);
-
         ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(@delegate, priority, category);
@@ -136,7 +227,6 @@ public static class RocketSurgeryOpenTelemetryExtensions
     )
     {
         ArgumentNullException.ThrowIfNull(container);
-
         ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, _) => @delegate(builder)), priority, category);
@@ -159,7 +249,6 @@ public static class RocketSurgeryOpenTelemetryExtensions
     )
     {
         ArgumentNullException.ThrowIfNull(container);
-
         ArgumentNullException.ThrowIfNull(@delegate);
 
         container.AppendDelegate(new OpenTelemetryAsyncConvention((_, _, builder, token) => @delegate(builder, token)), priority, category);

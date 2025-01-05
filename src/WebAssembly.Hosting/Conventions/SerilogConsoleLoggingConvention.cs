@@ -7,10 +7,8 @@ using Rocket.Surgery.LaunchPad.Serilog;
 using Rocket.Surgery.LaunchPad.Serilog.Conventions;
 
 using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 
-namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
+namespace Rocket.Surgery.LaunchPad.WebAssembly.Hosting.Conventions;
 
 /// <summary>
 ///     SerilogConsoleLoggingConvention.
@@ -41,13 +39,6 @@ public sealed class SerilogConsoleLoggingConvention(LaunchPadLoggingOptions? opt
 
         if (!_options.EnableConsoleLogging) return;
 
-        loggerConfiguration.WriteTo.Async(
-            c => c.Console(
-                LogEventLevel.Verbose,
-                _options.ConsoleMessageTemplate,
-                CultureInfo.InvariantCulture,
-                theme: AnsiConsoleTheme.Code
-            )
-        );
+        loggerConfiguration.WriteTo.BrowserConsole(formatProvider: CultureInfo.InvariantCulture);
     }
 }

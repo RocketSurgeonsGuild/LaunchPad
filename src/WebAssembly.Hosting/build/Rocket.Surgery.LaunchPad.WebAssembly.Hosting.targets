@@ -1,0 +1,6 @@
+﻿<Project>
+    <ItemGroup Condition="'$(RocketSurgeryLaunchPadWebAssemblyHostingBanHosting)' == 'true'">
+        <AdditionalFiles Include="$(MSBuildThisFileDirectory)/BannedSymbols.Rocket.Surgery.LaunchPad.WebAssembly.Hosting.txt" />
+        <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)/banned_symbols.globalconfig" />
+    </ItemGroup>
+</Project>
