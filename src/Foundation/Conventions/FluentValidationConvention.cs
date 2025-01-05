@@ -11,6 +11,7 @@ using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.DependencyInjection.Compiled;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
+using Rocket.Surgery.LaunchPad.Primitives.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
@@ -26,8 +27,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <param name="options"></param>
 [PublicAPI]
 [ExportConvention]
-[AfterConvention(typeof(MediatRConvention))]
-[AfterConvention(typeof(HealthChecksConvention))]
+[AfterConvention<MediatRConvention>]
+[AfterConvention<HealthChecksConvention>]
 [ConventionCategory(ConventionCategory.Core)]
 public class FluentValidationConvention(FoundationOptions? options = null) : IServiceConvention
 {

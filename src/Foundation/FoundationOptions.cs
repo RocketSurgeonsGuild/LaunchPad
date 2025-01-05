@@ -1,7 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using NodaTime.TimeZones;
-
 namespace Rocket.Surgery.LaunchPad.Foundation;
 
 /// <summary>
@@ -10,11 +8,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 [PublicAPI]
 public class FoundationOptions
 {
-    /// <summary>
-    ///     The NodaTime timezone source
-    /// </summary>
-    public IDateTimeZoneSource DateTimeZoneSource { get; set; } = TzdbDateTimeZoneSource.Default;
-
     /// <summary>
     ///     The Mediator lifetime
     /// </summary>

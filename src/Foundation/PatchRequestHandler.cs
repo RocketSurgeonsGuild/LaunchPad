@@ -1,3 +1,4 @@
+
 using MediatR;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
@@ -8,20 +9,15 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 /// <typeparam name="TRequest">The request type that will be run after the patch has been applied</typeparam>
 /// <typeparam name="TPatch">The patch object itself</typeparam>
 /// <typeparam name="TResponse">The final result object</typeparam>
-public abstract class PatchRequestHandler<TRequest, TPatch, TResponse> : IRequestHandler<TPatch, TResponse>
+/// <remarks>
+///     The based handler using Mediator
+/// </remarks>
+/// <param name="mediator"></param>
+public abstract class PatchRequestHandler<TRequest, TPatch, TResponse>(IMediator mediator) : IRequestHandler<TPatch, TResponse>
     where TRequest : IRequest<TResponse>
     where TPatch : IPropertyTracking<TRequest>, IRequest<TResponse>
 {
-    private readonly IMediator _mediator;
-
-    /// <summary>
-    ///     The based handler using Mediator
-    /// </summary>
-    /// <param name="mediator"></param>
-    protected PatchRequestHandler(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     /// <summary>
     ///     Method used to get request database calls, etc.

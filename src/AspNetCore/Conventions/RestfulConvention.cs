@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
@@ -16,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
-[AfterConvention(typeof(AspNetCoreConvention))]
+[AfterConvention<AspNetCoreConvention>]
 [ConventionCategory(ConventionCategory.Application)]
 public class RestfulConvention : IServiceConvention
 {

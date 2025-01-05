@@ -1,11 +1,13 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.Results;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
@@ -21,7 +23,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
-[AfterConvention(typeof(AspNetCoreConvention))]
+[AfterConvention<AspNetCoreConvention>]
 [ConventionCategory(ConventionCategory.Application)]
 public class ProblemDetailsConvention : IServiceConvention
 {
@@ -35,11 +37,11 @@ public class ProblemDetailsConvention : IServiceConvention
                 var old = options.StatusCodeSelector;
                 options.StatusCodeSelector = (exception) => exception switch
                                                             {
-                                                                NotFoundException      => StatusCodes.Status404NotFound,
+                                                                NotFoundException => StatusCodes.Status404NotFound,
                                                                 RequestFailedException => StatusCodes.Status400BadRequest,
                                                                 NotAuthorizedException => StatusCodes.Status403Forbidden,
-                                                                ValidationException    => StatusCodes.Status422UnprocessableEntity,
-                                                                _                      => old?.Invoke(exception) ?? StatusCodes.Status500InternalServerError,
+                                                                ValidationException => StatusCodes.Status422UnprocessableEntity,
+                                                                _ => old?.Invoke(exception) ?? StatusCodes.Status500InternalServerError,
                                                             };
             }
         );
@@ -53,7 +55,7 @@ public class ProblemDetailsConvention : IServiceConvention
     }
 }
 
-class OnBeforeWriteProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
+internal class OnBeforeWriteProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
 {
     public ValueTask WriteAsync(ProblemDetailsContext context) => throw new NotImplementedException();
 
@@ -61,7 +63,9 @@ class OnBeforeWriteProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehavior
     {
         if (!context.ProblemDetails.Status.HasValue
          || !apiBehaviorOptions.Value.ClientErrorMapping.TryGetValue(context.ProblemDetails.Status.Value, out var clientErrorData))
+        {
             return false;
+        }
 
         context.ProblemDetails.Title ??= clientErrorData.Title;
         context.ProblemDetails.Type ??= clientErrorData.Link;
@@ -69,12 +73,15 @@ class OnBeforeWriteProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehavior
     }
 }
 
-class FluentValidationProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
+internal class FluentValidationProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
 {
     public ValueTask WriteAsync(ProblemDetailsContext context)
     {
         if (context is not { Exception: IProblemDetailsData details }
-         || context.HttpContext.Items[typeof(ValidationResult)] is not ValidationResult validationResult) return ValueTask.CompletedTask;
+         || context.HttpContext.Items[typeof(ValidationResult)] is not ValidationResult validationResult)
+        {
+            return ValueTask.CompletedTask;
+        }
 
         context.ProblemDetails = new FluentValidationProblemDetails(validationResult.Errors)
         {
@@ -88,13 +95,10 @@ class FluentValidationProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehav
         return ValueTask.CompletedTask;
     }
 
-    public bool CanWrite(ProblemDetailsContext context)
-    {
-        return context.Exception is not IProblemDetailsData && context.HttpContext.Items[typeof(ValidationResult)] is ValidationResult;
-    }
+    public bool CanWrite(ProblemDetailsContext context) => context.Exception is not IProblemDetailsData && context.HttpContext.Items[typeof(ValidationResult)] is ValidationResult;
 }
 
-class ValidationExceptionProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
+internal class ValidationExceptionProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
 {
     public ValueTask WriteAsync(ProblemDetailsContext context)
     {
