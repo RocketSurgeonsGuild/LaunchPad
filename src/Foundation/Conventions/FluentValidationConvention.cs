@@ -26,8 +26,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
 /// <param name="options"></param>
 [PublicAPI]
 [ExportConvention]
-[AfterConvention(typeof(MediatRConvention))]
-[AfterConvention(typeof(HealthChecksConvention))]
+[AfterConvention<MediatRConvention>]
 [ConventionCategory(ConventionCategory.Core)]
 public class FluentValidationConvention(FoundationOptions? options = null) : IServiceConvention
 {

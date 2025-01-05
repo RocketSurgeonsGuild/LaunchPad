@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Configuration;
+
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Telemetry;
 
@@ -15,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IOpenTelemetryConvention" />
 [PublicAPI]
 [ExportConvention]
-[AfterConvention(typeof(AspNetCoreConvention))]
+[AfterConvention<AspNetCoreConvention>]
 [ConventionCategory(ConventionCategory.Application)]
 public class AspNetCoreConventionInstrumentationConvention : IOpenTelemetryConvention
 {

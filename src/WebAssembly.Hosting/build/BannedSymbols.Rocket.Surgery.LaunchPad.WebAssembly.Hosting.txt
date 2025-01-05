@@ -1,0 +1,2 @@
+T:Microsoft.Extensions.Hosting.IHostEnvironment
+N:Microsoft.Extensions.Hosting

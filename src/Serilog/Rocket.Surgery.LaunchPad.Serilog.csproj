@@ -5,21 +5,18 @@
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="NodaTime" />
+        <PackageReference Include="System.Text.Json" />
         <PackageReference Include="Serilog.Enrichers.AssemblyName" />
         <PackageReference Include="Serilog.Enrichers.Demystifier" />
         <PackageReference Include="Serilog.Settings.Configuration" />
-        <PackageReference Include="Serilog.Sinks.Async" />
-        <PackageReference Include="Serilog.Sinks.Observable" />
         <PackageReference Include="Serilog.Enrichers.Environment" />
         <PackageReference Include="Serilog.Enrichers.Thread" />
         <PackageReference Include="Serilog.Enrichers.Process" />
         <PackageReference Include="Serilog.Exceptions" />
         <PackageReference Include="Serilog.Enrichers.Span" />
         <PackageReference Include="Serilog.Extensions.Logging" />
-        <PackageReference Include="Serilog.Sinks.Console" />
-        <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Rocket.Surgery.Conventions.Serilog" />
-        <PackageReference Include="Serilog.Sinks.Trace" />
     </ItemGroup>
 </Project>

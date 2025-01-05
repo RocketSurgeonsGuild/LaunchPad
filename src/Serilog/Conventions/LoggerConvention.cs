@@ -1,10 +1,13 @@
-﻿using App.Metrics;
+using App.Metrics;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.Conventions.Hosting;
+
 using Serilog;
 using Serilog.Core;
 using Serilog.Extensions.Logging;
@@ -43,19 +46,13 @@ public class LoggerConvention : IServiceConvention
             services.Remove(item);
         }
 
-        #pragma warning disable CA2000
+#pragma warning disable CA2000
         var loggerProviderCollection = new LoggerProviderCollection();
-        #pragma warning restore CA2000
+#pragma warning restore CA2000
         var loggerConfiguration = new LoggerConfiguration();
 
         if (context.Get<ILogger>() is { } logger) loggerConfiguration.WriteTo.Logger(logger);
-        services.AddSingleton(
-            serviceProvider =>
-            {
-                loggerConfiguration.ApplyConventions(context, configuration, serviceProvider);
-                return loggerConfiguration.CreateLogger();
-            }
-        );
+        services.AddSingleton(serviceProvider => loggerConfiguration.ApplyConventions(context, configuration, serviceProvider).CreateLogger());
         services.AddSingleton<ILogger>(serviceProvider => serviceProvider.GetRequiredService<Logger>());
         services.AddSingleton<ILoggerFactory>(
             serviceProvider => new SerilogLoggerFactory(
@@ -65,7 +62,7 @@ public class LoggerConvention : IServiceConvention
             )
         );
 
-        services.AddSingleton<LoggerProviderCollection>(
+        services.AddSingleton(
             serviceProvider =>
             {
                 var loggerProviders = serviceProvider.GetServices<ILoggerProvider>();

@@ -6,6 +6,9 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="OpenTelemetry" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Process" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
     </ItemGroup>
 </Project>

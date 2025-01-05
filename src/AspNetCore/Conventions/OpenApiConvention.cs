@@ -1,13 +1,9 @@
-﻿using System.Text;
-using System.Text.Json;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
@@ -24,17 +20,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <seealso cref="IServiceConvention" />
 [PublicAPI]
 [ExportConvention]
-[AfterConvention(typeof(AspNetCoreConvention))]
+[AfterConvention<AspNetCoreConvention>]
 [ConventionCategory(ConventionCategory.Application)]
 public partial class OpenApiConvention : IServiceConvention
 {
-    [LoggerMessage(
-        EventId = 0,
-        Level = LogLevel.Debug,
-        Message = "Error adding XML comments from {XmlFile}"
-    )]
-    internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -56,17 +45,24 @@ public partial class OpenApiConvention : IServiceConvention
                 options.AddOperationTransformer<StatusCode201Filter>();
                 options.AddOperationTransformer<OperationMediaTypesFilter>();
                 options.AddOperationTransformer<AuthorizeFilter>();
-
-            });
+            }
+        );
         services.AddFluentValidationOpenApi();
     }
+
+    [LoggerMessage(
+        EventId = 0,
+        Level = LogLevel.Debug,
+        Message = "Error adding XML comments from {XmlFile}"
+    )]
+    internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
 }
 
 internal class NestedTypeSchemaFilter : IOpenApiSchemaTransformer
 {
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (context is not {  JsonTypeInfo.Type.DeclaringType: {} }) return Task.CompletedTask;
+        if (context is not { JsonTypeInfo.Type.DeclaringType: { } }) return Task.CompletedTask;
         schema.Annotations["x-schema-id"] = $"{context.JsonTypeInfo.Type.DeclaringType.Name}{context.JsonTypeInfo.Type.Name}";
         return Task.CompletedTask;
     }

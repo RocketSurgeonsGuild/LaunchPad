@@ -7,7 +7,7 @@
         <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+        <ProjectReference Include="..\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" />
