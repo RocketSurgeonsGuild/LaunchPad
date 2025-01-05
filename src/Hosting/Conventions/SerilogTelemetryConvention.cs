@@ -12,7 +12,11 @@ namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
 /// </summary>
 [PublicAPI]
 [ConventionCategory(ConventionCategory.Core)]
-[UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Getting string values")]
+[UnconditionalSuppressMessage(
+    "Trimming",
+    "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+    Justification = "Getting string values"
+)]
 public partial class SerilogTelemetryConvention : ISerilogConvention
 {
     /// <inheritdoc />

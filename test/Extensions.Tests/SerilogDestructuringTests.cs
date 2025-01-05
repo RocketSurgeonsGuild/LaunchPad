@@ -26,7 +26,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
 
         Logger.Information(
             "This is just a test {@Data}",
-            JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234", }, }), options: null)
+            JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234" } }), options: null)
         );
 
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -39,7 +39,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
 
         Logger.Information(
             "This is just a test {@Data}",
-            JsonSerializer.Deserialize<JsonDocument>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234", }, }), options: null)
+            JsonSerializer.Deserialize<JsonDocument>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234" } }), options: null)
         );
 
         await Verify(logs.Select(z => z.RenderMessage()));
@@ -50,7 +50,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
     {
         using var _ = CaptureLogs(out var logs);
 
-        Logger.Information("This is just a test {@Data}", JObject.FromObject(new { test = true, system = new { data = "1234", }, }));
+        Logger.Information("This is just a test {@Data}", JObject.FromObject(new { test = true, system = new { data = "1234" } }));
 
         await Verify(logs.Select(z => z.RenderMessage()));
     }
@@ -60,7 +60,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
     {
         using var _ = CaptureLogs(out var logs);
 
-        Logger.Information("This is just a test {@Data}", JArray.FromObject(new object[] { 1, "2", 3d, }));
+        Logger.Information("This is just a test {@Data}", JArray.FromObject(new object[] { 1, "2", 3d }));
 
         await Verify(logs.Select(z => z.RenderMessage()));
     }
@@ -190,34 +190,6 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    public SerilogDestructuringTests(ITestOutputHelper outputHelper) : base(
-        XUnitTestContext.Create(
-            outputHelper,
-            LogEventLevel.Information,
-            configureLogger: (_, configuration) => configuration
-                                                  .Destructure.NewtonsoftJsonTypes()
-                                                  .Destructure.SystemTextJsonTypes()
-                                                  .Destructure.NetTopologySuiteTypes()
-                                                  .Destructure.NodaTimeTypes()
-        )
-    )
-
-    {
-        LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
-        _clock = new(
-            Instant.FromUtc(
-                2022,
-                1,
-                1,
-                4,
-                4,
-                4
-            )
-        );
-    }
-
-    private readonly FakeClock _clock;
-
     [Theory]
     [InlineData(OgcGeometryType.Point, 5, false)]
     [InlineData(OgcGeometryType.Point, 5, true)]
@@ -274,4 +246,32 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         Logger.Information("This is just a test {@Data}", geometry);
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, threeD);
     }
+
+    public SerilogDestructuringTests(ITestOutputHelper outputHelper) : base(
+        XUnitTestContext.Create(
+            outputHelper,
+            LogEventLevel.Information,
+            configureLogger: (_, configuration) => configuration
+                                                  .Destructure.NewtonsoftJsonTypes()
+                                                  .Destructure.SystemTextJsonTypes()
+                                                  .Destructure.NetTopologySuiteTypes()
+                                                  .Destructure.NodaTimeTypes()
+        )
+    )
+
+    {
+        LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
+        _clock = new(
+            Instant.FromUtc(
+                2022,
+                1,
+                1,
+                4,
+                4,
+                4
+            )
+        );
+    }
+
+    private readonly FakeClock _clock;
 }

@@ -11,8 +11,7 @@ public class NotAuthorizedException : ProblemDetailsException
     ///     Initializes a new instance of the <see cref="NotAuthorizedException" /> class.
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
-    public NotAuthorizedException(string message) : base(message)
-    { }
+    public NotAuthorizedException(string message) : base(message) { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="NotAuthorizedException" /> class.
@@ -22,12 +21,10 @@ public class NotAuthorizedException : ProblemDetailsException
     ///     The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is
     ///     specified.
     /// </param>
-    public NotAuthorizedException(string message, Exception innerException) : base(message, innerException)
-    { }
+    public NotAuthorizedException(string message, Exception innerException) : base(message, innerException) { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="NotAuthorizedException" /> class.
     /// </summary>
-    public NotAuthorizedException() : base("Not Authorized")
-    { }
+    public NotAuthorizedException() : base("Not Authorized") { }
 }

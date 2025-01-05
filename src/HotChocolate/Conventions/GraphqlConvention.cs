@@ -28,14 +28,12 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
 [ExportConvention]
 [BeforeConvention<HotChocolateConvention>]
 [ConventionCategory(ConventionCategory.Application)]
-public class GraphqlConvention(
+public class GraphqlConvention
+(
     RocketChocolateOptions? rocketChocolateOptions = null,
     FoundationOptions? foundationOptions = null
-    ) : IServiceConvention
+) : IServiceConvention
 {
-    private readonly FoundationOptions _foundationOptions = foundationOptions ?? new FoundationOptions();
-    private readonly RocketChocolateOptions _rocketChocolateOptions = rocketChocolateOptions ?? new RocketChocolateOptions();
-
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
@@ -54,6 +52,9 @@ public class GraphqlConvention(
         services.TryAddSingleton(_foundationOptions);
         sb.AddType<AssemblyInfoQuery>();
     }
+
+    private readonly FoundationOptions _foundationOptions = foundationOptions ?? new FoundationOptions();
+    private readonly RocketChocolateOptions _rocketChocolateOptions = rocketChocolateOptions ?? new RocketChocolateOptions();
 }
 
 //class LaunchPadValidatorProvider : IValidatorProvider
@@ -66,6 +67,8 @@ public class GraphqlConvention(
 
 internal class LaunchPadValidatorRegistry(IServiceProvider serviceProvider) : IValidatorRegistry
 {
+    public Dictionary<Type, List<ValidatorDescriptor>> Cache => _cache.Value;
+
     private readonly Lazy<Dictionary<Type, List<ValidatorDescriptor>>> _cache = new(
         () =>
         {
@@ -83,9 +86,8 @@ internal class LaunchPadValidatorRegistry(IServiceProvider serviceProvider) : IV
 
                 list.Add(new(validator.GetType()));
             }
+
             return dictionary;
         }
     );
-
-    public Dictionary<Type, List<ValidatorDescriptor>> Cache => _cache.Value;
 }

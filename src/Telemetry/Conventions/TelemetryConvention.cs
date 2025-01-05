@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using OpenTelemetry;
-using OpenTelemetry.Logs;
 
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
@@ -12,7 +11,7 @@ using Rocket.Surgery.Conventions.Logging;
 namespace Rocket.Surgery.LaunchPad.Telemetry.Conventions;
 
 /// <summary>
-/// Defines default telemetry convention
+///     Defines default telemetry convention
 /// </summary>
 [PublicAPI]
 [ExportConvention]

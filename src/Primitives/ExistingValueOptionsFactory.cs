@@ -22,7 +22,7 @@ public static class ExistingValueOptions
         serviceProvider.GetServices<IConfigureOptions<TOptions>>(),
         serviceProvider.GetServices<IPostConfigureOptions<TOptions>>(),
         serviceProvider.GetServices<IValidateOptions<TOptions>>()
-        ).Create(name);
+    ).Create(name);
 }
 
 /// <summary>
@@ -36,16 +36,17 @@ public static class ExistingValueOptions
 /// <param name="setups">The configuration actions to run.</param>
 /// <param name="postConfigures">The initialization actions to run.</param>
 /// <param name="validations">The validations to run.</param>
-public class ExistingValueOptionsFactory<TOptions>(
+public class ExistingValueOptionsFactory<TOptions>
+(
     TOptions instance,
     IEnumerable<IConfigureOptions<TOptions>> setups,
     IEnumerable<IPostConfigureOptions<TOptions>> postConfigures,
     IEnumerable<IValidateOptions<TOptions>> validations
-    ) : OptionsFactory<TOptions>(setups, postConfigures, validations)
+) : OptionsFactory<TOptions>(setups, postConfigures, validations)
     where TOptions : class, new()
 {
-    private readonly TOptions _instance = instance;
-
     /// <inheritdoc />
     protected override TOptions CreateInstance(string name) => _instance;
+
+    private readonly TOptions _instance = instance;
 }

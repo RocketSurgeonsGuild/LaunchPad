@@ -1,21 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
-
+using Microsoft.Extensions.Configuration;
 
 using OpenTelemetry.Logs;
-
 
 using Rocket.Surgery.Conventions;
 
 namespace Rocket.Surgery.LaunchPad.Telemetry;
 
 /// <summary>
-///   IOpenTelemetryLoggingConvention
+///     IOpenTelemetryLoggingConvention
 /// </summary>
 [PublicAPI]
 public interface IOpenTelemetryLoggingConvention : IConvention
 {
     /// <summary>
-    ///   Register the OpenTelemetry logging
+    ///     Register the OpenTelemetry logging
     /// </summary>
     /// <param name="context"></param>
     /// <param name="configuration"></param>

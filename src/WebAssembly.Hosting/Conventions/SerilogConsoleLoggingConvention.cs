@@ -25,8 +25,6 @@ namespace Rocket.Surgery.LaunchPad.WebAssembly.Hosting.Conventions;
 [ConventionCategory(ConventionCategory.Core)]
 public sealed class SerilogConsoleLoggingConvention(LaunchPadLoggingOptions? options = null) : ISerilogConvention
 {
-    private readonly LaunchPadLoggingOptions _options = options ?? new LaunchPadLoggingOptions();
-
     /// <inheritdoc />
     public void Register(
         IConventionContext context,
@@ -41,4 +39,6 @@ public sealed class SerilogConsoleLoggingConvention(LaunchPadLoggingOptions? opt
 
         loggerConfiguration.WriteTo.BrowserConsole(formatProvider: CultureInfo.InvariantCulture);
     }
+
+    private readonly LaunchPadLoggingOptions _options = options ?? new LaunchPadLoggingOptions();
 }

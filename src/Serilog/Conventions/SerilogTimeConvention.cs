@@ -17,5 +17,6 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 public class SerilogTimeConvention : ISerilogConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration) => loggerConfiguration.Destructure.NodaTimeTypes();
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
+        loggerConfiguration.Destructure.NodaTimeTypes();
 }

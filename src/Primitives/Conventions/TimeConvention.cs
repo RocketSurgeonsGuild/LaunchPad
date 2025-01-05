@@ -23,8 +23,6 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Conventions;
 [ConventionCategory(ConventionCategory.Core)]
 public class TimeConvention(PrimitiveOptions? options = null) : IServiceConvention
 {
-    private readonly PrimitiveOptions _options = options ?? new();
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -40,4 +38,6 @@ public class TimeConvention(PrimitiveOptions? options = null) : IServiceConventi
         services.TryAddSingleton<IClock>(SystemClock.Instance);
         services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
     }
+
+    private readonly PrimitiveOptions _options = options ?? new();
 }

@@ -18,15 +18,11 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 /// <param name="patterns">The patterns to use for parsing and formatting.</param>
 public sealed class SystemTextJsonCompositeNodaPatternConverter<T>(Action<T>? validator, params IPattern<T>[] patterns) : NodaConverterBase<T>
 {
-    private readonly IPattern<T>[] _patterns = patterns;
-    private readonly Action<T>? _validator = validator;
-
     /// <summary>
     ///     Creates a new instance with a pattern and no validator.
     /// </summary>
     /// <param name="patterns">The patterns to use for parsing and formatting.</param>
-    public SystemTextJsonCompositeNodaPatternConverter(params IPattern<T>[] patterns) : this(null, patterns)
-    { }
+    public SystemTextJsonCompositeNodaPatternConverter(params IPattern<T>[] patterns) : this(null, patterns) { }
 
     /// <inheritdoc />
     protected override T ReadJsonImpl(ref Utf8JsonReader reader, JsonSerializerOptions options)
@@ -52,4 +48,7 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T>(Action<T>? va
         _validator?.Invoke(value);
         writer.WriteStringValue(_patterns[0].Format(value));
     }
+
+    private readonly IPattern<T>[] _patterns = patterns;
+    private readonly Action<T>? _validator = validator;
 }

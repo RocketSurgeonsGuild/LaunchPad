@@ -27,15 +27,15 @@ namespace Rocket.Surgery.LaunchPad.Testing;
 [ConventionCategory(ConventionCategory.Core)]
 public class FakeTimeConvention(int? unixTimeSeconds = null, Duration? advanceBy = null) : IServiceConvention
 {
-    private readonly int _unixTimeSeconds = unixTimeSeconds ?? 1577836800;
-    private readonly Duration _advanceBy = advanceBy ?? Duration.FromSeconds(1);
-
     /// <inheritdoc />
     public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
     {
         services.RemoveAll<TimeProvider>();
-        services.AddSingleton(new FakeTimeProvider(DateTimeOffset.FromUnixTimeSeconds(_unixTimeSeconds)) { AutoAdvanceAmount = _advanceBy.ToTimeSpan(), });
+        services.AddSingleton(new FakeTimeProvider(DateTimeOffset.FromUnixTimeSeconds(_unixTimeSeconds)) { AutoAdvanceAmount = _advanceBy.ToTimeSpan() });
         services.AddSingleton<TimeProvider>(sp => sp.GetRequiredService<FakeTimeProvider>());
         services.AddSingleton(s => s.GetRequiredService<TimeProvider>().ToClock());
     }
+
+    private readonly int _unixTimeSeconds = unixTimeSeconds ?? 1577836800;
+    private readonly Duration _advanceBy = advanceBy ?? Duration.FromSeconds(1);
 }

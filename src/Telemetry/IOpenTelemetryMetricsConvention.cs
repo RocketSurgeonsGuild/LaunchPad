@@ -7,13 +7,13 @@ using Rocket.Surgery.Conventions;
 namespace Rocket.Surgery.LaunchPad.Telemetry;
 
 /// <summary>
-///   IOpenTelemetryMetricsConvention
+///     IOpenTelemetryMetricsConvention
 /// </summary>
 [PublicAPI]
 public interface IOpenTelemetryMetricsConvention : IConvention
 {
     /// <summary>
-    ///   Register the OpenTelemetry metrics
+    ///     Register the OpenTelemetry metrics
     /// </summary>
     /// <param name="context"></param>
     /// <param name="configuration"></param>

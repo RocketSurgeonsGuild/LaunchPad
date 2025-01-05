@@ -24,13 +24,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [ConventionCategory(ConventionCategory.Application)]
 public partial class OpenApiConvention : IServiceConvention
 {
-    [LoggerMessage(
-        EventId = 0,
-        Level = LogLevel.Debug,
-        Message = "Error adding XML comments from {XmlFile}"
-    )]
-    internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -52,9 +45,17 @@ public partial class OpenApiConvention : IServiceConvention
                 options.AddOperationTransformer<StatusCode201Filter>();
                 options.AddOperationTransformer<OperationMediaTypesFilter>();
                 options.AddOperationTransformer<AuthorizeFilter>();
-            });
+            }
+        );
         services.AddFluentValidationOpenApi();
     }
+
+    [LoggerMessage(
+        EventId = 0,
+        Level = LogLevel.Debug,
+        Message = "Error adding XML comments from {XmlFile}"
+    )]
+    internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
 }
 
 internal class NestedTypeSchemaFilter : IOpenApiSchemaTransformer

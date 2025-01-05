@@ -1,4 +1,3 @@
-
 using MediatR;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
@@ -17,7 +16,12 @@ public abstract class PatchRequestHandler<TRequest, TPatch, TResponse>(IMediator
     where TRequest : IRequest<TResponse>
     where TPatch : IPropertyTracking<TRequest>, IRequest<TResponse>
 {
-    private readonly IMediator _mediator = mediator;
+    /// <inheritdoc />
+    public virtual async Task<TResponse> Handle(TPatch request, CancellationToken cancellationToken)
+    {
+        var underlyingRequest = await GetRequest(request, cancellationToken);
+        return await _mediator.Send(request.ApplyChanges(underlyingRequest), cancellationToken);
+    }
 
     /// <summary>
     ///     Method used to get request database calls, etc.
@@ -27,10 +31,5 @@ public abstract class PatchRequestHandler<TRequest, TPatch, TResponse>(IMediator
     /// <returns></returns>
     protected abstract Task<TRequest> GetRequest(TPatch patchRequest, CancellationToken cancellationToken);
 
-    /// <inheritdoc />
-    public virtual async Task<TResponse> Handle(TPatch request, CancellationToken cancellationToken)
-    {
-        var underlyingRequest = await GetRequest(request, cancellationToken);
-        return await _mediator.Send(request.ApplyChanges(underlyingRequest), cancellationToken);
-    }
+    private readonly IMediator _mediator = mediator;
 }

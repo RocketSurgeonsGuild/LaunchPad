@@ -11,8 +11,7 @@ public class NotFoundException : ProblemDetailsException
     ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
-    public NotFoundException(string message) : base(message)
-    { }
+    public NotFoundException(string message) : base(message) { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
@@ -22,12 +21,10 @@ public class NotFoundException : ProblemDetailsException
     ///     The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is
     ///     specified.
     /// </param>
-    public NotFoundException(string message, Exception innerException) : base(message, innerException)
-    { }
+    public NotFoundException(string message, Exception innerException) : base(message, innerException) { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
     /// </summary>
-    public NotFoundException() : base("Not Found")
-    { }
+    public NotFoundException() : base("Not Found") { }
 }

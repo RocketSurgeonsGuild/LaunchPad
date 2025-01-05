@@ -35,14 +35,14 @@ public class ProblemDetailsConvention : IServiceConvention
             options =>
             {
                 var old = options.StatusCodeSelector;
-                options.StatusCodeSelector = (exception) => exception switch
-                                                            {
-                                                                NotFoundException => StatusCodes.Status404NotFound,
-                                                                RequestFailedException => StatusCodes.Status400BadRequest,
-                                                                NotAuthorizedException => StatusCodes.Status403Forbidden,
-                                                                ValidationException => StatusCodes.Status422UnprocessableEntity,
-                                                                _ => old?.Invoke(exception) ?? StatusCodes.Status500InternalServerError,
-                                                            };
+                options.StatusCodeSelector = exception => exception switch
+                                                          {
+                                                              NotFoundException => StatusCodes.Status404NotFound,
+                                                              RequestFailedException => StatusCodes.Status400BadRequest,
+                                                              NotAuthorizedException => StatusCodes.Status403Forbidden,
+                                                              ValidationException => StatusCodes.Status422UnprocessableEntity,
+                                                              _ => old?.Invoke(exception) ?? StatusCodes.Status500InternalServerError,
+                                                          };
             }
         );
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, OnBeforeWriteProblemDetailsWriter>());

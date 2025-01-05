@@ -18,5 +18,6 @@ namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;
 public class SerilogSystemTextJsonConvention : ISerilogConvention
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration) => loggerConfiguration.Destructure.SystemTextJsonTypes();
+    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
+        loggerConfiguration.Destructure.SystemTextJsonTypes();
 }

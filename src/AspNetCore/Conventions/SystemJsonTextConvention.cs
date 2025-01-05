@@ -26,8 +26,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [ConventionCategory(ConventionCategory.Application)]
 public class SystemJsonTextConvention(FoundationOptions? options = null) : IServiceConvention
 {
-    private readonly FoundationOptions _options = options ?? new FoundationOptions();
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -45,4 +43,6 @@ public class SystemJsonTextConvention(FoundationOptions? options = null) : IServ
            .AddOptions<HttpJsonOptions>()
            .Configure<IServiceProvider>((options, provider) => ExistingValueOptions.Apply(provider, options.SerializerOptions, Options.DefaultName));
     }
+
+    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }
