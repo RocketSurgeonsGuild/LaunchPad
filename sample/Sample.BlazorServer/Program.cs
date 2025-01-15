@@ -1,5 +1,6 @@
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+
 using Sample.BlazorServer.Data;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.Configuration;
+
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -34,16 +36,20 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
         ArgumentNullException.ThrowIfNull(context);
 
         var applicationLogLevel = configuration.GetValue<LogLevel?>("ApplicationState:LogLevel");
-        if (applicationLogLevel.HasValue)
-            builder.AddInMemoryCollection(
-                new Dictionary<string, string?>
-                {
+        if (!applicationLogLevel.HasValue)
+        {
+            return;
+        }
+
+        builder.AddInMemoryCollection(
+            new Dictionary<string, string?>
+            {
                     {
                         "Serilog:MinimumLevel:Default",
                         LevelConvert.ToSerilogLevel(applicationLogLevel.Value).ToString()
                     },
-                }
-            );
+            }
+        );
     }
 
     /// <inheritdoc />

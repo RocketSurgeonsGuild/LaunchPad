@@ -1,5 +1,7 @@
 using System.Runtime.CompilerServices;
+
 using DiffEngine;
+
 using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
@@ -17,10 +19,7 @@ internal static class ModuleInitializer
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {
-                static string GetTypeName(Type type)
-                {
-                    return type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
-                }
+                static string GetTypeName(Type type) => type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
 
                 var typeName = GetTypeName(type);
 
@@ -29,5 +28,4 @@ internal static class ModuleInitializer
             }
         );
     }
-
 }

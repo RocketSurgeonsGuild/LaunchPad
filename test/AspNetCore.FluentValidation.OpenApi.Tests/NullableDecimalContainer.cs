@@ -1,6 +1,6 @@
 namespace AspNetCore.FluentValidation.OpenApi.Tests;
 
-class NullableDecimalContainer
+internal class NullableDecimalContainer
 {
     public decimal? Value { get; set; }
 }

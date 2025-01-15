@@ -1,27 +1,26 @@
 using Alba;
+
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Grpc.Tests.Helpers;
 
-public abstract class WebAppFixtureTest<TAppFixture>(ITestOutputHelper outputHelper,
+public abstract class WebAppFixtureTest<TAppFixture>
+(
+    ITestOutputHelper outputHelper,
     TAppFixture rocketSurgeryWebAppFixture) : LoggerTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper)), IClassFixture<TAppFixture>, IAsyncLifetime
     where TAppFixture : class, ILaunchPadWebAppFixture
 {
-    public IAlbaHost AlbaHost => rocketSurgeryWebAppFixture.AlbaHost;
-
-    /// <summary>
-    ///     The Service Provider
-    /// </summary>
-    protected IServiceProvider ServiceProvider => AlbaHost.Services;
-
     public virtual Task InitializeAsync()
     {
         rocketSurgeryWebAppFixture.SetLoggerFactory(CreateLoggerFactory());
         return rocketSurgeryWebAppFixture.ResetAsync();
     }
 
-    public virtual Task DisposeAsync()
-    {
-        return Task.CompletedTask;
-    }
+    public virtual Task DisposeAsync() => Task.CompletedTask;
+    public IAlbaHost AlbaHost => rocketSurgeryWebAppFixture.AlbaHost;
+
+    /// <summary>
+    ///     The Service Provider
+    /// </summary>
+    protected IServiceProvider ServiceProvider => AlbaHost.Services;
 }

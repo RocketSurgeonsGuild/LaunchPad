@@ -1,7 +1,10 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
+
 using FluentValidation;
+
 using MediatR;
+
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -42,7 +45,7 @@ namespace Sample.Core.Operations.Rockets
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.");
 
@@ -82,7 +85,7 @@ namespace Sample.Core.Operations.Rockets
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket must be made partial.");
 
@@ -256,7 +259,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    #if !ROSLYN4_0
+#if !ROSLYN4_0
     [Fact]
     public async Task Should_Inherit_Using_Generic_Type_Arguments()
     {
@@ -299,7 +302,7 @@ namespace Sample.Core.Operations.Rockets
 
         await Verify(result);
     }
-    #endif
+#endif
 
     [Fact]
     public async Task Should_Generate_With_Method_For_Record_That_Inherits()
@@ -756,7 +759,8 @@ partial class Validator : AbstractValidator<Request>
         yield return
         [
             "RuleSet",
-            @"
+            """
+
 using FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation;
 public class Model
@@ -769,14 +773,14 @@ public class Model
     {
         public Validator()
         {
-            RuleSet(""Create"",
+            RuleSet("Create",
                 () =>
                 {
                     RuleFor(x => x.SerialNumber).NotNull();
                     RuleFor(x => x.Id).NotNull();
                     RuleFor(x => x.Something).NotNull();
                 });
-            this.RuleSet(""OnlySerialNumber"",
+            this.RuleSet("OnlySerialNumber",
                 () =>
                 {
                     RuleFor(x => x.SerialNumber).NotNull();
@@ -799,13 +803,15 @@ partial class Validator : AbstractValidator<Request>
         InheritFromModel();
     }
 }
-",
+
+""",
         ];
 
         yield return
         [
             "RuleSet_Exclude",
-            @"
+            """
+
 using FluentValidation;
 using Rocket.Surgery.LaunchPad.Foundation;
 public class Model
@@ -818,14 +824,14 @@ public class Model
     {
         public Validator()
         {
-            RuleSet(""Create"",
+            RuleSet("Create",
                 () =>
                 {
                     RuleFor(x => x.SerialNumber).NotNull();
                     RuleFor(x => x.Id).NotNull();
                     RuleFor(x => x.Something).NotNull();
                 });
-            this.RuleSet(""OnlySerialNumber"",
+            this.RuleSet("OnlySerialNumber",
                 () =>
                 {
                     RuleFor(x => x.SerialNumber).NotNull();
@@ -848,7 +854,8 @@ partial class Validator : AbstractValidator<Request>
         InheritFromModel();
     }
 }
-",
+
+""",
         ];
     }
 

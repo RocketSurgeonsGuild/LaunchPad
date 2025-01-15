@@ -1,11 +1,14 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Reflection;
+
 using HotChocolate;
 using HotChocolate.Data.Filters;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types;
 using HotChocolate.Utilities;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
@@ -38,7 +41,6 @@ public static class GraphqlExtensions
         return error;
     }
 
-
     /// <summary>
     ///     Configures a generated strongly typed id type with the given graphql schema type
     /// </summary>
@@ -51,7 +53,7 @@ public static class GraphqlExtensions
     /// <returns></returns>
     public static IRequestExecutorBuilder ConfigureStronglyTypedId<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)]
-        TStrongType,
+    TStrongType,
         TSchemaType>(this IRequestExecutorBuilder builder)
         where TSchemaType : INamedType
     {
@@ -61,18 +63,6 @@ public static class GraphqlExtensions
         return builder;
     }
 
-
-    // TOOD: Make a source generator for this.
-    private static readonly MethodInfo AddTypeConverterMethod = typeof(RequestExecutorBuilderExtensions)
-                                                               .GetMethods()
-                                                               .Single(
-                                                                    z => z.Name == "AddTypeConverter"
-                                                                     && z.ReturnType == typeof(IRequestExecutorBuilder)
-                                                                     && z.IsGenericMethod
-                                                                     && z.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                                                                     && z.GetParameters().Length == 2
-                                                                );
-
     [UnconditionalSuppressMessage(
         "Trimming",
         "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
@@ -80,7 +70,7 @@ public static class GraphqlExtensions
     )]
     private static void AddTypeConversion<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)]
-        TStrongType>(
+    TStrongType>(
         IRequestExecutorBuilder builder
     )
     {
@@ -95,7 +85,7 @@ public static class GraphqlExtensions
                .MakeGenericMethod(typeof(TStrongType), underlyingType)
                .Invoke(
                     null,
-                    new object[] { builder, Expression.Lambda(delegateType, Expression.Property(value, "Value"), false, value).Compile(), }
+                    [builder, Expression.Lambda(delegateType, Expression.Property(value, "Value"), false, value).Compile()]
                 );
         }
 
@@ -104,13 +94,24 @@ public static class GraphqlExtensions
             var delegateType = typeof(ChangeType<,>).MakeGenericType(underlyingType, typeof(TStrongType));
 
             // ReSharper disable once NullableWarningSuppressionIsUsed
-            var constructor = typeof(TStrongType).GetConstructor(new[] { underlyingType, })!;
+            var constructor = typeof(TStrongType).GetConstructor([underlyingType])!;
             AddTypeConverterMethod
                .MakeGenericMethod(underlyingType, typeof(TStrongType))
                .Invoke(
                     null,
-                    new object[] { builder, Expression.Lambda(delegateType, Expression.New(constructor, value), false, value).Compile(), }
+                    [builder, Expression.Lambda(delegateType, Expression.New(constructor, value), false, value).Compile()]
                 );
         }
     }
+
+    // TOOD: Make a source generator for this.
+    private static readonly MethodInfo AddTypeConverterMethod = typeof(RequestExecutorBuilderExtensions)
+                                                               .GetMethods()
+                                                               .Single(
+                                                                    z => z.Name == "AddTypeConverter"
+                                                                     && z.ReturnType == typeof(IRequestExecutorBuilder)
+                                                                     && z.IsGenericMethod
+                                                                     && z.GetGenericMethodDefinition().GetGenericArguments().Length == 2
+                                                                     && z.GetParameters().Length == 2
+                                                                );
 }

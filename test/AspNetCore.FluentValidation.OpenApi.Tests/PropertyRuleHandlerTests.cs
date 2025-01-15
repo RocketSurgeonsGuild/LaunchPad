@@ -1,17 +1,21 @@
 using System.Text.RegularExpressions;
+
 using Argon;
+
 using FluentValidation;
 using FluentValidation.AspNetCore;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
 namespace AspNetCore.FluentValidation.OpenApi.Tests;
 
 [Experimental(Constants.ExperimentalId)]
-public class PropertyRuleHandlerTests : RuleTestBase
+public partial class PropertyRuleHandlerTests : RuleTestBase
 {
     [Theory]
     [MemberData(nameof(GetNotNullValidators))]
@@ -82,8 +86,8 @@ public class PropertyRuleHandlerTests : RuleTestBase
 
     public static IEnumerable<object[]> RegularExpressionValidators()
     {
-        yield return [GetOpenApiDocument<StringContainer>("/regex/string", x => x.RuleFor(y => y.Value).Matches(new Regex("^[a-zA-Z0-9]*$")))];
-        yield return [GetOpenApiDocument<NullableStringContainer>("/regex/nullable/string", x => x.RuleFor(y => y.Value).Matches(new Regex("^[a-zA-Z0-9]*$")))];
+        yield return [GetOpenApiDocument<StringContainer>("/regex/string", x => x.RuleFor(y => y.Value).Matches(MyRegex()))];
+        yield return [GetOpenApiDocument<NullableStringContainer>("/regex/nullable/string", x => x.RuleFor(y => y.Value).Matches(MyRegex()))];
         yield return [GetOpenApiDocument<CollectionContainer>("/regex/collection", x => x.RuleForEach(y => y.Value).Matches(new Regex("^[a-zA-Z0-9]*$")))];
     }
 
@@ -153,7 +157,7 @@ public class PropertyRuleHandlerTests : RuleTestBase
             async () =>
             {
                 var builder = WebApplication.CreateSlimBuilder(
-                    new WebApplicationOptions()
+                    new WebApplicationOptions
                     {
                         ApplicationName = typeof(TObject).Name,
                     }
@@ -166,7 +170,7 @@ public class PropertyRuleHandlerTests : RuleTestBase
                 configureValidator(validator);
                 builder.Services.AddSingleton<IValidator<TObject>>(validator);
 
-                #pragma warning disable CA2007
+#pragma warning disable CA2007
                 await using var app = builder.Build();
 
                 app.MapOpenApi();
@@ -181,8 +185,11 @@ public class PropertyRuleHandlerTests : RuleTestBase
                 response.EnsureSuccessStatusCode();
                 var json = JObject.Parse(await response.Content.ReadAsStringAsync());
                 return json["components"].ToString();
-                #pragma warning restore CA2007
+#pragma warning restore CA2007
             }
         );
     }
+
+    [GeneratedRegex("^[a-zA-Z0-9]*$")]
+    private static partial Regex MyRegex();
 }

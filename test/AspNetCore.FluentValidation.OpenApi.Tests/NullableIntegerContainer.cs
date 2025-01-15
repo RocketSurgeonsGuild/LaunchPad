@@ -1,6 +1,6 @@
 namespace AspNetCore.FluentValidation.OpenApi.Tests;
 
-class NullableIntegerContainer
+internal class NullableIntegerContainer
 {
     public int? Value { get; set; }
 }

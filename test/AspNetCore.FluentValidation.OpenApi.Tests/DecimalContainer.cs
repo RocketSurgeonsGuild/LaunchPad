@@ -1,6 +1,6 @@
 namespace AspNetCore.FluentValidation.OpenApi.Tests;
 
-class DecimalContainer
+internal class DecimalContainer
 {
     public decimal Value { get; set; }
 }

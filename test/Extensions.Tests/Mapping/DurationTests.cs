@@ -1,4 +1,5 @@
 using NodaTime;
+
 using Riok.Mapperly.Abstractions;
 using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
@@ -10,12 +11,9 @@ public partial class DurationTests(ITestOutputHelper testOutputHelper) : MapperT
 {
     [Theory]
     [MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(result, new Mapper(), TimeSpan.FromHours(1), Duration.FromMinutes(44))
-              .UseParameters(result.ToString())
-              .HashParameters();
-    }
+    public Task Maps_All_Methods(MethodResult result) => VerifyMethod(result, new Mapper(), TimeSpan.FromHours(1), Duration.FromMinutes(44))
+        .UseParameters(result.ToString())
+        .HashParameters();
 
     [Mapper]
     [PublicAPI]

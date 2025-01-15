@@ -1,6 +1,8 @@
-﻿using MediatR;
+using MediatR;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
@@ -32,10 +34,8 @@ internal static partial class RocketEndpoints
     private static async Task<Results<CreatedAtRoute<CreateRocket.Response>, ProblemHttpResult, BadRequest>> CreateRocket(
         IMediator mediator,
         CreateRocket.Request request
-    )
-    {
-        return TypedResults.CreatedAtRoute(await mediator.Send(request), nameof(GetRocket));
-    }
+    ) =>
+        TypedResults.CreatedAtRoute(await mediator.Send(request), nameof(GetRocket));
 
     private static async Task<Results<Ok<RocketModel>, NotFound, ProblemHttpResult, BadRequest>> EditRocket(
         IMediator mediator,

@@ -1,4 +1,5 @@
-﻿using System.Net;
+using System.Net;
+
 using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Restful.Tests;
@@ -17,6 +18,6 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json");
         var document = await response.Content.ReadAsStringAsync();
-        await Verify(document, extension: "json");
+        await Verify(document, "json");
     }
 }

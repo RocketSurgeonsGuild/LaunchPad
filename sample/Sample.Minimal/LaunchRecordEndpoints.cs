@@ -1,6 +1,8 @@
-﻿using MediatR;
+using MediatR;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
@@ -34,13 +36,11 @@ internal static partial class LaunchRecordEndpoints
     private static async Task<Results<CreatedAtRoute<CreateLaunchRecord.Response>, ProblemHttpResult, BadRequest>> CreateLaunchRecord(
         IMediator mediator,
         CreateLaunchRecord.Request request
-    )
-    {
-        return TypedResults.CreatedAtRoute(await mediator.Send(request), nameof(GetLaunchRecord));
-    }
+    ) =>
+        TypedResults.CreatedAtRoute(await mediator.Send(request), nameof(GetLaunchRecord));
 
     /// <summary>
-    /// Does this comment get picked up?
+    ///     Does this comment get picked up?
     /// </summary>
     /// <param name="mediator"></param>
     /// <param name="id"></param>

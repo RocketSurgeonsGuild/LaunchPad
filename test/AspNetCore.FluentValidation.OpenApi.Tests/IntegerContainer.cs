@@ -1,6 +1,6 @@
 namespace AspNetCore.FluentValidation.OpenApi.Tests;
 
-class IntegerContainer
+internal class IntegerContainer
 {
     public int Value { get; set; }
 }

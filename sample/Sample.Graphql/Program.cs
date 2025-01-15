@@ -1,8 +1,10 @@
 using HotChocolate.Configuration;
 using HotChocolate.Types.Spatial;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
+
 using Sample.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);

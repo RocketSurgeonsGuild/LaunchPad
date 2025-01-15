@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
+
 using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Conventions;
@@ -20,8 +22,8 @@ public class EnvironmentLoggingConvention : ISerilogConvention
     ///     Registers the specified context.
     /// </summary>
     /// <param name="context">The context.</param>
-    /// <param name="services"></param>
     /// <param name="configuration"></param>
+    /// <param name="services"></param>
     /// <param name="loggerConfiguration"></param>
     public void Register(
         IConventionContext context,

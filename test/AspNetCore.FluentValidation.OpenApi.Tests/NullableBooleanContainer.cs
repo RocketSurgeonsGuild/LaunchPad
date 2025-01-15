@@ -1,6 +1,6 @@
 namespace AspNetCore.FluentValidation.OpenApi.Tests;
 
-class NullableBooleanContainer
+internal class NullableBooleanContainer
 {
     public bool? Value { get; set; }
 }

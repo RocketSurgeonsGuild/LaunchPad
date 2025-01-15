@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
+
 using Rocket.Surgery.LaunchPad.Serilog;
+
 using Serilog;
 
 // ReSharper disable once CheckNamespace
@@ -26,10 +28,7 @@ public static class SerilogAbstractionsHostBuilderExtensions
         Action<LoggerConfiguration> @delegate,
         int priority = 0,
         ConventionCategory? category = null
-    )
-    {
-        return ConfigureSerilog(container, (_, _, _, logger) => @delegate(logger), priority, category);
-    }
+    ) => ConfigureSerilog(container, (_, _, _, logger) => @delegate(logger), priority, category);
 
     /// <summary>
     ///     Configure the serilog delegate to the convention scanner
@@ -44,10 +43,7 @@ public static class SerilogAbstractionsHostBuilderExtensions
         Action<IConfiguration, IServiceProvider, LoggerConfiguration> @delegate,
         int priority = 0,
         ConventionCategory? category = null
-    )
-    {
-        return ConfigureSerilog(container, (_, configuration, services, logger) => @delegate(configuration, services, logger), priority, category);
-    }
+    ) => ConfigureSerilog(container, (_, configuration, services, logger) => @delegate(configuration, services, logger), priority, category);
 
     /// <summary>
     ///     Configure the serilog delegate to the convention scanner
@@ -62,10 +58,7 @@ public static class SerilogAbstractionsHostBuilderExtensions
         Action<IServiceProvider, LoggerConfiguration> @delegate,
         int priority = 0,
         ConventionCategory? category = null
-    )
-    {
-        return ConfigureSerilog(container, (_, _, services, logger) => @delegate(services, logger), priority, category);
-    }
+    ) => ConfigureSerilog(container, (_, _, services, logger) => @delegate(services, logger), priority, category);
 
     /// <summary>
     ///     Configure the serilog delegate to the convention scanner

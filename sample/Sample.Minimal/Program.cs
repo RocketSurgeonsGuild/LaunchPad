@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+
 using Sample.Minimal;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,9 +1,13 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using Riok.Mapperly.Abstractions;
+
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Mapping;
 using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -22,18 +26,6 @@ public static partial class EditRocket
     [MapperRequiredMapping(RequiredMappingStrategy.Target)]
     [MapProperty(nameof(RocketModel.Sn), nameof(Request.SerialNumber))]
     public static partial Request MapRequest(RocketModel model);
-
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static partial ReadyRocket Map(Request request);
-
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static partial void Map(Request request, ReadyRocket record);
-
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static Request Map(PatchRequest request, ReadyRocket rocket)
-    {
-        return request.ApplyChanges(MapRequest(rocket));
-    }
 
     /// <summary>
     ///     The edit operation to update a rocket
@@ -107,29 +99,27 @@ public static partial class EditRocket
     private class RequestHandler(RocketDbContext dbContext, IMediator mediator)
         : PatchRequestHandler<Request, PatchRequest, RocketModel>(mediator), IRequestHandler<Request, RocketModel>
     {
-        private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken)
-        {
-            return await dbContext
-                        .Rockets.FindAsync([id,], cancellationToken)
-                        .ConfigureAwait(false)
-             ?? throw new NotFoundException();
-        }
-
-        protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
-        {
-            return Map(patchRequest, await GetRocket(patchRequest.Id, cancellationToken));
-        }
-
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await GetRocket(request.Id, cancellationToken);
-            if (rocket == null) throw new NotFoundException();
-
+            var rocket =  await GetRocket(request.Id, cancellationToken)  ?? throw new NotFoundException();
             Map(request, rocket);
             dbContext.Update(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return ModelMapper.Map(rocket);
         }
+
+        protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken) => Map(patchRequest, await GetRocket(patchRequest.Id, cancellationToken));
+
+        private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken) => await dbContext
+            .Rockets.FindAsync([id], cancellationToken)
+            .ConfigureAwait(false)
+            ?? throw new NotFoundException();
     }
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial void Map(Request request, ReadyRocket record);
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static Request Map(PatchRequest request, ReadyRocket rocket) => request.ApplyChanges(MapRequest(rocket));
 }

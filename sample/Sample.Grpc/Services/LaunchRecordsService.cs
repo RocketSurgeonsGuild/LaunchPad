@@ -1,8 +1,13 @@
 using FluentValidation;
+
 using Google.Protobuf.WellKnownTypes;
+
 using Grpc.Core;
+
 using MediatR;
+
 using Riok.Mapperly.Abstractions;
+
 using Sample.Core.Operations.LaunchRecords;
 using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
@@ -21,15 +26,10 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
     public static partial DeleteLaunchRecord.Request Map(DeleteLaunchRecordRequest request);
     public static partial LaunchRecordModel Map(Core.Models.LaunchRecordModel request);
 
-    public override async Task<CreateLaunchRecordResponse> CreateLaunchRecord(CreateLaunchRecordRequest request, ServerCallContext context)
-    {
-        return Map(await mediator.Send(Map(request), context.CancellationToken));
-    }
+    public override async Task<CreateLaunchRecordResponse> CreateLaunchRecord(CreateLaunchRecordRequest request, ServerCallContext context) =>
+        Map(await mediator.Send(Map(request), context.CancellationToken));
 
-    public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context)
-    {
-        return Map(await mediator.Send(Map(request), context.CancellationToken));
-    }
+    public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context) => Map(await mediator.Send(Map(request), context.CancellationToken));
 
     public override async Task<Empty> DeleteLaunchRecord(DeleteLaunchRecordRequest request, ServerCallContext context)
     {
@@ -37,10 +37,7 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
         return new();
     }
 
-    public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context)
-    {
-        return Map(await mediator.Send(Map(request), context.CancellationToken));
-    }
+    public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context) => Map(await mediator.Send(Map(request), context.CancellationToken));
 
     public override async Task ListLaunchRecords(
         ListLaunchRecordsRequest request,
@@ -104,12 +101,9 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
     [UsedImplicitly]
     private class GetLaunchRecordRequestValidator : AbstractValidator<GetLaunchRecordRequest>
     {
-        public GetLaunchRecordRequestValidator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-        }
+        public GetLaunchRecordRequestValidator() => RuleFor(x => x.Id)
+            .NotEmpty()
+            .NotNull();
     }
 
     [UsedImplicitly]
@@ -118,11 +112,8 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
     [UsedImplicitly]
     private class DeleteLaunchRecordRequestValidator : AbstractValidator<DeleteLaunchRecordRequest>
     {
-        public DeleteLaunchRecordRequestValidator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-        }
+        public DeleteLaunchRecordRequestValidator() => RuleFor(x => x.Id)
+            .NotEmpty()
+            .NotNull();
     }
 }

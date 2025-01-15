@@ -1,10 +1,14 @@
-﻿using MediatR;
+using MediatR;
+
 using NodaTime;
+
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
+
 using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
@@ -14,36 +18,39 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHo
     [Fact]
     public async Task Should_Get_A_LaunchRecord()
     {
-        var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
-                                          .Invoke(
-                                               async (context, clock) =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Id = RocketId.New(),
-                                                       Type = RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
+        var record = await ServiceProvider
+                          .WithScoped<RocketDbContext, IClock>()
+                          .Invoke(
+                               async (context, clock) =>
+                               {
+                                   var rocket = new ReadyRocket
+                                   {
+                                       Id = RocketId.New(),
+                                       Type = RocketType.Falcon9,
+                                       SerialNumber = "12345678901234",,
+                                   };
 
-                                                   var record = new LaunchRecord
-                                                   {
-                                                       Partner = "partner",
-                                                       Payload = "geo-fence-ftl",
-                                                       RocketId = rocket.Id,
-                                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
-                                                       PayloadWeightKg = 100,
-                                                   };
-                                                   context.Add(rocket);
-                                                   context.Add(record);
+                                   var record = new LaunchRecord
+                                   {
+                                       Partner = "partner",
+                                       Payload = "geo-fence-ftl",
+                                       RocketId = rocket.Id,
+                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                                       PayloadWeightKg = 100,
+                                   };
+                                   context.Add(rocket);
+                                   context.Add(record);
 
-                                                   await context.SaveChangesAsync();
-                                                   return record;
-                                               }
-                                           );
+                                   await context.SaveChangesAsync();
+                                   return record;
+                               }
+                           );
 
-        var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new GetLaunchRecord.Request( record.Id))
-        );
+        var response = await ServiceProvider
+                            .WithScoped<IMediator>()
+                            .Invoke(
+                                 mediator => mediator.Send(new GetLaunchRecord.Request(record.Id))
+                             );
 
         response.Partner.Should().Be("partner");
         response.Payload.Should().Be("geo-fence-ftl");
@@ -55,9 +62,11 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHo
     [Fact]
     public async Task Should_Not_Get_A_Missing_Launch_Record()
     {
-        Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(new GetLaunchRecord.Request (LaunchRecordId.New()))
-        );
+        Func<Task> action = () => ServiceProvider
+                                 .WithScoped<IMediator>()
+                                 .Invoke(
+                                      mediator => mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()))
+                                  );
 
         await action.Should().ThrowAsync<NotFoundException>();
     }

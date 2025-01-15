@@ -1,8 +1,10 @@
 using HotChocolate;
 using HotChocolate.Data.Filters;
 using HotChocolate.Types.NodaTime;
+
 using NodaTime;
 using NodaTime.Text;
+
 using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Extensions;

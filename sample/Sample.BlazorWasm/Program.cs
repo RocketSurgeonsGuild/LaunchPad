@@ -1,6 +1,9 @@
 using FluentValidation;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
 using Rocket.Surgery.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

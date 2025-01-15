@@ -1,9 +1,14 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
+
 using Riok.Mapperly.Abstractions;
+
 using Rocket.Surgery.LaunchPad.Mapping;
 using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -22,12 +27,9 @@ public static partial class GetLaunchRecord
 
     private class Validator : AbstractValidator<Request>
     {
-        public Validator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-        }
+        public Validator() => RuleFor(x => x.Id)
+            .NotEmpty()
+            .NotNull();
     }
 
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
@@ -38,9 +40,7 @@ public static partial class GetLaunchRecord
                               .LaunchRecords
                               .Include(x => x.Rocket)
                               .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-            if (rocket == null) throw new NotFoundException();
-
-            return ModelMapper.Map(rocket);
+            return rocket is null ? throw new NotFoundException() :  ModelMapper.Map(rocket);
         }
     }
 }

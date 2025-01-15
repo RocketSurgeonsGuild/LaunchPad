@@ -1,9 +1,13 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+
 using DiffEngine;
+
 using Microsoft.CodeAnalysis;
+
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 using Rocket.Surgery.LaunchPad.Analyzers;
+
 using VerifyTests.DiffPlex;
 
 namespace Analyzers.Tests;
@@ -19,18 +23,15 @@ public static class ModuleInitializer
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {
-                static string GetTypeName(Type type)
-                {
-                    return type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
-                }
+                static string GetTypeName(Type type) => type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
 
                 var typeName = GetTypeName(type);
 
                 // ReSharper disable once RedundantAssignment
                 var path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots");
-                #if !ROSLYN_CURRENT
+#if !ROSLYN_CURRENT
                 path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "../Analyzers.Tests", "snapshots");
-                #endif
+#endif
                 return new(path, typeName, method.Name);
             }
         );
@@ -38,7 +39,7 @@ public static class ModuleInitializer
         VerifierSettings.AddScrubber(
             (builder, counter) =>
             {
-                if (typeof(InheritFromGenerator).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>() is { Version: { Length: > 0, } version, })
+                if (typeof(InheritFromGenerator).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>() is { Version: { Length: > 0 } version })
                     builder.Replace(version, "version");
             }
         );
