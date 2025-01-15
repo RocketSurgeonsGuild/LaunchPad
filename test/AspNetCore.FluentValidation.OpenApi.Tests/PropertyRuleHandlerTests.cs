@@ -192,6 +192,7 @@ public partial class PropertyRuleHandlerTests : RuleTestBase
 
     [GeneratedRegex("^[a-zA-Z0-9]*$")]
     private static partial Regex MyRegex();
+
     [GeneratedRegex("^[a-zA-Z0-9]*$")]
     private static partial Regex MyRegex1();
 }
