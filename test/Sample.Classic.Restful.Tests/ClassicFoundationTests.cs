@@ -14,11 +14,11 @@ public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebA
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(Skip = "Problematic on ci")]
-    public async Task OpenApiDocument()
-    {
-        var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json");
-        var document = await response.Content.ReadAsStringAsync();
-        await VerifyJson(document);
-    }
+//    [Fact]
+//    public async Task OpenApiDocument()
+//    {
+//        var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json");
+//        var document = await response.Content.ReadAsStringAsync();
+//        await VerifyJson(document);
+//    }
 }
