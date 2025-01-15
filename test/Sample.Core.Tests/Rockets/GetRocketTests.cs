@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Primitives;

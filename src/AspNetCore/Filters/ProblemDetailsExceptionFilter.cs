@@ -29,19 +29,16 @@ public abstract class ProblemDetailsExceptionFilter<T>(int statusCode, ProblemDe
     /// <inheritdoc />
     public void OnException(ExceptionContext context)
     {
-        if (context.Exception is not T exception)
-        {
-            return;
-        }
+        if (context.Exception is not T exception) return;
 
         context.ExceptionHandled = true;
         var problemDetails = _problemDetailsFactory.CreateProblemDetails(
             context.HttpContext,
             _statusCode,
-            title: exception.Title,
-            type: exception.Link,
-            detail: exception.Message,
-            instance: exception.Instance
+            exception.Title,
+            exception.Link,
+            exception.Message,
+            exception.Instance
         );
 
         foreach (var item in exception.Properties)

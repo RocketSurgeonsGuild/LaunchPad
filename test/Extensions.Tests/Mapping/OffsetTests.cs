@@ -14,13 +14,13 @@ public partial class OffsetTests(ITestOutputHelper testOutputHelper) : MapperTes
     [Theory]
     [MapperData<Mapper>]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
-        result,
-        new Mapper(),
-        Offset.FromHours(11),
-        TimeSpan.FromHours(10)
-        )
-        .UseParameters(result.ToString())
-        .HashParameters();
+                                                             result,
+                                                             new Mapper(),
+                                                             Offset.FromHours(11),
+                                                             TimeSpan.FromHours(10)
+                                                         )
+                                                        .UseParameters(result.ToString())
+                                                        .HashParameters();
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

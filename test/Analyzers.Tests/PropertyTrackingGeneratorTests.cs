@@ -20,25 +20,25 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                           .AddSources(
                                """
 
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name="Id">The rocket id</param>
-    public class Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
-}
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public class Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                   }
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -57,28 +57,28 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                """
 
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name="Id">The rocket id</param>
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public static class PublicClass
-    {
-        public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-        {
-            public Guid Id { get; init; }
-        }
-    }
-}
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public static class PublicClass
+                                   {
+                                       public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                       {
+                                           public Guid Id { get; init; }
+                                       }
+                                   }
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -97,21 +97,21 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                """
 
-/// <summary>
-/// Request
-/// </summary>
-/// <param name="Id">The rocket id</param>
-public record Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-}
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public record Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -157,21 +157,21 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
                           .AddSources(
                                """
 
-/// <summary>
-/// Request
-/// </summary>
-/// <param name="Id">The rocket id</param>
-public class Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-}
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public class Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -212,22 +212,22 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
                           .AddSources(
                                """
 
-/// <summary>
-/// Request
-/// </summary>
-/// <param name="Id">The rocket id</param>
-namespace Sample.Core.Operations.Rockets
-{
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public partial class PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
-}
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public partial class PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -246,25 +246,25 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                """
 
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name="Id">The rocket id</param>
-    public class Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
-}
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public class Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                   }
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -283,22 +283,22 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                """
 
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name="Id">The rocket id</param>
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string? SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public partial record PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
-}
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string? SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public partial record PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -314,25 +314,25 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                """
 
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name="Id">The rocket id</param>
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int? Type { get; set; }
-    }
-    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
-}
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int? Type { get; set; }
+                                   }
+                                   public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                   }
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -439,21 +439,21 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
                           .AddSources(
                                """
 
-/// <summary>
-/// Request
-/// </summary>
-/// <param name="Id">The rocket id</param>
-public record Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-}
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public record Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -490,22 +490,22 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
                           .AddSources(
                                """
 
-/// <summary>
-/// Request
-/// </summary>
-/// <param name="Id">The rocket id</param>
-public class Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public class Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                               }
 
-"""
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -959,55 +959,55 @@ partial class Validator : AbstractValidator<PatchRequest>
             "RuleSet",
             """
 
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
-
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet("Create",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet("OnlySerialNumber",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model))]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+            {
+                public Guid Id { get; init; }
+            }
+
+            partial class Validator : AbstractValidator<PatchRequest>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model))]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
-partial class Validator : AbstractValidator<PatchRequest>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-
-""",
+            """,
         ];
 
         yield return
@@ -1015,55 +1015,55 @@ partial class Validator : AbstractValidator<PatchRequest>
             "RuleSet_Exclude",
             """
 
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
-
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet("Create",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet("OnlySerialNumber",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+            {
+                public Guid Id { get; init; }
+            }
+
+            partial class Validator : AbstractValidator<PatchRequest>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
-partial class Validator : AbstractValidator<PatchRequest>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-
-""",
+            """,
         ];
     }
 

@@ -69,7 +69,7 @@ public static partial class CreateRocket
             var existingRocket = await dbContext
                                       .Rockets.AsQueryable()
                                       .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
-            if (existingRocket is not null)
+            if (existingRocket is { })
             {
                 throw new RequestFailedException("A Rocket already exists with that serial number!")
                 {

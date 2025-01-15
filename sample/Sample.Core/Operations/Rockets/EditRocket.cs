@@ -101,7 +101,7 @@ public static partial class EditRocket
     {
         public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket =  await GetRocket(request.Id, cancellationToken)  ?? throw new NotFoundException();
+            var rocket = await GetRocket(request.Id, cancellationToken) ?? throw new NotFoundException();
             Map(request, rocket);
             dbContext.Update(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -112,9 +112,9 @@ public static partial class EditRocket
         protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken) => Map(patchRequest, await GetRocket(patchRequest.Id, cancellationToken));
 
         private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken) => await dbContext
-            .Rockets.FindAsync([id], cancellationToken)
-            .ConfigureAwait(false)
-            ?? throw new NotFoundException();
+                                                                                                            .Rockets.FindAsync([id], cancellationToken)
+                                                                                                            .ConfigureAwait(false)
+         ?? throw new NotFoundException();
     }
 
     [MapperRequiredMapping(RequiredMappingStrategy.Source)]

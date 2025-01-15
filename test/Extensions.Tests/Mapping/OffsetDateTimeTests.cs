@@ -14,13 +14,13 @@ public partial class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : M
     [Theory]
     [MapperData<Mapper>]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
-        result,
-        new Mapper(),
-        _fakeTimeProvider.GetLocalNow(),
-        OffsetDateTime.FromDateTimeOffset(_fakeTimeProvider.GetLocalNow())
-        )
-        .UseParameters(result.ToString())
-        .HashParameters();
+                                                             result,
+                                                             new Mapper(),
+                                                             _fakeTimeProvider.GetLocalNow(),
+                                                             OffsetDateTime.FromDateTimeOffset(_fakeTimeProvider.GetLocalNow())
+                                                         )
+                                                        .UseParameters(result.ToString())
+                                                        .HashParameters();
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

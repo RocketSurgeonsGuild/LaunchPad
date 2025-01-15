@@ -14,14 +14,14 @@ public partial class InstantTests(ITestOutputHelper testOutputHelper) : MapperTe
     [Theory]
     [MapperData<Mapper>]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
-        result,
-        new Mapper(),
-        _fakeTimeProvider.GetUtcNow(),
-        _fakeTimeProvider.GetUtcNow().UtcDateTime,
-        Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
-        )
-        .UseParameters(result.ToString())
-        .HashParameters();
+                                                             result,
+                                                             new Mapper(),
+                                                             _fakeTimeProvider.GetUtcNow(),
+                                                             _fakeTimeProvider.GetUtcNow().UtcDateTime,
+                                                             Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
+                                                         )
+                                                        .UseParameters(result.ToString())
+                                                        .HashParameters();
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

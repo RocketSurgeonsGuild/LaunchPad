@@ -88,7 +88,7 @@ public partial class PropertyRuleHandlerTests : RuleTestBase
     {
         yield return [GetOpenApiDocument<StringContainer>("/regex/string", x => x.RuleFor(y => y.Value).Matches(MyRegex()))];
         yield return [GetOpenApiDocument<NullableStringContainer>("/regex/nullable/string", x => x.RuleFor(y => y.Value).Matches(MyRegex()))];
-        yield return [GetOpenApiDocument<CollectionContainer>("/regex/collection", x => x.RuleForEach(y => y.Value).Matches(new Regex("^[a-zA-Z0-9]*$")))];
+        yield return [GetOpenApiDocument<CollectionContainer>("/regex/collection", x => x.RuleForEach(y => y.Value).Matches(MyRegex1()))];
     }
 
     public static IEnumerable<object[]> EmailAddressValidators()
@@ -192,4 +192,6 @@ public partial class PropertyRuleHandlerTests : RuleTestBase
 
     [GeneratedRegex("^[a-zA-Z0-9]*$")]
     private static partial Regex MyRegex();
+    [GeneratedRegex("^[a-zA-Z0-9]*$")]
+    private static partial Regex MyRegex1();
 }

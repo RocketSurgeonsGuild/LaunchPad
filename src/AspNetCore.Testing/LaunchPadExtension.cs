@@ -17,9 +17,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 ///     Create the test extension
 /// </remarks>
 /// <param name="loggerFactory"></param>
-public class LaunchPadExtension<TTestAssembly>(ILoggerFactory loggerFactory) : LaunchPadExtension(loggerFactory)
-{
-}
+public class LaunchPadExtension<TTestAssembly>(ILoggerFactory loggerFactory) : LaunchPadExtension(loggerFactory) { }
 
 #pragma warning disable CA1816, CA1063
 /// <summary>

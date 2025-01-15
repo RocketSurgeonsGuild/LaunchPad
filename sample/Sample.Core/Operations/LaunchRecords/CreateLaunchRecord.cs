@@ -95,7 +95,7 @@ public static partial class CreateLaunchRecord
         {
             var record = Map(request);
 
-            var rocket =  await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken)  ?? throw new RequestFailedException("Rocket not found!");
+            var rocket = await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken) ?? throw new RequestFailedException("Rocket not found!");
             record.Rocket = rocket;
 
             await dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);

@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 
 using DiffEngine;
+
 using VerifyTests.DiffPlex;
 
 namespace AspNetCore.FluentValidation.OpenApi.Tests;

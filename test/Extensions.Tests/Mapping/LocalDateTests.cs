@@ -12,14 +12,14 @@ public partial class LocalDateTests(ITestOutputHelper testOutputHelper) : Mapper
     [Theory]
     [MapperData<Mapper>]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
-        result,
-        new Mapper(),
-        _fakeTimeProvider.GetLocalNow().DateTime,
-        DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
-        LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
-        )
-        .UseParameters(result.ToString())
-        .HashParameters();
+                                                             result,
+                                                             new Mapper(),
+                                                             _fakeTimeProvider.GetLocalNow().DateTime,
+                                                             DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
+                                                             LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+                                                         )
+                                                        .UseParameters(result.ToString())
+                                                        .HashParameters();
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

@@ -102,8 +102,8 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
     private class GetLaunchRecordRequestValidator : AbstractValidator<GetLaunchRecordRequest>
     {
         public GetLaunchRecordRequestValidator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                                                   .NotEmpty()
+                                                   .NotNull();
     }
 
     [UsedImplicitly]
@@ -113,7 +113,7 @@ public partial class LaunchRecordsService(IMediator mediator) : LaunchRecords.La
     private class DeleteLaunchRecordRequestValidator : AbstractValidator<DeleteLaunchRecordRequest>
     {
         public DeleteLaunchRecordRequestValidator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                                                      .NotEmpty()
+                                                      .NotNull();
     }
 }

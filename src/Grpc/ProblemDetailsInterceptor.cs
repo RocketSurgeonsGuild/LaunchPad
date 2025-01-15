@@ -108,7 +108,7 @@ public abstract class ProblemDetailsInterceptor<T>(StatusCode statusCode, JsonSe
         new(_statusCode, exception.Title ?? exception.Message, exception),
         CustomizeMetadata(CreateMetadata(exception, options)),
         exception.Message
-        );
+    );
 
     private readonly StatusCode _statusCode = statusCode;
     private readonly JsonSerializerOptions _options = options;

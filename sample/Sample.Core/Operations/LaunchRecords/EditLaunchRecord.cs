@@ -152,11 +152,11 @@ public static partial class EditLaunchRecord
             Map(patchRequest, await GetLaunchRecord(patchRequest.Id, cancellationToken));
 
         private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) => await dbContext
-            .LaunchRecords
-            .Include(z => z.Rocket)
-            .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
-            .ConfigureAwait(false)
-            ?? throw new NotFoundException();
+                                                                                                                         .LaunchRecords
+                                                                                                                         .Include(z => z.Rocket)
+                                                                                                                         .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
+                                                                                                                         .ConfigureAwait(false)
+         ?? throw new NotFoundException();
     }
 
     [MapperIgnoreSource(nameof(LaunchRecord.Rocket))]

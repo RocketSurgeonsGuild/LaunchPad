@@ -36,18 +36,15 @@ public class SerilogReadFromConfigurationConvention : ISerilogConvention, IConfi
         ArgumentNullException.ThrowIfNull(context);
 
         var applicationLogLevel = configuration.GetValue<LogLevel?>("ApplicationState:LogLevel");
-        if (!applicationLogLevel.HasValue)
-        {
-            return;
-        }
+        if (!applicationLogLevel.HasValue) return;
 
         builder.AddInMemoryCollection(
             new Dictionary<string, string?>
             {
-                    {
-                        "Serilog:MinimumLevel:Default",
-                        LevelConvert.ToSerilogLevel(applicationLogLevel.Value).ToString()
-                    },
+                {
+                    "Serilog:MinimumLevel:Default",
+                    LevelConvert.ToSerilogLevel(applicationLogLevel.Value).ToString()
+                },
             }
         );
     }

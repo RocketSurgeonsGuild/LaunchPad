@@ -28,8 +28,8 @@ public static partial class GetLaunchRecord
     private class Validator : AbstractValidator<Request>
     {
         public Validator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                             .NotEmpty()
+                             .NotNull();
     }
 
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
@@ -40,7 +40,7 @@ public static partial class GetLaunchRecord
                               .LaunchRecords
                               .Include(x => x.Rocket)
                               .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-            return rocket is null ? throw new NotFoundException() :  ModelMapper.Map(rocket);
+            return rocket is null ? throw new NotFoundException() : ModelMapper.Map(rocket);
         }
     }
 }

@@ -287,11 +287,11 @@ public class ReadyRocketType : ObjectType<ReadyRocket>
     protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor) =>
         //        descriptor.Implements<InterfaceType<IReadyRocket>>();
         descriptor
-        .Field(z => z.LaunchRecords)
-        .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
-            //                  .UseFiltering()
-            //                  .UseSorting()
-            ;
+           .Field(z => z.LaunchRecords)
+           .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
+    //                  .UseFiltering()
+    //                  .UseSorting()
+    ;
     //        descriptor.Ignore(z => z.LaunchRecords);
 }
 

@@ -14,13 +14,13 @@ public partial class PeriodTests(ITestOutputHelper testOutputHelper) : MapperTes
     [Theory]
     [MapperData<Mapper>]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
-        result,
-        new Mapper(),
-        Period.FromMonths(10),
-        "P5M"
-        )
-        .UseParameters(result.ToString())
-        .HashParameters();
+                                                             result,
+                                                             new Mapper(),
+                                                             Period.FromMonths(10),
+                                                             "P5M"
+                                                         )
+                                                        .UseParameters(result.ToString())
+                                                        .HashParameters();
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

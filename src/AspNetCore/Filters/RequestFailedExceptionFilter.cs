@@ -13,6 +13,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 /// <remarks>
 ///     Request failed exception that catches issues that might have been thrown by calling code.
 /// </remarks>
-internal class RequestFailedExceptionFilter(ProblemDetailsFactory problemDetailsFactory) : ProblemDetailsExceptionFilter<RequestFailedException>(StatusCodes.Status400BadRequest, problemDetailsFactory)
-{
-}
+internal class RequestFailedExceptionFilter
+    (ProblemDetailsFactory problemDetailsFactory) : ProblemDetailsExceptionFilter<RequestFailedException>(StatusCodes.Status400BadRequest, problemDetailsFactory)
+{ }

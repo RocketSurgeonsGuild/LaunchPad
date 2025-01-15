@@ -26,8 +26,8 @@ public static partial class GetRocket
     private class Validator : AbstractValidator<Request>
     {
         public Validator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                             .NotEmpty()
+                             .NotNull();
     }
 
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>

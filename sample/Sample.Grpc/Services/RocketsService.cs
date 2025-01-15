@@ -65,8 +65,8 @@ public partial class RocketsService(IMediator mediator) : Rockets.RocketsBase
     private class GetRocketRequestValidator : AbstractValidator<GetRocketRequest>
     {
         public GetRocketRequestValidator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                                             .NotEmpty()
+                                             .NotNull();
     }
 
     [UsedImplicitly]
@@ -96,7 +96,7 @@ public partial class RocketsService(IMediator mediator) : Rockets.RocketsBase
     private class DeleteRocketRequestValidator : AbstractValidator<DeleteRocketRequest>
     {
         public DeleteRocketRequestValidator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                                                .NotEmpty()
+                                                .NotNull();
     }
 }

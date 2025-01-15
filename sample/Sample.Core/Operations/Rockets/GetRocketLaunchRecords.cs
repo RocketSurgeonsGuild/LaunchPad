@@ -32,15 +32,15 @@ public static partial class GetRocketLaunchRecords
     private class Validator : AbstractValidator<Request>
     {
         public Validator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                             .NotEmpty()
+                             .NotNull();
     }
 
     private class Handler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
         public async IAsyncEnumerable<LaunchRecordModel> Handle(Request request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var rocket =  await dbContext.Rockets.FindAsync([request.Id], cancellationToken)  ?? throw new NotFoundException();
+            var rocket = await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
             var query = ModelMapper.ProjectTo(dbContext.LaunchRecords.Where(z => z.RocketId == rocket.Id));
             await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
             {

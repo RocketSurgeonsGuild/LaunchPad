@@ -649,12 +649,12 @@ public partial class GraphPatchRequest : IOptionalTracking<PatchRequest>
     public enum PropertyTracking { SameAssembly, OtherAssembly }
 
     private GeneratorTestContextBuilder AddPatchRocketModel(RocketModelType type, PropertyTracking propertyTracking) => (type, propertyTracking)
-        switch
+                                                                                                                        switch
     {
         (RocketModelType.Record, PropertyTracking.SameAssembly) => Builder
-                              .WithGenerator<PropertyTrackingGenerator>()
-                              .AddSources(
-                                   @"
+           .WithGenerator<PropertyTrackingGenerator>()
+           .AddSources(
+                @"
 
 namespace Sample.Core.Operations.Rockets
 {
@@ -665,11 +665,11 @@ namespace Sample.Core.Operations.Rockets
 
     public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }"
-                               ),
+            ),
         (RocketModelType.Class, PropertyTracking.SameAssembly) => Builder
-                              .WithGenerator<PropertyTrackingGenerator>()
-                              .AddSources(
-                                   @"
+           .WithGenerator<PropertyTrackingGenerator>()
+           .AddSources(
+                @"
 namespace Sample.Core.Operations.Rockets
 {
     public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
@@ -680,9 +680,10 @@ namespace Sample.Core.Operations.Rockets
     public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }
 "
-                               ),
-        (RocketModelType.Record, PropertyTracking.OtherAssembly) => Builder.AddSources(
-                            @"
+            ),
+        (RocketModelType.Record, PropertyTracking.OtherAssembly) => Builder
+           .AddSources(
+                @"
 
 namespace Sample.Core.Operations.Rockets
 {
@@ -748,9 +749,10 @@ namespace Sample.Core.Operations.Rockets
 
     public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }"
-                        ),
-        (RocketModelType.Class, PropertyTracking.OtherAssembly) => Builder.AddSources(
-                            @"
+            ),
+        (RocketModelType.Class, PropertyTracking.OtherAssembly) => Builder
+           .AddSources(
+                @"
 namespace Sample.Core.Operations.Rockets
 {
     public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
@@ -816,7 +818,7 @@ namespace Sample.Core.Operations.Rockets
     public partial class PatchGraphRocket : IOptionalTracking<PatchRocket>;
 }
 "
-                        ),
+            ),
         _ => throw new NotSupportedException(),
     };
 
@@ -1192,50 +1194,50 @@ partial class Validator : AbstractValidator<PatchRequest>
             "RuleSet",
             """
 
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
-
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet("Create",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet("OnlySerialNumber",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model))]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            partial class Validator : AbstractValidator<PatchRequest>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model))]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-partial class Validator : AbstractValidator<PatchRequest>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-
-""",
+            """,
         ];
 
         yield return
@@ -1243,50 +1245,50 @@ partial class Validator : AbstractValidator<PatchRequest>
             "RuleSet_Exclude",
             """
 
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
-
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet("Create",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet("OnlySerialNumber",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            partial class Validator : AbstractValidator<PatchRequest>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-partial class Validator : AbstractValidator<PatchRequest>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-
-""",
+            """,
         ];
     }
 

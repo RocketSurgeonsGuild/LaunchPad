@@ -14,6 +14,4 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 ///     Create a new NotFoundExceptionFilter
 /// </remarks>
 /// <param name="problemDetailsFactory"></param>
-internal class NotFoundExceptionFilter(ProblemDetailsFactory problemDetailsFactory) : ProblemDetailsExceptionFilter<NotFoundException>(StatusCodes.Status404NotFound, problemDetailsFactory)
-{
-}
+internal class NotFoundExceptionFilter(ProblemDetailsFactory problemDetailsFactory) : ProblemDetailsExceptionFilter<NotFoundException>(StatusCodes.Status404NotFound, problemDetailsFactory) { }

@@ -26,15 +26,15 @@ public static partial class DeleteRocket
     private class Validator : AbstractValidator<Request>
     {
         public Validator() => RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotNull();
+                             .NotEmpty()
+                             .NotNull();
     }
 
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request>
     {
         public async Task Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket =  await dbContext.Rockets.FindAsync([request.Id], cancellationToken)  ?? throw new NotFoundException();
+            var rocket = await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
