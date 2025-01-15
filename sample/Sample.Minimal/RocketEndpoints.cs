@@ -5,6 +5,8 @@ using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
 
+namespace Sample.Minimal;
+
 internal static partial class RocketEndpoints
 {
     public static void UseRockets(this WebApplication app)

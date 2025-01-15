@@ -1,6 +1,6 @@
 using System.Text.Json;
 using NodaTime;
-using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Extensions.Tests;
 

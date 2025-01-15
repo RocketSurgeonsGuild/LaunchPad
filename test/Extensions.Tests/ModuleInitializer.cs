@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using DiffEngine;
+using VerifyTests.DiffPlex;
 
 namespace Extensions.Tests;
 
@@ -10,6 +11,7 @@ public static class ModuleInitializer
     {
         DiffRunner.Disabled = true;
 
+        VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifySystemJson.Initialize();
         VerifyNewtonsoftJson.Initialize();

@@ -1,7 +1,8 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.Grpc;
 
@@ -13,8 +14,8 @@ namespace Rocket.Surgery.LaunchPad.Grpc;
 public abstract class ProblemDetailsInterceptor<T> : Interceptor
     where T : Exception, IProblemDetailsData
 {
-    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
-    private static Metadata CreateMetadata(T exception)
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "options is assumed to have a proper resolver chain")]
+    private static Metadata CreateMetadata(T exception, JsonSerializerOptions options)
     {
         var metadata = new Metadata();
         if (exception.Title is { })
@@ -26,28 +27,34 @@ public abstract class ProblemDetailsInterceptor<T> : Interceptor
         metadata.Add("message", exception.Message);
         foreach (var item in exception.Properties)
         {
-            metadata.Add(item.Key, item.Value is string s ? s : JsonSerializer.Serialize(item.Value));
+            metadata.Add(
+                item.Key,
+                item.Value switch { string s => s, { } o => JsonSerializer.Serialize(o, o.GetType(), options), _ => null } ?? string.Empty
+            );
         }
 
         return metadata;
     }
 
     private readonly StatusCode _statusCode;
+    private readonly JsonSerializerOptions _options;
 
     /// <summary>
-    ///     Create the interceptor with it's status code
+    ///     Create the interceptor with its status code
     /// </summary>
     /// <param name="statusCode"></param>
-    protected ProblemDetailsInterceptor(StatusCode statusCode)
+    /// <param name="options"></param>
+    protected ProblemDetailsInterceptor(StatusCode statusCode, JsonSerializerOptions options)
     {
         _statusCode = statusCode;
+        _options = options;
     }
 
-    private RpcException CreateException(T exception)
+    private RpcException CreateException(T exception, JsonSerializerOptions options)
     {
-        return new RpcException(
-            new Status(_statusCode, exception.Title ?? exception.Message, exception),
-            CustomizeMetadata(CreateMetadata(exception)),
+        return new(
+            new(_statusCode, exception.Title ?? exception.Message, exception),
+            CustomizeMetadata(CreateMetadata(exception, options)),
             exception.Message
         );
     }
@@ -75,7 +82,7 @@ public abstract class ProblemDetailsInterceptor<T> : Interceptor
         }
         catch (T exception)
         {
-            throw CreateException(exception);
+            throw CreateException(exception, _options);
         }
     }
 
@@ -92,7 +99,7 @@ public abstract class ProblemDetailsInterceptor<T> : Interceptor
         }
         catch (T exception)
         {
-            throw CreateException(exception);
+            throw CreateException(exception, _options);
         }
     }
 
@@ -109,7 +116,7 @@ public abstract class ProblemDetailsInterceptor<T> : Interceptor
         }
         catch (T exception)
         {
-            throw CreateException(exception);
+            throw CreateException(exception, _options);
         }
     }
 }

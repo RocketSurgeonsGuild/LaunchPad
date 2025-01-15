@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Extensions.Tests;
 

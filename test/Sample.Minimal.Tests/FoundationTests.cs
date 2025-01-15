@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Restful.Tests;

@@ -1,8 +1,8 @@
 using Google.Protobuf.WellKnownTypes;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Duration = NodaTime.Duration;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 using WktDuration = Google.Protobuf.WellKnownTypes.Duration;
 
 namespace Sample.Grpc;

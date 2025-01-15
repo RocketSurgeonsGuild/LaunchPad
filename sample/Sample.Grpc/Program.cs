@@ -1,6 +1,5 @@
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-
 using Sample.Grpc.Services;
 
 var app = await WebApplication
@@ -23,4 +22,7 @@ app.MapGet(
 
 await app.RunAsync();
 
-public partial class Program;
+namespace Sample.Grpc
+{
+    public partial class Program;
+}

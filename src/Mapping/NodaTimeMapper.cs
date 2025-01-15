@@ -2,7 +2,7 @@ using NodaTime;
 using NodaTime.Text;
 using Riok.Mapperly.Abstractions;
 
-namespace Rocket.Surgery.LaunchPad.Mapping.Profiles;
+namespace Rocket.Surgery.LaunchPad.Mapping;
 
 /// <summary>
 ///     A mapper used to map between NodaTime and <see cref="DateTimeOffset" />, <see cref="TimeOnly" />, <see cref="DateOnly" /> and <see cref="TimeSpan" />

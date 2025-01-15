@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 

@@ -1,6 +1,6 @@
 ﻿using Riok.Mapperly.Abstractions;
 
-namespace Sample.Core;
+namespace Sample.Core.Models;
 
 [Mapper]
 internal static partial class StandardMapper

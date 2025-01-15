@@ -5,6 +5,8 @@ using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
 
+namespace Sample.Minimal;
+
 internal static partial class LaunchRecordEndpoints
 {
     public static void UseLaunchRecords(this WebApplication app)

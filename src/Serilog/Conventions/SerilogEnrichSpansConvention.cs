@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Serilog;
 using Serilog.Enrichers.Span;

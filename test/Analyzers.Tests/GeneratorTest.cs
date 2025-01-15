@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 
-namespace Analyzers.Tests.Helpers;
+namespace Analyzers.Tests;
 
 internal sealed class CollectibleTestAssemblyLoadContext() : AssemblyLoadContext(true), IDisposable
 {

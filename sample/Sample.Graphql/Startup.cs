@@ -5,7 +5,6 @@ using HotChocolate.Data.Sorting;
 using MediatR;
 using NetTopologySuite.Geometries;
 using NodaTime;
-using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Domain;
 using Sample.Core.Models;

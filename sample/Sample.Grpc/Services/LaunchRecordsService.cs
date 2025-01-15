@@ -3,8 +3,8 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Operations.LaunchRecords;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Sample.Grpc.Services;
 

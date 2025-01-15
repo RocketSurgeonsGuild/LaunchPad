@@ -1,8 +1,5 @@
 using Alba;
-using Microsoft.Extensions.Logging;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
-using Serilog;
-using Serilog.Events;
 
 namespace Sample.BlazorServer.Tests.Helpers;
 

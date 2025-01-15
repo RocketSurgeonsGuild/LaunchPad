@@ -2,9 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -12,7 +12,7 @@ namespace Sample.Core.Operations.LaunchRecords;
 [Mapper]
 [UseStaticMapper(typeof(NodaTimeMapper))]
 [UseStaticMapper(typeof(ModelMapper))]
-[UseStaticMapper(typeof(StandardMapper))]
+[UseStaticMapper(typeof(Models.StandardMapper))]
 public static partial class ListLaunchRecords
 {
     private static partial IQueryable<LaunchRecordModel> Project(IQueryable<LaunchRecord> queryable);

@@ -3,7 +3,7 @@ using DiffEngine;
 using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Worker.Tests;
 
 internal static class ModuleInitializer
 {

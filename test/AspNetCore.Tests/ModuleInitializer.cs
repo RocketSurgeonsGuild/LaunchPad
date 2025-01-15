@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using DiffEngine;
 using VerifyTests.DiffPlex;
 
-namespace Extensions.Tests;
+namespace AspNetCore.Tests;
 
 public static class ModuleInitializer
 {

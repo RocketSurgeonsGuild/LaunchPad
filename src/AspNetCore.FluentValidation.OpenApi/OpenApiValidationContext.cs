@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization.Metadata;
-using FluentValidation.Internal;
+﻿using FluentValidation.Internal;
 using FluentValidation.Validators;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;

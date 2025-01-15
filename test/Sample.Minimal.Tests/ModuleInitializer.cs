@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using DiffEngine;
+using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
 namespace Sample.Minimal.Tests;
@@ -10,6 +11,7 @@ internal static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
+        VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
         DerivePathInfo(

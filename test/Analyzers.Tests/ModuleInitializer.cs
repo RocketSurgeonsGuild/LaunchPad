@@ -4,6 +4,7 @@ using DiffEngine;
 using Microsoft.CodeAnalysis;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 using Rocket.Surgery.LaunchPad.Analyzers;
+using VerifyTests.DiffPlex;
 
 namespace Analyzers.Tests;
 
@@ -14,6 +15,7 @@ public static class ModuleInitializer
     {
         VerifyGeneratorTextContext.Initialize(DiagnosticSeverity.Error, Customizers.Empty);
         DiffRunner.Disabled = true;
+        VerifyDiffPlex.Initialize(OutputType.Compact);
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {

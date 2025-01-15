@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
+﻿namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
 internal static class Constants
 {

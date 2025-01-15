@@ -1,4 +1,4 @@
-namespace Rocket.Surgery.LaunchPad.Serilog;
+namespace Rocket.Surgery.LaunchPad.Hosting;
 
 /// <summary>
 ///     RocketSerilogOptions.

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
@@ -22,6 +23,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// <param name="options"></param>
 [PublicAPI]
 [ExportConvention]
+[SuppressMessage("Trimming", "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code", Justification = "Mvc pieces are not specifically added, and problem writers are used by other apis")]
 [AfterConvention<AspNetCoreConvention>]
 [ConventionCategory(ConventionCategory.Application)]
 public class SystemJsonTextConvention(FoundationOptions? options = null) : IServiceConvention

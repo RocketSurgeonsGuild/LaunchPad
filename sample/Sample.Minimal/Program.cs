@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-
+using Sample.Minimal;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,4 +47,7 @@ app.MapHealthChecks(
 
 app.Run();
 
-public partial class Program;
+namespace Sample.Minimal
+{
+    public partial class Program;
+}

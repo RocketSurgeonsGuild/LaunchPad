@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Analyzers.Tests.Helpers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;

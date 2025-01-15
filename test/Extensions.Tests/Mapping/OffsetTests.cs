@@ -2,7 +2,7 @@ using Microsoft.Extensions.Time.Testing;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Mapping;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Extensions.Tests.Mapping;
 

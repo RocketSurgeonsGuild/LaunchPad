@@ -1,6 +1,6 @@
 using NodaTime;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 

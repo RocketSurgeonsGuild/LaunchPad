@@ -3,9 +3,9 @@ using DiffEngine;
 using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
-namespace Sample.Restful.Tests;
+namespace Sample.BlazorWasm.Tests;
 
-internal static class ModuleInitializer
+public static class ModuleInitializer
 {
     [ModuleInitializer]
     public static void Init()
@@ -29,5 +29,4 @@ internal static class ModuleInitializer
             }
         );
     }
-
 }

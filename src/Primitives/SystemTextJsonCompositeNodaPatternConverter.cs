@@ -1,9 +1,8 @@
 using System.Text.Json;
-
 using NodaTime.Serialization.SystemTextJson;
 using NodaTime.Text;
 
-namespace Rocket.Surgery.LaunchPad.Foundation;
+namespace Rocket.Surgery.LaunchPad.Primitives;
 
 /// <summary>
 ///     A JSON converter for types which can be represented by a single string value, parsed or formatted

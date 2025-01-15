@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Analyzers.Tests.Helpers;
 using HotChocolate;
 using HotChocolate.Language;
 using HotChocolate.Types;

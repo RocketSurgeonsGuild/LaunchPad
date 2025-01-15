@@ -1,8 +1,8 @@
 using FluentValidation;
 using MediatR;
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Primitives;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 

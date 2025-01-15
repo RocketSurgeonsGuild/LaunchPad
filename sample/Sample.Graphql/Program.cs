@@ -1,10 +1,8 @@
 using HotChocolate.Configuration;
 using HotChocolate.Types.Spatial;
-
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
-
 using Sample.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,4 +50,7 @@ app.MapGraphQL();
 
 app.Run();
 
-public partial class Program;
+namespace Sample.Graphql
+{
+    public partial class Program;
+}

@@ -24,4 +24,7 @@ app.MapControllers();
 
 await app.RunAsync();
 
-public partial class Program;
+namespace Sample.Classic.Restful
+{
+    public partial class Program;
+}

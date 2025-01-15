@@ -1,8 +1,9 @@
 using System.Runtime.CompilerServices;
 using DiffEngine;
+using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Classic.Restful.Tests;
 
 internal static class ModuleInitializer
 {
@@ -10,6 +11,7 @@ internal static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
+        VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
         DerivePathInfo(

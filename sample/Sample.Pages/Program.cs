@@ -1,10 +1,7 @@
 using System.Text;
 using System.Text.Json;
-
 using Humanizer;
-
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 
@@ -127,4 +124,7 @@ static async Task WriteResponse(HttpContext context, HealthReport healthReport)
     );
 }
 
-public partial class Program;
+namespace Sample.Pages
+{
+    public partial class Program;
+}

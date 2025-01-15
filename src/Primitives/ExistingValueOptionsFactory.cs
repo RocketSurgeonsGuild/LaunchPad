@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Rocket.Surgery.LaunchPad.Foundation;
+namespace Rocket.Surgery.LaunchPad.Primitives;
 
 /// <summary>
 ///     Helper methods for creating <see cref="ExistingValueOptionsFactory{TOptions}" /> instances.

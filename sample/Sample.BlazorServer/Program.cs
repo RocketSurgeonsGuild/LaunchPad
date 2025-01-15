@@ -1,6 +1,5 @@
 using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
-
 using Sample.BlazorServer.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,4 +33,7 @@ app.MapFallbackToPage("/_Host");
 
 await app.RunAsync();
 
-public partial class Program;
+namespace Sample.BlazorServer
+{
+    public partial class Program;
+}

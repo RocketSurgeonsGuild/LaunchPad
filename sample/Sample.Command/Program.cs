@@ -1,13 +1,11 @@
 using DryIoc;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
 using Rocket.Surgery.CommandLine;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Hosting;
-
+using Sample.Command;
 using Spectre.Console.Cli;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -28,33 +26,36 @@ var host = await builder.ConfigureRocketSurgery(
 );
 await host.RunAsync();
 
-public class InstanceThing
+namespace Sample.Command
 {
-    public string From => "DryIoc";
-}
-
-public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceThing instanceThing)
-    : Command<AppSettings>
-{
-    public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
+    public class InstanceThing
     {
-        // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
-        logger.LogInformation(instanceThing.From);
-        foreach (var item in configuration.AsEnumerable().Reverse())
-        {
-            logger.LogInformation("{Key}: {Value}", item.Key, item.Value ?? "");
-        }
-
-        return 1;
+        public string From => "DryIoc";
     }
-}
 
-public class DefaultCommand(ILogger<DefaultCommand> logger) : Command<AppSettings>
-{
-    public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
+    public class Dump(IConfiguration configuration, ILogger<Dump> logger, InstanceThing instanceThing)
+        : Command<AppSettings>
     {
-        Console.WriteLine("Hello World!");
-        logger.LogInformation("Test");
-        return 1;
+        public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
+        {
+            // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
+            logger.LogInformation(instanceThing.From);
+            foreach (var item in configuration.AsEnumerable().Reverse())
+            {
+                logger.LogInformation("{Key}: {Value}", item.Key, item.Value ?? "");
+            }
+
+            return 1;
+        }
+    }
+
+    public class DefaultCommand(ILogger<DefaultCommand> logger) : Command<AppSettings>
+    {
+        public override int Execute([NotNull] CommandContext context, [NotNull] AppSettings settings)
+        {
+            Console.WriteLine("Hello World!");
+            logger.LogInformation("Test");
+            return 1;
+        }
     }
 }

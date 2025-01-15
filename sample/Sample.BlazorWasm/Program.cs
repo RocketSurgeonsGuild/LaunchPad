@@ -1,9 +1,6 @@
 using FluentValidation;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
 using Rocket.Surgery.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -13,43 +10,46 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostE
 
 await ( await builder.ConfigureRocketSurgery() ).RunAsync();
 
-public static class TestHandler
+namespace Sample.BlazorWasm
 {
-    public record Request : IRequest<Response>
+    public static class TestHandler
     {
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
-    }
-
-    public record Response(string FullName);
-
-    [UsedImplicitly]
-    private class RequestValidator : AbstractValidator<Request>
-    {
-        public RequestValidator()
+        public record Request : IRequest<Response>
         {
-            RuleFor(x => x.FirstName)
-               .NotEmpty()
-               .MinimumLength(1)
-               .MaximumLength(20);
-            RuleFor(x => x.LastName)
-               .NotEmpty()
-               .MinimumLength(1)
-               .MaximumLength(50);
+            public string FirstName { get; set; } = null!;
+            public string LastName { get; set; } = null!;
         }
-    }
 
-    [UsedImplicitly]
-    private class ResponseValidator : AbstractValidator<Response>
-    {
-        public ResponseValidator() => RuleFor(z => z.FullName).NotEmpty();
-    }
+        public record Response(string FullName);
 
-    [UsedImplicitly]
-    private class Handler : IRequestHandler<Request, Response>
-    {
-        public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
-            new Response(request.FirstName + " " + request.LastName)
-        );
+        [UsedImplicitly]
+        private class RequestValidator : AbstractValidator<Request>
+        {
+            public RequestValidator()
+            {
+                RuleFor(x => x.FirstName)
+                   .NotEmpty()
+                   .MinimumLength(1)
+                   .MaximumLength(20);
+                RuleFor(x => x.LastName)
+                   .NotEmpty()
+                   .MinimumLength(1)
+                   .MaximumLength(50);
+            }
+        }
+
+        [UsedImplicitly]
+        private class ResponseValidator : AbstractValidator<Response>
+        {
+            public ResponseValidator() => RuleFor(z => z.FullName).NotEmpty();
+        }
+
+        [UsedImplicitly]
+        private class Handler : IRequestHandler<Request, Response>
+        {
+            public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
+                new Response(request.FirstName + " " + request.LastName)
+            );
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;

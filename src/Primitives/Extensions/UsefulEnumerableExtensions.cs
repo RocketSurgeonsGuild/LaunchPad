@@ -1,4 +1,4 @@
-namespace Rocket.Surgery.LaunchPad.Foundation.Extensions;
+namespace Rocket.Surgery.LaunchPad.Primitives.Extensions;
 
 /// <summary>
 ///     Useful extensions for enumerations.
