@@ -1,0 +1,63 @@
+﻿[
+  {
+    Input: {
+      Bar: null
+    },
+    Result: {
+      Bar: null
+    }
+  },
+  {
+    Input: {
+      Bar: []
+    },
+    Result: {
+      Bar: []
+    }
+  },
+  {
+    Input: {
+      Bar: {}
+    },
+    Result: {
+      Bar: {}
+    }
+  },
+  {
+    Input: {
+      Bar: 1234
+    },
+    Result: {
+      Bar: "1234"
+    }
+  },
+  {
+    Input: {
+      Bar: 1234
+    },
+    Result: {
+      Bar: 1234
+    }
+  },
+  {
+    Input: {
+      Bar: [
+        1234,
+        5678
+      ]
+    },
+    Result: {
+      Bar: [1234,5678]
+    }
+  },
+  {
+    Input: {
+      Bar: {
+        a: 1234
+      }
+    },
+    Result: {
+      Bar: {"a":1234}
+    }
+  }
+]

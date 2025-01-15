@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 
 using NodaTime;
 
@@ -27,7 +27,7 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHo
                                    {
                                        Id = RocketId.New(),
                                        Type = RocketType.Falcon9,
-                                       SerialNumber = "12345678901234",,
+                                       SerialNumber = "12345678901234",
                                    };
 
                                    var record = new LaunchRecord

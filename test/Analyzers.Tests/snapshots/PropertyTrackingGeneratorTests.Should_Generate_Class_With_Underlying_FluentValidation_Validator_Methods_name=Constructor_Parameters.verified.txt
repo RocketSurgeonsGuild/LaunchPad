@@ -1,0 +1,40 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: CS0103,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (59,8)-(59,24),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
+      MessageFormat: The name '{0}' does not exist in the current context,
+      Message: The name 'InheritFromModel' does not exist in the current context,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS1503,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Analyzers/Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator/Input1_PatchRequest_PropertyTracking.cs: (75,103)-(75,111),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1503),
+      MessageFormat: Argument {0}: cannot convert from '{1}' to '{2}',
+      Message: Argument 1: cannot convert from 'System.Guid' to 'int',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
+  }
+}

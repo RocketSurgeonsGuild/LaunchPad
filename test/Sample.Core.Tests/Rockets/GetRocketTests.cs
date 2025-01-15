@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 
 using Rocket.Surgery.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Primitives;
@@ -24,7 +24,7 @@ public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase
                                    var rocket = new ReadyRocket
                                    {
                                        Type = RocketType.Falcon9,
-                                       SerialNumber = "12345678901234",,
+                                       SerialNumber = "12345678901234",
                                    };
                                    z.Add(rocket);
 

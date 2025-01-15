@@ -1,0 +1,25 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: CS0103,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input2.cs: (33,8)-(33,24),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
+      MessageFormat: The name '{0}' does not exist in the current context,
+      Message: The name 'InheritFromModel' does not exist in the current context,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
+  }
+}

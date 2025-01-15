@@ -1,0 +1,67 @@
+﻿[
+  {
+    Input: {},
+    Result: {}
+  },
+  {
+    Input: {
+      Bar: bnVsbA==
+    },
+    Result: {
+      Bar: null
+    }
+  },
+  {
+    Input: {
+      Bar: W10=
+    },
+    Result: {
+      Bar: []
+    }
+  },
+  {
+    Input: {
+      Bar: e30=
+    },
+    Result: {
+      Bar: {}
+    }
+  },
+  {
+    Input: {
+      Bar: IjEyMzQi
+    },
+    Result: {
+      Bar: 1234
+    }
+  },
+  {
+    Input: {
+      Bar: MTIzNA==
+    },
+    Result: {
+      Bar: 1234
+    }
+  },
+  {
+    Input: {
+      Bar: WzEyMzQsNTY3OF0=
+    },
+    Result: {
+      Bar: [
+        1234,
+        5678
+      ]
+    }
+  },
+  {
+    Input: {
+      Bar: eyJhIjoxMjM0fQ==
+    },
+    Result: {
+      Bar: {
+        a: 1234
+      }
+    }
+  }
+]

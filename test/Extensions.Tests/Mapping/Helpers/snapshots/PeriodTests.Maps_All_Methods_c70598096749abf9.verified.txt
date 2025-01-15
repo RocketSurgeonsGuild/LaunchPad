@@ -1,0 +1,8 @@
+﻿{
+  Input: {
+    Bar: P10M
+  },
+  Result: {
+    Bar: P10M
+  }
+}

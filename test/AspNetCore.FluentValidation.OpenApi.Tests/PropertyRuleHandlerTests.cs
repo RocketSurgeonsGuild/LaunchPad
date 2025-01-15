@@ -131,23 +131,23 @@ public partial class PropertyRuleHandlerTests : RuleTestBase
 
     public static IEnumerable<object[]> BetweenValidators()
     {
-        yield return [GetOpenApiDocument<DecimalContainer>("/comparison/exclusive/decimal/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
-        yield return [GetOpenApiDocument<DecimalContainer>("/comparison/exclusive/decimal/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
-        yield return [GetOpenApiDocument<IntegerContainer>("/comparison/exclusive/integer/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 10))];
-        yield return [GetOpenApiDocument<IntegerContainer>("/comparison/exclusive/integer/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 11))];
-        yield return [GetOpenApiDocument<NullableIntegerContainer>("/comparison/exclusive/nullable/integer/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 10))];
-        yield return [GetOpenApiDocument<NullableIntegerContainer>("/comparison/exclusive/nullable/integer/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 11))];
-        yield return [GetOpenApiDocument<NullableDecimalContainer>("/comparison/exclusive/nullable/decimal/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
-        yield return [GetOpenApiDocument<NullableDecimalContainer>("/comparison/exclusive/nullable/decimal/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<DecimalContainer>("/between/exclusive/decimal/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<DecimalContainer>("/between/exclusive/decimal/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<IntegerContainer>("/between/exclusive/integer/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 10))];
+        yield return [GetOpenApiDocument<IntegerContainer>("/between/exclusive/integer/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 11))];
+        yield return [GetOpenApiDocument<NullableIntegerContainer>("/between/exclusive/nullable/integer/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 10))];
+        yield return [GetOpenApiDocument<NullableIntegerContainer>("/between/exclusive/nullable/integer/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(2, 11))];
+        yield return [GetOpenApiDocument<NullableDecimalContainer>("/between/exclusive/nullable/decimal/gtlte", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<NullableDecimalContainer>("/between/exclusive/nullable/decimal/gtelt", x => x.RuleFor(y => y.Value).ExclusiveBetween(1.1m, 2.2m))];
 
-        yield return [GetOpenApiDocument<DecimalContainer>("/comparison/inclusive/decimal/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
-        yield return [GetOpenApiDocument<DecimalContainer>("/comparison/inclusive/decimal/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
-        yield return [GetOpenApiDocument<IntegerContainer>("/comparison/inclusive/integer/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 10))];
-        yield return [GetOpenApiDocument<IntegerContainer>("/comparison/inclusive/integer/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 11))];
-        yield return [GetOpenApiDocument<NullableIntegerContainer>("/comparison/inclusive/nullable/integer/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 10))];
-        yield return [GetOpenApiDocument<NullableIntegerContainer>("/comparison/inclusive/nullable/integer/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 11))];
-        yield return [GetOpenApiDocument<NullableDecimalContainer>("/comparison/inclusive/nullable/decimal/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
-        yield return [GetOpenApiDocument<NullableDecimalContainer>("/comparison/inclusive/nullable/decimal/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<DecimalContainer>("/between/inclusive/decimal/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<DecimalContainer>("/between/inclusive/decimal/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<IntegerContainer>("/between/inclusive/integer/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 10))];
+        yield return [GetOpenApiDocument<IntegerContainer>("/between/inclusive/integer/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 11))];
+        yield return [GetOpenApiDocument<NullableIntegerContainer>("/between/inclusive/nullable/integer/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 10))];
+        yield return [GetOpenApiDocument<NullableIntegerContainer>("/between/inclusive/nullable/integer/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(2, 11))];
+        yield return [GetOpenApiDocument<NullableDecimalContainer>("/between/inclusive/nullable/decimal/gtlte", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
+        yield return [GetOpenApiDocument<NullableDecimalContainer>("/between/inclusive/nullable/decimal/gtelt", x => x.RuleFor(y => y.Value).InclusiveBetween(1.1m, 2.2m))];
     }
 
     private static OpenApiResult GetOpenApiDocument<TObject>(string path, Action<InlineValidator<TObject>> configureValidator)
