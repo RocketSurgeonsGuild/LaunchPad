@@ -1,3 +1,0 @@
-﻿[
-  This is just a test "POINT (38.69 54.97)"
-]

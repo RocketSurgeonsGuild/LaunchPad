@@ -1,3 +1,0 @@
-﻿[
-  This is just a test "America/New_York"
-]

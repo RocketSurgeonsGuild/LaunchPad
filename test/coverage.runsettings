@@ -230,6 +230,7 @@
                 <ModulePath>.*System\.Reactive\.dll</ModulePath>
                 <ModulePath>.*System\.Reactive\.Observable\.Aliases\.dll</ModulePath>
                 <ModulePath>.*System\.Text\.Json\.dll</ModulePath>
+                <ModulePath>.*Verify\.DiffPlex\.dll</ModulePath>
                 <ModulePath>.*Verify\.NewtonsoftJson\.dll</ModulePath>
                 <ModulePath>.*Verify\.NodaTime\.dll</ModulePath>
                 <ModulePath>.*Verify\.SourceGenerators\.dll</ModulePath>

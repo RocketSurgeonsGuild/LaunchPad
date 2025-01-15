@@ -16,6 +16,8 @@ internal static class ModuleInitializer
         VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
+        VerifierSettings.SortJsonObjects();
+        VerifierSettings.SortPropertiesAlphabetically();
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {

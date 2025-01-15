@@ -1,3 +1,0 @@
-﻿[
-  This is just a test "04:04:04Z"
-]

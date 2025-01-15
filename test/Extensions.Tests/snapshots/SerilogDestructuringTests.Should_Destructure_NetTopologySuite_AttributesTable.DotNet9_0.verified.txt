@@ -1,3 +1,0 @@
-﻿[
-  This is just a test { id: -1304539648, label: "Caso - 93", number1: 440.64536501683546, number2: 4457612420 }
-]
