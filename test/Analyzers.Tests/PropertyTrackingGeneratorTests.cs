@@ -1,8 +1,11 @@
 using System.Linq.Expressions;
-using Analyzers.Tests.Helpers;
+
 using DryIoc.ImTools;
+
 using FluentValidation;
+
 using MediatR;
+
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -15,30 +18,32 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
     {
         var result = await Builder
                           .AddSources(
-                               @"
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public class Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
-}
-"
+                               """
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public class Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                   }
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.PatchRocket must be made partial.");
 
@@ -50,33 +55,35 @@ namespace Sample.Core.Operations.Rockets
     {
         var result = await Builder
                           .AddSources(
-                               @"
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public static class PublicClass
-    {
-        public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-        {
-            public Guid Id { get; init; }
-        }
-    }
-}
-"
+                               """
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public static class PublicClass
+                                   {
+                                       public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                       {
+                                           public Guid Id { get; init; }
+                                       }
+                                   }
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.PublicClass must be made partial.");
 
@@ -88,26 +95,28 @@ namespace Sample.Core.Operations.Rockets
     {
         var result = await Builder
                           .AddSources(
-                               @"
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public record Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-}
-"
+                               """
+
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public record Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().HaveCount(0);
+        output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
@@ -121,19 +130,19 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
         var instance = Activator.CreateInstance(type);
 
         serialNumberProperty.SetValue(instance, new Assigned<string>("12345"));
-        var changes = getChangesMethod.Invoke(instance, Array.Empty<object>());
+        var changes = getChangesMethod.Invoke(instance, []);
 
         var serialNumberChanged = (bool)serialNumberChangedProperty.GetValue(changes)!;
         serialNumberChanged.Should().BeTrue();
 
         typeProperty.SetValue(instance, new Assigned<int>(12345));
-        changes = getChangesMethod.Invoke(instance, Array.Empty<object>());
+        changes = getChangesMethod.Invoke(instance, []);
 
         var typeChanged = (bool)typeChangedProperty.GetValue(changes)!;
         typeChanged.Should().BeTrue();
 
         idProperty.SetValue(instance, new Assigned<Guid>(Guid.NewGuid()));
-        changes = getChangesMethod.Invoke(instance, Array.Empty<object>());
+        changes = getChangesMethod.Invoke(instance, []);
 
         var idChanged = (bool)idChangedProperty.GetValue(changes)!;
         idChanged.Should().BeTrue();
@@ -146,26 +155,28 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
     {
         var result = await Builder
                           .AddSources(
-                               @"
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public class Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-}
-"
+                               """
+
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public class Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().HaveCount(0);
+        output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
@@ -177,13 +188,13 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         var instance = Activator.CreateInstance(type);
 
         serialNumberProperty.SetValue(instance, new Assigned<string>("12345"));
-        var changes = getChangesMethod.Invoke(instance, Array.Empty<object>());
+        var changes = getChangesMethod.Invoke(instance, []);
 
         var serialNumberChanged = (bool)serialNumberChangedProperty.GetValue(changes)!;
         serialNumberChanged.Should().BeTrue();
 
         typeProperty.SetValue(instance, new Assigned<int>(12345));
-        changes = getChangesMethod.Invoke(instance, Array.Empty<object>());
+        changes = getChangesMethod.Invoke(instance, []);
 
         var typeChanged = (bool)typeChangedProperty.GetValue(changes)!;
         typeChanged.Should().BeTrue();
@@ -199,27 +210,29 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
     {
         var result = await Builder
                           .AddSources(
-                               @"
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-namespace Sample.Core.Operations.Rockets
-{
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public partial class PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
-}
-"
+                               """
+
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public partial class PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0005");
         diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchRocket must be a record.");
 
@@ -231,30 +244,32 @@ namespace Sample.Core.Operations.Rockets
     {
         var result = await Builder
                           .AddSources(
-                               @"
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public class Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
-}
-"
+                               """
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public class Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                   }
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0005");
         diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchRocket must be a class.");
 
@@ -266,22 +281,24 @@ namespace Sample.Core.Operations.Rockets
     {
         var result = await Builder
                           .AddSources(
-                               @"
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string? SerialNumber { get; set; } = null!;
-        public int Type { get; set; }
-    }
-    public partial record PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
-}
-"
+                               """
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string? SerialNumber { get; set; } = null!;
+                                       public int Type { get; set; }
+                                   }
+                                   public partial record PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -295,25 +312,27 @@ namespace Sample.Core.Operations.Rockets
     {
         var result = await Builder
                           .AddSources(
-                               @"
-namespace Sample.Core.Operations.Rockets
-{
-    /// <summary>
-    /// Request
-    /// </summary>
-    /// <param name=""Id"">The rocket id</param>
-    public record Request : IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-        public string SerialNumber { get; set; } = null!;
-        public int? Type { get; set; }
-    }
-    public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-    {
-        public Guid Id { get; init; }
-    }
-}
-"
+                               """
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   /// <summary>
+                                   /// Request
+                                   /// </summary>
+                                   /// <param name="Id">The rocket id</param>
+                                   public record Request : IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                       public string SerialNumber { get; set; } = null!;
+                                       public int? Type { get; set; }
+                                   }
+                                   public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                                   {
+                                       public Guid Id { get; init; }
+                                   }
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -350,7 +369,6 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
                           .GenerateAsync();
         await Verify(result);
     }
-
 
     [Fact]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude()
@@ -419,26 +437,28 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
     {
         var result = await Builder
                           .AddSources(
-                               @"
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public record Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-}
-"
+                               """
+
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public record Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().HaveCount(0);
+        output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
@@ -453,7 +473,7 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
 
         var assignedType = typeof(Assigned<>).MakeGenericType(value.GetType());
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
-        request = applyChangesMethod.Invoke(instance, new[] { request, });
+        request = applyChangesMethod.Invoke(instance, [request]);
         var r = requestPropertyUnderTest.GetValue(request);
         r.Should().Be(value);
         currentPropertyValues.Should().ContainInOrder(otherRequestProperties.Select(z => z.GetValue(request)).ToArray());
@@ -468,27 +488,29 @@ public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketM
     {
         var result = await Builder
                           .AddSources(
-                               @"
-/// <summary>
-/// Request
-/// </summary>
-/// <param name=""Id"">The rocket id</param>
-public class Request : IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public int Type { get; set; }
-}
-public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-"
+                               """
+
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               /// <param name="Id">The rocket id</param>
+                               public class Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; set; } = null!;
+                                   public int Type { get; set; }
+                               }
+                               public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                               }
+
+                               """
                            )
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().HaveCount(0);
+        output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
@@ -503,7 +525,7 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
 
         var assignedType = typeof(Assigned<>).MakeGenericType(value.GetType());
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
-        applyChangesMethod.Invoke(instance, new[] { request, });
+        applyChangesMethod.Invoke(instance, [request]);
         var r = requestPropertyUnderTest.GetValue(request);
         r.Should().Be(value);
         currentPropertyValues.Should().ContainInOrder(otherRequestProperties.Select(z => z.GetValue(request)).ToArray());
@@ -511,7 +533,7 @@ public partial class PatchRocket : IPropertyTracking<Request>, IRequest<RocketMo
         await Verify(result).UseParameters(property, value);
     }
 
-    [Theory(Skip = "Need to figure out how to get the correct type for the validator")]
+    [Theory]
     [MemberData(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
     public async Task Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods(string name, string source)
     {
@@ -935,109 +957,113 @@ partial class Validator : AbstractValidator<PatchRequest>
         yield return
         [
             "RuleSet",
-            @"
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
+            """
 
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet(""Create"",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet(""OnlySerialNumber"",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model))]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+            {
+                public Guid Id { get; init; }
+            }
+
+            partial class Validator : AbstractValidator<PatchRequest>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model))]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
-partial class Validator : AbstractValidator<PatchRequest>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-",
+            """,
         ];
 
         yield return
         [
             "RuleSet_Exclude",
-            @"
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
+            """
 
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet(""Create"",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet(""OnlySerialNumber"",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+            {
+                public Guid Id { get; init; }
+            }
+
+            partial class Validator : AbstractValidator<PatchRequest>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
-{
-    public Guid Id { get; init; }
-}
-
-partial class Validator : AbstractValidator<PatchRequest>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-",
+            """,
         ];
     }
 

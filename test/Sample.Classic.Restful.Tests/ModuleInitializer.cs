@@ -1,8 +1,11 @@
 using System.Runtime.CompilerServices;
+
 using DiffEngine;
+
+using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Classic.Restful.Tests;
 
 internal static class ModuleInitializer
 {
@@ -10,15 +13,16 @@ internal static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
+        VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
+        VerifierSettings.SortJsonObjects();
+        VerifierSettings.SortPropertiesAlphabetically();
+
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {
-                static string GetTypeName(Type type)
-                {
-                    return type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
-                }
+                static string GetTypeName(Type type) => type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
 
                 var typeName = GetTypeName(type);
 
@@ -27,5 +31,4 @@ internal static class ModuleInitializer
             }
         );
     }
-
 }

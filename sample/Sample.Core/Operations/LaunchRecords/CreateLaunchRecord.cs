@@ -1,9 +1,14 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using NodaTime;
+
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -16,8 +21,6 @@ namespace Sample.Core.Operations.LaunchRecords;
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class CreateLaunchRecord
 {
-    private static partial LaunchRecord Map(Request request);
-
     /// <summary>
     ///     Create a launch record
     /// </summary>
@@ -31,12 +34,12 @@ public static partial class CreateLaunchRecord
         /// <summary>
         ///     The launch partner
         /// </summary>
-        public string? Partner { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string? Partner { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The launch partners payload
         /// </summary>
-        public string? Payload { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string? Payload { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The payload weight
@@ -92,9 +95,7 @@ public static partial class CreateLaunchRecord
         {
             var record = Map(request);
 
-            var rocket = await dbContext.Rockets.FindAsync(new object[] { request.RocketId, }, cancellationToken);
-            if (rocket == null) throw new RequestFailedException("Rocket not found!");
-
+            var rocket = await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken) ?? throw new RequestFailedException("Rocket not found!");
             record.Rocket = rocket;
 
             await dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);
@@ -106,4 +107,6 @@ public static partial class CreateLaunchRecord
             };
         }
     }
+
+    private static partial LaunchRecord Map(Request request);
 }

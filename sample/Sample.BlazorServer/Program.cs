@@ -34,4 +34,7 @@ app.MapFallbackToPage("/_Host");
 
 await app.RunAsync();
 
-public partial class Program;
+namespace Sample.BlazorServer
+{
+    public partial class Program;
+}

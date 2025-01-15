@@ -1,5 +1,8 @@
 using System.Runtime.CompilerServices;
+
 using DiffEngine;
+
+using VerifyTests.DiffPlex;
 
 namespace Extensions.Tests;
 
@@ -10,6 +13,7 @@ public static class ModuleInitializer
     {
         DiffRunner.Disabled = true;
 
+        VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifySystemJson.Initialize();
         VerifyNewtonsoftJson.Initialize();
@@ -17,10 +21,7 @@ public static class ModuleInitializer
         DerivePathInfo(
             (sourceFile, _, type, method) =>
             {
-                static string GetTypeName(Type type)
-                {
-                    return type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
-                }
+                static string GetTypeName(Type type) => type.IsNested ? $"{type.ReflectedType!.Name}.{type.Name}" : type.Name;
 
                 var typeName = GetTypeName(type);
 

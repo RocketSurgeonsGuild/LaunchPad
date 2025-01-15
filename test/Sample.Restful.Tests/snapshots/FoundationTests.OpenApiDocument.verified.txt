@@ -1,0 +1,1730 @@
+﻿{
+  components: {
+    schemas: {
+      AssignedOfdouble: {
+        properties: {
+          hasValue: {
+            type: boolean
+          },
+          value: {
+            format: double,
+            type: number
+          }
+        },
+        required: [
+          value
+        ],
+        type: object
+      },
+      AssignedOfInstant: {
+        properties: {
+          hasValue: {
+            type: boolean
+          },
+          value: {
+            $ref: #/components/schemas/RocketId
+          }
+        },
+        required: [
+          value
+        ],
+        type: object
+      },
+      AssignedOfNullableOfInstant: {
+        properties: {
+          hasValue: {
+            type: boolean
+          },
+          value: {
+            $ref: #/components/schemas/RocketId
+          }
+        },
+        required: [
+          value
+        ],
+        type: object
+      },
+      AssignedOfRocketId: {
+        properties: {
+          hasValue: {
+            type: boolean
+          },
+          value: {
+            $ref: #/components/schemas/RocketId
+          }
+        },
+        required: [
+          value
+        ],
+        type: object
+      },
+      AssignedOfRocketType: {
+        properties: {
+          hasValue: {
+            type: boolean
+          },
+          value: {
+            $ref: #/components/schemas/RocketType
+          }
+        },
+        required: [
+          value
+        ],
+        type: object
+      },
+      AssignedOfstring: {
+        properties: {
+          hasValue: {
+            type: boolean
+          },
+          value: {
+            nullable: true,
+            type: string
+          }
+        },
+        required: [
+          value
+        ],
+        type: object
+      },
+      CreateLaunchRecordRequest: {
+        properties: {
+          actualLaunchDate: {
+            $ref: #/components/schemas/Instant
+          },
+          partner: {
+            minLength: 1,
+            nullable: true,
+            type: string
+          },
+          payload: {
+            minLength: 1,
+            nullable: true,
+            type: string
+          },
+          payloadWeightKg: {
+            format: double,
+            minimum: 0,
+            type: number
+          },
+          rocketId: {
+            $ref: #/components/schemas/Instant
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/Instant
+          }
+        },
+        required: [
+          partner,
+          rocketId,
+          payload,
+          scheduledLaunchDate
+        ],
+        type: object
+      },
+      CreateLaunchRecordResponse: {
+        properties: {
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          }
+        },
+        type: object
+      },
+      CreateRocketRequest: {
+        properties: {
+          serialNumber: {
+            maxLength: 30,
+            minLength: 10,
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType
+          }
+        },
+        required: [
+          serialNumber
+        ],
+        type: object
+      },
+      CreateRocketResponse: {
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          }
+        },
+        type: object
+      },
+      EditLaunchRecordPatchRequest: {
+        properties: {
+          actualLaunchDate: {
+            $ref: #/components/schemas/AssignedOfNullableOfInstant
+          },
+          partner: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          payload: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          payloadWeightKg: {
+            $ref: #/components/schemas/AssignedOfdouble
+          },
+          rocketId: {
+            $ref: #/components/schemas/AssignedOfRocketId
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/AssignedOfInstant
+          }
+        },
+        required: [
+          id
+        ],
+        type: object
+      },
+      EditLaunchRecordRequest: {
+        properties: {
+          actualLaunchDate: {
+            $ref: #/components/schemas/RocketId
+          },
+          partner: {
+            minLength: 1,
+            type: string
+          },
+          payload: {
+            minLength: 1,
+            type: string
+          },
+          payloadWeightKg: {
+            format: double,
+            minimum: 0,
+            type: number
+          },
+          rocketId: {
+            $ref: #/components/schemas/RocketId
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/RocketId
+          }
+        },
+        required: [
+          partner,
+          rocketId,
+          payload,
+          scheduledLaunchDate
+        ],
+        type: object
+      },
+      EditRocketPatchRequest: {
+        properties: {
+          serialNumber: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          type: {
+            $ref: #/components/schemas/AssignedOfRocketType
+          }
+        },
+        type: object
+      },
+      EditRocketRequest: {
+        properties: {
+          serialNumber: {
+            maxLength: 30,
+            minLength: 10,
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType
+          }
+        },
+        required: [
+          type,
+          serialNumber
+        ],
+        type: object
+      },
+      LaunchRecordModel: {
+        properties: {
+          actualLaunchDate: {
+            $ref: #/components/schemas/Instant
+          },
+          id: {
+            $ref: #/components/schemas/Instant
+          },
+          partner: {
+            type: string
+          },
+          payload: {
+            type: string
+          },
+          payloadWeightKg: {
+            format: int64,
+            type: integer
+          },
+          rocketSerialNumber: {
+            type: string
+          },
+          rocketType: {
+            $ref: #/components/schemas/RocketType
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/Instant
+          }
+        },
+        type: object
+      },
+      ProblemDetails: {
+        properties: {
+          detail: {
+            nullable: true,
+            type: string
+          },
+          instance: {
+            nullable: true,
+            type: string
+          },
+          status: {
+            format: int32,
+            nullable: true,
+            type: integer
+          },
+          title: {
+            nullable: true,
+            type: string
+          },
+          type: {
+            nullable: true,
+            type: string
+          }
+        },
+        required: [
+          type,
+          title
+        ],
+        type: object
+      },
+      RocketModel: {
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          },
+          sn: {
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType
+          }
+        },
+        type: object
+      },
+      RocketType: {
+        enum: [
+          falcon9,
+          falconHeavy,
+          atlasV
+        ]
+      }
+    }
+  },
+  info: {
+    title: Sample.Restful | v1,
+    version: 1.0.0
+  },
+  openapi: 3.0.1,
+  paths: {
+    /LaunchRecord: {
+      get: {
+        operationId: ListLaunchRecords,
+        parameters: [
+          {
+            in: query,
+            name: rocketType,
+            schema: {
+              type: string
+            }
+          }
+        ],
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  items: {
+                    $ref: #/components/schemas/LaunchRecordModel
+                  },
+                  type: array
+                }
+              },
+              text/json: {
+                schema: {
+                  items: {
+                    $ref: #/components/schemas/LaunchRecordModel
+                  },
+                  type: array
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          LaunchRecord
+        ]
+      },
+      post: {
+        operationId: CreateLaunchRecord,
+        requestBody: {
+          content: {
+            application/*+json: {
+              schema: {
+                $ref: #/components/schemas/CreateLaunchRecordRequest
+              }
+            },
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/CreateLaunchRecordRequest
+              }
+            },
+            text/json: {
+              schema: {
+                $ref: #/components/schemas/CreateLaunchRecordRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          201: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/CreateLaunchRecordResponse
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/CreateLaunchRecordResponse
+                }
+              }
+            },
+            description: Created,
+            headers: {
+              location: {
+                description: The location of the entity that was created,
+                schema: {
+                  type: string
+                }
+              }
+            }
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          LaunchRecord
+        ]
+      }
+    },
+    /LaunchRecord/{id}: {
+      delete: {
+        operationId: DeleteLaunchRecord,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        responses: {
+          204: {
+            description: No Content
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          LaunchRecord
+        ]
+      },
+      get: {
+        operationId: GetLaunchRecord,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/LaunchRecordModel
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/LaunchRecordModel
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          LaunchRecord
+        ]
+      },
+      patch: {
+        operationId: PatchLaunchRecord,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/*+json: {
+              schema: {
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
+              }
+            },
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
+              }
+            },
+            text/json: {
+              schema: {
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          204: {
+            description: No Content
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          LaunchRecord
+        ]
+      },
+      put: {
+        operationId: EditLaunchRecord,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/*+json: {
+              schema: {
+                $ref: #/components/schemas/EditLaunchRecordRequest
+              }
+            },
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/EditLaunchRecordRequest
+              }
+            },
+            text/json: {
+              schema: {
+                $ref: #/components/schemas/EditLaunchRecordRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          204: {
+            description: No Content
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          LaunchRecord
+        ]
+      }
+    },
+    /Rocket: {
+      get: {
+        operationId: ListRockets,
+        parameters: [
+          {
+            in: query,
+            name: rocketType,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  items: {
+                    $ref: #/components/schemas/RocketModel
+                  },
+                  type: array
+                }
+              },
+              text/json: {
+                schema: {
+                  items: {
+                    $ref: #/components/schemas/RocketModel
+                  },
+                  type: array
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      },
+      post: {
+        operationId: CreateRocket,
+        requestBody: {
+          content: {
+            application/*+json: {
+              schema: {
+                $ref: #/components/schemas/CreateRocketRequest
+              }
+            },
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/CreateRocketRequest
+              }
+            },
+            text/json: {
+              schema: {
+                $ref: #/components/schemas/CreateRocketRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          201: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/CreateRocketResponse
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/CreateRocketResponse
+                }
+              }
+            },
+            description: Created,
+            headers: {
+              location: {
+                description: The location of the entity that was created,
+                schema: {
+                  type: string
+                }
+              }
+            }
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      }
+    },
+    /Rocket/{id}: {
+      delete: {
+        operationId: RemoveRocket,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        responses: {
+          204: {
+            description: No Content
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      },
+      get: {
+        operationId: GetRocket,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      },
+      patch: {
+        operationId: PatchRocket,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/*+json: {
+              schema: {
+                $ref: #/components/schemas/EditRocketPatchRequest
+              }
+            },
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/EditRocketPatchRequest
+              }
+            },
+            text/json: {
+              schema: {
+                $ref: #/components/schemas/EditRocketPatchRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      },
+      put: {
+        operationId: EditRocket,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/*+json: {
+              schema: {
+                $ref: #/components/schemas/EditRocketRequest
+              }
+            },
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/EditRocketRequest
+              }
+            },
+            text/json: {
+              schema: {
+                $ref: #/components/schemas/EditRocketRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      }
+    },
+    /Rocket/{id}/launch-records: {
+      get: {
+        operationId: GetRocketLaunchRecords,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  items: {
+                    $ref: #/components/schemas/LaunchRecordModel
+                  },
+                  type: array
+                }
+              },
+              text/json: {
+                schema: {
+                  items: {
+                    $ref: #/components/schemas/LaunchRecordModel
+                  },
+                  type: array
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      }
+    },
+    /Rocket/{id}/launch-records/{launchRecordId}: {
+      get: {
+        operationId: GetRocketLaunchRecord,
+        parameters: [
+          {
+            in: path,
+            name: id,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          },
+          {
+            in: path,
+            name: launchRecordId,
+            required: true,
+            schema: {
+              format: uuid,
+              type: string
+            }
+          }
+        ],
+        responses: {
+          200: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/LaunchRecordModel
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/LaunchRecordModel
+                }
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Bad Request
+          },
+          404: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
+          },
+          422: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/FluentValidationProblemDetails
+                }
+              }
+            },
+            description: Unprocessable Entity
+          },
+          default: {
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: 
+          }
+        },
+        tags: [
+          Rocket
+        ]
+      }
+    }
+  },
+  tags: [
+    {
+      name: LaunchRecord
+    },
+    {
+      name: Rocket
+    }
+  ]
+}

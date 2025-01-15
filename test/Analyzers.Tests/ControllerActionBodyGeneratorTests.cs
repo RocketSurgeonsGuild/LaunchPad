@@ -1,10 +1,13 @@
 using System.Security.Claims;
-using Analyzers.Tests.Helpers;
+
 using FluentValidation;
 using FluentValidation.AspNetCore;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 
@@ -36,19 +39,21 @@ public static class Save2Rocket
         public string? Sn { get; init; } = null!;
     }
 }",
-                               @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                               """
+                               using Microsoft.AspNetCore.Mvc;
+                               using Microsoft.AspNetCore.Mvc.ModelBinding;
+                               using Rocket.Surgery.LaunchPad.AspNetCore;
+                               using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                               namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpPost(""{id:guid}/{sn?}"")]
-    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}"
+                               [Route("[controller]")]
+                               public partial class RocketController : RestfulApiController
+                               {
+                                   [HttpPost("{id:guid}/{sn?}")]
+                                   public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
+                               }
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -84,23 +89,25 @@ public static class ListRockets
 }
 
 ",
-                               @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                               """
+                               using Microsoft.AspNetCore.Mvc;
+                               using Microsoft.AspNetCore.Mvc.ModelBinding;
+                               using Rocket.Surgery.LaunchPad.AspNetCore;
+                               using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                               namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public class RocketController : RestfulApiController
-{
-    [HttpGet]
-    public partial Task<ActionResult<IEnumerable<RocketModel>>> ListRockets([FromQuery] ListRockets.Request request);
+                               [Route("[controller]")]
+                               public class RocketController : RestfulApiController
+                               {
+                                   [HttpGet]
+                                   public partial Task<ActionResult<IEnumerable<RocketModel>>> ListRockets([FromQuery] ListRockets.Request request);
+                               
+                                   [HttpGet("{id:guid}")]
+                                   public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
+                               }
 
-    [HttpGet(""{id:guid}"")]
-    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
-}
-"
+                               """
                            )
                           .Build()
                           .GenerateAsync();
@@ -109,29 +116,15 @@ public class RocketController : RestfulApiController
 
     [Theory]
     [ClassData(typeof(MethodBodyData))]
-    public async Task Should_Generate_Method_Bodies(string key, string[] sources)
-    {
-        await Verify(Builder.AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
-    }
+    public async Task Should_Generate_Method_Bodies(string key, string[] sources) => await Verify(Builder.AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
 
     private sealed class MethodBodyData : TheoryData<string, string[]>
     {
-        private const string defaultString = @"
-namespace TestNamespace;
-public record RocketModel
-{
-    public Guid Id { get; init; }
-    public string Sn { get; init; } = null!;
-}
-public enum RocketType { A, B }
-";
-
         public MethodBodyData()
         {
             Add(
                 "GenerateBodyForRequest",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -142,25 +135,26 @@ public static class GetRocket
         public Guid Id { get; set; }
     }
 }",
-                    @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                    namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpGet(""{id:guid}"")]
-    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpGet("{id:guid}")]
+                        public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodyWithIdParameterAndAddBindRequired",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -171,25 +165,26 @@ public static class SaveRocket
         public Guid Id { get; set; }
     }
 }",
-                    @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                    namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpPost(""{id:guid}"")]
-    public partial Task<ActionResult> SaveRocket([BindRequired][FromRoute] Guid id, [FromRoute] SaveRocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpPost("{id:guid}")]
+                        public partial Task<ActionResult> SaveRocket([BindRequired][FromRoute] Guid id, [FromRoute] SaveRocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodyWithIdParameter",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -201,25 +196,26 @@ public static class Save2Rocket
         public string Sn { get; init; } = null!;
     }
 }",
-                    @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                    namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpPost(""{id:guid}"")]
-    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpPost("{id:guid}")]
+                        public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [BindRequired] [FromRoute] Save2Rocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodyWithIdParameterMultiple",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -231,25 +227,26 @@ public static class Save2Rocket
         public string? Sn { get; set; } = null!;
     }
 }",
-                    @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                    namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpPost(""{id:guid}/{sn?}"")]
-    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpPost("{id:guid}/{sn?}")]
+                        public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodyForListAction",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -258,26 +255,27 @@ public static class ListRockets
     // TODO: Paging model!
     public record Request : IStreamRequest<RocketModel>;
 }",
-                    @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                    namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpGet]
-    public partial IAsyncEnumerable<RocketModel> ListRockets(ListRockets.Request model);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpGet]
+                        public partial IAsyncEnumerable<RocketModel> ListRockets(ListRockets.Request model);
+                    }
+                    """,
+                ]
             );
 
             Add(
                 "GenerateBodiesWithCreatedReturn",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -302,30 +300,31 @@ public static class CreateRocket
         public Guid Id { get; init; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpGet(""{id:guid}"")]
-    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
+                    namespace MyNamespace.Controllers;
 
-    [HttpPost]
-    [Created(nameof(GetRocket))]
-    public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpGet("{id:guid}")]
+                        public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
+                    
+                        [HttpPost]
+                        [Created(nameof(GetRocket))]
+                        public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodiesWithAcceptReturnType",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -350,31 +349,32 @@ public static class CreateRocket
         public Guid Id { get; init; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpGet(""{id:guid}"")]
-    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
+                    namespace MyNamespace.Controllers;
 
-    [HttpPost]
-    [Accepted(nameof(GetRocket))]
-    [ProducesResponseType(202)]
-    public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpGet("{id:guid}")]
+                        public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
+                    
+                        [HttpPost]
+                        [Accepted(nameof(GetRocket))]
+                        [ProducesResponseType(202)]
+                        public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodiesWithVoidReturnType",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -385,26 +385,27 @@ public static class DeleteRocket
         public Guid Id { get; set; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpGet(""{id:guid}"")]
-    public partial Task<ActionResult> DeleteRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] DeleteRocket.Request request);
-}",
-                }
+                    namespace MyNamespace.Controllers;
+
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpGet("{id:guid}")]
+                        public partial Task<ActionResult> DeleteRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] DeleteRocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodiesWithVoidReturnTypeOther",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -415,26 +416,27 @@ public static class DeleteLaunchRecord
         public Guid Id { get; set; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpDelete(""{id:guid}"")]
-    public partial Task<ActionResult> DeleteLaunchRecord([BindRequired] [FromRoute] Guid id, DeleteLaunchRecord.Request request);
-}",
-                }
+                    namespace MyNamespace.Controllers;
+
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpDelete("{id:guid}")]
+                        public partial Task<ActionResult> DeleteLaunchRecord([BindRequired] [FromRoute] Guid id, DeleteLaunchRecord.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodiesWithMultipleParameters",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -462,37 +464,38 @@ public static class GetRocketLaunchRecord
         public Guid LaunchRecordId { get; init; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    /// <summary>
-    /// Get the launch records for a given rocket
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet(""{id:guid}/launch-records"")]
-    public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords([BindRequired] [FromRoute] Guid id, GetRocketLaunchRecords.Request request);
+                    namespace MyNamespace.Controllers;
 
-    /// <summary>
-    /// Get a specific launch record for a given rocket
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
-    public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        /// <summary>
+                        /// Get the launch records for a given rocket
+                        /// </summary>
+                        /// <returns></returns>
+                        [HttpGet("{id:guid}/launch-records")]
+                        public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords([BindRequired] [FromRoute] Guid id, GetRocketLaunchRecords.Request request);
+                    
+                        /// <summary>
+                        /// Get a specific launch record for a given rocket
+                        /// </summary>
+                        /// <returns></returns>
+                        [HttpGet("{id:guid}/launch-records/{launchRecordId:guid}")]
+                        public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodiesWithMultipleParameters2",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -513,30 +516,31 @@ public static class GetRocketLaunchRecord
         public Guid LaunchId { get; init; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    /// <summary>
-    /// Get a specific launch record for a given rocket
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
-    public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchId, GetRocketLaunchRecord.Request request);
-}",
-                }
+                    namespace MyNamespace.Controllers;
+
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        /// <summary>
+                        /// Get a specific launch record for a given rocket
+                        /// </summary>
+                        /// <returns></returns>
+                        [HttpGet("{id:guid}/launch-records/{launchRecordId:guid}")]
+                        public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchId, GetRocketLaunchRecord.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodiesWithMultipleParameters3",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -557,30 +561,31 @@ public static class GetRocketLaunchRecord
         public Guid LaunchRecordId { get; init; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    /// <summary>
-    /// Get a specific launch record for a given rocket
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
-    public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
-}",
-                }
+                    namespace MyNamespace.Controllers;
+
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        /// <summary>
+                        /// Get a specific launch record for a given rocket
+                        /// </summary>
+                        /// <returns></returns>
+                        [HttpGet("{id:guid}/launch-records/{launchRecordId:guid}")]
+                        public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] Guid launchRecordId, GetRocketLaunchRecord.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodiesWithMultipleParameters4",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 namespace TestNamespace;
@@ -601,30 +606,31 @@ public static class GetRocketLaunchRecord
         public string LaunchRecordId { get; init; }
     }
 }",
-                    @"
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using TestNamespace;
+                    """
 
-namespace MyNamespace.Controllers;
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
+                    using TestNamespace;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    /// <summary>
-    /// Get a specific launch record for a given rocket
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet(""{id:guid}/launch-records/{launchRecordId:guid}"")]
-    public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] string launchRecordId, GetRocketLaunchRecord.Request request);
-}",
-                }
+                    namespace MyNamespace.Controllers;
+
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        /// <summary>
+                        /// Get a specific launch record for a given rocket
+                        /// </summary>
+                        /// <returns></returns>
+                        [HttpGet("{id:guid}/launch-records/{launchRecordId:guid}")]
+                        public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] string launchRecordId, GetRocketLaunchRecord.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodyWithClaimsPrincipal",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 using System.Security.Claims;
@@ -639,26 +645,27 @@ public static class Save2Rocket
         public string Other { get; set; }
     }
 }",
-                    @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
+                    """
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
 
-using TestNamespace;
+                    using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                    namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpPost(""{id:guid}/{sn?}"")]
-    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpPost("{id:guid}/{sn?}")]
+                        public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
+                    }
+                    """,
+                ]
             );
             Add(
                 "GenerateBodyWithHttpRequest",
-                new[]
-                {
+                [
                     defaultString,
                     @"
 using Microsoft.AspNetCore.Http;
@@ -673,23 +680,35 @@ public static class Save2Rocket
         public string Other { get; init; }
     }
 }",
-                    @"using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Rocket.Surgery.LaunchPad.AspNetCore;
+                    """
+                    using Microsoft.AspNetCore.Mvc;
+                    using Microsoft.AspNetCore.Mvc.ModelBinding;
+                    using Rocket.Surgery.LaunchPad.AspNetCore;
 
-using TestNamespace;
+                    using TestNamespace;
 
-namespace MyNamespace.Controllers;
+                    namespace MyNamespace.Controllers;
 
-[Route(""[controller]"")]
-public partial class RocketController : RestfulApiController
-{
-    [HttpPost(""{id:guid}/{sn?}"")]
-    public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
-}",
-                }
+                    [Route("[controller]")]
+                    public partial class RocketController : RestfulApiController
+                    {
+                        [HttpPost("{id:guid}/{sn?}")]
+                        public partial Task<ActionResult<RocketModel>> Save2Rocket([BindRequired][FromRoute] Guid id, [FromRoute] string? sn, [BindRequired] [FromRoute] Save2Rocket.Request request);
+                    }
+                    """,
+                ]
             );
         }
+
+        private const string defaultString = @"
+namespace TestNamespace;
+public record RocketModel
+{
+    public Guid Id { get; init; }
+    public string Sn { get; init; } = null!;
+}
+public enum RocketType { A, B }
+";
     }
 
     public override async Task InitializeAsync()

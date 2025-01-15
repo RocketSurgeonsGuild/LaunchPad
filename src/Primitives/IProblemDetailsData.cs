@@ -1,4 +1,4 @@
-namespace Rocket.Surgery.LaunchPad.Foundation;
+namespace Rocket.Surgery.LaunchPad.Primitives;
 
 /// <summary>
 ///     A common interface used for definiting problems

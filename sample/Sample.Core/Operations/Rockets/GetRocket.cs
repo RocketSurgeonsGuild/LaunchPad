@@ -1,8 +1,12 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -21,19 +25,14 @@ public static partial class GetRocket
 
     private class Validator : AbstractValidator<Request>
     {
-        public Validator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-        }
+        public Validator() => RuleFor(x => x.Id)
+                             .NotEmpty()
+                             .NotNull();
     }
 
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>
     {
-        public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken)
-        {
-            return ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id,], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
-        }
+        public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken) =>
+            ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
     }
 }

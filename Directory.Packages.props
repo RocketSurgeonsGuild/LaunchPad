@@ -38,6 +38,7 @@
         <PackageVersion Include="Serilog.Sinks.Spectre" Version="0.5.0" />
         <PackageVersion Include="Serilog.Sinks.Trace" Version="4.0.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
+        <PackageVersion Include="Verify.DiffPlex" Version="3.1.2" />
         <PackageVersion Include="xunit.analyzers" Version="1.19.0" />
         <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0" />
         <PackageVersion Include="JetBrains.dotCover.CommandLineTools" Version="2024.3.3" />
@@ -120,8 +121,8 @@
         <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.45" />
         <PackageVersion Include="Rocket.Surgery.Conventions.Serilog" Version="14.0.1-beta.45" />
         <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.45" />
-        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.34" />
-        <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.34" />
+        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.36" />
+        <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.36" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.45" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.45" />
         <PackageVersion Include="Scrutor" Version="5.1.1" />

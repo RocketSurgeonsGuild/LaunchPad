@@ -1,0 +1,15 @@
+﻿{
+  schemas: {
+    IntegerContainer: {
+      type: object,
+      properties: {
+        value: {
+          maximum: 11,
+          minimum: 2,
+          type: integer,
+          format: int32
+        }
+      }
+    }
+  }
+}

@@ -1,12 +1,17 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
+
 using MediatR;
+
 using NetTopologySuite.Geometries;
+
 using NodaTime;
-using Rocket.Surgery.LaunchPad.Foundation;
+
 using Rocket.Surgery.LaunchPad.HotChocolate;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
@@ -19,7 +24,7 @@ public partial record EditRocketPatchRequest : IOptionalTracking<EditRocket.Patc
     public RocketId Id { get; init; }
 
     [UsedImplicitly]
-    class Validator : AbstractValidator<EditRocketPatchRequest>
+    private class Validator : AbstractValidator<EditRocketPatchRequest>
     {
         public Validator()
         {
@@ -42,8 +47,6 @@ public partial record EditRocketPatchRequest : IOptionalTracking<EditRocket.Patc
 public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunchRecord.PatchRequest>
 {
     public LaunchRecordId Id { get; init; }
-
-
 
     private class Validator : AbstractValidator<EditLaunchRecordPatchRequest>
     {
@@ -157,19 +160,13 @@ public class QueryType
     [UseProjection]
     [UseFiltering]
     [UseSorting(typeof(LaunchRecordSort))]
-    public IQueryable<LaunchRecord> LaunchRecords([Service] RocketDbContext context)
-    {
-        return context.LaunchRecords;
-    }
+    public IQueryable<LaunchRecord> LaunchRecords([Service] RocketDbContext context) => context.LaunchRecords;
 
     [UsePaging]
     [UseProjection]
     [UseFiltering]
     [UseSorting(typeof(RocketSort))]
-    public IQueryable<ReadyRocket> Rockets([Service] RocketDbContext context)
-    {
-        return context.Rockets;
-    }
+    public IQueryable<ReadyRocket> Rockets([Service] RocketDbContext context) => context.Rockets;
 }
 
 public class NodaTimeOutputs
@@ -221,39 +218,33 @@ public class GeometryInputs
 [ExtendObjectType(OperationTypeNames.Query)]
 public class QueryTests
 {
-    public NodaTimeOutputs NodaTimeTest(NodaTimeInputs inputs)
+    public NodaTimeOutputs NodaTimeTest(NodaTimeInputs inputs) => new()
     {
-        return new()
-        {
-            Instant = inputs.Instant,
-            LocalDate = inputs.LocalDate,
-            LocalTime = inputs.LocalTime,
-            LocalDateTime = inputs.LocalDateTime,
-            OffsetDateTime = inputs.OffsetDateTime,
-            OffsetTime = inputs.OffsetTime,
-            Period = inputs.Period,
-            Duration = inputs.Duration,
-            ZonedDateTime = inputs.ZonedDateTime,
-            Offset = inputs.Offset,
-            IsoDayOfWeek = inputs.IsoDayOfWeek,
-        };
-    }
+        Instant = inputs.Instant,
+        LocalDate = inputs.LocalDate,
+        LocalTime = inputs.LocalTime,
+        LocalDateTime = inputs.LocalDateTime,
+        OffsetDateTime = inputs.OffsetDateTime,
+        OffsetTime = inputs.OffsetTime,
+        Period = inputs.Period,
+        Duration = inputs.Duration,
+        ZonedDateTime = inputs.ZonedDateTime,
+        Offset = inputs.Offset,
+        IsoDayOfWeek = inputs.IsoDayOfWeek,
+    };
 
-    public GeometryOutputs GeometryTest(GeometryInputs inputs)
+    public GeometryOutputs GeometryTest(GeometryInputs inputs) => new()
     {
-        return new()
-        {
-            Geometry = inputs.Geometry,
-            // TODO: Determine why these are not working
-//            Point = inputs.Geometry as Point,
-//            LineString = inputs.Geometry as LineString,
-//            Polygon = inputs.Geometry as Polygon,
-//            MultiPoint = inputs.Geometry as MultiPoint,
-//            MultiLineString = inputs.Geometry as MultiLineString,
-//            MultiPolygon = inputs.Geometry as MultiPolygon,
-//            GeometryCollection = inputs.GeometryCollection
-        };
-    }
+        Geometry = inputs.Geometry,
+        // TODO: Determine why these are not working
+        //            Point = inputs.Geometry as Point,
+        //            LineString = inputs.Geometry as LineString,
+        //            Polygon = inputs.Geometry as Polygon,
+        //            MultiPoint = inputs.Geometry as MultiPoint,
+        //            MultiLineString = inputs.Geometry as MultiLineString,
+        //            MultiPolygon = inputs.Geometry as MultiPolygon,
+        //            GeometryCollection = inputs.GeometryCollection
+    };
 }
 
 internal class LaunchRecordSort : SortInputType<LaunchRecord>
@@ -293,29 +284,27 @@ public class CustomFilterConventionExtension : FilterConventionExtension
 
 public class ReadyRocketType : ObjectType<ReadyRocket>
 {
-    protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor)
-    {
-//        descriptor.Implements<InterfaceType<IReadyRocket>>();
+    protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor) =>
+        //        descriptor.Implements<InterfaceType<IReadyRocket>>();
         descriptor
            .Field(z => z.LaunchRecords)
            .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
-//                  .UseFiltering()
-//                  .UseSorting()
-            ;
-//        descriptor.Ignore(z => z.LaunchRecords);
-    }
+    //                  .UseFiltering()
+    //                  .UseSorting()
+    ;
+    //        descriptor.Ignore(z => z.LaunchRecords);
 }
 
 public class LaunchRecordType : ObjectType<LaunchRecord>
 {
     protected override void Configure(IObjectTypeDescriptor<LaunchRecord> descriptor)
     {
-//        descriptor.Implements<InterfaceType<ILaunchRecord>>();
+        //        descriptor.Implements<InterfaceType<ILaunchRecord>>();
         descriptor
            .Field(z => z.Rocket)
            .Type<NonNullType<ObjectType<ReadyRocket>>>();
         descriptor.Field(z => z.RocketId).Ignore();
-//        descriptor.Ignore(z => z.LaunchRecords);
+        //        descriptor.Ignore(z => z.LaunchRecords);
     }
 }
 

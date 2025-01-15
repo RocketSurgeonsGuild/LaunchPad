@@ -1,8 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using FluentValidation;
-using FluentValidation.Results;
 using HotChocolate;
-using Rocket.Surgery.LaunchPad.Foundation;
+
+using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
@@ -56,26 +54,32 @@ internal class GraphqlErrorFilter : IErrorFilter
                .SetCode(error.Code ?? "UNKNOWN");
         }
 
-
-        if (error.Exception is IProblemDetailsData ex)
-        {
-            builder.WithProblemDetails(ex);
-        }
+        if (error.Exception is IProblemDetailsData ex) builder.WithProblemDetails(ex);
 
         switch (error.Exception)
         {
             case NotFoundException:
-                builder.SetCode("NOTFOUND");
-                break;
+                {
+                    builder.SetCode("NOTFOUND");
+                    break;
+                }
+
             case NotAuthorizedException:
-                builder.SetCode("NOTAUTHORIZED");
-                break;
+                {
+                    builder.SetCode("NOTAUTHORIZED");
+                    break;
+                }
+
             case RequestFailedException:
-                builder.SetCode("FAILED");
+                {
+                    builder.SetCode("FAILED");
+                    break;
+                }
+
+            default:
                 break;
         }
 
         return builder.Build();
-
     }
 }

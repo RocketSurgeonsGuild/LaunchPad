@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using Newtonsoft.Json;
+
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -14,22 +17,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 /// </summary>
 /// <seealso cref="IServiceConvention" />
 /// <seealso cref="IServiceConvention" />
+/// <remarks>
+///     Creates a convention for newtonsoft json
+/// </remarks>
+/// <param name="options"></param>
 [PublicAPI]
 [ExportConvention]
 [ConventionCategory(ConventionCategory.Application)]
-public class NewtonsoftJsonConvention : IServiceConvention
+public class NewtonsoftJsonConvention(FoundationOptions? options = null) : IServiceConvention
 {
-    private readonly FoundationOptions _options;
-
-    /// <summary>
-    ///     Creates a convention for newtonsoft json
-    /// </summary>
-    /// <param name="options"></param>
-    public NewtonsoftJsonConvention(FoundationOptions? options = null)
-    {
-        _options = options ?? new FoundationOptions();
-    }
-
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
@@ -55,4 +51,6 @@ public class NewtonsoftJsonConvention : IServiceConvention
                 )
             );
     }
+
+    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

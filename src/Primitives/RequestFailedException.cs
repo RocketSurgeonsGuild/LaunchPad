@@ -1,4 +1,4 @@
-namespace Rocket.Surgery.LaunchPad.Foundation;
+namespace Rocket.Surgery.LaunchPad.Primitives;
 
 /// <summary>
 ///     An exception for failed requests, with overloads to take additional details

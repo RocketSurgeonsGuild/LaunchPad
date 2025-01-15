@@ -1,9 +1,13 @@
-﻿using MediatR;
+using MediatR;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
+
 using Serilog.Events;
 using ValidationException = FluentValidation.ValidationException;
 
@@ -14,15 +18,17 @@ public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
     [Fact]
     public async Task Should_Create_A_Rocket()
     {
-        var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(
-                new CreateRocket.Request
-                {
-                    Type = RocketType.Falcon9,
-                    SerialNumber = "12345678901234"
-                }
-            )
-        );
+        var response = await ServiceProvider
+                            .WithScoped<IMediator>()
+                            .Invoke(
+                                 mediator => mediator.Send(
+                                     new CreateRocket.Request
+                                     {
+                                         Type = RocketType.Falcon9,
+                                         SerialNumber = "12345678901234",
+                                     }
+                                 )
+                             );
 
         response.Id.Value.Should().NotBeEmpty();
     }
@@ -30,36 +36,38 @@ public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
     [Fact]
     public async Task Should_Throw_If_Rocket_Exists()
     {
-        await ServiceProvider.WithScoped<RocketDbContext>()
-                             .Invoke(
-                                  async z =>
-                                  {
-                                      z.Add(
-                                          new ReadyRocket
+        await ServiceProvider
+             .WithScoped<RocketDbContext>()
+             .Invoke(
+                  async z =>
+                  {
+                      z.Add(
+                          new ReadyRocket
+                          {
+                              Type = RocketType.Falcon9,
+                              SerialNumber = "12345678901234",
+                          }
+                      );
+
+                      await z.SaveChangesAsync();
+                  }
+              );
+
+        Func<Task> action = () => ServiceProvider
+                                 .WithScoped<IMediator>()
+                                 .Invoke(
+                                      mediator => mediator.Send(
+                                          new CreateRocket.Request
                                           {
                                               Type = RocketType.Falcon9,
-                                              SerialNumber = "12345678901234"
+                                              SerialNumber = "12345678901234",
                                           }
-                                      );
-
-                                      await z.SaveChangesAsync();
-                                  }
-                              );
-
-        Func<Task> action = () => ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(
-                new CreateRocket.Request
-                {
-                    Type = RocketType.Falcon9,
-                    SerialNumber = "12345678901234"
-                }
-            )
-        );
+                                      )
+                                  );
         ( await action.Should().ThrowAsync<RequestFailedException>() )
-           .And.Title.Should().Be("Rocket Creation Failed");
+           .And.Title.Should()
+           .Be("Rocket Creation Failed");
     }
-
-    private static readonly Faker Faker = new();
 
     [Theory]
     [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
@@ -73,22 +81,24 @@ public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
         ( await a.Should().ThrowAsync<ValidationException>() ).And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
     }
 
+    private static readonly Faker Faker = new();
+
     private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<CreateRocket.Request, string>
     {
         public ShouldValidateUsersRequiredFieldData()
         {
-            Add(new CreateRocket.Request(), nameof(CreateRocket.Request.SerialNumber));
+            Add(new(), nameof(CreateRocket.Request.SerialNumber));
             Add(
-                new CreateRocket.Request
+                new()
                 {
-                    SerialNumber = Faker.Random.String2(0, 9)
+                    SerialNumber = Faker.Random.String2(0, 9),
                 },
                 nameof(CreateRocket.Request.SerialNumber)
             );
             Add(
-                new CreateRocket.Request
+                new()
                 {
-                    SerialNumber = Faker.Random.String2(600, 800)
+                    SerialNumber = Faker.Random.String2(600, 800),
                 },
                 nameof(CreateRocket.Request.SerialNumber)
             );

@@ -1,10 +1,15 @@
 using FluentValidation;
+
 using Google.Protobuf.WellKnownTypes;
+
 using Grpc.Core;
+
 using MediatR;
+
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+
 using Sample.Core.Operations.Rockets;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Sample.Grpc.Services;
 
@@ -21,15 +26,9 @@ public partial class RocketsService(IMediator mediator) : Rockets.RocketsBase
     public static partial DeleteRocket.Request Map(DeleteRocketRequest request);
     public static partial RocketModel Map(Core.Models.RocketModel request);
 
-    public override async Task<CreateRocketResponse> CreateRocket(CreateRocketRequest request, ServerCallContext context)
-    {
-        return Map(await mediator.Send(Map(request), context.CancellationToken));
-    }
+    public override async Task<CreateRocketResponse> CreateRocket(CreateRocketRequest request, ServerCallContext context) => Map(await mediator.Send(Map(request), context.CancellationToken));
 
-    public override async Task<RocketModel> EditRocket(UpdateRocketRequest request, ServerCallContext context)
-    {
-        return Map(await mediator.Send(Map(request), context.CancellationToken));
-    }
+    public override async Task<RocketModel> EditRocket(UpdateRocketRequest request, ServerCallContext context) => Map(await mediator.Send(Map(request), context.CancellationToken));
 
     public override async Task<Empty> DeleteRocket(DeleteRocketRequest request, ServerCallContext context)
     {
@@ -37,10 +36,7 @@ public partial class RocketsService(IMediator mediator) : Rockets.RocketsBase
         return new();
     }
 
-    public override async Task<RocketModel> GetRockets(GetRocketRequest request, ServerCallContext context)
-    {
-        return Map(await mediator.Send(Map(request), context.CancellationToken));
-    }
+    public override async Task<RocketModel> GetRockets(GetRocketRequest request, ServerCallContext context) => Map(await mediator.Send(Map(request), context.CancellationToken));
 
     public override async Task ListRockets(ListRocketsRequest request, IServerStreamWriter<RocketModel> responseStream, ServerCallContext context)
     {
@@ -68,12 +64,9 @@ public partial class RocketsService(IMediator mediator) : Rockets.RocketsBase
     [UsedImplicitly]
     private class GetRocketRequestValidator : AbstractValidator<GetRocketRequest>
     {
-        public GetRocketRequestValidator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-        }
+        public GetRocketRequestValidator() => RuleFor(x => x.Id)
+                                             .NotEmpty()
+                                             .NotNull();
     }
 
     [UsedImplicitly]
@@ -102,11 +95,8 @@ public partial class RocketsService(IMediator mediator) : Rockets.RocketsBase
     [UsedImplicitly]
     private class DeleteRocketRequestValidator : AbstractValidator<DeleteRocketRequest>
     {
-        public DeleteRocketRequestValidator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-        }
+        public DeleteRocketRequestValidator() => RuleFor(x => x.Id)
+                                                .NotEmpty()
+                                                .NotNull();
     }
 }

@@ -1,4 +1,4 @@
-namespace Rocket.Surgery.LaunchPad.Foundation;
+namespace Rocket.Surgery.LaunchPad.Primitives;
 
 /// <summary>
 ///     Register the options using the configuration key as the configuration root

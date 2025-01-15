@@ -1,10 +1,14 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
+
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -15,8 +19,6 @@ namespace Sample.Core.Operations.LaunchRecords;
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class ListLaunchRecords
 {
-    private static partial IQueryable<LaunchRecordModel> Project(IQueryable<LaunchRecord> queryable);
-
     /// <summary>
     ///     The launch record search
     /// </summary>
@@ -39,4 +41,6 @@ public static partial class ListLaunchRecords
             return Project(query).ToAsyncEnumerable();
         }
     }
+
+    private static partial IQueryable<LaunchRecordModel> Project(IQueryable<LaunchRecord> queryable);
 }

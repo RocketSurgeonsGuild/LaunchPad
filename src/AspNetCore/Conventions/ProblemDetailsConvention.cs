@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 
@@ -25,6 +25,11 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
 [ExportConvention]
 [AfterConvention<AspNetCoreConvention>]
 [ConventionCategory(ConventionCategory.Application)]
+[SuppressMessage(
+    "Trimming",
+    "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code",
+    Justification = "Mvc pieces are not specifically added, and problem writers are used by other apis"
+)]
 public class ProblemDetailsConvention : IServiceConvention
 {
     /// <inheritdoc />

@@ -1,8 +1,11 @@
 using Microsoft.Extensions.Time.Testing;
+
 using NodaTime;
+
 using Riok.Mapperly.Abstractions;
+
 using Rocket.Surgery.LaunchPad.Mapping;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 
@@ -10,21 +13,18 @@ namespace Extensions.Tests.Mapping;
 
 public partial class LocalDateTimeTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
 {
-    private FakeTimeProvider _fakeTimeProvider = new();
-
     [Theory]
     [MapperData<Mapper>]
-    public Task Maps_All_Methods(MethodResult result)
-    {
-        return VerifyMethod(
-                   result,
-                   new Mapper(),
-                   _fakeTimeProvider.GetLocalNow().DateTime,
-                   LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
-               )
-              .UseParameters(result.ToString())
-              .HashParameters();
-    }
+    public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
+                                                             result,
+                                                             new Mapper(),
+                                                             _fakeTimeProvider.GetLocalNow().DateTime,
+                                                             LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+                                                         )
+                                                        .UseParameters(result.ToString())
+                                                        .HashParameters();
+
+    private readonly FakeTimeProvider _fakeTimeProvider = new();
 
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]

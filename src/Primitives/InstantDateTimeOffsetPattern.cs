@@ -5,7 +5,7 @@ using NodaTime;
 using NodaTime.Extensions;
 using NodaTime.Text;
 
-namespace Rocket.Surgery.LaunchPad.Foundation;
+namespace Rocket.Surgery.LaunchPad.Primitives;
 
 /// <summary>
 ///     A pattern used to create an instant from a serialized DateTimeOffset value

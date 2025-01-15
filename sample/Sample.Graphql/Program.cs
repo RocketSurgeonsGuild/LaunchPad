@@ -52,4 +52,7 @@ app.MapGraphQL();
 
 app.Run();
 
-public partial class Program;
+namespace Sample.Graphql
+{
+    public partial class Program;
+}

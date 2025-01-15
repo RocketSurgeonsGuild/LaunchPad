@@ -61,6 +61,7 @@
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Mapping\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Mapping\.NewtonsoftJson\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Metadata\.dll</ModulePath>
+                <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Primitives\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Serilog\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Spatial\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Spatial\.NewtonsoftJson\.dll</ModulePath>
@@ -68,6 +69,7 @@
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.StrawberryShake\.Spatial\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Telemetry\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Testing\.dll</ModulePath>
+                <ModulePath>.*Rocket\.Surgery\.LaunchPad\.WebAssembly\.Hosting\.dll</ModulePath>
                 <ModulePath>.*Sample\.BlazorServer\.dll</ModulePath>
                 <ModulePath>.*Sample\.BlazorServer\.Tests\.dll</ModulePath>
                 <ModulePath>.*Sample\.BlazorWasm\.dll</ModulePath>
@@ -167,6 +169,7 @@
                 <ModulePath>.*OpenTelemetry\.Extensions\.Hosting\.dll</ModulePath>
                 <ModulePath>.*OpenTelemetry\.Instrumentation\.AspNetCore\.dll</ModulePath>
                 <ModulePath>.*OpenTelemetry\.Instrumentation\.Http\.dll</ModulePath>
+                <ModulePath>.*OpenTelemetry\.Instrumentation\.Process\.dll</ModulePath>
                 <ModulePath>.*OpenTelemetry\.Instrumentation\.Runtime\.dll</ModulePath>
                 <ModulePath>.*Polly\.dll</ModulePath>
                 <ModulePath>.*Polyfill\.dll</ModulePath>
@@ -177,6 +180,7 @@
                 <ModulePath>.*Rocket\.Surgery\.Conventions\.Abstractions\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.Conventions\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.Conventions\.DryIoc\.dll</ModulePath>
+                <ModulePath>.*Rocket\.Surgery\.Conventions\.Serilog\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.DependencyInjection\.Extensions\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.Extensions\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.Extensions\.Testing\.FakeItEasy\.dll</ModulePath>
@@ -193,7 +197,6 @@
                 <ModulePath>.*Roslynator\.CodeFixes\.dll</ModulePath>
                 <ModulePath>.*Roslynator\.Formatting\.Analyzers\.dll</ModulePath>
                 <ModulePath>.*Roslynator\.Refactorings\.dll</ModulePath>
-                <ModulePath>.*Scrutor\.dll</ModulePath>
                 <ModulePath>.*Serilog\.AspNetCore\.dll</ModulePath>
                 <ModulePath>.*Serilog\.Enrichers\.AssemblyName\.dll</ModulePath>
                 <ModulePath>.*Serilog\.Enrichers\.Demystifier\.dll</ModulePath>
@@ -207,6 +210,7 @@
                 <ModulePath>.*Serilog\.Settings\.Configuration\.dll</ModulePath>
                 <ModulePath>.*Serilog\.Sinks\.ApplicationInsights\.dll</ModulePath>
                 <ModulePath>.*Serilog\.Sinks\.Async\.dll</ModulePath>
+                <ModulePath>.*Serilog\.Sinks\.BrowserConsole\.dll</ModulePath>
                 <ModulePath>.*Serilog\.Sinks\.Console\.dll</ModulePath>
                 <ModulePath>.*Serilog\.Sinks\.Debug\.dll</ModulePath>
                 <ModulePath>.*Serilog\.Sinks\.Observable\.dll</ModulePath>
@@ -226,6 +230,7 @@
                 <ModulePath>.*System\.Reactive\.dll</ModulePath>
                 <ModulePath>.*System\.Reactive\.Observable\.Aliases\.dll</ModulePath>
                 <ModulePath>.*System\.Text\.Json\.dll</ModulePath>
+                <ModulePath>.*Verify\.DiffPlex\.dll</ModulePath>
                 <ModulePath>.*Verify\.NewtonsoftJson\.dll</ModulePath>
                 <ModulePath>.*Verify\.NodaTime\.dll</ModulePath>
                 <ModulePath>.*Verify\.SourceGenerators\.dll</ModulePath>

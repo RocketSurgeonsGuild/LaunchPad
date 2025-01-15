@@ -1,10 +1,17 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
+
 using NodaTime;
+
 using Riok.Mapperly.Abstractions;
+
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -17,20 +24,6 @@ namespace Sample.Core.Operations.LaunchRecords;
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class EditLaunchRecord
 {
-    [MapperIgnoreTarget(nameof(LaunchRecord.Rocket))]
-    private static partial LaunchRecord Map(Request request);
-
-    [MapperIgnoreSource(nameof(LaunchRecord.Rocket))]
-    private static partial Request Map(LaunchRecord model);
-
-    [MapperIgnoreTarget(nameof(LaunchRecord.Rocket))]
-    private static partial void Map(Request request, LaunchRecord record);
-
-    private static Request Map(PatchRequest request, LaunchRecord record)
-    {
-        return request.ApplyChanges(Map(record));
-    }
-
     /// <summary>
     ///     The launch record update request
     /// </summary>
@@ -144,21 +137,6 @@ public static partial class EditLaunchRecord
     private class Handler(RocketDbContext dbContext, IMediator mediator)
         : PatchRequestHandler<Request, PatchRequest, LaunchRecordModel>(mediator), IRequestHandler<Request, LaunchRecordModel>
     {
-        private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken)
-        {
-            return await dbContext
-                        .LaunchRecords
-                        .Include(z => z.Rocket)
-                        .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
-                        .ConfigureAwait(false)
-             ?? throw new NotFoundException();
-        }
-
-        protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken)
-        {
-            return Map(patchRequest, await GetLaunchRecord(patchRequest.Id, cancellationToken));
-        }
-
         public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await GetLaunchRecord(request.Id, cancellationToken);
@@ -169,5 +147,23 @@ public static partial class EditLaunchRecord
 
             return ModelMapper.Map(rocket);
         }
+
+        protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken) =>
+            Map(patchRequest, await GetLaunchRecord(patchRequest.Id, cancellationToken));
+
+        private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) => await dbContext
+                                                                                                                         .LaunchRecords
+                                                                                                                         .Include(z => z.Rocket)
+                                                                                                                         .FirstOrDefaultAsync(z => z.Id == id, cancellationToken)
+                                                                                                                         .ConfigureAwait(false)
+         ?? throw new NotFoundException();
     }
+
+    [MapperIgnoreSource(nameof(LaunchRecord.Rocket))]
+    private static partial Request Map(LaunchRecord model);
+
+    [MapperIgnoreTarget(nameof(LaunchRecord.Rocket))]
+    private static partial void Map(Request request, LaunchRecord record);
+
+    private static Request Map(PatchRequest request, LaunchRecord record) => request.ApplyChanges(Map(record));
 }

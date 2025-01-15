@@ -1,8 +1,12 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -22,12 +26,9 @@ public static partial class DeleteLaunchRecord
     [UsedImplicitly]
     private class Validator : AbstractValidator<Request>
     {
-        public Validator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-        }
+        public Validator() => RuleFor(x => x.Id)
+                             .NotEmpty()
+                             .NotNull();
     }
 
     [UsedImplicitly]
@@ -35,8 +36,7 @@ public static partial class DeleteLaunchRecord
     {
         public async Task Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.LaunchRecords.FindAsync(new object[] { request.Id, }, cancellationToken);
-            if (rocket == null) throw new NotFoundException();
+            var rocket = await dbContext.LaunchRecords.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
 
             // contrived for testing
             if (rocket.Id == new LaunchRecordId(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6")))

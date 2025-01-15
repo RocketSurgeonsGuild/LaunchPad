@@ -1,9 +1,14 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
+
 using Riok.Mapperly.Abstractions;
-using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Mapping.Profiles;
+
+using Rocket.Surgery.LaunchPad.Mapping;
+using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
@@ -16,9 +21,6 @@ namespace Sample.Core.Operations.Rockets;
 [UseStaticMapper(typeof(StandardMapper))]
 public static partial class CreateRocket
 {
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static partial ReadyRocket Map(Request request);
-
     /// <summary>
     ///     The operation to create a new rocket record
     /// </summary>
@@ -67,7 +69,8 @@ public static partial class CreateRocket
             var existingRocket = await dbContext
                                       .Rockets.AsQueryable()
                                       .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
-            if (existingRocket != null)
+            if (existingRocket is { })
+            {
                 throw new RequestFailedException("A Rocket already exists with that serial number!")
                 {
                     Title = "Rocket Creation Failed",
@@ -81,6 +84,7 @@ public static partial class CreateRocket
                         },
                     },
                 };
+            }
 
             var rocket = Map(request);
             await dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
@@ -92,4 +96,7 @@ public static partial class CreateRocket
             };
         }
     }
+
+    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
+    private static partial ReadyRocket Map(Request request);
 }

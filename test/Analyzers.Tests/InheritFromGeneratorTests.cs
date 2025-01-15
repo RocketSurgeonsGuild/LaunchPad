@@ -1,8 +1,10 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
-using Analyzers.Tests.Helpers;
+
 using FluentValidation;
+
 using MediatR;
+
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -43,7 +45,7 @@ namespace Sample.Core.Operations.Rockets
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.");
 
@@ -83,7 +85,7 @@ namespace Sample.Core.Operations.Rockets
                           .Build()
                           .GenerateAsync();
         result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().HaveCount(1).And.Subject.First();
+        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
         diagnostic.Id.Should().Be("LPAD0001");
         diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket must be made partial.");
 
@@ -257,7 +259,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    #if !ROSLYN4_0
+#if !ROSLYN4_0
     [Fact]
     public async Task Should_Inherit_Using_Generic_Type_Arguments()
     {
@@ -300,7 +302,7 @@ namespace Sample.Core.Operations.Rockets
 
         await Verify(result);
     }
-    #endif
+#endif
 
     [Fact]
     public async Task Should_Generate_With_Method_For_Record_That_Inherits()
@@ -757,99 +759,103 @@ partial class Validator : AbstractValidator<Request>
         yield return
         [
             "RuleSet",
-            @"
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
+            """
 
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet(""Create"",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet(""OnlySerialNumber"",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model))]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            partial class Validator : AbstractValidator<Request>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model))]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-partial class Validator : AbstractValidator<Request>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-",
+            """,
         ];
 
         yield return
         [
             "RuleSet_Exclude",
-            @"
-using FluentValidation;
-using Rocket.Surgery.LaunchPad.Foundation;
-public class Model
-{
-    public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null!;
-    public string Something { get; set; } = null!;
+            """
 
-    class Validator : AbstractValidator<Model>
-    {
-        public Validator()
-        {
-            RuleSet(""Create"",
-                () =>
+            using FluentValidation;
+            using Rocket.Surgery.LaunchPad.Foundation;
+            public class Model
+            {
+                public Guid Id { get; init; }
+                public string SerialNumber { get; set; } = null!;
+                public string Something { get; set; } = null!;
+            
+                class Validator : AbstractValidator<Model>
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                    RuleFor(x => x.Id).NotNull();
-                    RuleFor(x => x.Something).NotNull();
-                });
-            this.RuleSet(""OnlySerialNumber"",
-                () =>
+                    public Validator()
+                    {
+                        RuleSet("Create",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                                RuleFor(x => x.Id).NotNull();
+                                RuleFor(x => x.Something).NotNull();
+                            });
+                        this.RuleSet("OnlySerialNumber",
+                            () =>
+                            {
+                                RuleFor(x => x.SerialNumber).NotNull();
+                            });
+                    }
+                }
+            }
+
+            [InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
+            public partial class Request : IRequest<RocketModel>
+            {
+                public int Type { get; set; }
+            }
+
+            partial class Validator : AbstractValidator<Request>
+            {
+                public Validator()
                 {
-                    RuleFor(x => x.SerialNumber).NotNull();
-                });
-        }
-    }
-}
+                    RuleFor(x => x.Id).NotEmpty();
+                    InheritFromModel();
+                }
+            }
 
-[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.SerialNumber) })]
-public partial class Request : IRequest<RocketModel>
-{
-    public int Type { get; set; }
-}
-
-partial class Validator : AbstractValidator<Request>
-{
-    public Validator()
-    {
-        RuleFor(x => x.Id).NotEmpty();
-        InheritFromModel();
-    }
-}
-",
+            """,
         ];
     }
 
