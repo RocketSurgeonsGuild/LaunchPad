@@ -1,4 +1,5 @@
 using System.Net;
+
 using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Minimal.Tests;
