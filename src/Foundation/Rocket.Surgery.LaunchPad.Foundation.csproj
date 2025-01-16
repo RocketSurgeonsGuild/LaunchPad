@@ -8,6 +8,30 @@
         <None Include="build/*.*" Pack="true" PackagePath="build" />
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
+        <None Update="build\Rocket.Surgery.LaunchPad.Primitives.props">
+          <Pack>true</Pack>
+          <PackagePath>build</PackagePath>
+        </None>
+        <None Update="build\Rocket.Surgery.LaunchPad.Primitives.targets">
+          <Pack>true</Pack>
+          <PackagePath>build</PackagePath>
+        </None>
+        <None Update="buildMultiTargeting\Rocket.Surgery.LaunchPad.Primitives.props">
+          <Pack>true</Pack>
+          <PackagePath>buildMultiTargeting</PackagePath>
+        </None>
+        <None Update="buildMultiTargeting\Rocket.Surgery.LaunchPad.Primitives.targets">
+          <Pack>true</Pack>
+          <PackagePath>buildMultiTargeting</PackagePath>
+        </None>
+        <None Update="buildTransitive\Rocket.Surgery.LaunchPad.Primitives.props">
+          <Pack>true</Pack>
+          <PackagePath>buildTransitive</PackagePath>
+        </None>
+        <None Update="buildTransitive\Rocket.Surgery.LaunchPad.Primitives.targets">
+          <Pack>true</Pack>
+          <PackagePath>buildTransitive</PackagePath>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="FluentValidation" />
