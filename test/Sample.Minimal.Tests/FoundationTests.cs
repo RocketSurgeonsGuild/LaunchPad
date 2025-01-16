@@ -2,7 +2,7 @@ using System.Net;
 
 using Sample.Minimal.Tests.Helpers;
 
-namespace Sample.Restful.Tests;
+namespace Sample.Minimal.Tests;
 
 public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
 {
