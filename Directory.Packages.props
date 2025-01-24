@@ -154,9 +154,9 @@
         <PackageVersion Include="Riok.Mapperly" Version="4.1.1" />
         <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="9.0.0" />
         <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0" />
-        <PackageVersion Include="OpenTelemetry" Version="1.11.0" />
-        <PackageVersion Include="OpenTelemetry.Api" Version="1.11.0" />
-        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.11.0" />
+        <PackageVersion Include="OpenTelemetry" Version="1.11.1" />
+        <PackageVersion Include="OpenTelemetry.Api" Version="1.11.1" />
+        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.11.1" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.10.0" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.1" />
