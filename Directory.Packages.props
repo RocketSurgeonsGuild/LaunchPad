@@ -47,7 +47,7 @@
         <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
         <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.1.0" />
         <PackageVersion Include="Xunit.Combinatorial" Version="1.6.24" />
-        <PackageVersion Include="Polyfill" Version="7.15.0" />
+        <PackageVersion Include="Polyfill" Version="7.16.0" />
         <PackageVersion Include="GitVersion.Tool" Version="6.1.0" />
         <PackageVersion Include="Nuke.Common" Version="9.0.4" />
         <PackageVersion Include="ReportGenerator" Version="5.4.3" />
