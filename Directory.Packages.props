@@ -50,7 +50,7 @@
         <PackageVersion Include="Polyfill" Version="7.16.1" />
         <PackageVersion Include="GitVersion.Tool" Version="6.1.0" />
         <PackageVersion Include="Nuke.Common" Version="9.0.4" />
-        <PackageVersion Include="ReportGenerator" Version="5.4.3" />
+        <PackageVersion Include="ReportGenerator" Version="5.4.4" />
         <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.9.10" />
         <PackageVersion Include="AutoMapper" Version="13.0.1" />
         <PackageVersion Include="FluentValidation" Version="11.11.0" />
