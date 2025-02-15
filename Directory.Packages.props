@@ -52,7 +52,7 @@
         <PackageVersion Include="Nuke.Common" Version="9.0.4" />
         <PackageVersion Include="ReportGenerator" Version="5.4.4" />
         <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.9.10" />
-        <PackageVersion Include="AutoMapper" Version="13.0.1" />
+        <PackageVersion Include="AutoMapper" Version="14.0.0" />
         <PackageVersion Include="FluentValidation" Version="11.11.0" />
         <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
