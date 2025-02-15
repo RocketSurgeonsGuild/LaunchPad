@@ -32,7 +32,7 @@ builder
         {
             options.RemoveUnreachableTypes = false;
             options.EnableDirectiveIntrospection = true;
-            options.EnableTrueNullability = true;
+//            options.EnableTrueNullability = true;
             options.DefaultDirectiveVisibility = DirectiveVisibility.Public;
             options.RemoveUnusedTypeSystemDirectives = false;
         }
