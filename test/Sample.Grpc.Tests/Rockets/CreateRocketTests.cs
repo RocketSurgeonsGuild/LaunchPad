@@ -21,7 +21,7 @@ public class CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFix
             }
         );
 
-        response.Id.Should().NotBeEmpty();
+        response.Id.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -43,8 +43,7 @@ public class CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFix
                 SerialNumber = "12345678901234"
             }
         );
-        var r = ( await action.Should().ThrowAsync<RpcException>() )
-           .And;
-        r.Message.Should().Contain("Rocket Creation Failed");
+        var r = (await action.ShouldThrowAsync<RpcException>());
+        r.Message.ShouldContain("Rocket Creation Failed");
     }
 }

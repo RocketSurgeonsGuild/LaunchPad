@@ -60,8 +60,8 @@ public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppF
 
         var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), });
 
-        response.ScheduledLaunchDate.ToDateTimeOffset().Should().BeCloseTo(launchDate.ToDateTimeOffset(), TimeSpan.FromMilliseconds(1));
-        response.PayloadWeightKg.Should().Be(200);
+        response.ScheduledLaunchDate.ShouldBe(Timestamp.FromDateTimeOffset(launchDate.ToDateTimeOffset()));
+        response.PayloadWeightKg.ShouldBe(200);
     }
 
     private static readonly Faker Faker = new();

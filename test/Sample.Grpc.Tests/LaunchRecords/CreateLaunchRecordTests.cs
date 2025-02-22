@@ -47,6 +47,6 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppF
             }
         );
 
-        response.Id.Should().NotBeEmpty();
+        response.Id.ShouldNotBeEmpty();
     }
 }

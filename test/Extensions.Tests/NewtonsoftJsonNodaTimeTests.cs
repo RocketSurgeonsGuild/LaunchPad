@@ -16,8 +16,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void Instant_Tests(string value)
     {
         JsonConvert.DeserializeObject<Instant>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(Instant.FromUtc(2020, 01, 01, 12, 12, 12));
+                   .ShouldBe(Instant.FromUtc(2020, 01, 01, 12, 12, 12));
     }
 
     [Theory]
@@ -26,8 +25,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void LocalDate_Tests(string value)
     {
         JsonConvert.DeserializeObject<LocalDate>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(new LocalDate(2020, 01, 01));
+                   .ShouldBe(new LocalDate(2020, 01, 01));
     }
 
     [Theory]
@@ -37,8 +35,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void LocalDateTime_Tests(string value)
     {
         JsonConvert.DeserializeObject<LocalDateTime>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(new LocalDateTime(2020, 01, 01, 12, 12, 12));
+                   .ShouldBe(new LocalDateTime(2020, 01, 01, 12, 12, 12));
     }
 
     [Theory]
@@ -48,8 +45,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void LocalTime_Tests(string value)
     {
         JsonConvert.DeserializeObject<LocalTime>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(new LocalTime(12, 12, 12));
+                   .ShouldBe(new LocalTime(12, 12, 12));
     }
 
     [Theory]
@@ -57,8 +53,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void Offset_Tests(string value)
     {
         JsonConvert.DeserializeObject<Offset>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(Offset.FromTimeSpan(TimeSpan.FromSeconds(12345)));
+                   .ShouldBe(Offset.FromTimeSpan(TimeSpan.FromSeconds(12345)));
     }
 
     [Theory]
@@ -67,8 +62,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void Duration_Tests(string value)
     {
         JsonConvert.DeserializeObject<Duration>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(Duration.FromTimeSpan(TimeSpan.FromSeconds(12345)));
+                   .ShouldBe(Duration.FromTimeSpan(TimeSpan.FromSeconds(12345)));
     }
 
     [Theory]
@@ -77,8 +71,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void Period_Tests(string value)
     {
         JsonConvert.DeserializeObject<Period>("\"" + value + "\"", _settings)!
-                   .Normalize().Should()
-                   .Be(Period.FromSeconds(12345).Normalize());
+                   .Normalize().ShouldBe(Period.FromSeconds(12345).Normalize());
     }
 
     [Theory]
@@ -87,8 +80,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void OffsetDateTime_Tests(string value)
     {
         JsonConvert.DeserializeObject<OffsetDateTime>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(new OffsetDateTime(new LocalDateTime(2020, 01, 01, 12, 12, 12), Offset.FromHours(1)));
+                   .ShouldBe(new OffsetDateTime(new LocalDateTime(2020, 01, 01, 12, 12, 12), Offset.FromHours(1)));
     }
 
     [Theory]
@@ -97,8 +89,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void OffsetDate_Tests(string value)
     {
         JsonConvert.DeserializeObject<OffsetDate>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(new OffsetDate(new LocalDate(2020, 01, 01), Offset.FromHours(1)));
+                   .ShouldBe(new OffsetDate(new LocalDate(2020, 01, 01), Offset.FromHours(1)));
     }
 
     [Theory]
@@ -107,8 +98,7 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void OffsetTime_Tests(string value)
     {
         JsonConvert.DeserializeObject<OffsetTime>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(new OffsetTime(new LocalTime(12, 12, 12), Offset.FromHours(1)));
+                   .ShouldBe(new OffsetTime(new LocalTime(12, 12, 12), Offset.FromHours(1)));
     }
 
     [Theory]
@@ -116,7 +106,6 @@ public class NewtonsoftJsonNodaTimeTests(ITestOutputHelper outputHelper) : Logge
     public void ZonedDateTime_Tests(string value)
     {
         JsonConvert.DeserializeObject<ZonedDateTime>("\"" + value + "\"", _settings)
-                   .Should()
-                   .Be(new ZonedDateTime(Instant.FromUtc(2020, 01, 01, 12, 12, 12), DateTimeZoneProviders.Tzdb.GetZoneOrNull("America/New_York")!));
+                   .ShouldBe(new ZonedDateTime(Instant.FromUtc(2020, 01, 01, 12, 12, 12), DateTimeZoneProviders.Tzdb.GetZoneOrNull("America/New_York")!));
     }
 }

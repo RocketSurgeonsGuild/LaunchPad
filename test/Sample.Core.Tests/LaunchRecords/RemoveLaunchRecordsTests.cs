@@ -38,7 +38,7 @@ public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTe
                   mediator => mediator.Send(new DeleteLaunchRecord.Request(id))
               );
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
+        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTe
                                  .Invoke(
                                       mediator => mediator.Send(new DeleteLaunchRecord.Request(id))
                                   );
-        await action.Should().ThrowAsync<NotAuthorizedException>();
+        await action.ShouldThrowAsync<NotAuthorizedException>();
     }
 
     private static readonly Faker Faker = new();

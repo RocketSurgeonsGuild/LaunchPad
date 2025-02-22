@@ -17,7 +17,7 @@ public class CreateRocketTests : HandleWebHostBase
             }
         );
 
-        response.Result.Id.Should().NotBeEmpty();
+        response.Result.Id.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -39,9 +39,9 @@ public class CreateRocketTests : HandleWebHostBase
                 SerialNumber = "12345678901234"
             }
         );
-        var r = ( await action.Should().ThrowAsync<ApiException<ProblemDetails>>() )
+        var r = (await action.ShouldThrowAsync<ApiException<ProblemDetails>>())
                .And.Result;
-        r.Title.Should().Be("Rocket Creation Failed");
+        r.Title.ShouldBe("Rocket Creation Failed");
     }
 
     public CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebHost host) : base(testOutputHelper, host)

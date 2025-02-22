@@ -148,7 +148,7 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var response = await client.UpdateRocket.ExecuteAsync(request);
-        response.IsErrorResult().Should().BeTrue();
+        response.IsErrorResult().ShouldBeTrue();
 
         await Verify(response).UseParameters(request, propertyName).HashParameters();
     }

@@ -30,7 +30,7 @@ public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
                                  )
                              );
 
-        response.Id.Value.Should().NotBeEmpty();
+        response.Id.Value.ShouldNotBe(Guid.Empty);
     }
 
     [Fact]
@@ -64,9 +64,8 @@ public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
                                           }
                                       )
                                   );
-        ( await action.Should().ThrowAsync<RequestFailedException>() )
-           .And.Title.Should()
-           .Be("Rocket Creation Failed");
+        (await action.ShouldThrowAsync<RequestFailedException>())
+           .Title.ShouldBe("Rocket Creation Failed");
     }
 
     [Theory]
@@ -78,7 +77,7 @@ public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
         var mediater = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         var a = () => mediater.Send(request);
-        ( await a.Should().ThrowAsync<ValidationException>() ).And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
+        (await a.ShouldThrowAsync<ValidationException>()).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
     }
 
     private static readonly Faker Faker = new();

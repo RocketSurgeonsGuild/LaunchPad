@@ -9,6 +9,6 @@ public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixtu
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 }

@@ -8,9 +8,9 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
     public void ShouldTrackChanges_For_Classes()
     {
         var tracking = new ClassWithTracking(1);
-        tracking.Name.HasValue.Should().BeFalse();
+        tracking.Name.HasValue.ShouldBeFalse();
         tracking.Name = "Test";
-        tracking.Name.HasValue.Should().BeTrue();
+        tracking.Name.HasValue.ShouldBeTrue();
     }
 
     [Fact]
@@ -21,7 +21,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
             Name = "Test",
         };
         tracking.ResetChanges();
-        tracking.Name.HasValue.Should().BeFalse();
+        tracking.Name.HasValue.ShouldBeFalse();
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         };
         tracking.ApplyChanges(instance);
 
-        instance.Name.Should().Be("Test");
+        instance.Name.ShouldBe("Test");
     }
 
     [Fact]
@@ -50,21 +50,21 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         };
         var tracking = ClassWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
-        tracking.Name.HasValue.Should().BeFalse();
-        tracking.Description.HasValue.Should().BeTrue();
+        tracking.Name.HasValue.ShouldBeFalse();
+        tracking.Description.HasValue.ShouldBeTrue();
         tracking.ApplyChanges(instance);
 
-        instance.Name.Should().Be("MyName");
-        instance.Description.Should().Be("My New description");
+        instance.Name.ShouldBe("MyName");
+        instance.Description.ShouldBe("My New description");
     }
 
     [Fact]
     public void ShouldTrackChanges_For_Records()
     {
         var tracking = new RecordWithTracking(1);
-        tracking.Name.HasValue.Should().BeFalse();
+        tracking.Name.HasValue.ShouldBeFalse();
         tracking.Name = "Test";
-        tracking.Name.HasValue.Should().BeTrue();
+        tracking.Name.HasValue.ShouldBeTrue();
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
             Name = "Test",
         };
         tracking.ResetChanges();
-        tracking.Name.HasValue.Should().BeFalse();
+        tracking.Name.HasValue.ShouldBeFalse();
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         };
         instance = tracking.ApplyChanges(instance);
 
-        instance.Name.Should().Be("Test");
+        instance.Name.ShouldBe("Test");
     }
 
     [Fact]
@@ -100,12 +100,12 @@ public partial class ChangeTrackingTests(ITestOutputHelper testOutputHelper) : L
         };
         var tracking = RecordWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
-        tracking.Name.HasValue.Should().BeFalse();
-        tracking.Description.HasValue.Should().BeTrue();
+        tracking.Name.HasValue.ShouldBeFalse();
+        tracking.Description.HasValue.ShouldBeTrue();
         instance = tracking.ApplyChanges(instance);
 
-        instance.Name.Should().Be("MyName");
-        instance.Description.Should().Be("My New description");
+        instance.Name.ShouldBe("MyName");
+        instance.Description.ShouldBe("My New description");
     }
 
     public partial class Class(int Id)

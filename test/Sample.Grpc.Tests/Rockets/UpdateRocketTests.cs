@@ -41,12 +41,12 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFix
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
             }
         );
-        u.Should().NotBeNull();
+        u.ShouldNotBeNull();
 
         // var response = await client.GetRocketAsync(rocket.Id);
         //
-        // response.Type.Should().Be(RocketType.FalconHeavy);
-        // response.Sn.Should().Be("43210987654321");
+        // response.Type.ShouldBe(RocketType.FalconHeavy);
+        // response.Sn.ShouldBe("43210987654321");
     }
 
     [Theory]
@@ -55,9 +55,9 @@ public class UpdateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFix
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
         Func<Task> a = async () => await client.EditRocketAsync(request);
-        var e = ( await a.Should().ThrowAsync<RpcException>() ).And;
-        e.Status.StatusCode.Should().Be(StatusCode.InvalidArgument);
-        e.Message.Should().Contain(propertyName);
+        var e = (await a.ShouldThrowAsync<RpcException>());
+        e.Status.StatusCode.ShouldBe(StatusCode.InvalidArgument);
+        e.Message.ShouldContain(propertyName);
     }
 
     private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<UpdateRocketRequest, string>

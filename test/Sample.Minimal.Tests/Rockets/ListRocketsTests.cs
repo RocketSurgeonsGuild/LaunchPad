@@ -26,7 +26,7 @@ public class ListRocketsTests : HandleWebHostBase
 
         var response = await client.ListRocketsAsync();
 
-        response.Result.Should().HaveCount(10);
+        response.Result.ShouldHaveCount(10);
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class ListRocketsTests : HandleWebHostBase
 
         var response = await client.ListRocketsAsync(RocketType.AtlasV);
 
-        response.Result.Should().HaveCount(5);
+        response.Result.ShouldHaveCount(5);
     }
 
     public ListRocketsTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)

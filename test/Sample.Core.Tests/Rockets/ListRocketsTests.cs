@@ -26,7 +26,7 @@ public class ListRocketsTests(ITestOutputHelper outputHelper) : HandleTestHostBa
             mediator => mediator.CreateStream(new ListRockets.Request(null)).ToListAsync()
         );
 
-        response.Should().HaveCount(10);
+        response.Count.ShouldBe(10);
     }
 
     private static readonly Faker Faker = new();

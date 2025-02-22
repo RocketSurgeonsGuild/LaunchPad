@@ -26,7 +26,7 @@ public class RemoveRocketsTests : HandleWebHostBase
 
         await client.RemoveRocketAsync(id.Value);
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
+        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.ShouldBeEmpty());
     }
 
     public RemoveRocketsTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)

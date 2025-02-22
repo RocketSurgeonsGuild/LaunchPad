@@ -58,8 +58,8 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
 
         var response = await client.GetLaunchRecordAsync(record.Id.Value);
 
-        response.Result.ScheduledLaunchDate.Should().Be(launchDate);
-        response.Result.PayloadWeightKg.Should().Be(200);
+        response.Result.ScheduledLaunchDate.ShouldBe(launchDate);
+        response.Result.PayloadWeightKg.ShouldBe(200);
     }
 
     public UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)

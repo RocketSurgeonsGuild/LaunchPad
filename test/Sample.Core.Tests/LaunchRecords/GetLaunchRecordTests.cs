@@ -52,11 +52,11 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHo
                                  mediator => mediator.Send(new GetLaunchRecord.Request(record.Id))
                              );
 
-        response.Partner.Should().Be("partner");
-        response.Payload.Should().Be("geo-fence-ftl");
-        response.RocketType.Should().Be(RocketType.Falcon9);
-        response.RocketSerialNumber.Should().Be("12345678901234");
-        response.ScheduledLaunchDate.Should().Be(Instant.FromDateTimeOffset(record.ScheduledLaunchDate));
+        response.Partner.ShouldBe("partner");
+        response.Payload.ShouldBe("geo-fence-ftl");
+        response.RocketType.ShouldBe(RocketType.Falcon9);
+        response.RocketSerialNumber.ShouldBe("12345678901234");
+        response.ScheduledLaunchDate.ShouldBe(Instant.FromDateTimeOffset(record.ScheduledLaunchDate));
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHo
                                       mediator => mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()))
                                   );
 
-        await action.Should().ThrowAsync<NotFoundException>();
+        await action.ShouldThrowAsync<NotFoundException>();
     }
 
     private static readonly Faker Faker = new();

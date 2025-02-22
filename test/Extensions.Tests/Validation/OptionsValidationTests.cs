@@ -17,9 +17,8 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
-                      .Should()
-                      .Throw<OptionsValidationException>()
-                      .Which.Failures;
+                      .ShouldThrow<OptionsValidationException>()
+                      .Failures;
         await Verify(failures);
     }
 
@@ -40,7 +39,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
+        a.ShouldNotThrow();
     }
 
     [Fact]
@@ -61,9 +60,8 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
-                      .Should()
-                      .Throw<OptionsValidationException>()
-                      .Which.Failures;
+                      .ShouldThrow<OptionsValidationException>()
+                      .Failures;
         await Verify(failures);
     }
 

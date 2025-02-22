@@ -29,7 +29,7 @@ public class RemoveLaunchRecordsTests : HandleWebHostBase
 
         await client.DeleteLaunchRecordAsync(id.Value);
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
+        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class RemoveLaunchRecordsTests : HandleWebHostBase
 
 
         Func<Task> action = () => client.DeleteLaunchRecordAsync(id.Value);
-        await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
+        await action.ShouldThrowAsync<ApiException<ProblemDetails>>()
                     .Where(z => z.StatusCode == 403 && z.Result.Status == 403 && z.Result.Title == "Forbidden");
     }
 

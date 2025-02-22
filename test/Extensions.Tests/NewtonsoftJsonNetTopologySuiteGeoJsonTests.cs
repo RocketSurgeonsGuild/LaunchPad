@@ -1,4 +1,3 @@
-using FluentAssertions.Primitives;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
 using Rocket.Surgery.LaunchPad.Spatial;
@@ -19,8 +18,7 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     public void Geometry_Tests(string geom)
     {
         JsonConvert.DeserializeObject<Point>(geom, _settings)
-                   .Should()
-                   .Be(new Point(30, 10));
+                   .ShouldBe(new Point(30, 10));
     }
 
     [Theory]
@@ -28,8 +26,7 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     public void LineString_Tests(string geom)
     {
         JsonConvert.DeserializeObject<LineString>(geom, _settings)
-                   .Should()
-                   .Be(
+                   .ShouldBe(
                         new LineString(
                             new[]
                             {
@@ -46,8 +43,7 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     public void Polygon_Tests(string geom)
     {
         JsonConvert.DeserializeObject<Polygon>(geom, _settings)
-                   .Should()
-                   .Be(
+                   .ShouldBe(
                         new Polygon(
                             new LinearRing(
                                 new[]
@@ -63,10 +59,8 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     [InlineData("{\"type\": \"MultiPoint\",\"coordinates\": [[10, 40], [40, 30], [20, 20], [30, 10]]}")]
     public void MultiPoint_Tests(string geom)
     {
-        new ObjectAssertions(
                 JsonConvert.DeserializeObject<MultiPoint>(geom, _settings)
-            )
-           .Be(
+                           .ShouldBe(
                 new MultiPoint(
                     new[]
                     {
@@ -85,10 +79,7 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     )]
     public void MultiLineString_Tests(string geom)
     {
-        new ObjectAssertions(
-                JsonConvert.DeserializeObject<MultiLineString>(geom, _settings)
-            )
-           .BeOfType<MultiLineString>();
+        JsonConvert.DeserializeObject<MultiLineString>(geom, _settings).ShouldBeOfType<MultiLineString>();
     }
 
     [Theory]
@@ -97,10 +88,8 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     )]
     public void MultiPolygon_Tests(string geom)
     {
-        new ObjectAssertions(
                 JsonConvert.DeserializeObject<MultiPolygon>(geom, _settings)
-            )
-           .BeOfType<MultiPolygon>();
+                           .ShouldBeOfType<MultiPolygon>();
     }
 
     [Theory]
@@ -109,9 +98,7 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     )]
     public void GeometryCollection_Tests(string geom)
     {
-        new ObjectAssertions(
                 JsonConvert.DeserializeObject<GeometryCollection>(geom, _settings)
-            )
-           .BeOfType<GeometryCollection>();
+                           .ShouldBeOfType<GeometryCollection>();
     }
 }

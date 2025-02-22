@@ -28,7 +28,7 @@ public class ListLaunchRecordsTests : HandleWebHostBase
 
         var response = await client.ListLaunchRecordsAsync();
 
-        response.Result.Should().HaveCount(10);
+        response.Result.ShouldHaveCount(10);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class ListLaunchRecordsTests : HandleWebHostBase
                               );
 
         var response = await client.ListLaunchRecordsAsync(RocketType.FalconHeavy);
-        response.Result.Should().HaveCount(3);
+        response.Result.ShouldHaveCount(3);
     }
 
     public ListLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)

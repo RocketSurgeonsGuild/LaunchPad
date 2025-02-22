@@ -16,7 +16,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     public Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().Throw<OptionsValidationException>();
+        a.ShouldThrow<OptionsValidationException>();
         return Task.CompletedTask;
     }
 
@@ -37,7 +37,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().Throw<OptionsValidationException>();
+        a.ShouldThrow<OptionsValidationException>();
     }
 
     [Fact]
@@ -45,9 +45,8 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
-                      .Should()
-                      .Throw<OptionsValidationException>()
-                      .Which.Failures;
+                      .ShouldThrow<OptionsValidationException>()
+                      .Failures;
         await Verify(failures);
     }
 
@@ -68,7 +67,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.Should().NotThrow();
+        a.ShouldNotThrow();
     }
 
     [Fact]
@@ -89,9 +88,7 @@ public class HealthCheckOptionsValidationTests(ITestOutputHelper outputHelper) :
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
-                      .Should()
-                      .Throw<OptionsValidationException>()
-                      .Which.Failures;
+                      .ShouldThrow<OptionsValidationException>().Failures;
         await Verify(failures);
     }
 

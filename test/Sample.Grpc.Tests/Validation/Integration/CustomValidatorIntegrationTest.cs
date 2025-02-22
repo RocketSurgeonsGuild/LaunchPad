@@ -32,7 +32,7 @@ public class CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, 
         var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
 
         // Then nothing happen.
-        response.Should().HaveCountGreaterThan(0);
+        response.Count.ShouldBeGreaterThan(0);
     }
 
     [Fact]

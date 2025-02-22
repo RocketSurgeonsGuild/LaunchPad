@@ -26,7 +26,7 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
 
         services.AddSingleton(sub);
 
-        services.Should().Contain(x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient);
+        services.ShouldContain(x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Transient);
 
         var r = services.BuildServiceProvider();
         var mediator = r.GetRequiredService<IMediator>();
@@ -58,8 +58,7 @@ public class MediatRTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTe
         services.AddSingleton(sub);
 
         services
-           .Should()
-           .Contain(
+           .ShouldContain(
                 x => x.ServiceType == typeof(IMediator) && x.Lifetime == ServiceLifetime.Singleton
             );
 

@@ -56,8 +56,8 @@ public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTes
             )
         );
 
-        response.ScheduledLaunchDate.Should().Be(launchDate);
-        response.PayloadWeightKg.Should().Be(200);
+        response.ScheduledLaunchDate.ShouldBe(launchDate);
+        response.PayloadWeightKg.ShouldBe(200);
     }
 
     private static readonly Faker Faker = new();

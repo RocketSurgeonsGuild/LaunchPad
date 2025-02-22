@@ -41,13 +41,13 @@ public class GetLaunchRecordTests : HandleWebHostBase
                                                }
                                            );
 
-        var response = ( await client.GetLaunchRecordAsync(record.Id.Value) ).Result;
+        var response = (await client.GetLaunchRecordAsync(record.Id.Value)).Result;
 
-        response.Partner.Should().Be("partner");
-        response.Payload.Should().Be("geo-fence-ftl");
-        response.RocketType.Should().Be(HttpRocketType.Falcon9);
-        response.RocketSerialNumber.Should().Be("12345678901234");
-        response.ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate);
+        response.Partner.ShouldBe("partner");
+        response.Payload.ShouldBe("geo-fence-ftl");
+        response.RocketType.ShouldBe(HttpRocketType.Falcon9);
+        response.RocketSerialNumber.ShouldBe("12345678901234");
+        response.ScheduledLaunchDate.ShouldBe(record.ScheduledLaunchDate);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class GetLaunchRecordTests : HandleWebHostBase
         var client = new LaunchRecordClient(Factory.CreateClient());
 
         Func<Task> action = () => client.GetLaunchRecordAsync(Guid.NewGuid());
-        await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
+        await action.ShouldThrowAsync<ApiException<ProblemDetails>>()
                     .Where(
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );

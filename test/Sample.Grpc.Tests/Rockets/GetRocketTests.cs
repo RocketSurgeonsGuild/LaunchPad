@@ -32,7 +32,7 @@ public class GetRocketTests(ITestOutputHelper outputHelper, TestWebAppFixture we
 
         var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.ToString() });
 
-        response.Type.Should().Be(RocketType.Falcon9);
-        response.Sn.Should().Be("12345678901234");
+        response.Type.ShouldBe(RocketType.Falcon9);
+        response.Sn.ShouldBe("12345678901234");
     }
 }

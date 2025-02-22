@@ -46,6 +46,6 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppF
         );
         response.EnsureNoErrors();
 
-        response.Data!.CreateLaunchRecord.Id.Should().NotBeEmpty();
+        response.Data!.CreateLaunchRecord.Id.ShouldNotBe(Guid.Empty);
     }
 }

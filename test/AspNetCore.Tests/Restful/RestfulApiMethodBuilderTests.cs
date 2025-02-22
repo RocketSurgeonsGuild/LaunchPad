@@ -13,7 +13,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
     public void Should_Have_Method()
     {
         IRestfulApiMethodMatcher builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
-        builder.Method.Should().Be(RestfulApiMethod.List);
+        builder.Method.ShouldBe(RestfulApiMethod.List);
     }
 
     [Theory]
@@ -26,7 +26,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchName(nameToMatch);
 
-        builder.IsMatch(CreateActionModel(nameof(MyActionName))).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(nameof(MyActionName))).ShouldBeTrue();
     }
 
     [Theory]
@@ -38,7 +38,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchParameterCount(count);
 
-        builder.IsMatch(CreateActionModel(actionName)).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(actionName)).ShouldBeTrue();
     }
 
     [Theory]
@@ -50,7 +50,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchParameterCount(count);
 
-        builder.IsMatch(CreateActionModel(actionName)).Should().BeFalse();
+        builder.IsMatch(CreateActionModel(actionName)).ShouldBeFalse();
     }
 
     [Theory]
@@ -62,7 +62,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchPrefix(prefix);
 
-        builder.IsMatch(CreateActionModel(nameof(MyActionName))).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(nameof(MyActionName))).ShouldBeTrue();
     }
 
     [Theory]
@@ -74,7 +74,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchSuffix(suffix);
 
-        builder.IsMatch(CreateActionModel(nameof(MyActionName))).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(nameof(MyActionName))).ShouldBeTrue();
     }
 
 
@@ -87,7 +87,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.HasParameter(parameterIndex);
 
-        builder.IsMatch(CreateActionModel(methodName)).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(methodName)).ShouldBeTrue();
     }
 
 
@@ -101,7 +101,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchParameterType(parameterIndex, type);
 
-        builder.IsMatch(CreateActionModel(methodName)).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(methodName)).ShouldBeTrue();
     }
 
 
@@ -114,7 +114,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchParameterName(parameterIndex, parameterName);
 
-        builder.IsMatch(CreateActionModel(methodName)).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(methodName)).ShouldBeTrue();
     }
 
 
@@ -125,7 +125,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchParameterSuffix(parameterIndex, parameterName);
 
-        builder.IsMatch(CreateActionModel(methodName)).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(methodName)).ShouldBeTrue();
     }
 
 
@@ -136,7 +136,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.MatchParameterPrefix(parameterIndex, parameterName);
 
-        builder.IsMatch(CreateActionModel(methodName)).Should().BeTrue();
+        builder.IsMatch(CreateActionModel(methodName)).ShouldBeTrue();
     }
 
     [Theory]
@@ -150,7 +150,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
            .MatchParameterName(^2, "id")
            .MatchParameterType(^1, typeof(IBaseRequest));
 
-        builder.IsMatch(CreateActionModel(name)).Should().Be(toBe);
+        builder.IsMatch(CreateActionModel(name)).ShouldBe(toBe);
     }
 
     [Theory]
@@ -159,7 +159,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
     {
         var builders = new RestfulApiOptions().Builders.Where(z => z.IsValid());
         builders.Any(builder => builder.IsMatch(CreateActionModel(methodName, fromType: type)))
-                .Should().BeTrue();
+                .ShouldBeTrue();
     }
 
     [Theory]
@@ -168,17 +168,17 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
     {
         var builders = new RestfulApiOptions().Builders;
         builders.All(builder => builder.IsMatch(CreateActionModel(methodName, fromType: type)))
-                .Should().BeFalse();
+                .ShouldBeFalse();
     }
 
     private ActionModel CreateActionModel(string methodName, string? name = null, Type? fromType = null)
     {
         return new ActionModel(
-            ( fromType ?? GetType() ).GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!,
+            (fromType ?? GetType()).GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!,
             new List<object>()
         )
         {
-            ActionName = name ?? ( fromType is null ? nameof(MyActionName) : methodName )
+            ActionName = name ?? (fromType is null ? nameof(MyActionName) : methodName)
         };
     }
 
@@ -232,7 +232,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
                       .GetMethods()
                       .Select(z => z.Name)
                       .Except(typeof(T).BaseType!.GetMethods().Select(z => z.Name))
-                      .Select(z => ( typeof(T), z ));
+                      .Select(z => (typeof(T), z));
             }
         }
 
@@ -468,12 +468,12 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
                       .GetMethods()
                       .Select(z => z.Name)
                       .Except(typeof(T).BaseType!.GetMethods().Select(z => z.Name))
-                      .Select(z => ( typeof(T), z ));
+                      .Select(z => (typeof(T), z));
             }
         }
 
         [PublicAPI]
-        public sealed  class ListActions
+        public sealed class ListActions
         {
             public Task<ActionResult<object>> PeopleList(Request request)
             {
@@ -487,7 +487,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         }
 
         [PublicAPI]
-        public sealed  class GetActions
+        public sealed class GetActions
         {
             public Task<ActionResult<object>> PeopleGet(Request request)
             {
@@ -511,7 +511,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         }
 
         [PublicAPI]
-        public sealed  class PostActions
+        public sealed class PostActions
         {
             public Task<ActionResult<object>> PersonPost(Request request)
             {
@@ -564,7 +564,7 @@ public class RestfulApiMethodBuilderTests(ITestOutputHelper testOutputHelper) : 
         }
 
         [PublicAPI]
-        public sealed  class DeleteActions
+        public sealed class DeleteActions
         {
             public Task<ActionResult<object>> PersonDelete(Request request)
             {

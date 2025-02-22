@@ -48,10 +48,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
-        diagnostic.Id.Should().Be("LPAD0001");
-        diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.PatchGraphRocket must be made partial.");
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
+        diagnostic.Id.ShouldBe("LPAD0001");
+        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.PatchGraphRocket must be made partial.");
 
         await Verify(result);
     }
@@ -118,10 +118,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
-        diagnostic.Id.Should().Be("LPAD0005");
-        diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.");
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
+        diagnostic.Id.ShouldBe("LPAD0005");
+        diagnostic.ToString().ShouldContain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.");
 
         await Verify(result);
     }
@@ -152,10 +152,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
-        diagnostic.Id.Should().Be("LPAD0005");
-        diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.");
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
+        diagnostic.Id.ShouldBe("LPAD0005");
+        diagnostic.ToString().ShouldContain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.");
 
         await Verify(result);
     }
@@ -186,7 +186,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
     }
@@ -217,7 +217,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
     }
@@ -246,7 +246,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
     }
@@ -280,7 +280,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
     }
@@ -448,8 +448,8 @@ public record Request : IRequest<RocketModel>
 
         await Verify(result).UseParameters(property, value, propertyTracking);
 
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().BeEmpty();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        output!.Diagnostics.ShouldBeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var typeInstance = Activator.CreateInstance(type);
@@ -464,7 +464,7 @@ public record Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(typeInstance, Activator.CreateInstance(optionalType, value));
         var request = patchCreateMethod.Invoke(typeInstance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).Should().BeEquivalentTo(value);
+        assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
     }
 
     [Theory]
@@ -493,8 +493,8 @@ public class Request : IRequest<RocketModel>
                           .GenerateAsync();
 
         await Verify(result).UseParameters(property, value, propertyTracking);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().BeEmpty();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        output!.Diagnostics.ShouldBeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var typeInstance = Activator.CreateInstance(type);
@@ -509,7 +509,7 @@ public class Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(typeInstance, Activator.CreateInstance(optionalType, value));
         var request = patchCreateMethod.Invoke(typeInstance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).Should().BeEquivalentTo(value);
+        assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
     }
 
     [Theory]
@@ -542,8 +542,8 @@ public record Request : IRequest<RocketModel>
                           .GenerateAsync();
 
         await Verify(result).UseParameters(property, value, propertyTracking);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().BeEmpty();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        output!.Diagnostics.ShouldBeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
@@ -558,7 +558,7 @@ public record Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(optionalType, value));
         var request = applyChangesMethod.Invoke(instance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).Should().BeEquivalentTo(value);
+        assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
     }
 
     [Theory]
@@ -583,7 +583,7 @@ public record Request : IRequest<RocketModel>
         var result = await AddPatchRocketModel(modelType, propertyTracking)
                           .AddSources(
                                $$""""
-                               public {{( modelType == RocketModelType.Class ? "class" : "record" )}} Request : IRequest<RocketModel>
+                               public {{(modelType == RocketModelType.Class ? "class" : "record")}} Request : IRequest<RocketModel>
                                {
                                    public Guid Id { get; init; }
                                    public string SerialNumber { get; set; } = null!;
@@ -596,8 +596,8 @@ public record Request : IRequest<RocketModel>
                           .GenerateAsync();
 
         await Verify(result).UseParameters(property, value, modelType, propertyTracking);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
-        output!.Diagnostics.Should().BeEmpty();
+        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        output!.Diagnostics.ShouldBeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
@@ -612,7 +612,7 @@ public record Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(optionalType, value));
         var request = applyChangesMethod.Invoke(instance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).Should().Be(value);
+        assignedPropertyUnderTest.GetValue(r).ShouldBe(value);
     }
 
     [Theory]
@@ -1201,7 +1201,7 @@ partial class Validator : AbstractValidator<PatchRequest>
                 public Guid Id { get; init; }
                 public string SerialNumber { get; set; } = null!;
                 public string Something { get; set; } = null!;
-            
+
                 class Validator : AbstractValidator<Model>
                 {
                     public Validator()
@@ -1252,7 +1252,7 @@ partial class Validator : AbstractValidator<PatchRequest>
                 public Guid Id { get; init; }
                 public string SerialNumber { get; set; } = null!;
                 public string Something { get; set; } = null!;
-            
+
                 class Validator : AbstractValidator<Model>
                 {
                     public Validator()

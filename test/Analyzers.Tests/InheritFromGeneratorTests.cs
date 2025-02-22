@@ -44,10 +44,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
-        diagnostic.Id.Should().Be("LPAD0001");
-        diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.");
+        result.TryGetResult<InheritFromGenerator>(out var output).ShouldBeTrue();
+        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
+        diagnostic.Id.ShouldBe("LPAD0001");
+        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.");
 
         await Verify(result);
     }
@@ -84,10 +84,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync();
-        result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
-        var diagnostic = output!.Diagnostics.Should().ContainSingle().And.Subject.First();
-        diagnostic.Id.Should().Be("LPAD0001");
-        diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket must be made partial.");
+        result.TryGetResult<InheritFromGenerator>(out var output).ShouldBeTrue();
+        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
+        diagnostic.Id.ShouldBe("LPAD0001");
+        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.CreateRocket must be made partial.");
 
         await Verify(result);
     }
@@ -768,7 +768,7 @@ partial class Validator : AbstractValidator<Request>
                 public Guid Id { get; init; }
                 public string SerialNumber { get; set; } = null!;
                 public string Something { get; set; } = null!;
-            
+
                 class Validator : AbstractValidator<Model>
                 {
                     public Validator()
@@ -819,7 +819,7 @@ partial class Validator : AbstractValidator<Request>
                 public Guid Id { get; init; }
                 public string SerialNumber { get; set; } = null!;
                 public string Something { get; set; } = null!;
-            
+
                 class Validator : AbstractValidator<Model>
                 {
                     public Validator()
