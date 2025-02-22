@@ -45,11 +45,11 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixt
         var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes![0].Partner.Should().Be("partner");
-        response.Data.LaunchRecords!.Nodes[0].Payload.Should().Be("geo-fence-ftl");
-        response.Data.LaunchRecords!.Nodes[0].Rocket.Type.Should().Be(RocketType.Falcon9);
-        response.Data.LaunchRecords!.Nodes[0].Rocket.SerialNumber.Should().Be("12345678901234");
-        response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.Should().Be(record.ScheduledLaunchDate);
+        response.Data!.LaunchRecords!.Nodes![0].Partner.ShouldBe("partner");
+        response.Data.LaunchRecords!.Nodes[0].Payload.ShouldBe("geo-fence-ftl");
+        response.Data.LaunchRecords!.Nodes[0].Rocket.Type.ShouldBe(RocketType.Falcon9);
+        response.Data.LaunchRecords!.Nodes[0].Rocket.SerialNumber.ShouldBe("12345678901234");
+        response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.ShouldBe(record.ScheduledLaunchDate);
     }
 
     private static readonly Faker Faker = new();

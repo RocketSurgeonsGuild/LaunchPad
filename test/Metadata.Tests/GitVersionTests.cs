@@ -10,8 +10,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo().Assembly);
 
-        version.Should().NotBeNull();
-        version.SemVer.Should().NotBeNullOrWhiteSpace();
+        version.ShouldNotBeNull();
+        version.SemVer.ShouldNotBeNullOrWhiteSpace();
     }
 
     [Fact]
@@ -19,15 +19,15 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo().Assembly);
         var version2 = GitVersion.For(typeof(GitVersion).GetTypeInfo().Assembly);
-        version.Should().NotBeNull();
-        version.Should().Be(version2);
+        version.ShouldNotBeNull();
+        version.ShouldBe(version2);
     }
 
     [Fact]
     public void NotHaveAVersionForNonVersionedAssembly()
     {
         var version = GitVersion.For(typeof(string).GetTypeInfo().Assembly);
-        version.HasVersion.Should().BeFalse();
+        version.HasVersion.ShouldBeFalse();
     }
 
     [Fact(Skip = "Disabled for CI")]
@@ -35,8 +35,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo());
 
-        version.Should().NotBeNull();
-        version.HasVersion.Should().BeTrue();
+        version.ShouldNotBeNull();
+        version.HasVersion.ShouldBeTrue();
     }
 
     [Fact(Skip = "Disabled for CI")]
@@ -44,8 +44,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(typeof(GitVersion));
 
-        version.Should().NotBeNull();
-        version.HasVersion.Should().BeTrue();
+        version.ShouldNotBeNull();
+        version.HasVersion.ShouldBeTrue();
     }
 
     [Fact]
@@ -53,8 +53,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(typeof(GitVersion), typeof(GitVersion));
 
-        version.Should().NotBeNull();
-        version.Should().HaveCount(1);
+        version.ShouldNotBeNull();
+        version.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo(), typeof(GitVersion).GetTypeInfo());
 
-        version.Should().NotBeNull();
-        version.Should().HaveCount(1);
+        version.ShouldNotBeNull();
+        version.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -71,8 +71,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo().Assembly, typeof(GitVersion).GetTypeInfo().Assembly);
 
-        version.Should().NotBeNull();
-        version.Should().HaveCount(1);
+        version.ShouldNotBeNull();
+        version.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -80,8 +80,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(new[] { typeof(GitVersion), typeof(GitVersion) }.AsEnumerable());
 
-        version.Should().NotBeNull();
-        version.Should().HaveCount(1);
+        version.ShouldNotBeNull();
+        version.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(new[] { typeof(GitVersion).GetTypeInfo(), typeof(GitVersion).GetTypeInfo() }.AsEnumerable());
 
-        version.Should().NotBeNull();
-        version.Should().HaveCount(1);
+        version.ShouldNotBeNull();
+        version.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUni
     {
         var version = GitVersion.For(new[] { typeof(GitVersion).GetTypeInfo().Assembly, typeof(GitVersion).GetTypeInfo().Assembly }.AsEnumerable());
 
-        version.Should().NotBeNull();
-        version.Should().HaveCount(1);
+        version.ShouldNotBeNull();
+        version.Count.ShouldBe(1);
     }
 }

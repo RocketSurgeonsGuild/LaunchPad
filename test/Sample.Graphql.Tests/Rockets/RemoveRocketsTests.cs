@@ -30,6 +30,6 @@ public class RemoveRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixtur
 
         await client.DeleteRocket.ExecuteAsync(new DeleteRocketRequest { Id = id.Value });
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
+        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.ShouldBeEmpty());
     }
 }

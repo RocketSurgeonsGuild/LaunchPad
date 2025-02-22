@@ -32,8 +32,8 @@ public class GetRocketTests(ITestOutputHelper outputHelper, GraphQlAppFixture ro
         var response = await client.GetRocket.ExecuteAsync(rocket.Value);
         response.EnsureNoErrors();
 
-        response.Data!.Rockets!.Nodes![0].Type.Should().Be(RocketType.Falcon9);
-        response.Data.Rockets!.Nodes[0].SerialNumber.Should().Be("12345678901234");
+        response.Data!.Rockets!.Nodes![0].Type.ShouldBe(RocketType.Falcon9);
+        response.Data.Rockets!.Nodes[0].SerialNumber.ShouldBe("12345678901234");
     }
 
     private static readonly Faker Faker = new();

@@ -20,7 +20,7 @@ public class CreateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
         );
 
         response.EnsureNoErrors();
-        response.Data!.CreateRocket.Id.Should().NotBeEmpty();
+        response.Data!.CreateRocket.Id.ShouldNotBe(Guid.Empty);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class CreateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
                 SerialNumber = "12345678901234"
             }
         );
-        response.IsErrorResult().Should().BeFalse();
+        response.IsErrorResult().ShouldBeFalse();
 
         var response2 = await client.CreateRocket.ExecuteAsync(
             new CreateRocketRequest
@@ -43,7 +43,7 @@ public class CreateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFix
                 SerialNumber = "12345678901234"
             }
         );
-        response2.IsErrorResult().Should().BeTrue();
-        response2.Errors[0].Message.Should().Be("A Rocket already exists with that serial number!");
+        response2.IsErrorResult().ShouldBeTrue();
+        response2.Errors[0].Message.ShouldBe("A Rocket already exists with that serial number!");
     }
 }

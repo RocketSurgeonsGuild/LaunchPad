@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using Google.Protobuf.WellKnownTypes;
+using NodaTime;
 using Rocket.Surgery.DependencyInjection;
 using Sample.Core.Domain;
 using Sample.Core.Models;
@@ -45,11 +46,11 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixt
 
         var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), });
 
-        response.Partner.Should().Be("partner");
-        response.Payload.Should().Be("geo-fence-ftl");
-        response.RocketType.Should().Be(RocketType.Falcon9);
-        response.RocketSerialNumber.Should().Be("12345678901234");
-        response.ScheduledLaunchDate.ToDateTimeOffset().Should().BeCloseTo(record.ScheduledLaunchDate, TimeSpan.FromMilliseconds(1));
+        response.Partner.ShouldBe("partner");
+        response.Payload.ShouldBe("geo-fence-ftl");
+        response.RocketType.ShouldBe(RocketType.Falcon9);
+        response.RocketSerialNumber.ShouldBe("12345678901234");
+        response.ScheduledLaunchDate.ShouldBe(Timestamp.FromDateTimeOffset(record.ScheduledLaunchDate));
     }
 
     private static readonly Faker Faker = new();

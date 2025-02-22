@@ -24,7 +24,6 @@
             <Version>11.0.0</Version>
         </PackageVersion>
         <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
-        <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1" />
         <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
         <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="9.0.2" />
         <PackageVersion Include="OpenTelemetry.AutoInstrumentation" Version="1.10.0" />
@@ -164,7 +163,7 @@
         <PackageVersion Include="Bogus" Version="35.6.2" />
         <PackageVersion Include="Microsoft.CodeCoverage" Version="17.13.0" />
         <PackageVersion Include="FakeItEasy" Version="8.3.0" />
-        <PackageVersion Include="FluentAssertions" Version="7.0.0" />
+        <PackageVersion Include="Shouldly" Version="4.3.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="9.0.4" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="9.0.4" />

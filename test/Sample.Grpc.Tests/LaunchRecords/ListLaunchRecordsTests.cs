@@ -32,7 +32,7 @@ public class ListLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFi
 
         var response = await client.ListLaunchRecords(new ListLaunchRecordsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
 
-        response.Should().HaveCount(10);
+        response.Count.ShouldBe(10);
     }
 
     [Fact]
@@ -62,6 +62,6 @@ public class ListLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFi
             }
         ).ResponseStream.ReadAllAsync().ToListAsync();
 
-        response.Should().HaveCount(3);
+        response.Count.ShouldBe(3);
     }
 }

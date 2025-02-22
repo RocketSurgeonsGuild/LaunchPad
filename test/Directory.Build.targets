@@ -6,7 +6,7 @@
         <PackageReference Include="Bogus" />
         <PackageReference Include="Microsoft.CodeCoverage" />
         <PackageReference Include="FakeItEasy" />
-        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Shouldly" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio" />
         <PackageReference Include="Verify.Xunit" />
@@ -20,11 +20,10 @@
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="FakeItEasy.Analyzer.CSharp" />
-        <PackageReference Include="FluentAssertions.Analyzers" />
         <PackageReference Include="xunit.analyzers" />
         <Using Include="Rocket.Surgery.Extensions.Testing" />
         <Using Include="Bogus" />
-        <Using Include="FluentAssertions" />
+        <Using Include="Shouldly" />
         <Using Include="Xunit" />
         <Using Include="Xunit.Abstractions" />
     </ItemGroup>

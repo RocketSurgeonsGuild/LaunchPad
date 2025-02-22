@@ -41,8 +41,8 @@ public class UpdateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
             )
         );
 
-        response.Type.Should().Be(RocketType.FalconHeavy);
-        response.Sn.Should().Be("43210987654321");
+        response.Type.ShouldBe(RocketType.FalconHeavy);
+        response.Sn.ShouldBe("43210987654321");
     }
 
     [Fact]
@@ -65,20 +65,20 @@ public class UpdateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
                                            );
 
         var request = new EditRocket.PatchRequest
-            {
-                Id = rocket.Id,
-//            Type = RocketType.FalconHeavy,
-                SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
-            }.ResetChanges() with
-            {
-                Type = RocketType.FalconHeavy
-            };
+        {
+            Id = rocket.Id,
+            //            Type = RocketType.FalconHeavy,
+            SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
+        }.ResetChanges() with
+        {
+            Type = RocketType.FalconHeavy
+        };
         var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
             mediator => mediator.Send(request)
         );
 
-        response.Type.Should().Be(RocketType.FalconHeavy);
-        response.Sn.Should().Be("12345678901234");
+        response.Type.ShouldBe(RocketType.FalconHeavy);
+        response.Sn.ShouldBe("12345678901234");
     }
 
     private static readonly Faker Faker = new();
@@ -92,7 +92,7 @@ public class UpdateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostB
         var mediater = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         Func<Task> a = () => mediater.Send(request);
-        ( await a.Should().ThrowAsync<ValidationException>() ).And.Errors.Select(x => x.PropertyName).Should().Contain(propertyName);
+        (await a.ShouldThrowAsync<ValidationException>()).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
     }
 
     private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocket.Request, string>

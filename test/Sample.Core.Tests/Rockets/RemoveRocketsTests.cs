@@ -28,7 +28,7 @@ public class RemoveRocketsTests(ITestOutputHelper outputHelper) : HandleTestHost
             mediator => mediator.Send(new DeleteRocket.Request(id))
         );
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.Should().BeEmpty());
+        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.ShouldBeEmpty());
     }
 
     private static readonly Faker Faker = new();

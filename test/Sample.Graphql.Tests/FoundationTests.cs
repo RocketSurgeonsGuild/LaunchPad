@@ -18,7 +18,7 @@ public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest<XU
             new SqliteExtension<RocketDbContext>()
         );
         var response = await host.Server.CreateClient().GetAsync("/graphql/index.html");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]

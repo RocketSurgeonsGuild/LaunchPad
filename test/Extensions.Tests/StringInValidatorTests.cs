@@ -18,15 +18,15 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
-        #pragma warning disable CA1849
+#pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
-        #pragma warning restore CA1849
-        result.Should().BeEquivalentTo(result2);
+#pragma warning restore CA1849
+        result.ShouldBeEquivalentTo(result2);
 
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(z => z.PropertyName == nameof(Target.Type));
-        result.Errors.Should().Contain(z => z.PropertyName == nameof(Target.TypeIgnoreCase));
+        result.IsValid.ShouldBeFalse();
+        result.Errors.ShouldContain(z => z.PropertyName == nameof(Target.Type));
+        result.Errors.ShouldContain(z => z.PropertyName == nameof(Target.TypeIgnoreCase));
     }
 
     [Fact]
@@ -42,14 +42,14 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
-        #pragma warning disable CA1849
+#pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
-        #pragma warning restore CA1849
-        result.Should().BeEquivalentTo(result2);
+#pragma warning restore CA1849
+        result.ShouldBeEquivalentTo(result2);
 
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(z => z.PropertyName == nameof(Target.Type));
+        result.IsValid.ShouldBeFalse();
+        result.Errors.ShouldContain(z => z.PropertyName == nameof(Target.Type));
     }
 
     [Fact]
@@ -65,14 +65,14 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
         var result = await validator.ValidateAsync(data);
-        #pragma warning disable CA1849
+#pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
-        #pragma warning restore CA1849
-        result.Should().BeEquivalentTo(result2);
+#pragma warning restore CA1849
+        result.ShouldBeEquivalentTo(result2);
 
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(z => z.PropertyName == nameof(Target.TypeIgnoreCase));
+        result.IsValid.ShouldBeFalse();
+        result.Errors.ShouldContain(z => z.PropertyName == nameof(Target.TypeIgnoreCase));
     }
 
     private class Target

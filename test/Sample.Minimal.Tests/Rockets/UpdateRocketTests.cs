@@ -37,12 +37,12 @@ public class UpdateRocketTests : HandleWebHostBase
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
             }
         );
-        ( u.StatusCode is >= 200 and < 300 ).Should().BeTrue();
+        (u.StatusCode is >= 200 and < 300).ShouldBeTrue();
 
         var response = await client.GetRocketAsync(rocket.Id.Value);
 
-        response.Result.Type.Should().Be(ClientRocketType.FalconHeavy);
-        response.Result.Sn.Should().Be("43210987654321");
+        response.Result.Type.ShouldBe(ClientRocketType.FalconHeavy);
+        response.Result.Sn.ShouldBe("43210987654321");
     }
 
     [Fact]
@@ -73,12 +73,12 @@ public class UpdateRocketTests : HandleWebHostBase
                 SerialNumber = new() { Value = "123456789012345" }
             }
         );
-        ( u.StatusCode is >= 200 and < 300 ).Should().BeTrue();
+        (u.StatusCode is >= 200 and < 300).ShouldBeTrue();
 
         var response = await client.GetRocketAsync(rocket.Id.Value);
 
-        response.Result.Type.Should().Be(ClientRocketType.AtlasV);
-        response.Result.Sn.Should().Be("123456789012345");
+        response.Result.Type.ShouldBe(ClientRocketType.AtlasV);
+        response.Result.Sn.ShouldBe("123456789012345");
     }
 
     [Fact]
@@ -109,9 +109,9 @@ public class UpdateRocketTests : HandleWebHostBase
                 SerialNumber = new() { Value = null }
             }
         );
-        var result = ( await action.Should().ThrowAsync<ApiException<FluentValidationProblemDetails>>() ).And.Result;
-        result.Errors.Should().HaveCount(1);
-        result.Errors["SerialNumber"][0].ErrorMessage.Should().Be("'Serial Number' must not be empty.");
+        var result = (await action.ShouldThrowAsync<ApiException<FluentValidationProblemDetails>>()).And.Result;
+        result.Errors.ShouldHaveCount(1);
+        result.Errors["SerialNumber"][0].ErrorMessage.ShouldBe("'Serial Number' must not be empty.");
     }
 
     [Fact]
@@ -142,11 +142,11 @@ public class UpdateRocketTests : HandleWebHostBase
                 Type = new() { Value = ClientRocketType.FalconHeavy }
             }
         );
-        ( u.StatusCode is >= 200 and < 300 ).Should().BeTrue();
+        (u.StatusCode is >= 200 and < 300).ShouldBeTrue();
 
         var response = await client.GetRocketAsync(rocket.Id.Value);
-        response.Result.Type.Should().Be(ClientRocketType.FalconHeavy);
-        response.Result.Sn.Should().Be("12345678901234");
+        response.Result.Type.ShouldBe(ClientRocketType.FalconHeavy);
+        response.Result.Sn.ShouldBe("12345678901234");
     }
 
     public UpdateRocketTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
@@ -161,13 +161,12 @@ public class UpdateRocketTests : HandleWebHostBase
     {
         var client = new RocketClient(Factory.CreateClient());
         Func<Task> a = () => client.EditRocketAsync(Guid.NewGuid(), request);
-        ( await a.Should().ThrowAsync<ApiException<FluentValidationProblemDetails>>() )
+        (await a.ShouldThrowAsync<ApiException<FluentValidationProblemDetails>>())
            .And
            .Result.Errors.Values
            .SelectMany(x => x)
            .Select(z => z.PropertyName)
-           .Should()
-           .Contain(propertyName);
+           .ShouldContain(propertyName);
     }
 
     private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>

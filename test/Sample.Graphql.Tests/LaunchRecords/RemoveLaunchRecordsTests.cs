@@ -33,6 +33,6 @@ public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, GraphQlApp
         var response = await client.DeleteLaunchRecord.ExecuteAsync(new DeleteLaunchRecordRequest { Id = id.Value });
         response.EnsureNoErrors();
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.Should().BeEmpty());
+        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());
     }
 }

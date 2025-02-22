@@ -30,8 +30,8 @@ public class GetRocketTests : HandleWebHostBase
 
         var response = await client.GetRocketAsync(rocket.Value);
 
-        response.Result.Type.Should().Be(HttpRocketType.Falcon9);
-        response.Result.Sn.Should().Be("12345678901234");
+        response.Result.Type.ShouldBe(HttpRocketType.Falcon9);
+        response.Result.Sn.ShouldBe("12345678901234");
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class GetRocketTests : HandleWebHostBase
         var client = new RocketClient(Factory.CreateClient());
 
         Func<Task> action = () => client.GetRocketAsync(Guid.NewGuid());
-        await action.Should().ThrowAsync<ApiException<ProblemDetails>>()
+        await action.ShouldThrowAsync<ApiException<ProblemDetails>>()
                     .Where(
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );

@@ -29,7 +29,7 @@ public class ListLaunchRecordsTests(ITestOutputHelper outputHelper, GraphQlAppFi
         var response = await client.GetLaunchRecords.ExecuteAsync();
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes!.Should().HaveCount(10);
+        response.Data!.LaunchRecords!.Nodes!.Count.ShouldBe(10);
     }
 
 
@@ -53,7 +53,7 @@ public class ListLaunchRecordsTests(ITestOutputHelper outputHelper, GraphQlAppFi
         var response = await client.GetFilteredLaunchRecords.ExecuteAsync(RocketType.FalconHeavy);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes!.Should().HaveCount(3);
+        response.Data!.LaunchRecords!.Nodes!.Count.ShouldBe(3);
     }
 
     private static readonly Faker Faker = new();

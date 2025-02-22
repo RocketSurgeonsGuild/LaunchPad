@@ -42,7 +42,7 @@ public class CreateLaunchRecordTests : HandleWebHostBase
             }
         );
 
-        response.Result.Id.Should().NotBeEmpty();
+        response.Result.Id.ShouldNotBeEmpty();
     }
 
     public CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)

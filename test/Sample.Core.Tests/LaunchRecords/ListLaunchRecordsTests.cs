@@ -28,7 +28,7 @@ public class ListLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTest
             mediator => mediator.CreateStream(new ListLaunchRecords.Request(null)).ToListAsync()
         );
 
-        response.Should().HaveCount(10);
+        response.Count.ShouldBe(10);
     }
 
     private static readonly Faker Faker = new();

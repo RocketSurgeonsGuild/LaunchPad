@@ -39,8 +39,8 @@ public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase
                                  mediator => mediator.Send(new GetRocket.Request(rocket))
                              );
 
-        response.Type.Should().Be(RocketType.Falcon9);
-        response.Sn.Should().Be("12345678901234");
+        response.Type.ShouldBe(RocketType.Falcon9);
+        response.Sn.ShouldBe("12345678901234");
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase
                                       mediator => mediator.Send(new GetRocket.Request(RocketId.New()))
                                   );
 
-        await action.Should().ThrowAsync<NotFoundException>();
+        await action.ShouldThrowAsync<NotFoundException>();
     }
 
     private static readonly Faker Faker = new();

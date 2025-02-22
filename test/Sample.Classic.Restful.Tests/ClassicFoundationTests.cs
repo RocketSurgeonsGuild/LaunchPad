@@ -11,7 +11,7 @@ public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebA
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/");
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     //    [Fact]

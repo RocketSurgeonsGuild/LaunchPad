@@ -1,5 +1,4 @@
 using System.Text.Json;
-using FluentAssertions.Primitives;
 using NetTopologySuite.Geometries;
 using Rocket.Surgery.LaunchPad.Spatial;
 
@@ -19,8 +18,7 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     public void Geometry_Tests(string geom)
     {
         JsonSerializer.Deserialize<Point>(geom, _settings)
-                      .Should()
-                      .Be(new Point(30, 10));
+                      .ShouldBe(new Point(30, 10));
     }
 
     [Theory]
@@ -28,8 +26,7 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     public void LineString_Tests(string geom)
     {
         JsonSerializer.Deserialize<LineString>(geom, _settings)
-                      .Should()
-                      .Be(
+                      .ShouldBe(
                            new LineString(
                                new[]
                                {
@@ -46,8 +43,7 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     public void Polygon_Tests(string geom)
     {
         JsonSerializer.Deserialize<Polygon>(geom, _settings)
-                      .Should()
-                      .Be(
+                      .ShouldBe(
                            new Polygon(
                                new LinearRing(
                                    new[]
@@ -63,10 +59,9 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     [InlineData("{\"type\": \"MultiPoint\",\"coordinates\": [[10, 40], [40, 30], [20, 20], [30, 10]]}")]
     public void MultiPoint_Tests(string geom)
     {
-        new ObjectAssertions(
                 JsonSerializer.Deserialize<MultiPoint>(geom, _settings)
-            )
-           .Be(
+
+           .ShouldBe(
                 new MultiPoint(
                     new[]
                     {
@@ -85,10 +80,8 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     )]
     public void MultiLineString_Tests(string geom)
     {
-        new ObjectAssertions(
-                JsonSerializer.Deserialize<MultiLineString>(geom, _settings)
-            )
-           .BeOfType<MultiLineString>();
+        JsonSerializer.Deserialize<MultiLineString>(geom, _settings)
+                      .ShouldBeOfType<MultiLineString>();
     }
 
     [Theory]
@@ -97,10 +90,8 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     )]
     public void MultiPolygon_Tests(string geom)
     {
-        new ObjectAssertions(
-                JsonSerializer.Deserialize<MultiPolygon>(geom, _settings)
-            )
-           .BeOfType<MultiPolygon>();
+        JsonSerializer.Deserialize<MultiPolygon>(geom, _settings)
+                      .ShouldBeOfType<MultiPolygon>();
     }
 
     [Theory]
@@ -109,9 +100,7 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper output
     )]
     public void GeometryCollection_Tests(string geom)
     {
-        new ObjectAssertions(
-                JsonSerializer.Deserialize<GeometryCollection>(geom, _settings)
-            )
-           .BeOfType<GeometryCollection>();
+        JsonSerializer.Deserialize<GeometryCollection>(geom, _settings)
+                      .ShouldBeOfType<GeometryCollection>();
     }
 }

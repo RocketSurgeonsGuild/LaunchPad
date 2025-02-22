@@ -30,7 +30,7 @@ public class ListRocketsTests(ITestOutputHelper outputHelper, TestWebAppFixture 
 
         var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
 
-        response.Should().HaveCount(10);
+        response.Count.ShouldBe(10);
     }
 
     [Fact]
@@ -58,6 +58,6 @@ public class ListRocketsTests(ITestOutputHelper outputHelper, TestWebAppFixture 
             }
         ).ResponseStream.ReadAllAsync().ToListAsync();
 
-        response.Should().HaveCount(5);
+        response.Count.ShouldBe(5);
     }
 }

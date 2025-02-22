@@ -42,7 +42,7 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTes
             )
         );
 
-        response.Id.Value.Should().NotBeEmpty();
+        response.Id.Value.ShouldNotBe(Guid.Empty);
     }
 
     private static readonly Faker Faker = new();

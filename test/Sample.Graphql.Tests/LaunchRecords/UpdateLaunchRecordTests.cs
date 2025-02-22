@@ -59,8 +59,8 @@ public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppF
         var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.Should().Be(launchDate);
-        response.Data.LaunchRecords!.Nodes[0].PayloadWeightKg.Should().Be(200);
+        response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.ShouldBe(launchDate);
+        response.Data.LaunchRecords!.Nodes[0].PayloadWeightKg.ShouldBe(200);
     }
 
     private static readonly Faker Faker = new();
