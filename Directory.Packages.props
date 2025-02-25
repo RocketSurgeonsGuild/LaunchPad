@@ -5,9 +5,8 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
     <ItemGroup>
-        <GlobalPackageReference Include="Rocket.Surgery.MSBuild.CI" Version="1.2.1" />
-        <GlobalPackageReference Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.2.1" />
-        <GlobalPackageReference Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.2.1" />
+        <GlobalPackageReference Include="Rocket.Surgery.MSBuild" Version="1.3.0-beta.2" />
+        <GlobalPackageReference Include="Rocket.Surgery.MyAssembly" Version="1.3.0-beta.2" />
         <GlobalPackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
         <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
         <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
@@ -82,7 +81,8 @@
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.2" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.2" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.2" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer"
+            Version="9.0.2" />
         <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
         <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.6.0" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
@@ -92,11 +92,14 @@
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
         <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.2" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions"
+            Version="9.0.2" />
         <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.2" />
-        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="9.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions"
+            Version="9.0.2" />
         <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.2" />
-        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions"
+            Version="9.0.2" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.12.0" />
@@ -120,7 +123,8 @@
         <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.48" />
         <PackageVersion Include="Rocket.Surgery.Conventions.Serilog" Version="14.0.1-beta.48" />
         <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.48" />
-        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.37" />
+        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions"
+            Version="13.0.0-beta.37" />
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.37" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.48" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.48" />
@@ -141,7 +145,8 @@
         <PackageVersion Include="Serilog.Sinks.Observable" Version="3.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="7.2.0" />
-        <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="8.0.1" />
+        <PackageVersion Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime"
+            Version="8.0.1" />
         <PackageVersion Include="System.Collections.Immutable" Version="9.0.2" />
         <PackageVersion Include="System.Interactive" Version="6.0.1" />
         <PackageVersion Include="System.Interactive.Async" Version="6.0.1" />
