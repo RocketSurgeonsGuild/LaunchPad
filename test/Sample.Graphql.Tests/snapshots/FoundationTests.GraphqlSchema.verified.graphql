@@ -24,7 +24,6 @@ type CreateRocketResponse {
   id: UUID!
 }
 
-"Models an OGC-style LineString"
 type GeoJSONLineStringType implements GeoJSONInterface {
   "The \"coordinates\" field is an array of two or more positions."
   coordinates: [Position]
@@ -36,11 +35,6 @@ type GeoJSONLineStringType implements GeoJSONInterface {
   crs: Int!
 }
 
-"""
-Models a collection of LineStrings.
-
-Any collection of LineStrings is a valid MultiLineString.
-"""
 type GeoJSONMultiLineStringType implements GeoJSONInterface {
   "The \"coordinates\" field is an array of LineString coordinate arrays."
   coordinates: [Position]
@@ -52,7 +46,6 @@ type GeoJSONMultiLineStringType implements GeoJSONInterface {
   crs: Int!
 }
 
-"Models a collection of Points."
 type GeoJSONMultiPointType implements GeoJSONInterface {
   "The \"coordinates\" field is an array of positions."
   coordinates: [Position]
@@ -64,7 +57,6 @@ type GeoJSONMultiPointType implements GeoJSONInterface {
   crs: Int!
 }
 
-"Basic implementation of MultiPolygon."
 type GeoJSONMultiPolygonType implements GeoJSONInterface {
   "The \"coordinates\" field is an array of Polygon coordinate arrays."
   coordinates: Coordinates
