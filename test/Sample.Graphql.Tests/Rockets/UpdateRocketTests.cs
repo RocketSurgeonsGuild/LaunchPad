@@ -6,8 +6,8 @@ using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class UpdateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
-    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testOutputHelper, rocketSurgeryWebAppFixture)
+public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testContext, rocketSurgeryWebAppFixture)
 {
     [Fact]
     public async Task Should_Update_A_Rocket()

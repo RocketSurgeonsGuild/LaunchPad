@@ -3,7 +3,7 @@ using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests;
 
-public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
+public class FoundationTests(ITestContextAccessor testContext, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testContext, factory)
 {
     [Fact]
     public async Task Starts()

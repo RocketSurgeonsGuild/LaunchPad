@@ -8,7 +8,7 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-public class StrawberryShakeSerializerTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
+public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
 {
     [Fact]
     public async Task Should_Roundtrip_Instant()

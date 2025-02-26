@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestOutputHelper outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
+public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     private readonly JsonSerializerOptions _settings = new JsonSerializerOptions().ConfigureGeoJsonForLaunchPad(null);
 

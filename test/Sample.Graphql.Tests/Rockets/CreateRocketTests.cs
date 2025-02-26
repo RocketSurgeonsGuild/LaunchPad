@@ -4,8 +4,8 @@ using Serilog.Events;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class CreateRocketTests(ITestOutputHelper testOutputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
-    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testOutputHelper, rocketSurgeryWebAppFixture, LogEventLevel.Information)
+public class CreateRocketTests(ITestContextAccessor testContext, GraphQlAppFixture rocketSurgeryWebAppFixture)
+    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testContext, rocketSurgeryWebAppFixture, LogEventLevel.Information)
 {
     [Fact]
     public async Task Should_Create_A_Rocket()

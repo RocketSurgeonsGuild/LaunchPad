@@ -10,7 +10,7 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-public class InheritFromGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
+public class InheritFromGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
 {
     [Fact]
     public async Task Should_Require_Partial_Type_Declaration()
@@ -43,7 +43,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<InheritFromGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0001");
@@ -83,7 +83,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<InheritFromGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0001");
@@ -124,7 +124,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -163,7 +163,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -200,7 +200,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -254,7 +254,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }
@@ -298,7 +298,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }
@@ -335,7 +335,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }
@@ -371,7 +371,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }
@@ -385,7 +385,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddReferences(typeof(Expression))
                           .AddSources(source)
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result).UseParameters(name);
     }
 
@@ -859,7 +859,7 @@ partial class Validator : AbstractValidator<Request>
         ];
     }
 
-    public override async Task InitializeAsync()
+    public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

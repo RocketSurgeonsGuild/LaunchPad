@@ -12,7 +12,7 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Analyzers.Tests;
 
-public class GraphqlMutationActionBodyGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
+public class GraphqlMutationActionBodyGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
 {
     [Fact]
     public async Task Should_Error_If_Class_Property_Is_Init()
@@ -52,7 +52,7 @@ public partial class RocketMutation
 }"
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -94,12 +94,12 @@ public class RocketMutation
     public partial Task<IEnumerable<RocketModel>> ListRockets([Service] IMediator mediator, ListRockets.Request request);
 }
 ";
-        await Verify(await Builder.AddSources(source1, source2).Build().GenerateAsync());
+        await Verify(await Builder.AddSources(source1, source2).Build().GenerateAsync(TestContext.CancellationToken));
     }
 
     [Theory]
     [ClassData(typeof(MethodBodyData))]
-    public async Task Should_Generate_Method_Bodies(string key, string[] sources) => await Verify(await Builder.AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
+    public async Task Should_Generate_Method_Bodies(string key, string[] sources) => await Verify(await Builder.AddSources(sources).Build().GenerateAsync(TestContext.CancellationToken)).UseParameters(key, "");
 
     [Theory]
     [ClassData(typeof(MethodBodyWithOptionalTrackingData))]
@@ -110,7 +110,7 @@ public class RocketMutation
                  .AddReferences(typeof(IOptionalTracking<>), typeof(IPropertyTracking))
                  .AddSources(sources)
                  .Build()
-                 .GenerateAsync()
+                 .GenerateAsync(TestContext.CancellationToken)
         )
        .UseParameters(key, "");
 
@@ -1266,7 +1266,7 @@ public record RocketModel
 ";
     }
 
-    public override async Task InitializeAsync()
+    public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

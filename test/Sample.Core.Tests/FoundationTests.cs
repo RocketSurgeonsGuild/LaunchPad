@@ -1,3 +1,3 @@
 ﻿namespace Sample.Core.Tests;
 
-public class FoundationTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper) { }
+public class FoundationTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext) { }

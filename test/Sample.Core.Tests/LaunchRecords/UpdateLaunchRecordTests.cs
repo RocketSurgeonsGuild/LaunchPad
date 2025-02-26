@@ -9,7 +9,7 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
+public class UpdateLaunchRecordTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Update_A_LaunchRecord()

@@ -12,7 +12,7 @@ public interface ILaunchPadWebAppFixture : IDisposable, IAsyncDisposable
     /// Reset the fixture to a near pristine state.
     /// </summary>
     /// <returns></returns>
-    Task ResetAsync();
+    ValueTask ResetAsync();
     /// <summary>
     /// Reset the fixture to a near pristine state.
     /// </summary>

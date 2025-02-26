@@ -17,7 +17,7 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Analyzers.Tests;
 
-public class GraphqlOptionalPropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
+public class GraphqlOptionalPropertyTrackingGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
 {
     [Fact]
     public async Task Should_Require_Partial_Type_Declaration()
@@ -47,7 +47,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0001");
@@ -87,7 +87,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }
@@ -117,7 +117,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0005");
@@ -151,7 +151,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0005");
@@ -185,7 +185,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
@@ -216,7 +216,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
@@ -245,7 +245,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
@@ -279,7 +279,7 @@ namespace Sample.Core.Operations.Rockets
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
@@ -317,7 +317,7 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
                      )
                     .WithCustomizer(Customizers.IncludeReferences)
                     .Build()
-                    .GenerateAsync();
+                    .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -349,7 +349,7 @@ public partial class Request : IRequest<RocketModel>
                            )
                           .WithCustomizer(Customizers.IncludeReferences)
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result).UseParameters(propertyTracking);
     }
 
@@ -385,7 +385,7 @@ public partial class Request : IRequest<RocketModel>
                            )
                           .WithCustomizer(Customizers.IncludeReferences)
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result).UseParameters(propertyTracking);
     }
 
@@ -417,7 +417,7 @@ public partial class Request : IRequest<RocketModel>
                            )
                           .WithCustomizer(Customizers.IncludeReferences)
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result).UseParameters(propertyTracking);
     }
 
@@ -444,7 +444,7 @@ public record Request : IRequest<RocketModel>
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result).UseParameters(property, value, propertyTracking);
 
@@ -490,7 +490,7 @@ public class Request : IRequest<RocketModel>
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result).UseParameters(property, value, propertyTracking);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
@@ -539,7 +539,7 @@ public record Request : IRequest<RocketModel>
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result).UseParameters(property, value, propertyTracking);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
@@ -593,7 +593,7 @@ public record Request : IRequest<RocketModel>
                                """"
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result).UseParameters(property, value, modelType, propertyTracking);
         result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
@@ -640,7 +640,7 @@ public partial class GraphPatchRequest : IOptionalTracking<PatchRequest>
                           .WithGenerator<InheritFromGenerator>()
                           .AddSources(source)
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result).UseParameters(name);
     }
 
@@ -1292,7 +1292,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         ];
     }
 
-    public override async Task InitializeAsync()
+    public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

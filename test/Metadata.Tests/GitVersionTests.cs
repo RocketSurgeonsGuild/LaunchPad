@@ -3,7 +3,7 @@ using Rocket.Surgery.LaunchPad.Metadata;
 
 namespace Metadata.Tests;
 
-public class GitVersionTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
+public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
 {
     [Fact(Skip = "Disabled for CI")]
     public void ReturnsInformationForVersionedAssembly()

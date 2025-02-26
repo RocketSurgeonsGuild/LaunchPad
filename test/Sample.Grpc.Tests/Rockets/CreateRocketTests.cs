@@ -5,8 +5,8 @@ using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFixture webAppFixture)
-    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, webAppFixture)
+public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixture webAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(testContext, webAppFixture)
 {
     [Fact]
     public async Task Should_Create_A_Rocket()

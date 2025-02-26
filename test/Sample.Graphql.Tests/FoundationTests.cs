@@ -7,7 +7,7 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
+public class FoundationTests(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
 {
     [Fact]
     public async Task Starts()

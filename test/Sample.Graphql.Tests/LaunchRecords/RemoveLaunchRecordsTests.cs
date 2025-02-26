@@ -6,7 +6,7 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+public class RemoveLaunchRecordsTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
     : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     private static readonly Faker Faker = new();

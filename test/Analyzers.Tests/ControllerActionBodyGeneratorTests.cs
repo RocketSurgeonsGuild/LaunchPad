@@ -13,7 +13,7 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 
 namespace Analyzers.Tests;
 
-public class ControllerActionBodyGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
+public class ControllerActionBodyGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
 {
     [Fact]
     public async Task Should_Error_If_Class_Property_Is_Init()
@@ -56,7 +56,7 @@ public static class Save2Rocket
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -102,7 +102,7 @@ public static class ListRockets
                                {
                                    [HttpGet]
                                    public partial Task<ActionResult<IEnumerable<RocketModel>>> ListRockets([FromQuery] ListRockets.Request request);
-                               
+
                                    [HttpGet("{id:guid}")]
                                    public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] GetRocket.Request request);
                                }
@@ -110,13 +110,13 @@ public static class ListRockets
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
     [Theory]
     [ClassData(typeof(MethodBodyData))]
-    public async Task Should_Generate_Method_Bodies(string key, string[] sources) => await Verify(Builder.AddSources(sources).Build().GenerateAsync()).UseParameters(key, "");
+    public async Task Should_Generate_Method_Bodies(string key, string[] sources) => await Verify(Builder.AddSources(sources).Build().GenerateAsync(TestContext.CancellationToken)).UseParameters(key, "");
 
     private sealed class MethodBodyData : TheoryData<string, string[]>
     {
@@ -314,7 +314,7 @@ public static class CreateRocket
                     {
                         [HttpGet("{id:guid}")]
                         public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
-                    
+
                         [HttpPost]
                         [Created(nameof(GetRocket))]
                         public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
@@ -363,7 +363,7 @@ public static class CreateRocket
                     {
                         [HttpGet("{id:guid}")]
                         public partial Task<ActionResult<RocketModel>> GetRocket([BindRequired] [FromRoute] Guid id, [BindRequired] [FromRoute] GetRocket.Request request);
-                    
+
                         [HttpPost]
                         [Accepted(nameof(GetRocket))]
                         [ProducesResponseType(202)]
@@ -482,7 +482,7 @@ public static class GetRocketLaunchRecord
                         /// <returns></returns>
                         [HttpGet("{id:guid}/launch-records")]
                         public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords([BindRequired] [FromRoute] Guid id, GetRocketLaunchRecords.Request request);
-                    
+
                         /// <summary>
                         /// Get a specific launch record for a given rocket
                         /// </summary>
@@ -711,7 +711,7 @@ public enum RocketType { A, B }
 ";
     }
 
-    public override async Task InitializeAsync()
+    public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

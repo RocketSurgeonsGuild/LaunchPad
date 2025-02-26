@@ -19,7 +19,7 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
         serviceProvider.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreated());
     }
 
-    public async Task ResetAsync(IServiceProvider serviceProvider)
+    public async ValueTask ResetAsync(IServiceProvider serviceProvider)
     {
         await _connection.CloseAsync();
         await _connection.OpenAsync();

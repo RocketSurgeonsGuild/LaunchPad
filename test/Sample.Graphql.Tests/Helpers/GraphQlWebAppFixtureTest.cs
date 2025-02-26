@@ -7,17 +7,17 @@ using Serilog.Events;
 namespace Sample.Graphql.Tests.Helpers;
 
 public abstract class GraphQlWebAppFixtureTest<TAppFixture>
-    (ITestOutputHelper outputHelper, TAppFixture rocketSurgeryWebAppFixture, LogEventLevel logEventLevel = LogEventLevel.Verbose)
-    : LoggerTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper, logEventLevel)), IClassFixture<TAppFixture>, IAsyncLifetime
+    (ITestContextAccessor outputHelper, TAppFixture rocketSurgeryWebAppFixture, LogEventLevel logEventLevel = LogEventLevel.Verbose)
+    : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper, logEventLevel)), IClassFixture<TAppFixture>, IAsyncLifetime
     where TAppFixture : class, ILaunchPadWebAppFixture
 {
-    public virtual Task InitializeAsync()
+    public virtual ValueTask InitializeAsync()
     {
         rocketSurgeryWebAppFixture.SetLoggerFactory(CreateLoggerFactory());
         return rocketSurgeryWebAppFixture.ResetAsync();
     }
 
-    public virtual Task DisposeAsync() => Task.CompletedTask;
+    public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
     protected IAlbaHost Host => rocketSurgeryWebAppFixture.AlbaHost;
 
     /// <summary>

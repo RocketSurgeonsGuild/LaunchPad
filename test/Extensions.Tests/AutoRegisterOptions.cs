@@ -7,7 +7,7 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Extensions.Tests;
 
-public class AutoRegisterOptions(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
+public class AutoRegisterOptions(ITestContextAccessor testContext) : ConventionFakeTest(testContext)
 {
     [Fact]
     public async Task Should_Register_Options()

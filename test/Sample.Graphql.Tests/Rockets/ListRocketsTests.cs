@@ -6,7 +6,7 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class ListRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+public class ListRocketsTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
     : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     [Fact]

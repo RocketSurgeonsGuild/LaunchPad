@@ -9,7 +9,7 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture)
+public class GetLaunchRecordTests(ITestContextAccessor outputHelper, TestWebAppFixture testWebAppFixture)
     : WebAppFixtureTest<TestWebAppFixture>(outputHelper, testWebAppFixture)
 {
     [Fact]

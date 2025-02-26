@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Extensions.Tests;
 
-public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
+public class StringInValidatorTests(ITestContextAccessor testContext) : ConventionFakeTest(testContext)
 {
     [Fact]
     public async Task Should_Validate_Invalid()

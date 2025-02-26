@@ -10,7 +10,7 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests.Validation;
 
-public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper)), IAsyncLifetime
+public class OptionsValidationTests(ITestContextAccessor testContext) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext)), IAsyncLifetime
 {
     [Fact]
     public async Task Should_Validate_Options_And_Throw()
@@ -85,7 +85,7 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         }
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create(Imports.Instance)
@@ -96,5 +96,5 @@ public class OptionsValidationTests(ITestOutputHelper outputHelper) : AutoFakeTe
         Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

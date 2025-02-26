@@ -7,7 +7,7 @@ using Sample.Pages.Tests.Helpers;
 
 namespace Sample.Pages.Tests;
 
-public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
+public class FoundationTests(ITestContextAccessor testContext, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testContext, factory)
 {
     [Fact]
     public async Task Starts()

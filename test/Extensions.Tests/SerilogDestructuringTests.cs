@@ -247,8 +247,8 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, threeD);
     }
 
-    public SerilogDestructuringTests(ITestOutputHelper outputHelper) : base(
-        XUnitTestContext.Create(
+    public SerilogDestructuringTests(ITestContextAccessor outputHelper) : base(
+        new (
             outputHelper,
             LogEventLevel.Information,
             configureLogger: (_, configuration) => configuration

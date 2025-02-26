@@ -7,8 +7,8 @@ using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class UpdateRocketTests(ITestOutputHelper testOutputHelper, TestWebAppFixture testWebAppFixture)
-    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, testWebAppFixture)
+public class UpdateRocketTests(ITestContextAccessor testContext, TestWebAppFixture testWebAppFixture)
+    : WebAppFixtureTest<TestWebAppFixture>(testContext, testWebAppFixture)
 {
     private static readonly Faker Faker = new();
 

@@ -16,7 +16,7 @@ namespace Sample.Core.Tests;
 
 public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyncLifetime
 {
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         _connection = new("DataSource=:memory:");
         await _connection.OpenAsync();
@@ -36,10 +36,10 @@ public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyn
         await Container.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
     }
 
-    public async Task DisposeAsync() => await _connection!.DisposeAsync();
+    public async ValueTask DisposeAsync() => await _connection!.DisposeAsync();
 
-    protected HandleTestHostBase(ITestOutputHelper outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : base(
-        XUnitTestContext.Create(outputHelper, logLevel)
+    protected HandleTestHostBase(ITestContextAccessor testContext, LogEventLevel logLevel = LogEventLevel.Information) : base(
+        XUnitDefaults.CreateTestContext(testContext, logLevel)
     ) => ExcludeSourceContext(nameof(AutoFakeTest));
 
     protected override IContainer BuildContainer(IContainer container) => container.WithDependencyInjectionAdapter().Container;

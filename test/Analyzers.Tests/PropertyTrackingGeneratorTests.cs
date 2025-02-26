@@ -11,7 +11,7 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) : GeneratorTest(testOutputHelper)
+public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
 {
     [Fact]
     public async Task Should_Require_Partial_Type_Declaration()
@@ -41,7 +41,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0001");
@@ -81,7 +81,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0001");
@@ -114,7 +114,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         output!.Diagnostics.ShouldBeEmpty();
 
@@ -174,7 +174,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         output!.Diagnostics.ShouldBeEmpty();
 
@@ -230,7 +230,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0005");
@@ -267,7 +267,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
         diagnostic.Id.ShouldBe("LPAD0005");
@@ -301,7 +301,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
@@ -335,7 +335,7 @@ public class PropertyTrackingGeneratorTests(ITestOutputHelper testOutputHelper) 
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out _).ShouldBeTrue();
 
         await Verify(result);
@@ -366,7 +366,7 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -396,7 +396,7 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -426,7 +426,7 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
 "
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result);
     }
 
@@ -456,7 +456,7 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         output!.Diagnostics.ShouldBeEmpty();
 
@@ -504,7 +504,7 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
                                """
                            )
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
         output!.Diagnostics.ShouldBeEmpty();
 
@@ -535,7 +535,7 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
                           .WithGenerator<InheritFromGenerator>()
                           .AddSources(source)
                           .Build()
-                          .GenerateAsync();
+                          .GenerateAsync(TestContext.CancellationToken);
         await Verify(result).UseParameters(name);
     }
 
@@ -1059,7 +1059,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         ];
     }
 
-    public override async Task InitializeAsync()
+    public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

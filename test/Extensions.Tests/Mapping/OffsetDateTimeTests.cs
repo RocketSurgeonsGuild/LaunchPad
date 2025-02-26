@@ -9,7 +9,7 @@ using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class OffsetDateTimeTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
+public partial class OffsetDateTimeTests(ITestContextAccessor testContext) : MapperTestBase(testContext)
 {
     [Theory]
     [MapperData<Mapper>]

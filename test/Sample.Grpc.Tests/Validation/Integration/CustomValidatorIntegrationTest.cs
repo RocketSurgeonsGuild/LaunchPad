@@ -6,8 +6,8 @@ using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
-public class CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory)
-    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
+public class CustomValidatorIntegrationTest(ITestContextAccessor testContext, TestWebAppFixture factory)
+    : WebAppFixtureTest<TestWebAppFixture>(testContext, factory)
 {
     [Fact]
     public async Task Should_ResponseMessage_When_MessageIsValid()

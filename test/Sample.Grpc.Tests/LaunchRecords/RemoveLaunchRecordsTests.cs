@@ -7,7 +7,7 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture)
+public class RemoveLaunchRecordsTests(ITestContextAccessor outputHelper, TestWebAppFixture webAppFixture)
     : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
 {
     private static readonly Faker Faker = new();
