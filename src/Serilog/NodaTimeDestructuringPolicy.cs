@@ -1,6 +1,5 @@
 using NodaTime;
 using NodaTime.Text;
-
 using Serilog.Core;
 using Serilog.Events;
 

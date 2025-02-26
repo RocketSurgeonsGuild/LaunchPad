@@ -1,5 +1,4 @@
 using NodaTime;
-
 using Serilog;
 using Serilog.Configuration;
 

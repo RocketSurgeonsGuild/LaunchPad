@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
-
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Serilog;
-
 using Serilog;
 
 // ReSharper disable once CheckNamespace
@@ -59,9 +57,6 @@ public static class RocketSurgerySerilogExtensions
 
                         break;
                     }
-
-                default:
-                    break;
             }
         }
 
