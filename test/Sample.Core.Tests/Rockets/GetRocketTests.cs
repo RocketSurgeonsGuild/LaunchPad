@@ -11,7 +11,7 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class GetRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
+public class GetRocketTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Get_A_Rocket()

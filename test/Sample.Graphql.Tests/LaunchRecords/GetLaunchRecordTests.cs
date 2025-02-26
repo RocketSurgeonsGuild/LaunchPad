@@ -8,7 +8,7 @@ using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+public class GetLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
     : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     [Fact]
@@ -17,7 +17,7 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixt
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
-                                               async (context, clock) =>
+                                               async (context, clock, ct) =>
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
@@ -37,12 +37,14 @@ public class GetLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixt
                                                    context.Add(rocket);
                                                    context.Add(record);
 
-                                                   await context.SaveChangesAsync();
+                                                   await context.SaveChangesAsync(ct);
                                                    return record;
-                                               }
+                                               },
+                                               TestContext.CancellationToken
                                            );
 
-        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
+        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value,
+            cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         response.Data!.LaunchRecords!.Nodes![0].Partner.ShouldBe("partner");

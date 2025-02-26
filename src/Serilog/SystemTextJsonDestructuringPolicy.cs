@@ -1,5 +1,4 @@
 using System.Text.Json;
-
 using Serilog.Core;
 using Serilog.Events;
 
@@ -22,9 +21,6 @@ internal class SystemTextJsonDestructuringPolicy : IDestructuringPolicy
                     result = Destructure(jel);
                     return true;
                 }
-
-            default:
-                break;
         }
 
         result = null;

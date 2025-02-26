@@ -7,7 +7,7 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture)
+public class RemoveLaunchRecordsTests(ITestContextAccessor outputHelper, TestWebAppFixture webAppFixture)
     : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
 {
     private static readonly Faker Faker = new();
@@ -31,7 +31,7 @@ public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper, TestWebApp
                                            }
                                        );
 
-        await client.DeleteLaunchRecordAsync(new DeleteLaunchRecordRequest { Id = id.ToString() });
+        await client.DeleteLaunchRecordAsync(new DeleteLaunchRecordRequest { Id = id.ToString() }, cancellationToken: TestContext.CancellationToken);
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());
     }

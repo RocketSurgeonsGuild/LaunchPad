@@ -5,7 +5,7 @@ using Rocket.Surgery.Conventions;
 
 namespace Extensions.Tests;
 
-public abstract class ConventionFakeTest(ITestOutputHelper testOutputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
+public abstract class ConventionFakeTest(ITestContextAccessor testContext) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
 {
     protected async Task Init(Action<ConventionContextBuilder>? action = null)
     {

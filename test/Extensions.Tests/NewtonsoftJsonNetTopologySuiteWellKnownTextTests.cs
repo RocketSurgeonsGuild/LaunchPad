@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestOutputHelper outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
+public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccessor outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     private static T DeserializeObject<T>(string geom, JsonSerializerSettings settings)
     {

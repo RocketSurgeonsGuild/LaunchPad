@@ -39,7 +39,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// <summary>
     ///     Method used to start the alba host
     /// </summary>
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         _host = await Alba.AlbaHost.For<TEntryPoint>([.._extensions]);
         await ResetAsync();
@@ -94,9 +94,9 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// <summary>
     ///     Method to reset the database if provided
     /// </summary>
-    public Task ResetAsync()
+    public ValueTask ResetAsync()
     {
-        if (_sqlExtension is null || _host is null) return Task.CompletedTask;
+        if (_sqlExtension is null || _host is null) return ValueTask.CompletedTask;
 
         return _sqlExtension.ResetAsync(AlbaHost.Services);
     }

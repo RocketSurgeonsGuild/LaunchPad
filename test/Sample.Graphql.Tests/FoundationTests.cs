@@ -7,7 +7,7 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper))
+public class FoundationTests(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
 {
     [Fact]
     public async Task Starts()
@@ -17,7 +17,7 @@ public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest<XU
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
-        var response = await host.Server.CreateClient().GetAsync("/graphql/index.html");
+        var response = await host.Server.CreateClient().GetAsync("/graphql/index.html", TestContext.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
@@ -29,7 +29,7 @@ public class FoundationTests(ITestOutputHelper testOutputHelper) : LoggerTest<XU
             new GraphQlExtension(),
             new SqliteExtension<RocketDbContext>()
         );
-        var exeuctor = await host.Services.GetRequestExecutorAsync();
+        var exeuctor = await host.Services.GetRequestExecutorAsync(cancellationToken: TestContext.CancellationToken);
         await Verify(exeuctor.Schema.Print(), "graphql");
     }
 }

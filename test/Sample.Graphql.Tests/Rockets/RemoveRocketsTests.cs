@@ -6,7 +6,7 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class RemoveRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+public class RemoveRocketsTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
     : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     private static readonly Faker Faker = new();
@@ -28,7 +28,7 @@ public class RemoveRocketsTests(ITestOutputHelper outputHelper, GraphQlAppFixtur
                                            }
                                        );
 
-        await client.DeleteRocket.ExecuteAsync(new DeleteRocketRequest { Id = id.Value });
+        await client.DeleteRocket.ExecuteAsync(new DeleteRocketRequest { Id = id.Value }, TestContext.CancellationToken);
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.ShouldBeEmpty());
     }

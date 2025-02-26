@@ -15,7 +15,7 @@ public interface IResettableAlbaExtension : IAlbaExtension
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <returns></returns>
-    Task ResetAsync(IServiceProvider serviceProvider);
+    ValueTask ResetAsync(IServiceProvider serviceProvider);
     /// <summary>
     /// Reset the provider
     /// </summary>

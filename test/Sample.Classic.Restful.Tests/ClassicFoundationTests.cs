@@ -4,13 +4,13 @@ using Sample.Classic.Restful.Tests.Helpers;
 
 namespace Sample.Classic.Restful.Tests;
 
-public class ClassicFoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture fixture)
-    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, fixture)
+public class ClassicFoundationTests(ITestContextAccessor testContext, TestWebAppFixture fixture)
+    : WebAppFixtureTest<TestWebAppFixture>(testContext, fixture)
 {
     [Fact]
     public async Task Starts()
     {
-        var response = await AlbaHost.Server.CreateClient().GetAsync("/");
+        var response = await AlbaHost.Server.CreateClient().GetAsync("/", TestContext.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 

@@ -6,7 +6,7 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Extensions.Tests;
 
-public class SystemTextJsonNodaTimeTests(ITestOutputHelper outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
+public class SystemTextJsonNodaTimeTests(ITestContextAccessor outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
 {
     [Theory]
     [InlineData("2020-01-01T12:12:12Z")]

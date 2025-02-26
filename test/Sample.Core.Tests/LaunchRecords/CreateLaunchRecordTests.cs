@@ -7,7 +7,7 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
+public class CreateLaunchRecordTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Create_A_LaunchRecord()
@@ -25,11 +25,12 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTes
 
                                                    await context.SaveChangesAsync(ct);
                                                    return rocket;
-                                               }
+                                               },
+                                               TestContext.CancellationToken
                                            );
 
         var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
-            async (mediator, clock, ct) => await mediator.Send(
+            (mediator, clock, ct) => mediator.Send(
                 new CreateLaunchRecord.Request
                 {
                     Partner = "partner",
@@ -39,7 +40,8 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper) : HandleTes
                     PayloadWeightKg = 100,
                 },
                 ct
-            )
+            ),
+            TestContext.CancellationToken
         );
 
         response.Id.Value.ShouldNotBe(Guid.Empty);

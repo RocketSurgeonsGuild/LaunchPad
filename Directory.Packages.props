@@ -30,7 +30,7 @@
         <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
         <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="9.0.2" />
         <PackageVersion Include="OpenTelemetry.AutoInstrumentation" Version="1.10.0" />
-        <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.10.0-beta.1" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.11.0-beta.1" />
         <PackageVersion Include="PartiallyApplied" Version="1.3.0" />
         <PackageVersion Include="Serilog.Enrichers.AssemblyName" Version="2.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Demystifier" Version="1.0.3" />
@@ -46,9 +46,9 @@
         <PackageVersion Include="JetBrains.dotCover.CommandLineTools" Version="2024.3.5" />
         <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2024.3.5" />
         <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.2.0" />
-        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.1.0" />
         <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.2.0" />
-        <PackageVersion Include="Xunit.Combinatorial" Version="1.6.24" />
+        <PackageVersion Include="Xunit.Combinatorial" Version="2.0.24" />
         <PackageVersion Include="Polyfill" Version="7.18.0" />
         <PackageVersion Include="GitVersion.Tool" Version="6.1.0" />
         <PackageVersion Include="Nuke.Common" Version="9.0.4" />
@@ -104,11 +104,11 @@
         <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.2" />
         <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions"
             Version="9.0.2" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.12.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.12.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.12.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.13.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.13.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.13.0" />
         <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.1" />
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageVersion Include="NetTopologySuite" Version="2.5.0" />
@@ -122,16 +122,16 @@
         <PackageVersion Include="Polly" Version="8.5.2" />
         <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
         <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-        <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.1-beta.48" />
-        <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.1-beta.48" />
-        <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.48" />
-        <PackageVersion Include="Rocket.Surgery.Conventions.Serilog" Version="14.0.1-beta.48" />
-        <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.48" />
+        <PackageVersion Include="Rocket.Surgery.Conventions" Version="14.0.1-beta.54" />
+        <PackageVersion Include="Rocket.Surgery.Conventions.Abstractions" Version="14.0.1-beta.54" />
+        <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.54" />
+        <PackageVersion Include="Rocket.Surgery.Conventions.Serilog" Version="14.0.1-beta.54" />
+        <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.54" />
         <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions"
             Version="13.0.0-beta.37" />
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.37" />
-        <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.48" />
-        <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.48" />
+        <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.54" />
+        <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.54" />
         <PackageVersion Include="Scrutor" Version="5.1.1" />
         <PackageVersion Include="Serilog" Version="4.2.0" />
         <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -174,12 +174,12 @@
         <PackageVersion Include="FakeItEasy" Version="8.3.0" />
         <PackageVersion Include="Shouldly" Version="4.3.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="9.0.4" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit" Version="9.0.4" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="9.0.4" />
-        <PackageVersion Include="xunit" Version="2.9.3" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="9.0.5" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit3" Version="9.0.5" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="9.0.5" />
+        <PackageVersion Include="xunit.v3" Version="1.1.0" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
-        <PackageVersion Include="Verify.Xunit" Version="28.12.1" />
+        <PackageVersion Include="Verify.XunitV3" Version="28.12.1" />
         <PackageVersion Include="Verify.NodaTime" Version="2.2.0" />
         <PackageVersion Include="Verify.SystemJson" Version="1.4.1" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />

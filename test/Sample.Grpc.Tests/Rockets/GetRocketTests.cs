@@ -6,7 +6,7 @@ using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class GetRocketTests(ITestOutputHelper outputHelper, TestWebAppFixture webAppFixture) : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
+public class GetRocketTests(ITestContextAccessor outputHelper, TestWebAppFixture webAppFixture) : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
 {
     private static readonly Faker Faker = new();
 
@@ -30,7 +30,8 @@ public class GetRocketTests(ITestOutputHelper outputHelper, TestWebAppFixture we
                                                }
                                            );
 
-        var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.ToString() });
+        var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.ToString() },
+            cancellationToken: TestContext.CancellationToken);
 
         response.Type.ShouldBe(RocketType.Falcon9);
         response.Sn.ShouldBe("12345678901234");

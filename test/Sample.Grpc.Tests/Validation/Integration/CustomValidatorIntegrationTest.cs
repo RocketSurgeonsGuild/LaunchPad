@@ -6,8 +6,8 @@ using Sample.Grpc.Tests.Helpers;
 
 namespace Sample.Grpc.Tests.Validation.Integration;
 
-public class CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, TestWebAppFixture factory)
-    : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
+public class CustomValidatorIntegrationTest(ITestContextAccessor testContext, TestWebAppFixture factory)
+    : WebAppFixtureTest<TestWebAppFixture>(testContext, factory)
 {
     [Fact]
     public async Task Should_ResponseMessage_When_MessageIsValid()
@@ -29,7 +29,7 @@ public class CustomValidatorIntegrationTest(ITestOutputHelper testOutputHelper, 
         var client = new Grpc.Rockets.RocketsClient(AlbaHost.CreateGrpcChannel());
 
         // When
-        var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
+        var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync(TestContext.CancellationToken).ToListAsync(TestContext.CancellationToken);
 
         // Then nothing happen.
         response.Count.ShouldBeGreaterThan(0);

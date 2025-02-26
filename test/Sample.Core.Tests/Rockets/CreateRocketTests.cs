@@ -13,7 +13,7 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class CreateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
+public class CreateRocketTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Create_A_Rocket()

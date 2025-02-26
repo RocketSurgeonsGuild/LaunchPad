@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Extensions.Tests;
 
-public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
+public class StringInValidatorTests(ITestContextAccessor testContext) : ConventionFakeTest(testContext)
 {
     [Fact]
     public async Task Should_Validate_Invalid()
@@ -17,7 +17,7 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
-        var result = await validator.ValidateAsync(data);
+        var result = await validator.ValidateAsync(data, TestContext.CancellationToken);
 #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
@@ -41,7 +41,7 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
-        var result = await validator.ValidateAsync(data);
+        var result = await validator.ValidateAsync(data, TestContext.CancellationToken);
 #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
@@ -64,7 +64,7 @@ public class StringInValidatorTests(ITestOutputHelper testOutputHelper) : Conven
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
-        var result = await validator.ValidateAsync(data);
+        var result = await validator.ValidateAsync(data, TestContext.CancellationToken);
 #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);

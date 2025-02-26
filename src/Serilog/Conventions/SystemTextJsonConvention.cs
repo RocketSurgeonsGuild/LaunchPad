@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
-
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-
 using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Serilog.Conventions;

@@ -1,7 +1,5 @@
 using Microsoft.Extensions.Configuration;
-
 using Rocket.Surgery.LaunchPad.Serilog;
-
 using Serilog;
 
 // ReSharper disable once CheckNamespace

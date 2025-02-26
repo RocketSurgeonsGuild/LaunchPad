@@ -554,8 +554,8 @@ public class InheritFromGenerator : IIncrementalGenerator
                                           )
                                       )
                                      .Select(
-                                          (z, _) => ( z.declaration, z.targetSymbol, z.semanticModel,
-                                                      relatedTypeSymbol: z.semanticModel.GetSymbolInfo(z.relatedType!).Symbol! )
+                                          (z, ct) => ( z.declaration, z.targetSymbol, z.semanticModel,
+                                                      relatedTypeSymbol: z.semanticModel.GetSymbolInfo(z.relatedType!, ct).Symbol! )
                                       )
                                      .Where(z => z is { targetSymbol: { }, relatedTypeSymbol: { }, })
                                      .Select(

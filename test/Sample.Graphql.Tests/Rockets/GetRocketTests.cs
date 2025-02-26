@@ -6,7 +6,7 @@ using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class GetRocketTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
+public class GetRocketTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
     : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
 {
     [Fact]
@@ -29,7 +29,7 @@ public class GetRocketTests(ITestOutputHelper outputHelper, GraphQlAppFixture ro
                                                }
                                            );
 
-        var response = await client.GetRocket.ExecuteAsync(rocket.Value);
+        var response = await client.GetRocket.ExecuteAsync(rocket.Value, cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         response.Data!.Rockets!.Nodes![0].Type.ShouldBe(RocketType.Falcon9);

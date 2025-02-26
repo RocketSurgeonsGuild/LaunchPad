@@ -40,7 +40,7 @@ public class OptionsConvention : IServiceConvention
 
         foreach ((var options, var attribute) in classes.SelectMany(z => z.GetCustomAttributes<RegisterOptionsConfigurationAttribute>(), (type, attribute) => (type, attribute)))
         {
-            _ = _configureMethod
+            _configureMethod
                .MakeGenericMethod(options)
                .Invoke(null, [services, attribute.OptionsName, configuration.GetSection(attribute.ConfigurationKey)]);
         }

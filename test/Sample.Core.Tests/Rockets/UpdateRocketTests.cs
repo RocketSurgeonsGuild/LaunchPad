@@ -9,7 +9,7 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class UpdateRocketTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
+public class UpdateRocketTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Update_A_Rocket()

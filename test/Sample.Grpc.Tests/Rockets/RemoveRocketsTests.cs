@@ -7,7 +7,7 @@ using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class RemoveRocketsTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture)
+public class RemoveRocketsTests(ITestContextAccessor outputHelper, TestWebAppFixture testWebAppFixture)
     : WebAppFixtureTest<TestWebAppFixture>(outputHelper, testWebAppFixture)
 {
     private static readonly Faker Faker = new();
@@ -29,7 +29,8 @@ public class RemoveRocketsTests(ITestOutputHelper outputHelper, TestWebAppFixtur
                                            }
                                        );
 
-        await client.DeleteRocketAsync(new DeleteRocketRequest { Id = id.ToString() });
+        await client.DeleteRocketAsync(new DeleteRocketRequest { Id = id.ToString() },
+            cancellationToken: TestContext.CancellationToken);
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.ShouldBeEmpty());
     }

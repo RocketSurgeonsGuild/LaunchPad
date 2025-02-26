@@ -9,7 +9,7 @@ using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppFixture testWebAppFixture)
+public class CreateLaunchRecordTests(ITestContextAccessor outputHelper, TestWebAppFixture testWebAppFixture)
     : WebAppFixtureTest<TestWebAppFixture>(outputHelper, testWebAppFixture)
 {
     private static readonly Faker Faker = new();
@@ -44,7 +44,8 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebAppF
                 RocketId = rocket.Id.ToString(),
                 ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset().ToTimestamp(),
                 PayloadWeightKg = 100,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         response.Id.ShouldNotBeEmpty();

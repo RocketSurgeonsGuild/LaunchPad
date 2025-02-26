@@ -4,12 +4,12 @@ using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Minimal.Tests;
 
-public class FoundationTests(ITestOutputHelper testOutputHelper, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testOutputHelper, factory)
+public class FoundationTests(ITestContextAccessor testContext, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testContext, factory)
 {
     [Fact]
     public async Task Starts()
     {
-        var response = await AlbaHost.Server.CreateClient().GetAsync("/");
+        var response = await AlbaHost.Server.CreateClient().GetAsync("/", TestContext.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 

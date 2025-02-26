@@ -11,7 +11,7 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
+public class RemoveLaunchRecordsTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_Remove_LaunchRecord()

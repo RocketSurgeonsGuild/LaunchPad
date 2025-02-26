@@ -5,7 +5,7 @@ using Rocket.Surgery.LaunchPad.Testing;
 
 namespace Extensions.Tests;
 
-public class FakeTimeConventionTests(ITestOutputHelper testOutputHelper) : ConventionFakeTest(testOutputHelper)
+public class FakeTimeConventionTests(ITestContextAccessor testContext) : ConventionFakeTest(testContext)
 {
     [Fact]
     public async Task Clock_Convention_Default()

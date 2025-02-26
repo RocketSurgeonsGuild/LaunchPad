@@ -6,7 +6,7 @@ using Rocket.Surgery.LaunchPad.Mapping;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class JsonElementConverterTests(ITestOutputHelper testOutputHelper) : MapperTestBase(testOutputHelper)
+public partial class JsonElementConverterTests(ITestContextAccessor testContext) : MapperTestBase(testContext)
 {
 //    private class JsonElementB
 //    {

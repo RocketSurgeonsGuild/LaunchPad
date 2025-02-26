@@ -3,7 +3,7 @@ using Serilog.Events;
 
 namespace Extensions.Tests.Validation;
 
-public class ValidatorFactoryTests(ITestOutputHelper outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper, LogEventLevel.Information))
+public class ValidatorFactoryTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper, LogEventLevel.Information))
 {
     //    [Fact]
     //    public void Should_Aggregate_Validators()

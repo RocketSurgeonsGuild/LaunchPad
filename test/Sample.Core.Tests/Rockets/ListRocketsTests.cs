@@ -6,7 +6,7 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class ListRocketsTests(ITestOutputHelper outputHelper) : HandleTestHostBase(outputHelper, LogEventLevel.Verbose)
+public class ListRocketsTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
 {
     [Fact]
     public async Task Should_List_Rockets()

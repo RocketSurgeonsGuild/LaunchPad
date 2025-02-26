@@ -5,16 +5,16 @@ using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 namespace Sample.Restful.Tests.Helpers;
 
 public abstract class WebAppFixtureTest<TAppFixture>
-    (ITestOutputHelper outputHelper, TestWebAppFixture rocketSurgeryWebAppFixture) : LoggerTest<XUnitTestContext>(XUnitTestContext.Create(outputHelper)), IClassFixture<TAppFixture>, IAsyncLifetime
+    (ITestContextAccessor outputHelper, TestWebAppFixture rocketSurgeryWebAppFixture) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper)), IClassFixture<TAppFixture>, IAsyncLifetime
     where TAppFixture : class, ILaunchPadWebAppFixture
 {
-    public virtual Task InitializeAsync()
+    public virtual ValueTask InitializeAsync()
     {
         rocketSurgeryWebAppFixture.SetLoggerFactory(CreateLoggerFactory());
         return rocketSurgeryWebAppFixture.ResetAsync();
     }
 
-    public virtual Task DisposeAsync() => Task.CompletedTask;
+    public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
     protected IAlbaHost AlbaHost => rocketSurgeryWebAppFixture.AlbaHost;
 
     /// <summary>

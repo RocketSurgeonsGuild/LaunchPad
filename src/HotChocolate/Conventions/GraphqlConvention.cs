@@ -46,11 +46,6 @@ public class GraphqlConvention
                 .AddErrorFilter<GraphqlErrorFilter>()
                 .BindRuntimeType<Unit, VoidType>();
         services.Replace(ServiceDescriptor.Singleton<IValidatorRegistry, LaunchPadValidatorRegistry>());
-
-        if (!_rocketChocolateOptions.IncludeAssemblyInfoQuery) return;
-
-        services.TryAddSingleton(_foundationOptions);
-        sb.AddType<AssemblyInfoQuery>();
     }
 
     private readonly FoundationOptions _foundationOptions = foundationOptions ?? new FoundationOptions();

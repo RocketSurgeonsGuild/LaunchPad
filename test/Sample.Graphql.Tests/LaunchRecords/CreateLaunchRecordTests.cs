@@ -7,7 +7,7 @@ using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 
-public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppFixture rocketSurgeryWebWebAppFixture)
+public class CreateLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebWebAppFixture)
     : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebWebAppFixture)
 {
     private static readonly Faker Faker = new();
@@ -19,7 +19,7 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppF
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
-                                               async z =>
+                                               async (z, ct) =>
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
@@ -28,9 +28,10 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppF
                                                    };
                                                    z.Add(rocket);
 
-                                                   await z.SaveChangesAsync();
+                                                   await z.SaveChangesAsync(ct);
                                                    return rocket;
-                                               }
+                                               },
+                                               cancellationToken: TestContext.CancellationToken
                                            );
 
 
@@ -42,7 +43,8 @@ public class CreateLaunchRecordTests(ITestOutputHelper outputHelper, GraphQlAppF
                 RocketId = rocket.Id.Value,
                 ScheduledLaunchDate = clock.GetCurrentInstant(),
                 PayloadWeightKg = 100,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         response.EnsureNoErrors();
 

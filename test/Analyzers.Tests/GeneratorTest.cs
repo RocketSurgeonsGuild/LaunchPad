@@ -17,9 +17,9 @@ internal sealed class CollectibleTestAssemblyLoadContext() : AssemblyLoadContext
     protected override Assembly? Load(AssemblyName assemblyName) => null;
 }
 
-public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testOutputHelper)), IAsyncLifetime
+public abstract class GeneratorTest(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext)), IAsyncLifetime
 {
-    public virtual Task InitializeAsync()
+    public virtual ValueTask InitializeAsync()
     {
         Builder = GeneratorTestContextBuilder
                  .Create()
@@ -32,15 +32,15 @@ public abstract class GeneratorTest(ITestOutputHelper testOutputHelper) : Logger
                       typeof(ErrorAttribute<>).Assembly
                   );
 
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
-    public virtual Task DisposeAsync()
+    public virtual ValueTask DisposeAsync()
     {
         if (AssemblyLoadContext is IDisposable disposable) Disposables.Add(disposable);
 
         Disposables.Dispose();
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
     public AssemblyLoadContext AssemblyLoadContext { get; } = new CollectibleTestAssemblyLoadContext();
