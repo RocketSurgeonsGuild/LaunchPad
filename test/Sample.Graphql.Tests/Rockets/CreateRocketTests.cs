@@ -16,7 +16,8 @@ public class CreateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234"
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         response.EnsureNoErrors();
@@ -32,7 +33,8 @@ public class CreateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234"
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         response.IsErrorResult().ShouldBeFalse();
 
@@ -41,7 +43,8 @@ public class CreateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234"
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         response2.IsErrorResult().ShouldBeTrue();
         response2.Errors[0].Message.ShouldBe("A Rocket already exists with that serial number!");

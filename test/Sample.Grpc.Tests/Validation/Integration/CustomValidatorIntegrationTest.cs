@@ -29,7 +29,7 @@ public class CustomValidatorIntegrationTest(ITestContextAccessor testContext, Te
         var client = new Grpc.Rockets.RocketsClient(AlbaHost.CreateGrpcChannel());
 
         // When
-        var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync().ToListAsync();
+        var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync(TestContext.CancellationToken).ToListAsync(TestContext.CancellationToken);
 
         // Then nothing happen.
         response.Count.ShouldBeGreaterThan(0);

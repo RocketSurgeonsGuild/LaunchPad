@@ -24,7 +24,7 @@ public class ListRocketsTests(ITestContextAccessor outputHelper, GraphQlAppFixtu
                                   }
                               );
 
-        var response = await client.GetRockets.ExecuteAsync();
+        var response = await client.GetRockets.ExecuteAsync(cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         response.Data!.Rockets!.Nodes!.Count.ShouldBe(10);
@@ -36,16 +36,16 @@ public class ListRocketsTests(ITestContextAccessor outputHelper, GraphQlAppFixtu
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
         await ServiceProvider.WithScoped<RocketDbContext>()
                              .Invoke(
-                                  async z =>
+                                  async (z, ct) =>
                                   {
                                       var faker = new RocketFaker();
                                       z.AddRange(faker.UseSeed(100).Generate(10));
 
-                                      await z.SaveChangesAsync();
-                                  }
+                                      await z.SaveChangesAsync(ct);
+                                  },TestContext.CancellationToken
                               );
 
-        var response = await client.GetFilteredRockets.ExecuteAsync(RocketType.AtlasV);
+        var response = await client.GetFilteredRockets.ExecuteAsync(RocketType.AtlasV, TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         response.Data!.Rockets!.Nodes!.Count.ShouldBe(5);

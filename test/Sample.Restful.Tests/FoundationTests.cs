@@ -9,7 +9,7 @@ public class FoundationTests(ITestContextAccessor testContext, TestWebAppFixture
     [Fact]
     public async Task Starts()
     {
-        var response = await AlbaHost.Server.CreateClient().GetAsync("/");
+        var response = await AlbaHost.Server.CreateClient().GetAsync("/", TestContext.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 

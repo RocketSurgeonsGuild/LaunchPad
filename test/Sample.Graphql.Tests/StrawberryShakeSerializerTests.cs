@@ -28,7 +28,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 Instant = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -53,7 +54,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 LocalDate = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -77,7 +79,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 LocalTime = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -101,7 +104,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 LocalDateTime = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -125,7 +129,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 OffsetDateTime = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -149,7 +154,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 OffsetTime = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -193,7 +199,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 Period = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -216,7 +223,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 Duration = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -239,7 +247,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 Offset = value,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -260,7 +269,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 IsoDayOfWeek = IsoDayOfWeek.Wednesday,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result);
@@ -288,7 +298,8 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
             new()
             {
                 Geometry = reader.Read(wkt),
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         await Verify(result).UseTextForParameters(wkt);

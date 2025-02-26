@@ -30,7 +30,8 @@ public class GetRocketTests(ITestContextAccessor outputHelper, TestWebAppFixture
                                                }
                                            );
 
-        var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.ToString() });
+        var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.ToString() },
+            cancellationToken: TestContext.CancellationToken);
 
         response.Type.ShouldBe(RocketType.Falcon9);
         response.Sn.ShouldBe("12345678901234");

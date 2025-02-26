@@ -44,7 +44,8 @@ public class CreateLaunchRecordTests(ITestContextAccessor outputHelper, TestWebA
                 RocketId = rocket.Id.ToString(),
                 ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset().ToTimestamp(),
                 PayloadWeightKg = 100,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         response.Id.ShouldNotBeEmpty();

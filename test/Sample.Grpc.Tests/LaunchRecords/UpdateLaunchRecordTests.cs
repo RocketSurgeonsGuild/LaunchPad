@@ -55,10 +55,11 @@ public class UpdateLaunchRecordTests(ITestContextAccessor outputHelper, TestWebA
                 RocketId = record.RocketId.ToString(),
                 ScheduledLaunchDate = launchDate,
                 PayloadWeightKg = 200,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
-        var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), });
+        var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), }, cancellationToken: TestContext.CancellationToken);
 
         response.ScheduledLaunchDate.ShouldBe(Timestamp.FromDateTimeOffset(launchDate.ToDateTimeOffset()));
         response.PayloadWeightKg.ShouldBe(200);

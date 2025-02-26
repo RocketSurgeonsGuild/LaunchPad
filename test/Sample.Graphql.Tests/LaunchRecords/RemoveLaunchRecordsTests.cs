@@ -17,7 +17,7 @@ public class RemoveLaunchRecordsTests(ITestContextAccessor outputHelper, GraphQl
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var id = await ServiceProvider.WithScoped<RocketDbContext>()
                                       .Invoke(
-                                           async z =>
+                                           async (z, ct) =>
                                            {
                                                var faker = new RocketFaker();
                                                var rocket = faker.Generate();
@@ -25,12 +25,14 @@ public class RemoveLaunchRecordsTests(ITestContextAccessor outputHelper, GraphQl
                                                z.Add(rocket);
                                                z.Add(record);
 
-                                               await z.SaveChangesAsync();
+                                               await z.SaveChangesAsync(ct);
                                                return record.Id;
-                                           }
+                                           },
+                                           TestContext.CancellationToken
                                        );
 
-        var response = await client.DeleteLaunchRecord.ExecuteAsync(new DeleteLaunchRecordRequest { Id = id.Value });
+        var response = await client.DeleteLaunchRecord.ExecuteAsync(new DeleteLaunchRecordRequest { Id = id.Value },
+            cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());

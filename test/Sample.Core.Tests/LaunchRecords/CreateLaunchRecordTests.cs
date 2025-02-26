@@ -25,11 +25,12 @@ public class CreateLaunchRecordTests(ITestContextAccessor testContext) : HandleT
 
                                                    await context.SaveChangesAsync(ct);
                                                    return rocket;
-                                               }
+                                               },
+                                               TestContext.CancellationToken
                                            );
 
         var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
-            async (mediator, clock, ct) => await mediator.Send(
+            (mediator, clock, ct) => mediator.Send(
                 new CreateLaunchRecord.Request
                 {
                     Partner = "partner",
@@ -39,7 +40,8 @@ public class CreateLaunchRecordTests(ITestContextAccessor testContext) : HandleT
                     PayloadWeightKg = 100,
                 },
                 ct
-            )
+            ),
+            TestContext.CancellationToken
         );
 
         response.Id.Value.ShouldNotBe(Guid.Empty);

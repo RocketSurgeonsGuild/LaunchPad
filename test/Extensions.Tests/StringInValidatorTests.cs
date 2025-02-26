@@ -17,7 +17,7 @@ public class StringInValidatorTests(ITestContextAccessor testContext) : Conventi
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
-        var result = await validator.ValidateAsync(data);
+        var result = await validator.ValidateAsync(data, TestContext.CancellationToken);
 #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
@@ -41,7 +41,7 @@ public class StringInValidatorTests(ITestContextAccessor testContext) : Conventi
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
-        var result = await validator.ValidateAsync(data);
+        var result = await validator.ValidateAsync(data, TestContext.CancellationToken);
 #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);
@@ -64,7 +64,7 @@ public class StringInValidatorTests(ITestContextAccessor testContext) : Conventi
 
         var validator = ServiceProvider.GetRequiredService<IValidator<Target>>();
 
-        var result = await validator.ValidateAsync(data);
+        var result = await validator.ValidateAsync(data, TestContext.CancellationToken);
 #pragma warning disable CA1849
         // ReSharper disable once MethodHasAsyncOverload
         var result2 = validator.Validate(data);

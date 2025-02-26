@@ -39,7 +39,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
                 Id = rocket.Id.ToString(),
                 Type = RocketType.FalconHeavy,
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         u.ShouldNotBeNull();
 

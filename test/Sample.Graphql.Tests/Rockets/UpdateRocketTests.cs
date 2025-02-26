@@ -37,7 +37,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
                 Id = rocket.Id.Value,
                 Type = RocketType.FalconHeavy,
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
-            }
+            },
+            TestContext.CancellationToken
         );
         await Verify(u);
     }
@@ -69,7 +70,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
             {
                 Id = rocket.Id.Value,
                 SerialNumber = "123456789012345",
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         u.EnsureNoErrors();
 
@@ -84,7 +86,7 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         var rocket = await ServiceProvider
                           .WithScoped<RocketDbContext>()
                           .Invoke(
-                               async z =>
+                               async (z, ct) =>
                                {
                                    var rocket = new ReadyRocket
                                    {
@@ -93,9 +95,10 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
                                    };
                                    z.Add(rocket);
 
-                                   await z.SaveChangesAsync();
+                                   await z.SaveChangesAsync(ct);
                                    return rocket;
-                               }
+                               },
+                               cancellationToken: TestContext.CancellationToken
                            );
 
 
@@ -104,7 +107,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
             {
                 Id = rocket.Id.Value,
                 SerialNumber = null,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         await Verify(u);
     }
@@ -117,7 +121,7 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         var rocket = await ServiceProvider
                           .WithScoped<RocketDbContext>()
                           .Invoke(
-                               async z =>
+                               async (z, ct) =>
                                {
                                    var rocket = new ReadyRocket
                                    {
@@ -126,9 +130,10 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
                                    };
                                    z.Add(rocket);
 
-                                   await z.SaveChangesAsync();
+                                   await z.SaveChangesAsync(ct);
                                    return rocket;
-                               }
+                               },
+                               TestContext.CancellationToken
                            );
 
         var u = await client.PatchRocket.ExecuteAsync(
@@ -136,7 +141,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
             {
                 Id = rocket.Id.Value,
                 Type = RocketType.FalconHeavy,
-            }
+            },
+            TestContext.CancellationToken
         );
 
         await Verify(u);
@@ -147,7 +153,7 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
     public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
-        var response = await client.UpdateRocket.ExecuteAsync(request);
+        var response = await client.UpdateRocket.ExecuteAsync(request, TestContext.CancellationToken);
         response.IsErrorResult().ShouldBeTrue();
 
         await Verify(response).UseParameters(request, propertyName).HashParameters();

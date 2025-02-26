@@ -31,7 +31,7 @@ public class RemoveLaunchRecordsTests(ITestContextAccessor outputHelper, TestWeb
                                            }
                                        );
 
-        await client.DeleteLaunchRecordAsync(new DeleteLaunchRecordRequest { Id = id.ToString() });
+        await client.DeleteLaunchRecordAsync(new DeleteLaunchRecordRequest { Id = id.ToString() }, cancellationToken: TestContext.CancellationToken);
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());
     }

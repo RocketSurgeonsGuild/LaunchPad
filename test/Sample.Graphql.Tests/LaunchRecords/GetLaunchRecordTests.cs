@@ -17,7 +17,7 @@ public class GetLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlAppF
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
-                                               async (context, clock) =>
+                                               async (context, clock, ct) =>
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
@@ -37,12 +37,14 @@ public class GetLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlAppF
                                                    context.Add(rocket);
                                                    context.Add(record);
 
-                                                   await context.SaveChangesAsync();
+                                                   await context.SaveChangesAsync(ct);
                                                    return record;
-                                               }
+                                               },
+                                               TestContext.CancellationToken
                                            );
 
-        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
+        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value,
+            cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         response.Data!.LaunchRecords!.Nodes![0].Partner.ShouldBe("partner");

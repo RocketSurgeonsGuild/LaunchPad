@@ -10,7 +10,7 @@ internal sealed class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
     public ApiDescriptionData()
     {
         var host = new T();
-        host.InitializeAsync().GetAwaiter().GetResult();
+        host.InitializeAsync().AsTask().GetAwaiter().GetResult();
         var provider = host.AlbaHost.Services.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
         foreach (var item in provider.ApiDescriptionGroups.Items.SelectMany(z => z.Items))
         {

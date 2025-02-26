@@ -19,7 +19,7 @@ public class CreateLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlA
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
                                           .Invoke(
-                                               async z =>
+                                               async (z, ct) =>
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
@@ -28,9 +28,10 @@ public class CreateLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlA
                                                    };
                                                    z.Add(rocket);
 
-                                                   await z.SaveChangesAsync();
+                                                   await z.SaveChangesAsync(ct);
                                                    return rocket;
-                                               }
+                                               },
+                                               cancellationToken: TestContext.CancellationToken
                                            );
 
 
@@ -42,7 +43,8 @@ public class CreateLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlA
                 RocketId = rocket.Id.Value,
                 ScheduledLaunchDate = clock.GetCurrentInstant(),
                 PayloadWeightKg = 100,
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         response.EnsureNoErrors();
 

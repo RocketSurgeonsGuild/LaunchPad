@@ -29,7 +29,8 @@ public class RemoveRocketsTests(ITestContextAccessor outputHelper, TestWebAppFix
                                            }
                                        );
 
-        await client.DeleteRocketAsync(new DeleteRocketRequest { Id = id.ToString() });
+        await client.DeleteRocketAsync(new DeleteRocketRequest { Id = id.ToString() },
+            cancellationToken: TestContext.CancellationToken);
 
         ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.ShouldBeEmpty());
     }

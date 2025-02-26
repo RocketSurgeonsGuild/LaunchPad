@@ -19,7 +19,7 @@ public class GetLaunchRecordTests(ITestContextAccessor outputHelper, TestWebAppF
         var record = await ServiceProvider
                           .WithScoped<RocketDbContext, IClock>()
                           .Invoke(
-                               async (context, clock) =>
+                               async (context, clock, ct) =>
                                {
                                    var rocket = new ReadyRocket
                                    {
@@ -39,12 +39,13 @@ public class GetLaunchRecordTests(ITestContextAccessor outputHelper, TestWebAppF
                                    context.Add(rocket);
                                    context.Add(record);
 
-                                   await context.SaveChangesAsync();
+                                   await context.SaveChangesAsync(ct);
                                    return record;
-                               }
+                               },
+                               TestContext.CancellationToken
                            );
 
-        var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), });
+        var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), }, cancellationToken: TestContext.CancellationToken);
 
         response.Partner.ShouldBe("partner");
         response.Payload.ShouldBe("geo-fence-ftl");

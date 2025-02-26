@@ -18,7 +18,7 @@ public class UpdateLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlA
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
                                           .Invoke(
-                                               async (context, clk) =>
+                                               async (context, clk, ct) =>
                                                {
                                                    var rocket = new ReadyRocket
                                                    {
@@ -38,9 +38,9 @@ public class UpdateLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlA
                                                    context.Add(rocket);
                                                    context.Add(record);
 
-                                                   await context.SaveChangesAsync();
+                                                   await context.SaveChangesAsync(ct);
                                                    return record;
-                                               }
+                                               }, TestContext.CancellationToken
                                            );
 
         var launchDate = record.ScheduledLaunchDate.AddSeconds(1);
@@ -53,10 +53,10 @@ public class UpdateLaunchRecordTests(ITestContextAccessor outputHelper, GraphQlA
                 RocketId = record.RocketId.Value,
                 ScheduledLaunchDate = launchDate.ToInstant(),
                 PayloadWeightKg = 200,
-            }
+            }, TestContext.CancellationToken
         );
 
-        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value);
+        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value, TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.ShouldBe(launchDate);

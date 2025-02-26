@@ -18,7 +18,8 @@ public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234"
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         response.Id.ShouldNotBeEmpty();
@@ -33,7 +34,8 @@ public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234"
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
 
         Func<Task> action = async () => await client.CreateRocketAsync(
@@ -41,7 +43,8 @@ public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234"
-            }
+            },
+            cancellationToken: TestContext.CancellationToken
         );
         var r = (await action.ShouldThrowAsync<RpcException>());
         r.Message.ShouldContain("Rocket Creation Failed");

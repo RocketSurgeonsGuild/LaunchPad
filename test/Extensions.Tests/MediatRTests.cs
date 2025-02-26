@@ -18,7 +18,7 @@ public class MediatRTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUni
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
         var builder = ConventionContextBuilder.Create(Imports.Instance, new Dictionary<object, object>());
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        var context = await ConventionContext.FromAsync(builder);
+        var context = await ConventionContext.FromAsync(builder, TestContext.CancellationToken);
         var services = new ServiceCollection();
         new MediatRConvention().Register(context, new ConfigurationBuilder().Build(), services);
 
@@ -31,7 +31,7 @@ public class MediatRTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUni
         var r = services.BuildServiceProvider();
         var mediator = r.GetRequiredService<IMediator>();
 
-        await mediator.Send(new Request());
+        await mediator.Send(new Request(), TestContext.CancellationToken);
 
         A
            .CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))
@@ -44,7 +44,7 @@ public class MediatRTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUni
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
         var builder = ConventionContextBuilder.Create(Imports.Instance, new Dictionary<object, object>());
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        var context = await ConventionContext.FromAsync(builder);
+        var context = await ConventionContext.FromAsync(builder, TestContext.CancellationToken);
         var services = new ServiceCollection();
         new MediatRConvention(
             new()
@@ -66,7 +66,7 @@ public class MediatRTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUni
 
         var mediator = r.GetRequiredService<IMediator>();
 
-        await mediator.Send(new Request());
+        await mediator.Send(new Request(), TestContext.CancellationToken);
 
         A
            .CallTo(() => sub.Handle(A<Request>._, A<RequestHandlerDelegate<Unit>>._, A<CancellationToken>._))

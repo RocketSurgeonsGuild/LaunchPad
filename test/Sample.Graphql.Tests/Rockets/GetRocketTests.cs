@@ -29,7 +29,7 @@ public class GetRocketTests(ITestContextAccessor outputHelper, GraphQlAppFixture
                                                }
                                            );
 
-        var response = await client.GetRocket.ExecuteAsync(rocket.Value);
+        var response = await client.GetRocket.ExecuteAsync(rocket.Value, cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         response.Data!.Rockets!.Nodes![0].Type.ShouldBe(RocketType.Falcon9);
