@@ -19,7 +19,7 @@
         <!--        <PackageVersion Update="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />-->
         <PackageVersion Update="Microsoft.Extensions.ApiDescription.Client" Version="8.0.13" />
 
-        <PackageVersion Update="Swashbuckle.AspNetCore.ReDoc" Version="7.3.0" />
-        <PackageVersion Update="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.0" />
+        <PackageVersion Update="Swashbuckle.AspNetCore.ReDoc" Version="7.3.1" />
+        <PackageVersion Update="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.1" />
     </ItemGroup>
 </Project>
