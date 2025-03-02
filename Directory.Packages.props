@@ -121,8 +121,8 @@
         <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="14.0.1-beta.54" />
         <PackageVersion Include="Rocket.Surgery.Conventions.Serilog" Version="14.0.1-beta.54" />
         <PackageVersion Include="Rocket.Surgery.CommandLine" Version="14.0.1-beta.54" />
-        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0-beta.38" />
-        <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0-beta.38" />
+        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="13.0.0" />
+        <PackageVersion Include="Rocket.Surgery.Extensions" Version="13.0.0" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="14.0.1-beta.54" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="14.0.1-beta.54" />
 
