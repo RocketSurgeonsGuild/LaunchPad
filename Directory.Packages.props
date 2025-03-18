@@ -63,7 +63,7 @@
 
         <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.0-p.16" />
         <PackageVersion Include="HotChocolate.Data" Version="15.1.0-p.16" />
-        <PackageVersion Include="HotChocolate.Diagnostics" Version="15.1.0-p.16" />
+        <PackageVersion Include="HotChocolate.Diagnostics" Version="15.1.0-rc.1" />
         <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="15.1.0-p.16" />
 
         <PackageVersion Include="HotChocolate.Data.Spatial" Version="15.1.0-p.16" />
