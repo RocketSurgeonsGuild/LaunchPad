@@ -78,7 +78,7 @@
         <PackageVersion Include="StrawberryShake.Server" Version="15.1.0-p.15" />
 
 
-        <PackageVersion Include="MediatR" Version="12.4.1" />
+        <PackageVersion Include="MediatR" Version="12.5.0" />
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3" />
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.3" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="9.0.3" />
