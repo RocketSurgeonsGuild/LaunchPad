@@ -150,7 +150,7 @@
         <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.0.1" />
         <PackageVersion Include="System.Text.Json" Version="9.0.4" />
         <PackageVersion Include="System.Net.Http.Json" Version="9.0.4" />
-        <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.2.0" />
+        <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.4.0" />
         <PackageVersion Include="Riok.Mapperly" Version="4.1.1" />
         <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="9.0.4" />
 
