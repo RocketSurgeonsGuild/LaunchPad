@@ -18,7 +18,7 @@
         <GlobalPackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="4.13.1" />
         <GlobalPackageReference Include="Roslynator.CodeFixes" Version="4.13.1" />
         <GlobalPackageReference Include="Roslynator.Refactorings" Version="4.13.1" />
-        <GlobalPackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.161" />
+        <GlobalPackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.162" />
     </ItemGroup>
     <ItemGroup>
 
