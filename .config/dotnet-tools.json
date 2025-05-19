@@ -48,7 +48,7 @@
             "rollForward": false
         },
         "strawberryshake.tools": {
-            "version": "15.1.0-p.15",
+            "version": "15.1.4",
             "commands": ["dotnet-graphql"],
             "rollForward": false
         },
