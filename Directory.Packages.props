@@ -35,7 +35,7 @@
         <PackageVersion Include="Serilog.Enrichers.Demystifier" Version="1.0.3" />
         <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
         <PackageVersion Include="Serilog.Sinks.BrowserConsole" Version="8.0.0" />
-        <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.1.1" />
+        <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
 
         <PackageVersion Include="Serilog.Sinks.Trace" Version="4.0.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.2" />
