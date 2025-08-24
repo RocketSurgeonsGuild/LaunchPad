@@ -105,7 +105,7 @@
         <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0" />
         <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.1" />
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageVersion Include="NetTopologySuite" Version="2.5.0" />
+        <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
 
         <PackageVersion Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
         <PackageVersion Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
