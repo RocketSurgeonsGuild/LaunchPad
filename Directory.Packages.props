@@ -35,7 +35,7 @@
         <PackageVersion Include="Serilog.Enrichers.Demystifier" Version="1.0.3" />
         <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
         <PackageVersion Include="Serilog.Sinks.BrowserConsole" Version="8.0.0" />
-        <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.1.1" />
+        <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
 
         <PackageVersion Include="Serilog.Sinks.Trace" Version="4.0.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.2" />
@@ -134,7 +134,7 @@
         <PackageVersion Include="Serilog.Enrichers.Process" Version="3.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
         <PackageVersion Include="Serilog.Extensions.Hosting" Version="9.0.0" />
-        <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.1" />
+        <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.2" />
         <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
         <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
         <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
