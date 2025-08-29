@@ -103,7 +103,7 @@
         <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.14.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0" />
-        <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.1" />
+        <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.2" />
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageVersion Include="NetTopologySuite" Version="2.5.0" />
 
@@ -146,8 +146,8 @@
         <PackageVersion Include="System.Collections.Immutable" Version="9.0.7" />
         <PackageVersion Include="System.Interactive" Version="6.0.3" />
         <PackageVersion Include="System.Interactive.Async" Version="6.0.3" />
-        <PackageVersion Include="System.Reactive" Version="6.0.1" />
-        <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.0.1" />
+        <PackageVersion Include="System.Reactive" Version="6.0.2" />
+        <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.0.2" />
         <PackageVersion Include="System.Text.Json" Version="9.0.7" />
         <PackageVersion Include="System.Net.Http.Json" Version="9.0.7" />
         <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.2.0" />
