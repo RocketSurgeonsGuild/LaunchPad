@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
     </PropertyGroup>
@@ -20,9 +20,6 @@
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" />
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Rocket.Surgery.DependencyInjection.Extensions" />
-        <PackageReference Include="System.Collections.Immutable" />
-        <PackageReference Include="System.Interactive" />
-        <PackageReference Include="System.Interactive.Async" />
         <PackageReference Include="System.Reactive" />
         <PackageReference Include="System.Reactive.Observable.Aliases" />
         <PackageReference Include="System.Text.Json" />

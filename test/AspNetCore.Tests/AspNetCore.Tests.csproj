@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
-    <ProjectReference Include="..\..\src\AspNetCore.NewtonsoftJson\Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
+    <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj"
+      IncludeAssets="all" />
+    <ProjectReference
+      Include="..\..\src\AspNetCore.NewtonsoftJson\Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
   </ItemGroup>
 </Project>
