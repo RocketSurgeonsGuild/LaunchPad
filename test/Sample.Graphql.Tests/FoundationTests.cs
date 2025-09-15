@@ -30,6 +30,6 @@ public class FoundationTests(ITestContextAccessor testContext) : LoggerTest<XUni
             new SqliteExtension<RocketDbContext>()
         );
         var exeuctor = await host.Services.GetRequestExecutorAsync(cancellationToken: TestContext.CancellationToken);
-        await Verify(exeuctor.Schema.Print(), "graphql");
+        await Verify(exeuctor.Schema.Print(), "txt");
     }
 }

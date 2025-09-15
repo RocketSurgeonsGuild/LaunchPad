@@ -1,0 +1,60 @@
+scalar _KeyFieldSet
+
+directive @key(fields: _KeyFieldSet!) on SCHEMA | OBJECT
+
+directive @serializationType(name: String!) on SCALAR
+
+directive @runtimeType(name: String!, valueType: Boolean) on SCALAR
+
+directive @enumValue(value: String!) on ENUM_VALUE
+
+directive @rename(name: String!) on INPUT_FIELD_DEFINITION | INPUT_OBJECT | ENUM | ENUM_VALUE
+
+extend schema @key(fields: "id")
+
+extend scalar Geometry
+    @serializationType(name: "global::System.Text.Json.JsonElement")
+    @runtimeType(name: "global::NetTopologySuite.Geometries.Geometry")
+#extend scalar Coordinates
+#    @serializationType(name: "global::System.Text.Json.JsonElement")
+#    @runtimeType(name: "global::NetTopologySuite.Geometries.Coordinate")
+
+extend scalar DateTimeZone
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.DateTimeZone", valueType: true)
+extend scalar Duration
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.Duration", valueType: true)
+extend scalar Instant
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.Instant", valueType: true)
+extend scalar IsoDayOfWeek
+    @serializationType(name: "global::System.Int32")
+    @runtimeType(name: "global::NodaTime.IsoDayOfWeek", valueType: true)
+extend scalar LocalDateTime
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.LocalDateTime", valueType: true)
+extend scalar LocalDate
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.LocalDate", valueType: true)
+extend scalar LocalTime
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.LocalTime", valueType: true)
+extend scalar OffsetDateTime
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.OffsetDateTime", valueType: true)
+extend scalar OffsetDate
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.OffsetDate", valueType: true)
+extend scalar OffsetTime
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.OffsetTime", valueType: true)
+extend scalar Offset
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.Offset", valueType: true)
+extend scalar Period
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.Period")
+extend scalar ZonedDateTime
+    @serializationType(name: "global::System.String")
+    @runtimeType(name: "global::NodaTime.ZonedDateTime", valueType: true)

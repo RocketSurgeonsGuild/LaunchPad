@@ -25,8 +25,13 @@
     </ItemGroup>
     <Target Name="DeleteGraphqlSchema" BeforeTargets="_GenerateGraphQLCode">
         <Delete
-            Files="snapshots/FoundationTests.GraphqlSchema.received.graphql"
-            Condition="Exists('snapshots/FoundationTests.GraphqlSchema.received.graphql')"
+                Files="snapshots/FoundationTests.GraphqlSchema.received.txt"
+                Condition="Exists('snapshots/FoundationTests.GraphqlSchema.received.txt')"
+        />
+        <Copy
+                SourceFiles="snapshots/FoundationTests.GraphqlSchema.verified.txt"
+                DestinationFiles="schema.graphql"
+                Condition="Exists('snapshots/FoundationTests.GraphqlSchema.verified.txt')"
         />
     </Target>
 </Project>
