@@ -1,0 +1,12 @@
+﻿[
+  {
+    Message: The required input field `serialNumber` is missing.,
+    Path: [
+      req,
+      serialNumber
+    ],
+    Extensions: {
+      field: EditRocketRequest.serialNumber
+    }
+  }
+]

@@ -156,7 +156,7 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         var response = await client.UpdateRocket.ExecuteAsync(request, TestContext.CancellationToken);
         response.IsErrorResult().ShouldBeTrue();
 
-        await Verify(response).UseParameters(request, propertyName).HashParameters();
+        await Verify(response.Errors).UseParameters(request.Id);
     }
 
     private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>

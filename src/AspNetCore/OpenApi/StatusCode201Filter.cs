@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
@@ -15,7 +15,7 @@ internal class StatusCode201Filter : IOpenApiOperationTransformer
             new OpenApiHeader
             {
                 // Required = true,
-                Schema = new OpenApiSchema { Type = "string" },
+                Schema = new OpenApiSchema { Type = JsonSchemaType.String },
                 Description = "The location of the entity that was created"
             }
         );

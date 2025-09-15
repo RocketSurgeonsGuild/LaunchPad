@@ -8,20 +8,9 @@
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
-        <ProjectReference
-            Include="../Analyzers.roslyn4.6/Rocket.Surgery.LaunchPad.Analyzers.roslyn4.6.csproj"
-            PrivateAssets="all"
-            ReferenceOutputAssembly="false"
-        />
     </ItemGroup>
     <ItemGroup>
-        <None
-            Include="$(MSBuildThisFileDirectory)\..\Analyzers.roslyn4.6\bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll"
-            Pack="true"
-            PackagePath="analyzers/dotnet/roslyn4.6/cs"
-            Visible="false"
-        />
-        <None Include="bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.9/cs" Visible="false" />
+        <None Include="bin\$(Configuration)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />

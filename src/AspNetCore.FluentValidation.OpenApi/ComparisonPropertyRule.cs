@@ -1,4 +1,5 @@
-﻿using FluentValidation.Validators;
+﻿using System.Globalization;
+using FluentValidation.Validators;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
@@ -7,10 +8,9 @@ public sealed class ComparisonPropertyRule : IPropertyRuleHandler
 {
     Task IPropertyRuleHandler.HandleAsync(OpenApiValidationContext context, CancellationToken cancellationToken)
     {
-        if (context is not { PropertyValidator: IComparisonValidator validator }) return Task.CompletedTask;
+        if (context is not { PropertyValidator: IComparisonValidator validator } || !validator.ValueToCompare.IsNumeric()) return Task.CompletedTask;
 
-        if (!validator.ValueToCompare.IsNumeric()) return Task.CompletedTask;
-        var valueToCompare = Convert.ToDecimal(validator.ValueToCompare);
+        var valueToCompare = Convert.ToDecimal(validator.ValueToCompare).ToString(CultureInfo.InvariantCulture);
         var schemaProperty = context.PropertySchema;
 
         switch (validator)
@@ -18,27 +18,27 @@ public sealed class ComparisonPropertyRule : IPropertyRuleHandler
             case { Comparison: Comparison.GreaterThanOrEqual }:
                 {
                     schemaProperty.Minimum = valueToCompare;
-                    return Task.CompletedTask;
+                    break;
                 }
 
             case { Comparison: Comparison.GreaterThan }:
                 {
                     schemaProperty.Minimum = valueToCompare;
-                    schemaProperty.ExclusiveMinimum = true;
-                    return Task.CompletedTask;
+                    schemaProperty.ExclusiveMinimum = "true";
+                    break;
                 }
 
             case { Comparison: Comparison.LessThanOrEqual }:
                 {
                     schemaProperty.Maximum = valueToCompare;
-                    return Task.CompletedTask;
+                    break;
                 }
 
             case { Comparison: Comparison.LessThan }:
                 {
                     schemaProperty.Maximum = valueToCompare;
-                    schemaProperty.ExclusiveMaximum = true;
-                    return Task.CompletedTask;
+                    schemaProperty.ExclusiveMaximum = "true";
+                    break;
                 }
         }
 

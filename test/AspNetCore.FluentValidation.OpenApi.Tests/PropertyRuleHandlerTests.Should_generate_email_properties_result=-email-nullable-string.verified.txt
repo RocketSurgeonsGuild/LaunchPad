@@ -4,9 +4,11 @@
       type: object,
       properties: {
         value: {
-          type: string,
-          format: email,
-          nullable: true
+          type: [
+            null,
+            string
+          ],
+          format: email
         }
       }
     }

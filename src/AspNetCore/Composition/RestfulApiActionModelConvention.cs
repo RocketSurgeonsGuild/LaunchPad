@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;

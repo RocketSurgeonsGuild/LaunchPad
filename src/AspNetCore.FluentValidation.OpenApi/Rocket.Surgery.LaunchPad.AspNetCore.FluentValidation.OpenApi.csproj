@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <PackageDescription>
-            The goal of this package is be a minimal and experimental implementation of open api integration of fluent validation for aspnet core
+            The goal of this package is be a minimal and experimental implementation of open api
+            integration of fluent validation for aspnet core
         </PackageDescription>
         <PackageTags>fluentvalidation,openapi</PackageTags>
     </PropertyGroup>

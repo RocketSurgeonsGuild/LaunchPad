@@ -21,8 +21,7 @@ public partial class LocalDateTimeTests(ITestContextAccessor testContext) : Mapp
                                                              _fakeTimeProvider.GetLocalNow().DateTime,
                                                              LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
                                                          )
-                                                        .UseParameters(result.ToString())
-                                                        .HashParameters();
+                                                        .UseParameters(result.ToString());
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

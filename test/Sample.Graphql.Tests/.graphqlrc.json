@@ -1,5 +1,5 @@
 {
-    "schema": "snapshots/FoundationTests.GraphqlSchema.verified.graphql",
+    "schema": "schema.graphql",
     "include": "Queries/*.graphql",
     "extensions": {
         "strawberryShake": {

@@ -1,0 +1,784 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+interface GeoJSONInterface {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"The launch record creation response"
+type CreateLaunchRecordResponse {
+  "The id of the new launch record"
+  id: UUID!
+}
+
+"The identifier of the rocket that was created"
+type CreateRocketResponse {
+  "The rocket id"
+  id: UUID!
+}
+
+"Models an OGC-style LineString"
+type GeoJSONLineStringType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of two or more positions."
+  coordinates: [Position]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"""
+Models a collection of LineStrings.
+
+Any collection of LineStrings is a valid MultiLineString.
+"""
+type GeoJSONMultiLineStringType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of LineString coordinate arrays."
+  coordinates: [Position]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"Models a collection of Points."
+type GeoJSONMultiPointType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of positions."
+  coordinates: [Position]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"Basic implementation of MultiPolygon."
+type GeoJSONMultiPolygonType implements GeoJSONInterface {
+  "The \"coordinates\" field is an array of Polygon coordinate arrays."
+  coordinates: Coordinates
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"""
+Represents a single point.
+
+A Point is topologically valid if and only if:
+
+The coordinate which defines it if any) is a valid coordinate
+(i.e. does not have an NaN X- or Y-ordinate
+"""
+type GeoJSONPointType implements GeoJSONInterface {
+  "The \"coordinates\" field is a single position."
+  coordinates: Position
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+"""
+Represents a polygon with linear edges, which may include holes.
+The outer boundary (shell)
+and inner boundaries (holes) of the polygon are represented by {@link LinearRing}s.
+The boundary rings of the polygon may have any orientation.
+Polygons are closed, simple geometries by definition.
+
+The polygon model conforms to the assertions specified in the
+OpenGIS Simple Features
+Specification for SQL.
+
+A Polygon is topologically valid if and only if:
+
+the coordinates which define it are valid coordinates
+the linear rings for the shell and holes are valid
+(i.e. are closed and do not self-intersect)
+holes touch the shell or another hole at at most one point
+(which implies that the rings of the shell and holes must not cross)
+the interior of the polygon is connected,
+or equivalently no sequence of touching holes
+makes the interior of the polygon disconnected
+(i.e. effectively split the polygon into two pieces).
+"""
+type GeoJSONPolygonType implements GeoJSONInterface {
+  "The \"coordinates\" field MUST be an array of linear ring coordinate arrays. For Polygons with more than one of these rings, the first MUST be the exterior ring, and any others MUST be interior rings. The exterior ring bounds the surface, and the interior rings (if present) bound holes within the surface."
+  coordinates: [[Position]]
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType!
+  "The minimum bounding box around the geometry object"
+  bbox: [Float!]!
+  "The coordinate reference system integer identifier"
+  crs: Int!
+}
+
+type GeometryOutputs {
+  geometry: Geometry
+  point: GeoJSONPointType
+  lineString: GeoJSONLineStringType
+  polygon: GeoJSONPolygonType
+  multiPoint: GeoJSONMultiPointType
+  multiLineString: GeoJSONMultiLineStringType
+  multiPolygon: GeoJSONMultiPolygonType
+}
+
+type LaunchRecord {
+  rocket: ReadyRocket!
+  id: UUID!
+  partner: String
+  payload: String
+  payloadWeightKg: Long!
+  actualLaunchDate: DateTime
+  scheduledLaunchDate: DateTime!
+}
+
+"The launch record details"
+type LaunchRecordModel {
+  "The launch record id"
+  id: UUID!
+  "The launch partner"
+  partner: String!
+  "The payload details"
+  payload: String!
+  "The payload weight in Kg"
+  payloadWeightKg: Long!
+  "The actual launch date"
+  actualLaunchDate: Instant
+  "The intended date for the launch"
+  scheduledLaunchDate: Instant!
+  "The serial number of the reusable rocket"
+  rocketSerialNumber: String!
+  "The kind of rocket that will be launching"
+  rocketType: RocketType!
+}
+
+"A connection to a list of items."
+type LaunchRecordsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [LaunchRecordsEdge!]
+  "A flattened list of the nodes."
+  nodes: [LaunchRecord!]
+}
+
+"An edge in a connection."
+type LaunchRecordsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: LaunchRecord!
+}
+
+type Mutation {
+  createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse! @cost(weight: "10")
+  editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel! @cost(weight: "10")
+  patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel! @cost(weight: "10")
+  deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void! @cost(weight: "10")
+  createRocket(request: CreateRocketRequest!): CreateRocketResponse! @cost(weight: "10")
+  editRocket(request: EditRocketRequest!): RocketModel! @cost(weight: "10")
+  patchRocket(request: EditRocketPatchRequestInput!): RocketModel! @cost(weight: "10")
+  deleteRocket(request: DeleteRocketRequest!): Void! @cost(weight: "10")
+}
+
+type NodaTimeOutputs {
+  instant: Instant
+  localDate: LocalDate
+  localTime: LocalTime
+  localDateTime: LocalDateTime
+  offsetDateTime: OffsetDateTime
+  offsetTime: OffsetTime
+  period: Period
+  duration: Duration
+  zonedDateTime: ZonedDateTime
+  offset: Offset
+  isoDayOfWeek: IsoDayOfWeek
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+type Query {
+  nodaTimeTest(inputs: NodaTimeInputsInput!): NodaTimeOutputs!
+  geometryTest(inputs: GeometryInputsInput!): GeometryOutputs!
+  launchRecords("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: LaunchRecordFilterInput @cost(weight: "10") order: [LaunchRecordSortInput!] @cost(weight: "10")): LaunchRecordsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], slicingArgumentDefaultValue: 10, sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  rockets("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ReadyRocketFilterInput @cost(weight: "10") order: [ReadyRocketSortInput!] @cost(weight: "10")): RocketsConnection @listSize(assumedSize: 50, slicingArguments: [ "first", "last" ], slicingArgumentDefaultValue: 10, sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+}
+
+"A rocket in inventory"
+type ReadyRocket {
+  launchRecords: [LaunchRecord!]!
+  id: UUID!
+  serialNumber: String!
+  type: RocketType!
+}
+
+"The details of a given rocket"
+type RocketModel {
+  "The unique rocket identifier"
+  id: UUID!
+  "The serial number of the rocket"
+  sn: String!
+  "The type of the rocket"
+  type: RocketType!
+}
+
+"A connection to a list of items."
+type RocketsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [RocketsEdge!]
+  "A flattened list of the nodes."
+  nodes: [ReadyRocket!]
+}
+
+"An edge in a connection."
+type RocketsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: ReadyRocket!
+}
+
+"Create a launch record"
+input CreateLaunchRecordRequest {
+  "The rocket to use"
+  rocketId: UUID!
+  "The launch partner"
+  partner: String
+  "The launch partners payload"
+  payload: String
+  "The payload weight"
+  payloadWeightKg: Float!
+  "The actual launch date"
+  actualLaunchDate: Instant
+  "The intended launch date"
+  scheduledLaunchDate: Instant!
+}
+
+"The operation to create a new rocket record"
+input CreateRocketRequest {
+  "The serial number of the rocket"
+  serialNumber: String!
+  "The type of rocket"
+  type: RocketType!
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime @cost(weight: "10")
+  neq: DateTime @cost(weight: "10")
+  in: [DateTime] @cost(weight: "10")
+  nin: [DateTime] @cost(weight: "10")
+  gt: DateTime @cost(weight: "10")
+  ngt: DateTime @cost(weight: "10")
+  gte: DateTime @cost(weight: "10")
+  ngte: DateTime @cost(weight: "10")
+  lt: DateTime @cost(weight: "10")
+  nlt: DateTime @cost(weight: "10")
+  lte: DateTime @cost(weight: "10")
+  nlte: DateTime @cost(weight: "10")
+}
+
+"The request to delete a launch record"
+input DeleteLaunchRecordRequest {
+  "The id of the record to delete"
+  id: UUID!
+}
+
+"The request to remove a rocket from the system"
+input DeleteRocketRequest {
+  "The id of the rocket to remove"
+  id: UUID!
+}
+
+input EditLaunchRecordPatchRequestInput {
+  id: UUID!
+  partner: String
+  payload: String
+  payloadWeightKg: Float
+  actualLaunchDate: Instant
+  scheduledLaunchDate: Instant
+  rocketId: UUID
+}
+
+"The launch record update request"
+input EditLaunchRecordRequest {
+  "The launch record to update"
+  id: UUID!
+  "The updated launch partner"
+  partner: String!
+  "The updated launch payload"
+  payload: String!
+  "The updated payload weight"
+  payloadWeightKg: Float!
+  "The updated actual launch date"
+  actualLaunchDate: Instant
+  "The scheduled launch date"
+  scheduledLaunchDate: Instant!
+  "The update rocket id"
+  rocketId: UUID!
+}
+
+input EditRocketPatchRequestInput {
+  id: UUID!
+  serialNumber: String
+  type: RocketType
+}
+
+"The edit operation to update a rocket"
+input EditRocketRequest {
+  "The rocket id"
+  id: UUID!
+  "The serial number of the rocket"
+  serialNumber: String!
+  "The type of the rocket"
+  type: RocketType!
+}
+
+"Models an OGC-style LineString"
+input GeoJSONLineStringInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of two or more positions."
+  coordinates: [Position]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"""
+Models a collection of LineStrings.
+
+Any collection of LineStrings is a valid MultiLineString.
+"""
+input GeoJSONMultiLineStringInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of LineString coordinate arrays."
+  coordinates: [[Position]]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"Models a collection of Points."
+input GeoJSONMultiPointInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of positions."
+  coordinates: [Position]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"Basic implementation of MultiPolygon."
+input GeoJSONMultiPolygonInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is an array of Polygon coordinate arrays."
+  coordinates: Coordinates
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"""
+Represents a single point.
+
+A Point is topologically valid if and only if:
+
+The coordinate which defines it if any) is a valid coordinate
+(i.e. does not have an NaN X- or Y-ordinate
+"""
+input GeoJSONPointInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field is a single position."
+  coordinates: Position
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+"""
+Represents a polygon with linear edges, which may include holes.
+The outer boundary (shell)
+and inner boundaries (holes) of the polygon are represented by {@link LinearRing}s.
+The boundary rings of the polygon may have any orientation.
+Polygons are closed, simple geometries by definition.
+
+The polygon model conforms to the assertions specified in the
+OpenGIS Simple Features
+Specification for SQL.
+
+A Polygon is topologically valid if and only if:
+
+the coordinates which define it are valid coordinates
+the linear rings for the shell and holes are valid
+(i.e. are closed and do not self-intersect)
+holes touch the shell or another hole at at most one point
+(which implies that the rings of the shell and holes must not cross)
+the interior of the polygon is connected,
+or equivalently no sequence of touching holes
+makes the interior of the polygon disconnected
+(i.e. effectively split the polygon into two pieces).
+"""
+input GeoJSONPolygonInput {
+  "The geometry type of the GeoJson object"
+  type: GeoJSONGeometryType
+  "The \"coordinates\" field MUST be an array of linear ring coordinate arrays. For Polygons with more than one of these rings, the first MUST be the exterior ring, and any others MUST be interior rings. The exterior ring bounds the surface, and the interior rings (if present) bound holes within the surface."
+  coordinates: [[Position]]
+  "The coordinate reference system integer identifier"
+  crs: Int
+}
+
+input GeometryInputsInput {
+  geometry: Geometry
+}
+
+input LaunchRecordFilterInput {
+  and: [LaunchRecordFilterInput!]
+  or: [LaunchRecordFilterInput!]
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
+  partner: StringOperationFilterInput
+  payload: StringOperationFilterInput
+  payloadWeightKg: LongOperationFilterInput
+  actualLaunchDate: DateTimeOperationFilterInput
+  scheduledLaunchDate: DateTimeOperationFilterInput
+  rocketId: StronglyTypedIdFilterOfUuidTypeFilterInput
+  rocket: ReadyRocketFilterInput
+}
+
+input LaunchRecordSortInput {
+  partner: SortEnumType @cost(weight: "10")
+  payload: SortEnumType @cost(weight: "10")
+  payloadWeightKg: SortEnumType @cost(weight: "10")
+  actualLaunchDate: SortEnumType @cost(weight: "10")
+  scheduledLaunchDate: SortEnumType @cost(weight: "10")
+}
+
+input ListFilterInputTypeOfLaunchRecordFilterInput {
+  all: LaunchRecordFilterInput @cost(weight: "10")
+  none: LaunchRecordFilterInput @cost(weight: "10")
+  some: LaunchRecordFilterInput @cost(weight: "10")
+  any: Boolean @cost(weight: "10")
+}
+
+input LongOperationFilterInput {
+  eq: Long @cost(weight: "10")
+  neq: Long @cost(weight: "10")
+  in: [Long] @cost(weight: "10")
+  nin: [Long] @cost(weight: "10")
+  gt: Long @cost(weight: "10")
+  ngt: Long @cost(weight: "10")
+  gte: Long @cost(weight: "10")
+  ngte: Long @cost(weight: "10")
+  lt: Long @cost(weight: "10")
+  nlt: Long @cost(weight: "10")
+  lte: Long @cost(weight: "10")
+  nlte: Long @cost(weight: "10")
+}
+
+input NodaTimeInputsInput {
+  instant: Instant
+  localDate: LocalDate
+  localTime: LocalTime
+  localDateTime: LocalDateTime
+  offsetDateTime: OffsetDateTime
+  offsetTime: OffsetTime
+  period: Period
+  duration: Duration
+  zonedDateTime: ZonedDateTime
+  offset: Offset
+  isoDayOfWeek: IsoDayOfWeek
+}
+
+"A rocket in inventory"
+input ReadyRocketFilterInput {
+  and: [ReadyRocketFilterInput!]
+  or: [ReadyRocketFilterInput!]
+  id: StronglyTypedIdFilterOfUuidTypeFilterInput
+  serialNumber: StringOperationFilterInput
+  type: RocketTypeOperationFilterInput
+  launchRecords: ListFilterInputTypeOfLaunchRecordFilterInput
+}
+
+"A rocket in inventory"
+input ReadyRocketSortInput {
+  type: SortEnumType @cost(weight: "10")
+  serialNumber: SortEnumType @cost(weight: "10")
+}
+
+input RocketTypeOperationFilterInput {
+  eq: RocketType @cost(weight: "10")
+  neq: RocketType @cost(weight: "10")
+  in: [RocketType!] @cost(weight: "10")
+  nin: [RocketType!] @cost(weight: "10")
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String @cost(weight: "10")
+  neq: String @cost(weight: "10")
+  contains: String @cost(weight: "20")
+  ncontains: String @cost(weight: "20")
+  in: [String] @cost(weight: "10")
+  nin: [String] @cost(weight: "10")
+  startsWith: String @cost(weight: "20")
+  nstartsWith: String @cost(weight: "20")
+  endsWith: String @cost(weight: "20")
+  nendsWith: String @cost(weight: "20")
+}
+
+input StronglyTypedIdFilterOfUuidTypeFilterInput {
+  eq: UUID @cost(weight: "10")
+  neq: UUID @cost(weight: "10")
+  in: [UUID] @cost(weight: "10")
+  nin: [UUID] @cost(weight: "10")
+}
+
+input StronglyTypedIdOperationFilterInput {
+  eq: UUID @cost(weight: "10")
+  neq: UUID @cost(weight: "10")
+  in: [UUID] @cost(weight: "10")
+  nin: [UUID] @cost(weight: "10")
+}
+
+enum GeoJSONGeometryType {
+  Point
+  MultiPoint
+  LineString
+  MultiLineString
+  Polygon
+  MultiPolygon
+  GeometryCollection
+}
+
+"The available rocket types"
+enum RocketType {
+  "Your best bet"
+  FALCON9
+  "For those huge payloads"
+  FALCON_HEAVY
+  "We stole our competitors rocket platform!"
+  ATLAS_V
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost("The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc." weight: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
+
+"The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
+directive @listSize("The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field." assumedSize: Int "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments." slicingArguments: [String!] "The `slicingArgumentDefaultValue` argument can be used to define a default value for a slicing argument, which is used if the argument is not present in a query." slicingArgumentDefaultValue: Int "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields." sizedFields: [String!] "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error." requireOneSlicingArgument: Boolean! = true) on FIELD_DEFINITION
+
+"""
+The `@oneOf` directive is used within the type system definition language
+ to indicate:
+
+ - an Input Object is a Oneof Input Object, or
+ - an Object Type's Field is a Oneof Field.
+"""
+directive @oneOf on INPUT_OBJECT
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"""
+The @tag directive is used to apply arbitrary string
+metadata to a schema location. Custom tooling can use
+this metadata during any step of the schema delivery flow,
+including composition, static analysis, and documentation.
+
+interface Book {
+  id: ID! @tag(name: "your-value")
+  title: String!
+  author: String!
+}
+"""
+directive @tag("The name of the tag." name: String!) repeatable on SCHEMA | SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+"A coordinate is an array of positions."
+scalar Coordinates
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"""
+Represents a time zone - a mapping between UTC and local time.
+A time zone maps UTC instants to local times - or, equivalently, to the offset from UTC at any particular instant.
+
+Example: `Europe/Zurich`
+"""
+scalar DateTimeZone
+
+"""
+Represents a fixed (and calendar-independent) length of time.
+
+Allowed patterns:
+- `-hh:mm:ss.sssssssss`
+- `-D:hh:mm:ss.sssssssss`
+
+Examples:
+- `-44:00:00.999999999`
+- `-1:20:00:00.999999999`
+"""
+scalar Duration
+
+scalar Geometry
+
+"Represents an instant on the global timeline, with nanosecond resolution."
+scalar Instant
+
+"""
+Equates the days of the week with their numerical value according to ISO-8601.
+ Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5, Saturday = 6, Sunday = 7.
+"""
+scalar IsoDayOfWeek
+
+"""
+LocalDate represents a date within the calendar, with no reference to a particular time zone or time of day.
+
+Allowed patterns:
+- `YYYY-MM-DD`
+- `YYYY-MM-DD (calendar)`
+
+Examples:
+- `2000-01-01`
+- `2000-01-01 (ISO)`
+"""
+scalar LocalDate
+
+"""
+A date and time in a particular calendar system.
+
+Allowed patterns:
+- `YYYY-MM-DDThh:mm:ss`
+- `YYYY-MM-DDThh:mm:ss.sssssssss`
+- `YYYY-MM-DDThh:mm:ss.sssssss`
+
+Examples:
+- `2000-01-01T20:00:00`
+- `2000-01-01T20:00:00.999`
+- `2000-01-01T20:00:00.9999999`
+"""
+scalar LocalDateTime
+
+"""
+LocalTime represents a time of day, with no reference to a particular calendar, time zone, or date.
+
+Allowed patterns:
+- `hh:mm:ss.sssssssss`
+- `hh:mm:ss`
+
+Examples:
+- `20:00:00.999`
+- `20:00:00`
+"""
+scalar LocalTime
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+"""
+An offset from UTC in seconds.
+ A positive value means that the local time is ahead of UTC (e.g. for Europe); a negative value means that the local time is behind UTC (e.g. for America).
+
+Allowed patterns:
+- `±hh:mm:ss`
+- `Z`
+
+Examples:
+- `+02:30:00`
+- `Z`
+"""
+scalar Offset
+
+"""
+A combination of a LocalDate and an Offset, to represent a date at a specific offset from UTC but without any time-of-day information.
+
+Allowed patterns:
+- `YYYY-MM-DD±hh:mm`
+- `YYYY-MM-DD±hh:mm (calendar)`
+
+Examples:
+- `2000-01-01Z`
+- `2000-01-01Z (ISO)`
+"""
+scalar OffsetDate
+
+"""
+A local date and time in a particular calendar system, combined with an offset from UTC.
+
+Allowed patterns:
+- `YYYY-MM-DDThh:mm:ss±hh:mm`
+- `YYYY-MM-DDThh:mm:ss.sssssssss±hh:mm (calendar)`
+
+Examples:
+- `2000-01-01T20:00:00Z`
+- `2000-01-01T20:00:00.999Z (ISO)`
+"""
+scalar OffsetDateTime
+
+"""
+A combination of a LocalTime and an Offset, to represent a time-of-day at a specific offset from UTC but without any date information.
+
+Allowed patterns:
+- `hh:mm:ss.sssssssss±hh:mm`
+- `hh:mm:ss±hh:mm`
+- `hh:mm:ss.sssssssss±hh:mm`
+
+Examples:
+- `20:00:00.999999999Z`
+- `20:00:00Z`
+- `20:00:00.999Z`
+"""
+scalar OffsetTime
+
+"""
+Represents a period of time expressed in human chronological terms: hours, days, weeks, months and so on.
+
+Pattern: `PnYnMnDTnHnMnS`
+Example: `P3Y6M4DT12H30M5S`
+"""
+scalar Period
+
+"A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
+scalar Position
+
+scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
+
+scalar Void
+
+"""
+A LocalDateTime in a specific time zone and with a particular offset to distinguish between otherwise-ambiguous instants.
+A ZonedDateTime is global, in that it maps to a single Instant.
+"""
+scalar ZonedDateTime

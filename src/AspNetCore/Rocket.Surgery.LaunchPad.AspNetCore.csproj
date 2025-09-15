@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -14,7 +14,8 @@
     <ItemGroup>
         <PackageReference Include="Humanizer.Core" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-        <ProjectReference Include="..\AspNetCore.FluentValidation.OpenApi\Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
+        <ProjectReference
+            Include="..\AspNetCore.FluentValidation.OpenApi\Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />

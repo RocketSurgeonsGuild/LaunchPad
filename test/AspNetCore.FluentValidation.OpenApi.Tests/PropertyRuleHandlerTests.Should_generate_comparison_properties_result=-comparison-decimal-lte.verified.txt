@@ -5,7 +5,11 @@
       properties: {
         value: {
           maximum: 1.1,
-          type: number,
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$,
+          type: [
+            number,
+            string
+          ],
           format: double
         }
       }

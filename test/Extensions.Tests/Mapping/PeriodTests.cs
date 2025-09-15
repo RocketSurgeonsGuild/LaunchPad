@@ -19,8 +19,7 @@ public partial class PeriodTests(ITestContextAccessor testContext) : MapperTestB
                                                              Period.FromMonths(10),
                                                              "P5M"
                                                          )
-                                                        .UseParameters(result.ToString())
-                                                        .HashParameters();
+                                                        .UseParameters(result.ToString());
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

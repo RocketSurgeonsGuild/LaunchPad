@@ -19,8 +19,7 @@ public partial class OffsetDateTimeTests(ITestContextAccessor testContext) : Map
                                                              _fakeTimeProvider.GetLocalNow(),
                                                              OffsetDateTime.FromDateTimeOffset(_fakeTimeProvider.GetLocalNow())
                                                          )
-                                                        .UseParameters(result.ToString())
-                                                        .HashParameters();
+                                                        .UseParameters(result.ToString());
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

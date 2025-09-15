@@ -18,8 +18,7 @@ public partial class LocalDateTests(ITestContextAccessor testContext) : MapperTe
                                                              DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
                                                              LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
                                                          )
-                                                        .UseParameters(result.ToString())
-                                                        .HashParameters();
+                                                        .UseParameters(result.ToString());
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

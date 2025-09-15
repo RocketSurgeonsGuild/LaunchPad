@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
 
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <GraphQLStrictSchemaValidation>true</GraphQLStrictSchemaValidation>
@@ -15,15 +15,23 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
-        <ProjectReference Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
-        <ProjectReference Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
-        <ProjectReference Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
+        <ProjectReference
+            Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+        <ProjectReference
+            Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
+        <ProjectReference
+            Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
         <Using Include="StrawberryShake" />
     </ItemGroup>
     <Target Name="DeleteGraphqlSchema" BeforeTargets="_GenerateGraphQLCode">
         <Delete
-            Files="snapshots/FoundationTests.GraphqlSchema.received.graphql"
-            Condition="Exists('snapshots/FoundationTests.GraphqlSchema.received.graphql')"
+                Files="snapshots/FoundationTests.GraphqlSchema.received.txt"
+                Condition="Exists('snapshots/FoundationTests.GraphqlSchema.received.txt')"
+        />
+        <Copy
+                SourceFiles="snapshots/FoundationTests.GraphqlSchema.verified.txt"
+                DestinationFiles="schema.graphql"
+                Condition="Exists('snapshots/FoundationTests.GraphqlSchema.verified.txt')"
         />
     </Target>
 </Project>
