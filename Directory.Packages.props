@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <Project>
     <PropertyGroup>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
     <ItemGroup>
         <GlobalPackageReference Include="Rocket.Surgery.MSBuild.CI" Version="1.3.0-beta.2" />
-        <GlobalPackageReference Include="Rocket.Surgery.MSBuild.GlobalAnalyzerConfig"
-            Version="1.3.0-beta.2" />
+        <GlobalPackageReference Include="Rocket.Surgery.MSBuild.GlobalAnalyzerConfig" Version="1.3.0-beta.2" />
         <GlobalPackageReference Include="Rocket.Surgery.MSBuild.GitVersion" Version="1.3.0-beta.2" />
         <GlobalPackageReference Include="Rocket.Surgery.MSBuild.SourceLink" Version="1.3.0-beta.2" />
         <GlobalPackageReference Include="Rocket.Surgery.MyAssembly" Version="1.3.0-beta.2" />
@@ -80,33 +78,25 @@
 
 
         <PackageVersion Include="MediatR" Version="12.5.0" />
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson"
-            Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.0-rc.1.25451.107" />
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0-rc.1.25451.107" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.Web"
-            Version="10.0.0-rc.1.25451.107" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly"
-            Version="10.0.0-rc.1.25451.107" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer"
-            Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0-rc.1.25451.107" />
 
 
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite"
-                        Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0-rc.1.25451.107" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0-rc.1.25451.107" />
         <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.0-rc.1.25451.107" />
 
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0-rc.1.25451.107" />
         <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.0-rc.1.25451.107" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection"
-            Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-rc.1.25451.107" />
 
-        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks"
-            Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.0-rc.1.25451.107" />
 
 
-        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions"
-            Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0-rc.1.25451.107" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
@@ -130,8 +120,7 @@
         <PackageVersion Include="Rocket.Surgery.Conventions.DryIoc" Version="15.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.Conventions.Serilog" Version="15.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.CommandLine" Version="15.0.0-beta.2" />
-        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions"
-            Version="14.0.0-beta.1" />
+        <PackageVersion Include="Rocket.Surgery.DependencyInjection.Extensions" Version="14.0.0-beta.1" />
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="14.0.0-beta.1" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="15.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="15.0.0-beta.2" />
@@ -159,8 +148,7 @@
         <PackageVersion Include="System.Net.Http.Json" Version="10.0.0-rc.1.25451.107" />
         <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.5.0" />
         <PackageVersion Include="Riok.Mapperly" Version="4.2.1" />
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client"
-            Version="10.0.0-rc.1.25451.107" />
+        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="10.0.0-rc.1.25451.107" />
 
         <PackageVersion Include="OpenTelemetry" Version="1.12.0" />
 
@@ -174,11 +162,9 @@
         <PackageVersion Include="FakeItEasy" Version="8.3.0" />
         <PackageVersion Include="Shouldly" Version="4.3.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy"
-            Version="10.0.0-beta.2" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="10.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit3" Version="10.0.0-beta.2" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators"
-            Version="10.0.0-beta.2" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="10.0.0-beta.2" />
         <PackageVersion Include="xunit.v3" Version="3.0.1" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
         <PackageVersion Include="Verify.XunitV3" Version="30.13.0" />
@@ -189,5 +175,6 @@
     </ItemGroup>
     <Import
         Project="$(MSBuildThisFileDirectory)/Directory.Packages.support.props"
-        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')" />
+        Condition="Exists('$(MSBuildThisFileDirectory)/Directory.Packages.support.props')"
+    />
 </Project>
