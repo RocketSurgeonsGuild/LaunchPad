@@ -5,8 +5,10 @@
       properties: {
         value: {
           maxLength: 100,
-          type: string,
-          nullable: true
+          type: [
+            null,
+            string
+          ]
         }
       }
     }

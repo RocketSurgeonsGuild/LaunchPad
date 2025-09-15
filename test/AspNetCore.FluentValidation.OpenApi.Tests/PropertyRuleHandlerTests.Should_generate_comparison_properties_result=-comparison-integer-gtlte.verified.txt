@@ -5,9 +5,12 @@
       properties: {
         value: {
           maximum: 10,
-          minimum: 2,
           exclusiveMinimum: true,
-          type: integer,
+          pattern: ^-?(?:0|[1-9]\d*)$,
+          type: [
+            integer,
+            string
+          ],
           format: int32
         }
       }

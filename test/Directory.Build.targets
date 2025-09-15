@@ -16,6 +16,7 @@
         <PackageReference Include="Verify.NewtonsoftJson" />
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
         <PackageReference Include="Xunit.Combinatorial" />
+        <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Rocket.Surgery.Conventions" />

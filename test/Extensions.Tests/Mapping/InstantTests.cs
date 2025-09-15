@@ -20,8 +20,7 @@ public partial class InstantTests(ITestContextAccessor testContext) : MapperTest
                                                              _fakeTimeProvider.GetUtcNow().UtcDateTime,
                                                              Instant.FromDateTimeOffset(_fakeTimeProvider.GetUtcNow())
                                                          )
-                                                        .UseParameters(result.ToString())
-                                                        .HashParameters();
+                                                        .UseParameters(result.ToString());
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

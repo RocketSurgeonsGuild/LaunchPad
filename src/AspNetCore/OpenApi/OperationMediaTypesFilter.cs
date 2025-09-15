@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 

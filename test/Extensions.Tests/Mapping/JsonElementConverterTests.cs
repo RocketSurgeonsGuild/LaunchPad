@@ -46,8 +46,7 @@ public partial class JsonElementConverterTests(ITestContextAccessor testContext)
                    JsonDocument.Parse("[1234,5678]").RootElement,
                    JsonDocument.Parse("{\"a\":1234}").RootElement
                )
-              .UseParameters(result.ToString())
-              .HashParameters();
+              .UseParameters(result.ToString());
     }
 
     [Mapper]

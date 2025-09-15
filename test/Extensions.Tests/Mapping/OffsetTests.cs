@@ -19,8 +19,7 @@ public partial class OffsetTests(ITestContextAccessor testContext) : MapperTestB
                                                              Offset.FromHours(11),
                                                              TimeSpan.FromHours(10)
                                                          )
-                                                        .UseParameters(result.ToString())
-                                                        .HashParameters();
+                                                        .UseParameters(result.ToString());
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
 

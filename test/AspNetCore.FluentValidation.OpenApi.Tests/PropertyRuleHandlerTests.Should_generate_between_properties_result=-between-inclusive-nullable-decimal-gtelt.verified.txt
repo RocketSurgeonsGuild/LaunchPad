@@ -6,9 +6,13 @@
         value: {
           maximum: 2.2,
           minimum: 1.1,
-          type: number,
-          format: double,
-          nullable: true
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$,
+          type: [
+            null,
+            number,
+            string
+          ],
+          format: double
         }
       }
     }

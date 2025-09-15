@@ -39,13 +39,11 @@
               <Include>
                 <ModulePath>.*\.build\.dll</ModulePath>
                 <ModulePath>.*Analyzers\.Tests\.dll</ModulePath>
-                <ModulePath>.*Analyzers\.Tests\.roslyn4\.6\.dll</ModulePath>
                 <ModulePath>.*AspNetCore\.FluentValidation\.OpenApi\.Tests\.dll</ModulePath>
                 <ModulePath>.*AspNetCore\.Tests\.dll</ModulePath>
                 <ModulePath>.*Extensions\.Tests\.dll</ModulePath>
                 <ModulePath>.*Metadata\.Tests\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Analyzers\.dll</ModulePath>
-                <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Analyzers\.roslyn4\.6\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.Blazor\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.FluentValidation\.OpenApi\.dll</ModulePath>
@@ -117,7 +115,7 @@
                 <ModulePath>.*HotChocolate\.Types\.OffsetPagination\.dll</ModulePath>
                 <ModulePath>.*HotChocolate\.Types\.Spatial\.dll</ModulePath>
                 <ModulePath>.*Humanizer\.Core\.dll</ModulePath>
-                <ModulePath>.*JetBrains\.Annotations\.dll</ModulePath>
+                <ModulePath>.*JetBrains\.Annotations\.Sources\.dll</ModulePath>
                 <ModulePath>.*JetBrains\.dotCover\.CommandLineTools\.dll</ModulePath>
                 <ModulePath>.*JetBrains\.ExternalAnnotations\.dll</ModulePath>
                 <ModulePath>.*JetBrains\.ReSharper\.GlobalTools\.dll</ModulePath>
@@ -224,9 +222,6 @@
                 <ModulePath>.*StronglyTypedId\.Templates\.dll</ModulePath>
                 <ModulePath>.*Swashbuckle\.AspNetCore\.ReDoc\.dll</ModulePath>
                 <ModulePath>.*Swashbuckle\.AspNetCore\.SwaggerUI\.dll</ModulePath>
-                <ModulePath>.*System\.Collections\.Immutable\.dll</ModulePath>
-                <ModulePath>.*System\.Interactive\.Async\.dll</ModulePath>
-                <ModulePath>.*System\.Interactive\.dll</ModulePath>
                 <ModulePath>.*System\.Net\.Http\.Json\.dll</ModulePath>
                 <ModulePath>.*System\.Reactive\.dll</ModulePath>
                 <ModulePath>.*System\.Reactive\.Observable\.Aliases\.dll</ModulePath>

@@ -1,4 +1,6 @@
-﻿using FluentValidation.Validators;
+﻿using System.Globalization;
+using FluentValidation.Validators;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
@@ -9,7 +11,7 @@ public sealed class LengthPropertyRule : IPropertyRuleHandler
     {
         if (context.PropertyValidator is not ILengthValidator validator) return Task.CompletedTask;
 
-        if (context.PropertySchema.Type == "array")
+        if (context.PropertySchema.Type == JsonSchemaType.Array)
         {
             if (validator.Max > 0)
                 context.PropertySchema.MaxItems = validator.Max;

@@ -4,9 +4,12 @@
       type: object,
       properties: {
         value: {
-          minimum: 2.1,
           exclusiveMinimum: true,
-          type: number,
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$,
+          type: [
+            number,
+            string
+          ],
           format: double
         }
       }

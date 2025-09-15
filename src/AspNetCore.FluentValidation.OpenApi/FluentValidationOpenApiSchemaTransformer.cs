@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
@@ -16,10 +16,10 @@ public class FluentValidationOpenApiSchemaTransformer(IEnumerable<IPropertyRuleH
         foreach (var (validators, propertyKey, property) in descriptor
                                                    .GetMembersWithValidators()
                                                    .Join(
-                                                        schema.Properties,
+                                                        schema.Properties.Where(z => z.Value is OpenApiSchema),
                                                         z => z.Key,
                                                         z => z.Key,
-                                                        (z, y) => ( validators: z.AsEnumerable(), property: y.Key, schema: y.Value ),
+                                                        (z, y) => ( validators: z.AsEnumerable(), property: y.Key, schema: (OpenApiSchema)y.Value ),
                                                         StringComparer.OrdinalIgnoreCase
                                                     ))
 

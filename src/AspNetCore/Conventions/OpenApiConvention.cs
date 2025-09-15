@@ -1,9 +1,9 @@
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-
+using Microsoft.OpenApi;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
@@ -34,18 +34,17 @@ public partial class OpenApiConvention : IServiceConvention
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        services.AddOpenApi(
-            options =>
-            {
-                options.AddSchemaTransformer<NestedTypeSchemaFilter>();
-                options.AddSchemaTransformer<RestfulApiActionModelConvention>();
-                options.AddSchemaTransformer<ProblemDetailsSchemaFilter>();
-                options.AddSchemaTransformer<StronglyTypedIdSchemaFilter>();
-                options.AddOperationTransformer<OperationIdFilter>();
-                options.AddOperationTransformer<StatusCode201Filter>();
-                options.AddOperationTransformer<OperationMediaTypesFilter>();
-                options.AddOperationTransformer<AuthorizeFilter>();
-            }
+        services.AddOpenApi(options =>
+                            {
+                                options.AddSchemaTransformer<NestedTypeSchemaFilter>();
+                                options.AddSchemaTransformer<RestfulApiActionModelConvention>();
+                                options.AddSchemaTransformer<ProblemDetailsSchemaFilter>();
+                                options.AddSchemaTransformer<StronglyTypedIdSchemaFilter>();
+                                options.AddOperationTransformer<OperationIdFilter>();
+                                options.AddOperationTransformer<StatusCode201Filter>();
+                                options.AddOperationTransformer<OperationMediaTypesFilter>();
+                                options.AddOperationTransformer<AuthorizeFilter>();
+                            }
         );
         services.AddFluentValidationOpenApi();
     }
@@ -63,7 +62,7 @@ internal class NestedTypeSchemaFilter : IOpenApiSchemaTransformer
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         if (context is not { JsonTypeInfo.Type.DeclaringType: { } }) return Task.CompletedTask;
-        schema.Annotations["x-schema-id"] = $"{context.JsonTypeInfo.Type.DeclaringType.Name}{context.JsonTypeInfo.Type.Name}";
+        schema.AddExtension("x-schema-id", new JsonNodeExtension($"{context.JsonTypeInfo.Type.DeclaringType.Name}{context.JsonTypeInfo.Type.Name}"));
         return Task.CompletedTask;
     }
 }

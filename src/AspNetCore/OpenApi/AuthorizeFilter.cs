@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
@@ -11,10 +11,10 @@ internal class AuthorizeFilter : IOpenApiOperationTransformer
         if (operation.Responses.TryGetValue("401", out var value))
             value.Headers.Add(
                 "www-authenticate",
-                new()
+                new OpenApiHeader
                 {
                     // Required = true,
-                    Schema = new() { Type = "string", },
+                    Schema = new OpenApiSchema { Type = JsonSchemaType.String, },
                     Description = "The error details",
                 }
             );
@@ -22,10 +22,10 @@ internal class AuthorizeFilter : IOpenApiOperationTransformer
         if (operation.Responses.TryGetValue("403", out value))
             value.Headers.Add(
                 "www-authenticate",
-                new()
+                new OpenApiHeader()
                 {
                     // Required = true,
-                    Schema = new() { Type = "string", },
+                    Schema = new OpenApiSchema { Type = JsonSchemaType.String, },
                     Description = "The error details",
                 }
             );

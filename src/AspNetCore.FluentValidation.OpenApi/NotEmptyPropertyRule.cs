@@ -1,4 +1,5 @@
 ﻿using FluentValidation.Validators;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
@@ -7,7 +8,7 @@ public sealed class NotEmptyPropertyRule : IPropertyRuleHandler
 {
     Task IPropertyRuleHandler.HandleAsync(OpenApiValidationContext context, CancellationToken cancellationToken)
     {
-        if (context is { PropertyValidator: not INotEmptyValidator } or { PropertySchema.MinLength: > 1 } or { PropertySchema.Type: not ("string" or "array") })
+        if (context is { PropertyValidator: not INotEmptyValidator } or { PropertySchema.MinLength: > 1 } or { PropertySchema.Type: not (JsonSchemaType.String or JsonSchemaType.Array) })
             return Task.CompletedTask;
         context.PropertySchema.MinLength = 1;
         return Task.CompletedTask;

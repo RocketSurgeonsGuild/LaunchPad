@@ -1,4 +1,5 @@
-﻿using FluentValidation.Validators;
+﻿using System.Globalization;
+using FluentValidation.Validators;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
@@ -12,14 +13,14 @@ public sealed class BetweenPropertyRule : IPropertyRuleHandler
         var schemaProperty = context.PropertySchema;
         if (validator.From.IsNumeric())
         {
-            schemaProperty.Minimum = Convert.ToDecimal(validator.From);
-            if (validator.Name == "ExclusiveBetweenValidator") schemaProperty.ExclusiveMinimum = true;
+            schemaProperty.Minimum = Convert.ToDecimal(validator.From).ToString(CultureInfo.InvariantCulture);
+            if (validator.Name == "ExclusiveBetweenValidator") schemaProperty.ExclusiveMinimum = "true";
         }
 
         if (validator.To.IsNumeric())
         {
-            schemaProperty.Maximum = Convert.ToDecimal(validator.To);
-            if (validator.Name == "ExclusiveBetweenValidator") schemaProperty.ExclusiveMaximum = true;
+            schemaProperty.Maximum = Convert.ToDecimal(validator.To).ToString(CultureInfo.InvariantCulture);
+            if (validator.Name == "ExclusiveBetweenValidator") schemaProperty.ExclusiveMaximum = "true";
         }
 
         return Task.CompletedTask;

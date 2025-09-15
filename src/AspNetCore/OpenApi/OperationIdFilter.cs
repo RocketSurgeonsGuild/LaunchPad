@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
@@ -37,7 +37,7 @@ internal class OperationIdFilter : IOpenApiOperationTransformer
             operation.OperationId = cad.ActionName;
 
         if (operation.Parameters is null) return Task.CompletedTask;
-        foreach (var parameter in operation.Parameters)
+        foreach (var parameter in operation.Parameters.OfType<OpenApiParameter>())
         {
             parameter.Name = Camelize(parameter.Name);
         }

@@ -5,8 +5,10 @@
       properties: {
         value: {
           pattern: ^[a-zA-Z0-9]*$,
-          type: string,
-          nullable: true
+          type: [
+            null,
+            string
+          ]
         }
       }
     }

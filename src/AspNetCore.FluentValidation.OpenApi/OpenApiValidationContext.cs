@@ -2,7 +2,7 @@ using FluentValidation.Internal;
 using FluentValidation.Validators;
 
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 

@@ -7,9 +7,13 @@
       type: object,
       properties: {
         value: {
-          type: integer,
-          format: int32,
-          nullable: true
+          pattern: ^-?(?:0|[1-9]\d*)$,
+          type: [
+            null,
+            integer,
+            string
+          ],
+          format: int32
         }
       }
     }

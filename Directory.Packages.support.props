@@ -26,8 +26,8 @@
         Version="8.0.0" />-->
         <PackageVersion Update="Microsoft.Extensions.ApiDescription.Client" Version="8.0.18" />
 
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.7" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+        <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.7" />
+        <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="9.0.7" />
 
         <PackageVersion Update="Swashbuckle.AspNetCore.ReDoc" Version="7.3.2" />
         <PackageVersion Update="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.2" />

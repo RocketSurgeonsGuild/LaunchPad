@@ -7,8 +7,10 @@
       type: object,
       properties: {
         value: {
-          type: string,
-          nullable: true
+          type: [
+            null,
+            string
+          ]
         }
       }
     }

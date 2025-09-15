@@ -5,8 +5,10 @@
       properties: {
         value: {
           minLength: 5,
-          type: string,
-          nullable: true
+          type: [
+            null,
+            string
+          ]
         }
       }
     }
