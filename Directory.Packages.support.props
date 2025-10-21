@@ -26,7 +26,7 @@
         <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.10" />
         <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="9.0.10" />
 
-        <PackageVersion Update="Swashbuckle.AspNetCore.ReDoc" Version="7.3.2" />
-        <PackageVersion Update="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.2" />
+        <PackageVersion Update="Swashbuckle.AspNetCore.ReDoc" Version="9.0.6" />
+        <PackageVersion Update="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
     </ItemGroup>
 </Project>
