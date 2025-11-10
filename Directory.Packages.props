@@ -41,8 +41,8 @@
         <PackageVersion Include="Verify.DiffPlex" Version="3.1.2" />
         <PackageVersion Include="xunit.analyzers" Version="1.25.0" />
         <PackageVersion Include="JetBrains.Annotations.Sources" Version="2025.2.2" />
-        <PackageVersion Include="JetBrains.dotCover.CommandLineTools" Version="2025.2.4" />
-        <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2025.2.4" />
+        <PackageVersion Include="JetBrains.dotCover.CommandLineTools" Version="2025.3.0" />
+        <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2025.3.0" />
         <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.9.0" />
         <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.2" />
         <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.9.0" />
