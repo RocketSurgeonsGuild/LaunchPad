@@ -39,7 +39,7 @@
         <PackageVersion Include="Serilog.Sinks.Trace" Version="4.0.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
         <PackageVersion Include="Verify.DiffPlex" Version="3.1.2" />
-        <PackageVersion Include="xunit.analyzers" Version="1.25.0" />
+        <PackageVersion Include="xunit.analyzers" Version="1.26.0" />
         <PackageVersion Include="JetBrains.Annotations.Sources" Version="2025.2.4" />
         <PackageVersion Include="JetBrains.dotCover.CommandLineTools" Version="2025.3.0.3" />
         <PackageVersion Include="JetBrains.ReSharper.GlobalTools" Version="2025.3.0.3" />
@@ -165,7 +165,7 @@
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="10.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit3" Version="10.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="10.0.0-beta.2" />
-        <PackageVersion Include="xunit.v3" Version="3.2.0" />
+        <PackageVersion Include="xunit.v3" Version="3.2.1" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
         <PackageVersion Include="Verify.XunitV3" Version="31.7.2" />
         <PackageVersion Include="Verify.NodaTime" Version="2.3.0" />
