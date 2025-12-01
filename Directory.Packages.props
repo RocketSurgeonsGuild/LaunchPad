@@ -51,7 +51,7 @@
         <PackageVersion Include="GitVersion.Tool" Version="6.5.1" />
         <PackageVersion Include="Nuke.Common" Version="9.0.4" />
         <PackageVersion Include="ReportGenerator" Version="5.5.0" />
-        <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.9.11" />
+        <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.9.12" />
 
         <PackageVersion Include="FluentValidation" Version="12.0.0" />
         <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.1" />
