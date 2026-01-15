@@ -58,23 +58,23 @@
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.71.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.1" />
-        <PackageVersion Include="HotChocolate" Version="15.1.11" />
+        <PackageVersion Include="HotChocolate" Version="15.1.12" />
 
-        <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Data" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Diagnostics" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="15.1.11" />
+        <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Data" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Diagnostics" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="15.1.12" />
 
-        <PackageVersion Include="HotChocolate.Data.Spatial" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Types.Analyzers" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Types.NodaTime" Version="15.1.11" />
-        <PackageVersion Include="HotChocolate.Types.Spatial" Version="15.1.11" />
-        <PackageVersion Include="StrawberryShake.Transport.Http" Version="15.1.11" />
+        <PackageVersion Include="HotChocolate.Data.Spatial" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Types.Analyzers" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Types.NodaTime" Version="15.1.12" />
+        <PackageVersion Include="HotChocolate.Types.Spatial" Version="15.1.12" />
+        <PackageVersion Include="StrawberryShake.Transport.Http" Version="15.1.12" />
 
-        <PackageVersion Include="StrawberryShake.Core" Version="15.1.11" />
-        <PackageVersion Include="StrawberryShake.Server" Version="15.1.11" />
+        <PackageVersion Include="StrawberryShake.Core" Version="15.1.12" />
+        <PackageVersion Include="StrawberryShake.Server" Version="15.1.12" />
 
 
         <PackageVersion Include="MediatR" Version="12.5.0" />
