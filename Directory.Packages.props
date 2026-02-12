@@ -32,7 +32,7 @@
 
         <PackageVersion Include="Serilog.Enrichers.AssemblyName" Version="2.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Demystifier" Version="1.0.3" />
-        <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="4.1.0-dev-02304" />
+        <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="4.1.0" />
         <PackageVersion Include="Serilog.Sinks.BrowserConsole" Version="8.0.0" />
         <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.1-nblumhardt-02317" />
 
@@ -136,7 +136,7 @@
         <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.2" />
         <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
         <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
-        <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
         <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
         <PackageVersion Include="Serilog.Sinks.Observable" Version="3.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
