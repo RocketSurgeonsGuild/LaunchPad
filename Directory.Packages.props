@@ -53,9 +53,9 @@
         <PackageVersion Include="ReportGenerator" Version="5.5.1" />
         <PackageVersion Include="Rocket.Surgery.Nuke" Version="2.9.12" />
 
-        <PackageVersion Include="FluentValidation" Version="12.0.0" />
+        <PackageVersion Include="FluentValidation" Version="12.1.1" />
         <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.1" />
-        <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+        <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.71.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.1" />
         <PackageVersion Include="HotChocolate" Version="15.1.12" />
