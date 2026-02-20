@@ -102,7 +102,7 @@
         <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="5.0.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="5.0.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.0.0" />
-        <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.2" />
+        <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.1.0" />
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
 
@@ -142,8 +142,8 @@
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="8.1.4" />
 
-        <PackageVersion Include="System.Reactive" Version="6.0.2" />
-        <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.0.2" />
+        <PackageVersion Include="System.Reactive" Version="6.1.0" />
+        <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.1.0" />
         <PackageVersion Include="System.Text.Json" Version="10.0.3" />
         <PackageVersion Include="System.Net.Http.Json" Version="10.0.3" />
         <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.5.0" />
