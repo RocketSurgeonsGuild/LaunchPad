@@ -158,7 +158,7 @@
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
         <PackageVersion Include="Alba" Version="8.2.1" />
         <PackageVersion Include="Bogus" Version="35.6.5" />
-        <PackageVersion Include="Microsoft.CodeCoverage" Version="17.14.1" />
+        <PackageVersion Include="Microsoft.CodeCoverage" Version="18.0.1" />
         <PackageVersion Include="FakeItEasy" Version="9.0.1" />
         <PackageVersion Include="Shouldly" Version="4.3.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
