@@ -37,7 +37,7 @@
         <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.1-nblumhardt-02317" />
 
         <PackageVersion Include="Serilog.Sinks.Trace" Version="4.0.0" />
-        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
+        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.4" />
         <PackageVersion Include="Verify.DiffPlex" Version="3.1.2" />
         <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
         <PackageVersion Include="JetBrains.Annotations.Sources" Version="2025.2.4" />
@@ -140,7 +140,7 @@
         <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
         <PackageVersion Include="Serilog.Sinks.Observable" Version="3.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
-        <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="8.1.4" />
+        <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="10.1.4" />
 
         <PackageVersion Include="System.Reactive" Version="6.0.2" />
         <PackageVersion Include="System.Reactive.Observable.Aliases" Version="6.0.2" />
