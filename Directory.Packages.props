@@ -164,7 +164,7 @@
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="10.0.1" />
         <PackageVersion Include="Rocket.Surgery.Extensions.Testing.XUnit3" Version="10.0.1" />
-        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="10.0.1" />
+        <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="10.0.5" />
         <PackageVersion Include="xunit.v3" Version="3.2.2" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
         <PackageVersion Include="Verify.XunitV3" Version="31.20.0" />
