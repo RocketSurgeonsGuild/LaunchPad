@@ -1,0 +1,60 @@
+---
+import Select from '@astrojs/starlight/components/Select.astro';
+
+// The gh-pages branch serves latest main at the docs root, each release under <root>/v<version>/ and pull request
+// previews under <root>/pr-preview/pr-<n>/. Which one this build is comes from its base path; the released versions come
+// from <root>/versions.json at runtime, so a build made for an old release still lists the releases that came after it.
+const root = __DOCS_ROOT__;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const relative = base.slice(root.length);
+const version = /^\/v([^/]+)$/.exec(relative)?.[1];
+const pullRequest = /^\/pr-preview\/pr-(\d+)$/.exec(relative)?.[1];
+
+const options = [{ label: 'Latest', value: `${root}/`, selected: !version && !pullRequest }];
+if (version) options.push({ label: `v${version}`, value: `${base}/`, selected: true });
+if (pullRequest) options.push({ label: `PR #${pullRequest}`, value: `${base}/`, selected: true });
+---
+
+<docs-version-select data-root={root} data-base={base} hidden={options.length < 2 ? '' : undefined}>
+  <Select icon="list-format" label="Docs version" options={options} width="7em" />
+</docs-version-select>
+
+<script>
+  interface VersionsFile {
+    versions: string[];
+  }
+
+  class DocsVersionSelect extends HTMLElement {
+    connectedCallback() {
+      const select = this.querySelector('select');
+      if (!select) return;
+      const root = this.dataset.root ?? '';
+      const base = this.dataset.base ?? '';
+
+      // Keep the reader on the same page when switching; a page that doesn't exist in that version gets the site 404.
+      select.addEventListener('change', () => {
+        const page = location.pathname.startsWith(`${base}/`) ? location.pathname.slice(base.length + 1) : '';
+        location.href = `${select.value}${page}${location.search}${location.hash}`;
+      });
+
+      fetch(`${root}/versions.json`, { cache: 'no-cache' })
+        .then((response) => (response.ok ? (response.json() as Promise<VersionsFile>) : { versions: [] }))
+        .then(({ versions }) => {
+          // Latest, then the releases newest first (versions.json is kept sorted), then this pull request's preview.
+          const current = select.value;
+          const items = [['Latest', `${root}/`], ...versions.map((version) => [`v${version}`, `${root}/v${version}/`])];
+          const built = [...select.options].slice(1);
+          for (const option of built) {
+            if (!items.some(([, value]) => value === option.value)) items.push([option.label, option.value]);
+          }
+          select.replaceChildren(...items.map(([label, value]) => new Option(label, value, false, value === current)));
+          this.hidden = select.options.length < 2;
+        })
+        .catch(() => {
+          // No versions.json (a local build, or nothing released yet): the build-time options stay.
+        });
+    }
+  }
+
+  customElements.define('docs-version-select', DocsVersionSelect);
+</script>

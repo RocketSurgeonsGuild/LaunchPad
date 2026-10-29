@@ -6,13 +6,15 @@
 *.user
 *.sln.docstates
 
+.DS_Store
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 x64/
-artifacts/
-coverage/
+/artifacts/
+/coverage/
 bld/
 [Bb]in/
 [Oo]bj/
@@ -20,7 +22,6 @@ bld/
 # Roslyn cache directories
 *.ide/
 *.vs/
-.DS_Store
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -192,10 +193,11 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
+lib/
 .nuget/
 project.lock.json
 *.nupkg
-/.nuke/temp/
+/.temp/
 .automation/
 /tools/*/
 /tools/*.exe
@@ -208,3 +210,43 @@ codealike.json
 
 # Rider
 *.received.*
+
+.skillfile/cache/
+
+
+# APM dependencies
+apm_modules/
+
+# Roslyn language server (installed via mise `roslyn-lsp` task)
+.roslyn-lsp/
+
+# Pkl VS Code extension VSIX cache (installed via mise `pkl-vscode` task)
+.pkl-vscode/
+.temp/
+# Squad: ignore runtime state (logs, inbox, sessions)
+.squad/orchestration-log/
+.squad/log/
+.squad/decisions/inbox/
+.squad/sessions/
+.squad/.scratch/
+.squad/.cache/
+# Squad: SubSquad activation file (local to this machine)
+.squad-workstream
+dist/
+.astro/
+*.local.toml
+
+# Docs: C# API reference JSON generated from the build output by `mise run docs:api`.
+docs/src/data/api/
+.playwright-mcp/
+docs/api/
+.agents/skills/.mise-skills.json
+.agents/skills/fnox
+.agents/skills/hk-configure
+.agents/skills/hk-debug
+
+# apm: machine-local files deployed by apm install (modernize-dotnet telemetry hooks whose script is not vendored here, Copilot plugin settings pointing at apm_modules/)
+.claude/settings.json
+.claude/apm-hooks.json
+.github/hooks/
+.github/copilot/settings.local.json
