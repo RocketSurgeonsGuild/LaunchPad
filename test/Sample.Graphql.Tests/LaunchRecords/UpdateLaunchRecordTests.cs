@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Extensions;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Graphql.Tests.Helpers;

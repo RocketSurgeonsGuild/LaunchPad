@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 
 namespace Sample.Core;

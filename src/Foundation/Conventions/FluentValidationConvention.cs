@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.DependencyInjection.Compiled;
+using Indago.Abstractions;
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;

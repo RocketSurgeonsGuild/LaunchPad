@@ -18,19 +18,6 @@ public static class NetTopologySuiteSerializationExtensions
     /// <param name="factory"></param>
     /// <param name="dimension"></param>
     /// <returns></returns>
-    [Obsolete("Use ConfigureGeoJsonForLaunchPad instead")]
-    public static JsonSerializer ConfigureNetTopologySuiteForLaunchPad(this JsonSerializer options, GeometryFactory? factory, int dimension = 2)
-    {
-        return ConfigureGeoJsonForLaunchPad(options, factory, dimension);
-    }
-
-    /// <summary>
-    ///     Configure System.Text.Json with defaults for launchpad
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="factory"></param>
-    /// <param name="dimension"></param>
-    /// <returns></returns>
     public static JsonSerializer ConfigureGeoJsonForLaunchPad(this JsonSerializer options, GeometryFactory? factory, int dimension = 2)
     {
         factory ??= NtsGeometryServices.Instance.CreateGeometryFactory(4326);
@@ -50,19 +37,6 @@ public static class NetTopologySuiteSerializationExtensions
         factory ??= NtsGeometryServices.Instance.CreateGeometryFactory(4326);
         ApplyWellKnownTextConverters(factory, dimension, options.Converters);
         return options;
-    }
-
-    /// <summary>
-    ///     Configure System.Text.Json with defaults for launchpad
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="factory"></param>
-    /// <param name="dimension"></param>
-    /// <returns></returns>
-    [Obsolete("Use ConfigureGeoJsonForLaunchPad instead")]
-    public static JsonSerializerSettings ConfigureNetTopologySuiteForLaunchPad(this JsonSerializerSettings options, GeometryFactory? factory, int dimension = 2)
-    {
-        return ConfigureGeoJsonForLaunchPad(options, factory, dimension);
     }
 
     /// <summary>

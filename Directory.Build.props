@@ -7,7 +7,13 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageIcon>images/packageicon.png</PackageIcon>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageTags />
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
+        <!--
+            in package
+            Title
+            Description
+            Tags
+        -->
         <LangVersion>preview</LangVersion>
         <Features>strict</Features>
         <Nullable>enable</Nullable>
@@ -16,9 +22,6 @@
         <NukeTelemetryVersion>1</NukeTelemetryVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <ImplicitUsings>enable</ImplicitUsings>
-        <IsTrimmable>true</IsTrimmable>
-        <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
-        <NoWarn>$(NoWarn);0436;CA1014;CA1062</NoWarn>
         <AnalysisLevel>latest</AnalysisLevel>
         <!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
         <!--        <WarningsNotAsErrors></WarningsNotAsErrors>-->
@@ -27,17 +30,19 @@
         <NuGetAudit>true</NuGetAudit>
         <NuGetAuditMode>all</NuGetAuditMode>
         <NuGetAuditLevel>moderate</NuGetAuditLevel>
+        <SolutionDir>$(MSBuildThisFileDirectory)</SolutionDir>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
     <ItemGroup>
         <None
-            Include="$(MSBuildThisFileDirectory)/.nuke/temp/packageicon.png"
-            Condition="Exists('$(MSBuildThisFileDirectory)/.nuke/temp/packageicon.png')"
+            Include="$(MSBuildThisFileDirectory).temp/packageicon.png"
+            Condition="Exists('$(MSBuildThisFileDirectory).temp/packageicon.png')"
             Pack="true"
             PackagePath="/images/"
             Visible="false"
         />
-        <None Include="$(MSBuildThisFileDirectory)/LICENSE" Pack="true" PackagePath="/"
-            Visible="false" />
+        <None Include="$(MSBuildThisFileDirectory)/LICENSE" Pack="true" PackagePath="/" Visible="false" />
+        <None Include="$(MSBuildThisFileDirectory)/Readme.md" Pack="true" PackagePath="/" Visible="false" />
     </ItemGroup>
     <ItemGroup>
         <ProjectCapability Include="DynamicDependentFile" />

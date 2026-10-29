@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.DependencyInjection.Compiled;
+using Indago.Abstractions;
 
 namespace Rocket.Surgery.LaunchPad.Primitives.Conventions;
 
@@ -30,6 +30,6 @@ public class DefaultConvention : IServiceConvention
            .AddLogging()
            .AddExecuteScopedServices();
 
-        services.AddCompiledServiceRegistrations(context.Assembly.GetCompiledTypeProvider());
+        services.AddIndagoServiceRegistrations(context.Assembly.GetCompiledTypeProvider());
     }
 }

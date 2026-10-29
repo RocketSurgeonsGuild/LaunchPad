@@ -1,4 +1,4 @@
-﻿using Rocket.Surgery.DependencyInjection;
+﻿using Indago;
 using Sample.Core.Domain;
 using Sample.Restful.Client;
 using HttpRocketType = Sample.Restful.Client.RocketType;

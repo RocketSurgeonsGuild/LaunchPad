@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
 using Serilog.Events;

@@ -1,5 +1,5 @@
 ﻿#if NET6_0_OR_GREATER
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Restful.Client;

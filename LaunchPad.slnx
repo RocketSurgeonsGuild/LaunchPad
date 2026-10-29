@@ -1,0 +1,130 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/config/">
+    <File Path=".codecov.yml" />
+    <File Path=".config/dotnet-tools.json" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path=".gitmodules" />
+    <File Path=".mergify.yml" />
+    <File Path=".prettierignore" />
+    <File Path=".prettierrc" />
+    <File Path="build.cmd" />
+    <File Path="build.ps1" />
+    <File Path="build.sh" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Directory.Packages.support.props" />
+    <File Path="dotnet-tools.json" />
+    <File Path="GitReleaseManager.yaml" />
+    <File Path="GitVersion.yml" />
+    <File Path="LICENSE" />
+    <File Path="NuGet.config" />
+    <File Path="package.json" />
+    <File Path="Readme.md" />
+    <Project Path=".build/.build.csproj">
+      <Build Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/config/.github/">
+    <File Path="labels.yml" />
+    <File Path="release.yml" />
+    <File Path="renovate.json" />
+  </Folder>
+  <Folder Name="/config/.github/workflows/">
+    <File Path="ci-ignore.yml" />
+    <File Path="ci.yml" />
+    <File Path="close-milestone.yml" />
+    <File Path="dependabot-merge.yml" />
+    <File Path="draft-release.yml" />
+    <File Path="lint.yml" />
+    <File Path="publish-docs.yml" />
+    <File Path="publish-nuget.yml" />
+    <File Path="sync-labels.yml" />
+    <File Path="update-milestone.yml" />
+  </Folder>
+  <Folder Name="/config/.husky/">
+    <File Path="pre-commit" />
+    <File Path="task-runner.json" />
+  </Folder>
+  <Folder Name="/config/.vscode/">
+    <File Path="launch.json" />
+    <File Path="settings.json" />
+    <File Path="tasks.json" />
+  </Folder>
+  <Folder Name="/sample/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <Project Path="sample/Sample.BlazorServer/Sample.BlazorServer.csproj" />
+    <Project Path="sample/Sample.BlazorWasm/Sample.BlazorWasm.csproj" />
+    <Project Path="sample/Sample.Classic.Restful/Sample.Classic.Restful.csproj" />
+    <Project Path="sample/Sample.Command/Sample.Command.csproj" />
+    <Project Path="sample/Sample.Core/Sample.Core.csproj" />
+    <Project Path="sample/Sample.Graphql/Sample.Graphql.csproj" />
+    <Project Path="sample/Sample.Grpc/Sample.Grpc.csproj" />
+    <Project Path="sample/Sample.Minimal/Sample.Minimal.csproj" />
+    <Project Path="sample/Sample.Pages/Sample.Pages.csproj" />
+    <Project Path="sample/Sample.Restful.Client/Sample.Restful.Client.csproj" />
+    <Project Path="sample/Sample.Restful/Sample.Restful.csproj" />
+    <Project Path="sample/Sample.Worker/Sample.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
+    <Project Path="src/AspNetCore.Blazor/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.csproj" />
+    <Project Path="src/AspNetCore.FluentValidation.OpenApi/Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
+    <Project Path="src/AspNetCore.NewtonsoftJson/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
+    <Project Path="src/AspNetCore.Spatial/Rocket.Surgery.LaunchPad.AspNetCore.Spatial.csproj" />
+    <Project Path="src/AspNetCore.Testing/Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+    <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+    <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
+    <Project Path="src/Foundation.NewtonsoftJson/Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
+    <Project Path="src/Foundation/Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    <Project Path="src/Grpc/Rocket.Surgery.LaunchPad.Grpc.csproj" />
+    <Project Path="src/Hosting/Rocket.Surgery.LaunchPad.Hosting.csproj" />
+    <Project Path="src/HotChocolate/Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
+    <Project Path="src/Mapping.NewtonsoftJson/Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj" />
+    <Project Path="src/Mapping/Rocket.Surgery.LaunchPad.Mapping.csproj" />
+    <Project Path="src/Metadata/Rocket.Surgery.LaunchPad.Metadata.csproj" />
+    <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
+    <Project Path="src/Serilog/Rocket.Surgery.LaunchPad.Serilog.csproj" />
+    <Project Path="src/Spatial.NewtonsoftJson/Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
+    <Project Path="src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />
+    <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
+    <Project Path="src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
+    <Project Path="src/Telemetry/Rocket.Surgery.LaunchPad.Telemetry.csproj" />
+    <Project Path="src/Testing/Rocket.Surgery.LaunchPad.Testing.csproj" />
+    <Project Path="src/WebAssembly.Hosting/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <Project Path="test/Analyzers.Tests/Analyzers.Tests.csproj" />
+    <Project Path="test/AspNetCore.FluentValidation.OpenApi.Tests/AspNetCore.FluentValidation.OpenApi.Tests.csproj" />
+    <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />
+    <Project Path="test/Extensions.Tests/Extensions.Tests.csproj" />
+    <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
+    <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
+    <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />
+    <Project Path="test/Sample.Classic.Restful.Tests/Sample.Classic.Restful.Tests.csproj" />
+    <Project Path="test/Sample.Command.Tests/Sample.Command.Tests.csproj" />
+    <Project Path="test/Sample.Core.Tests/Sample.Core.Tests.csproj" />
+    <Project Path="test/Sample.Graphql.Tests/Sample.Graphql.Tests.csproj" />
+    <Project Path="test/Sample.Grpc.Tests/Sample.Grpc.Tests.csproj" />
+    <Project Path="test/Sample.Minimal.Tests/Sample.Minimal.Tests.csproj" />
+    <Project Path="test/Sample.Pages.Tests/Sample.Pages.Tests.csproj" />
+    <Project Path="test/Sample.Restful.Tests/Sample.Restful.Tests.csproj" />
+    <Project Path="test/Sample.Worker.Tests/Sample.Worker.Tests.csproj" />
+  </Folder>
+</Solution>

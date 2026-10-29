@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using NodaTime;
 using NodaTime.Extensions;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;

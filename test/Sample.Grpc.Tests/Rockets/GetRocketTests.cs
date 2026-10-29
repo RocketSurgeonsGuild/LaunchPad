@@ -1,4 +1,4 @@
-﻿using Rocket.Surgery.DependencyInjection;
+﻿using Indago;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
