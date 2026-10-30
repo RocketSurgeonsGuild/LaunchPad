@@ -1,131 +1,302 @@
 lockfile_version: '1'
-generated_at: '2026-06-23T01:41:07.825028+00:00'
-apm_version: 0.10.0
+generated_at: '2026-10-30T02:57:53.353812+00:00'
+apm_version: 0.35.0
 dependencies:
-- repo_url: antfu/skills
-  host: github.com
-  resolved_commit: a74f281a27dadc02397bc1a174b0f2c97531b6ae
-  virtual_path: skills/vitepress
-  is_virtual: true
-  package_type: claude_skill
-  deployed_files:
-  - .github/skills/vitepress
-  content_hash: sha256:4cb4b38f31b0de634d10fe185af829f418032562d722a53520c926f6e694a7c9
 - repo_url: diegosouzapw/awesome-omni-skills
+  name: mise-configurator-v2
   host: github.com
-  resolved_commit: eb0888e610c027b5ac37daec092e64e83cd802a3
+  resolved_commit: c3af0048b70a4b84b2f2324e2f7b7ae5206d89b2
+  version: unknown
   virtual_path: skills/mise-configurator-v2
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .github/skills/mise-configurator-v2
+  - .agents/skills/mise-configurator-v2
+  - .agents/skills/mise-configurator-v2/ORIGIN.md
+  - .agents/skills/mise-configurator-v2/SKILL.md
+  - .agents/skills/mise-configurator-v2/metadata.json
+  - .claude/skills/mise-configurator-v2
+  - .claude/skills/mise-configurator-v2/ORIGIN.md
+  - .claude/skills/mise-configurator-v2/SKILL.md
+  - .claude/skills/mise-configurator-v2/metadata.json
+  deployed_file_hashes:
+    .agents/skills/mise-configurator-v2/ORIGIN.md: sha256:b1d1d3c4cb876dd32d6a0992b52a89ed89613fee4ed368d2797c33248031ac7f
+    .agents/skills/mise-configurator-v2/SKILL.md: sha256:baa446fc8ecced9b80584a40fa5facd8ea7af3a1f3b44a4c418c848ffa1b3bca
+    .agents/skills/mise-configurator-v2/metadata.json: sha256:b0c867987ca18b021665cba81b68d98e4959543bba35969c79c593e00cede1ff
+    .claude/skills/mise-configurator-v2/ORIGIN.md: sha256:b1d1d3c4cb876dd32d6a0992b52a89ed89613fee4ed368d2797c33248031ac7f
+    .claude/skills/mise-configurator-v2/SKILL.md: sha256:baa446fc8ecced9b80584a40fa5facd8ea7af3a1f3b44a4c418c848ffa1b3bca
+    .claude/skills/mise-configurator-v2/metadata.json: sha256:b0c867987ca18b021665cba81b68d98e4959543bba35969c79c593e00cede1ff
   content_hash: sha256:ca26118b486f85b567f542c5eeb2589c5deb6b2b07289daa4d28c9a0102fbbad
 - repo_url: dotnet/modernize-dotnet
+  name: modernize-dotnet
   host: github.com
-  resolved_commit: f3b670df0cbe94c567cf6817b91f90c5e5a5bd5c
+  resolved_commit: ce4ec09678498da38099ca9169c1624c59c2a89a
+  version: 1.0.1161-preview1
   virtual_path: plugins/modernize-dotnet
   is_virtual: true
   package_type: marketplace_plugin
   deployed_files:
+  - .claude/agents/modernize-dotnet.md
   - .github/agents/modernize-dotnet.agent.md
   - .github/hooks/modernize-dotnet-hooks.json
   deployed_file_hashes:
-    .github/agents/modernize-dotnet.agent.md: sha256:e0dc213c02753bc6a611f77ebd5e0aab5bf205a2d511b62b03ec6e4fadc52405
-    .github/hooks/modernize-dotnet-hooks.json: sha256:93f0235aff3ea05f01e2a072d8af7920b6a38238e5b0a0b0c67eaf3345228cea
-  content_hash: sha256:4c29f51a67f01d9379fb8c7c60e61ffe1791d0b3557a21bda5d097a13d9e666a
+    .claude/agents/modernize-dotnet.md: sha256:f5c3fd7fbff3235df1a848edb1def31301267ff837c1b1ac3230c72a72e16b7a
+    .github/agents/modernize-dotnet.agent.md: sha256:f5c3fd7fbff3235df1a848edb1def31301267ff837c1b1ac3230c72a72e16b7a
+    .github/hooks/modernize-dotnet-hooks.json: sha256:7d3bf06c6ed5e29ff1dacd30574bdb72a2527c77478a99cbc0a0bc5f0c08ba1e
+  content_hash: sha256:7a826affb12a92cdbf0c3599d8d9636f2bb02f73848cd7b555b9bd91daf22de6
+  declared_license: MIT
 - repo_url: dotnet/skills
+  name: b7b5400a22d3356b
   host: github.com
-  resolved_commit: 5ad4286d06f428a01b421a54adc2e9e07a1c3406
+  resolved_commit: 95e7d0cb7994d47b5789baa68e13f7a2f348b956
+  version: 95e7d0c
   package_type: marketplace_plugin
-  content_hash: sha256:156a8bc147b67745caf90a35472326cf9ce304bb252bf3cb1e6c0f93fcdd43a2
+  content_hash: sha256:81b7df7067ddd88f99f59a2ea970a7d65a5f888d1976a0f7e8d90b260a11c9f1
 - repo_url: github/awesome-copilot
+  name: context-engineering
   host: github.com
-  resolved_commit: 56a508cca5cbb30a2440534a1f377887d86b9747
+  resolved_commit: 5269f7ea2d6c3a9bfda5ed878b6726cf509121fd
+  version: 1.0.0
   virtual_path: plugins/context-engineering
   is_virtual: true
-  package_type: marketplace_plugin
-  deployed_files:
-  - .github/agents/context-architect.agent.md
-  - .github/skills/context-map
-  - .github/skills/refactor-plan
-  - .github/skills/what-context-needed
-  deployed_file_hashes:
-    .github/agents/context-architect.agent.md: sha256:6da7a854a670d2810fc61b173eea2500a2af644d8292f58e3d440ac2d120ee0d
-  content_hash: sha256:6d5ed9518d725ff8ff634939759a4b1069b1b89ef9a885bfedd6df569722d473
+  package_type: agent_plugin
+  content_hash: sha256:2f04290f2b4a514d04dd0fcbf8ca4c03745c04bdc63c123471bb0a52d590ca03
+  declared_license: MIT
 - repo_url: github/awesome-copilot
+  name: csharp-dotnet-development
   host: github.com
-  resolved_commit: 56a508cca5cbb30a2440534a1f377887d86b9747
+  resolved_commit: 5269f7ea2d6c3a9bfda5ed878b6726cf509121fd
+  version: 1.2.0
   virtual_path: plugins/csharp-dotnet-development
   is_virtual: true
-  package_type: marketplace_plugin
-  deployed_files:
-  - .github/agents/expert-dotnet-software-engineer.agent.md
-  - .github/skills/aspnet-minimal-api-openapi
-  - .github/skills/csharp-async
-  - .github/skills/csharp-mstest
-  - .github/skills/csharp-nunit
-  - .github/skills/csharp-tunit
-  - .github/skills/csharp-xunit
-  - .github/skills/dotnet-best-practices
-  - .github/skills/dotnet-upgrade
-  deployed_file_hashes:
-    .github/agents/expert-dotnet-software-engineer.agent.md: sha256:28a306e1a700abd0435f1fd6aef365341ac2519cc460f0c83a6f2a93332bf915
-  content_hash: sha256:50c15691d05dac6ab39fb591fc6d56b629b1104f7321ec23aa5ab00e171d5cd9
+  package_type: agent_plugin
+  content_hash: sha256:e72e23795d1178000eb6a9666ea3ee74f35e97694db7c0b6bfea5fe1ec016433
+  declared_license: MIT
 - repo_url: majiayu000/claude-skill-registry
+  name: hk-setup
   host: github.com
-  resolved_commit: e279b06baf58da10886c43d49821c5da8e22aa88
+  resolved_commit: 9577d5b98f72c9b8a21e949fe3ca99087690bfb4
+  version: unknown
   virtual_path: skills/data/hk-setup
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .github/skills/hk-setup
-  content_hash: sha256:0eada7424168bf04bcb05b41b8d55db9abc32c819d4455c9b7a1815d39fad3ff
-- repo_url: sickn33/antigravity-awesome-skills
-  host: github.com
-  resolved_commit: 8e26a629cefb398681a00263b4a669b024c355a3
-  virtual_path: plugins/antigravity-awesome-skills-claude/skills/mise-configurator
-  is_virtual: true
-  package_type: claude_skill
-  deployed_files:
-  - .github/skills/mise-configurator
-  content_hash: sha256:696eeb54b100091124646bebc1e5c4f6c4887167379971aa2b70b2bfb814c947
-- repo_url: terrylica/cc-skills
-  host: github.com
-  resolved_commit: 5fe3b188a14906b21d353ae07fc37f1b001c71bf
-  virtual_path: plugins/itp/skills/mise-configuration
-  is_virtual: true
-  package_type: claude_skill
-  deployed_files:
-  - .github/skills/mise-configuration
-  content_hash: sha256:0f125b4b212fa4083132aac5ddaab297c719fa672f4d757103456ff4e7ec083d
-- repo_url: terrylica/cc-skills
-  host: github.com
-  resolved_commit: 5fe3b188a14906b21d353ae07fc37f1b001c71bf
-  virtual_path: plugins/itp/skills/mise-tasks
-  is_virtual: true
-  package_type: claude_skill
-  deployed_files:
-  - .github/skills/mise-tasks
-  content_hash: sha256:dd93054927a344583aa870ad9f0fa62340395c6a96fded9622afcd25b966e286
-- repo_url: terrylica/cc-skills
-  host: github.com
-  resolved_commit: 5fe3b188a14906b21d353ae07fc37f1b001c71bf
-  virtual_path: plugins/mise
-  is_virtual: true
-  package_type: marketplace_plugin
-  deployed_files:
-  - .github/skills/list-repo-tasks
-  - .github/skills/run-full-release
-  - .github/skills/show-env-status
-  - .github/skills/sred-commit
-  content_hash: sha256:e87a6ab412ff5040f34f2540bad9968f57359260e2bc1e4f7654f3344dfe0ec4
-- repo_url: yvgude/lean-ctx
-  host: github.com
-  resolved_commit: 45cd29224b4a168f364900fc12995ff180458037
-  package_type: marketplace_plugin
-  deployed_files:
-  - .github/skills/lean-ctx
-  content_hash: sha256:80aba55537ab73057ca55b0e66c91eac78c5f1abd3452715275b7ebeb45cb798
+  - .agents/skills/hk-setup
+  - .agents/skills/hk-setup/SKILL.md
+  - .claude/skills/hk-setup
+  - .claude/skills/hk-setup/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/hk-setup/SKILL.md: sha256:01209fa77aed39b8244f53b031c1a3040923367049d1f8e83c35df2ee4cadfe8
+    .claude/skills/hk-setup/SKILL.md: sha256:01209fa77aed39b8244f53b031c1a3040923367049d1f8e83c35df2ee4cadfe8
+  content_hash: sha256:60edbabea7f9e3c82fe0b82b07ffb16bde922844db743715f2567bccc6a9dcbe
+deployments:
+- kind: project-relative
+  target: claude
+  value: .claude/agents/modernize-dotnet.md
+  runtime: null
+  scope: project
+  owners:
+  - dotnet/modernize-dotnet/plugins/modernize-dotnet
+  active_owner: dotnet/modernize-dotnet/plugins/modernize-dotnet
+  content_hash: sha256:f5c3fd7fbff3235df1a848edb1def31301267ff837c1b1ac3230c72a72e16b7a
+- kind: project-relative
+  target: claude
+  value: .claude/rules/context7.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0f66072fffde531a3b65ad1fca2a0a719b2c0a146f79a32230e1566aa917a792
+- kind: project-relative
+  target: claude
+  value: .claude/rules/neo4j-knowledgebase.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:416db8f43b40abd878578c0e11c3eb5531c646a5ac77d6df62e4f3ee0876088e
+- kind: project-relative
+  target: claude
+  value: .claude/skills/context7-mcp
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/context7-mcp/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:6f07fd4d6cbf96c00c66ef859c2981efb0795315069f55af30c0ae4f28b77690
+- kind: project-relative
+  target: claude
+  value: .claude/skills/hk-setup
+  runtime: null
+  scope: project
+  owners:
+  - majiayu000/claude-skill-registry/skills/data/hk-setup
+  active_owner: majiayu000/claude-skill-registry/skills/data/hk-setup
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/hk-setup/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - majiayu000/claude-skill-registry/skills/data/hk-setup
+  active_owner: majiayu000/claude-skill-registry/skills/data/hk-setup
+  content_hash: sha256:01209fa77aed39b8244f53b031c1a3040923367049d1f8e83c35df2ee4cadfe8
+- kind: project-relative
+  target: claude
+  value: .claude/skills/mise-configurator-v2
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/mise-configurator-v2/ORIGIN.md
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: sha256:b1d1d3c4cb876dd32d6a0992b52a89ed89613fee4ed368d2797c33248031ac7f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/mise-configurator-v2/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: sha256:baa446fc8ecced9b80584a40fa5facd8ea7af3a1f3b44a4c418c848ffa1b3bca
+- kind: project-relative
+  target: claude
+  value: .claude/skills/mise-configurator-v2/metadata.json
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: sha256:b0c867987ca18b021665cba81b68d98e4959543bba35969c79c593e00cede1ff
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/context7-mcp
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/context7-mcp/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:6f07fd4d6cbf96c00c66ef859c2981efb0795315069f55af30c0ae4f28b77690
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/hk-setup
+  runtime: null
+  scope: project
+  owners:
+  - majiayu000/claude-skill-registry/skills/data/hk-setup
+  active_owner: majiayu000/claude-skill-registry/skills/data/hk-setup
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/hk-setup/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - majiayu000/claude-skill-registry/skills/data/hk-setup
+  active_owner: majiayu000/claude-skill-registry/skills/data/hk-setup
+  content_hash: sha256:01209fa77aed39b8244f53b031c1a3040923367049d1f8e83c35df2ee4cadfe8
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/mise-configurator-v2
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/mise-configurator-v2/ORIGIN.md
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: sha256:b1d1d3c4cb876dd32d6a0992b52a89ed89613fee4ed368d2797c33248031ac7f
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/mise-configurator-v2/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: sha256:baa446fc8ecced9b80584a40fa5facd8ea7af3a1f3b44a4c418c848ffa1b3bca
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/mise-configurator-v2/metadata.json
+  runtime: null
+  scope: project
+  owners:
+  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
+  content_hash: sha256:b0c867987ca18b021665cba81b68d98e4959543bba35969c79c593e00cede1ff
+- kind: project-relative
+  target: copilot
+  value: .github/agents/modernize-dotnet.agent.md
+  runtime: null
+  scope: project
+  owners:
+  - dotnet/modernize-dotnet/plugins/modernize-dotnet
+  active_owner: dotnet/modernize-dotnet/plugins/modernize-dotnet
+  content_hash: sha256:f5c3fd7fbff3235df1a848edb1def31301267ff837c1b1ac3230c72a72e16b7a
+- kind: project-relative
+  target: copilot
+  value: .github/hooks/modernize-dotnet-hooks.json
+  runtime: null
+  scope: project
+  owners:
+  - dotnet/modernize-dotnet/plugins/modernize-dotnet
+  active_owner: dotnet/modernize-dotnet/plugins/modernize-dotnet
+  content_hash: sha256:7d3bf06c6ed5e29ff1dacd30574bdb72a2527c77478a99cbc0a0bc5f0c08ba1e
+- kind: project-relative
+  target: copilot
+  value: .github/instructions/context7.instructions.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:c2faee057cf9de0bd7fcf511743479ab2755f09b0274d3ba69ad157ff5757d24
+- kind: project-relative
+  target: copilot
+  value: .github/instructions/neo4j-knowledgebase.instructions.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1c54cb072667363a83ba46ba02b1d25d022f9a5b9256b5c9f17d63b22793c6db
 mcp_servers:
 - io.github.github/github-mcp-server
 - io.github.upstash/context7
@@ -143,10 +314,20 @@ mcp_configs:
     transport: stdio
     registry: false
     command: nuget-mcp-server
+mcp_target_servers: {}
 local_deployed_files:
+- .agents/skills/context7-mcp
+- .agents/skills/context7-mcp/SKILL.md
+- .claude/rules/context7.md
+- .claude/rules/neo4j-knowledgebase.md
+- .claude/skills/context7-mcp
+- .claude/skills/context7-mcp/SKILL.md
 - .github/instructions/context7.instructions.md
 - .github/instructions/neo4j-knowledgebase.instructions.md
-- .github/skills/context7-mcp
 local_deployed_file_hashes:
+  .agents/skills/context7-mcp/SKILL.md: sha256:6f07fd4d6cbf96c00c66ef859c2981efb0795315069f55af30c0ae4f28b77690
+  .claude/rules/context7.md: sha256:0f66072fffde531a3b65ad1fca2a0a719b2c0a146f79a32230e1566aa917a792
+  .claude/rules/neo4j-knowledgebase.md: sha256:416db8f43b40abd878578c0e11c3eb5531c646a5ac77d6df62e4f3ee0876088e
+  .claude/skills/context7-mcp/SKILL.md: sha256:6f07fd4d6cbf96c00c66ef859c2981efb0795315069f55af30c0ae4f28b77690
   .github/instructions/context7.instructions.md: sha256:c2faee057cf9de0bd7fcf511743479ab2755f09b0274d3ba69ad157ff5757d24
   .github/instructions/neo4j-knowledgebase.instructions.md: sha256:1c54cb072667363a83ba46ba02b1d25d022f9a5b9256b5c9f17d63b22793c6db
