@@ -1,5 +1,5 @@
 ﻿using NodaTime;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Restful.Client;

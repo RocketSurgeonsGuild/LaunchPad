@@ -1,0 +1,47 @@
+[tools]
+# The SDK comes first: Renovate's custom managers (.github/renovate.json) read the first entry as the SDK and the runtime entry separately.
+dotnet = [{ version = "11.0.100-rc.3.26522.148" }, { version = "10.0.14", runtime = "dotnet" }]
+"github:microsoft/apm" = { version = "v0.35.0", bin = "apm" }
+"github:eljulians/skillfile" = { version = "v1.9.2", bin = "skillfile" }
+hk = "2.9.0"
+pkl = "0.32.2"
+node = "26.13.0"
+actionlint = "1.7.12"
+biome = "2.5.2"
+
+"dotnet:gitversion.tool" = "6.6.0"
+"dotnet:dotnet-reportgenerator-globaltool" = "5.5.3"
+"dotnet:codecov.tool" = "1.13.0"
+"dotnet:jetbrains.resharper.globaltools" = "2025.3.3"
+"dotnet:jetbrains.dotcover.commandlinetools" = "2025.3.3"
+"dotnet:jetbrains.dottrace.globaltools" = "2025.3.3"
+"dotnet:dotnet-coverage" = "18.5.1"
+"dotnet:dotnet-outdated-tool" = "4.7.0"
+"dotnet:verify.tool" = "0.7.0"
+"dotnet:gitreleasemanager.tool" = "0.20.0"
+"dotnet:NuGet.Mcp.Server" = "1.4.3"
+tombi = "1.9.8"
+oxfmt = "0.75.0"
+
+[tasks]
+build = { run = "dotnet run build/Build.cs" }
+docs = { run = "npm run dev --workspace docs", description = "Start the Astro/Starlight dev server" }
+"docs:preview" = { run = "npm run preview --workspace docs", description = "Preview built Starlight site" }
+"docs:build" = { run = "npm run build --workspace docs", description = "Build the Starlight site" }
+"roslyn-lsp" = { run = "bash build/scripts/install-roslyn-lsp.sh", description = "Install the Microsoft Roslyn language server for this RID" }
+"pkl-vscode" = { run = "bash build/scripts/install-pkl-vscode.sh", description = "Install the Pkl VS Code extension (not in marketplace; installed from VSIX)" }
+
+[settings]
+experimental = true
+prereleases = true
+
+[env]
+HK_MISE = 1
+npm_config_cache = "{{env.HOME}}/.local/share/mise/npm-cache"
+# Microsoft Roslyn language server (Microsoft.CodeAnalysis.LanguageServer), installed by the
+# `roslyn-lsp` task from the Azure DevOps vs-impl feed. The wrapper lands on PATH below.
+ROSLYN_LSP_VERSION = "4.8.0-7.26274.14"
+PKL_VSCODE_VERSION = "0.22.0"
+
+[deps.npm]
+auto = true

@@ -2,7 +2,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" />
-        <PackageReference Include="Rocket.Surgery.Extensions.Testing.XUnit3" />
+        <PackageReference Include="Rocket.Surgery.Extensions.Testing.TUnit" />
         <PackageReference Include="Bogus" />
         <PackageReference Include="Microsoft.CodeCoverage" />
         <PackageReference Include="FakeItEasy" />

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.DependencyInjection.Compiled;
+using Indago.Abstractions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;

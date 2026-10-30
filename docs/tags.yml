@@ -1,0 +1,10 @@
+tags:
+    getting-started:
+        label: Getting Started
+        description: Introductory guides and tutorials.
+    architecture:
+        label: Architecture
+        description: Internal architecture and design documentation.
+    hosting:
+        label: Hosting
+        description: Hosting conventions for the supported application types.

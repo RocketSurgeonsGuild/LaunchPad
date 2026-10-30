@@ -1,0 +1,242 @@
+name: Build
+
+on:
+    push:
+        branches:
+            - main
+            - next
+        tags:
+            - v*
+    pull_request:
+        branches:
+            - main
+            - next
+    merge_group:
+        branches:
+            - main
+            - next
+
+permissions:
+    contents: read
+
+# A newer run for the same branch (or pull request head) cancels this one; tags and merge-queue refs are unique.
+concurrency:
+    group: build-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  clean: 'false'
+                  fetch-depth: '0'
+            - name: 🛠️ Setup mise
+              uses: jdx/mise-action@v5
+              env:
+                  # One install at a time: mise downloads dotnet-install.sh to one shared path for every dotnet version, so the
+                  # SDK and runtime installs overwrite it under each other ("failed to execute command") when they run in parallel.
+                  MISE_JOBS: '1'
+              with:
+                  install: true
+                  # Only dotnet (the SDK and the runtime) here; the other tools install in parallel in the next step.
+                  install_args: dotnet
+                  # One cache for every tool: restored here, before anything installs, and saved in the post step
+                  # (cache_save_post), after the next step's tools and the pruning at the end of the job. The key is fixed
+                  # rather than hashed from the tool versions, so a bump doesn't start a new multi-GB cache; it rolls over
+                  # every cache_max_age_days to pick up bumps. Only main saves it (pull requests and the merge queue each
+                  # have their own cache scope, so saving there would make one per ref); every ref can restore main's.
+                  cache: true
+                  cache_key: mise-{{platform}}-{{cache_period}}
+                  cache_max_age_days: 7
+                  cache_save: ${{ github.ref == 'refs/heads/main' }}
+                  cache_save_post: true
+                  experimental: true
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+            # Everything but dotnet, in parallel (mise's default jobs). Naming the tools keeps `mise install` from touching the
+            # dotnet installs again.
+            - name: 🧰 Install tools
+              run: mise ls --current --local --json | jq -r 'keys[] | select(. != "dotnet")' | xargs mise install
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: ⚙️ Build
+              id: build
+              run: |
+                  mise run build
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  # The folder of the gh-pages branch these docs deploy to (see the docs job): a pull request's preview, a
+                  # release's version folder, or (empty) the site root that holds latest main.
+                  DOCS_BASE: >-
+                      ${{ github.event_name == 'pull_request' && format('/{0}/pr-preview/pr-{1}', github.event.repository.name, github.event.number)
+                      || startsWith(github.ref, 'refs/tags/v') && format('/{0}/{1}', github.event.repository.name, github.ref_name)
+                      || '' }}
+            - name: 🏺 Save GitHub event
+              if: always()
+              run: cp "$GITHUB_EVENT_PATH" artifacts/event.json || true
+            - name: 🏺 Publish logs
+              if: always()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: logs
+                  # Test results and coverage have their own artifacts below.
+                  path: |
+                      artifacts/logs/
+                      !artifacts/logs/tests/
+                      !artifacts/logs/coverage/
+            - name: 🏺 Publish test data
+              if: always()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: test data
+                  # The pipeline writes test results and coverage under artifacts/logs/ (Publish Results reads both artifacts).
+                  path: artifacts/logs/tests/
+            - name: 🏺 Publish coverage data
+              if: always()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: coverage
+                  path: artifacts/logs/coverage/
+            - name: 🏺 Publish NuGet Packages
+              if: always()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: nuget
+                  path: artifacts/nuget/
+            - name: 🏺 Publish event
+              if: always()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: event
+                  path: artifacts/event.json
+            - name: 🏺 Publish docs
+              uses: actions/upload-artifact@v7
+              with:
+                  name: docs
+                  path: artifacts/docs/
+                  include-hidden-files: true
+            # Before the post step saves the mise cache: drop tool versions nothing selects anymore, so it holds only the
+            # current ones.
+            - name: 🧹 Prune tools
+              if: always() && github.ref == 'refs/heads/main'
+              run: mise prune --tools
+
+    # Deploys the docs the build made to the gh-pages branch: main to the root, each release to v<version>/ (listed in
+    # versions.json for the version switcher), and each pull request from this repository to pr-preview/pr-<n>/ (removed
+    # again by docs-preview-cleanup.yml). Pre-release tags and fork pull requests don't deploy.
+    docs:
+        needs: build
+        if: >-
+            github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-'))
+            || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        # Every gh-pages writer (main, releases, previews and their cleanup) shares this group, so they push one at a time;
+        # queue: max keeps every waiting deploy rather than only the newest.
+        concurrency:
+            group: gh-pages
+            cancel-in-progress: false
+            queue: max
+        steps:
+            # The deploy action runs git in the workspace, so it needs a checkout. A full one: a sparse checkout is a
+            # partial (blob-less) clone, and fetching gh-pages into it fails with "missing blob object".
+            - name: Checkout
+              uses: actions/checkout@v7
+            - name: 📥 Download docs
+              uses: actions/download-artifact@v8
+              with:
+                  name: docs
+                  path: site
+            # A pull request closed while its build ran already had its preview removed by docs-preview-cleanup.yml, so
+            # deploying now would leave an orphaned preview behind.
+            - name: 🔍 Check the pull request is still open
+              id: pr
+              if: github.event_name == 'pull_request'
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  PR_URL: ${{ github.event.pull_request.html_url }}
+              run: echo "state=$(gh pr view "$PR_URL" --json state --jq .state)" >> "$GITHUB_OUTPUT"
+            - name: 🚀 Deploy pull request preview
+              if: github.event_name == 'pull_request' && steps.pr.outputs.state == 'OPEN'
+              uses: rossjrw/pr-preview-action@v1
+              with:
+                  source-dir: site
+                  action: deploy
+            # Without .nojekyll at the root, Pages runs Jekyll, which drops _astro/. Only the root gets one: the deploy action
+            # never deletes .nojekyll, so a copy in each preview would outlive the preview.
+            - name: Add .nojekyll
+              if: github.ref == 'refs/heads/main'
+              run: touch site/.nojekyll
+            - name: 🚀 Deploy main
+              if: github.ref == 'refs/heads/main'
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: site
+                  branch: gh-pages
+                  clean: true
+                  # Releases, previews and the release list live beside main's build; don't clean them away.
+                  clean-exclude: |
+                      /pr-preview/
+                      /v[0-9]*/
+                      /versions.json
+            - name: 🏷️ Add the release to versions.json
+              if: startsWith(github.ref, 'refs/tags/v')
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  version="${GITHUB_REF_NAME#v}"
+                  mkdir -p "release/v$version"
+                  cp -R site/. "release/v$version/"
+                  gh api "repos/$GITHUB_REPOSITORY/contents/versions.json?ref=gh-pages" -H "Accept: application/vnd.github.raw" > versions.json \
+                    || echo '{"versions":[]}' > versions.json
+                  VERSION="$version" node -e '
+                    const fs = require("fs");
+                    const { versions = [] } = JSON.parse(fs.readFileSync("versions.json", "utf8"));
+                    const parts = (v) => v.split(".").map(Number);
+                    const sorted = [...new Set([process.env.VERSION, ...versions])].sort((a, b) => {
+                      const [x, y] = [parts(a), parts(b)];
+                      return y[0] - x[0] || y[1] - x[1] || y[2] - x[2];
+                    });
+                    fs.writeFileSync("release/versions.json", JSON.stringify({ versions: sorted }, null, 2) + "\n");
+                  '
+                  cat release/versions.json
+            - name: 🚀 Deploy release
+              if: startsWith(github.ref, 'refs/tags/v')
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: release
+                  branch: gh-pages
+                  # Only adds v<version>/ and replaces versions.json; everything else on gh-pages stays.
+                  clean: false
+
+    # Pushes the packages the build made to nuget.org with NuGet trusted publishing: the job trades its GitHub OIDC token
+    # for a short-lived API key (valid for an hour), so no long-lived key is stored. Only version tags publish, and only this
+    # job can request an OIDC token. The nuget.org trusted publishing policy names this workflow (build.yml) and the nuget
+    # environment; NUGET_USER is the nuget.org profile name that owns that policy.
+    publish:
+        needs: build
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        runs-on: ubuntu-latest
+        environment: nuget
+        permissions:
+            id-token: write
+        steps:
+            - name: 📥 Download NuGet packages
+              uses: actions/download-artifact@v8
+              with:
+                  name: nuget
+                  path: nuget
+            - name: 🔑 NuGet login
+              id: nuget-login
+              uses: NuGet/login@v1
+              with:
+                  user: ${{ secrets.NUGET_USER }}
+            # Each .snupkg beside its .nupkg is pushed with it.
+            - name: 🚀 Push to nuget.org
+              env:
+                  NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+              run: dotnet nuget push 'nuget/*.nupkg' --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate

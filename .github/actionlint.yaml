@@ -1,0 +1,11 @@
+# GitHub-hosted runner labels newer than actionlint knows about.
+self-hosted-runner:
+    labels:
+        # macOS with Xcode 27 (public preview): https://github.com/actions/runner-images/issues/14404
+        - xcode-27
+paths:
+    .github/workflows/**/*.{yml,yaml}:
+        ignore:
+            # concurrency.queue (https://github.blog/changelog/2026-05-07-github-actions-concurrency-groups-now-allow-larger-queues)
+            # is newer than actionlint: https://github.com/rhysd/actionlint/issues/654
+            - 'unexpected key "queue" for "concurrency" section'

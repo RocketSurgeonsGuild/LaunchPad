@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using NodaTime;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
 using Serilog.Events;

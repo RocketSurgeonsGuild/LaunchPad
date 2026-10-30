@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.Conventions;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 
 using Sample.Core.Domain;
 

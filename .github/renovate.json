@@ -1,12 +1,39 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": ["local>RocketSurgeonsGuild/.github:renovate-config"],
-    "ignorePaths": ["**/node_modules/**", "**/*.csproj", "Directory.Packages.support.props"],
-    "packageRules": [
-        {
-            "matchCategories": ["js"],
-            "automerge": true,
-            "labels": [":truck: private-dependencies"]
-        }
-    ]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>RocketSurgeonsGuild/.github:renovate-config"],
+  "ignorePaths": ["**/node_modules/**", "**/*.csproj"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The .NET SDK pinned in mise (Renovate's mise manager does not update dotnet); comment lines may sit above it",
+      "managerFilePatterns": ["/^\\.config/mise\\.toml$/"],
+      "matchStrings": ["dotnet = \\[(?:\\s*#[^\\n]*)*\\s*\\{ version = \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "dotnet-sdk",
+      "datasourceTemplate": "dotnet-version",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "The extra .NET runtime pinned in mise (Renovate's mise manager ignores the runtime element)",
+      "managerFilePatterns": ["/^\\.config/mise\\.toml$/"],
+      "matchStrings": ["version = \"(?<currentValue>[^\"]+)\", runtime = \"dotnet\""],
+      "depNameTemplate": "dotnet-runtime",
+      "datasourceTemplate": "dotnet-version",
+      "versioningTemplate": "semver"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Ship the .NET SDK (global.json and mise.toml) and the extra runtime in the same PR as the NuGet packages, rather than splitting the runtime into its own patch PR",
+      "matchDepNames": ["dotnet-sdk", "dotnet-runtime"],
+      "groupName": "dotnet monorepo",
+      "separateMinorPatch": false,
+      "separateMultipleMinor": false
+    },
+    {
+      "matchCategories": ["js"],
+      "automerge": true,
+      "labels": [":truck: private-dependencies"]
+    }
+  ]
 }

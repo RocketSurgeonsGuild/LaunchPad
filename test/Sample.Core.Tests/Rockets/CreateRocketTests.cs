@@ -2,7 +2,7 @@ using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;

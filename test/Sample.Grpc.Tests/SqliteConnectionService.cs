@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 
 namespace Sample.Grpc.Tests;

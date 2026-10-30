@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 using CoreRocketType = Sample.Core.Domain.RocketType;

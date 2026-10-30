@@ -1,5 +1,5 @@
 using Grpc.Core;
-using Rocket.Surgery.DependencyInjection;
+using Indago;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;

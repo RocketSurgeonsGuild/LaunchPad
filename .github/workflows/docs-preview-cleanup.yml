@@ -1,0 +1,32 @@
+name: Docs Preview Cleanup
+
+# Removes a pull request's docs preview (deployed by the docs job in build.yml) from gh-pages when the pull request closes.
+on:
+    pull_request:
+        types:
+            - closed
+
+permissions:
+    contents: write
+    pull-requests: write
+
+# The same group as every other gh-pages writer (see build.yml), so they push one at a time.
+concurrency:
+    group: gh-pages
+    cancel-in-progress: false
+    queue: max
+
+jobs:
+    remove:
+        # Fork pull requests never get a preview.
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        runs-on: ubuntu-latest
+        steps:
+            # The deploy action runs git in the workspace, so it needs a checkout. A full one: a sparse checkout is a
+            # partial (blob-less) clone, and fetching gh-pages into it fails with "missing blob object".
+            - name: Checkout
+              uses: actions/checkout@v7
+            - name: 🧹 Remove pull request preview
+              uses: rossjrw/pr-preview-action@v1
+              with:
+                  action: remove

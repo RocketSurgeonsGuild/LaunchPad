@@ -1,7 +1,3 @@
 <Project>
-    <ItemGroup>
-        <!-- <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" IncludeAssets="analyzers;build;buildMultitargeting;buildTransitive" PrivateAssets="All" />-->
-        <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
-    </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 </Project>
