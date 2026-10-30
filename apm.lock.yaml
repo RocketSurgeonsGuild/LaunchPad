@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-10-30T02:31:51.031198+00:00'
+generated_at: '2026-10-30T02:57:53.353812+00:00'
 apm_version: 0.35.0
 dependencies:
 - repo_url: diegosouzapw/awesome-omni-skills
@@ -19,7 +19,6 @@ dependencies:
   - .claude/skills/mise-configurator-v2/ORIGIN.md
   - .claude/skills/mise-configurator-v2/SKILL.md
   - .claude/skills/mise-configurator-v2/metadata.json
-  - .github/skills/mise-configurator-v2
   deployed_file_hashes:
     .agents/skills/mise-configurator-v2/ORIGIN.md: sha256:b1d1d3c4cb876dd32d6a0992b52a89ed89613fee4ed368d2797c33248031ac7f
     .agents/skills/mise-configurator-v2/SKILL.md: sha256:baa446fc8ecced9b80584a40fa5facd8ea7af3a1f3b44a4c418c848ffa1b3bca
@@ -61,10 +60,6 @@ dependencies:
   virtual_path: plugins/context-engineering
   is_virtual: true
   package_type: agent_plugin
-  deployed_files:
-  - .github/skills/context-map
-  - .github/skills/refactor-plan
-  - .github/skills/what-context-needed
   content_hash: sha256:2f04290f2b4a514d04dd0fcbf8ca4c03745c04bdc63c123471bb0a52d590ca03
   declared_license: MIT
 - repo_url: github/awesome-copilot
@@ -75,15 +70,6 @@ dependencies:
   virtual_path: plugins/csharp-dotnet-development
   is_virtual: true
   package_type: agent_plugin
-  deployed_files:
-  - .github/skills/aspnet-minimal-api-openapi
-  - .github/skills/csharp-async
-  - .github/skills/csharp-mstest
-  - .github/skills/csharp-nunit
-  - .github/skills/csharp-tunit
-  - .github/skills/csharp-xunit
-  - .github/skills/dotnet-best-practices
-  - .github/skills/dotnet-upgrade
   content_hash: sha256:e72e23795d1178000eb6a9666ea3ee74f35e97694db7c0b6bfea5fe1ec016433
   declared_license: MIT
 - repo_url: majiayu000/claude-skill-registry
@@ -99,7 +85,6 @@ dependencies:
   - .agents/skills/hk-setup/SKILL.md
   - .claude/skills/hk-setup
   - .claude/skills/hk-setup/SKILL.md
-  - .github/skills/hk-setup
   deployed_file_hashes:
     .agents/skills/hk-setup/SKILL.md: sha256:01209fa77aed39b8244f53b031c1a3040923367049d1f8e83c35df2ee4cadfe8
     .claude/skills/hk-setup/SKILL.md: sha256:01209fa77aed39b8244f53b031c1a3040923367049d1f8e83c35df2ee4cadfe8
@@ -312,132 +297,6 @@ deployments:
   - .
   active_owner: .
   content_hash: sha256:1c54cb072667363a83ba46ba02b1d25d022f9a5b9256b5c9f17d63b22793c6db
-- kind: project-relative
-  target: copilot
-  value: .github/skills/aspnet-minimal-api-openapi
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/context-map
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/context-engineering
-  active_owner: github/awesome-copilot/plugins/context-engineering
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/context7-mcp
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/csharp-async
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/csharp-mstest
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/csharp-nunit
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/csharp-tunit
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/csharp-xunit
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/dotnet-best-practices
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/dotnet-upgrade
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/csharp-dotnet-development
-  active_owner: github/awesome-copilot/plugins/csharp-dotnet-development
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/hk-setup
-  runtime: null
-  scope: project
-  owners:
-  - majiayu000/claude-skill-registry/skills/data/hk-setup
-  active_owner: majiayu000/claude-skill-registry/skills/data/hk-setup
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/mise-configurator-v2
-  runtime: null
-  scope: project
-  owners:
-  - diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
-  active_owner: diegosouzapw/awesome-omni-skills/skills/mise-configurator-v2
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/refactor-plan
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/context-engineering
-  active_owner: github/awesome-copilot/plugins/context-engineering
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/what-context-needed
-  runtime: null
-  scope: project
-  owners:
-  - github/awesome-copilot/plugins/context-engineering
-  active_owner: github/awesome-copilot/plugins/context-engineering
-  content_hash: null
 mcp_servers:
 - io.github.github/github-mcp-server
 - io.github.upstash/context7
@@ -465,7 +324,6 @@ local_deployed_files:
 - .claude/skills/context7-mcp/SKILL.md
 - .github/instructions/context7.instructions.md
 - .github/instructions/neo4j-knowledgebase.instructions.md
-- .github/skills/context7-mcp
 local_deployed_file_hashes:
   .agents/skills/context7-mcp/SKILL.md: sha256:6f07fd4d6cbf96c00c66ef859c2981efb0795315069f55af30c0ae4f28b77690
   .claude/rules/context7.md: sha256:0f66072fffde531a3b65ad1fca2a0a719b2c0a146f79a32230e1566aa917a792
