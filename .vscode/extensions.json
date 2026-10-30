@@ -10,6 +10,6 @@
         "lambdageek.msbuild-structured-log-viewer",
         "github.vscode-github-actions",
         "christian-kohler.path-intellisense",
-        "esbenp.prettier-vscode"
+        "biomejs.biome"
     ]
 }
