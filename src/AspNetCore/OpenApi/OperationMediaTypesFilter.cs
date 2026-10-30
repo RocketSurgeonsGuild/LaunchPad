@@ -7,17 +7,21 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
     {
         public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
+        // The content dictionary's value type differs between Microsoft.OpenApi 2.x (net10.0, OpenApiMediaType) and 3.x (net11.0,
+        // IOpenApiMediaType), so skip missing content instead of substituting an empty dictionary of one particular type.
         var contentCollections =
             operation
-               .Responses.Values.Select(x => x.Content ?? new Dictionary<string, OpenApiMediaType>())
-               .Concat([operation.RequestBody?.Content ?? new Dictionary<string, OpenApiMediaType>()])
-               .Where(x => x.ContainsKey("text/plain"))
+               .Responses.Values.Select(x => x.Content)
+               .Append(operation.RequestBody?.Content)
+               .Where(x => x is not null && x.ContainsKey("text/plain"))
+               .Select(x => x!)
                .ToArray();
         var patchCollections =
             operation
-               .Responses.Values.Select(x => x.Content ?? new Dictionary<string, OpenApiMediaType>())
-               .Concat([operation.RequestBody?.Content ?? new Dictionary<string, OpenApiMediaType>()])
-               .Where(x => x.Keys.Any(z => z.Contains("patch", StringComparison.OrdinalIgnoreCase)))
+               .Responses.Values.Select(x => x.Content)
+               .Append(operation.RequestBody?.Content)
+               .Where(x => x is not null && x.Keys.Any(z => z.Contains("patch", StringComparison.OrdinalIgnoreCase)))
+               .Select(x => x!)
                .ToArray();
 
         foreach (var item in contentCollections)

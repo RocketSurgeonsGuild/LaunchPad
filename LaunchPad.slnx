@@ -6,63 +6,54 @@
   </Configurations>
   <Folder Name="/config/">
     <File Path=".codecov.yml" />
-    <File Path=".config/dotnet-tools.json" />
+    <File Path=".config/hk.pkl" />
+    <File Path=".config/mise.toml" />
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
     <File Path=".gitmodules" />
     <File Path=".mergify.yml" />
     <File Path=".prettierignore" />
-    <File Path=".prettierrc" />
     <File Path="build.cmd" />
     <File Path="build.ps1" />
     <File Path="build.sh" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
-    <File Path="Directory.Packages.support.props" />
-    <File Path="dotnet-tools.json" />
     <File Path="GitReleaseManager.yaml" />
     <File Path="GitVersion.yml" />
+    <File Path="global.json" />
     <File Path="LICENSE" />
     <File Path="NuGet.config" />
     <File Path="package.json" />
     <File Path="Readme.md" />
-    <Project Path=".build/.build.csproj">
-      <Build Project="false" />
-    </Project>
   </Folder>
   <Folder Name="/config/.github/">
-    <File Path="labels.yml" />
-    <File Path="release.yml" />
-    <File Path="renovate.json" />
+    <File Path=".github/labels.yml" />
+    <File Path=".github/release.yml" />
+    <File Path=".github/renovate.json" />
   </Folder>
   <Folder Name="/config/.github/workflows/">
-    <File Path="ci-ignore.yml" />
-    <File Path="ci.yml" />
-    <File Path="close-milestone.yml" />
-    <File Path="dependabot-merge.yml" />
-    <File Path="draft-release.yml" />
-    <File Path="lint.yml" />
-    <File Path="publish-docs.yml" />
-    <File Path="publish-nuget.yml" />
-    <File Path="sync-labels.yml" />
-    <File Path="update-milestone.yml" />
-  </Folder>
-  <Folder Name="/config/.husky/">
-    <File Path="pre-commit" />
-    <File Path="task-runner.json" />
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/close-milestone.yml" />
+    <File Path=".github/workflows/dependabot-merge.yml" />
+    <File Path=".github/workflows/docs-preview-cleanup.yml" />
+    <File Path=".github/workflows/draft-release.yml" />
+    <File Path=".github/workflows/lint.yml" />
+    <File Path=".github/workflows/publish-results.yml" />
+    <File Path=".github/workflows/sync-labels.yml" />
+    <File Path=".github/workflows/update-milestone.yml" />
   </Folder>
   <Folder Name="/config/.vscode/">
-    <File Path="launch.json" />
-    <File Path="settings.json" />
-    <File Path="tasks.json" />
+    <File Path=".vscode/launch.json" />
+    <File Path=".vscode/settings.json" />
+    <File Path=".vscode/tasks.json" />
   </Folder>
   <Folder Name="/sample/">
-    <File Path=".editorconfig" />
-    <File Path="Directory.Build.props" />
-    <File Path="Directory.Build.targets" />
-    <File Path="Directory.Packages.props" />
+    <File Path="sample/.editorconfig" />
+    <File Path="sample/Directory.Build.props" />
+    <File Path="sample/Directory.Build.targets" />
+    <File Path="sample/Directory.Packages.props" />
     <Project Path="sample/Sample.BlazorServer/Sample.BlazorServer.csproj" />
     <Project Path="sample/Sample.BlazorWasm/Sample.BlazorWasm.csproj" />
     <Project Path="sample/Sample.Classic.Restful/Sample.Classic.Restful.csproj" />
@@ -77,9 +68,9 @@
     <Project Path="sample/Sample.Worker/Sample.Worker.csproj" />
   </Folder>
   <Folder Name="/src/">
-    <File Path=".editorconfig" />
-    <File Path="Directory.Build.props" />
-    <File Path="Directory.Build.targets" />
+    <File Path="src/.editorconfig" />
+    <File Path="src/Directory.Build.props" />
+    <File Path="src/Directory.Build.targets" />
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <Project Path="src/AspNetCore.Blazor/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.csproj" />
     <Project Path="src/AspNetCore.FluentValidation.OpenApi/Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
@@ -107,9 +98,9 @@
     <Project Path="src/WebAssembly.Hosting/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <File Path=".editorconfig" />
-    <File Path="Directory.Build.props" />
-    <File Path="Directory.Build.targets" />
+    <File Path="test/.editorconfig" />
+    <File Path="test/Directory.Build.props" />
+    <File Path="test/Directory.Build.targets" />
     <Project Path="test/Analyzers.Tests/Analyzers.Tests.csproj" />
     <Project Path="test/AspNetCore.FluentValidation.OpenApi.Tests/AspNetCore.FluentValidation.OpenApi.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />
