@@ -52,8 +52,5 @@ public class MethodResult(MethodInfo methodInfo)
               .SelectMany(sources => sources, (_, source) => new MapResult(source, methodInfo.Invoke(mapper, [source,])));
     }
 
-    public override string ToString()
-    {
-        return $"{methodInfo.Name}({methodInfo.GetParameters()[0].ParameterType.Name} -> {methodInfo.ReturnType.Name})";
-    }
+    public override string ToString() => $"{methodInfo.Name}({methodInfo.GetParameters()[0].ParameterType.Name} -> {methodInfo.ReturnType.Name})";
 }

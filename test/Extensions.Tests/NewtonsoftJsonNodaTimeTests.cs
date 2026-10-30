@@ -6,7 +6,7 @@ namespace Extensions.Tests;
 
 public class NewtonsoftJsonNodaTimeTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
-    private JsonSerializerSettings _settings = new JsonSerializerSettings()
+    private readonly JsonSerializerSettings _settings = new JsonSerializerSettings()
        .ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);
 
     [Test]

@@ -28,12 +28,11 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
         JsonSerializer.Deserialize<LineString>(geom, _settings)
                       .ShouldBe(
                            new LineString(
-                               new[]
-                               {
+                               [
                                    new Coordinate(30, 10),
                                    new Coordinate(10, 30),
                                    new Coordinate(40, 40),
-                               }
+                               ]
                            )
                        );
     }
@@ -46,10 +45,9 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
                       .ShouldBe(
                            new Polygon(
                                new LinearRing(
-                                   new[]
-                                   {
+                                   [
                                        new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
-                                   }
+                                   ]
                                )
                            )
                        );
@@ -59,10 +57,12 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
     [Arguments("{\"type\": \"MultiPoint\",\"coordinates\": [[10, 40], [40, 30], [20, 20], [30, 10]]}")]
     public void MultiPoint_Tests(string geom)
     {
-                JsonSerializer.Deserialize<MultiPoint>(geom, _settings)
+        JsonSerializer.Deserialize<MultiPoint>(geom, _settings)
 
-           .ShouldBe(
-                new MultiPoint(
+   .ShouldBe(
+        new MultiPoint(
+
+<<<<<<< TODO: Unmerged change from project 'Extensions.Tests(net11.0)', Before:
                     new[]
                     {
                         new Point(10, 40),
@@ -72,6 +72,24 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
                     }
                 )
             );
+=======
+            [
+                new Point(10, 40),
+                        new Point(40, 30),
+                        new Point(20, 20),
+                        new Point(30, 10)
+            ]
+        )
+    );
+>>>>>>> After
+            [
+                        new Point(10, 40),
+                        new Point(40, 30),
+                        new Point(20, 20),
+                        new Point(30, 10)
+            ]
+        )
+    );
     }
 
     [Test]
