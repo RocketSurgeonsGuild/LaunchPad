@@ -6,15 +6,15 @@ using Rocket.Surgery.LaunchPad.Mapping;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class JsonElementConverterTests(ITestContextAccessor testContext) : MapperTestBase(testContext)
+public partial class JsonElementConverterTests() : MapperTestBase()
 {
 //    private class JsonElementB
 //    {
 //        public JsonElement? Bar { get; set; }
 //    }
 
-    [Theory]
-    [MapperData<Mapper>]
+    [Test]
+    [MethodDataSource(nameof(Methods))]
     public Task Maps_All_Methods(MethodResult result)
     {
         var stub = A.Fake<IOptionsMonitor<JsonSerializerOptions>>();
@@ -48,6 +48,8 @@ public partial class JsonElementConverterTests(ITestContextAccessor testContext)
                )
               .UseParameters(result.ToString());
     }
+
+    public static IEnumerable<Func<MethodResult>> Methods() => MapperData.Methods<Mapper>();
 
     [Mapper]
     [PublicAPI]

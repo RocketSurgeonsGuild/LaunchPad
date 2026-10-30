@@ -10,9 +10,9 @@ using Rocket.Surgery.LaunchPad.Foundation.Conventions;
 
 namespace Extensions.Tests;
 
-public class MediatRTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
+public class MediatRTests() : AutoFakeTest<TestRecord>(TestRecord.Create())
 {
-    [Fact]
+    [Test]
     public async Task Test1()
     {
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
@@ -38,7 +38,7 @@ public class MediatRTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUni
            .MustHaveHappenedOnceExactly();
     }
 
-    [Fact]
+    [Test]
     public async Task Test2()
     {
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.

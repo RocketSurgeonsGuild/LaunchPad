@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace Extensions.Tests.Mapping.Helpers;
 
-public class MethodResult(MethodInfo methodInfo) : TheoryDataRowBase
+public class MethodResult(MethodInfo methodInfo)
 {
     public MapResult Map(object mapper, params object[] instances)
     {
@@ -56,7 +56,4 @@ public class MethodResult(MethodInfo methodInfo) : TheoryDataRowBase
     {
         return $"{methodInfo.Name}({methodInfo.GetParameters()[0].ParameterType.Name} -> {methodInfo.ReturnType.Name})";
     }
-
-    /// <inheritdoc />
-    protected override object?[] GetData() => [this];
 }

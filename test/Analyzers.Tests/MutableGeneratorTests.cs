@@ -3,9 +3,9 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-public class MutableGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
+public class MutableGeneratorTests() : GeneratorTest()
 {
-    public override async ValueTask InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

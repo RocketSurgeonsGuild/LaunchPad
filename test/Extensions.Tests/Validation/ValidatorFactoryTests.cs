@@ -3,9 +3,9 @@ using Serilog.Events;
 
 namespace Extensions.Tests.Validation;
 
-public class ValidatorFactoryTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper, LogEventLevel.Information))
+public class ValidatorFactoryTests() : AutoFakeTest<TestRecord>(TestRecord.Create(LogEventLevel.Information))
 {
-    //    [Fact]
+    //    [Test]
     //    public void Should_Aggregate_Validators()
     //    {
     //        var sp = A.Fake<IServiceProvider>();

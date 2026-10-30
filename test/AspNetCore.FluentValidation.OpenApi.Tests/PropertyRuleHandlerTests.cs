@@ -17,32 +17,32 @@ namespace AspNetCore.FluentValidation.OpenApi.Tests;
 [Experimental(Constants.ExperimentalId)]
 public partial class PropertyRuleHandlerTests : RuleTestBase
 {
-    [Theory]
-    [MemberData(nameof(GetNotNullValidators))]
+    [Test]
+    [MethodDataSource(nameof(GetNotNullValidators))]
     public Task Should_generate_required_property(OpenApiResult result) => VerifyJson(result.JsonFactory()).UseParameters(result.Path);
 
-    [Theory]
-    [MemberData(nameof(GetNotEmptyValidators))]
+    [Test]
+    [MethodDataSource(nameof(GetNotEmptyValidators))]
     public Task Should_generate_required_property_and_min_length(OpenApiResult result) => VerifyJson(result.JsonFactory()).UseParameters(result.Path);
 
-    [Theory]
-    [MemberData(nameof(GetLengthValidators))]
+    [Test]
+    [MethodDataSource(nameof(GetLengthValidators))]
     public Task Should_generate_length_properties(OpenApiResult result) => VerifyJson(result.JsonFactory()).UseParameters(result.Path);
 
-    [Theory]
-    [MemberData(nameof(RegularExpressionValidators))]
+    [Test]
+    [MethodDataSource(nameof(RegularExpressionValidators))]
     public Task Should_generate_regex_properties(OpenApiResult result) => VerifyJson(result.JsonFactory()).UseParameters(result.Path);
 
-    [Theory]
-    [MemberData(nameof(EmailAddressValidators))]
+    [Test]
+    [MethodDataSource(nameof(EmailAddressValidators))]
     public Task Should_generate_email_properties(OpenApiResult result) => VerifyJson(result.JsonFactory()).UseParameters(result.Path);
 
-    [Theory]
-    [MemberData(nameof(ComparisonValidators))]
+    [Test]
+    [MethodDataSource(nameof(ComparisonValidators))]
     public Task Should_generate_comparison_properties(OpenApiResult result) => VerifyJson(result.JsonFactory()).UseParameters(result.Path);
 
-    [Theory]
-    [MemberData(nameof(BetweenValidators))]
+    [Test]
+    [MethodDataSource(nameof(BetweenValidators))]
     public Task Should_generate_between_properties(OpenApiResult result) => VerifyJson(result.JsonFactory()).UseParameters(result.Path);
 
     public static IEnumerable<object[]> GetNotNullValidators()

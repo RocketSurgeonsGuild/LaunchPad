@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccessor outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
+public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
     private static T DeserializeObject<T>(string geom, JsonSerializerSettings settings)
     {
@@ -23,8 +23,8 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccess
     // typeof(MultiLineString),
     // typeof(MultiPolygon),
     // typeof(GeometryCollection)
-    [Theory]
-    [InlineData("POINT (30 10)")]
+    [Test]
+    [Arguments("POINT (30 10)")]
     public void Geometry_Tests(string geom)
     {
         var value = DeserializeObject<Point>(geom, _settings);
@@ -32,8 +32,8 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccess
         SerializeObject(value, _settings).ShouldBe(geom);
     }
 
-    [Theory]
-    [InlineData("LINESTRING (30 10, 10 30, 40 40)")]
+    [Test]
+    [Arguments("LINESTRING (30 10, 10 30, 40 40)")]
     public void LineString_Tests(string geom)
     {
         var value = DeserializeObject<LineString>(geom, _settings);
@@ -50,8 +50,8 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccess
         SerializeObject(value, _settings).ShouldBe(geom);
     }
 
-    [Theory]
-    [InlineData("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")]
+    [Test]
+    [Arguments("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")]
     public void Polygon_Tests(string geom)
     {
         var value = DeserializeObject<Polygon>(geom, _settings);
@@ -68,8 +68,8 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccess
         SerializeObject(value, _settings).ShouldBe(geom);
     }
 
-    [Theory]
-    [InlineData("MULTIPOINT ((10 40), (40 30), (20 20), (30 10))")]
+    [Test]
+    [Arguments("MULTIPOINT ((10 40), (40 30), (20 20), (30 10))")]
     public void MultiPoint_Tests(string geom)
     {
         var value = DeserializeObject<MultiPoint>(geom, _settings);
@@ -87,8 +87,8 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccess
         SerializeObject(value, _settings).ShouldBe(geom);
     }
 
-    [Theory]
-    [InlineData("MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))")]
+    [Test]
+    [Arguments("MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))")]
     public void MultiLineString_Tests(string geom)
     {
         var value = DeserializeObject<MultiLineString>(geom, _settings);
@@ -97,8 +97,8 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccess
         SerializeObject(value, _settings).ShouldBe(geom);
     }
 
-    [Theory]
-    [InlineData("MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35)), ((30 20, 20 15, 20 25, 30 20)))")]
+    [Test]
+    [Arguments("MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35)), ((30 20, 20 15, 20 25, 30 20)))")]
     public void MultiPolygon_Tests(string geom)
     {
         var value = DeserializeObject<MultiPolygon>(geom, _settings);
@@ -106,8 +106,8 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests(ITestContextAccess
         SerializeObject(value, _settings).ShouldBe(geom);
     }
 
-    [Theory]
-    [InlineData("GEOMETRYCOLLECTION (POINT (40 10), LINESTRING (10 10, 20 20, 10 40), POLYGON ((40 40, 20 45, 45 30, 40 40)))")]
+    [Test]
+    [Arguments("GEOMETRYCOLLECTION (POINT (40 10), LINESTRING (10 10, 20 20, 10 40), POLYGON ((40 40, 20 45, 45 30, 40 40)))")]
     public void GeometryCollection_Tests(string geom)
     {
         var value = DeserializeObject<GeometryCollection>(geom, _settings);

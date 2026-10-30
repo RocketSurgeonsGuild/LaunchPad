@@ -17,9 +17,9 @@ using Serilog.Events;
 
 namespace Extensions.Tests;
 
-public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
+public class SerilogDestructuringTests : LoggerTest<TestRecord>
 {
-    [Fact]
+    [Test]
     public async Task Should_Destructure_Sjt_Values_JsonElement()
     {
         using var _ = CaptureLogs(out var logs);
@@ -32,7 +32,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_Sjt_Values_JsonDocument()
     {
         using var _ = CaptureLogs(out var logs);
@@ -45,7 +45,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NewtonsoftJson_JObject()
     {
         using var _ = CaptureLogs(out var logs);
@@ -55,7 +55,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NewtonsoftJson_JArray()
     {
         using var _ = CaptureLogs(out var logs);
@@ -65,7 +65,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NewtonsoftJson_JValue()
     {
         var faker = new Faker
@@ -79,7 +79,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NetTopologySuite_AttributesTable()
     {
         var value = new FeatureFactory().CreateRandomAttributes(
@@ -94,7 +94,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_Instant()
     {
         using var _ = CaptureLogs(out var logs);
@@ -102,7 +102,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_LocalDateTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -110,7 +110,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_LocalDate()
     {
         using var _ = CaptureLogs(out var logs);
@@ -118,7 +118,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_LocalTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -126,7 +126,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_OffsetDateTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -134,7 +134,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_OffsetDate()
     {
         using var _ = CaptureLogs(out var logs);
@@ -142,7 +142,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_OffsetTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -150,7 +150,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_ZonedDateTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -158,7 +158,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_DateTimeZone()
     {
         using var _ = CaptureLogs(out var logs);
@@ -166,7 +166,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_Duration()
     {
         using var _ = CaptureLogs(out var logs);
@@ -174,7 +174,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_Period()
     {
         using var _ = CaptureLogs(out var logs);
@@ -182,7 +182,7 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Destructure_NodaTime_Interval()
     {
         using var _ = CaptureLogs(out var logs);
@@ -190,19 +190,19 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
-    [Theory]
-    [InlineData(OgcGeometryType.Point, 5, false)]
-    [InlineData(OgcGeometryType.Point, 5, true)]
-    [InlineData(OgcGeometryType.LineString, 5, false)]
-    [InlineData(OgcGeometryType.LineString, 5, true)]
-    [InlineData(OgcGeometryType.Polygon, 5, false)]
-    [InlineData(OgcGeometryType.Polygon, 5, true)]
-    [InlineData(OgcGeometryType.MultiPoint, 5, false)]
-    [InlineData(OgcGeometryType.MultiPoint, 5, true)]
-    [InlineData(OgcGeometryType.MultiLineString, 5, false)]
-    [InlineData(OgcGeometryType.MultiLineString, 5, true)]
-    [InlineData(OgcGeometryType.MultiPolygon, 5, false)]
-    //    [InlineData(OgcGeometryType.MultiPolygon, 5, true)]
+    [Test]
+    [Arguments(OgcGeometryType.Point, 5, false)]
+    [Arguments(OgcGeometryType.Point, 5, true)]
+    [Arguments(OgcGeometryType.LineString, 5, false)]
+    [Arguments(OgcGeometryType.LineString, 5, true)]
+    [Arguments(OgcGeometryType.Polygon, 5, false)]
+    [Arguments(OgcGeometryType.Polygon, 5, true)]
+    [Arguments(OgcGeometryType.MultiPoint, 5, false)]
+    [Arguments(OgcGeometryType.MultiPoint, 5, true)]
+    [Arguments(OgcGeometryType.MultiLineString, 5, false)]
+    [Arguments(OgcGeometryType.MultiLineString, 5, true)]
+    [Arguments(OgcGeometryType.MultiPolygon, 5, false)]
+    //    [Arguments(OgcGeometryType.MultiPolygon, 5, true)]
     public async Task Should_Destructure_NetTopologySuite_FeatureCollection(OgcGeometryType type, int num, bool threeD)
     {
         var fc = new FeatureCollection();
@@ -225,19 +225,19 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, num, threeD);
     }
 
-    [Theory]
-    [InlineData(OgcGeometryType.Point, false)]
-    [InlineData(OgcGeometryType.Point, true)]
-    [InlineData(OgcGeometryType.LineString, false)]
-    [InlineData(OgcGeometryType.LineString, true)]
-    [InlineData(OgcGeometryType.Polygon, false)]
-    [InlineData(OgcGeometryType.Polygon, true)]
-    [InlineData(OgcGeometryType.MultiPoint, false)]
-    [InlineData(OgcGeometryType.MultiPoint, true)]
-    [InlineData(OgcGeometryType.MultiLineString, false)]
-    [InlineData(OgcGeometryType.MultiLineString, true)]
-    [InlineData(OgcGeometryType.MultiPolygon, false)]
-    //    [InlineData(OgcGeometryType.MultiPolygon, true)]
+    [Test]
+    [Arguments(OgcGeometryType.Point, false)]
+    [Arguments(OgcGeometryType.Point, true)]
+    [Arguments(OgcGeometryType.LineString, false)]
+    [Arguments(OgcGeometryType.LineString, true)]
+    [Arguments(OgcGeometryType.Polygon, false)]
+    [Arguments(OgcGeometryType.Polygon, true)]
+    [Arguments(OgcGeometryType.MultiPoint, false)]
+    [Arguments(OgcGeometryType.MultiPoint, true)]
+    [Arguments(OgcGeometryType.MultiLineString, false)]
+    [Arguments(OgcGeometryType.MultiLineString, true)]
+    [Arguments(OgcGeometryType.MultiPolygon, false)]
+    //    [Arguments(OgcGeometryType.MultiPolygon, true)]
     public async Task Should_Destructure_NetTopologySuite_Geometry(OgcGeometryType type, bool threeD)
     {
         var geometry = new FeatureFactory().CreateRandomGeometry(type, threeD);
@@ -247,9 +247,8 @@ public class SerilogDestructuringTests : LoggerTest<XUnitTestContext>
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, threeD);
     }
 
-    public SerilogDestructuringTests(ITestContextAccessor outputHelper) : base(
+    public SerilogDestructuringTests() : base(
         new (
-            outputHelper,
             LogEventLevel.Information,
             configureLogger: (_, configuration) => configuration
                                                   .Destructure.NewtonsoftJsonTypes()

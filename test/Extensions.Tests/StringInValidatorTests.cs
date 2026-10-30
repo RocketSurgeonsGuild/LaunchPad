@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Extensions.Tests;
 
-public class StringInValidatorTests(ITestContextAccessor testContext) : ConventionFakeTest(testContext)
+public class StringInValidatorTests() : ConventionFakeTest()
 {
-    [Fact]
+    [Test]
     public async Task Should_Validate_Invalid()
     {
         await Init();
@@ -29,7 +29,7 @@ public class StringInValidatorTests(ITestContextAccessor testContext) : Conventi
         result.Errors.ShouldContain(z => z.PropertyName == nameof(Target.TypeIgnoreCase));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Validate_CaseSensitive()
     {
         await Init();
@@ -52,7 +52,7 @@ public class StringInValidatorTests(ITestContextAccessor testContext) : Conventi
         result.Errors.ShouldContain(z => z.PropertyName == nameof(Target.Type));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Validate_CaseInsensitive()
     {
         await Init();

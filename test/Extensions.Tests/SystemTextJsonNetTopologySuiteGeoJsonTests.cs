@@ -4,7 +4,7 @@ using Rocket.Surgery.LaunchPad.Spatial;
 
 namespace Extensions.Tests;
 
-public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor outputHelper) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper))
+public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
     private readonly JsonSerializerOptions _settings = new JsonSerializerOptions().ConfigureGeoJsonForLaunchPad(null);
 
@@ -13,16 +13,16 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor out
     // typeof(MultiLineString),
     // typeof(MultiPolygon),
     // typeof(GeometryCollection)
-    [Theory]
-    [InlineData("{\"type\": \"Point\",\"coordinates\": [30, 10]}")]
+    [Test]
+    [Arguments("{\"type\": \"Point\",\"coordinates\": [30, 10]}")]
     public void Geometry_Tests(string geom)
     {
         JsonSerializer.Deserialize<Point>(geom, _settings)
                       .ShouldBe(new Point(30, 10));
     }
 
-    [Theory]
-    [InlineData("{\"type\": \"LineString\",\"coordinates\": [[30, 10], [10, 30], [40, 40]]}")]
+    [Test]
+    [Arguments("{\"type\": \"LineString\",\"coordinates\": [[30, 10], [10, 30], [40, 40]]}")]
     public void LineString_Tests(string geom)
     {
         JsonSerializer.Deserialize<LineString>(geom, _settings)
@@ -38,8 +38,8 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor out
                        );
     }
 
-    [Theory]
-    [InlineData("{\"type\": \"Polygon\",\"coordinates\": [[[30, 10], [40, 40], [20, 40], [10, 20], [30, 10]]]}")]
+    [Test]
+    [Arguments("{\"type\": \"Polygon\",\"coordinates\": [[[30, 10], [40, 40], [20, 40], [10, 20], [30, 10]]]}")]
     public void Polygon_Tests(string geom)
     {
         JsonSerializer.Deserialize<Polygon>(geom, _settings)
@@ -55,8 +55,8 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor out
                        );
     }
 
-    [Theory]
-    [InlineData("{\"type\": \"MultiPoint\",\"coordinates\": [[10, 40], [40, 30], [20, 20], [30, 10]]}")]
+    [Test]
+    [Arguments("{\"type\": \"MultiPoint\",\"coordinates\": [[10, 40], [40, 30], [20, 20], [30, 10]]}")]
     public void MultiPoint_Tests(string geom)
     {
                 JsonSerializer.Deserialize<MultiPoint>(geom, _settings)
@@ -74,8 +74,8 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor out
             );
     }
 
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         "{\n    \"type\": \"MultiLineString\", \n    \"coordinates\": [\n        [[10, 10], [20, 20], [10, 40]], \n        [[40, 40], [30, 30], [40, 20], [30, 10]]\n    ]\n}"
     )]
     public void MultiLineString_Tests(string geom)
@@ -84,8 +84,8 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor out
                       .ShouldBeOfType<MultiLineString>();
     }
 
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         "{\n    \"type\": \"MultiPolygon\", \n    \"coordinates\": [\n        [\n            [[40, 40], [20, 45], [45, 30], [40, 40]]\n        ], \n        [\n            [[20, 35], [10, 30], [10, 10], [30, 5], [45, 20], [20, 35]], \n            [[30, 20], [20, 15], [20, 25], [30, 20]]\n        ]\n    ]\n}"
     )]
     public void MultiPolygon_Tests(string geom)
@@ -94,8 +94,8 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests(ITestContextAccessor out
                       .ShouldBeOfType<MultiPolygon>();
     }
 
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         "{\n    \"type\": \"GeometryCollection\",\n    \"geometries\": [\n        {\n            \"type\": \"Point\",\n            \"coordinates\": [40, 10]\n        },\n        {\n            \"type\": \"LineString\",\n            \"coordinates\": [\n                [10, 10], [20, 20], [10, 40]\n            ]\n        },\n        {\n            \"type\": \"Polygon\",\n            \"coordinates\": [\n                [[40, 40], [20, 45], [45, 30], [40, 40]]\n            ]\n        }\n    ]\n}"
     )]
     public void GeometryCollection_Tests(string geom)

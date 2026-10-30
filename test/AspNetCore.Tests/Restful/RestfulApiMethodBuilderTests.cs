@@ -7,20 +7,20 @@ using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
 namespace AspNetCore.Tests.Restful;
 
-public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
+public class RestfulApiMethodBuilderTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
-    [Fact]
+    [Test]
     public void Should_Have_Method()
     {
         IRestfulApiMethodMatcher builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
         builder.Method.ShouldBe(RestfulApiMethod.List);
     }
 
-    [Theory]
-    [InlineData("MyActionName")]
-    [InlineData("myActionName")]
-    [InlineData("myactionname")]
-    [InlineData("MYACTIONNAME")]
+    [Test]
+    [Arguments("MyActionName")]
+    [Arguments("myActionName")]
+    [Arguments("myactionname")]
+    [Arguments("MYACTIONNAME")]
     public void Matches_Method_Name(string nameToMatch)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -29,10 +29,10 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
         builder.IsMatch(CreateActionModel(nameof(MyActionName))).ShouldBeTrue();
     }
 
-    [Theory]
-    [InlineData(nameof(OneParameter), 1)]
-    [InlineData(nameof(TwoParameter), 2)]
-    [InlineData(nameof(ThreeParameter), 3)]
+    [Test]
+    [Arguments(nameof(OneParameter), 1)]
+    [Arguments(nameof(TwoParameter), 2)]
+    [Arguments(nameof(ThreeParameter), 3)]
     public void Matches_Method_ParameterCount(string actionName, int count)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -41,10 +41,10 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
         builder.IsMatch(CreateActionModel(actionName)).ShouldBeTrue();
     }
 
-    [Theory]
-    [InlineData(nameof(OneParameter), 0)]
-    [InlineData(nameof(TwoParameter), 1)]
-    [InlineData(nameof(ThreeParameter), 4)]
+    [Test]
+    [Arguments(nameof(OneParameter), 0)]
+    [Arguments(nameof(TwoParameter), 1)]
+    [Arguments(nameof(ThreeParameter), 4)]
     public void Not_Matches_Method_ParameterCount(string actionName, int count)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -53,10 +53,10 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
         builder.IsMatch(CreateActionModel(actionName)).ShouldBeFalse();
     }
 
-    [Theory]
-    [InlineData("My")]
-    [InlineData("my")]
-    [InlineData("MY")]
+    [Test]
+    [Arguments("My")]
+    [Arguments("my")]
+    [Arguments("MY")]
     public void Matches_Method_Prefix(string prefix)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -65,10 +65,10 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
         builder.IsMatch(CreateActionModel(nameof(MyActionName))).ShouldBeTrue();
     }
 
-    [Theory]
-    [InlineData("Name")]
-    [InlineData("name")]
-    [InlineData("NAME")]
+    [Test]
+    [Arguments("Name")]
+    [Arguments("name")]
+    [Arguments("NAME")]
     public void Matches_Method_Suffix(string suffix)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -78,10 +78,10 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
     }
 
 
-    [Theory]
-    [InlineData(nameof(OneParameter), 0)]
-    [InlineData(nameof(TwoParameter), 1)]
-    [InlineData(nameof(ThreeParameter), 2)]
+    [Test]
+    [Arguments(nameof(OneParameter), 0)]
+    [Arguments(nameof(TwoParameter), 1)]
+    [Arguments(nameof(ThreeParameter), 2)]
     public void Matches_Parameter_Existence(string methodName, int parameterIndex)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -91,11 +91,11 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
     }
 
 
-    [Theory]
-    [InlineData(nameof(OneParameter), 0, typeof(Guid))]
-    [InlineData(nameof(TwoParameter), 1, typeof(object))]
-    [InlineData(nameof(ThreeParameter), 2, typeof(int))]
-    [InlineData(nameof(MyActionName), 1, typeof(IBaseRequest))]
+    [Test]
+    [Arguments(nameof(OneParameter), 0, typeof(Guid))]
+    [Arguments(nameof(TwoParameter), 1, typeof(object))]
+    [Arguments(nameof(ThreeParameter), 2, typeof(int))]
+    [Arguments(nameof(MyActionName), 1, typeof(IBaseRequest))]
     public void Matches_Parameter_Type(string methodName, int parameterIndex, Type type)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -105,10 +105,10 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
     }
 
 
-    [Theory]
-    [InlineData(nameof(OneParameter), 0, "id")]
-    [InlineData(nameof(TwoParameter), 1, "two")]
-    [InlineData(nameof(ThreeParameter), 2, "three")]
+    [Test]
+    [Arguments(nameof(OneParameter), 0, "id")]
+    [Arguments(nameof(TwoParameter), 1, "two")]
+    [Arguments(nameof(ThreeParameter), 2, "three")]
     public void Matches_Parameter_Name(string methodName, int parameterIndex, string parameterName)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -118,8 +118,8 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
     }
 
 
-    [Theory]
-    [InlineData(nameof(MyActionName), 1, "Request")]
+    [Test]
+    [Arguments(nameof(MyActionName), 1, "Request")]
     public void Matches_Parameter_Suffix(string methodName, int parameterIndex, string parameterName)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -129,8 +129,8 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
     }
 
 
-    [Theory]
-    [InlineData(nameof(MyActionName), 1, "base")]
+    [Test]
+    [Arguments(nameof(MyActionName), 1, "base")]
     public void Matches_Parameter_Prefix(string methodName, int parameterIndex, string parameterName)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -139,10 +139,10 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
         builder.IsMatch(CreateActionModel(methodName)).ShouldBeTrue();
     }
 
-    [Theory]
-    [InlineData(nameof(MyActionName), true)]
-    [InlineData(nameof(ThreeParameter), false)]
-    [InlineData(nameof(MyComplexAction), true)]
+    [Test]
+    [Arguments(nameof(MyActionName), true)]
+    [Arguments(nameof(ThreeParameter), false)]
+    [Arguments(nameof(MyComplexAction), true)]
     public void Matches_Index_Based_Parameters(string name, bool toBe)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.Create);
@@ -153,8 +153,8 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
         builder.IsMatch(CreateActionModel(name)).ShouldBe(toBe);
     }
 
-    [Theory]
-    [ClassData(typeof(Matching))]
+    [Test]
+    [MethodDataSource(nameof(MatchingActions))]
     public void Matches_Default_Names(Type type, string methodName)
     {
         var builders = new RestfulApiOptions().Builders.Where(z => z.IsValid());
@@ -162,14 +162,18 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
                 .ShouldBeTrue();
     }
 
-    [Theory]
-    [ClassData(typeof(NonMatching))]
+    [Test]
+    [MethodDataSource(nameof(NonMatchingActions))]
     public void Does_Not_Match_Default_Names(Type type, string methodName)
     {
         var builders = new RestfulApiOptions().Builders;
         builders.All(builder => builder.IsMatch(CreateActionModel(methodName, fromType: type)))
                 .ShouldBeFalse();
     }
+
+    public static IEnumerable<(Type Type, string MethodName)> MatchingActions() => Matching.Rows();
+
+    public static IEnumerable<(Type Type, string MethodName)> NonMatchingActions() => NonMatching.Rows();
 
     private ActionModel CreateActionModel(string methodName, string? name = null, Type? fromType = null)
     {
@@ -211,9 +215,9 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
 
     private sealed class RequestResponse : IRequest<string>;
 
-    private sealed class Matching : TheoryData<Type, string>
+    private sealed class Matching
     {
-        public Matching()
+        public static IEnumerable<(Type Type, string MethodName)> Rows()
         {
             foreach (var (type, name) in
                      getActions<ListActions>()
@@ -223,7 +227,7 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
                         .Concat(getActions<DeleteActions>())
                     )
             {
-                Add(type, name);
+                yield return (type, name);
             }
 
             static IEnumerable<(Type type, string name)> getActions<T>()
@@ -447,9 +451,9 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
         }
     }
 
-    private sealed class NonMatching : TheoryData<Type, string>
+    private sealed class NonMatching
     {
-        public NonMatching()
+        public static IEnumerable<(Type Type, string MethodName)> Rows()
         {
             foreach (var (type, name) in
                      getActions<ListActions>()
@@ -459,7 +463,7 @@ public class RestfulApiMethodBuilderTests(ITestContextAccessor testContext) : Lo
                         .Concat(getActions<DeleteActions>())
                     )
             {
-                Add(type, name);
+                yield return (type, name);
             }
 
             static IEnumerable<(Type type, string name)> getActions<T>()

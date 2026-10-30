@@ -12,9 +12,9 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Analyzers.Tests;
 
-public class GraphqlMutationActionBodyGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
+public class GraphqlMutationActionBodyGeneratorTests() : GeneratorTest()
 {
-    [Fact]
+    [Test]
     public async Task Should_Error_If_Class_Property_Is_Init()
     {
         var result = await Builder
@@ -56,7 +56,7 @@ public partial class RocketMutation
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Error_If_Class_Is_Not_Partial()
     {
         const string source2 = @"
@@ -97,12 +97,12 @@ public class RocketMutation
         await Verify(await Builder.AddSources(source1, source2).Build().GenerateAsync(TestContext.CancellationToken));
     }
 
-    [Theory]
-    [ClassData(typeof(MethodBodyData))]
+    [Test]
+    [MethodDataSource(nameof(MethodBodies))]
     public async Task Should_Generate_Method_Bodies(string key, string[] sources) => await Verify(await Builder.AddSources(sources).Build().GenerateAsync(TestContext.CancellationToken)).UseParameters(key, "");
 
-    [Theory]
-    [ClassData(typeof(MethodBodyWithOptionalTrackingData))]
+    [Test]
+    [MethodDataSource(nameof(MethodBodiesWithOptionalTracking))]
     public async Task Should_Generate_Method_Bodies_With_Optional_Tracking(string key, string[] sources) => await Verify(
             await Builder
                  .WithGenerator<GraphqlOptionalPropertyTrackingGenerator>()
@@ -114,11 +114,13 @@ public class RocketMutation
         )
        .UseParameters(key, "");
 
-    private sealed class MethodBodyData : TheoryData<string, string[]>
+    public static IEnumerable<Func<(string Key, string[] Sources)>> MethodBodies() => MethodBodyData.Rows();
+
+    private static class MethodBodyData
     {
-        public MethodBodyData()
+        public static IEnumerable<Func<(string Key, string[] Sources)>> Rows()
         {
-            Add(
+            yield return () => (
                 "GenerateBodyForRequest",
                 [
                     defaultString,
@@ -143,7 +145,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForTaskRequest",
                 [
                     defaultString,
@@ -168,7 +170,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters",
                 [
                     defaultString,
@@ -219,7 +221,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters2",
                 [
                     defaultString,
@@ -258,7 +260,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters3",
                 [
                     defaultString,
@@ -297,7 +299,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters4",
                 [
                     defaultString,
@@ -336,7 +338,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithClaimsPrincipal",
                 [
                     defaultString,
@@ -366,7 +368,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithDifferentlyNamedClaimsPrincipal",
                 [
                     defaultString,
@@ -396,7 +398,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithoutClaimsPrincipal",
                 [
                     defaultString,
@@ -425,7 +427,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithCancellationToken",
                 [
                     defaultString,
@@ -454,7 +456,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithCancellationTokenAndClaimsPrincipal",
                 [
                     defaultString,
@@ -484,7 +486,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithDifferentlyNamedCancellationToken",
                 [
                     defaultString,
@@ -513,7 +515,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithoutCancellationToken",
                 [
                     defaultString,
@@ -553,11 +555,13 @@ public record RocketModel
 ";
     }
 
-    private sealed class MethodBodyWithOptionalTrackingData : TheoryData<string, string[]>
+    public static IEnumerable<Func<(string Key, string[] Sources)>> MethodBodiesWithOptionalTracking() => MethodBodyWithOptionalTrackingData.Rows();
+
+    private static class MethodBodyWithOptionalTrackingData
     {
-        public MethodBodyWithOptionalTrackingData()
+        public static IEnumerable<Func<(string Key, string[] Sources)>> Rows()
         {
-            Add(
+            yield return () => (
                 "GenerateBodyForRequest",
                 [
                     defaultString,
@@ -588,7 +592,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForRequestWithClaimsPrincipal",
                 [
                     defaultString,
@@ -622,7 +626,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForRequestWithClaimsPrincipal2",
                 [
                     defaultString,
@@ -652,7 +656,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForRequestWithCancellationToken",
                 [
                     defaultString,
@@ -685,7 +689,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForRequestWithClaimsPrincipalAndCancellationToken",
                 [
                     defaultString,
@@ -721,7 +725,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForRequestWithClaimsPrincipalConstructor",
                 [
                     defaultString,
@@ -753,7 +757,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForTaskRequest",
                 [
                     defaultString,
@@ -783,7 +787,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters",
                 [
                     defaultString,
@@ -850,7 +854,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters2",
                 [
                     defaultString,
@@ -897,7 +901,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters3",
                 [
                     defaultString,
@@ -944,7 +948,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters4",
                 [
                     defaultString,
@@ -991,7 +995,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithClaimsPrincipal",
                 [
                     defaultString,
@@ -1029,7 +1033,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithDifferentlyNamedClaimsPrincipal",
                 [
                     defaultString,
@@ -1067,7 +1071,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithoutClaimsPrincipal",
                 [
                     defaultString,
@@ -1104,7 +1108,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithCancellationToken",
                 [
                     defaultString,
@@ -1141,7 +1145,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithCancellationTokenAndClaimsPrincipal",
                 [
                     defaultString,
@@ -1179,7 +1183,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithDifferentlyNamedCancellationToken",
                 [
                     defaultString,
@@ -1216,7 +1220,7 @@ public partial class RocketMutation
 }",
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithoutCancellationToken",
                 [
                     defaultString,
@@ -1266,7 +1270,7 @@ public record RocketModel
 ";
     }
 
-    public override async ValueTask InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

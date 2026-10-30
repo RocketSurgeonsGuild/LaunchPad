@@ -8,11 +8,13 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
 
+using TUnit.Core.Interfaces;
+
 namespace Extensions.Tests.Validation;
 
-public class HealthCheckOptionsValidationTests(ITestContextAccessor testContext) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext)), IAsyncLifetime
+public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
-    [Fact]
+    [Test]
     public Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
@@ -20,7 +22,7 @@ public class HealthCheckOptionsValidationTests(ITestContextAccessor testContext)
         return Task.CompletedTask;
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds()
     {
         var services = new ServiceCollection();
@@ -40,7 +42,7 @@ public class HealthCheckOptionsValidationTests(ITestContextAccessor testContext)
         a.ShouldThrow<OptionsValidationException>();
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Validate_Options_And_Throw_After_Application_Has_Started()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
@@ -50,7 +52,7 @@ public class HealthCheckOptionsValidationTests(ITestContextAccessor testContext)
         await Verify(failures);
     }
 
-    [Fact]
+    [Test]
     public void Should_Validate_Options_And_Pass_After_Application_Has_Started()
     {
         var services = new ServiceCollection();
@@ -70,7 +72,7 @@ public class HealthCheckOptionsValidationTests(ITestContextAccessor testContext)
         a.ShouldNotThrow();
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds_After_Application_Has_Started()
     {
         var services = new ServiceCollection();
@@ -112,7 +114,7 @@ public class HealthCheckOptionsValidationTests(ITestContextAccessor testContext)
         }
     }
 
-    public async ValueTask InitializeAsync()
+    public async Task InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create(Imports.Instance)
@@ -127,6 +129,4 @@ public class HealthCheckOptionsValidationTests(ITestContextAccessor testContext)
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
         Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
-
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

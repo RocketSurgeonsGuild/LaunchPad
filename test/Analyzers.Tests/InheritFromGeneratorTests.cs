@@ -10,9 +10,9 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-public class InheritFromGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
+public class InheritFromGeneratorTests() : GeneratorTest()
 {
-    [Fact]
+    [Test]
     public async Task Should_Require_Partial_Type_Declaration()
     {
         var result = await Builder
@@ -52,7 +52,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Require_Partial_Parent_Type_Declaration()
     {
         var result = await Builder
@@ -92,7 +92,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_With_Method_For_Record()
     {
         var result = await Builder
@@ -128,7 +128,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_With_Method_For_Record_Exclude_Attribute()
     {
         var result = await Builder
@@ -167,7 +167,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_And_Ignore_Type_Declaration_Members()
     {
         var result = await Builder
@@ -204,7 +204,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Inherit_Multiple_With_Method_For_Record()
     {
         var result = await Builder
@@ -260,7 +260,7 @@ namespace Sample.Core.Operations.Rockets
     }
 
 #if !ROSLYN4_0
-    [Fact]
+    [Test]
     public async Task Should_Inherit_Using_Generic_Type_Arguments()
     {
         var result = await Builder
@@ -304,7 +304,7 @@ namespace Sample.Core.Operations.Rockets
     }
 #endif
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_With_Method_For_Record_That_Inherits()
     {
         var result = await Builder
@@ -340,7 +340,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_With_Method_For_Class()
     {
         var result = await Builder
@@ -376,8 +376,8 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Theory]
-    [MemberData(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
+    [Test]
+    [MethodDataSource(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
     public async Task Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods(string name, string source)
     {
         var result = await Builder
@@ -859,7 +859,7 @@ partial class Validator : AbstractValidator<Request>
         ];
     }
 
-    public override async ValueTask InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

@@ -1,6 +1,6 @@
 ﻿namespace Extensions.Tests.Mapping.Helpers;
 
-public abstract class MapperTestBase(ITestContextAccessor testContext) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
+public abstract class MapperTestBase() : AutoFakeTest<TestRecord>(TestRecord.Create())
 {
     protected SettingsTask VerifyMethod(MethodResult result, object mapper, params object[] instances)
     {
