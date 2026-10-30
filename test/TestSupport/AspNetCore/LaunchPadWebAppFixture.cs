@@ -20,11 +20,8 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// <param name="resettableAlbaExtension"></param>
     /// <param name="extensions"></param>
     protected LaunchPadWebAppFixture(IResettableAlbaExtension resettableAlbaExtension, params IAlbaExtension[] extensions) : this(
-        [resettableAlbaExtension, ..extensions,]
-    )
-    {
-        _sqlExtension = resettableAlbaExtension;
-    }
+        [resettableAlbaExtension, .. extensions,]
+    ) => _sqlExtension = resettableAlbaExtension;
 
     /// <summary>
     ///     The base constructor for use with hte web app fixture
@@ -33,7 +30,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     protected LaunchPadWebAppFixture(params IAlbaExtension[] extensions)
     {
         _loggerFactory = new();
-        _extensions = [new LaunchPadExtension(_loggerFactory), ..extensions,];
+        _extensions = [new LaunchPadExtension(_loggerFactory), .. extensions,];
     }
 
     /// <summary>
@@ -41,7 +38,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// </summary>
     public async ValueTask InitializeAsync()
     {
-        _host = await Alba.AlbaHost.For<TEntryPoint>([.._extensions]);
+        _host = await Alba.AlbaHost.For<TEntryPoint>([.. _extensions]);
         await ResetAsync();
     }
 
@@ -77,10 +74,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     ///     Set the logger factory when initializing the test
     /// </summary>
     /// <param name="loggerFactory"></param>
-    public void SetLoggerFactory(ILoggerFactory loggerFactory)
-    {
-        _loggerFactory.SetLoggerFactory(loggerFactory);
-    }
+    public void SetLoggerFactory(ILoggerFactory loggerFactory) => _loggerFactory.SetLoggerFactory(loggerFactory);
 
     /// <summary>
     ///     Method to reset the database if provided
@@ -96,17 +90,19 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// </summary>
     public ValueTask ResetAsync()
     {
+
+<<<<<<< TODO: Unmerged change from project 'TestSupport(net11.0)', Before:
         if (_sqlExtension is null || _host is null) return ValueTask.CompletedTask;
 
         return _sqlExtension.ResetAsync(AlbaHost.Services);
+=======
+        return _sqlExtension is null || _host is null ? ValueTask.CompletedTask : _sqlExtension.ResetAsync(AlbaHost.Services);
+>>>>>>> After
+        return  _sqlExtension is null || _host is null  ?  ValueTask.CompletedTask  :  _sqlExtension.ResetAsync(AlbaHost.Services);
     }
 
-    #pragma warning disable CA1816
-    async ValueTask IAsyncDisposable.DisposeAsync()
-        #pragma warning restore CA1816
-    {
-        await DisposeAsync().ConfigureAwait(false);
-    }
+#pragma warning disable CA1816
+    async ValueTask IAsyncDisposable.DisposeAsync() => await DisposeAsync().ConfigureAwait(false);
 
     /// <summary>
     ///     The dispose method
@@ -119,7 +115,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
 
     private class AppFixtureLoggerFactory : ILoggerFactory
     {
-        private readonly List<DeferredLogger> _deferredLoggers = new();
+        private readonly List<DeferredLogger> _deferredLoggers = [];
         private ILoggerFactory? _innerLoggerFactory;
 
         public void SetLoggerFactory(ILoggerFactory loggerFactory)
@@ -140,15 +136,9 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
 
         public void Dispose() { }
 
-        public void AddProvider(ILoggerProvider provider)
-        {
-            _innerLoggerFactory?.AddProvider(provider);
-        }
+        public void AddProvider(ILoggerProvider provider) => _innerLoggerFactory?.AddProvider(provider);
 
-        public ILogger CreateLogger(string categoryName)
-        {
-            return _innerLoggerFactory?.CreateLogger(categoryName) ?? AddDeferredLogger(categoryName);
-        }
+        public ILogger CreateLogger(string categoryName) => _innerLoggerFactory?.CreateLogger(categoryName) ?? AddDeferredLogger(categoryName);
     }
 
     private class DeferredLogger(string categoryName) : ILogger
@@ -160,14 +150,14 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         public void SetLogger(ILogger logger)
         {
             _logger = logger;
-            foreach (var log in _deferredLogs)
+            foreach (var (logLevel, eventId, text) in _deferredLogs)
             {
-                #pragma warning disable CA1848
-                #pragma warning disable CA2254
+#pragma warning disable CA1848
+#pragma warning disable CA2254
                 // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
-                _logger.Log(log.logLevel, log.eventId, log.text);
-                #pragma warning restore CA2254
-                #pragma warning restore CA1848
+                _logger.Log(logLevel, eventId, text);
+#pragma warning restore CA2254
+#pragma warning restore CA1848
             }
         }
 
@@ -175,21 +165,15 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
         {
             if (_logger is null)
             {
-                _deferredLogs.Add(( logLevel, eventId, formatter(state, exception) ));
+                _deferredLogs.Add((logLevel, eventId, formatter(state, exception)));
                 return;
             }
 
             _logger.Log(logLevel, eventId, state, exception, formatter);
         }
 
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return _logger?.IsEnabled(logLevel) ?? true;
-        }
+        public bool IsEnabled(LogLevel logLevel) => _logger?.IsEnabled(logLevel) ?? true;
 
-        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
-        {
-            return _logger?.BeginScope(state);
-        }
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => _logger?.BeginScope(state);
     }
 }
