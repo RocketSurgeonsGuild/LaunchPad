@@ -9,6 +9,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\sample\Sample.BlazorServer\Sample.BlazorServer.csproj" />
         <ProjectReference
-            Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+            Include="..\TestSupport\TestSupport.csproj" />
     </ItemGroup>
 </Project>

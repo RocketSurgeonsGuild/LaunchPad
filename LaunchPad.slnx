@@ -76,7 +76,6 @@
     <Project Path="src/AspNetCore.FluentValidation.OpenApi/Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
     <Project Path="src/AspNetCore.NewtonsoftJson/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
     <Project Path="src/AspNetCore.Spatial/Rocket.Surgery.LaunchPad.AspNetCore.Spatial.csproj" />
-    <Project Path="src/AspNetCore.Testing/Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <Project Path="src/Foundation.NewtonsoftJson/Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
@@ -94,7 +93,6 @@
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
     <Project Path="src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
     <Project Path="src/Telemetry/Rocket.Surgery.LaunchPad.Telemetry.csproj" />
-    <Project Path="src/Testing/Rocket.Surgery.LaunchPad.Testing.csproj" />
     <Project Path="src/WebAssembly.Hosting/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.csproj" />
   </Folder>
   <Folder Name="/test/">
@@ -117,5 +115,6 @@
     <Project Path="test/Sample.Pages.Tests/Sample.Pages.Tests.csproj" />
     <Project Path="test/Sample.Restful.Tests/Sample.Restful.Tests.csproj" />
     <Project Path="test/Sample.Worker.Tests/Sample.Worker.Tests.csproj" />
+    <Project Path="test/TestSupport/TestSupport.csproj" />
   </Folder>
 </Solution>

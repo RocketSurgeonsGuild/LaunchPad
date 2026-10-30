@@ -4,7 +4,7 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\sample\Sample.BlazorWasm\Sample.BlazorWasm.csproj" />
-      <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
+      <ProjectReference Include="..\TestSupport\TestSupport.csproj" />
     </ItemGroup>
     <ItemGroup>
     </ItemGroup>

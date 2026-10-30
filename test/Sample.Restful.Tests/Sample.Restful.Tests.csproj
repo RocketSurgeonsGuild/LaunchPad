@@ -11,7 +11,7 @@
     />-->
     <ProjectReference Include="..\..\sample\Sample.Restful\Sample.Restful.csproj" />
     <ProjectReference
-      Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+      Include="..\TestSupport\TestSupport.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="LaunchRecords\*.cs" />

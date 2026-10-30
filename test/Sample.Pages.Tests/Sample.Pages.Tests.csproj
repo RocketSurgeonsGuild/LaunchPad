@@ -9,6 +9,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\sample\Sample.Pages\Sample.Pages.csproj" />
         <ProjectReference
-            Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+            Include="..\TestSupport\TestSupport.csproj" />
     </ItemGroup>
 </Project>

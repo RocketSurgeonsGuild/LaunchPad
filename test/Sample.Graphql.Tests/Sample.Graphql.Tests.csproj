@@ -16,7 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\sample\Sample.Graphql\Sample.Graphql.csproj" />
         <ProjectReference
-            Include="..\..\src\AspNetCore.Testing\Rocket.Surgery.LaunchPad.AspNetCore.Testing.csproj" />
+            Include="..\TestSupport\TestSupport.csproj" />
         <ProjectReference
             Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
         <ProjectReference
