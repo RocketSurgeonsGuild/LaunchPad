@@ -25,6 +25,8 @@
         Microsoft.Testing.Platform runner (TUnit brings its own coverage and TRX extensions, so it needs neither Microsoft.NET.Test.Sdk
         nor Microsoft.CodeCoverage). A project that leaves it unset, today the Sample.*.Tests projects, keeps the xunit v3 packages it
         has always had until RocketSurgeonsGuild/LaunchPad#3051 moves it to TUnit; that ticket deletes the xunit group and this property.
+        Set UseTUnit in the project file and read it only in item conditions like these: a property in Directory.Build.props is evaluated
+        before the project body and would never see it. The Rocket.Surgery TUnit adapter above stays shared, as it was before the split.
     -->
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true' and '$(UseTUnit)' == 'true'">
         <PackageReference Include="TUnit" />
