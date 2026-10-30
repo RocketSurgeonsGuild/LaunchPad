@@ -1,6 +1,8 @@
 # Rebuild LaunchPad on Specular and Dovetail
 
-Status: **draft for approval**. No GitHub issues exist yet. Branch: `feature/dovetail-migration`.
+Status: **tickets published**. Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3045). Board: [project 3](https://github.com/orgs/RocketSurgeonsGuild/projects/3). Branch: `feature/dovetail-migration`.
+
+The tickets are the source of truth for scope and acceptance criteria. This document keeps the decisions, the package maps and the design notes that cut across tickets.
 
 ## Goal
 
@@ -30,408 +32,184 @@ Vocabulary lives in [GLOSSARY.md](../GLOSSARY.md). The two hard-to-reverse decis
 
 ## Sequence
 
-| Phase | Name                   | Repos                | Issues              |
-| ----- | ---------------------- | -------------------- | ------------------- |
-| 0     | Tooling and docs       | LaunchPad            | done on this branch |
-| 1     | Green baseline         | LaunchPad            | L1, L2, L3, L4      |
-| 2     | Upstream (parallel)    | Dovetail, MSBuildSdk | D1-D5, M1, M2       |
-| 3     | Restructure            | LaunchPad            | L5-L14              |
-| 4     | LaunchPad SDK          | LaunchPad            | L15                 |
-| 5     | Docs, tooling, release | LaunchPad            | L16-L19             |
-
-Phase 2 runs alongside Phase 1. Upstream issues are filed in their own repositories and marked as blocking the LaunchPad issues that need them.
-
-### Blocking relationships
-
-| Issue | Blocked by        |
-| ----- | ----------------- |
-| L5    | L1, L2, L3, L4    |
-| L7    | M1                |
-| L8    | L5, D1, D4        |
-| L9    | L8, D3            |
-| L10   | L8, D2            |
-| L11   | L5, L10           |
-| L12   | L5                |
-| L13   | L5, L10           |
-| L14   | L5, L8            |
-| L15   | L8, L11, L12, L13 |
-| L16   | L15               |
-| L18   | L1-L15            |
-
-## Epic: Rebuild LaunchPad on Specular and Dovetail
-
-Umbrella issue in `RocketSurgeonsGuild/LaunchPad`. Sub-issues L1-L19. Links to D1-D5 and M1-M2 as blockers.
-
----
-
-## Upstream: Dovetail (`RocketSurgeonsGuild/Dovetail`)
-
-### D1. Application lifecycle hooks in `Joinery.Dovetail.Hosting`
-
-Labels: `:rocket: feature`
-
-Dovetail has no support for `IHostedLifecycleService` or `IHostApplicationLifetime`. LaunchPad has this in `src/Hosting/ApplicationLifecycleExtensions.cs`.
-
-- Move the 12 extension methods (`OnHostStarting`, `OnHostStarted`, `OnHostStopping`, `OnHostStopped`, each with `Action<IServiceProvider>`, `Func<IServiceProvider, Task>` and `Func<IServiceProvider, CancellationToken, Task>` overloads) on `IHostApplicationBuilder`.
-- Move the internal `IHostedLifecycleService` that runs registered handlers. Keep today's behaviour: handlers for a phase run in parallel (`Task.WhenAll`).
-- Add `IServiceCollection` overloads so hosts built with `IHostBuilder` work too.
-- Register the service automatically from the generated hosting helper wherever `Microsoft.Extensions.Hosting` is referenced, gated like `DovetailHostApplicationHelpers`. Hosts without `IHostedLifecycleService` (MAUI, Blazor WebAssembly) get nothing.
-- Cover it in `Joinery.Dovetail.Hosting.Tests` and `Sdk.Tests/HostingHelperTests`; add a docs page.
-
-Acceptance: a generic host and an ASP.NET Core host run starting, started, stopping and stopped handlers; the test that today lives in `Sample.Pages.Tests` is ported.
-
-### D2. `Joinery.Dovetail.Serilog` builds and registers the logger
-
-Labels: `:rocket: feature`
-
-Today `SerilogJoint` builds a `LoggerConfiguration` and discards it. Nothing calls `CreateLogger`, `AddSerilog` or `ReadFrom.Configuration`, the package configures no sinks or enrichers, and no test project covers the runtime.
-
-- Create the `Logger` from the `LoggerConfiguration` after all `ISerilogJoint`s have run.
-- Register `Logger`, `ILogger` and `ILoggerFactory` (`SerilogLoggerFactory`) with a `LoggerProviderCollection`, removing the default `Microsoft.Extensions.Logging` provider registrations (as `LaunchPad.Serilog`'s `LoggerConvention` does).
-- Apply DI-registered `IConfigureOptions<LoggerConfiguration>` and `IPostConfigureOptions<LoggerConfiguration>`.
-- Read the `Serilog` configuration section with `Serilog.Settings.Configuration`. Replace or remove the hand-written `SerilogRuntimeConfiguration` stand-in.
-- Add runtime tests and a docs page. Note the AOT and trimming implications of `ReadFrom.Configuration`.
-
-Acceptance: an app that references Serilog and applies one joint gets a working `ILogger<T>` backed by Serilog, configured from `appsettings`.
-
-### D3. Verify `Joinery.Dovetail.OpenTelemetry` covers `LaunchPad.Telemetry`
-
-Labels: `:hammer: chore`
-
-LaunchPad.Telemetry exposes six convention interfaces (base, async, logging, metrics, resource, tracing). Dovetail already has the base joint plus `ITracerProviderJoint`, `IMeterProviderBuilderJoint`, `ILoggerProviderBuilderJoint` and `IResourceBuilderJoint`, and generates async variants. No functional gap is expected.
-
-- Confirm parity, including log export through the logging provider and behaviour on Blazor WebAssembly, MAUI and Uno.
-- Confirm the SDK's default resource already includes what `DefaultTelemetryConvention` adds (`AddTelemetrySdk`, environment-variable detector). If not, add the defaults here.
-- Fix anything found; otherwise close with a short note in the docs.
-
-### D4. Spike: supported extension point for gated templates
-
-Labels: `:fire: enhancement`
-
-`Joinery.Dovetail.Hosting` gates its templates on referenced assemblies through underscore-prefixed items (`_DovetailHostingHelper`, `References` metadata). `LaunchPad.Hosting` needs the same thing, plus a **direct reference only** mode.
-
-- Decide whether Dovetail exposes a supported public item (for example a `DovetailTemplate` item with `References` and host-model metadata) that downstream packages declare in their own `build/*.targets`.
-- If yes, implement it, document it, and keep `Joinery.Dovetail.Hosting` as its first user.
-- If no, record that LaunchPad reimplements the gating targets, and why.
-
-Blocks L8. Fallback is LaunchPad-owned targets.
-
-### D5. Honour `[LiveJoint]`, `[UnitTestJoint]` and `[DovetailHostType]` in generated metadata
-
-Labels: `:lady_beetle: bug` (verify first)
-
-`ExportDovetails.HandleDovetailExports` appears to check only `IsTestProject`, so generated export metadata ignores those attributes; only the runtime reflection path in `DovetailContextBuilder.FromDovetail` honours them. LaunchPad relies on live-only and unit-test-only wiring (`SerilogReadFromConfigurationConvention` is live-only; `FakeTimeConvention` is unit-test-only).
-
-- Reproduce with a test, then fix or document.
-
----
-
-## Upstream: MSBuildSdk (`RocketSurgeonsGuild/MSBuildSdk`)
-
-### M1. `AssemblyInfo.Dependencies`: typed info for every dependent assembly
-
-Labels: `:rocket: feature`
-
-`Rocket.Surgery.AssemblyInfo` generates one `partial class AssemblyInfo` per assembly (Attributes, Metadata, Project, Git, Constants, Resources, Strings) and reads nothing from referenced assemblies. `InternalsVisibleTo` cannot solve this generically because a dependency would have to name every consumer.
-
-- A producing assembly stamps a marker (the spike chooses the exact form).
-- The consuming project's generator enumerates referenced assemblies (transitive ones included), finds the marked ones, and emits typed `AssemblyInfo.Dependencies.<AssemblyName>` copies with the same shape. No runtime reflection, no `InternalsVisibleTo`.
-- Opt-in through an MSBuild property (for example `AssemblyInfoIncludeDependencies=true`).
-- Spike question: read the producer's generated constants through Roslyn symbols, or embed the data in the marker. Symbols cover constants but not the `public` mode, which emits properties.
-- Handle name sanitising and collisions; keep the Roslyn 5.0, 5.3, 5.6 and 5.9 builds in step; extend the test harness to compile multiple assemblies; add Verify snapshots and an SDK end-to-end test.
-
-Blocks L7. Replaces the typed `GitVersion` view in `LaunchPad.Metadata`.
-
-### M2. AssemblyInfo hygiene (verify each before fixing)
-
-Labels: `:hammer: chore`
-
-Found while reading; none confirmed by running.
-
-- `build/AssemblyInfo.Constants.targets` replaces newlines with a backslash-n sequence while `ConstantsGenerator.cs` reverts a backtick-n sequence, so multiline constants may not round-trip.
-- Resx files with any dot in the file name are skipped silently, not only culture variants.
-- Mixed named and indexed format strings generate nothing and report no diagnostic.
-- No tests for `AssemblyInfoVisibility=public` or `AssemblyInfoGitComment`.
-- The `Rocket.Surgery.Sdk.Script` project comment names a `.nuspec` that does not exist.
-
----
-
-## LaunchPad (`RocketSurgeonsGuild/LaunchPad`)
-
-### Phase 1: green baseline
-
-#### L1. Restore and build on `net10.0;net11.0`
-
-Labels: `:hammer: chore`
-
-LaunchPad does not build today.
-
-- `LaunchPad.slnx` lists deleted paths: `.build/.build.csproj`, `Directory.Packages.support.props`, `ci-ignore.yml`, `publish-nuget.yml`, `.husky/*`. Fix it and keep `Sample.Pages`.
-- `Primitives.csproj` references `Specular` but `Directory.Packages.props` has no `Specular` version.
-- Multi-target every project `net10.0;net11.0` (`net10.0-browser;net11.0-browser` for WebAssembly; analyzers stay `netstandard2.0`).
-- Use TFM-conditional package versions: `Microsoft.*` stays on 10.0.x for net10 and 11.0.x for net11, as Dovetail does. List any dependency without net11 assets.
-
-Acceptance: `mise run build` compiles every project for both TFMs.
-
-#### L2. Scan with Specular; drop `IExecuteScoped<T>`
-
-Labels: `:hammer: chore`
-
-The working tree calls Indago-era APIs that Specular `main` does not have: `GetCompiledTypeProvider()`, `AddExecuteScopedServices()`, `IExecuteScoped<T>`, and `using Indago`. Specular `main` has `ISpecularProvider`, `AddSpecularServiceRegistrations`, `TypeInfoFilter` and `TypeKindFilter`.
-
-- Move `AspNetCoreConvention`, `MediatRConvention`, `FluentValidationConvention` and `DefaultConvention` to the Specular API.
-- Remove `IExecuteScoped<T>` and `AddExecuteScopedServices()`. Rewrite `Sample.Worker`'s `BackgroundWorker` and `DefaultConvention` to create scopes directly.
-- Design point: how a convention (later a joint) obtains its `ISpecularProvider`.
-
-#### L3. Convert tests from xunit v3 to TUnit
-
-Labels: `:hammer: chore`
-
-309 tests (198 `[Fact]`, 111 `[Theory]`) across `test/*`. The working tree already swapped package references to TUnit but the tests are still xunit.
-
-- Move to TUnit on Microsoft.Testing.Platform with `AutoFakeTest<TUnitTestRecord>`, `Verify.TUnit`, FakeItEasy and Shouldly, as in Dovetail, Specular and Testing.
-- Replace `Xunit.Combinatorial` with TUnit data sources.
-- Restore `Sample.Pages.Tests` (and `Sample.Pages` itself, 61 files, restored on this branch from git).
-
-Acceptance: `dotnet test` is green on both TFMs; Verify snapshots differ only by file extension if at all.
-
-#### L4. Replace the Testing packages with non-packable test support
-
-Labels: `:hammer: chore`
-
-- Create one non-packable project under `test/` holding `FakeTimeConvention` (from `src/Testing`; used by 6 test projects) and the Alba fixtures (`LaunchPadWebAppFixture<TEntryPoint>`, `ILaunchPadWebAppFixture`, `IResettableAlbaExtension`, `LaunchPadExtension`; from `src/AspNetCore.Testing`, used by 7 sample test projects).
-- Delete `src/Testing` and `src/AspNetCore.Testing`. Nothing from them ships to NuGet.
-- The redesign you plan for later stays open.
-
-### Phase 3: restructure
-
-#### L5. Adopt Dovetail and convert conventions to joints
-
-Labels: `:boom: breaking change`
-
-Epic-sized; split per project when scheduled (Primitives, Foundation, AspNetCore, Grpc, HotChocolate, StrawberryShake, Spatial, Mapping, EntityFramework, and so on).
-
-- `[ExportConvention]` types become `[DovetailExport]` joints; `*Convention` type names become `*Joint`; ordering attributes map to Dovetail's (for example `DependsOnJoint<T>`); `[LiveConvention]` and `[UnitTestConvention]` map to the Dovetail host-type attributes (see D5).
-- Remove `Rocket.Surgery.Conventions*`, `Rocket.Surgery.Hosting`, `Rocket.Surgery.WebAssembly.Hosting` and `Rocket.Surgery.Extensions` references.
-- Samples call the generated `ConfigureDovetail()`.
-- Update docs and XML comments to the Joint vocabulary.
-
-#### L6. Remove `RegisterOptionsConfigurationAttribute`
-
-Labels: `:fire: enhancement`
-
-- Delete `src/Primitives/RegisterOptionsConfigurationAttribute.cs` and `src/Primitives/Conventions/OptionsConvention.cs`. The attribute is also read by a reflection path through the Specular type provider.
-- Port `test/Extensions.Tests/AutoRegisterOptions.cs` to `[DovetailConfiguration]`.
-- Keep `ExistingValueOptions` / `ExistingValueOptionsFactory<T>`: used by the System.Text.Json and Newtonsoft conventions, unrelated.
-
-#### L7. Delete `LaunchPad.Metadata`
-
-Labels: `:fire: enhancement`
-
-Remove `src/Metadata` (`AssemblyMetadataProvider`, `GitVersion`) and `test/Metadata.Tests`. No other project uses it. Three of its eleven tests are skipped. Typed access now comes from `AssemblyInfo.Metadata` and `AssemblyInfo.Dependencies` (M1).
-
-#### L8. Rebuild `LaunchPad.Hosting` on host-model templates
-
-Labels: `:rocket: feature`
-
-Follow `Joinery.Dovetail.Hosting`: joints shipped as templates, emitted only when the host model and referenced libraries match, and only into projects with a **direct reference** to `LaunchPad.Hosting`.
-
-- Initial host models: generic host, ASP.NET Core, Blazor WebAssembly. MAUI and Uno are out of scope until a sample needs them.
-- Fold in `LaunchPad.WebAssembly.Hosting`: its Browser console sink, `Environment` and `BaseAddress` enrichment, and the `BannedSymbols` config that forbids `Microsoft.Extensions.Hosting` (today gated by `RocketSurgeryLaunchPadWebAssemblyHostingBanHosting`).
-- Joint disposition is in the table below.
-- Add template tests and snapshots modelled on Dovetail's `HostingHelperTests`; include a "transitive reference gets nothing" test.
-
-#### L9. Replace `LaunchPad.Telemetry` with `Joinery.Dovetail.OpenTelemetry`
-
-Labels: `:boom: breaking change`
-
-- Delete `src/Telemetry` and its six interfaces and delegates, and the ten `ConfigureOpenTelemetry*` overloads.
-- Add `InstrumentationJoint` to `LaunchPad.Hosting`: `HttpClient` tracing with `RecordException`, and `HttpClient`, runtime and process metrics. Runtime and process instrumentation are not emitted for Blazor WebAssembly.
-- Port the AspNetCore and HotChocolate instrumentation joints to Dovetail's joint interfaces, emitted only when OpenTelemetry is referenced.
-- Remove the `Primitives` to `Telemetry` project reference.
-
-#### L10. Replace `LaunchPad.Serilog` with `Joinery.Dovetail.Serilog`
-
-Labels: `:boom: breaking change`
-
-- Delete `src/Serilog`. Port the opinionated joints into `LaunchPad.Hosting`, emitted when Serilog is referenced: enrichers (environment, span, exceptions, demystifier, log context), `ApplicationState:LogLevel` mapping, console/debug/trace sinks, `IDiagnosticContext`.
-- Port `SerilogTelemetryConvention` (`WriteTo.OpenTelemetry`) as a live joint; it has never run, so this starts log export.
-- Serilog-specific code in other packages moves out: AspNetCore's `SerilogLoggingActionFilter`, `SerilogLoggingPageFilter` and request logging; the NodaTime, Newtonsoft.Json, System.Text.Json and NetTopologySuite destructuring policies.
-- Design points to settle in this issue: where each destructuring policy and the Serilog sink packages live (a `*.Serilog` integration package versus a Serilog-gated template, and whether the SDK or `LaunchPad.Hosting` brings the sinks).
-- Remove the `Primitives` to `Serilog` project reference, which forces Serilog on every consumer today.
-
-#### L11. Split NodaTime into integration packages
-
-Labels: `:boom: breaking change`
-
-| Package                              | Contents (from today)                                                                                                   | Added when also referenced |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| `LaunchPad.NodaTime`                 | `TimeConvention` clock and time-zone registration, STJ converters (`Primitives`), `PrimitiveOptions.DateTimeZoneSource` | NodaTime                   |
-| `LaunchPad.NodaTime.NewtonsoftJson`  | converters and extensions from `Foundation.NewtonsoftJson`                                                              | Newtonsoft.Json            |
-| `LaunchPad.NodaTime.Mapping`         | `NodaTimeMapper`, `NodaTimeDateTimeMapper`                                                                              | Riok.Mapperly              |
-| `LaunchPad.NodaTime.EntityFramework` | `NodaTimeDateTimeOffsetValueGenerator`, `NodaTimeDateTimeValueGenerator`                                                | EF Core                    |
-| `LaunchPad.NodaTime.HotChocolate`    | `AddNodaTime`, the time-zone cache setup                                                                                | HotChocolate               |
-| `LaunchPad.NodaTime.StrawberryShake` | 14 serializers (`DateTimeZone`, `Duration`, `Instant`, `IsoDayOfWeek`, `LocalDate`, ... `ZonedDateTime`, `Period`)      | StrawberryShake            |
-| `LaunchPad.NodaTime.Serilog`         | `NodaTimeDestructuringPolicy`                                                                                           | Serilog                    |
-
-Also: `DateTimeZoneSerializer` and `OffsetDateSerializer` exist but are not registered by `StrawberryShakeConvention`; decide whether to register them. Move the matching tests out of `Extensions.Tests`, `Sample.Graphql.Tests/StrawberryShakeSerializerTests` and the mapping tests. `Verify.NodaTime` stays a test dependency.
-
-#### L12. Extract FluentValidation into integration packages
-
-Labels: `:boom: breaking change`
-
-FluentValidation is embedded in `Foundation`, `AspNetCore`, `Grpc` and `HotChocolate` today, so the SDK cannot add "FluentValidation packages" until it is extracted. MediatR itself stays in `Foundation`.
-
-| Package                                   | Contents                                                                                                                                     | Added when also referenced |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| `LaunchPad.FluentValidation`              | `FluentValidationConvention`, `Validation/*` (pipeline behavior, `CompositeValidator`, `StringInValidator`), `FluentValidationProblemDetail` | FluentValidation           |
-| `LaunchPad.FluentValidation.AspNetCore`   | `AspNetCore` validation code and `AspNetCoreValidationBehaviorConvention`; absorbs `AspNetCore.FluentValidation.OpenApi` (experimental)      | ASP.NET Core               |
-| `LaunchPad.FluentValidation.Grpc`         | `Grpc` `Validation/*`                                                                                                                        | Grpc.AspNetCore            |
-| `LaunchPad.FluentValidation.HotChocolate` | FairyBread integration from `GraphqlConvention`                                                                                              | HotChocolate               |
-| `LaunchPad.FluentValidation.Blazor`       | the `FluentValidator` component (all that `AspNetCore.Blazor` contains)                                                                      | Blazor components          |
-
-Remove the hard `AspNetCore` to `AspNetCore.FluentValidation.OpenApi` project reference.
-
-#### L13. Tidy Newtonsoft.Json and NetTopologySuite packages
-
-Labels: `:fire: enhancement`
-
-- Keep `Foundation.NewtonsoftJson`, `AspNetCore.NewtonsoftJson`, `Mapping.NewtonsoftJson`, `Spatial`, `Spatial.NewtonsoftJson` and `StrawberryShake.Spatial`.
-- Delete `AspNetCore.Spatial`: its convention body and all of `NetTopologySuiteSwashbuckleExtensions.cs` are commented out.
-- Move NTS and Newtonsoft Serilog code out (see L10); fix the misspelled `SpactialNewtonsoftJsonConvention.cs`.
-- Remove the unused `FoundationOptions` field from `AspNetCore.NewtonsoftJson`.
-
-#### L14. Update the samples
-
-Labels: `:hammer: chore`
-
-- Every sample calls `ConfigureDovetail()` (L5).
-- `Sample.Pages` is restored (done on this branch) and works again with `Sample.Pages.Tests`.
-- Rebuild `Sample.Command` on a plain generic host with Spectre.Console.Cli and `Joinery.Dovetail.DryIoc`; drop `Rocket.Surgery.CommandLine` and `Conventions.DryIoc`.
-- Sample.BlazorWasm moves to the folded WebAssembly templates.
-
-### Phase 4: LaunchPad SDK
-
-#### L15. Create `Rocket.Surgery.LaunchPad.Sdk`
-
-Labels: `:rocket: feature`
-
-Model it on `Joinery.Dovetail.Sdk` and `Rocket.Surgery.Sdk`.
-
-- Applied from `Directory.Build.props` with a `global.json` `msbuild-sdks` entry; imports `Joinery.Dovetail.Sdk` so apps need one SDK entry.
-- Reuses Dovetail's host detection to add `LaunchPad.Hosting` for any detected host. Defaults `DovetailEnableSerilog` to true when Serilog is referenced directly.
-- Adds integration packages from **direct** `PackageReference`s only, expanded as implicit references at evaluation time. Default on, with `LaunchPadEnable<Tech>=false` to opt out.
-- Package versions come from a generated `Packages.props` at pack time, as in Dovetail.
-- Tests with `MSBuild.ProjectCreation` and Verify snapshots; a sample that consumes the packed SDK like an outside user (compare `sample/SdkSample`).
-
-Detection rules (all packages are `Rocket.Surgery.LaunchPad.<name>`):
-
-| Technology detected | Packages added (each also needs its partner library referenced, where shown)                                                                                    |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| NodaTime            | `NodaTime`; `.NewtonsoftJson` (Newtonsoft.Json); `.Mapping` (Mapperly); `.EntityFramework` (EF Core); `.HotChocolate`; `.StrawberryShake`; `.Serilog` (Serilog) |
-| Newtonsoft.Json     | `Foundation.NewtonsoftJson`; `AspNetCore.NewtonsoftJson` (ASP.NET Core); `Mapping.NewtonsoftJson` (Mapperly); `Spatial.NewtonsoftJson` (NetTopologySuite)       |
-| Serilog             | Dovetail's Serilog package (via the chained SDK); `NodaTime.Serilog` (NodaTime); the Serilog destructuring packages from L10                                    |
-| NetTopologySuite    | `Spatial`; `Spatial.NewtonsoftJson` (Newtonsoft.Json); `StrawberryShake.Spatial` (StrawberryShake); the NTS Serilog package (Serilog)                           |
-| FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.HotChocolate`; `.Blazor` (each when its host library is referenced)                                               |
-
-Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced explicitly in v1.
-
-### Phase 5: docs, tooling, release
-
-#### L16. Docs content and API reference
-
-Labels: `:blue_book: documentation`
-
-The empty Starlight shell is in place (Getting Started, Concepts, Changelog; no theme, no API reference).
-
-- Write guides and concepts in the Joint vocabulary; add pages for the SDK, host models and each integration.
-- Add the C# API reference: a `docs:api` task using `Rocket.Surgery.ApiReference`, the `packages` collection and `src/pages/api` routes, as in Dovetail and Specular.
-- Add a brand theme and wordmarks.
-
-#### L17. Agent and editor tooling follow-ups
-
-Labels: `:hammer: chore`
-
-- Sync the `apm.yml` package list and `Skillfile` with Dovetail and run `apm install`.
-- Add `AGENTS.md` and `CLAUDE.md`.
-- Replace the prettier extension recommendation with biome (`.vscode/extensions.json`, `.devcontainer/devcontainer.json`).
-- Decide whether to port Dovetail's `samples.yml`.
-- Normalise `NuGet.config` (BOM) through the hk step.
-
-#### L18. Release: major version and NuGet deprecations
-
-Labels: `:boom: breaking change`
-
-- Choose the new major version in `GitVersion.yml`.
-- Deprecate on nuget.org: Telemetry, Metadata, Serilog, Testing, AspNetCore.Testing, WebAssembly.Hosting, AspNetCore.Spatial and AspNetCore.FluentValidation.OpenApi, pointing at their replacements.
-- Write migration notes (Convention to Joint, package map).
-
-#### L19. Repository settings checklist (manual)
-
-Labels: `:hammer: chore`
-
-I cannot change these; the new `build.yml` needs them:
-
-- GitHub Pages serving the `gh-pages` branch.
-- A `nuget` environment, a `NUGET_USER` secret, and a nuget.org trusted-publishing policy naming `build.yml` and that environment.
-- Labels (`sync-labels.yml`), Codecov token, and merge-queue settings.
-
----
-
-## Hosting joint disposition (L8)
-
-| Today                                                 | Destination                                                                                                                |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `HostingConvention` (registers the lifecycle service) | Dovetail's lifecycle support (D1); nothing LaunchPad-side                                                                  |
-| `SerilogHostingConvention` (`IDiagnosticContext`)     | Hosting joint, emitted when Serilog is referenced                                                                          |
-| `HealthChecksConvention`                              | Hosting joint for hosts with `Microsoft.Extensions.Diagnostics.HealthChecks` (generic host, ASP.NET Core); not WebAssembly |
-| `DefaultTelemetryConvention`                          | Dropped if D3 confirms the SDK defaults cover it                                                                           |
-| `EnvironmentLoggingConvention`                        | Hosting joint when Serilog is referenced; WebAssembly variant enriches `Environment` and `BaseAddress`                     |
-| `SerilogConsole/Debug/TraceLoggingConvention`         | Hosting joints when Serilog is referenced; WebAssembly uses the Browser console sink                                       |
-| `SerilogTelemetryConvention` (never exported)         | Live joint, emitted when `Serilog.Sinks.OpenTelemetry` is referenced                                                       |
-| `InstrumentationConvention` (from Telemetry)          | `InstrumentationJoint` (L9)                                                                                                |
+| Phase | Name                                         | Tickets                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ----- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0     | Tooling and docs                             | done on this branch                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 1     | Green baseline                               | [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046) to [#3051](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3051)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 2     | Upstream (in parallel with the baseline)     | [Dovetail#262](https://github.com/RocketSurgeonsGuild/Dovetail/issues/262), [Dovetail#263](https://github.com/RocketSurgeonsGuild/Dovetail/issues/263), [Dovetail#264](https://github.com/RocketSurgeonsGuild/Dovetail/issues/264), [Dovetail#265](https://github.com/RocketSurgeonsGuild/Dovetail/issues/265), [Dovetail#266](https://github.com/RocketSurgeonsGuild/Dovetail/issues/266), [MSBuildSdk#96](https://github.com/RocketSurgeonsGuild/MSBuildSdk/issues/96), [MSBuildSdk#97](https://github.com/RocketSurgeonsGuild/MSBuildSdk/issues/97) |
+| 3     | Joint conversion (shared integration branch) | [#3052](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3052) to [#3056](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3056)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 4     | Restructure and integration packages         | [#3057](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3057) to [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 5     | LaunchPad SDK                                | [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072) to [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 6     | Docs, tooling and release                    | [#3076](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3076) to [#3079](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3079)                                                                                                                                                                                                                                                                                                                                                                                                         |
+
+Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3045) with every ticket below as a native sub-issue. Blocking relationships are native GitHub links; the _Blocked by_ columns repeat them for reading offline. Tickets with nothing in _Blocked by_ can start immediately and are Ready on the board; the rest are Backlog.
+
+## Tickets
+
+### Green baseline
+
+| Ticket                                                                | Title                                                                                                   | Blocked by                                                                                                                                   |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046) | Solution restores and targets net10.0 and net11.0                                                       | None                                                                                                                                         |
+| [#3047](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3047) | Spike: how a Joint gets Specular's provider, and how old conventions and Joints coexist during the move | [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046)                                                                        |
+| [#3048](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3048) | Scanning goes through Specular and the scoped-execution helper is dropped                               | [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046), [#3047](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3047) |
+| [#3049](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3049) | Test support project replaces the Testing packages                                                      | [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046), [#3048](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3048) |
+| [#3050](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3050) | Library tests run on TUnit                                                                              | [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046), [#3048](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3048) |
+| [#3051](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3051) | Sample tests run on TUnit, including the Razor Pages sample tests                                       | [#3049](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3049), [#3050](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3050) |
+
+### Upstream (in parallel with the baseline)
+
+| Ticket                                                                       | Title                                                                                  | Blocked by |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ---------- |
+| [Dovetail#262](https://github.com/RocketSurgeonsGuild/Dovetail/issues/262)   | Run code at host starting, started, stopping and stopped                               | None       |
+| [Dovetail#263](https://github.com/RocketSurgeonsGuild/Dovetail/issues/263)   | Serilog joints produce a working Serilog logger                                        | None       |
+| [Dovetail#264](https://github.com/RocketSurgeonsGuild/Dovetail/issues/264)   | Confirm the OpenTelemetry joints cover everything LaunchPad.Telemetry offered          | None       |
+| [Dovetail#265](https://github.com/RocketSurgeonsGuild/Dovetail/issues/265)   | Spike: let other packages ship host-model templates, with a direct-reference-only mode | None       |
+| [Dovetail#266](https://github.com/RocketSurgeonsGuild/Dovetail/issues/266)   | Honour live-only and unit-test-only joints in generated export metadata                | None       |
+| [MSBuildSdk#96](https://github.com/RocketSurgeonsGuild/MSBuildSdk/issues/96) | AssemblyInfo gives typed information about every dependent assembly                    | None       |
+| [MSBuildSdk#97](https://github.com/RocketSurgeonsGuild/MSBuildSdk/issues/97) | AssemblyInfo hygiene: verify and fix the issues found while reading                    | None       |
+
+### Joint conversion (shared integration branch)
+
+| Ticket                                                                | Title                                                                                 | Blocked by                                                                                                                                                                                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [#3052](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3052) | Joint conversion, batch 1: Primitives and Foundation                                  | [Dovetail#266](https://github.com/RocketSurgeonsGuild/Dovetail/issues/266), [#3048](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3048), [#3050](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3050) |
+| [#3053](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3053) | Joint conversion, batch 2: ASP.NET Core and gRPC                                      | [#3052](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3052)                                                                                                                                                    |
+| [#3054](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3054) | Joint conversion, batch 3: GraphQL, mapping, EF, spatial and Newtonsoft.Json packages | [#3052](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3052)                                                                                                                                                    |
+| [#3055](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3055) | Samples start through Dovetail, and the command-line sample uses Spectre.Console.Cli  | [#3051](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3051), [#3053](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3053), [#3054](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3054)      |
+| [#3056](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3056) | Integrate and verify: the old conventions are gone and everything is green            | [#3053](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3053), [#3054](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3054), [#3055](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3055)      |
+
+### Restructure and integration packages
+
+| Ticket                                                                | Title                                                                                                 | Blocked by                                                                                                                                          |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#3057](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3057) | Typed assembly info replaces LaunchPad.Metadata                                                       | [MSBuildSdk#96](https://github.com/RocketSurgeonsGuild/MSBuildSdk/issues/96), [#3050](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3050) |
+| [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058) | Generic-host and ASP.NET Core apps get LaunchPad.Hosting joints from templates, direct reference only | [Dovetail#265](https://github.com/RocketSurgeonsGuild/Dovetail/issues/265), [#3056](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3056)   |
+| [#3059](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3059) | Application lifecycle comes from Dovetail                                                             | [Dovetail#262](https://github.com/RocketSurgeonsGuild/Dovetail/issues/262), [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058)   |
+| [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060) | Blazor WebAssembly apps get the folded-in browser templates                                           | [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058)                                                                               |
+| [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061) | Instrumentation Joint replaces LaunchPad.Telemetry                                                    | [Dovetail#264](https://github.com/RocketSurgeonsGuild/Dovetail/issues/264), [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058)   |
+| [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062) | Serilog comes from Dovetail; LaunchPad.Serilog is removed                                             | [Dovetail#263](https://github.com/RocketSurgeonsGuild/Dovetail/issues/263), [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058)   |
+| [#3063](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3063) | Serilog code leaves ASP.NET Core for an integration package                                           | [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062)                                                                               |
+| [#3064](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3064) | NodaTime core package                                                                                 | [#3056](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3056)                                                                               |
+| [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) | NodaTime for Newtonsoft.Json, Mapperly and EF Core                                                    | [#3064](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3064)                                                                               |
+| [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) | NodaTime for GraphQL                                                                                  | [#3064](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3064)                                                                               |
+| [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067) | NodaTime Serilog destructuring                                                                        | [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3064](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3064)        |
+| [#3068](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3068) | FluentValidation core package                                                                         | [#3056](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3056)                                                                               |
+| [#3069](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3069) | FluentValidation for ASP.NET Core                                                                     | [#3068](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3068)                                                                               |
+| [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) | FluentValidation for gRPC, GraphQL and Blazor                                                         | [#3068](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3068)                                                                               |
+| [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071) | Newtonsoft.Json and NetTopologySuite tidy-up                                                          | [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3063](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3063)        |
+
+### LaunchPad SDK
+
+| Ticket                                                                | Title                                                                                      | Blocked by                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072) | LaunchPad SDK skeleton: chains Dovetail's SDK and adds Hosting for the detected host model | [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058)                                                                                                                                                                                                                      |
+| [#3073](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3073) | LaunchPad SDK adds the NodaTime packages                                                   | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065), [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066), [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067), [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072) |
+| [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) | LaunchPad SDK adds the Newtonsoft.Json and NetTopologySuite packages                       | [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071), [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072)                                                                                                                                               |
+| [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) | LaunchPad SDK adds the Serilog and FluentValidation packages                               | [#3063](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3063), [#3069](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3069), [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070), [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072) |
+
+### Docs, tooling and release
+
+| Ticket                                                                | Title                                                                 | Blocked by                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [#3076](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3076) | Docs: guides and concepts in Joint vocabulary, plus the API reference | [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072)                                                                                                                                                                                                                      |
+| [#3077](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3077) | Agent and editor tooling follow-ups                                   | None                                                                                                                                                                                                                                                                                       |
+| [#3078](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3078) | Release: new major version, NuGet deprecations and migration notes    | [#3073](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3073), [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074), [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075), [#3076](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3076) |
+| [#3079](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3079) | Repository settings checklist (manual)                                | None                                                                                                                                                                                                                                                                                       |
+
+## Package maps
+
+### NodaTime
+
+| Package                              | Contents (from today)                                                                                | Added when also referenced | Ticket                                                                |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------- |
+| `LaunchPad.NodaTime`                 | clock and time-zone registration, System.Text.Json converters, `PrimitiveOptions.DateTimeZoneSource` | NodaTime                   | [#3064](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3064) |
+| `LaunchPad.NodaTime.NewtonsoftJson`  | converters and extensions from `Foundation.NewtonsoftJson`                                           | Newtonsoft.Json            | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
+| `LaunchPad.NodaTime.Mapping`         | `NodaTimeMapper`, `NodaTimeDateTimeMapper`                                                           | Riok.Mapperly              | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
+| `LaunchPad.NodaTime.EntityFramework` | the two NodaTime value generators                                                                    | EF Core                    | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
+| `LaunchPad.NodaTime.HotChocolate`    | `AddNodaTime`, the time-zone cache setup                                                             | HotChocolate               | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
+| `LaunchPad.NodaTime.StrawberryShake` | the 14 NodaTime serializers (two exist but are not registered today)                                 | StrawberryShake            | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
+| `LaunchPad.NodaTime.Serilog`         | `NodaTimeDestructuringPolicy`                                                                        | Serilog                    | [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067) |
+
+### FluentValidation
+
+| Package                                   | Contents                                                                                 | Added when also referenced | Ticket                                                                |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------- |
+| `LaunchPad.FluentValidation`              | the convention, validators and the MediatR pipeline behavior, out of Foundation          | FluentValidation           | [#3068](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3068) |
+| `LaunchPad.FluentValidation.AspNetCore`   | ASP.NET Core validation behaviours; absorbs the experimental OpenAPI transformer package | ASP.NET Core               | [#3069](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3069) |
+| `LaunchPad.FluentValidation.Grpc`         | gRPC validation                                                                          | Grpc.AspNetCore            | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) |
+| `LaunchPad.FluentValidation.HotChocolate` | the FairyBread integration                                                               | HotChocolate               | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) |
+| `LaunchPad.FluentValidation.Blazor`       | the validator component (all that `AspNetCore.Blazor` contains)                          | Blazor components          | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) |
+
+### SDK detection
+
+All packages are `Rocket.Surgery.LaunchPad.<name>`. Detection uses direct package references only, each technology defaults on, and `LaunchPadEnable<Tech>=false` opts out.
+
+| Technology detected | Packages added (each also needs its partner library where shown)                                                                                                | Ticket                                                                |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| (any host model)    | `Hosting`, through the chained Dovetail SDK's host detection                                                                                                    | [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072) |
+| NodaTime            | `NodaTime`; `.NewtonsoftJson` (Newtonsoft.Json); `.Mapping` (Mapperly); `.EntityFramework` (EF Core); `.HotChocolate`; `.StrawberryShake`; `.Serilog` (Serilog) | [#3073](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3073) |
+| Newtonsoft.Json     | `Foundation.NewtonsoftJson`; `AspNetCore.NewtonsoftJson` (ASP.NET Core); `Mapping.NewtonsoftJson` (Mapperly); `Spatial.NewtonsoftJson` (NetTopologySuite)       | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
+| NetTopologySuite    | `Spatial`; `Spatial.NewtonsoftJson` (Newtonsoft.Json); `StrawberryShake.Spatial` (StrawberryShake)                                                              | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
+| Serilog             | Dovetail's Serilog package (through the chained SDK); the Serilog integration packages (request logging, destructuring)                                         | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
+| FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.HotChocolate`; `.Blazor` (each when its host library is referenced)                                               | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
+
+Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced explicitly in the first release.
+
+## Hosting joint disposition
+
+| Today                                                 | Destination                                                                                                                                                                                                                                              |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `HostingConvention` (registers the lifecycle service) | Dovetail's lifecycle support ([Dovetail#262](https://github.com/RocketSurgeonsGuild/Dovetail/issues/262)); LaunchPad's own code goes in [#3059](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3059)                                            |
+| `HealthChecksConvention`                              | Hosting Joint for hosts with health checks (generic host, ASP.NET Core), not WebAssembly: [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058)                                                                                          |
+| `DefaultTelemetryConvention`                          | Dropped if [Dovetail#264](https://github.com/RocketSurgeonsGuild/Dovetail/issues/264) confirms the SDK defaults cover it                                                                                                                                 |
+| `SerilogHostingConvention` (`IDiagnosticContext`)     | Hosting Joint, emitted when Serilog is referenced: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062)                                                                                                                                 |
+| `EnvironmentLoggingConvention`                        | Hosting Joint when Serilog is referenced; the WebAssembly variant enriches `Environment` and `BaseAddress`: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060) |
+| `SerilogConsole/Debug/TraceLoggingConvention`         | Hosting Joints when Serilog is referenced; WebAssembly uses the Browser console sink: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060)                       |
+| `SerilogTelemetryConvention` (never exported today)   | Live Joint, emitted when `Serilog.Sinks.OpenTelemetry` is referenced: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062)                                                                                                              |
+| `InstrumentationConvention` (from Telemetry)          | `InstrumentationJoint`: [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)                                                                                                                                                            |
 
 ## Current package disposition
 
-| Project                             | Fate                                                                                   |
-| ----------------------------------- | -------------------------------------------------------------------------------------- |
-| Analyzers                           | Keep (`netstandard2.0`; six generators)                                                |
-| Primitives                          | Keep, slimmed: no Serilog/Telemetry references, NodaTime and options attribute removed |
-| Foundation                          | Keep (MediatR, core); FluentValidation extracted                                       |
-| Foundation.NewtonsoftJson           | Keep; NodaTime and Serilog parts move out                                              |
-| Metadata                            | Delete (L7)                                                                            |
-| Hosting                             | Rebuilt on templates (L8); absorbs WebAssembly.Hosting                                 |
-| WebAssembly.Hosting                 | Folded into Hosting                                                                    |
-| Telemetry                           | Delete (L9)                                                                            |
-| Serilog                             | Delete (L10)                                                                           |
-| AspNetCore                          | Keep; FluentValidation and Serilog parts move out                                      |
-| AspNetCore.Blazor                   | Becomes `FluentValidation.Blazor`                                                      |
-| AspNetCore.FluentValidation.OpenApi | Merged into `FluentValidation.AspNetCore`                                              |
-| AspNetCore.NewtonsoftJson           | Keep                                                                                   |
-| AspNetCore.Spatial                  | Delete (empty shell)                                                                   |
-| AspNetCore.Testing, Testing         | Delete; test support under `test/` (L4)                                                |
-| EntityFramework                     | Keep; NodaTime value generators move to `NodaTime.EntityFramework`                     |
-| Grpc                                | Keep; validation moves to `FluentValidation.Grpc`                                      |
-| HotChocolate                        | Keep; NodaTime and FluentValidation parts move out                                     |
-| Mapping, Mapping.NewtonsoftJson     | Keep; NodaTime mappers move out                                                        |
-| Spatial, Spatial.NewtonsoftJson     | Keep; Serilog parts move out                                                           |
-| StrawberryShake                     | NodaTime serializers move to `NodaTime.StrawberryShake`; generic serializers stay      |
-| StrawberryShake.Spatial             | Keep                                                                                   |
+| Project                             | Fate                                                                                   | Ticket                                                                                                                                                                                                                                                                                     |
+| ----------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Analyzers                           | Keep (`netstandard2.0`; six generators)                                                |                                                                                                                                                                                                                                                                                            |
+| Primitives                          | Keep, slimmed: no Serilog, Telemetry or NodaTime references, options attribute removed | [#3052](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3052), [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061), [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3064](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3064) |
+| Foundation                          | Keep (MediatR, core); FluentValidation extracted                                       | [#3052](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3052), [#3068](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3068)                                                                                                                                               |
+| Foundation.NewtonsoftJson           | Keep; NodaTime and Serilog parts move out                                              | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065), [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071)                                                                                                                                               |
+| Metadata                            | Delete                                                                                 | [#3057](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3057)                                                                                                                                                                                                                      |
+| Hosting                             | Rebuilt on templates; absorbs WebAssembly.Hosting                                      | [#3058](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3058)                                                                                                                                                                                                                      |
+| WebAssembly.Hosting                 | Folded into Hosting                                                                    | [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060)                                                                                                                                                                                                                      |
+| Telemetry                           | Delete                                                                                 | [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)                                                                                                                                                                                                                      |
+| Serilog                             | Delete                                                                                 | [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062)                                                                                                                                                                                                                      |
+| AspNetCore                          | Keep; FluentValidation and Serilog parts move out                                      | [#3063](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3063), [#3069](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3069)                                                                                                                                               |
+| AspNetCore.Blazor                   | Becomes `FluentValidation.Blazor`                                                      | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070)                                                                                                                                                                                                                      |
+| AspNetCore.FluentValidation.OpenApi | Merged into `FluentValidation.AspNetCore`                                              | [#3069](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3069)                                                                                                                                                                                                                      |
+| AspNetCore.NewtonsoftJson           | Keep                                                                                   | [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071)                                                                                                                                                                                                                      |
+| AspNetCore.Spatial                  | Delete (empty shell)                                                                   | [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071)                                                                                                                                                                                                                      |
+| AspNetCore.Testing, Testing         | Delete; non-packable test support under `test/`                                        | [#3049](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3049)                                                                                                                                                                                                                      |
+| EntityFramework                     | Keep; NodaTime value generators move out                                               | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065)                                                                                                                                                                                                                      |
+| Grpc                                | Keep; validation moves out                                                             | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070)                                                                                                                                                                                                                      |
+| HotChocolate                        | Keep; NodaTime and FluentValidation parts move out                                     | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066), [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070)                                                                                                                                               |
+| Mapping, Mapping.NewtonsoftJson     | Keep; NodaTime mappers move out                                                        | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065)                                                                                                                                                                                                                      |
+| Spatial, Spatial.NewtonsoftJson     | Keep; Serilog parts move out                                                           | [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071)                                                                                                                                                                                                                      |
+| StrawberryShake                     | NodaTime serializers move out; generic serializers stay                                | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066)                                                                                                                                                                                                                      |
+| StrawberryShake.Spatial             | Keep                                                                                   |                                                                                                                                                                                                                                                                                            |
 
 ## Open design points
 
-1. **Specular access from a joint**: how a joint obtains its `ISpecularProvider` (L2, L5).
-2. **Phase 1 coexistence**: the green baseline may keep `Rocket.Surgery.Conventions` for wiring while scanning moves to Specular. If the two cannot coexist, fold the affected projects' Phase 1 work into L5.
-3. **Template gating**: reuse a Dovetail extension point or reimplement (D4).
-4. **Serilog placement**: sink packages and destructuring policies (L10).
-5. **AssemblyInfo representation**: symbols versus embedded data (M1).
+1. **Specular access from a Joint, and coexistence of the old convention model with Joints during the baseline**: decided in [#3047](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3047).
+2. **Template gating**: reuse a Dovetail extension point or reimplement it in LaunchPad: [Dovetail#265](https://github.com/RocketSurgeonsGuild/Dovetail/issues/265).
+3. **Serilog placement**: where the sink packages and each destructuring policy live: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062).
+4. **AssemblyInfo representation**: compiler symbols versus data embedded in the marker: [MSBuildSdk#96](https://github.com/RocketSurgeonsGuild/MSBuildSdk/issues/96).
 
 ## Risks
 
-- **net11 prerelease support**: HotChocolate, StrawberryShake, Alba and EF Core may lack net11 assets; mitigated by TFM-conditional versions and a per-dependency list in L1.
-- **Moving upstream**: Dovetail, Specular, Testing and MSBuildSdk are mid net11 migration. LaunchPad's branch is also based on a commit 214 behind `origin/main`; rebase after the baseline.
-- **Test conversion volume**: 309 tests, some using `Xunit.Combinatorial`.
-- **Breaking release**: nearly every package changes; L18 owns the migration notes.
+- **net11 prerelease support**: HotChocolate, StrawberryShake, Alba and EF Core may lack net11 assets. Mitigated by per-framework package versions; [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046) lists every dependency affected.
+- **Moving upstream**: Dovetail, Specular, Testing and MSBuildSdk are mid net11 migration.
+- **Branch drift**: `feature/dovetail-migration` is based on a commit 214 behind `origin/main`, and merging today conflicts in 12 files (workflows, `Directory.Packages.props`, `global.json`, the package files and the deleted tool manifest). Rebase or merge `main` before [#3046](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3046) lands.
+- **Test conversion volume**: 309 tests, some using `Xunit.Combinatorial`: [#3050](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3050), [#3051](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3051).
+- **Breaking release**: nearly every package changes; [#3078](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3078) owns the migration notes.
 
 ## Out of scope
 
