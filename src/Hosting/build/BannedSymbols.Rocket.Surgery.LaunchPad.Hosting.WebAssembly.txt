@@ -1,0 +1,2 @@
+T:Microsoft.Extensions.Hosting.IHostEnvironment;Blazor WebAssembly has no generic host: use IWebAssemblyHostEnvironment
+N:Microsoft.Extensions.Hosting;Blazor WebAssembly has no generic host
