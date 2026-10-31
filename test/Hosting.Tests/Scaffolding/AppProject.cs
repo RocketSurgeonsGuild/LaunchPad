@@ -100,21 +100,23 @@ internal sealed class AppProject
     }
 
     /// <summary>
-    ///     Replaces what the application's <c>Program.cs</c> holds, for a test that reads something other than the health checks.
+    ///     Replaces the <c>Program.cs</c> the host model gets by default.
     /// </summary>
-    /// <param name="program">The program.</param>
+    /// <param name="program">The text of <c>Program.cs</c>.</param>
     /// <returns>This project.</returns>
     public AppProject WithProgram(string program)
     {
-        _program = program;
+        Program = program;
         return this;
     }
 
     /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
-    public string Program =>
-        _program ?? _host switch
+    public string Program
+    {
+        get =>
+        field ?? _host switch
         {
             // The generated ConfigureDovetail entry point builds the host with the joints Dovetail discovered; whether the health checks
             // are among them is what the application reports. It looks the type up by name, as the application may not reference it.
@@ -132,9 +134,11 @@ internal sealed class AppProject
                 """ + RegisteredFunction,
             // a library has nothing to run
             HostModel.None => "public static class Library;",
+            HostModel.WebAssembly => throw new NotImplementedException(),
             // a WebAssembly host cannot run on the machine the tests do
             _ => """System.Console.WriteLine("hello");""",
-        };
+        }; private set;
+    }
 
     private const string RegisteredFunction = """
 
@@ -210,6 +214,7 @@ internal sealed class AppProject
                       HostBuilderName="builder"
                       HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost" />
                 """,
+            HostModel.None => throw new NotImplementedException(),
             _ => null,
         };
 
@@ -217,5 +222,4 @@ internal sealed class AppProject
     private readonly List<(string Id, string? Version)> _packages = [];
     private readonly List<string> _projectReferences = [];
     private readonly bool _versioned;
-    private string? _program;
 }

@@ -1,0 +1,9 @@
+﻿{
+  Host: AspNetCore,
+  Moments: [
+    starting,
+    started,
+    stopping,
+    stopped
+  ]
+}
