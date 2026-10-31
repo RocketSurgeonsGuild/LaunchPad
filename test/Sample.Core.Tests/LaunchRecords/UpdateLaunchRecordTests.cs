@@ -1,59 +1,64 @@
-﻿using MediatR;
+using MediatR;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using NodaTime;
 using NodaTime.Extensions;
-using Indago;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
+
 using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
+public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
-    [Fact]
+    [Test]
     public async Task Should_Update_A_LaunchRecord()
     {
-        var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
-                                          .Invoke(
-                                               async (context, clock) =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Id = RocketId.New(),
-                                                       Type = RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
+        LaunchRecord record;
+        await using (var seedScope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var clock = seedScope.ServiceProvider.GetRequiredService<IClock>();
+            var rocket = new ReadyRocket
+            {
+                Id = RocketId.New(),
+                Type = RocketType.Falcon9,
+                SerialNumber = "12345678901234",
+            };
 
-                                                   var record = new LaunchRecord
-                                                   {
-                                                       Partner = "partner",
-                                                       Payload = "geo-fence-ftl",
-                                                       RocketId = rocket.Id,
-                                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
-                                                       PayloadWeightKg = 100,
-                                                   };
-                                                   context.Add(rocket);
-                                                   context.Add(record);
+            record = new LaunchRecord
+            {
+                Partner = "partner",
+                Payload = "geo-fence-ftl",
+                RocketId = rocket.Id,
+                ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                PayloadWeightKg = 100,
+            };
+            context.Add(rocket);
+            context.Add(record);
 
-                                                   await context.SaveChangesAsync();
-                                                   return record;
-                                               }
-                                           );
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
         var launchDate = record.ScheduledLaunchDate.ToInstant().Plus(Duration.FromSeconds(1));
-        var response = await ServiceProvider.WithScoped<IMediator, IClock>().Invoke(
-            (mediator, _) => mediator.Send(
-                new EditLaunchRecord.Request
-                {
-                    Id = record.Id,
-                    Partner = "partner",
-                    Payload = "geo-fence-ftl",
-                    RocketId = record.RocketId,
-                    ScheduledLaunchDate = launchDate,
-                    PayloadWeightKg = 200,
-                }
-            )
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var response = await mediator.Send(
+            new EditLaunchRecord.Request
+            {
+                Id = record.Id,
+                Partner = "partner",
+                Payload = "geo-fence-ftl",
+                RocketId = record.RocketId,
+                ScheduledLaunchDate = launchDate,
+                PayloadWeightKg = 200,
+            },
+            TestContext.CancellationToken
         );
 
         response.ScheduledLaunchDate.ShouldBe(launchDate);

@@ -1,6 +1,7 @@
 using MediatR;
 
-using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
@@ -11,46 +12,42 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class GetRocketTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
+public class GetRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
-    [Fact]
+    [Test]
     public async Task Should_Get_A_Rocket()
     {
-        var rocket = await ServiceProvider
-                          .WithScoped<RocketDbContext>()
-                          .Invoke(
-                               async z =>
-                               {
-                                   var rocket = new ReadyRocket
-                                   {
-                                       Type = RocketType.Falcon9,
-                                       SerialNumber = "12345678901234",
-                                   };
-                                   z.Add(rocket);
+        RocketId rocket;
+        await using (var seedScope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var seeded = new ReadyRocket
+            {
+                Type = RocketType.Falcon9,
+                SerialNumber = "12345678901234",
+            };
+            context.Add(seeded);
 
-                                   await z.SaveChangesAsync();
-                                   return rocket.Id;
-                               }
-                           );
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+            rocket = seeded.Id;
+        }
 
-        var response = await ServiceProvider
-                            .WithScoped<IMediator>()
-                            .Invoke(
-                                 mediator => mediator.Send(new GetRocket.Request(rocket))
-                             );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var response = await mediator.Send(new GetRocket.Request(rocket), TestContext.CancellationToken);
 
         response.Type.ShouldBe(RocketType.Falcon9);
         response.Sn.ShouldBe("12345678901234");
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Not_Get_A_Missing_Rocket()
     {
-        Func<Task> action = () => ServiceProvider
-                                 .WithScoped<IMediator>()
-                                 .Invoke(
-                                      mediator => mediator.Send(new GetRocket.Request(RocketId.New()))
-                                  );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        Func<Task> action = () => mediator.Send(new GetRocket.Request(RocketId.New()), TestContext.CancellationToken);
 
         await action.ShouldThrowAsync<NotFoundException>();
     }

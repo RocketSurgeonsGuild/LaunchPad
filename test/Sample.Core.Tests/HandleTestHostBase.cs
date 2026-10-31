@@ -6,20 +6,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.Conventions;
-using Indago;
 
 using Sample.Core.Domain;
 
 using Serilog.Events;
 
+using TUnit.Core.Interfaces;
+
 namespace Sample.Core.Tests;
 
-public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyncLifetime
+public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncInitializer
 {
-    public async ValueTask InitializeAsync()
+    public async Task InitializeAsync()
     {
         _connection = new("DataSource=:memory:");
-        await _connection.OpenAsync();
+        // LoggerTest disposes these when the test ends.
+        Disposables.Add(_connection);
+        await _connection.OpenAsync(TestContext.CancellationToken);
         _context = ConventionContextBuilder
                   .Create(Imports.Instance)
                   .UseLogger(Logger);
@@ -31,16 +34,13 @@ public abstract class HandleTestHostBase : AutoFakeTest<XUnitTestContext>, IAsyn
                                      .EnableSensitiveDataLogging()
                                      .UseSqlite(_connection)
                              )
-                            .ApplyConventionsAsync(await ConventionContext.FromAsync(_context));
+                            .ApplyConventionsAsync(await ConventionContext.FromAsync(_context, TestContext.CancellationToken));
         Populate(services);
-        await Container.WithScoped<RocketDbContext>().Invoke(context => context.Database.EnsureCreatedAsync());
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        await scope.ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureCreatedAsync(TestContext.CancellationToken);
     }
 
-    public async ValueTask DisposeAsync() => await _connection!.DisposeAsync();
-
-    protected HandleTestHostBase(ITestContextAccessor testContext, LogEventLevel logLevel = LogEventLevel.Information) : base(
-        XUnitDefaults.CreateTestContext(testContext, logLevel)
-    ) => ExcludeSourceContext(nameof(AutoFakeTest));
+    protected HandleTestHostBase(LogEventLevel logLevel = LogEventLevel.Information) : base(TestRecord.Create(logLevel)) => ExcludeSourceContext(nameof(AutoFakeTest));
 
     protected override IContainer BuildContainer(IContainer container) => container.WithDependencyInjectionAdapter().Container;
     private ConventionContextBuilder? _context;

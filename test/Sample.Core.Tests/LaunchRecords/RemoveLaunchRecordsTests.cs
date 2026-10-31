@@ -1,6 +1,7 @@
 using MediatR;
 
-using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
@@ -11,62 +12,56 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
+public class RemoveLaunchRecordsTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
-    [Fact]
+    [Test]
     public async Task Should_Remove_LaunchRecord()
     {
-        var id = await ServiceProvider
-                      .WithScoped<RocketDbContext>()
-                      .Invoke(
-                           async z =>
-                           {
-                               var faker = new RocketFaker();
-                               var rocket = faker.Generate();
-                               var record = new LaunchRecordFaker(new[] { rocket }.ToList()).Generate();
-                               z.Add(rocket);
-                               z.Add(record);
+        LaunchRecordId id;
+        await using (var seedScope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            var rocket = faker.Generate();
+            var record = new LaunchRecordFaker(new[] { rocket, }.ToList()).Generate();
+            context.Add(rocket);
+            context.Add(record);
 
-                               await z.SaveChangesAsync();
-                               return record.Id;
-                           }
-                       );
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+            id = record.Id;
+        }
 
-        await ServiceProvider
-             .WithScoped<IMediator>()
-             .Invoke(
-                  mediator => mediator.Send(new DeleteLaunchRecord.Request(id))
-              );
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            await mediator.Send(new DeleteLaunchRecord.Request(id), TestContext.CancellationToken);
+        }
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());
+        await using var assertScope = ServiceProvider.CreateAsyncScope();
+        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Not_Be_Authorized_On_Given_Record()
     {
         var id = new LaunchRecordId(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6"));
-        await ServiceProvider
-             .WithScoped<RocketDbContext>()
-             .Invoke(
-                  async z =>
-                  {
-                      var faker = new RocketFaker();
-                      var rocket = faker.Generate();
-                      var record = new LaunchRecordFaker(new[] { rocket }.ToList()).Generate();
-                      z.Add(rocket);
-                      record.Id = id;
-                      z.Add(record);
+        await using (var seedScope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            var rocket = faker.Generate();
+            var record = new LaunchRecordFaker(new[] { rocket, }.ToList()).Generate();
+            context.Add(rocket);
+            record.Id = id;
+            context.Add(record);
 
-                      await z.SaveChangesAsync();
-                      return record.Id;
-                  }
-              );
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
-        Func<Task> action = () => ServiceProvider
-                                 .WithScoped<IMediator>()
-                                 .Invoke(
-                                      mediator => mediator.Send(new DeleteLaunchRecord.Request(id))
-                                  );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        Func<Task> action = () => mediator.Send(new DeleteLaunchRecord.Request(id), TestContext.CancellationToken);
         await action.ShouldThrowAsync<NotAuthorizedException>();
     }
 

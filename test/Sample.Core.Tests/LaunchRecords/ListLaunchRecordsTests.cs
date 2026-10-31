@@ -1,32 +1,34 @@
-﻿using MediatR;
-using Indago;
+using MediatR;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core.Domain;
 using Sample.Core.Operations.LaunchRecords;
+
 using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class ListLaunchRecordsTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
+public class ListLaunchRecordsTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
-    [Fact]
+    [Test]
     public async Task Should_List_LaunchRecords()
     {
-        await ServiceProvider.WithScoped<RocketDbContext>()
-                             .Invoke(
-                                  async z =>
-                                  {
-                                      var faker = new RocketFaker();
-                                      var rockets = faker.Generate(3);
-                                      var records = new LaunchRecordFaker(rockets).Generate(10);
-                                      z.AddRange(rockets);
-                                      z.AddRange(records);
-                                      await z.SaveChangesAsync();
-                                  }
-                              );
+        await using (var seedScope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            var rockets = faker.Generate(3);
+            var records = new LaunchRecordFaker(rockets).Generate(10);
+            context.AddRange(rockets);
+            context.AddRange(records);
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
-        var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.CreateStream(new ListLaunchRecords.Request(null)).ToListAsync()
-        );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var response = await mediator.CreateStream(new ListLaunchRecords.Request(null), TestContext.CancellationToken).ToListAsync(TestContext.CancellationToken);
 
         response.Count.ShouldBe(10);
     }

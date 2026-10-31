@@ -1,126 +1,119 @@
-﻿using MediatR;
+using MediatR;
+
 using Microsoft.Extensions.DependencyInjection;
-using Indago;
+
+using Rocket.Surgery.LaunchPad.Primitives;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+
 using Serilog.Events;
+
 using ValidationException = FluentValidation.ValidationException;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class UpdateRocketTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
+public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
-    [Fact]
+    [Test]
     public async Task Should_Update_A_Rocket()
     {
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
+        var rocket = await SeedRocketAsync();
 
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(
-                new EditRocket.Request
-                {
-                    Id = rocket.Id,
-                    Type = RocketType.FalconHeavy,
-                    SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
-                }
-            )
+        var response = await mediator.Send(
+            new EditRocket.Request
+            {
+                Id = rocket.Id,
+                Type = RocketType.FalconHeavy,
+                SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
+            },
+            TestContext.CancellationToken
         );
 
         response.Type.ShouldBe(RocketType.FalconHeavy);
         response.Sn.ShouldBe("43210987654321");
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Patch_A_Rocket()
     {
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
-
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+        var rocket = await SeedRocketAsync();
 
         var request = new EditRocket.PatchRequest
         {
             Id = rocket.Id,
             //            Type = RocketType.FalconHeavy,
-            SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
+            SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
         }.ResetChanges() with
         {
-            Type = RocketType.FalconHeavy
+            Type = RocketType.FalconHeavy,
         };
-        var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.Send(request)
-        );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var response = await mediator.Send(request, TestContext.CancellationToken);
 
         response.Type.ShouldBe(RocketType.FalconHeavy);
         response.Sn.ShouldBe("12345678901234");
     }
 
-    private static readonly Faker Faker = new();
-
-    [Theory]
-    [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
+    [Test]
+    [MethodDataSource(nameof(RequiredFieldData))]
     public async Task Should_Validate_Required_Fields(EditRocket.Request request, string propertyName)
     {
-        using var scope = ServiceProvider.CreateScope();
+        await using var scope = ServiceProvider.CreateAsyncScope();
 
-        var mediater = scope.ServiceProvider.GetRequiredService<IMediator>();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        Func<Task> a = () => mediater.Send(request);
+        Func<Task> a = () => mediator.Send(request, TestContext.CancellationToken);
         (await a.ShouldThrowAsync<ValidationException>()).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
     }
 
-    private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocket.Request, string>
+    public static IEnumerable<Func<(EditRocket.Request Request, string PropertyName)>> RequiredFieldData()
     {
-        public ShouldValidateUsersRequiredFieldData()
-        {
-            Add(
-                new EditRocket.Request
-                {
-                    Id = RocketId.New()
-                }, nameof(EditRocket.Request.SerialNumber)
-            );
-            Add(
-                new EditRocket.Request
-                {
-                    Id = RocketId.New(),
-                    SerialNumber = Faker.Random.String2(0, 9)
-                },
-                nameof(EditRocket.Request.SerialNumber)
-            );
-            Add(
-                new EditRocket.Request
-                {
-                    Id = RocketId.New(),
-                    SerialNumber = Faker.Random.String2(600, 800)
-                },
-                nameof(EditRocket.Request.SerialNumber)
-            );
-        }
+        yield return () => (
+            new EditRocket.Request
+            {
+                Id = RocketId.New(),
+            },
+            nameof(EditRocket.Request.SerialNumber)
+        );
+        yield return () => (
+            new EditRocket.Request
+            {
+                Id = RocketId.New(),
+                SerialNumber = Faker.Random.String2(0, 9),
+            },
+            nameof(EditRocket.Request.SerialNumber)
+        );
+        yield return () => (
+            new EditRocket.Request
+            {
+                Id = RocketId.New(),
+                SerialNumber = Faker.Random.String2(600, 800),
+            },
+            nameof(EditRocket.Request.SerialNumber)
+        );
     }
+
+    private async Task<ReadyRocket> SeedRocketAsync()
+    {
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+        var rocket = new ReadyRocket
+        {
+            Type = RocketType.Falcon9,
+            SerialNumber = "12345678901234",
+        };
+        context.Add(rocket);
+
+        await context.SaveChangesAsync(TestContext.CancellationToken);
+        return rocket;
+    }
+
+    private static readonly Faker Faker = new();
 }
