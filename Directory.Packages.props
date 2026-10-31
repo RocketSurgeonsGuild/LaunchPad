@@ -113,7 +113,6 @@
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="14.0.1" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="15.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="15.0.0-beta.2" />
-        <PackageVersion Include="Joinery.Dovetail" Version="0.3.0" />
         <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.3.0" />
         <PackageVersion Include="Specular" Version="0.3.2" />
         <PackageVersion Include="Joinery.Dovetail" Version="0.3.0" />
