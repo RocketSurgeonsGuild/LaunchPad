@@ -41,7 +41,7 @@ internal class LaunchPadValidatorRegistry(IServiceProvider serviceProvider) : IV
         () =>
         {
             var dictionary = new Dictionary<Type, List<ValidatorDescriptor>>();
-            var scope = serviceProvider.CreateScope();
+            using var scope = serviceProvider.CreateScope();
             var validators = scope.ServiceProvider.GetServices<IValidator>();
             foreach (var validator in validators)
             {
