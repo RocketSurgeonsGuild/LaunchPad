@@ -1,6 +1,5 @@
 using System.Reflection;
 
-using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Joints;
 
@@ -10,19 +9,25 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
-using Specular;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
 ///     Registers MVC, the API explorer and the application parts for every assembly that depends on this one.
 ///     The other ASP.NET Core joints run after this one.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceJoint" />
 /// <remarks>
-///     The <see cref="AspNetCoreOptions" /> are read from the Joint context when this joint registers; without them the
-///     defaults apply.
+///     <para>
+///         The application parts are found with the <see cref="ISpecularProvider" /> in the joint context.
+///         The application seeds it with <c>builder.Set&lt;ISpecularProvider&gt;(SpecularProvider.Instance)</c> until Dovetail does.
+///     </para>
+///     <para>
+///         The <see cref="AspNetCoreOptions" /> are read from the joint context when the joint registers, and default when none were set.
+///         This stays out of the constructor until Dovetail resolves constructor parameters of exported joints from the context.
+///     </para>
 /// </remarks>
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Application)]
@@ -32,11 +37,13 @@ public class AspNetCoreJoint : IServiceJoint
     /// <summary>
     ///     Registers the MVC services, and adds the application parts found through the Specular provider in the context.
     /// </summary>
-    /// <param name="context">The context.</param>
+    /// <param name="context">The joint context.</param>
     /// <param name="services">The service collection.</param>
+    /// <exception cref="KeyNotFoundException">No <see cref="ISpecularProvider" /> was set in <paramref name="context" />.</exception>
     public void Register(IDovetailContext context, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(services);
 
         var aspNetCoreOptions = context.Get<AspNetCoreOptions>() ?? new AspNetCoreOptions();
 
