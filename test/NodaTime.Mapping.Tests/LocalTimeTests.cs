@@ -1,11 +1,9 @@
 using Microsoft.Extensions.Time.Testing;
 
-using NodaTime;
-
 using Riok.Mapperly.Abstractions;
 using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
-namespace Extensions.Tests.Mapping;
+namespace NodaTime.Mapping.Tests;
 
 public partial class LocalTimeTests() : MapperTestBase()
 {

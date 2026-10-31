@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using NodaTime;
 using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
@@ -16,6 +15,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 /// <remarks>
 ///     A service Joint that configures the Newtonsoft Json serializer settings,
 ///     and a Serilog Joint that destructures the Newtonsoft Json types.
+///     The NodaTime converters are added by the NodaTime.NewtonsoftJson package.
 /// </remarks>
 [PublicAPI]
 [DovetailExport]
@@ -33,14 +33,6 @@ public class NewtonsoftJsonJoint : IServiceJoint, ISerilogJoint
                 new ConfigureNamedOptions<JsonSerializerSettings>(
                     null,
                     options => options.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()))
-                )
-        );
-        services.AddTransient<IPostConfigureOptions<JsonSerializerSettings>>(
-            sp =>
-                new PostConfigureOptions<JsonSerializerSettings, IDateTimeZoneProvider>(
-                    null,
-                    sp.GetRequiredService<IDateTimeZoneProvider>(),
-                    (options, provider) => options.ConfigureNodaTimeForLaunchPad(provider)
                 )
         );
     }
