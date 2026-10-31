@@ -276,6 +276,52 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
         await Verify(result);
     }
 
+    // OffsetDate and DateTimeZone had serializers that were never registered: these prove the registration that
+    // Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake added.
+    [Test]
+    public async Task Should_Roundtrip_OffsetDate()
+    {
+        await using var host = await AlbaHost.For<Program>(
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
+            new GraphQlExtension(),
+            new SqliteExtension<RocketDbContext>()
+        );
+        var client = host.Services.GetRequiredService<IRocketClient>();
+
+        var result = await client.GetNodaTimeTypes.ExecuteAsync(
+            new()
+            {
+                OffsetDate = new OffsetDate(new(2020, 1, 2), Offset.FromHours(1)),
+            },
+            cancellationToken: TestContext.CancellationToken
+        );
+
+        string.Join("; ", result.Errors.Select(x => x.Message)).ShouldBeEmpty();
+        result.Data!.NodaTimeTest.OffsetDate.ShouldBe(new OffsetDate(new(2020, 1, 2), Offset.FromHours(1)));
+    }
+
+    [Test]
+    public async Task Should_Roundtrip_DateTimeZone()
+    {
+        await using var host = await AlbaHost.For<Program>(
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
+            new GraphQlExtension(),
+            new SqliteExtension<RocketDbContext>()
+        );
+        var client = host.Services.GetRequiredService<IRocketClient>();
+
+        var result = await client.GetNodaTimeTypes.ExecuteAsync(
+            new()
+            {
+                DateTimeZone = DateTimeZoneProviders.Tzdb["America/New_York"],
+            },
+            cancellationToken: TestContext.CancellationToken
+        );
+
+        string.Join("; ", result.Errors.Select(x => x.Message)).ShouldBeEmpty();
+        result.Data!.NodaTimeTest.DateTimeZone.ShouldNotBeNull().Id.ShouldBe("America/New_York");
+    }
+
     [Test]
     [Arguments("POINT(3 4)")]
     [Arguments("LINESTRING(5 6, 7 8)")]

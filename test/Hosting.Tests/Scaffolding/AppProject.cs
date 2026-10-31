@@ -36,6 +36,16 @@ internal sealed class AppProject
 {
     public const string HealthChecks = "Microsoft.Extensions.Diagnostics.HealthChecks";
 
+    public const string DovetailSerilog = "Joinery.Dovetail.Serilog";
+
+    public const string BrowserConsole = "Serilog.Sinks.BrowserConsole";
+
+    public const string ConsoleSink = "Serilog.Sinks.Console";
+
+    public const string HostingAbstractions = "Microsoft.Extensions.Hosting.Abstractions";
+
+    public const string BannedApiAnalyzers = "Microsoft.CodeAnalysis.BannedApiAnalyzers";
+
     private const string RootNamespace = "Throwaway";
 
     private AppProject(HostModel host, bool versioned)
@@ -89,6 +99,18 @@ internal sealed class AppProject
     }
 
     /// <summary>
+    ///     Sets an MSBuild property.
+    /// </summary>
+    /// <param name="name">The name of the property.</param>
+    /// <param name="value">The value.</param>
+    /// <returns>This project.</returns>
+    public AppProject AddProperty(string name, string value)
+    {
+        _properties.Add((name, value));
+        return this;
+    }
+
+    /// <summary>
     ///     References a project.
     /// </summary>
     /// <param name="path">The path of the project file.</param>
@@ -100,33 +122,23 @@ internal sealed class AppProject
     }
 
     /// <summary>
-    ///     Replaces what the application's <c>Program.cs</c> holds.
+    ///     Replaces the <c>Program.cs</c> the host model gets by default.
     /// </summary>
     /// <param name="program">The text of <c>Program.cs</c>.</param>
     /// <returns>This project.</returns>
     public AppProject WithProgram(string program)
     {
-        _program = program;
-        return this;
-    }
-
-    /// <summary>
-    ///     Sets an MSBuild property in the project.
-    /// </summary>
-    /// <param name="name">The name of the property.</param>
-    /// <param name="value">The value.</param>
-    /// <returns>This project.</returns>
-    public AppProject WithProperty(string name, string value)
-    {
-        _properties.Add((name, value));
+        Program = program;
         return this;
     }
 
     /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
-    public string Program =>
-        _program ?? _host switch
+    public string Program
+    {
+        get =>
+        field ?? _host switch
         {
             // The generated ConfigureDovetail entry point builds the host with the joints Dovetail discovered; whether the health checks
             // are among them is what the application reports. It looks the type up by name, as the application may not reference it.
@@ -144,9 +156,11 @@ internal sealed class AppProject
                 """ + RegisteredFunction,
             // a library has nothing to run
             HostModel.None => "public static class Library;",
-            // a WebAssembly host cannot run on the machine the tests do
-            _ => """System.Console.WriteLine("hello");""",
-        };
+            // a WebAssembly host cannot run on the machine the tests do, so its application is only built
+            HostModel.WebAssembly => """System.Console.WriteLine("hello");""",
+            _ => throw new ArgumentOutOfRangeException(nameof(_host), _host, null),
+        }; private set;
+    }
 
     private const string RegisteredFunction = """
 
@@ -227,13 +241,14 @@ internal sealed class AppProject
                       HostBuilderName="builder"
                       HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost" />
                 """,
-            _ => null,
+            // a library declares no host
+            HostModel.None => null,
+            _ => throw new ArgumentOutOfRangeException(nameof(_host), _host, null),
         };
 
     private readonly HostModel _host;
     private readonly List<(string Id, string? Version)> _packages = [];
     private readonly List<string> _projectReferences = [];
     private readonly List<(string Name, string Value)> _properties = [];
-    private string? _program;
     private readonly bool _versioned;
 }

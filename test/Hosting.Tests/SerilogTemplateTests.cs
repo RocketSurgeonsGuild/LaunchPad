@@ -171,7 +171,7 @@ public class SerilogTemplateTests
                .AddPackage(package.PackageId, package.Version)
                .AddPackage(DovetailSerilog)
                .AddPackage("Serilog.Sinks.OpenTelemetry")
-               .WithProperty("DovetailHostType", hostType)
+               .AddProperty("DovetailHostType", hostType)
                .WithProgram(OpenTelemetryProgram)
         );
 

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <!-- The value generators keep the Rocket.Surgery.LaunchPad.EntityFramework namespace they had in the EntityFramework package. -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.EntityFramework</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="NodaTime" />
+    </ItemGroup>
+</Project>

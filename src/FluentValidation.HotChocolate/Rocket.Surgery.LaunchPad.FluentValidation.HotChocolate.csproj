@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <!--
+            The types live in the Rocket.Surgery.LaunchPad.HotChocolate namespaces. A namespace of Rocket.Surgery.LaunchPad.FluentValidation
+            would shadow FluentValidation.* in LaunchPad code. The export class is named for the package so it does not collide with HotChocolate's.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.HotChocolate</RootNamespace>
+        <DovetailExportClassName>FluentValidationExports</DovetailExportClassName>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
+        <ProjectReference Include="..\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FairyBread" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="HotChocolate" />
+        <PackageReference Include="Joinery.Dovetail" />
+    </ItemGroup>
+</Project>

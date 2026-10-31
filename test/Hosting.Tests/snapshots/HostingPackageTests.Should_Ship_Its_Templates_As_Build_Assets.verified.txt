@@ -1,4 +1,6 @@
 ﻿[
+  build/BannedSymbols.Rocket.Surgery.LaunchPad.Hosting.WebAssembly.txt,
+  build/LaunchPadBrowserConsoleLoggingJoint.cs.template,
   build/LaunchPadHealthChecksJoint.cs.template,
   build/LaunchPadSerilogApplicationStateJoint.cs.template,
   build/LaunchPadSerilogConsoleJoint.cs.template,
@@ -11,6 +13,8 @@
   build/LaunchPadSerilogSpanJoint.cs.template,
   build/LaunchPadSerilogSystemTextJsonJoint.cs.template,
   build/LaunchPadSerilogTraceJoint.cs.template,
+  build/LaunchPadWebAssemblyEnvironmentLoggingJoint.cs.template,
+  build/Rocket.Surgery.LaunchPad.Hosting.WebAssembly.targets,
   build/Rocket.Surgery.LaunchPad.Hosting.targets,
   buildMultiTargeting/Rocket.Surgery.LaunchPad.Hosting.targets,
   buildTransitive/Rocket.Surgery.LaunchPad.Hosting.targets
