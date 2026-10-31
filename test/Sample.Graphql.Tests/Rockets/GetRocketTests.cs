@@ -5,6 +5,7 @@ using Sample.Core.Models;
 using Sample.Graphql.Tests.Helpers;
 
 using CoreRocketType = Sample.Core.Domain.RocketType;
+using GraphQlRocketType = Sample.Graphql.Tests.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
@@ -32,7 +33,7 @@ public class GetRocketTests : GraphQlWebAppFixtureTest
         var response = await client.GetRocket.ExecuteAsync(rocket.Value, cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.Rockets!.Nodes![0].Type.ShouldBe(CoreRocketType.Falcon9);
+        response.Data!.Rockets!.Nodes![0].Type.ShouldBe(GraphQlRocketType.Falcon9);
         response.Data.Rockets!.Nodes[0].SerialNumber.ShouldBe("12345678901234");
     }
 

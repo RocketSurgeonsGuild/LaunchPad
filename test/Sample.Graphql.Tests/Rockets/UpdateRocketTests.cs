@@ -4,6 +4,7 @@ using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 
 using CoreRocketType = Sample.Core.Domain.RocketType;
+using GraphQlRocketType = Sample.Graphql.Tests.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
@@ -20,7 +21,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             new()
             {
                 Id = rocket.Id.Value,
-                Type = CoreRocketType.FalconHeavy,
+                Type = GraphQlRocketType.FalconHeavy,
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
             },
             TestContext.CancellationToken
@@ -77,7 +78,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             new()
             {
                 Id = rocket.Id.Value,
-                Type = CoreRocketType.FalconHeavy,
+                Type = GraphQlRocketType.FalconHeavy,
             },
             TestContext.CancellationToken
         );
@@ -109,7 +110,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
                 new()
                 {
                     Id = faker.Random.Guid(),
-                    Type = CoreRocketType.Falcon9,
+                    Type = GraphQlRocketType.Falcon9,
                 },
                 nameof(EditRocketRequest.SerialNumber)
             ),
@@ -118,7 +119,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
                 {
                     Id = faker.Random.Guid(),
                     SerialNumber = faker.Random.String2(0, 9),
-                    Type = CoreRocketType.FalconHeavy,
+                    Type = GraphQlRocketType.FalconHeavy,
                 },
                 nameof(EditRocketRequest.SerialNumber)
             ),
@@ -127,7 +128,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
                 {
                     Id = faker.Random.Guid(),
                     SerialNumber = faker.Random.String2(600, 800),
-                    Type = CoreRocketType.AtlasV,
+                    Type = GraphQlRocketType.AtlasV,
                 },
                 nameof(EditRocketRequest.SerialNumber)
             ),
