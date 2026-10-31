@@ -1,14 +1,15 @@
-﻿using Grpc.Core;
+using Grpc.Core;
+
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
+
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixture webAppFixture)
-    : WebAppFixtureTest<TestWebAppFixture>(testContext, webAppFixture)
+public class CreateRocketTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Create_A_Rocket()
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
@@ -25,7 +26,7 @@ public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
         response.Id.ShouldNotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Throw_If_Rocket_Exists()
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
@@ -38,7 +39,7 @@ public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
             cancellationToken: TestContext.CancellationToken
         );
 
-        Func<Task> action = async () => await client.CreateRocketAsync(
+        var action = async () => await client.CreateRocketAsync(
             new CreateRocketRequest
             {
                 Type = RocketType.Falcon9,
@@ -46,7 +47,7 @@ public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
             },
             cancellationToken: TestContext.CancellationToken
         );
-        var r = (await action.ShouldThrowAsync<RpcException>());
+        var r = await action.ShouldThrowAsync<RpcException>();
         r.Message.ShouldContain("Rocket Creation Failed");
     }
 }

@@ -1,49 +1,51 @@
-﻿using Google.Protobuf.WellKnownTypes;
+using Google.Protobuf.WellKnownTypes;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using NodaTime;
-using Indago;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
+
+using CoreRocketType = Sample.Core.Domain.RocketType;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests(ITestContextAccessor outputHelper, TestWebAppFixture webAppFixture)
-    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
+public class UpdateLaunchRecordTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Update_A_LaunchRecord()
     {
         var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
-        var record = await ServiceProvider
-                          .WithScoped<RocketDbContext, IClock>()
-                          .Invoke(
-                               async (context, clk) =>
-                               {
-                                   var rocket = new ReadyRocket
-                                   {
-                                       Id = RocketId.New(),
-                                       Type = Core.Domain.RocketType.Falcon9,
-                                       SerialNumber = "12345678901234",
-                                   };
-                                   context.Add(rocket);
+        LaunchRecord record;
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var clk = scope.ServiceProvider.GetRequiredService<IClock>();
+            var rocket = new ReadyRocket
+            {
+                Id = RocketId.New(),
+                Type = CoreRocketType.Falcon9,
+                SerialNumber = "12345678901234",
+            };
+            context.Add(rocket);
 
-                                   var record = new LaunchRecord
-                                   {
-                                       Partner = "partner",
-                                       Payload = "geo-fence-ftl",
-                                       RocketId = rocket.Id,
-                                       Rocket = rocket,
-                                       ScheduledLaunchDate = clk.GetCurrentInstant().ToDateTimeOffset(),
-                                       PayloadWeightKg = 100,
-                                   };
-                                   context.Add(record);
+            record = new LaunchRecord
+            {
+                Partner = "partner",
+                Payload = "geo-fence-ftl",
+                RocketId = rocket.Id,
+                Rocket = rocket,
+                ScheduledLaunchDate = clk.GetCurrentInstant().ToDateTimeOffset(),
+                PayloadWeightKg = 100,
+            };
+            context.Add(record);
 
-                                   await context.SaveChangesAsync();
-                                   return record;
-                               }
-                           );
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
         var launchDate = record.ScheduledLaunchDate.AddSeconds(1).ToTimestamp();
         await client.EditLaunchRecordAsync(

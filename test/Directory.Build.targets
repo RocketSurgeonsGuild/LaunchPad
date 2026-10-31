@@ -1,6 +1,12 @@
 <Project>
     <!-- The test support project is a plain library: it is not a test project, so it skips the test framework packages. -->
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true'">
+        <!--
+            Every test project runs on TUnit with the Microsoft.Testing.Platform runner. TUnit brings its own coverage and TRX extensions, so
+            a test project needs neither Microsoft.NET.Test.Sdk nor Microsoft.CodeCoverage.
+        -->
+        <PackageReference Include="TUnit" />
+        <PackageReference Include="Verify.TUnit" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.TUnit" />
         <PackageReference Include="Bogus" />
@@ -20,7 +26,7 @@
         <Using Include="Shouldly" />
     </ItemGroup>
     <!--
-        The wiring generator is chosen per project, like the test framework below. A project that leaves UseDovetail unset keeps
+        The wiring generator is chosen per project. A project that leaves UseDovetail unset keeps
         Rocket.Surgery.Conventions until the conversion batch that owns it moves it to Joints (RocketSurgeonsGuild/LaunchPad#3045), by
         setting UseDovetail to true; RocketSurgeonsGuild/LaunchPad#3056 deletes the Conventions group, the RemoveConventionsGenerator
         target and this property once the last project has moved. The two cannot be combined: both generators write an Imports class into
@@ -46,27 +52,5 @@
             <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Rocket.Surgery.Conventions.Analyzers'" />
         </ItemGroup>
     </Target>
-    <!--
-        The test framework is chosen per project. The library test projects set UseTUnit to true and run on TUnit with the
-        Microsoft.Testing.Platform runner (TUnit brings its own coverage and TRX extensions, so it needs neither Microsoft.NET.Test.Sdk
-        nor Microsoft.CodeCoverage). A project that leaves it unset, today the Sample.*.Tests projects, keeps the xunit v3 packages it
-        has always had until RocketSurgeonsGuild/LaunchPad#3051 moves it to TUnit; that ticket deletes the xunit group and this property.
-        Set UseTUnit in the project file and read it only in item conditions like these: a property in Directory.Build.props is evaluated
-        before the project body and would never see it. The Rocket.Surgery TUnit adapter above stays shared, as it was before the split.
-    -->
-    <ItemGroup Condition="'$(IsTestSupportProject)' != 'true' and '$(UseTUnit)' == 'true'">
-        <PackageReference Include="TUnit" />
-        <PackageReference Include="Verify.TUnit" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(IsTestSupportProject)' != 'true' and '$(UseTUnit)' != 'true'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="Microsoft.CodeCoverage" />
-        <PackageReference Include="xunit.v3" />
-        <PackageReference Include="xunit.runner.visualstudio" />
-        <PackageReference Include="Verify.XunitV3" />
-        <PackageReference Include="Xunit.Combinatorial" />
-        <PackageReference Include="xunit.analyzers" />
-        <Using Include="Xunit" />
-    </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 </Project>

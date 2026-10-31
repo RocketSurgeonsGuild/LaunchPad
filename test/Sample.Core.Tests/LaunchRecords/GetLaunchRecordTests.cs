@@ -1,8 +1,9 @@
 using MediatR;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using NodaTime;
 
-using Indago;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
@@ -13,44 +14,41 @@ using Serilog.Events;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
+public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
-    [Fact]
+    [Test]
     public async Task Should_Get_A_LaunchRecord()
     {
-        var record = await ServiceProvider
-                          .WithScoped<RocketDbContext, IClock>()
-                          .Invoke(
-                               async (context, clock) =>
-                               {
-                                   var rocket = new ReadyRocket
-                                   {
-                                       Id = RocketId.New(),
-                                       Type = RocketType.Falcon9,
-                                       SerialNumber = "12345678901234",
-                                   };
+        LaunchRecord record;
+        await using (var seedScope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var clock = seedScope.ServiceProvider.GetRequiredService<IClock>();
+            var rocket = new ReadyRocket
+            {
+                Id = RocketId.New(),
+                Type = RocketType.Falcon9,
+                SerialNumber = "12345678901234",
+            };
 
-                                   var record = new LaunchRecord
-                                   {
-                                       Partner = "partner",
-                                       Payload = "geo-fence-ftl",
-                                       RocketId = rocket.Id,
-                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
-                                       PayloadWeightKg = 100,
-                                   };
-                                   context.Add(rocket);
-                                   context.Add(record);
+            record = new LaunchRecord
+            {
+                Partner = "partner",
+                Payload = "geo-fence-ftl",
+                RocketId = rocket.Id,
+                ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                PayloadWeightKg = 100,
+            };
+            context.Add(rocket);
+            context.Add(record);
 
-                                   await context.SaveChangesAsync();
-                                   return record;
-                               }
-                           );
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
-        var response = await ServiceProvider
-                            .WithScoped<IMediator>()
-                            .Invoke(
-                                 mediator => mediator.Send(new GetLaunchRecord.Request(record.Id))
-                             );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var response = await mediator.Send(new GetLaunchRecord.Request(record.Id), TestContext.CancellationToken);
 
         response.Partner.ShouldBe("partner");
         response.Payload.ShouldBe("geo-fence-ftl");
@@ -59,14 +57,13 @@ public class GetLaunchRecordTests(ITestContextAccessor testContext) : HandleTest
         response.ScheduledLaunchDate.ShouldBe(Instant.FromDateTimeOffset(record.ScheduledLaunchDate));
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Not_Get_A_Missing_Launch_Record()
     {
-        Func<Task> action = () => ServiceProvider
-                                 .WithScoped<IMediator>()
-                                 .Invoke(
-                                      mediator => mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()))
-                                  );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        Func<Task> action = () => mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()), TestContext.CancellationToken);
 
         await action.ShouldThrowAsync<NotFoundException>();
     }

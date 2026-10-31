@@ -1,3 +1,3 @@
-﻿namespace Sample.BlazorWasm.Tests;
+namespace Sample.BlazorWasm.Tests;
 
-public class FoundationTests(ITestContextAccessor outputHelper) : HandleTestHostBase(outputHelper) { }
+public class FoundationTests : HandleTestHostBase { }

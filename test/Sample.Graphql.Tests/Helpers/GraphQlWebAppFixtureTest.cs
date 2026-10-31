@@ -1,24 +1,32 @@
 using Alba;
 
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
-
 using Serilog.Events;
+
+using TUnit.Core.Interfaces;
 
 namespace Sample.Graphql.Tests.Helpers;
 
-public abstract class GraphQlWebAppFixtureTest<TAppFixture>
-    (ITestContextAccessor outputHelper, TAppFixture rocketSurgeryWebAppFixture, LogEventLevel logEventLevel = LogEventLevel.Verbose)
-    : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper, logEventLevel)), IClassFixture<TAppFixture>, IAsyncLifetime
-    where TAppFixture : class, ILaunchPadWebAppFixture
+/// <summary>
+///     A test that runs against its own graphql web app.
+/// </summary>
+/// <remarks>
+///     TUnit runs the tests of a class in parallel, and every test shares the in memory database of its web app, so
+///     <see cref="SharedType.None" /> gives each test a fresh <see cref="GraphQlAppFixture" />. The fixture is started (and its
+///     database created) before <see cref="InitializeAsync" /> runs, so there is nothing to reset.
+/// </remarks>
+public abstract class GraphQlWebAppFixtureTest(LogEventLevel logEventLevel = LogEventLevel.Verbose)
+    : LoggerTest<TestRecord>(TestRecord.Create(logEventLevel)), IAsyncInitializer
 {
-    public virtual ValueTask InitializeAsync()
+    [ClassDataSource<GraphQlAppFixture>(Shared = SharedType.None)]
+    public required GraphQlAppFixture WebAppFixture { get; init; }
+
+    public virtual Task InitializeAsync()
     {
-        rocketSurgeryWebAppFixture.SetLoggerFactory(CreateLoggerFactory());
-        return rocketSurgeryWebAppFixture.ResetAsync();
+        WebAppFixture.SetLoggerFactory(CreateLoggerFactory());
+        return Task.CompletedTask;
     }
 
-    public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
-    protected IAlbaHost Host => rocketSurgeryWebAppFixture.AlbaHost;
+    protected IAlbaHost Host => WebAppFixture.AlbaHost;
 
     /// <summary>
     ///     The Service Provider

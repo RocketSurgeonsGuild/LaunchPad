@@ -1,30 +1,32 @@
-﻿using MediatR;
-using Indago;
+using MediatR;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
+
 using Serilog.Events;
 
 namespace Sample.Core.Tests.Rockets;
 
-public class ListRocketsTests(ITestContextAccessor testContext) : HandleTestHostBase(testContext, LogEventLevel.Verbose)
+public class ListRocketsTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
-    [Fact]
+    [Test]
     public async Task Should_List_Rockets()
     {
-        await ServiceProvider.WithScoped<RocketDbContext>()
-                             .Invoke(
-                                  async z =>
-                                  {
-                                      var faker = new RocketFaker();
-                                      z.AddRange(faker.Generate(10));
+        await using (var seedScope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            context.AddRange(faker.Generate(10));
 
-                                      await z.SaveChangesAsync();
-                                  }
-                              );
+            await context.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
-        var response = await ServiceProvider.WithScoped<IMediator>().Invoke(
-            mediator => mediator.CreateStream(new ListRockets.Request(null)).ToListAsync()
-        );
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var response = await mediator.CreateStream(new ListRockets.Request(null), TestContext.CancellationToken).ToListAsync(TestContext.CancellationToken);
 
         response.Count.ShouldBe(10);
     }

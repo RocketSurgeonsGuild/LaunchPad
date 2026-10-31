@@ -4,9 +4,9 @@ using Sample.Restful.Tests.Helpers;
 
 namespace Sample.Restful.Tests;
 
-public class FoundationTests(ITestContextAccessor testContext, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testContext, factory)
+public class FoundationTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/", TestContext.CancellationToken);

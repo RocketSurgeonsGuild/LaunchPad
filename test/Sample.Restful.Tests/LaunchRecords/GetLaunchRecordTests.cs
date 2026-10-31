@@ -1,45 +1,48 @@
-﻿using NodaTime;
-using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
+using NodaTime;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Restful.Client;
+using Sample.Restful.Tests.Helpers;
+
 using HttpRocketType = Sample.Restful.Client.RocketType;
 using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Restful.Tests.LaunchRecords;
 
-public class GetLaunchRecordTests : HandleWebHostBase
+public class GetLaunchRecordTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Get_A_LaunchRecord()
     {
-        var client = new LaunchRecordClient(Factory.CreateClient());
-        var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
-                                          .Invoke(
-                                               async (context, clock) =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Id = RocketId.New(),
-                                                       Type = RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
+        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        LaunchRecord record;
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var clock = scope.ServiceProvider.GetRequiredService<IClock>();
+            var rocket = new ReadyRocket
+            {
+                Id = RocketId.New(),
+                Type = RocketType.Falcon9,
+                SerialNumber = "12345678901234"
+            };
 
-                                                   var record = new LaunchRecord
-                                                   {
-                                                       Partner = "partner",
-                                                       Payload = "geo-fence-ftl",
-                                                       RocketId = rocket.Id,
-                                                       ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
-                                                       PayloadWeightKg = 100,
-                                                   };
-                                                   context.Add(rocket);
-                                                   context.Add(record);
+            record = new LaunchRecord
+            {
+                Partner = "partner",
+                Payload = "geo-fence-ftl",
+                RocketId = rocket.Id,
+                ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                PayloadWeightKg = 100,
+            };
+            context.Add(rocket);
+            context.Add(record);
 
-                                                   await context.SaveChangesAsync();
-                                                   return record;
-                                               }
-                                           );
+            await context.SaveChangesAsync();
+        }
 
         var response = (await client.GetLaunchRecordAsync(record.Id.Value)).Result;
 
@@ -50,20 +53,16 @@ public class GetLaunchRecordTests : HandleWebHostBase
         response.ScheduledLaunchDate.ShouldBe(record.ScheduledLaunchDate);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Not_Get_A_Missing_Launch_Record()
     {
-        var client = new LaunchRecordClient(Factory.CreateClient());
+        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
 
         Func<Task> action = () => client.GetLaunchRecordAsync(Guid.NewGuid());
         await action.ShouldThrowAsync<ApiException<ProblemDetails>>()
                     .Where(
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );
-    }
-
-    public GetLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
-    {
     }
 
     private static readonly Faker Faker = new();

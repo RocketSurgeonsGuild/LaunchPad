@@ -36,7 +36,10 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// <summary>
     ///     Method used to start the alba host
     /// </summary>
-    public async ValueTask InitializeAsync()
+    /// <remarks>
+    ///     Returns a <see cref="Task" /> so that a test fixture can implement TUnit's <c>IAsyncInitializer</c> without any adapter code.
+    /// </remarks>
+    public async Task InitializeAsync()
     {
         _host = await Alba.AlbaHost.For<TEntryPoint>([.. _extensions]);
         await ResetAsync();

@@ -3,7 +3,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Indago;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Classic.Restful.Tests.Helpers;
@@ -12,39 +11,33 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
 {
     private readonly SqliteConnection _connection;
 
-    public SqliteExtension()
-    {
-        _connection = new("DataSource=:memory:");
-    }
+    public SqliteExtension() => _connection = new("DataSource=:memory:");
 
     public void Reset(IServiceProvider serviceProvider)
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
         _connection.Close();
         _connection.Open();
-        serviceProvider.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreated());
+        using var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        dbContext.Database.EnsureCreated();
     }
 
     public async ValueTask ResetAsync(IServiceProvider serviceProvider)
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
         await _connection.CloseAsync();
         await _connection.OpenAsync();
-        await serviceProvider.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreatedAsync());
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
     }
 
-    public void Dispose()
-    {
-        _connection.Dispose();
-    }
+    public void Dispose() => _connection.Dispose();
 
-    public ValueTask DisposeAsync()
-    {
-        return _connection.DisposeAsync();
-    }
+    public ValueTask DisposeAsync() => _connection.DisposeAsync();
 
-    public Task Start(IAlbaHost host)
-    {
-        return Task.CompletedTask;
-    }
+    public Task Start(IAlbaHost host) => Task.CompletedTask;
 
     public IHostBuilder Configure(IHostBuilder builder)
     {
