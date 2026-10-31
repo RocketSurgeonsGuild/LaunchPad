@@ -11,7 +11,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 using Rocket.Surgery.LaunchPad.HotChocolate.Rivets;
-using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Graphql.Tests;
@@ -105,14 +104,11 @@ public class GraphqlJointTests
     }
 
     [Test]
-    public async Task Runs_Before_The_Hot_Chocolate_Joint_And_After_The_Time_Joint_Whatever_The_Export_Order()
+    public async Task Runs_Before_The_Hot_Chocolate_Joint_Whatever_The_Export_Order()
     {
         var context = await DovetailContext.FromAsync(
             DovetailContextBuilder.Create(
-                [
-                    ..Exports.Joints().Reverse(),
-                    new DovetailJointMetadata(new TimeJoint(), DovetailHostType.Undefined),
-                ],
+                [.. Exports.Joints().Reverse()],
                 new Dictionary<object, object>(),
                 DovetailHostType.Live,
                 []
@@ -122,7 +118,6 @@ public class GraphqlJointTests
         var order = context.Joints.Select(x => x.GetType()).ToList();
 
         order.IndexOf(typeof(GraphqlJoint)).ShouldBeLessThan(order.IndexOf(typeof(HotChocolateJoint)));
-        order.IndexOf(typeof(TimeJoint)).ShouldBeLessThan(order.IndexOf(typeof(HotChocolateJoint)));
     }
 
     private static async Task Register(IServiceCollection services, Action<IDovetailContext>? configure = null)

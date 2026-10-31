@@ -1,7 +1,7 @@
-﻿using NodaTime;
+using NodaTime;
 using NodaTime.Text;
 
-namespace Rocket.Surgery.LaunchPad.StrawberryShake;
+namespace Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake;
 
 /// <summary>
 /// General purpose LocalDateTime Serializer

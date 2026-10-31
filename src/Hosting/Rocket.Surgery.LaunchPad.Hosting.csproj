@@ -17,6 +17,5 @@
     <ItemGroup>
         <!-- the templates are joints, so the application needs Dovetail (and its generator) for them to be written at all -->
         <PackageReference Include="Joinery.Dovetail" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
-﻿using NodaTime;
+using NodaTime;
 
-namespace Rocket.Surgery.LaunchPad.StrawberryShake;
+using Rocket.Surgery.LaunchPad.StrawberryShake;
+
+namespace Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake;
 
 /// <summary>
 /// General purpose IsoDayOfWeek Serializer
