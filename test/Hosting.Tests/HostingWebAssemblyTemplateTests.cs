@@ -14,7 +14,8 @@ public class HostingWebAssemblyTemplateTests
     private const string WebAssemblyEnvironmentLoggingJoint = "LaunchPadWebAssemblyEnvironmentLoggingJoint";
 
     /// <summary>
-    ///     Uses the generic hosting namespace, which a browser application must not.
+    ///     Uses the generic hosting namespace, which a browser application must not. The applications that use it reference the hosting
+    ///     abstractions themselves: a browser application gets them from what it references, which is what the ban is for.
     /// </summary>
     private const string GenericHostingProgram = """
         System.Console.WriteLine(typeof(Microsoft.Extensions.Hosting.IHostEnvironment).Name);
@@ -108,7 +109,7 @@ public class HostingWebAssemblyTemplateTests
     {
         var package = await PackedHosting.Pack();
         using var tree = ThrowawayTree.OutsideTheRepository(package);
-        tree.AddProject("app", BrowserApplication(package).AddPackage(AppProject.BannedApiAnalyzers));
+        tree.AddProject("app", BrowserApplication(package).AddPackage(AppProject.BannedApiAnalyzers).AddPackage(AppProject.HostingAbstractions));
         tree.AddFile("app/Program.cs", GenericHostingProgram);
 
         var failure = await Should.ThrowAsync<InvalidOperationException>(() => tree.Build("app", Cancellation));
@@ -119,7 +120,7 @@ public class HostingWebAssemblyTemplateTests
 
     /// <summary>
     ///     The ban is on the application's code: one that keeps off the generic host builds, although Dovetail would write its
-    ///     <c>IHostEnvironment</c> helper into any project that references the hosting abstractions (as the package does). The analyzer
+    ///     <c>IHostEnvironment</c> helper into any project that references the hosting abstractions (Joinery.Dovetail.Hosting brings them). The analyzer
     ///     reads the helper's documentation (<c>see cref</c>) when the project generates a documentation file, as the samples do.
     /// </summary>
     [Test]
@@ -129,7 +130,7 @@ public class HostingWebAssemblyTemplateTests
         using var tree = ThrowawayTree.OutsideTheRepository(package);
         tree.AddProject(
             "app",
-            BrowserApplication(package).AddPackage(AppProject.BannedApiAnalyzers).AddProperty("GenerateDocumentationFile", "true")
+            BrowserApplication(package).AddPackage(AppProject.BannedApiAnalyzers).AddPackage(AppProject.HostingAbstractions).AddProperty("GenerateDocumentationFile", "true")
         );
 
         var output = await tree.Build("app", Cancellation);
@@ -163,6 +164,7 @@ public class HostingWebAssemblyTemplateTests
                .Central(HostModel.WebAssembly)
                .AddPackage(AppProject.DovetailSerilog)
                .AddPackage(AppProject.BrowserConsole)
+               .AddPackage(AppProject.HostingAbstractions)
                .AddProjectReference(ThrowawayTree.HostingProject)
                .AddProperty("GenerateDocumentationFile", "true");
     }
@@ -179,7 +181,7 @@ public class HostingWebAssemblyTemplateTests
         var package = await PackedHosting.Pack();
         using var tree = ThrowawayTree.OutsideTheRepository(package);
         tree.AddProject("library", AppProject.Standalone(HostModel.None).AddPackage(package.PackageId, package.Version));
-        var application = AppProject.Standalone(host).AddPackage(AppProject.BannedApiAnalyzers).AddProjectReference("../library/library.csproj");
+        var application = AppProject.Standalone(host).AddPackage(AppProject.BannedApiAnalyzers).AddPackage(AppProject.HostingAbstractions).AddProjectReference("../library/library.csproj");
         if (referencePackage) application.AddPackage(package.PackageId, package.Version);
         tree.AddProject("app", application);
         tree.AddFile("app/Program.cs", GenericHostingProgram);
