@@ -20,8 +20,6 @@ public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncIniti
     public async Task InitializeAsync()
     {
         _connection = new("DataSource=:memory:");
-        // LoggerTest disposes these when the test ends.
-        Disposables.Add(_connection);
         await _connection.OpenAsync(TestContext.CancellationToken);
         _context = ConventionContextBuilder
                   .Create(Imports.Instance)
@@ -38,6 +36,12 @@ public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncIniti
         Populate(services);
         await using var scope = ServiceProvider.CreateAsyncScope();
         await scope.ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureCreatedAsync(TestContext.CancellationToken);
+    }
+
+    [After(HookType.Test)]
+    public async Task CloseConnectionAsync()
+    {
+        if (_connection is not null) await _connection.DisposeAsync();
     }
 
     protected HandleTestHostBase(LogEventLevel logLevel = LogEventLevel.Information) : base(TestRecord.Create(logLevel)) => ExcludeSourceContext(nameof(AutoFakeTest));
