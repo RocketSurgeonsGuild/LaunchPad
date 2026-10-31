@@ -15,6 +15,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Grpc.AspNetCore" />
-        <PackageReference Include="Rocket.Surgery.Hosting" />
+        <PackageReference Include="Joinery.Dovetail" />
     </ItemGroup>
 </Project>
