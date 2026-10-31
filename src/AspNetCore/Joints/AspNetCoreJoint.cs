@@ -1,41 +1,44 @@
 using System.Reflection;
 
+using Joinery.Dovetail;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Indago.Abstractions;
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+using Specular;
+
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     Class MvcConvention.
+///     Registers MVC, the API explorer and the application parts for every assembly that depends on this one.
+///     The other ASP.NET Core joints run after this one.
 /// </summary>
-/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IServiceJoint" />
 /// <remarks>
-///     Builds the aspnet core convention
+///     The <see cref="AspNetCoreOptions" /> are read from the Joint context when this joint registers; without them the
+///     defaults apply.
 /// </remarks>
-/// <param name="options"></param>
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Application)]
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Application)]
 [RequiresUnreferencedCode("Registering the MVC services requires access to the application's compiled assemblies.")]
-public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceConvention
+public class AspNetCoreJoint : IServiceJoint
 {
     /// <summary>
-    ///     Registers the specified context.
+    ///     Registers the MVC services, and adds the application parts found through the Specular provider in the context.
     /// </summary>
     /// <param name="context">The context.</param>
-    /// <param name="configuration"></param>
-    /// <param name="services"></param>
-    /// TODO Edit XML Comment Template for Register
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    /// <param name="services">The service collection.</param>
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
+
+        var aspNetCoreOptions = context.Get<AspNetCoreOptions>() ?? new AspNetCoreOptions();
 
         services
            .AddEndpointsApiExplorer()
@@ -45,9 +48,9 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
             // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
             context
-               .Assembly.GetCompiledTypeProvider()
-               .GetAssemblies(s => s.FromAssemblyDependenciesOf<AspNetCoreConvention>())
-               .Where(_options.AssemblyPartFilter)
+               .Require<ISpecularProvider>()
+               .GetAssemblies(s => s.DependenciesFromAssemblyOf<AspNetCoreJoint>())
+               .Where(aspNetCoreOptions.AssemblyPartFilter)
                .SelectMany(GetApplicationPartAssemblies)
         );
 
@@ -119,6 +122,4 @@ public class AspNetCoreConvention(AspNetCoreOptions? options = null) : IServiceC
             yield return relatedAssembly;
         }
     }
-
-    private readonly AspNetCoreOptions _options = options ?? new AspNetCoreOptions();
 }
