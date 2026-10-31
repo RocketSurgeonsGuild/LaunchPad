@@ -57,7 +57,7 @@ public class UpdateRocketTests : WebAppFixtureTest
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
         Func<Task> a = async () => await client.EditRocketAsync(request);
-        var e =  await a.ShouldThrowAsync<RpcException>() ;
+        var e = await a.ShouldThrowAsync<RpcException>();
         e.Status.StatusCode.ShouldBe(StatusCode.InvalidArgument);
         e.Message.ShouldContain(propertyName);
     }
