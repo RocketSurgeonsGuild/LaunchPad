@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Joinery.Dovetail.Hosting" />
-    <ProjectReference Include="..\..\src\AspNetCore.Blazor\Rocket.Surgery.LaunchPad.AspNetCore.Blazor.csproj" />
+    <ProjectReference Include="..\..\src\FluentValidation.Blazor\Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
