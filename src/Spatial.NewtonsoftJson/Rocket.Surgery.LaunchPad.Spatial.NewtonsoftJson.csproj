@@ -1,16 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.Spatial</RootNamespace>
-        <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
+        <DovetailExportClassName>NewtonsoftJsonExports</DovetailExportClassName>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="NetTopologySuite" />
         <PackageReference Include="NetTopologySuite.IO.GeoJSON" />
-        <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Joinery.Dovetail" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />

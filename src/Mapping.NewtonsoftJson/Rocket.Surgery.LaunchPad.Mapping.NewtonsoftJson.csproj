@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.Mapping</RootNamespace>
-        <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
         <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>

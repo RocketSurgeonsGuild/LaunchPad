@@ -60,6 +60,7 @@
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.71.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
+        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.3.0" />
         <PackageVersion Include="HotChocolate" Version="15.1.17" />
 
         <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.17" />
@@ -111,7 +112,9 @@
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="14.0.1" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="15.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="15.0.0-beta.2" />
+        <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.3.0" />
         <PackageVersion Include="Specular" Version="0.3.2" />
+        <PackageVersion Include="Joinery.Dovetail" Version="0.3.0" />
 
 
         <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -163,24 +166,25 @@
     -->
     <!-- net10.0 line -->
     <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
-        <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.9" />
-        <PackageVersion Include="System.Net.Http.Json" Version="10.0.9" />
-        <PackageVersion Include="System.Text.Json" Version="10.0.9" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.14" />
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.14" />
+        <PackageVersion Include="System.Net.Http.Json" Version="10.0.14" />
+        <PackageVersion Include="System.Text.Json" Version="10.0.14" />
     </ItemGroup>
     <!-- net11.0 line (Microsoft.Extensions.ApiDescription.Client has no 11.0 release candidate yet; preview.7 is its newest 11.0 build) -->
     <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
@@ -199,6 +203,7 @@
         <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="11.0.0-rc.3.26522.148" />
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="11.0.0-rc.3.26522.148" />
         <PackageVersion Include="Microsoft.Extensions.Logging" Version="11.0.0-rc.3.26522.148" />
+        <PackageVersion Include="Microsoft.Extensions.Options" Version="11.0.0-rc.3.26522.148" />
         <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="11.0.0-rc.3.26522.148" />
         <PackageVersion Include="System.Net.Http.Json" Version="11.0.0-rc.3.26522.148" />
         <PackageVersion Include="System.Text.Json" Version="11.0.0-rc.3.26522.148" />

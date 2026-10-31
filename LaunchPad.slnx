@@ -101,8 +101,11 @@
     <File Path="test/Directory.Build.targets" />
     <Project Path="test/Analyzers.Tests/Analyzers.Tests.csproj" />
     <Project Path="test/AspNetCore.FluentValidation.OpenApi.Tests/AspNetCore.FluentValidation.OpenApi.Tests.csproj" />
+    <Project Path="test/AspNetCore.NewtonsoftJson.Tests/AspNetCore.NewtonsoftJson.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />
     <Project Path="test/Extensions.Tests/Extensions.Tests.csproj" />
+    <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
+    <Project Path="test/Grpc.Tests/Grpc.Tests.csproj" />
     <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />

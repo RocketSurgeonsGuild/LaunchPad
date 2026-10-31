@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <PackageDescription />
@@ -14,7 +14,8 @@
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="NodaTime" />
     <!--        <PackageReference Include="Scrutor" />-->
-    <PackageReference Include="Rocket.Surgery.Conventions" />
+    <PackageReference Include="Joinery.Dovetail" />
+    <PackageReference Include="Joinery.Dovetail.OpenTelemetry" />
     <PackageReference Include="Humanizer.Core" />
   </ItemGroup>
   <ItemGroup>
