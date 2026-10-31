@@ -1,33 +1,35 @@
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NodaTime;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 
-namespace Rocket.Surgery.LaunchPad.Foundation.Conventions;
+namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 
 /// <summary>
-///     Convention for working with Newtonsoft Json
+///     Joint for working with Newtonsoft Json
 /// </summary>
+/// <remarks>
+///     A service Joint that configures the Newtonsoft Json serializer settings,
+///     and a Serilog Joint that destructures the Newtonsoft Json types.
+/// </remarks>
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Core)]
-public class NewtonsoftJsonConvention : IServiceConvention, ISerilogConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Core)]
+public class NewtonsoftJsonJoint : IServiceJoint, ISerilogJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration)
+    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration)
     {
         loggerConfiguration.Destructure.NewtonsoftJsonTypes();
     }
 
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.AddTransient<IConfigureOptions<JsonSerializerSettings>>(
             _ =>

@@ -4,12 +4,14 @@
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <RootNamespace>Rocket.Surgery.LaunchPad.Foundation</RootNamespace>
-        <ExportConventionsClassName>NewtonsoftJsonExports</ExportConventionsClassName>
+        <DovetailExportClassName>NewtonsoftJsonExports</DovetailExportClassName>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Joinery.Dovetail.Serilog" />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="NodaTime.Serialization.JsonNet" />
     </ItemGroup>
