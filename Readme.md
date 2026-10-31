@@ -36,7 +36,6 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson | [![nuget-version-fog68ak3napq-badge]![nuget-downloads-fog68ak3napq-badge]][nuget-fog68ak3napq] |
 | Rocket.Surgery.LaunchPad.Metadata | [![nuget-version-3qzc9nszspsw-badge]![nuget-downloads-3qzc9nszspsw-badge]][nuget-3qzc9nszspsw] |
 | Rocket.Surgery.LaunchPad.Primitives | [![nuget-version-o7c1eh0t5drw-badge]![nuget-downloads-o7c1eh0t5drw-badge]][nuget-o7c1eh0t5drw] |
-| Rocket.Surgery.LaunchPad.Serilog | [![nuget-version-io9yqzwujeig-badge]![nuget-downloads-io9yqzwujeig-badge]][nuget-io9yqzwujeig] |
 | Rocket.Surgery.LaunchPad.Spatial | [![nuget-version-ze4kfhfg7xqg-badge]![nuget-downloads-ze4kfhfg7xqg-badge]][nuget-ze4kfhfg7xqg] |
 | Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson | [![nuget-version-qmfh1x0xpofq-badge]![nuget-downloads-qmfh1x0xpofq-badge]][nuget-qmfh1x0xpofq] |
 | Rocket.Surgery.LaunchPad.StrawberryShake | [![nuget-version-l/j2wtrmeplq-badge]![nuget-downloads-l/j2wtrmeplq-badge]][nuget-l/j2wtrmeplq] |
@@ -107,9 +106,6 @@ TBD
 [nuget-o7c1eh0t5drw]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Primitives/
 [nuget-version-o7c1eh0t5drw-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Primitives.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-o7c1eh0t5drw-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Primitives.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-io9yqzwujeig]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Serilog/
-[nuget-version-io9yqzwujeig-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Serilog.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-io9yqzwujeig-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Serilog.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-ze4kfhfg7xqg]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Spatial/
 [nuget-version-ze4kfhfg7xqg-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.Spatial.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-ze4kfhfg7xqg-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.Spatial.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"

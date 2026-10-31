@@ -11,7 +11,7 @@ It is being rebuilt on two building blocks, tracked by the epic [RocketSurgeonsG
 - **Specular** provides AOT-safe assembly scanning.
 - **Dovetail** provides build-time composition. A **Joint** is a unit of application wiring that Dovetail resolves and applies at build time; it replaces what LaunchPad calls a convention today.
 
-This is a migration in progress, so both models exist at once. The pre-migration code is convention-based: `Rocket.Surgery.Conventions` is a central package version in `Directory.Packages.props`, and the convention classes live in `Conventions/` folders inside the packages (for example `src/Serilog/Conventions`). Which packages have moved is tracked by the epic's sub-issues.
+This is a migration in progress, so both models exist at once. The pre-migration code is convention-based: `Rocket.Surgery.Conventions` is a central package version in `Directory.Packages.props`, and the convention classes live in `Conventions/` folders inside the packages (for example `src/Telemetry/Conventions`). Which packages have moved is tracked by the epic's sub-issues.
 
 - Use the vocabulary in [`GLOSSARY.md`](GLOSSARY.md) (Joint, host model, integration package, direct reference, template, LaunchPad SDK) in code and docs you touch, and avoid the terms it marks as avoided.
 - The reasons behind the two big decisions are in [`docs/adr/`](docs/adr): Joints replace conventions, and one package per integration.

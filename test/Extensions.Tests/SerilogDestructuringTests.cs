@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 
@@ -9,7 +7,6 @@ using NodaTime;
 using NodaTime.Testing;
 
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Rocket.Surgery.LaunchPad.Spatial;
 
 using Serilog.Context;
@@ -19,32 +16,6 @@ namespace Extensions.Tests;
 
 public class SerilogDestructuringTests : LoggerTest<TestRecord>
 {
-    [Test]
-    public async Task Should_Destructure_Sjt_Values_JsonElement()
-    {
-        using var _ = CaptureLogs(out var logs);
-
-        Logger.Information(
-            "This is just a test {@Data}",
-            JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234" } }), options: null)
-        );
-
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    public async Task Should_Destructure_Sjt_Values_JsonDocument()
-    {
-        using var _ = CaptureLogs(out var logs);
-
-        Logger.Information(
-            "This is just a test {@Data}",
-            JsonSerializer.Deserialize<JsonDocument>(JsonSerializer.Serialize(new { test = true, system = new { data = "1234" } }), options: null)
-        );
-
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
     [Test]
     public async Task Should_Destructure_NewtonsoftJson_JObject()
     {
@@ -95,6 +66,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_Instant()
     {
         using var _ = CaptureLogs(out var logs);
@@ -103,6 +75,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_LocalDateTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -111,6 +84,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_LocalDate()
     {
         using var _ = CaptureLogs(out var logs);
@@ -119,6 +93,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_LocalTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -127,6 +102,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_OffsetDateTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -135,6 +111,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_OffsetDate()
     {
         using var _ = CaptureLogs(out var logs);
@@ -143,6 +120,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_OffsetTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -151,6 +129,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_ZonedDateTime()
     {
         using var _ = CaptureLogs(out var logs);
@@ -159,6 +138,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_DateTimeZone()
     {
         using var _ = CaptureLogs(out var logs);
@@ -167,6 +147,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_Duration()
     {
         using var _ = CaptureLogs(out var logs);
@@ -175,6 +156,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_Period()
     {
         using var _ = CaptureLogs(out var logs);
@@ -183,6 +165,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     [Test]
+    [Skip(NodaTimeMovesOut)]
     public async Task Should_Destructure_NodaTime_Interval()
     {
         using var _ = CaptureLogs(out var logs);
@@ -252,9 +235,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
             LogEventLevel.Information,
             configureLogger: (_, configuration) => configuration
                                                   .Destructure.NewtonsoftJsonTypes()
-                                                  .Destructure.SystemTextJsonTypes()
                                                   .Destructure.NetTopologySuiteTypes()
-                                                  .Destructure.NodaTimeTypes()
         )
     )
 
@@ -271,6 +252,12 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
             )
         );
     }
+
+    /// <summary>
+    ///     The NodaTime destructuring policy left with LaunchPad.Serilog (RocketSurgeonsGuild/LaunchPad#3062); its tests run again when it
+    ///     arrives in its own package.
+    /// </summary>
+    private const string NodaTimeMovesOut = "NodaTime destructuring moves to LaunchPad.NodaTime.Serilog in RocketSurgeonsGuild/LaunchPad#3067";
 
     private readonly FakeClock _clock;
 }

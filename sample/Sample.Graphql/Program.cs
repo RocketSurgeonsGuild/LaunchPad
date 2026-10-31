@@ -8,8 +8,6 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 using Sample.Core.Models;
 using Sample.Graphql;
 
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder
@@ -43,10 +41,6 @@ builder
    .ModifyRequestOptions(
         options => options.IncludeExceptionDetails = true
     );
-
-// LaunchPad.Hosting still registers the Serilog request logging services with conventions that Dovetail does not run,
-// until its Hosting joints replace them (RocketSurgeonsGuild/LaunchPad#3058)
-builder.Services.AddSerilog(logger => logger.WriteTo.Console());
 
 var app = await builder.ConfigureDovetail();
 
