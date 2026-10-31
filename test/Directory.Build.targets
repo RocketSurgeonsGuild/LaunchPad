@@ -14,12 +14,38 @@
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true'">
-        <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="FakeItEasy.Analyzer.CSharp" />
         <Using Include="Rocket.Surgery.Extensions.Testing" />
         <Using Include="Bogus" />
         <Using Include="Shouldly" />
     </ItemGroup>
+    <!--
+        The wiring generator is chosen per project, like the test framework below. A project that leaves UseDovetail unset keeps
+        Rocket.Surgery.Conventions until the conversion batch that owns it moves it to Joints (RocketSurgeonsGuild/LaunchPad#3045), by
+        setting UseDovetail to true; RocketSurgeonsGuild/LaunchPad#3056 deletes the Conventions group, the RemoveConventionsGenerator
+        target and this property once the last project has moved. The two cannot be combined: both generators write an Imports class into
+        the test assembly. A project with UseDovetail set gets the joints of the projects it references and the Specular scan results for
+        them, which are produced by the analyzers of Joinery.Dovetail and Specular and so do not flow through a project reference.
+        Set UseDovetail in the project file and read it only in item and target conditions like these (the target below reads it too): a
+        property in Directory.Build.props is evaluated before the project body and would never see it.
+    -->
+    <ItemGroup Condition="'$(IsTestSupportProject)' != 'true' and '$(UseDovetail)' != 'true'">
+        <PackageReference Include="Rocket.Surgery.Conventions" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(IsTestSupportProject)' != 'true' and '$(UseDovetail)' == 'true'">
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Specular" />
+    </ItemGroup>
+    <!--
+        Projects that are not converted yet bring Rocket.Surgery.Conventions to this project through their own references, and its
+        generator would write a second Imports class here. A direct reference with no assets does not switch it off, as the generator
+        still arrives through the other references, so it is removed from the analyzers after they are resolved.
+    -->
+    <Target Name="RemoveConventionsGenerator" AfterTargets="ResolveLockFileAnalyzers" Condition="'$(IsTestSupportProject)' != 'true' and '$(UseDovetail)' == 'true'">
+        <ItemGroup>
+            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Rocket.Surgery.Conventions.Analyzers'" />
+        </ItemGroup>
+    </Target>
     <!--
         The test framework is chosen per project. The library test projects set UseTUnit to true and run on TUnit with the
         Microsoft.Testing.Platform runner (TUnit brings its own coverage and TRX extensions, so it needs neither Microsoft.NET.Test.Sdk

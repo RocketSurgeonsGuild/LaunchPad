@@ -1,30 +1,31 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using NodaTime;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-
-namespace Rocket.Surgery.LaunchPad.Primitives.Conventions;
+namespace Rocket.Surgery.LaunchPad.Primitives.Joints;
 
 /// <summary>
-///     MediatRConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     A joint that configures <see cref="JsonSerializerOptions" /> the LaunchPad way: camel case names, camel case enums and the NodaTime converters.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Core)]
-public class SystemTextJsonConvention : IServiceConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Core)]
+public class SystemTextJsonJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
+        ArgumentNullException.ThrowIfNull(services);
+
         services.AddSingleton<IConfigureOptions<JsonSerializerOptions>>(
             _ =>
                 new ConfigureNamedOptions<JsonSerializerOptions>(
