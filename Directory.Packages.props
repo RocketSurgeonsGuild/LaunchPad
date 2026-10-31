@@ -60,7 +60,7 @@
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.71.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
-        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.3.1" />
+        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.4.0" />
         <PackageVersion Include="HotChocolate" Version="15.1.17" />
 
         <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.17" />
@@ -112,9 +112,9 @@
         <PackageVersion Include="Rocket.Surgery.Extensions" Version="14.0.1" />
         <PackageVersion Include="Rocket.Surgery.Hosting" Version="15.0.0-beta.2" />
         <PackageVersion Include="Rocket.Surgery.WebAssembly.Hosting" Version="15.0.0-beta.2" />
-        <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.3.1" />
+        <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.4.0" />
         <PackageVersion Include="Specular" Version="0.3.2" />
-        <PackageVersion Include="Joinery.Dovetail" Version="0.3.1" />
+        <PackageVersion Include="Joinery.Dovetail" Version="0.4.0" />
 
 
         <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
