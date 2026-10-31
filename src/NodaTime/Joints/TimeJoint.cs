@@ -7,21 +7,21 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using NodaTime;
 using NodaTime.TimeZones;
 
-namespace Rocket.Surgery.LaunchPad.Primitives.Joints;
+namespace Rocket.Surgery.LaunchPad.NodaTime.Joints;
 
 /// <summary>
 ///     A joint that registers the clock, time provider and time zone provider.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <remarks>
-///     Dovetail resolves the <see cref="PrimitiveOptions" /> from the joint context when it creates the joint, and they default when none were set.
+///     Dovetail resolves the <see cref="NodaTimeOptions" /> from the joint context when it creates the joint, and they default when none were set.
 /// </remarks>
 /// <param name="options">The options, or <see langword="null" /> for the defaults.</param>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Core)]
-public class TimeJoint(PrimitiveOptions? options = null) : IServiceJoint
+public class TimeJoint(NodaTimeOptions? options = null) : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
@@ -39,5 +39,5 @@ public class TimeJoint(PrimitiveOptions? options = null) : IServiceJoint
         services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
     }
 
-    private readonly PrimitiveOptions _options = options ?? new PrimitiveOptions();
+    private readonly NodaTimeOptions _options = options ?? new NodaTimeOptions();
 }

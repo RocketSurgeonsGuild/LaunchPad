@@ -1,0 +1,5 @@
+<Project>
+    <ItemGroup Condition="'$(ImplicitUsings)' == 'enable'">
+        <Using Include="Rocket.Surgery.LaunchPad.NodaTime" />
+    </ItemGroup>
+</Project>

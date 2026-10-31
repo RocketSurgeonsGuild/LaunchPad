@@ -7,14 +7,15 @@ using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using NodaTime;
-
 namespace Rocket.Surgery.LaunchPad.Primitives.Joints;
 
 /// <summary>
-///     A joint that configures <see cref="JsonSerializerOptions" /> the LaunchPad way: camel case names, camel case enums and the NodaTime converters.
+///     A joint that configures <see cref="JsonSerializerOptions" /> the LaunchPad way: camel case names and camel case enums.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
+/// <remarks>
+///     The NodaTime converters are added by the NodaTime package.
+/// </remarks>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
@@ -35,14 +36,6 @@ public class SystemTextJsonJoint : IServiceJoint
                         options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                         options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     }
-                )
-        );
-        services.AddSingleton<IPostConfigureOptions<JsonSerializerOptions>>(
-            sp =>
-                new PostConfigureOptions<JsonSerializerOptions, IDateTimeZoneProvider>(
-                    null,
-                    sp.GetRequiredService<IDateTimeZoneProvider>(),
-                    (options, provider) => options.ConfigureNodaTimeForLaunchPad(provider)
                 )
         );
     }

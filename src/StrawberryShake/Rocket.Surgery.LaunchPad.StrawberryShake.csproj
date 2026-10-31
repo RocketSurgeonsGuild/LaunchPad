@@ -11,5 +11,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+        <ProjectReference Include="..\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
     </ItemGroup>
 </Project>

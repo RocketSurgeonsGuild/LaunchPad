@@ -7,7 +7,7 @@ using Microsoft.Extensions.Time.Testing;
 
 using NodaTime.Extensions;
 
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 
 namespace Rocket.Surgery.LaunchPad.Testing;
 

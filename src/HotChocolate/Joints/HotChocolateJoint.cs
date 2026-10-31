@@ -8,8 +8,8 @@ using NodaTime.TimeZones;
 
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
-using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.NodaTime;
+using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 
@@ -28,7 +28,7 @@ public class HotChocolateJoint : IServiceJoint
         if (services.FirstOrDefault(z => z.ServiceType == typeof(IDateTimeZoneProvider) && z.ImplementationInstance is { }) is not
             { ImplementationInstance: IDateTimeZoneProvider dateTimeZoneProvider })
         {
-            dateTimeZoneProvider = new DateTimeZoneCache(context.Get<PrimitiveOptions>()?.DateTimeZoneSource ?? TzdbDateTimeZoneSource.Default);
+            dateTimeZoneProvider = new DateTimeZoneCache(context.Get<NodaTimeOptions>()?.DateTimeZoneSource ?? TzdbDateTimeZoneSource.Default);
         }
 
         services

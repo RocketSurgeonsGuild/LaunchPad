@@ -6,7 +6,7 @@ using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using NodaTime.Text;
 
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.NodaTime;
 
 namespace Rocket.Surgery.LaunchPad.Foundation;
 

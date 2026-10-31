@@ -1,12 +1,12 @@
 using NodaTime.TimeZones;
 
-namespace Rocket.Surgery.LaunchPad.Primitives;
+namespace Rocket.Surgery.LaunchPad.NodaTime;
 
 /// <summary>
-///     Common foundation options
+///     The options of the NodaTime support, set on the joint context to change how it behaves.
 /// </summary>
 [PublicAPI]
-public class PrimitiveOptions
+public class NodaTimeOptions
 {
     /// <summary>
     ///     The NodaTime timezone source

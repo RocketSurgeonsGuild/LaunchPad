@@ -86,6 +86,7 @@
     <Project Path="src/Mapping.NewtonsoftJson/Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj" />
     <Project Path="src/Mapping/Rocket.Surgery.LaunchPad.Mapping.csproj" />
     <Project Path="src/Metadata/Rocket.Surgery.LaunchPad.Metadata.csproj" />
+    <Project Path="src/NodaTime/Rocket.Surgery.LaunchPad.NodaTime.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Serilog/Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <Project Path="src/Spatial.NewtonsoftJson/Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
@@ -107,6 +108,7 @@
     <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
     <Project Path="test/Grpc.Tests/Grpc.Tests.csproj" />
     <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
+    <Project Path="test/NodaTime.Tests/NodaTime.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />
     <Project Path="test/Sample.Classic.Restful.Tests/Sample.Classic.Restful.Tests.csproj" />

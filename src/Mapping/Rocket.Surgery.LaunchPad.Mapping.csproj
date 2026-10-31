@@ -12,6 +12,9 @@
         <PackageReference Include="NodaTime" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    </ItemGroup>
+    <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />

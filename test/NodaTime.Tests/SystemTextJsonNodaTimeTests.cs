@@ -1,10 +1,8 @@
 using System.Text.Json;
 
-using NodaTime;
+using Rocket.Surgery.LaunchPad.NodaTime;
 
-using Rocket.Surgery.LaunchPad.Primitives;
-
-namespace Extensions.Tests;
+namespace NodaTime.Tests;
 
 public class SystemTextJsonNodaTimeTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {

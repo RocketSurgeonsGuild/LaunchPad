@@ -5,7 +5,7 @@ using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using NodaTime.Text;
 
-namespace Rocket.Surgery.LaunchPad.Primitives;
+namespace Rocket.Surgery.LaunchPad.NodaTime;
 
 /// <summary>
 ///     Extensions for noda time
