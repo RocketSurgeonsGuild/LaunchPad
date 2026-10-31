@@ -4,12 +4,9 @@ using StrawberryShake.Serialization;
 namespace Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake;
 
 /// <summary>
-/// Create a new DateTimeZoneSerializer
+/// General purpose DateTimeZone Serializer, which writes the zone id
 /// </summary>
-/// <remarks>
-/// Constructor for a new DateTimeZoneSerializer
-/// </remarks>
-/// <param name="provider"></param>
+/// <param name="provider">The provider that resolves a zone id to its zone.</param>
 public class DateTimeZoneSerializer(IDateTimeZoneProvider provider) : ScalarSerializer<string, DateTimeZone>("DateTimeZone")
 {
     private readonly IDateTimeZoneProvider _provider = provider;

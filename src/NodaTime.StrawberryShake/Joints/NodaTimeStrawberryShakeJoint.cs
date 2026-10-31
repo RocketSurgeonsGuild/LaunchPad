@@ -14,10 +14,10 @@ namespace Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.Joints;
 /// </summary>
 /// <remarks>
 ///     <para>
-///         Every NodaTime scalar that <c>AddNodaTime</c> puts in a HotChocolate schema has a serializer here, and all of them are registered.
-///         <see cref="OffsetDateSerializer" /> and <see cref="DateTimeZoneSerializer" /> existed but were not registered before this package
-///         (RocketSurgeonsGuild/LaunchPad#3066). They are registered now because a generated client resolves a serializer for every scalar its
-///         operations use, and fails to create its serializer resolver for all operations when one is missing.
+///         Every NodaTime scalar that <c>AddNodaTime</c> puts in a HotChocolate schema has a serializer here, and all of them are registered,
+///         <see cref="OffsetDateSerializer" /> and <see cref="DateTimeZoneSerializer" /> included (decided in RocketSurgeonsGuild/LaunchPad#3066).
+///         A generated client resolves a serializer for every scalar its operations use, and cannot create its serializer resolver, for any
+///         operation, when one of them is missing.
 ///     </para>
 ///     <para>
 ///         <see cref="ZonedDateTimeSerializer" /> and <see cref="DateTimeZoneSerializer" /> resolve the <see cref="IDateTimeZoneProvider" /> that the

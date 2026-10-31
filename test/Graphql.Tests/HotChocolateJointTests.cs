@@ -38,7 +38,6 @@ public class HotChocolateJointTests
         var export = Exports.Joints().Single(x => x.Joint is HotChocolateJoint);
 
         export.HostType.ShouldBe(DovetailHostType.Undefined);
-        // the NodaTime types, which ran after the TimeJoint, moved to Rocket.Surgery.LaunchPad.NodaTime.HotChocolate
         export.Dependencies.ShouldBeEmpty();
         export.Category.ToString().ShouldBe(DovetailCategory.Application);
         typeof(HotChocolateJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);

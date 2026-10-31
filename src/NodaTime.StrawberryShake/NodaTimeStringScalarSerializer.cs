@@ -6,12 +6,9 @@ namespace Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake;
 /// <summary>
 /// Shared base class for NodaTime string serializers
 /// </summary>
-/// <typeparam name="TRuntime"></typeparam>
-/// <remarks>
-/// Based consturctor for NodaTime string serializers
-/// </remarks>
-/// <param name="pattern"></param>
-/// <param name="typeName"></param>
+/// <typeparam name="TRuntime">The NodaTime type.</typeparam>
+/// <param name="pattern">The pattern that parses and formats the value.</param>
+/// <param name="typeName">The name of the GraphQL scalar.</param>
 public abstract class NodaTimeStringScalarSerializer<TRuntime>(IPattern<TRuntime> pattern, string typeName) : ScalarSerializer<string, TRuntime>(typeName)
 {
     private readonly IPattern<TRuntime> _pattern = pattern;
