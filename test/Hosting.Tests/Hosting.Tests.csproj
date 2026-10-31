@@ -9,6 +9,11 @@
         <UseDovetail>true</UseDovetail>
     </PropertyGroup>
     <ItemGroup>
+        <!-- Dovetail emits the lifecycle helpers (OnHostStarted and so on) into a project that references both of these -->
+        <PackageReference Include="Joinery.Dovetail.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+    </ItemGroup>
+    <ItemGroup>
         <!-- the snapshot of the C# a template writes into an application is C# too, and not part of this project -->
         <Compile Remove="snapshots/**" />
         <None Include="snapshots/**" />

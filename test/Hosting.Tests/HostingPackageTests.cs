@@ -8,11 +8,11 @@ namespace Hosting.Tests;
 public class HostingPackageTests
 {
     /// <summary>
-    ///     The package does not carry the dependencies of the joints that move into it later (Serilog and its sinks, OpenTelemetry, the
+    ///     The package depends on Dovetail alone. It does not carry the dependencies of the joints that move into it later (Serilog and its sinks, OpenTelemetry, the
     ///     health checks): those are the application's own references, and referencing them is what turns a template on.
     /// </summary>
     [Test]
-    public async Task Should_Depend_On_Dovetail_And_The_Hosting_Abstractions_Only()
+    public async Task Should_Depend_On_Dovetail_Only()
     {
         var package = await PackedHosting.Pack();
 
