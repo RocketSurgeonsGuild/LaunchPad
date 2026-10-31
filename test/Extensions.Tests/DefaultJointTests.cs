@@ -32,12 +32,21 @@ public class DefaultJointTests() : JointFakeTest()
     [Test]
     public async Task Should_Say_The_Specular_Provider_Is_Missing_When_It_Was_Not_Set()
     {
-        var builder = Imports.Joints();
+        // A bare context: the generated Imports seed the provider since Dovetail 0.3.1, so they cannot be used to leave it out.
+        var builder = DovetailContextBuilder.Create([], new Dictionary<object, object>(), []);
         var context = await DovetailContext.FromAsync(builder);
 
         var exception = Should.Throw<KeyNotFoundException>(() => new DefaultJoint().Register(context, new ServiceCollection()));
 
         exception.Message.ShouldContain(nameof(ISpecularProvider));
+    }
+
+    [Test]
+    public async Task Should_Find_The_Specular_Provider_Without_Setting_It_Because_The_Generated_Imports_Seed_It()
+    {
+        var context = await DovetailContext.FromAsync(Imports.Joints());
+
+        context.Get<ISpecularProvider>().ShouldNotBeNull();
     }
 
     public interface ISingletonThing;
