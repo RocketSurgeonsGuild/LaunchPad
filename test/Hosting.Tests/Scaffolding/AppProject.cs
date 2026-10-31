@@ -113,7 +113,9 @@ internal sealed class AppProject
     /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
-    public string Program { get =>
+    public string Program
+    {
+        get =>
         field ?? _host switch
         {
             // The generated ConfigureDovetail entry point builds the host with the joints Dovetail discovered; whether the health checks
