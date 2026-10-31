@@ -24,7 +24,7 @@ public class HotChocolateJointTests
     {
         var executor = await Executor();
 
-        (await ZoneOf(executor, ZonedDateTime("America/New_York", DateTimeZoneProviders.Tzdb))).ShouldBe("America/New_York");
+        ( await ZoneOf(executor, ZonedDateTime("America/New_York", DateTimeZoneProviders.Tzdb)) ).ShouldBe("America/New_York");
     }
 
     [Test]
@@ -33,7 +33,7 @@ public class HotChocolateJointTests
         var provider = new DateTimeZoneCache(TestZoneSource());
         var executor = await Executor(context: context => context.Set(new PrimitiveOptions { DateTimeZoneSource = TestZoneSource() }));
 
-        (await ZoneOf(executor, ZonedDateTime("Fake/Zone", provider))).ShouldBe("Fake/Zone");
+        ( await ZoneOf(executor, ZonedDateTime("Fake/Zone", provider)) ).ShouldBe("Fake/Zone");
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class HotChocolateJointTests
         var provider = new DateTimeZoneCache(TestZoneSource());
         var executor = await Executor();
 
-        var result = (await executor.ExecuteAsync($$"""{ zoneOf(value: "{{ZonedDateTime("Fake/Zone", provider)}}") }""")).ExpectOperationResult();
+        var result = ( await executor.ExecuteAsync($$"""{ zoneOf(value: "{{ZonedDateTime("Fake/Zone", provider)}}") }""") ).ExpectOperationResult();
 
         result.Errors.ShouldNotBeNull().ShouldNotBeEmpty();
     }
@@ -53,7 +53,7 @@ public class HotChocolateJointTests
         var provider = new DateTimeZoneCache(TestZoneSource());
         var executor = await Executor(services => services.AddSingleton<IDateTimeZoneProvider>(provider));
 
-        (await ZoneOf(executor, ZonedDateTime("Fake/Zone", provider))).ShouldBe("Fake/Zone");
+        ( await ZoneOf(executor, ZonedDateTime("Fake/Zone", provider)) ).ShouldBe("Fake/Zone");
     }
 
     [Test]
@@ -105,7 +105,7 @@ public class HotChocolateJointTests
 
     private static async Task<string?> ZoneOf(IRequestExecutor executor, string value)
     {
-        var result = (await executor.ExecuteAsync($$"""{ zoneOf(value: "{{value}}") }""")).ExpectOperationResult();
+        var result = ( await executor.ExecuteAsync($$"""{ zoneOf(value: "{{value}}") }""") ).ExpectOperationResult();
         string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).ShouldBeEmpty();
         return (string?)result.Data!["zoneOf"];
     }

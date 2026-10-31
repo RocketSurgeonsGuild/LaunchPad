@@ -17,6 +17,6 @@ public class StrawberryShakeSpatialJoint : IServiceJoint
     public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.AddSingleton<ISerializer, GeometrySerializer>();
-//        services.AddSerializer<CoordinatesSerializer>();
+        // services.AddSerializer<CoordinatesSerializer>();
     }
 }

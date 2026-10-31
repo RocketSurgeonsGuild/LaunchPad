@@ -54,7 +54,7 @@ public class GraphqlJointTests
     {
         var executor = await Executor();
 
-        var result = (await executor.ExecuteAsync("{ missing }")).ExpectOperationResult();
+        var result = ( await executor.ExecuteAsync("{ missing }") ).ExpectOperationResult();
 
         result.Errors.ShouldHaveSingleItem().Code.ShouldBe("NOTFOUND");
     }
@@ -66,8 +66,8 @@ public class GraphqlJointTests
             services => services.AddTransient<RequestValidator>().AddTransient<IValidator>(sp => sp.GetRequiredService<RequestValidator>())
         );
 
-        var valid = (await executor.ExecuteAsync("""{ echo(request: { name: "a" }) }""")).ExpectOperationResult();
-        var invalid = (await executor.ExecuteAsync("""{ echo(request: { name: "" }) }""")).ExpectOperationResult();
+        var valid = ( await executor.ExecuteAsync("""{ echo(request: { name: "a" }) }""") ).ExpectOperationResult();
+        var invalid = ( await executor.ExecuteAsync("""{ echo(request: { name: "" }) }""") ).ExpectOperationResult();
 
         string.Join("; ", valid.Errors?.Select(x => x.Message) ?? []).ShouldBeEmpty();
         invalid.Errors.ShouldNotBeNull().ShouldNotBeEmpty();
