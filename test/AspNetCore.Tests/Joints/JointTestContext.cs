@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using FakeItEasy;
@@ -7,8 +6,6 @@ using Joinery.Dovetail;
 using Joinery.Dovetail.Joints;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using Specular;
 using Specular.Abstractions;
 
 namespace AspNetCore.Tests.Joints;

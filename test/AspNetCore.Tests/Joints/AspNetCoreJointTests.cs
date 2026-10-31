@@ -124,15 +124,14 @@ public class AspNetCoreJointTests
         }
 
         thrown.ShouldNotBeNull();
-        thrown.ToString().ShouldContain(nameof(Specular.ISpecularProvider));
+        thrown.ToString().ShouldContain(nameof(ISpecularProvider));
     }
 
-    private static Assembly[] GetApplicationParts(IServiceCollection services) => services
+    private static Assembly[] GetApplicationParts(IServiceCollection services) => [.. services
                                                                                .Last(d => d.ServiceType == typeof(ApplicationPartManager))
                                                                                .ImplementationInstance
                                                                                .ShouldBeOfType<ApplicationPartManager>()
                                                                                .ApplicationParts
                                                                                .OfType<AssemblyPart>()
-                                                                               .Select(z => z.Assembly)
-                                                                               .ToArray();
+                                                                               .Select(z => z.Assembly)];
 }
