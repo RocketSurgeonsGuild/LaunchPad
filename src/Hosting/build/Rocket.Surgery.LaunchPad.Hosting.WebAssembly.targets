@@ -1,0 +1,57 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.Hosting.WebAssembly.targets
+        Blazor WebAssembly has no generic host, so a browser application must not use Microsoft.Extensions.Hosting (much of what a browser
+        application references brings its abstractions along, Joinery.Dovetail.Hosting among them). The project gets the banned API
+        analyzer's list of that namespace and RS0030 as an error, under the same gates as a template: it declares the WebAssembly host
+        and has a direct reference to this package. The analyzer is the application's own (the repository gives it to every project);
+        without it the list does nothing.
+
+        Joinery.Dovetail writes its IHostEnvironment helper (context.Environment) into every project that references the hosting
+        abstractions, and the analyzer reports the see cref in its documentation when the project generates a documentation file. A
+        browser application has no IHostEnvironment for the helper to return, so it is taken out of the helpers Dovetail writes; Dovetail
+        has no switch for it (its _DovetailEnvironmentEmittedHelper items are internal).
+
+        Imported by Rocket.Surgery.LaunchPad.Hosting.targets, never on its own. The gates are read in a target, once the project's
+        items are complete: a host the SDK declares or a reference it adds is there by then.
+    -->
+    <Target Name="_LaunchPadHostingResolveBrowserHost">
+        <ItemGroup>
+            <_LaunchPadHostingBrowserHost Include="@(DovetailHost)" Condition="'%(Identity)' == 'WebAssembly'" />
+            <_LaunchPadHostingDirectReference Include="@(PackageReference)" Condition="'%(Identity)' == 'Rocket.Surgery.LaunchPad.Hosting'" />
+            <!-- the .NET SDK lists the project references of referenced projects too, with their package id: those are transitive -->
+            <_LaunchPadHostingDirectReference
+                Include="@(ProjectReference)"
+                Condition="'%(Filename)' == 'Rocket.Surgery.LaunchPad.Hosting' and '%(ProjectReference.NuGetPackageId)' == ''"
+            />
+        </ItemGroup>
+        <PropertyGroup>
+            <_LaunchPadHostingBanGenericHost Condition="'@(_LaunchPadHostingBrowserHost)' != '' and '@(_LaunchPadHostingDirectReference)' != ''">true</_LaunchPadHostingBanGenericHost>
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="_LaunchPadHostingBanGenericHost" BeforeTargets="CoreCompile" DependsOnTargets="_LaunchPadHostingResolveBrowserHost">
+        <ItemGroup Condition="'$(_LaunchPadHostingBanGenericHost)' == 'true'">
+            <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.Rocket.Surgery.LaunchPad.Hosting.WebAssembly.txt" />
+        </ItemGroup>
+        <PropertyGroup Condition="'$(_LaunchPadHostingBanGenericHost)' == 'true'">
+            <WarningsAsErrors>$(WarningsAsErrors);RS0030</WarningsAsErrors>
+        </PropertyGroup>
+    </Target>
+
+    <!--
+        Between Dovetail choosing its environment helpers and writing them (Joinery.Dovetail.Environment.targets). These are Dovetail's
+        internal names: if they change, the helper is written again and the ban above still holds, so the build fails on it instead of
+        losing the ban.
+    -->
+    <Target
+        Name="_LaunchPadHostingRemoveGenericHostHelper"
+        AfterTargets="_DovetailResolveEnvironmentHelpers"
+        BeforeTargets="_DovetailGenerateEnvironmentHelpers"
+        DependsOnTargets="_LaunchPadHostingResolveBrowserHost"
+    >
+        <ItemGroup Condition="'$(_LaunchPadHostingBanGenericHost)' == 'true'">
+            <_DovetailEnvironmentEmittedHelper Remove="DovetailHostingContextExtensions" />
+        </ItemGroup>
+    </Target>
+</Project>
