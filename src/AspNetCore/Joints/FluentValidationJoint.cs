@@ -22,7 +22,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 [DovetailExport]
 [AfterJoint<AspNetCoreJoint>]
 [DovetailCategory(DovetailCategory.Application)]
-public partial class FluentValidationJoint : IServiceJoint
+public class FluentValidationJoint : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
