@@ -114,6 +114,8 @@
         <PackageVersion Include="Joinery.Dovetail" Version="0.4.0" />
         <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.4.0" />
         <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.4.0" />
+        <!-- no project references it: Rocket.Surgery.LaunchPad.Sdk chains this version of Dovetail's SDK (src/Sdk) -->
+        <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.4.0" />
         <PackageVersion Include="Spectre.Console.Cli" Version="0.57.2" />
         <PackageVersion Include="Spectre.Console.Testing" Version="0.57.2" />
 
@@ -155,6 +157,8 @@
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="10.0.5" />
         <PackageVersion Include="TUnit" Version="1.76.45" />
         <PackageVersion Include="Verify.TUnit" Version="33.3.4" />
+        <!-- test/Sdk.Tests writes its throwaway projects with it, as Dovetail's SDK tests do -->
+        <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.0" />
         <PackageVersion Include="Verify.NodaTime" Version="2.3.0" />
         <PackageVersion Include="Verify.SystemJson" Version="1.4.1" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />

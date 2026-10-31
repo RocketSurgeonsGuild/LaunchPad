@@ -1,0 +1,35 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.Sdk is applied in an application's Directory.Build.props, <Project Sdk="Rocket.Surgery.LaunchPad.Sdk">, with
+        its version pinned in global.json under msbuild-sdks, and is the only SDK entry the application needs: it chains Joinery.Dovetail.Sdk.
+        Like Dovetail's SDK it does not import Microsoft.NET.Sdk; each project names its own.
+    -->
+
+    <!-- The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. -->
+    <Import Project="$(MSBuildThisFileDirectory)Packages.props" />
+
+    <!--
+        LaunchPad turns on what Dovetail leaves off. Dovetail's SDK reads these after the project has been evaluated, so a project (or a
+        Directory.Build.props below the SDK entry) that sets one to false still wins.
+          - DovetailEnableSerilog: a project that references Serilog directly gets Joinery.Dovetail.Serilog.
+    -->
+    <PropertyGroup>
+        <DovetailEnableSerilog Condition="'$(DovetailEnableSerilog)' == ''">true</DovetailEnableSerilog>
+    </PropertyGroup>
+
+    <!--
+        The version of the import wins over a Joinery.Dovetail.Sdk entry in global.json. To chain another version, set
+        LaunchPadDovetailSdkVersion before this file is imported: as a global property, or in a Directory.Build.props that imports the SDK
+        with <Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" /> after setting it.
+    -->
+    <Import Project="Sdk.props" Sdk="Joinery.Dovetail.Sdk" Version="$(LaunchPadDovetailSdkVersion)" />
+
+    <!--
+        Dovetail's host detection runs through CustomAfterMicrosoftCommonTargets, after the whole project has been evaluated, as it reads
+        properties the project sets (OutputType). LaunchPad's detection reads what Dovetail's found (the DovetailHost items), so it is
+        registered after it: MSBuild imports the files of the list in order.
+    -->
+    <PropertyGroup>
+        <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.targets</CustomAfterMicrosoftCommonTargets>
+    </PropertyGroup>
+</Project>
