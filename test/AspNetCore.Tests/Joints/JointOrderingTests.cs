@@ -1,5 +1,6 @@
 using System.Reflection;
 
+using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;

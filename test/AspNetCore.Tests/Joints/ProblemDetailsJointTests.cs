@@ -1,5 +1,3 @@
-using FluentValidation;
-
 using Joinery.Dovetail.Joints;
 
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +8,8 @@ using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 using Rocket.Surgery.LaunchPad.Primitives;
+
+using ValidationException = FluentValidation.ValidationException;
 
 namespace AspNetCore.Tests.Joints;
 
