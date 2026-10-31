@@ -61,7 +61,7 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     /// <summary>
     ///     The version of Dovetail the repository pins, which the SDK chains.
     /// </summary>
-    public static string DovetailVersion => Repository.PackageVersion("Joinery.Dovetail.Sdk");
+    public static string DovetailVersion => Repository.PackageVersion("Joinery.Dovetail.Sdk", "net11.0");
 
     private static async Task<PackedSdk> PackCore()
     {

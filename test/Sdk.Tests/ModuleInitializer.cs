@@ -2,6 +2,8 @@ using System.Runtime.CompilerServices;
 
 using DiffEngine;
 
+using Microsoft.Build.Utilities.ProjectCreation;
+
 using VerifyTests.DiffPlex;
 
 namespace Sdk.Tests;
@@ -11,11 +13,15 @@ internal static class ModuleInitializer
     [ModuleInitializer]
     public static void Init()
     {
+        // MSBuild.ProjectCreation compiles against MSBuild without shipping it: load it from the installed .NET SDK before it is used.
+        MSBuildAssemblyResolver.Register();
         DiffRunner.Disabled = true;
+        // each test runs once per target framework of the throwaway projects (TargetFrameworksAttribute), and both runs share a snapshot
+        VerifierSettings.IgnoreConstructorParameters();
         VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
-        // "no templates" is the result several tests are about: keep it in the snapshot instead of leaving the property out
+        // "no hosts" is the result several tests are about: keep it in the snapshot instead of leaving the property out
         VerifierSettings.DontIgnoreEmptyCollections();
         DerivePathInfo(
             (sourceFile, _, type, method) =>
