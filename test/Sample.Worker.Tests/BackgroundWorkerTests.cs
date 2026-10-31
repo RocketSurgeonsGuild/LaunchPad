@@ -3,7 +3,6 @@ using FakeItEasy;
 using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
