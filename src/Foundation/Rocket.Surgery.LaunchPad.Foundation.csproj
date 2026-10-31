@@ -12,7 +12,9 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="MediatR" />
+        <PackageReference Include="Specular" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
