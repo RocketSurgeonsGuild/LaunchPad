@@ -1,0 +1,7 @@
+﻿{
+  Host: GenericHost,
+  Templates: [
+    LaunchPadHealthChecksJoint
+  ],
+  Output: HealthChecks:True
+}

@@ -1,0 +1,42 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.Hosting.targets
+        The joints of LaunchPad.Hosting, shipped as C# templates (*.cs.template next to this file) that Joinery.Dovetail writes into the
+        application and compiles there (Joinery.Dovetail.Templates.targets, the DovetailTemplate item). A template is only written into
+        a project that
+          - has a direct reference to this package (a PackageReference, or a ProjectReference to the project): a project that only
+            receives the package through a library gets nothing,
+          - declares one of the template's Hosts, the host models the template is for,
+          - references every assembly in the template's References, so this package depends on none of them, and
+          - runs the Dovetail source generator, which is what finds the joints the templates declare.
+
+        To add a joint:
+          1. Write it as Name.cs.template next to this file: an internal sealed class with [Embedded] (so an assembly never sees the
+             copy a referenced assembly wrote for itself), [DovetailExport] and the DovetailCategory it needs. Do not use backslashes.
+          2. Add one line to _LaunchPadHostingTemplate below: Include is the name (and the file name), References the assemblies it
+             compiles against (file names without extension), Hosts the host models it is for.
+          3. Add the case to test/Hosting.Tests/HostingTemplateTests.cs (and to the host models it covers).
+        Nothing else changes: the metadata every template shares is set once below.
+
+        NuGet imports this file into every project that gets the package, through the shim in buildTransitive/ (or buildMultiTargeting/);
+        it ignores a build/ file that a buildTransitive/ file of the same name replaces. The repository's Directory.Build.targets imports
+        it into every project in the repository instead, since a ProjectReference imports no package assets. Do not import it twice into
+        one project: the templates would be declared twice.
+    -->
+    <ItemGroup>
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadHealthChecksJoint"
+            References="Microsoft.Extensions.Diagnostics.HealthChecks"
+            Hosts="HostApplication;WebApplication"
+        />
+    </ItemGroup>
+    <ItemGroup>
+        <DovetailTemplate
+            Include="@(_LaunchPadHostingTemplate)"
+            File="$(MSBuildThisFileDirectory)%(Identity).cs.template"
+            Package="Rocket.Surgery.LaunchPad.Hosting"
+            DirectReferenceOnly="true"
+            OutputPrefix="LaunchPadHosting"
+        />
+    </ItemGroup>
+</Project>
