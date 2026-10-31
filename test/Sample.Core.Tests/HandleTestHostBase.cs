@@ -41,7 +41,10 @@ public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncIniti
     [After(Test)]
     public async Task CloseConnectionAsync()
     {
-        if (_connection is not null) await _connection.DisposeAsync();
+        if (_connection is not null)
+        {
+            await _connection.DisposeAsync();
+        }
     }
 
     protected HandleTestHostBase(LogEventLevel logLevel = LogEventLevel.Information) : base(TestRecord.Create(logLevel)) => ExcludeSourceContext(nameof(AutoFakeTest));

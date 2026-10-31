@@ -18,7 +18,8 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
         _connection.Close();
         _connection.Open();
         using var scope = serviceProvider.CreateScope();
-        scope.ServiceProvider.GetRequiredService<TDbContext>().Database.EnsureCreated();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        dbContext.Database.EnsureCreated();
     }
 
     public async ValueTask ResetAsync(IServiceProvider serviceProvider)
@@ -26,7 +27,8 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
         await _connection.CloseAsync();
         await _connection.OpenAsync();
         await using var scope = serviceProvider.CreateAsyncScope();
-        await scope.ServiceProvider.GetRequiredService<TDbContext>().Database.EnsureCreatedAsync();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
     }
 
     public void Dispose() => _connection.Dispose();
