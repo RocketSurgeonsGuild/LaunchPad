@@ -29,6 +29,41 @@
             References="Microsoft.Extensions.Diagnostics.HealthChecks"
             Hosts="HostApplication;WebApplication"
         />
+        <!--
+            The Serilog joints configure the logger Joinery.Dovetail.Serilog creates, so each needs it, and the packages of its own enrichers
+            or sinks: an application chooses them by referencing them.
+        -->
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogEnrichmentJoint" References="Joinery.Dovetail.Serilog" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogSystemTextJsonJoint" References="Joinery.Dovetail.Serilog" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogApplicationStateJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Extensions.Logging"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogEnvironmentEnrichersJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Enrichers.Environment;Serilog.Enrichers.Process;Serilog.Enrichers.Thread;Serilog.Enrichers.AssemblyName"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogSpanJoint" References="Joinery.Dovetail.Serilog;Serilog.Enrichers.Span" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogExceptionsJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Exceptions;Serilog.Enrichers.Demystifier"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogConsoleJoint" References="Joinery.Dovetail.Serilog;Serilog.Sinks.Console;Serilog.Sinks.Async" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogDebugJoint" References="Joinery.Dovetail.Serilog;Serilog.Sinks.Debug;Serilog.Sinks.Async" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogTraceJoint" References="Joinery.Dovetail.Serilog;Serilog.Sinks.Trace;Serilog.Sinks.Async" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogDiagnosticContextJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Extensions.Hosting"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogOpenTelemetryJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Sinks.OpenTelemetry"
+            Hosts="HostApplication;WebApplication"
+        />
     </ItemGroup>
     <ItemGroup>
         <DovetailTemplate

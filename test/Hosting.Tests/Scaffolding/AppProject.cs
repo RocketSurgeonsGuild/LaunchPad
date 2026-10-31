@@ -100,10 +100,33 @@ internal sealed class AppProject
     }
 
     /// <summary>
+    ///     Replaces what the application's <c>Program.cs</c> holds.
+    /// </summary>
+    /// <param name="program">The text of <c>Program.cs</c>.</param>
+    /// <returns>This project.</returns>
+    public AppProject WithProgram(string program)
+    {
+        _program = program;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets an MSBuild property in the project.
+    /// </summary>
+    /// <param name="name">The name of the property.</param>
+    /// <param name="value">The value.</param>
+    /// <returns>This project.</returns>
+    public AppProject WithProperty(string name, string value)
+    {
+        _properties.Add((name, value));
+        return this;
+    }
+
+    /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
     public string Program =>
-        _host switch
+        _program ?? _host switch
         {
             // The generated ConfigureDovetail entry point builds the host with the joints Dovetail discovered; whether the health checks
             // are among them is what the application reports. It looks the type up by name, as the application may not reference it.
@@ -121,7 +144,6 @@ internal sealed class AppProject
                 """ + RegisteredFunction,
             // a library has nothing to run
             HostModel.None => "public static class Library;",
-            HostModel.WebAssembly => throw new NotImplementedException(),
             // a WebAssembly host cannot run on the machine the tests do
             _ => """System.Console.WriteLine("hello");""",
         };
@@ -148,6 +170,11 @@ internal sealed class AppProject
         // the namespace of the generated ConfigureDovetail entry points, which Program.cs imports
         xml.AppendLine($"    <RootNamespace>{RootNamespace}</RootNamespace>");
         if (_host != HostModel.None) xml.AppendLine("    <OutputType>Exe</OutputType>");
+        foreach (var (name, value) in _properties)
+        {
+            xml.AppendLine($"    <{name}>{value}</{name}>");
+        }
+
         xml.AppendLine("  </PropertyGroup>");
         xml.AppendLine("  <ItemGroup>");
         foreach (var (id, version) in _packages)
@@ -200,12 +227,13 @@ internal sealed class AppProject
                       HostBuilderName="builder"
                       HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost" />
                 """,
-            HostModel.None => throw new NotImplementedException(),
             _ => null,
         };
 
     private readonly HostModel _host;
     private readonly List<(string Id, string? Version)> _packages = [];
     private readonly List<string> _projectReferences = [];
+    private readonly List<(string Name, string Value)> _properties = [];
+    private string? _program;
     private readonly bool _versioned;
 }
