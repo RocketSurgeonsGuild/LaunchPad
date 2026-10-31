@@ -1,11 +1,9 @@
-using NodaTime;
-
 using Riok.Mapperly.Abstractions;
 using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 #pragma warning disable CA1034 // Nested types should not be visible
 
-namespace Extensions.Tests.Mapping;
+namespace NodaTime.Mapping.Tests;
 
 public partial class DurationTests() : MapperTestBase()
 {

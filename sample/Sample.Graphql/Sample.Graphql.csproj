@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\FluentValidation.HotChocolate\Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\NodaTime.HotChocolate\Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />

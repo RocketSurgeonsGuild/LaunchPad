@@ -1,25 +1,21 @@
 using Microsoft.Extensions.Time.Testing;
 
-using NodaTime;
-
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Mapping;
 using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
-#pragma warning disable CA1034 // Nested types should not be visible
+namespace NodaTime.Mapping.Tests;
 
-namespace Extensions.Tests.Mapping;
-
-public partial class LocalDateTimeTests() : MapperTestBase()
+public partial class OffsetTests() : MapperTestBase()
 {
     [Test]
     [MethodDataSource(nameof(Methods))]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
                                                              result,
                                                              new Mapper(),
-                                                             _fakeTimeProvider.GetLocalNow().DateTime,
-                                                             LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+                                                             Offset.FromHours(11),
+                                                             TimeSpan.FromHours(10)
                                                          )
                                                         .UseParameters(result.ToString());
 
@@ -51,21 +47,21 @@ public partial class LocalDateTimeTests() : MapperTestBase()
 
     private class Foo1
     {
-        public LocalDateTime Bar { get; set; }
+        public Offset Bar { get; set; }
     }
 
     private class Foo2
     {
-        public LocalDateTime? Bar { get; set; }
+        public Offset? Bar { get; set; }
     }
 
     private class Foo3
     {
-        public DateTime Bar { get; set; }
+        public TimeSpan Bar { get; set; }
     }
 
     private class Foo4
     {
-        public DateTime? Bar { get; set; }
+        public TimeSpan? Bar { get; set; }
     }
 }

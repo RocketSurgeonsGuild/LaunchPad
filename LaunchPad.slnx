@@ -72,13 +72,15 @@
     <File Path="src/Directory.Build.props" />
     <File Path="src/Directory.Build.targets" />
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
-    <Project Path="src/AspNetCore.Blazor/Rocket.Surgery.LaunchPad.AspNetCore.Blazor.csproj" />
     <Project Path="src/AspNetCore.FluentValidation.OpenApi/Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
     <Project Path="src/AspNetCore.NewtonsoftJson/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
     <Project Path="src/AspNetCore.Spatial/Rocket.Surgery.LaunchPad.AspNetCore.Spatial.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <Project Path="src/FluentValidation/Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
+    <Project Path="src/FluentValidation.Blazor/Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
+    <Project Path="src/FluentValidation.Grpc/Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj" />
+    <Project Path="src/FluentValidation.HotChocolate/Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
     <Project Path="src/Foundation.NewtonsoftJson/Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
     <Project Path="src/Foundation/Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <Project Path="src/Grpc/Rocket.Surgery.LaunchPad.Grpc.csproj" />
@@ -90,6 +92,9 @@
     <Project Path="src/NodaTime.HotChocolate/Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <Project Path="src/NodaTime.StrawberryShake/Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
     <Project Path="src/NodaTime/Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    <Project Path="src/NodaTime.EntityFramework/Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj" />
+    <Project Path="src/NodaTime.Mapping/Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
+    <Project Path="src/NodaTime.NewtonsoftJson/Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Serilog/Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <Project Path="src/Spatial.NewtonsoftJson/Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
@@ -106,6 +111,9 @@
     <Project Path="test/AspNetCore.NewtonsoftJson.Tests/AspNetCore.NewtonsoftJson.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />
     <Project Path="test/Extensions.Tests/Extensions.Tests.csproj" />
+    <Project Path="test/FluentValidation.Blazor.Tests/FluentValidation.Blazor.Tests.csproj" />
+    <Project Path="test/FluentValidation.Grpc.Tests/FluentValidation.Grpc.Tests.csproj" />
+    <Project Path="test/FluentValidation.HotChocolate.Tests/FluentValidation.HotChocolate.Tests.csproj" />
     <Project Path="test/FluentValidation.Tests/FluentValidation.Tests.csproj" />
     <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
     <Project Path="test/Grpc.Tests/Grpc.Tests.csproj" />
@@ -113,6 +121,9 @@
     <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
     <Project Path="test/NodaTime.Graphql.Tests/NodaTime.Graphql.Tests.csproj" />
     <Project Path="test/NodaTime.Tests/NodaTime.Tests.csproj" />
+    <Project Path="test/NodaTime.EntityFramework.Tests/NodaTime.EntityFramework.Tests.csproj" />
+    <Project Path="test/NodaTime.Mapping.Tests/NodaTime.Mapping.Tests.csproj" />
+    <Project Path="test/NodaTime.NewtonsoftJson.Tests/NodaTime.NewtonsoftJson.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />
     <Project Path="test/Sample.Classic.Restful.Tests/Sample.Classic.Restful.Tests.csproj" />

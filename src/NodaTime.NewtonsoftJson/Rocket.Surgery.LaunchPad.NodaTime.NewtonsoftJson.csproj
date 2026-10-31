@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <!--
+            The types keep the Rocket.Surgery.LaunchPad.Foundation namespaces they had in Foundation.NewtonsoftJson. The export class is named
+            for the package so it does not collide with the NewtonsoftJsonExports of Foundation.NewtonsoftJson.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.Foundation</RootNamespace>
+        <DovetailExportClassName>NodaTimeNewtonsoftJsonExports</DovetailExportClassName>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Microsoft.Extensions.Options" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="NodaTime" />
+        <PackageReference Include="NodaTime.Serialization.JsonNet" />
+    </ItemGroup>
+</Project>

@@ -5,12 +5,10 @@
     <PackageTags>$(PackageTags)</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FairyBread" />
     <PackageReference Include="HotChocolate" />
     <PackageReference Include="HotChocolate.Data" />
     <PackageReference Include="HotChocolate.Diagnostics" />
     <PackageReference Include="HotChocolate.Execution.Abstractions" />
-    <PackageReference Include="FluentValidation" />
     <!--        <PackageReference Include="Scrutor" />-->
     <PackageReference Include="Joinery.Dovetail" />
     <PackageReference Include="Humanizer.Core" />
