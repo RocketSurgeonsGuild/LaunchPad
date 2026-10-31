@@ -28,12 +28,11 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
         JsonConvert.DeserializeObject<LineString>(geom, _settings)
                    .ShouldBe(
                         new LineString(
-                            new[]
-                            {
+                            [
                                 new Coordinate(30, 10),
                                 new Coordinate(10, 30),
                                 new Coordinate(40, 40),
-                            }
+                            ]
                         )
                     );
     }
@@ -46,10 +45,9 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
                    .ShouldBe(
                         new Polygon(
                             new LinearRing(
-                                new[]
-                                {
+                                [
                                     new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
-                                }
+                                ]
                             )
                         )
                     );
@@ -59,9 +57,11 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
     [Arguments("{\"type\": \"MultiPoint\",\"coordinates\": [[10, 40], [40, 30], [20, 20], [30, 10]]}")]
     public void MultiPoint_Tests(string geom)
     {
-                JsonConvert.DeserializeObject<MultiPoint>(geom, _settings)
-                           .ShouldBe(
-                new MultiPoint(
+        JsonConvert.DeserializeObject<MultiPoint>(geom, _settings)
+                   .ShouldBe(
+        new MultiPoint(
+
+<<<<<<< TODO: Unmerged change from project 'Extensions.Tests(net11.0)', Before:
                     new[]
                     {
                         new Point(10, 40),
@@ -71,16 +71,31 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
                     }
                 )
             );
+=======
+            [
+                new Point(10, 40),
+                        new Point(40, 30),
+                        new Point(20, 20),
+                        new Point(30, 10)
+            ]
+        )
+    );
+>>>>>>> After
+            [
+                        new Point(10, 40),
+                        new Point(40, 30),
+                        new Point(20, 20),
+                        new Point(30, 10)
+            ]
+        )
+    );
     }
 
     [Test]
     [Arguments(
         "{\n    \"type\": \"MultiLineString\", \n    \"coordinates\": [\n        [[10, 10], [20, 20], [10, 40]], \n        [[40, 40], [30, 30], [40, 20], [30, 10]]\n    ]\n}"
     )]
-    public void MultiLineString_Tests(string geom)
-    {
-        JsonConvert.DeserializeObject<MultiLineString>(geom, _settings).ShouldBeOfType<MultiLineString>();
-    }
+    public void MultiLineString_Tests(string geom) => JsonConvert.DeserializeObject<MultiLineString>(geom, _settings).ShouldBeOfType<MultiLineString>();
 
     [Test]
     [Arguments(
@@ -88,8 +103,8 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
     )]
     public void MultiPolygon_Tests(string geom)
     {
-                JsonConvert.DeserializeObject<MultiPolygon>(geom, _settings)
-                           .ShouldBeOfType<MultiPolygon>();
+        JsonConvert.DeserializeObject<MultiPolygon>(geom, _settings)
+                   .ShouldBeOfType<MultiPolygon>();
     }
 
     [Test]
@@ -98,7 +113,7 @@ public class NewtonsoftJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
     )]
     public void GeometryCollection_Tests(string geom)
     {
-                JsonConvert.DeserializeObject<GeometryCollection>(geom, _settings)
-                           .ShouldBeOfType<GeometryCollection>();
+        JsonConvert.DeserializeObject<GeometryCollection>(geom, _settings)
+                   .ShouldBeOfType<GeometryCollection>();
     }
 }

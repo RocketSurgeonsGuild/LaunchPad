@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Testing;

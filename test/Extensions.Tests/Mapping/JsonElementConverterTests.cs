@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using FakeItEasy;
 using Microsoft.Extensions.Options;
 using Riok.Mapperly.Abstractions;
@@ -8,10 +8,10 @@ namespace Extensions.Tests.Mapping;
 
 public partial class JsonElementConverterTests() : MapperTestBase()
 {
-//    private class JsonElementB
-//    {
-//        public JsonElement? Bar { get; set; }
-//    }
+    //    private class JsonElementB
+    //    {
+    //        public JsonElement? Bar { get; set; }
+    //    }
 
     [Test]
     [MethodDataSource(nameof(Methods))]
@@ -63,12 +63,12 @@ public partial class JsonElementConverterTests() : MapperTestBase()
         public partial JsonElementA MapToJsonElementA(ByteArray source);
 
         public partial ByteArray MapToByteArray(JsonElementA source);
-//        public partial JsonElementB MapToJsonElementB(StringValue source);
-//        public partial StringValue MapToStringValue(JsonElementB source);
-//        public partial JsonElementB MapToJsonElementB(ByteArray source);
-//        public partial ByteArray MapToByteArray(JsonElementB source);
-//        public partial JsonElementB MapToJsonElementB(JsonElementA source);
-//        public partial JsonElementA MapToJsonElementA(JsonElementB source);
+        //        public partial JsonElementB MapToJsonElementB(StringValue source);
+        //        public partial StringValue MapToStringValue(JsonElementB source);
+        //        public partial JsonElementB MapToJsonElementB(ByteArray source);
+        //        public partial ByteArray MapToByteArray(JsonElementB source);
+        //        public partial JsonElementB MapToJsonElementB(JsonElementA source);
+        //        public partial JsonElementA MapToJsonElementA(JsonElementB source);
     }
 
     private class ByteArray

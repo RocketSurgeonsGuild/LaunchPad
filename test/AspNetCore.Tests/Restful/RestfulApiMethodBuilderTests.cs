@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -178,38 +178,23 @@ public class RestfulApiMethodBuilderTests() : LoggerTest<TestRecord>(TestRecord.
     private ActionModel CreateActionModel(string methodName, string? name = null, Type? fromType = null)
     {
         return new ActionModel(
-            (fromType ?? GetType()).GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!,
+            ( fromType ?? GetType() ).GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!,
             new List<object>()
         )
         {
-            ActionName = name ?? (fromType is null ? nameof(MyActionName) : methodName)
+            ActionName = name ?? ( fromType is null ? nameof(MyActionName) : methodName )
         };
     }
 
-    private Task<ActionResult<object>> MyComplexAction(int someIdentifier, double someOtherIdentifier, Guid id, RequestResponse baseRequest)
-    {
-        throw new NotImplementedException();
-    }
+    private Task<ActionResult<object>> MyComplexAction(int someIdentifier, double someOtherIdentifier, Guid id, RequestResponse baseRequest) => throw new NotImplementedException();
 
-    private Task<ActionResult<object>> MyActionName(Guid id, Request baseRequest)
-    {
-        throw new NotImplementedException();
-    }
+    private Task<ActionResult<object>> MyActionName(Guid id, Request baseRequest) => throw new NotImplementedException();
 
-    private Task<ActionResult<object>> OneParameter(Guid id)
-    {
-        throw new NotImplementedException();
-    }
+    private Task<ActionResult<object>> OneParameter(Guid id) => throw new NotImplementedException();
 
-    private Task<ActionResult<object>> TwoParameter(Guid id, object two)
-    {
-        throw new NotImplementedException();
-    }
+    private Task<ActionResult<object>> TwoParameter(Guid id, object two) => throw new NotImplementedException();
 
-    private Task<ActionResult<object>> ThreeParameter(long id, object two, int three)
-    {
-        throw new NotImplementedException();
-    }
+    private Task<ActionResult<object>> ThreeParameter(long id, object two, int three) => throw new NotImplementedException();
 
     private sealed class Request : IRequest;
 
@@ -243,211 +228,97 @@ public class RestfulApiMethodBuilderTests() : LoggerTest<TestRecord>(TestRecord.
         [PublicAPI]
         public sealed class ListActions
         {
-            public Task<ActionResult<object>> ListPeople(Request listRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> ListPeople(Request listRequest) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> SearchPeople(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> SearchPeople(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> ListPeopleIndex(int orgId, int groupId, Request listRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> ListPeopleIndex(int orgId, int groupId, Request listRequest) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> SearchPeopleIndex(int orgId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> SearchPeopleIndex(int orgId, Request request) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class GetActions
         {
-            public Task<ActionResult<object>> GetPerson(Request personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> GetPerson(Request personRequest) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> FindPerson(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> FindPerson(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> FetchPerson(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> FetchPerson(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> ReadPerson(Request personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> ReadPerson(Request personRequest) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> GetPersonIndex(Request personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> GetPersonIndex(Request personRequest) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> FindPersonIndex(int orgId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> FindPersonIndex(int orgId, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> FetchPersonIndex(int orgId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> FetchPersonIndex(int orgId, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> ReadPersonIndex(int orgId, int groupId, Request personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> ReadPersonIndex(int orgId, int groupId, Request personRequest) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class PostActions
         {
-            public Task<ActionResult<object>> PostPerson(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PostPerson(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> CreatePerson(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> CreatePerson(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> AddPerson(Request personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> AddPerson(Request personRequest) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PostPersonIndex(int orgId, int groupId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PostPersonIndex(int orgId, int groupId, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> CreatePersonIndex(int orgId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> CreatePersonIndex(int orgId, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> AddPersonIndex(int orgId, int groupId, Request personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> AddPersonIndex(int orgId, int groupId, Request personRequest) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class PutActions
         {
-            public Task<ActionResult<object>> PutPerson(Guid personId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PutPerson(Guid personId, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> EditPerson(int id, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> EditPerson(int id, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> UpdatePerson(long personId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> UpdatePerson(long personId, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PutOtherPerson(Guid personId, object personModel)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PutOtherPerson(Guid personId, object personModel) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> EditOtherPerson(int id, object model)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> EditOtherPerson(int id, object model) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> UpdateOtherPerson(long personId, object personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> UpdateOtherPerson(long personId, object personRequest) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PutPersonIndex(int orgId, Guid id, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PutPersonIndex(int orgId, Guid id, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> EditPersonIndex(int orgId, int id, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> EditPersonIndex(int orgId, int id, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> UpdatePersonIndex(int orgId, int groupId, long id, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> UpdatePersonIndex(int orgId, int groupId, long id, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PutOtherPersonIndex(int orgId, int groupId, Guid personId, object personModel)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PutOtherPersonIndex(int orgId, int groupId, Guid personId, object personModel) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> EditOtherPersonIndex(int orgId, int groupId, int id, object model)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> EditOtherPersonIndex(int orgId, int groupId, int id, object model) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> UpdateOtherPersonIndex(int orgId, int groupId, long personId, object personRequest)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> UpdateOtherPersonIndex(int orgId, int groupId, long personId, object personRequest) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class DeleteActions
         {
-            public Task<ActionResult<object>> DeletePerson(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> DeletePerson(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> RemovePerson(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> RemovePerson(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> DeleteOtherPerson(int personId)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> DeleteOtherPerson(int personId) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> RemoveOtherPerson(Guid personId)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> RemoveOtherPerson(Guid personId) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> DeletePersonIndex(int org, int groupId, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> DeletePersonIndex(int org, int groupId, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> RemovePersonIndex(int org, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> RemovePersonIndex(int org, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> DeleteOtherPersonIndex(int org, int personId)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> DeleteOtherPersonIndex(int org, int personId) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> RemoveOtherPersonIndex(int org, Guid personId)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> RemoveOtherPersonIndex(int org, Guid personId) => throw new NotImplementedException();
         }
     }
 
@@ -479,116 +350,59 @@ public class RestfulApiMethodBuilderTests() : LoggerTest<TestRecord>(TestRecord.
         [PublicAPI]
         public sealed class ListActions
         {
-            public Task<ActionResult<object>> PeopleList(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PeopleList(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PeopleSearch(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PeopleSearch(Request request) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class GetActions
         {
-            public Task<ActionResult<object>> PeopleGet(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PeopleGet(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PeopleFind(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PeopleFind(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PeopleFetch(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PeopleFetch(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PeopleRead(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PeopleRead(Request request) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class PostActions
         {
-            public Task<ActionResult<object>> PersonPost(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonPost(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PersonCreate(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonCreate(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PersonAdd(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonAdd(Request request) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class PutActions
         {
-            public Task<ActionResult<object>> PersonPut(Guid id, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonPut(Guid id, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PersonEdit(int id, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonEdit(int id, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PersonUpdate(long id, Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonUpdate(long id, Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PutPerson(Guid id, object asdf)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PutPerson(Guid id, object asdf) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> EditPerson(int id, object asdf)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> EditPerson(int id, object asdf) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> UpdatePerson(long id, object asdf)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> UpdatePerson(long id, object asdf) => throw new NotImplementedException();
         }
 
         [PublicAPI]
         public sealed class DeleteActions
         {
-            public Task<ActionResult<object>> PersonDelete(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonDelete(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PersonRemove(Request request)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonRemove(Request request) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PersonDel(int id)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonDel(int id) => throw new NotImplementedException();
 
-            public Task<ActionResult<object>> PersonRem(Guid id)
-            {
-                throw new NotImplementedException();
-            }
+            public Task<ActionResult<object>> PersonRem(Guid id) => throw new NotImplementedException();
         }
     }
 }

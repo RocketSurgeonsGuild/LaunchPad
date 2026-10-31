@@ -583,7 +583,7 @@ public record Request : IRequest<RocketModel>
         var result = await AddPatchRocketModel(modelType, propertyTracking)
                           .AddSources(
                                $$""""
-                               public {{(modelType == RocketModelType.Class ? "class" : "record")}} Request : IRequest<RocketModel>
+                               public {{( modelType == RocketModelType.Class ? "class" : "record" )}} Request : IRequest<RocketModel>
                                {
                                    public Guid Id { get; init; }
                                    public string SerialNumber { get; set; } = null!;

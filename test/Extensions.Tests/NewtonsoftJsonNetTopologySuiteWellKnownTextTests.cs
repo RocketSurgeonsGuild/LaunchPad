@@ -6,15 +6,9 @@ namespace Extensions.Tests;
 
 public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
-    private static T DeserializeObject<T>(string geom, JsonSerializerSettings settings)
-    {
-        return JsonConvert.DeserializeObject<ValueOf<T>>("{\"value\":\"" + geom + "\"}", settings)!.Value;
-    }
+    private static T DeserializeObject<T>(string geom, JsonSerializerSettings settings) => JsonConvert.DeserializeObject<ValueOf<T>>("{\"value\":\"" + geom + "\"}", settings)!.Value;
 
-    private static string SerializeObject<T>(T geom, JsonSerializerSettings settings)
-    {
-        return JsonConvert.SerializeObject(geom, settings).Trim('"');
-    }
+    private static string SerializeObject<T>(T geom, JsonSerializerSettings settings) => JsonConvert.SerializeObject(geom, settings).Trim('"');
 
     private readonly JsonSerializerSettings _settings = new JsonSerializerSettings().ConfigureWellKnownTextForLaunchPad(null);
 
@@ -39,12 +33,11 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
         var value = DeserializeObject<LineString>(geom, _settings);
         value.ShouldBe(
             new LineString(
-                new[]
-                {
+                [
                     new Coordinate(30, 10),
                     new Coordinate(10, 30),
                     new Coordinate(40, 40),
-                }
+                ]
             )
         );
         SerializeObject(value, _settings).ShouldBe(geom);
@@ -58,10 +51,9 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
         value.ShouldBe(
             new Polygon(
                 new LinearRing(
-                    new[]
-                    {
+                    [
                         new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
-                    }
+                    ]
                 )
             )
         );
@@ -75,13 +67,12 @@ public class NewtonsoftJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
         var value = DeserializeObject<MultiPoint>(geom, _settings);
         value.ShouldBe(
             new MultiPoint(
-                new[]
-                {
+                [
                     new Point(10, 40),
                     new Point(40, 30),
                     new Point(20, 20),
                     new Point(30, 10)
-                }
+                ]
             )
         );
         SerializeObject(value, _settings).ShouldBe(geom);

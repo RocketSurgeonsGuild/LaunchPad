@@ -248,7 +248,7 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
     }
 
     public SerilogDestructuringTests() : base(
-        new (
+        new(
             LogEventLevel.Information,
             configureLogger: (_, configuration) => configuration
                                                   .Destructure.NewtonsoftJsonTypes()
