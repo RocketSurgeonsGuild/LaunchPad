@@ -15,9 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-// LaunchPad.Hosting still registers the health checks and the Serilog request logging services with conventions that Dovetail does not run,
-// until its Hosting joints replace them (RocketSurgeonsGuild/LaunchPad#3058)
-builder.Services.AddHealthChecks();
+// LaunchPad.Hosting still registers the Serilog request logging services with a convention that Dovetail does not run,
+// until its Serilog joint replaces it (RocketSurgeonsGuild/LaunchPad#3062)
 builder.Services.AddSerilog(logger => logger.WriteTo.Console());
 
 var app = await builder.ConfigureDovetail();

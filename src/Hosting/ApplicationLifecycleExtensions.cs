@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Rocket.Surgery.LaunchPad.Hosting;
@@ -18,7 +18,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStarted<T>(this T builder, Action<IServiceProvider> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(
+        builder.Services.AddLifecycleRegistration(
             new ApplicationLifecycleRegistration(
                 nameof(IHostedLifecycleService.StartedAsync),
                 (provider, _) =>
@@ -40,7 +40,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStarted<T>(this T builder, Func<IServiceProvider, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartedAsync), (provider, _) => action(provider)));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartedAsync), (provider, _) => action(provider)));
         return builder;
     }
 
@@ -53,7 +53,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStarted<T>(this T builder, Func<IServiceProvider, CancellationToken, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartedAsync), action));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartedAsync), action));
         return builder;
     }
 
@@ -66,7 +66,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStarting<T>(this T builder, Action<IServiceProvider> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(
+        builder.Services.AddLifecycleRegistration(
             new ApplicationLifecycleRegistration(
                 nameof(IHostedLifecycleService.StartingAsync),
                 (provider, _) =>
@@ -88,7 +88,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStarting<T>(this T builder, Func<IServiceProvider, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartingAsync), (provider, _) => action(provider)));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartingAsync), (provider, _) => action(provider)));
         return builder;
     }
 
@@ -101,7 +101,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStarting<T>(this T builder, Func<IServiceProvider, CancellationToken, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartingAsync), action));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StartingAsync), action));
         return builder;
     }
 
@@ -114,7 +114,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStopping<T>(this T builder, Action<IServiceProvider> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(
+        builder.Services.AddLifecycleRegistration(
             new ApplicationLifecycleRegistration(
                 nameof(IHostedLifecycleService.StoppingAsync),
                 (provider, _) =>
@@ -136,7 +136,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStopping<T>(this T builder, Func<IServiceProvider, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppingAsync), (provider, _) => action(provider)));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppingAsync), (provider, _) => action(provider)));
         return builder;
     }
 
@@ -149,7 +149,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStopping<T>(this T builder, Func<IServiceProvider, CancellationToken, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppingAsync), action));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppingAsync), action));
         return builder;
     }
 
@@ -162,7 +162,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStopped<T>(this T builder, Action<IServiceProvider> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(
+        builder.Services.AddLifecycleRegistration(
             new ApplicationLifecycleRegistration(
                 nameof(IHostedLifecycleService.StoppedAsync),
                 (provider, _) =>
@@ -184,7 +184,7 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStopped<T>(this T builder, Func<IServiceProvider, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppedAsync), (provider, _) => action(provider)));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppedAsync), (provider, _) => action(provider)));
         return builder;
     }
 
@@ -197,7 +197,18 @@ public static class ApplicationLifecycleExtensions
     /// <returns></returns>
     public static T OnHostStopped<T>(this T builder, Func<IServiceProvider, CancellationToken, Task> action) where T : IHostApplicationBuilder
     {
-        builder.Services.AddSingleton(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppedAsync), action));
+        builder.Services.AddLifecycleRegistration(new ApplicationLifecycleRegistration(nameof(IHostedLifecycleService.StoppedAsync), action));
         return builder;
+    }
+
+    /// <summary>
+    ///     Adds a handler, and the hosted service that runs the handlers, which asking for a handler is enough to get: the service used to
+    ///     be added by a convention that Dovetail does not run. <c>AddHostedService</c> adds the service once however many handlers there
+    ///     are, and however many times a host adds it itself.
+    /// </summary>
+    private static void AddLifecycleRegistration(this IServiceCollection services, ApplicationLifecycleRegistration registration)
+    {
+        services.AddHostedService<ApplicationLifecycleService>();
+        services.AddSingleton(registration);
     }
 }

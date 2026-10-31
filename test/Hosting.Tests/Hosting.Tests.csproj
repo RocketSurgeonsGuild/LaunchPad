@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <!--
+            The tests pack Rocket.Surgery.LaunchPad.Hosting and build throwaway applications against the package, so the project references
+            nothing of LaunchPad itself. It takes the Dovetail wiring like every converted test project (RocketSurgeonsGuild/LaunchPad#3056
+            deletes the property).
+        -->
+        <UseDovetail>true</UseDovetail>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- the snapshot of the C# a template writes into an application is C# too, and not part of this project -->
+        <Compile Remove="snapshots/**" />
+        <None Include="snapshots/**" />
+    </ItemGroup>
+</Project>

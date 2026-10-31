@@ -1,0 +1,13 @@
+﻿{
+  Host: AspNetCore,
+  Transitive: {
+    Templates: [],
+    Output: HealthChecks:False
+  },
+  Direct: {
+    Templates: [
+      LaunchPadHealthChecksJoint
+    ],
+    Output: HealthChecks:True
+  }
+}

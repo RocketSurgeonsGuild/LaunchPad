@@ -1,8 +1,6 @@
 using System.Net;
 
 using FakeItEasy;
-
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Rocket.Surgery.LaunchPad.Hosting;
@@ -32,7 +30,6 @@ public class FoundationTests : WebAppFixtureTest
         builder.OnHostStarting(onStarting);
         builder.OnHostStopped(onStopped);
         builder.OnHostStopping(onStopping);
-        builder.Services.AddHostedService<ApplicationLifecycleService>();
 
         var app = builder.Build();
         await app.StartAsync(TestContext.CancellationToken);
