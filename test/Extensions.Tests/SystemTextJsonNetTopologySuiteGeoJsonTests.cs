@@ -61,27 +61,6 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
 
    .ShouldBe(
         new MultiPoint(
-
-<<<<<<< TODO: Unmerged change from project 'Extensions.Tests(net11.0)', Before:
-                    new[]
-                    {
-                        new Point(10, 40),
-                        new Point(40, 30),
-                        new Point(20, 20),
-                        new Point(30, 10)
-                    }
-                )
-            );
-=======
-            [
-                new Point(10, 40),
-                        new Point(40, 30),
-                        new Point(20, 20),
-                        new Point(30, 10)
-            ]
-        )
-    );
->>>>>>> After
             [
                         new Point(10, 40),
                         new Point(40, 30),

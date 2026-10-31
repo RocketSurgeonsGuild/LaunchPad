@@ -33,25 +33,6 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
         var value = DeserializeObject<LineString>(geom, _settings);
         value.ShouldBe(
              new LineString(
-
-<<<<<<< TODO: Unmerged change from project 'Extensions.Tests(net11.0)', Before:
-                            new[]
-                            {
-                                new Coordinate(30, 10),
-                                new Coordinate(10, 30),
-                                new Coordinate(40, 40),
-                            }
-                        )
-                    );
-=======
-                 [
-                     new Coordinate(30, 10),
-                                new Coordinate(10, 30),
-                                new Coordinate(40, 40),
-                 ]
-             )
-         );
->>>>>>> After
                  [
                                 new Coordinate(30, 10),
                                 new Coordinate(10, 30),
@@ -70,23 +51,6 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
         value.ShouldBe(
              new Polygon(
                  new LinearRing(
-
-<<<<<<< TODO: Unmerged change from project 'Extensions.Tests(net11.0)', Before:
-                                new[]
-                                {
-                                    new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
-                                }
-                            )
-                        )
-                    );
-=======
-                     [
-                         new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
-                     ]
-                 )
-             )
-         );
->>>>>>> After
                      [
                                     new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
                      ]
@@ -103,27 +67,6 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
         var value = DeserializeObject<MultiPoint>(geom, _settings);
         value.ShouldBe(
              new MultiPoint(
-
-<<<<<<< TODO: Unmerged change from project 'Extensions.Tests(net11.0)', Before:
-                            new[]
-                            {
-                                new Point(10, 40),
-                                new Point(40, 30),
-                                new Point(20, 20),
-                                new Point(30, 10)
-                            }
-                        )
-                    );
-=======
-                 [
-                     new Point(10, 40),
-                                new Point(40, 30),
-                                new Point(20, 20),
-                                new Point(30, 10)
-                 ]
-             )
-         );
->>>>>>> After
                  [
                                 new Point(10, 40),
                                 new Point(40, 30),
