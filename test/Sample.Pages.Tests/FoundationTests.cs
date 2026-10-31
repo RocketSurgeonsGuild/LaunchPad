@@ -32,7 +32,6 @@ public class FoundationTests : WebAppFixtureTest
         builder.OnHostStarting(onStarting);
         builder.OnHostStopped(onStopped);
         builder.OnHostStopping(onStopping);
-        builder.Services.AddHostedService<ApplicationLifecycleService>();
 
         var app = builder.Build();
         await app.StartAsync(TestContext.CancellationToken);
