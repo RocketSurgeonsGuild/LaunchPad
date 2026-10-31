@@ -1,44 +1,37 @@
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Primitives;
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     ValidationConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     Applies the existing System.Text.Json options to the MVC and the HTTP JSON options.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
-/// <seealso cref="IServiceConvention" />
-/// <remarks>
-///     Create a new SystemJsonTextConvention
-/// </remarks>
-/// <param name="options"></param>
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
-[ExportConvention]
+[DovetailExport]
 [SuppressMessage(
     "Trimming",
     "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code",
     Justification = "Mvc pieces are not specifically added, and problem writers are used by other apis"
 )]
-[AfterConvention<AspNetCoreConvention>]
-[ConventionCategory(ConventionCategory.Application)]
-public class SystemJsonTextConvention(FoundationOptions? options = null) : IServiceConvention
+[AfterJoint<AspNetCoreJoint>]
+[DovetailCategory(DovetailCategory.Application)]
+public class SystemJsonTextJoint : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
     /// <param name="context">The context.</param>
-    /// <param name="configuration"></param>
-    /// <param name="services"></param>
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    /// <param name="services">The service collection.</param>
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
 
@@ -49,6 +42,4 @@ public class SystemJsonTextConvention(FoundationOptions? options = null) : IServ
            .AddOptions<HttpJsonOptions>()
            .Configure<IServiceProvider>((options, provider) => ExistingValueOptions.Apply(provider, options.SerializerOptions, Options.DefaultName));
     }
-
-    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

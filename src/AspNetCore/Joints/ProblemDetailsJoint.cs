@@ -1,39 +1,38 @@
 using FluentValidation;
 using FluentValidation.Results;
 
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using Rocket.Surgery.LaunchPad.Primitives;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     ProblemDetailsConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     Registers problem details and the exception handler status codes for the LaunchPad exceptions.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
-/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
-[ExportConvention]
-[AfterConvention<AspNetCoreConvention>]
-[ConventionCategory(ConventionCategory.Application)]
+[DovetailExport]
+[AfterJoint<AspNetCoreJoint>]
+[DovetailCategory(DovetailCategory.Application)]
 [SuppressMessage(
     "Trimming",
     "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code",
     Justification = "Mvc pieces are not specifically added, and problem writers are used by other apis"
 )]
-public class ProblemDetailsConvention : IServiceConvention
+public class ProblemDetailsJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.AddProblemDetails();
         services.AddExceptionHandler(

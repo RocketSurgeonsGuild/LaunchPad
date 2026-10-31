@@ -1,24 +1,24 @@
-﻿using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
+
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
-namespace Rocket.Surgery.LaunchPad.Grpc.Conventions;
+namespace Rocket.Surgery.LaunchPad.Grpc.Joints;
 
 /// <summary>
-///     ProblemDetailsConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     Registers gRPC with the LaunchPad exception interceptors and message validation.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
-/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Application)]
-public class GrpcConvention : IServiceConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Application)]
+public class GrpcJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         services
            .AddGrpcValidation()
