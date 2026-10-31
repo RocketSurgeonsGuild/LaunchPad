@@ -1,0 +1,7 @@
+﻿{
+  Host: WebAssembly,
+  Templates: [
+    LaunchPadBrowserConsoleLoggingJoint,
+    LaunchPadWebAssemblyEnvironmentLoggingJoint
+  ]
+}

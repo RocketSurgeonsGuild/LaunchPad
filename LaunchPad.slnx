@@ -98,7 +98,6 @@
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
     <Project Path="src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
     <Project Path="src/Telemetry/Rocket.Surgery.LaunchPad.Telemetry.csproj" />
-    <Project Path="src/WebAssembly.Hosting/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.csproj" />
   </Folder>
   <Folder Name="/test/">
     <File Path="test/.editorconfig" />
