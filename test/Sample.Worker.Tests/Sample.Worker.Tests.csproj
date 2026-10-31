@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\sample\Sample.Worker\Sample.Worker.csproj" />
-    <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
+    <ProjectReference Include="..\TestSupport\TestSupport.csproj" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

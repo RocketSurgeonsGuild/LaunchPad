@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <!-- Test support for this repository only: nothing in here ships to NuGet, and it is a library, not a test project. -->
+        <IsPackable>false</IsPackable>
+        <IsTestSupportProject>true</IsTestSupportProject>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- fake time -->
+        <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+        <PackageReference Include="Microsoft.Reactive.Testing" />
+        <PackageReference Include="NodaTime.Testing" />
+        <PackageReference Include="Shouldly" />
+        <PackageReference Include="Rocket.Surgery.Conventions.Abstractions" />
+        <!-- web application fixtures -->
+        <PackageReference Include="Alba" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+        <PackageReference Include="Rocket.Surgery.Hosting" />
+    </ItemGroup>
+    <ItemGroup>
+        <!--
+            Only Primitives: FakeTimeConvention orders itself before TimeConvention. The web fixtures need no LaunchPad project (the old
+            AspNetCore.Testing package referenced AspNetCore and Serilog, but every web sample test already gets those through its sample
+            and Primitives). Referencing AspNetCore here would also hand its conventions to the six projects that only use fake time.
+        -->
+        <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+    </ItemGroup>
+</Project>

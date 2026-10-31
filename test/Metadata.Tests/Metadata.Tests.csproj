@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     </PropertyGroup>
@@ -6,6 +6,6 @@
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\..\src\Metadata\Rocket.Surgery.LaunchPad.Metadata.csproj" />
-        <ProjectReference Include="..\..\src\Testing\Rocket.Surgery.LaunchPad.Testing.csproj" />
+        <ProjectReference Include="..\TestSupport\TestSupport.csproj" />
     </ItemGroup>
 </Project>
