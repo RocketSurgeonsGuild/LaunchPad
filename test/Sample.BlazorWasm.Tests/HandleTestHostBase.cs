@@ -5,24 +5,25 @@ using Rocket.Surgery.Conventions;
 
 using Serilog.Events;
 
+using TUnit.Core.Interfaces;
+
 namespace Sample.BlazorWasm.Tests;
 
-public abstract class HandleTestHostBase
-    (ITestContextAccessor outputHelper, LogEventLevel logLevel = LogEventLevel.Information) : AutoFakeTest<XUnitTestContext>(new XUnitTestContext(outputHelper, logLevel)), IAsyncLifetime
+public abstract class HandleTestHostBase(LogEventLevel logLevel = LogEventLevel.Information) : AutoFakeTest<TestRecord>(TestRecord.Create(logLevel)), IAsyncInitializer
 {
-    public async ValueTask InitializeAsync()
+    public async Task InitializeAsync()
     {
         _hostBuilder =
             await ConventionContext.FromAsync(
                 ConventionContextBuilder
                    .Create(Imports.Instance)
-                   .UseLogger(Logger)
+                   .UseLogger(Logger),
+                TestContext.CancellationToken
             );
         ExcludeSourceContext(nameof(WebAssemblyHostBuilder));
         ExcludeSourceContext(nameof(WebAssemblyHost));
         Populate(await new ServiceCollection().ApplyConventionsAsync(_hostBuilder));
     }
 
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     private IConventionContext _hostBuilder = null!;
 }
