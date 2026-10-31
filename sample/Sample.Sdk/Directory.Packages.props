@@ -1,0 +1,5 @@
+<!--
+    Stops MSBuild from walking up into the repository's Directory.Packages.props, which turns on central package management. The packages
+    the SDK adds carry their own versions, as they do in an application outside this repository.
+-->
+<Project />

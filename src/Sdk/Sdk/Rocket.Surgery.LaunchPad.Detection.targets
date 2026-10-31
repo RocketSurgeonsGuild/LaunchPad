@@ -1,0 +1,35 @@
+<Project>
+    <!--
+        Registered through CustomAfterMicrosoftCommonTargets after Joinery.Dovetail.HostDetection.targets (see Sdk.props), so the whole
+        project has been evaluated and Dovetail has declared the host it found, and still during evaluation, so NuGet restores the packages
+        added here.
+
+        Each package is added on its own condition and defaults on; LaunchPadEnable<Tech> set to false opts a project out. Detection reads
+        only what the project declares itself: the host model, and its own PackageReference items.
+          - Rocket.Surgery.LaunchPad.Hosting: any project Dovetail found a host model for (a DovetailHost item). The package is a direct
+            reference of the project, which is what its templates require.
+    -->
+    <PropertyGroup>
+        <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
+    </PropertyGroup>
+    <ItemGroup>
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.Hosting"
+            Version="$(LaunchPadHostingVersion)"
+            Condition="'$(LaunchPadEnableHosting)' != 'false' and '@(DovetailHost)' != ''"
+        />
+    </ItemGroup>
+
+    <!--
+        Last: every LaunchPadSdkImplicitPackageReference above becomes a PackageReference, unless the project references the package itself.
+        Dovetail's SDK expands its own DovetailSdkImplicitPackageReference items before this file is imported, so LaunchPad keeps a list of
+        its own.
+    -->
+    <ItemGroup>
+        <PackageReference
+            Include="@(LaunchPadSdkImplicitPackageReference)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', '%(LaunchPadSdkImplicitPackageReference.Identity)')) != 'true'"
+            IsImplicitlyDefined="true"
+        />
+    </ItemGroup>
+</Project>

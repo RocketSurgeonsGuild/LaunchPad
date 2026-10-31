@@ -1,0 +1,4 @@
+﻿{
+  Host: GenericHost,
+  Output: HealthChecks:True
+}

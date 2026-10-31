@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <UseDovetail>true</UseDovetail>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
+        <ProjectReference Include="..\..\src\NodaTime.Mapping\Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
+    </ItemGroup>
+</Project>

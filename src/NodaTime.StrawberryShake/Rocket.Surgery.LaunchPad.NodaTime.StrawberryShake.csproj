@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <IsTrimmable>false</IsTrimmable>
+        <DovetailExportClassName>NodaTimeStrawberryShakeExports</DovetailExportClassName>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="StrawberryShake.Core" />
+        <PackageReference Include="Joinery.Dovetail" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+        <ProjectReference Include="..\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,15 @@
+﻿{
+  Evaluation: {
+    Hosts: [
+      HostApplication
+    ],
+    PackageReferences: [
+      Joinery.Dovetail {DovetailVersion} (SDK),
+      Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+      Microsoft.Extensions.Diagnostics.HealthChecks,
+      Microsoft.Extensions.Hosting,
+      Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
+    ]
+  },
+  Output: HealthChecks:True
+}

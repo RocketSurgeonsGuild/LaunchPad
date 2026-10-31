@@ -22,6 +22,8 @@
             Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
         <ProjectReference
             Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
+        <ProjectReference
+            Include="..\..\src\NodaTime.StrawberryShake\Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
         <Using Include="StrawberryShake" />
     </ItemGroup>
     <!--

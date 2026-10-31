@@ -9,6 +9,9 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
         <PackageReference Include="System.Net.Http.Json" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />
+        <!-- with LaunchPad.Hosting below, these turn on its browser templates: browser console logging and the host environment enrichment -->
+        <PackageReference Include="Joinery.Dovetail.Serilog" />
+        <PackageReference Include="Serilog.Sinks.BrowserConsole" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,8 +25,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
-        <ProjectReference Include="..\..\src\AspNetCore.Blazor\Rocket.Surgery.LaunchPad.AspNetCore.Blazor.csproj" />
+        <ProjectReference Include="..\..\src\FluentValidation.Blazor\Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Sample.Restful.Client\Sample.Restful.Client.csproj" />
     </ItemGroup>

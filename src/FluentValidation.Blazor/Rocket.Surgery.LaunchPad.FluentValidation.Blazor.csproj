@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <!--
+            FluentValidator keeps the Rocket.Surgery.LaunchPad.AspNetCore.Blazor namespace it had in AspNetCore.Blazor. A namespace of
+            Rocket.Surgery.LaunchPad.FluentValidation would shadow FluentValidation.* in LaunchPad code.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore.Blazor</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+    </ItemGroup>
+</Project>
