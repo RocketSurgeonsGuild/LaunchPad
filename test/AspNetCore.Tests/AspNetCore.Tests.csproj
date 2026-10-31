@@ -7,5 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj"
       IncludeAssets="all" />
+    <!-- The AspNetCoreSpatialJoint is the only thing in this project. Remove the reference and the test when the project is deleted (LaunchPad#3071). -->
+    <ProjectReference Include="..\..\src\AspNetCore.Spatial\Rocket.Surgery.LaunchPad.AspNetCore.Spatial.csproj"
+      IncludeAssets="all" />
   </ItemGroup>
 </Project>
