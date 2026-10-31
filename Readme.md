@@ -41,7 +41,6 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson | [![nuget-version-qmfh1x0xpofq-badge]![nuget-downloads-qmfh1x0xpofq-badge]][nuget-qmfh1x0xpofq] |
 | Rocket.Surgery.LaunchPad.StrawberryShake | [![nuget-version-l/j2wtrmeplq-badge]![nuget-downloads-l/j2wtrmeplq-badge]][nuget-l/j2wtrmeplq] |
 | Rocket.Surgery.LaunchPad.StrawberryShake.Spatial | [![nuget-version-zeenxt+snrtq-badge]![nuget-downloads-zeenxt+snrtq-badge]][nuget-zeenxt+snrtq] |
-| Rocket.Surgery.LaunchPad.WebAssembly.Hosting | [![nuget-version-yamaca3l39wa-badge]![nuget-downloads-yamaca3l39wa-badge]][nuget-yamaca3l39wa] |
 <!-- nuget packages -->
 
 # Whats next?
@@ -121,9 +120,6 @@ TBD
 [nuget-zeenxt+snrtq]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial/
 [nuget-version-zeenxt+snrtq-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-zeenxt+snrtq-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-yamaca3l39wa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.WebAssembly.Hosting/
-[nuget-version-yamaca3l39wa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-yamaca3l39wa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 <!-- generated references -->
 
 <!-- nuke-data

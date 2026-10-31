@@ -1,0 +1,7 @@
+﻿{
+  Serilog: true,
+  BrowserConsole: false,
+  Templates: [
+    LaunchPadWebAssemblyEnvironmentLoggingJoint
+  ]
+}

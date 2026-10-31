@@ -36,6 +36,16 @@ internal sealed class AppProject
 {
     public const string HealthChecks = "Microsoft.Extensions.Diagnostics.HealthChecks";
 
+    public const string DovetailSerilog = "Joinery.Dovetail.Serilog";
+
+    public const string BrowserConsole = "Serilog.Sinks.BrowserConsole";
+
+    public const string ConsoleSink = "Serilog.Sinks.Console";
+
+    public const string HostingAbstractions = "Microsoft.Extensions.Hosting.Abstractions";
+
+    public const string BannedApiAnalyzers = "Microsoft.CodeAnalysis.BannedApiAnalyzers";
+
     private const string RootNamespace = "Throwaway";
 
     private AppProject(HostModel host, bool versioned)
@@ -89,6 +99,18 @@ internal sealed class AppProject
     }
 
     /// <summary>
+    ///     Sets an MSBuild property.
+    /// </summary>
+    /// <param name="name">The name of the property.</param>
+    /// <param name="value">The value.</param>
+    /// <returns>This project.</returns>
+    public AppProject AddProperty(string name, string value)
+    {
+        _properties.Add((name, value));
+        return this;
+    }
+
+    /// <summary>
     ///     References a project.
     /// </summary>
     /// <param name="path">The path of the project file.</param>
@@ -134,8 +156,9 @@ internal sealed class AppProject
                 """ + RegisteredFunction,
             // a library has nothing to run
             HostModel.None => "public static class Library;",
-            // a WebAssembly host cannot run on the machine the tests do
-            _ => """System.Console.WriteLine("hello");""",
+            // a WebAssembly host cannot run on the machine the tests do, so its application is only built
+            HostModel.WebAssembly => """System.Console.WriteLine("hello");""",
+            _ => throw new ArgumentOutOfRangeException(nameof(_host), _host, null),
         }; private set;
     }
 
@@ -161,6 +184,11 @@ internal sealed class AppProject
         // the namespace of the generated ConfigureDovetail entry points, which Program.cs imports
         xml.AppendLine($"    <RootNamespace>{RootNamespace}</RootNamespace>");
         if (_host != HostModel.None) xml.AppendLine("    <OutputType>Exe</OutputType>");
+        foreach (var (name, value) in _properties)
+        {
+            xml.AppendLine($"    <{name}>{value}</{name}>");
+        }
+
         xml.AppendLine("  </PropertyGroup>");
         xml.AppendLine("  <ItemGroup>");
         foreach (var (id, version) in _packages)
@@ -213,11 +241,14 @@ internal sealed class AppProject
                       HostBuilderName="builder"
                       HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost" />
                 """,
-            _ => null,
+            // a library declares no host
+            HostModel.None => null,
+            _ => throw new ArgumentOutOfRangeException(nameof(_host), _host, null),
         };
 
     private readonly HostModel _host;
     private readonly List<(string Id, string? Version)> _packages = [];
     private readonly List<string> _projectReferences = [];
+    private readonly List<(string Name, string Value)> _properties = [];
     private readonly bool _versioned;
 }
