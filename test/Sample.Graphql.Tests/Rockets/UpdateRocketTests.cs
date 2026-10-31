@@ -1,35 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
+
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixture rocketSurgeryWebAppFixture)
-    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testContext, rocketSurgeryWebAppFixture)
+public class UpdateRocketTests : GraphQlWebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Update_A_Rocket()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider
-                          .WithScoped<RocketDbContext>()
-                          .Invoke(
-                               async z =>
-                               {
-                                   var rocket = new ReadyRocket
-                                   {
-                                       Type = CoreRocketType.Falcon9,
-                                       SerialNumber = "12345678901234",
-                                   };
-                                   z.Add(rocket);
-
-                                   await z.SaveChangesAsync();
-                                   return rocket;
-                               }
-                           );
+        var rocket = await SeedRocketAsync(CoreRocketType.Falcon9);
 
         var u = await client.UpdateRocket.ExecuteAsync(
             new()
@@ -43,27 +28,12 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         await Verify(u);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Patch_A_Rocket_SerialNumber()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider
-                          .WithScoped<RocketDbContext>()
-                          .Invoke(
-                               async z =>
-                               {
-                                   var rocket = new ReadyRocket
-                                   {
-                                       Type = CoreRocketType.AtlasV,
-                                       SerialNumber = "12345678901234",
-                                   };
-                                   z.Add(rocket);
-
-                                   await z.SaveChangesAsync();
-                                   return rocket;
-                               }
-                           );
+        var rocket = await SeedRocketAsync(CoreRocketType.AtlasV);
 
         var u = await client.PatchRocket.ExecuteAsync(
             new()
@@ -78,29 +48,12 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         await Verify(u);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Fail_To_Patch_A_Null_Rocket_SerialNumber()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider
-                          .WithScoped<RocketDbContext>()
-                          .Invoke(
-                               async (z, ct) =>
-                               {
-                                   var rocket = new ReadyRocket
-                                   {
-                                       Type = CoreRocketType.AtlasV,
-                                       SerialNumber = "12345678901234",
-                                   };
-                                   z.Add(rocket);
-
-                                   await z.SaveChangesAsync(ct);
-                                   return rocket;
-                               },
-                               cancellationToken: TestContext.CancellationToken
-                           );
-
+        var rocket = await SeedRocketAsync(CoreRocketType.AtlasV);
 
         var u = await client.PatchRocket.ExecuteAsync(
             new()
@@ -113,28 +66,12 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         await Verify(u);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Patch_A_Rocket_Type()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
 
-        var rocket = await ServiceProvider
-                          .WithScoped<RocketDbContext>()
-                          .Invoke(
-                               async (z, ct) =>
-                               {
-                                   var rocket = new ReadyRocket
-                                   {
-                                       Type = CoreRocketType.AtlasV,
-                                       SerialNumber = "12345678901234",
-                                   };
-                                   z.Add(rocket);
-
-                                   await z.SaveChangesAsync(ct);
-                                   return rocket;
-                               },
-                               TestContext.CancellationToken
-                           );
+        var rocket = await SeedRocketAsync(CoreRocketType.AtlasV);
 
         var u = await client.PatchRocket.ExecuteAsync(
             new()
@@ -148,8 +85,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         await Verify(u);
     }
 
-    [Theory]
-    [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
+    [Test]
+    [MethodDataSource(nameof(RequiredFieldData))]
     public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
@@ -159,23 +96,24 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         await Verify(response.Errors).UseParameters(request.Id);
     }
 
-    private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>
+    public static IEnumerable<Func<(EditRocketRequest Request, string PropertyName)>> RequiredFieldData()
     {
-        public ShouldValidateUsersRequiredFieldData()
+        // The ids come from one seeded faker, so the rows are built in order up front: the snapshot names contain them.
+        var faker = new Faker
         {
-            var faker = new Faker
-            {
-                Random = new(1234567),
-            };
-            Add(
+            Random = new(1234567),
+        };
+        var rows = new (EditRocketRequest Request, string PropertyName)[]
+        {
+            (
                 new()
                 {
                     Id = faker.Random.Guid(),
                     Type = RocketType.Falcon9,
                 },
                 nameof(EditRocketRequest.SerialNumber)
-            );
-            Add(
+            ),
+            (
                 new()
                 {
                     Id = faker.Random.Guid(),
@@ -183,8 +121,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
                     Type = RocketType.FalconHeavy,
                 },
                 nameof(EditRocketRequest.SerialNumber)
-            );
-            Add(
+            ),
+            (
                 new()
                 {
                     Id = faker.Random.Guid(),
@@ -192,15 +130,35 @@ public class UpdateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
                     Type = RocketType.AtlasV,
                 },
                 nameof(EditRocketRequest.SerialNumber)
-            );
-            Add(
+            ),
+            (
                 new()
                 {
                     Id = faker.Random.Guid(),
                     SerialNumber = faker.Random.String2(11),
                 },
                 nameof(EditRocketRequest.Type)
-            );
+            ),
+        };
+
+        foreach (var row in rows)
+        {
+            yield return () => row;
         }
+    }
+
+    private async Task<ReadyRocket> SeedRocketAsync(CoreRocketType type)
+    {
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+        var rocket = new ReadyRocket
+        {
+            Type = type,
+            SerialNumber = "12345678901234",
+        };
+        z.Add(rocket);
+
+        await z.SaveChangesAsync(TestContext.CancellationToken);
+        return rocket;
     }
 }

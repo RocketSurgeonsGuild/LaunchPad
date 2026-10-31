@@ -1,4 +1,4 @@
-﻿using Alba;
+using Alba;
 using Microsoft.Extensions.DependencyInjection;
 using NetTopologySuite.IO;
 using NodaTime;
@@ -8,9 +8,9 @@ using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
+public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_Instant()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -35,7 +35,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_LocalDate()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -61,7 +61,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_LocalTime()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -86,7 +86,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_LocalDateTime()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -111,7 +111,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_OffsetDateTime()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -136,7 +136,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_OffsetTime()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -162,7 +162,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
     }
 
     // TBD
-//    [Fact]
+//    [Test]
 //    public async Task Should_Roundtrip_ZonedDateTime()
 //    {
 //        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
@@ -182,7 +182,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
 //        await Verify(result);
 //    }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_Period()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -206,7 +206,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_Duration()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -230,7 +230,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_Offset()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -254,7 +254,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Roundtrip_IsoDayOfWeek()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -276,13 +276,13 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Theory]
-    [InlineData("POINT(3 4)")]
-    [InlineData("LINESTRING(5 6, 7 8)")]
-    [InlineData("POLYGON((9 10, 11 12, 13 14, 9 10))")]
-    [InlineData("MULTIPOINT((15 16), (17 18))")]
-    [InlineData("MULTILINESTRING((19 20, 21 22), (23 24, 25 26))")]
-    [InlineData("MULTIPOLYGON(((27 28, 29 30, 31 32, 27 28)), ((33 34, 35 36, 37 38, 33 34)))")]
+    [Test]
+    [Arguments("POINT(3 4)")]
+    [Arguments("LINESTRING(5 6, 7 8)")]
+    [Arguments("POLYGON((9 10, 11 12, 13 14, 9 10))")]
+    [Arguments("MULTIPOINT((15 16), (17 18))")]
+    [Arguments("MULTILINESTRING((19 20, 21 22), (23 24, 25 26))")]
+    [Arguments("MULTIPOLYGON(((27 28, 29 30, 31 32, 27 28)), ((33 34, 35 36, 37 38, 33 34)))")]
     public async Task Should_Roundtrip_Geometry(string wkt)
     {
         await using var host = await AlbaHost.For<Program>(
@@ -306,7 +306,7 @@ public class StrawberryShakeSerializerTests(ITestContextAccessor testContext) : 
     }
 
 
-//    [Fact]
+//    [Test]
 //    public async Task Should_Roundtrip_Point()
 //    {
 //        await using var host = await AlbaHost.For<Program>(

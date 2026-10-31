@@ -1,15 +1,19 @@
-﻿using System.Net;
+using System.Net;
+
 using Alba;
+
 using HotChocolate.Execution;
+
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
+
 using Sample.Core.Domain;
 using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests;
 
-public class FoundationTests(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
+public class FoundationTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
-    [Fact]
+    [Test]
     public async Task Starts()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -21,7 +25,8 @@ public class FoundationTests(ITestContextAccessor testContext) : LoggerTest<XUni
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
-    [Fact(Skip = "snapshots not consistent atm")]
+    [Test]
+    [Skip("snapshots not consistent atm")]
     public async Task GraphqlSchema()
     {
         await using var host = await AlbaHost.For<Program>(

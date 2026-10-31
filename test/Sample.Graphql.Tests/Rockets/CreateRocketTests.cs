@@ -1,13 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Graphql.Tests.Helpers;
+
 using Serilog.Events;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class CreateRocketTests(ITestContextAccessor testContext, GraphQlAppFixture rocketSurgeryWebAppFixture)
-    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(testContext, rocketSurgeryWebAppFixture, LogEventLevel.Information)
+public class CreateRocketTests() : GraphQlWebAppFixtureTest(LogEventLevel.Information)
 {
-    [Fact]
+    [Test]
     public async Task Should_Create_A_Rocket()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
@@ -24,7 +25,7 @@ public class CreateRocketTests(ITestContextAccessor testContext, GraphQlAppFixtu
         response.Data!.CreateRocket.Id.ShouldNotBe(Guid.Empty);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Throw_If_Rocket_Exists()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();

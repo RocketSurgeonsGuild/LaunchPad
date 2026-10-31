@@ -1,35 +1,35 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core;
 using Sample.Core.Domain;
+using Sample.Core.Models;
 using Sample.Graphql.Tests.Helpers;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class RemoveRocketsTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
-    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
+public class RemoveRocketsTests : GraphQlWebAppFixtureTest
 {
     private static readonly Faker Faker = new();
 
-    [Fact]
+    [Test]
     public async Task Should_Remove_Rocket()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
-        var id = await ServiceProvider.WithScoped<RocketDbContext>()
-                                      .Invoke(
-                                           async z =>
-                                           {
-                                               var faker = new RocketFaker();
-                                               var rocket = faker.Generate();
-                                               z.Add(rocket);
+        RocketId id;
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            var rocket = faker.Generate();
+            z.Add(rocket);
 
-                                               await z.SaveChangesAsync();
-                                               return rocket.Id;
-                                           }
-                                       );
+            await z.SaveChangesAsync(TestContext.CancellationToken);
+            id = rocket.Id;
+        }
 
         await client.DeleteRocket.ExecuteAsync(new DeleteRocketRequest { Id = id.Value }, TestContext.CancellationToken);
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.Rockets.ShouldBeEmpty());
+        await using var assertScope = ServiceProvider.CreateAsyncScope();
+        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.ShouldBeEmpty();
     }
 }

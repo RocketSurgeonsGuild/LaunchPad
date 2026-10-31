@@ -1,33 +1,33 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core.Domain;
+using Sample.Core.Models;
 using Sample.Graphql.Tests.Helpers;
+
 using CoreRocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Graphql.Tests.Rockets;
 
-public class GetRocketTests(ITestContextAccessor outputHelper, GraphQlAppFixture rocketSurgeryWebAppFixture)
-    : GraphQlWebAppFixtureTest<GraphQlAppFixture>(outputHelper, rocketSurgeryWebAppFixture)
+public class GetRocketTests : GraphQlWebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Get_A_Rocket()
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = CoreRocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
+        RocketId rocket;
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var seeded = new ReadyRocket
+            {
+                Type = CoreRocketType.Falcon9,
+                SerialNumber = "12345678901234"
+            };
+            z.Add(seeded);
 
-                                                   await z.SaveChangesAsync();
-                                                   return rocket.Id;
-                                               }
-                                           );
+            await z.SaveChangesAsync(TestContext.CancellationToken);
+            rocket = seeded.Id;
+        }
 
         var response = await client.GetRocket.ExecuteAsync(rocket.Value, cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
