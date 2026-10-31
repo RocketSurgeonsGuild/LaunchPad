@@ -70,7 +70,7 @@ internal sealed record PackedHosting(
                          ?.Elements(ns + "group")
                           .ToDictionary(
                                z => (string?)z.Attribute("targetFramework") ?? "any",
-                               z => (IReadOnlyList<string>)z.Elements(ns + "dependency").Select(d => (string)d.Attribute("id")!).Order(StringComparer.Ordinal).ToArray()
+                               z => (IReadOnlyList<string>)[.. z.Elements(ns + "dependency").Select(d => (string)d.Attribute("id")!).Order(StringComparer.Ordinal)]
                            )
                    ?? [];
         var files = archive

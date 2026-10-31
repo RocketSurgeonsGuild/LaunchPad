@@ -53,6 +53,12 @@ internal sealed class AppProject
             case HostModel.WebAssembly:
                 AddPackage("Microsoft.AspNetCore.Components.WebAssembly");
                 break;
+            case HostModel.None:
+                break;
+            case HostModel.AspNetCore:
+                break;
+            default:
+                break;
         }
     }
 
@@ -115,6 +121,7 @@ internal sealed class AppProject
                 """ + RegisteredFunction,
             // a library has nothing to run
             HostModel.None => "public static class Library;",
+            HostModel.WebAssembly => throw new NotImplementedException(),
             // a WebAssembly host cannot run on the machine the tests do
             _ => """System.Console.WriteLine("hello");""",
         };
@@ -193,6 +200,7 @@ internal sealed class AppProject
                       HostBuilderName="builder"
                       HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost" />
                 """,
+            HostModel.None => throw new NotImplementedException(),
             _ => null,
         };
 

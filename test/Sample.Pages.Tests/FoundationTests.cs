@@ -1,8 +1,6 @@
 using System.Net;
 
 using FakeItEasy;
-
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Rocket.Surgery.LaunchPad.Hosting;

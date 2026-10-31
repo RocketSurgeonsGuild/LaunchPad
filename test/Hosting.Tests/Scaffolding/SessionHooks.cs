@@ -12,6 +12,6 @@ internal sealed class BuildsInParallel : IParallelLimit
 
 internal static class SessionHooks
 {
-    [After(HookType.TestSession)]
+    [After(TestSession)]
     public static void CleanUp() => PackedHosting.Clean();
 }
