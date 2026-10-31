@@ -10,6 +10,7 @@
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Microsoft.Extensions.Configuration" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Logging" />
@@ -18,7 +19,6 @@
         <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
         <PackageReference Include="NodaTime" />
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" />
-        <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="Specular" />
         <PackageReference Include="System.Reactive" />
         <PackageReference Include="System.Reactive.Observable.Aliases" />
