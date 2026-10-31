@@ -6,6 +6,7 @@ using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 
+using CoreRocketType = Sample.Core.Domain.RocketType;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
@@ -25,7 +26,7 @@ public class UpdateRocketTests : WebAppFixtureTest
             var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
             rocket = new ReadyRocket
             {
-                Type = Core.Domain.RocketType.Falcon9,
+                Type = CoreRocketType.Falcon9,
                 SerialNumber = "12345678901234"
             };
             z.Add(rocket);

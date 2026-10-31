@@ -9,6 +9,7 @@ using Sample.Core.Models;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 
+using CoreRocketType = Sample.Core.Domain.RocketType;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
@@ -27,7 +28,7 @@ public class UpdateLaunchRecordTests : WebAppFixtureTest
             var rocket = new ReadyRocket
             {
                 Id = RocketId.New(),
-                Type = Core.Domain.RocketType.Falcon9,
+                Type = CoreRocketType.Falcon9,
                 SerialNumber = "12345678901234",
             };
             context.Add(rocket);

@@ -8,6 +8,7 @@ using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 
+using CoreRocketType = Sample.Core.Domain.RocketType;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
@@ -23,7 +24,7 @@ public class CreateLaunchRecordTests : WebAppFixtureTest
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var rocket = new ReadyRocket
         {
-            Type = Core.Domain.RocketType.Falcon9,
+            Type = CoreRocketType.Falcon9,
             SerialNumber = "12345678901234"
         };
         await using (var scope = ServiceProvider.CreateAsyncScope())
