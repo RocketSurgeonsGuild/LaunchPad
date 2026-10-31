@@ -100,10 +100,21 @@ internal sealed class AppProject
     }
 
     /// <summary>
+    ///     Replaces the <c>Program.cs</c> the host model gets by default.
+    /// </summary>
+    /// <param name="program">The text of <c>Program.cs</c>.</param>
+    /// <returns>This project.</returns>
+    public AppProject WithProgram(string program)
+    {
+        _program = program;
+        return this;
+    }
+
+    /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
     public string Program =>
-        _host switch
+        _program ?? _host switch
         {
             // The generated ConfigureDovetail entry point builds the host with the joints Dovetail discovered; whether the health checks
             // are among them is what the application reports. It looks the type up by name, as the application may not reference it.
@@ -204,6 +215,7 @@ internal sealed class AppProject
             _ => null,
         };
 
+    private string? _program;
     private readonly HostModel _host;
     private readonly List<(string Id, string? Version)> _packages = [];
     private readonly List<string> _projectReferences = [];
