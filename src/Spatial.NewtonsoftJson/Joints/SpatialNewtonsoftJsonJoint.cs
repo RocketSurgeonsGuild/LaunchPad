@@ -1,24 +1,23 @@
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 
-namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
+namespace Rocket.Surgery.LaunchPad.Spatial.Joints;
 
 /// <summary>
 ///     Adds support for spatial types into Newtonsoft Json
 /// </summary>
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Core)]
-public class SpatialNewtonsoftJsonConvention : IServiceConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Core)]
+public class SpatialNewtonsoftJsonJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.TryAddSingleton(_ => NtsGeometryServices.Instance.CreateGeometryFactory(4326));
         services
