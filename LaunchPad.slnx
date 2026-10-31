@@ -78,6 +78,7 @@
     <Project Path="src/AspNetCore.Spatial/Rocket.Surgery.LaunchPad.AspNetCore.Spatial.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
+    <Project Path="src/FluentValidation/Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
     <Project Path="src/Foundation.NewtonsoftJson/Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
     <Project Path="src/Foundation/Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <Project Path="src/Grpc/Rocket.Surgery.LaunchPad.Grpc.csproj" />
@@ -105,6 +106,7 @@
     <Project Path="test/AspNetCore.NewtonsoftJson.Tests/AspNetCore.NewtonsoftJson.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />
     <Project Path="test/Extensions.Tests/Extensions.Tests.csproj" />
+    <Project Path="test/FluentValidation.Tests/FluentValidation.Tests.csproj" />
     <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
     <Project Path="test/Grpc.Tests/Grpc.Tests.csproj" />
     <Project Path="test/Hosting.Tests/Hosting.Tests.csproj" />

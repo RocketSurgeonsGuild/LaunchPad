@@ -1,7 +1,6 @@
-using FluentValidation;
 using Serilog.Events;
 
-namespace Extensions.Tests.Validation;
+namespace FluentValidation.Tests.Validation;
 
 public class ValidatorFactoryTests() : AutoFakeTest<TestRecord>(TestRecord.Create(LogEventLevel.Information))
 {

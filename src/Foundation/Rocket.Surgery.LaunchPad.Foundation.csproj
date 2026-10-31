@@ -10,8 +10,6 @@
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="FluentValidation" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="MediatR" />
         <PackageReference Include="Specular" />

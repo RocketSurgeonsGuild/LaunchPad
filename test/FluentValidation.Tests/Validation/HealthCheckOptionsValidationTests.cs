@@ -1,7 +1,5 @@
 using DryIoc;
 
-using FluentValidation;
-
 using Joinery.Dovetail;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -11,38 +9,16 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 using TUnit.Core.Interfaces;
 
-namespace Extensions.Tests.Validation;
+namespace FluentValidation.Tests.Validation;
 
-public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
+public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
     [Test]
-    public async Task Should_Validate_Options_And_Throw()
+    public Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a
-                      .ShouldThrow<OptionsValidationException>()
-                      .Failures;
-        await Verify(failures);
-    }
-
-    [Test]
-    public void Should_Validate_Options_And_Pass()
-    {
-        var services = new ServiceCollection();
-        services
-           .AddOptions<Options>()
-           .Configure(
-                options =>
-                {
-                    options.Bool = true;
-                    options.Double = -50;
-                    options.Int = 50;
-                    options.String = "Hello";
-                }
-            );
-        Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.ShouldNotThrow();
+        a.ShouldThrow<OptionsValidationException>();
+        return Task.CompletedTask;
     }
 
     [Test]
@@ -62,9 +38,58 @@ public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Crea
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
+        a.ShouldThrow<OptionsValidationException>();
+    }
+
+    [Test]
+    public async Task Should_Validate_Options_And_Throw_After_Application_Has_Started()
+    {
+        var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
                       .ShouldThrow<OptionsValidationException>()
                       .Failures;
+        await Verify(failures);
+    }
+
+    [Test]
+    public void Should_Validate_Options_And_Pass_After_Application_Has_Started()
+    {
+        var services = new ServiceCollection();
+        services
+           .AddOptions<Options>()
+           .Configure(
+                options =>
+                {
+                    options.Bool = true;
+                    options.Double = -50;
+                    options.Int = 50;
+                    options.String = "Hello";
+                }
+            );
+        Populate(services);
+        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        a.ShouldNotThrow();
+    }
+
+    [Test]
+    public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds_After_Application_Has_Started()
+    {
+        var services = new ServiceCollection();
+        services
+           .AddOptions<Options>()
+           .Configure(
+                options =>
+                {
+                    options.Bool = false;
+                    options.Double = 50;
+                    options.Int = -50;
+                    options.String = "";
+                }
+            );
+        Populate(services);
+        var a = () => Container.Resolve<IOptions<Options>>().Value;
+        var failures = a
+                      .ShouldThrow<OptionsValidationException>().Failures;
         await Verify(failures);
     }
 
@@ -76,7 +101,7 @@ public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Crea
         public double Double { get; set; }
 
         [UsedImplicitly]
-        private class Validator : AbstractValidator<Options>
+        private sealed class Validator : AbstractValidator<Options>
         {
             public Validator()
             {
@@ -92,7 +117,12 @@ public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Crea
     {
         var builder = TestJoints
                      .CreateBuilder()
-                     .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = false });
+                     .Set(
+                          new FoundationOptions
+                          {
+                              RegisterValidationOptionsAsHealthChecks = true,
+                          }
+                      );
 
         var context = await DovetailContext.FromAsync(builder);
         Populate(await TestJoints.ApplyServicesAsync(context));

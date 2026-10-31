@@ -17,7 +17,7 @@ internal class CompositeValidatorDescriptor(IEnumerable<IValidator> validators) 
     {
         return validators
               .SelectMany(z => z.CreateDescriptor().GetMembersWithValidators())
-              .SelectMany(outer => outer.Select(item => ( outer.Key, item )))
+              .SelectMany(outer => outer.Select(item => (outer.Key, item)))
               .ToLookup(z => z.Key, z => z.item);
     }
 

@@ -6,30 +6,21 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 /// <summary>
 ///     A validator that is used to verify the value is in a defined list without creating a specific enum
 /// </summary>
+/// <inheritdoc />
+/// <param name="items">The string values to validate against</param>
+/// <param name="caseSensitive">Should character case be enforced?</param>
 [PublicAPI]
-public class StringInValidator<T, TProperty> : PropertyValidator<T, TProperty?>, IStringInValidator
+public class StringInValidator<T, TProperty>(string[] items, bool caseSensitive) : PropertyValidator<T, TProperty?>, IStringInValidator
     where TProperty : notnull
 {
-    private readonly bool _caseSensitive;
-
-    /// <inheritdoc />
-    /// <param name="items">The string values to validate against</param>
-    /// <param name="caseSensitive">Should character case be enforced?</param>
-    public StringInValidator(string[] items, bool caseSensitive)
-    {
-        Values = items ?? throw new ArgumentNullException(nameof(items));
-        _caseSensitive = caseSensitive;
-    }
+    private readonly bool _caseSensitive = caseSensitive;
 
     /// <inheritdoc />
     public override string Name { get; } = "StringInValidator";
 
 
     /// <inheritdoc />
-    protected override string GetDefaultMessageTemplate(string errorCode)
-    {
-        return "'{PropertyName}' must include one of the following '{Values}'.";
-    }
+    protected override string GetDefaultMessageTemplate(string errorCode) => "'{PropertyName}' must include one of the following '{Values}'.";
 
     /// <inheritdoc />
     public override bool IsValid(ValidationContext<T> context, TProperty? value)
@@ -49,7 +40,7 @@ public class StringInValidator<T, TProperty> : PropertyValidator<T, TProperty?>,
     /// <summary>
     ///     The values that being enforced.
     /// </summary>
-    public IEnumerable<string> Values { get; }
+    public IEnumerable<string> Values { get; } = items ?? throw new ArgumentNullException(nameof(items));
 }
 
 internal interface IStringInValidator

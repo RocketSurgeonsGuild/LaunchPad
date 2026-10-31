@@ -1,7 +1,5 @@
 using DryIoc;
 
-using FluentValidation;
-
 using Joinery.Dovetail;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -11,40 +9,12 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 using TUnit.Core.Interfaces;
 
-namespace Extensions.Tests.Validation;
+namespace FluentValidation.Tests.Validation;
 
-public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
+public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
     [Test]
-    public Task Should_Validate_Options_And_Throw()
-    {
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.ShouldThrow<OptionsValidationException>();
-        return Task.CompletedTask;
-    }
-
-    [Test]
-    public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds()
-    {
-        var services = new ServiceCollection();
-        services
-           .AddOptions<Options>()
-           .Configure(
-                options =>
-                {
-                    options.Bool = false;
-                    options.Double = 50;
-                    options.Int = -50;
-                    options.String = "";
-                }
-            );
-        Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.ShouldThrow<OptionsValidationException>();
-    }
-
-    [Test]
-    public async Task Should_Validate_Options_And_Throw_After_Application_Has_Started()
+    public async Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
@@ -54,7 +24,7 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
     }
 
     [Test]
-    public void Should_Validate_Options_And_Pass_After_Application_Has_Started()
+    public void Should_Validate_Options_And_Pass()
     {
         var services = new ServiceCollection();
         services
@@ -74,7 +44,7 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
     }
 
     [Test]
-    public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds_After_Application_Has_Started()
+    public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds()
     {
         var services = new ServiceCollection();
         services
@@ -91,7 +61,8 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
         var failures = a
-                      .ShouldThrow<OptionsValidationException>().Failures;
+                      .ShouldThrow<OptionsValidationException>()
+                      .Failures;
         await Verify(failures);
     }
 
@@ -103,7 +74,7 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
         public double Double { get; set; }
 
         [UsedImplicitly]
-        private sealed class Validator : AbstractValidator<Options>
+        private class Validator : AbstractValidator<Options>
         {
             public Validator()
             {
@@ -119,12 +90,7 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
     {
         var builder = TestJoints
                      .CreateBuilder()
-                     .Set(
-                          new FoundationOptions
-                          {
-                              RegisterValidationOptionsAsHealthChecks = true,
-                          }
-                      );
+                     .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = false });
 
         var context = await DovetailContext.FromAsync(builder);
         Populate(await TestJoints.ApplyServicesAsync(context));
