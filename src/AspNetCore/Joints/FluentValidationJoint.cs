@@ -1,36 +1,35 @@
 using FluentValidation.AspNetCore;
 
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     ValidationConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter and the
+///     problem details converter.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
-/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
-[ExportConvention]
-[AfterConvention<AspNetCoreConvention>]
-[ConventionCategory(ConventionCategory.Application)]
-public partial class FluentValidationConvention : IServiceConvention
+[DovetailExport]
+[AfterJoint<AspNetCoreJoint>]
+[DovetailCategory(DovetailCategory.Application)]
+public class FluentValidationJoint : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
     /// <param name="context">The context.</param>
-    /// <param name="configuration"></param>
-    /// <param name="services"></param>
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    /// <param name="services">The service collection.</param>
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.AddFluentValidationClientsideAdapters();
         services
