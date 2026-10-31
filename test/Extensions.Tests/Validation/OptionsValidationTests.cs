@@ -2,10 +2,11 @@ using DryIoc;
 
 using FluentValidation;
 
+using Joinery.Dovetail;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 using TUnit.Core.Interfaces;
@@ -89,12 +90,11 @@ public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Crea
 
     public async Task InitializeAsync()
     {
-        var conventionContextBuilder = ConventionContextBuilder
-                                      .Create(Imports.Instance)
-                                      .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = false })
-                                      .UseLogger(Logger);
+        var builder = TestJoints
+                     .CreateBuilder()
+                     .Set(new FoundationOptions { RegisterValidationOptionsAsHealthChecks = false });
 
-        var context = await ConventionContext.FromAsync(conventionContextBuilder);
-        Populate(await new ServiceCollection().ApplyConventionsAsync(context));
+        var context = await DovetailContext.FromAsync(builder);
+        Populate(await TestJoints.ApplyServicesAsync(context));
     }
 }
