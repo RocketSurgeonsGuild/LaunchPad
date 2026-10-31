@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Extensions.Tests;
+namespace FluentValidation.Tests;
 
 public class StringInValidatorTests() : JointFakeTest()
 {

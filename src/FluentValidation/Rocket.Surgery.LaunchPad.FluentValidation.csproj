@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <!--
+            The types stay in the Rocket.Surgery.LaunchPad.Foundation namespaces they had in Foundation. A namespace of
+            Rocket.Surgery.LaunchPad.FluentValidation (the default root namespace here, and so the base of Dovetail's export namespace) would
+            shadow FluentValidation.* in LaunchPad code. The export class is named for the package so it does not collide with Foundation's.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.Foundation</RootNamespace>
+        <DovetailExportClassName>FluentValidationExports</DovetailExportClassName>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="MediatR" />
+        <PackageReference Include="Specular" />
+    </ItemGroup>
+</Project>

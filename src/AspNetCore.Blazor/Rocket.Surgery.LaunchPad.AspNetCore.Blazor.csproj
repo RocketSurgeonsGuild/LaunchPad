@@ -9,6 +9,7 @@
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />

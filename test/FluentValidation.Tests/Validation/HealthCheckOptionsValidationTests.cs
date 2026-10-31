@@ -11,7 +11,7 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 using TUnit.Core.Interfaces;
 
-namespace Extensions.Tests.Validation;
+namespace FluentValidation.Tests.Validation;
 
 public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {

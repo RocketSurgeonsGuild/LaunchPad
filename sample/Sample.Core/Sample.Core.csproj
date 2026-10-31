@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference
       Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\src\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
     <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
   </ItemGroup>
