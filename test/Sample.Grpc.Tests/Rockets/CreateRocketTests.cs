@@ -39,7 +39,7 @@ public class CreateRocketTests : WebAppFixtureTest
             cancellationToken: TestContext.CancellationToken
         );
 
-        Func<Task> action = async () => await client.CreateRocketAsync(
+        var action = async () => await client.CreateRocketAsync(
             new CreateRocketRequest
             {
                 Type = RocketType.Falcon9,
