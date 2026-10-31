@@ -1,47 +1,48 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+
 using NodaTime;
 using NodaTime.Extensions;
-using Indago;
+
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Restful.Client;
+using Sample.Minimal.Tests.Helpers;
+
 using RocketType = Sample.Core.Domain.RocketType;
 
-namespace Sample.Restful.Tests.LaunchRecords;
+namespace Sample.Minimal.Tests.LaunchRecords;
 
-public class UpdateLaunchRecordTests : HandleWebHostBase
+public class UpdateLaunchRecordTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Update_A_LaunchRecord()
     {
-        var client = new LaunchRecordClient(Factory.CreateClient());
-        var clock = ServiceProvider.GetRequiredService<IClock>();
-        var record = await ServiceProvider.WithScoped<RocketDbContext, IClock>()
-                                          .Invoke(
-                                               async (context, clk) =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Id = RocketId.New(),
-                                                       Type = RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
+        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        LaunchRecord record;
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var clock = scope.ServiceProvider.GetRequiredService<IClock>();
+            var rocket = new ReadyRocket
+            {
+                Id = RocketId.New(),
+                Type = RocketType.Falcon9,
+                SerialNumber = "12345678901234"
+            };
 
-                                                   var record = new LaunchRecord
-                                                   {
-                                                       Partner = "partner",
-                                                       Payload = "geo-fence-ftl",
-                                                       RocketId = rocket.Id,
-                                                       ScheduledLaunchDate = clk.GetCurrentInstant().ToDateTimeOffset(),
-                                                       PayloadWeightKg = 100,
-                                                   };
-                                                   context.Add(rocket);
-                                                   context.Add(record);
+            record = new LaunchRecord
+            {
+                Partner = "partner",
+                Payload = "geo-fence-ftl",
+                RocketId = rocket.Id,
+                ScheduledLaunchDate = clock.GetCurrentInstant().ToDateTimeOffset(),
+                PayloadWeightKg = 100,
+            };
+            context.Add(rocket);
+            context.Add(record);
 
-                                                   await context.SaveChangesAsync();
-                                                   return record;
-                                               }
-                                           );
+            await context.SaveChangesAsync();
+        }
 
         var launchDate = record.ScheduledLaunchDate.AddSeconds(1);
         await client.EditLaunchRecordAsync(
@@ -60,10 +61,6 @@ public class UpdateLaunchRecordTests : HandleWebHostBase
 
         response.Result.ScheduledLaunchDate.ShouldBe(launchDate);
         response.Result.PayloadWeightKg.ShouldBe(200);
-    }
-
-    public UpdateLaunchRecordTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
-    {
     }
 
     private static readonly Faker Faker = new();

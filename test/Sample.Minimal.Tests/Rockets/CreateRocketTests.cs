@@ -1,13 +1,14 @@
-﻿using Sample.Restful.Client;
+using Sample.Restful.Client;
+using Sample.Minimal.Tests.Helpers;
 
-namespace Sample.Restful.Tests.Rockets;
+namespace Sample.Minimal.Tests.Rockets;
 
-public class CreateRocketTests : HandleWebHostBase
+public class CreateRocketTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Create_A_Rocket()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
 
         var response = await client.CreateRocketAsync(
             new CreateRocketRequest
@@ -20,10 +21,10 @@ public class CreateRocketTests : HandleWebHostBase
         response.Result.Id.ShouldNotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Throw_If_Rocket_Exists()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
         await client.CreateRocketAsync(
             new CreateRocketRequest
             {
@@ -42,9 +43,5 @@ public class CreateRocketTests : HandleWebHostBase
         var r = (await action.ShouldThrowAsync<ApiException<ProblemDetails>>())
                .And.Result;
         r.Title.ShouldBe("Rocket Creation Failed");
-    }
-
-    public CreateRocketTests(ITestOutputHelper testOutputHelper, TestWebHost host) : base(testOutputHelper, host)
-    {
     }
 }

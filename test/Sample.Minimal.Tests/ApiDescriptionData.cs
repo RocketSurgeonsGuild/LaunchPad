@@ -1,22 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
+
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
+
+using TUnit.Core.Interfaces;
 
 namespace Sample.Minimal.Tests;
 
-internal sealed class ApiDescriptionData<T> : TheoryData<ApiDescriptionData>
-    where T : class, ILaunchPadWebAppFixture, IAsyncLifetime, new()
+internal static class ApiDescriptionDataSource<T>
+    where T : class, ILaunchPadWebAppFixture, IAsyncInitializer, new()
 {
-    public ApiDescriptionData()
+    /// <summary>
+    ///     The api descriptions of the web app, read once from a short lived web app for all the tests that use them.
+    /// </summary>
+    public static IEnumerable<Func<ApiDescriptionData>> Rows() => Descriptions.Value.Select(description => (Func<ApiDescriptionData>)(() => description));
+
+    private static ApiDescriptionData[] Load()
     {
-        var host = new T();
+        using var host = new T();
         host.InitializeAsync().GetAwaiter().GetResult();
         var provider = host.AlbaHost.Services.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
-        foreach (var item in provider.ApiDescriptionGroups.Items.SelectMany(z => z.Items))
-        {
-            Add(new ApiDescriptionData(item));
-        }
+        return [.. provider.ApiDescriptionGroups.Items.SelectMany(z => z.Items).Select(item => new ApiDescriptionData(item)),];
     }
+
+    private static readonly Lazy<ApiDescriptionData[]> Descriptions = new(Load);
 }
 
 public class ApiDescriptionData(ApiDescription description)
