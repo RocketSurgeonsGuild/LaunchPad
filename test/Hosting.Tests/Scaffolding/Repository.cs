@@ -21,7 +21,8 @@ internal static class Repository
 
     /// <summary>
     ///     The version <c>Directory.Packages.props</c> pins for <paramref name="packageId" /> on <see cref="TargetFramework" />. The
-    ///     Microsoft packages are pinned once per release line, in item groups conditioned on the target framework.
+    ///     Microsoft packages are pinned once per release line, in item groups conditioned on the target framework, and the packages every
+    ///     project gets are pinned as <c>GlobalPackageReference</c>.
     /// </summary>
     /// <param name="packageId">The package id.</param>
     /// <returns>The pinned version.</returns>
@@ -34,7 +35,7 @@ internal static class Repository
             // the net10.0 line is conditioned on !IsTargetFrameworkCompatible(..., 'net11.0'), the net11.0 line on the same without the !
             if (( (string?)group.Attribute("Condition") )?.Trim() is { Length: > 0 } condition && condition.StartsWith('!') == net11) continue;
 
-            foreach (var item in group.Elements("PackageVersion").Where(z => (string?)z.Attribute("Include") == packageId))
+            foreach (var item in group.Elements().Where(z => z.Name.LocalName is "PackageVersion" or "GlobalPackageReference" && (string?)z.Attribute("Include") == packageId))
             {
                 return (string?)item.Attribute("Version") ?? item.Element("Version")?.Value ?? throw new InvalidOperationException($"{packageId} has no version");
             }
