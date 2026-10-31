@@ -88,10 +88,7 @@ public abstract class LaunchPadWebAppFixture<TEntryPoint> : ILaunchPadWebAppFixt
     /// <summary>
     ///     Method to reset the database if provided
     /// </summary>
-    public ValueTask ResetAsync()
-    {
-        return _sqlExtension is null || _host is null ? ValueTask.CompletedTask : _sqlExtension.ResetAsync(AlbaHost.Services);
-    }
+    public ValueTask ResetAsync() => _sqlExtension is null || _host is null ? ValueTask.CompletedTask : _sqlExtension.ResetAsync(AlbaHost.Services);
 
 #pragma warning disable CA1816
     async ValueTask IAsyncDisposable.DisposeAsync() => await DisposeAsync().ConfigureAwait(false);
