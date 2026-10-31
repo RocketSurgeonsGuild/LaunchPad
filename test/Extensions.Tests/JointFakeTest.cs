@@ -24,10 +24,9 @@ public abstract class JointFakeTest() : AutoFakeTest<TestRecord>(TestRecord.Crea
 internal static class TestJoints
 {
     /// <summary>
-    ///     The imported joints, with the Specular provider of this test assembly seeded into the context.
-    ///     Dovetail does the seeding itself once RocketSurgeonsGuild/Dovetail#273 lands.
+    ///     The imported joints. The generated <c>Imports</c> seed the Specular provider of this test assembly into the context.
     /// </summary>
-    public static DovetailContextBuilder CreateBuilder() => Imports.Joints().Set(SpecularProvider.Instance);
+    public static DovetailContextBuilder CreateBuilder() => Imports.Joints();
 
     /// <summary>
     ///     Applies the configuration joints, then the service joints, the way a host does.

@@ -14,14 +14,14 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Joints;
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <remarks>
-///     The <see cref="PrimitiveOptions" /> are read from the joint context when the joint registers, and default when none were set.
-///     This stays out of the constructor until Dovetail resolves constructor parameters of exported joints from the context.
+///     Dovetail resolves the <see cref="PrimitiveOptions" /> from the joint context when it creates the joint, and they default when none were set.
 /// </remarks>
+/// <param name="options">The options, or <see langword="null" /> for the defaults.</param>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Core)]
-public class TimeJoint : IServiceJoint
+public class TimeJoint(PrimitiveOptions? options = null) : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
@@ -33,11 +33,11 @@ public class TimeJoint : IServiceJoint
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(services);
 
-        var options = context.Get<PrimitiveOptions>() ?? new PrimitiveOptions();
-
         // Try add so that unit tests can insert fakes
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IClock>(SystemClock.Instance);
-        services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(options.DateTimeZoneSource));
+        services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(_options.DateTimeZoneSource));
     }
+
+    private readonly PrimitiveOptions _options = options ?? new PrimitiveOptions();
 }

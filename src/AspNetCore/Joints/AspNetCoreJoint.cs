@@ -20,19 +20,20 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 /// <remarks>
 ///     <para>
 ///         The application parts are found with the <see cref="ISpecularProvider" /> in the joint context.
-///         The application seeds it with <c>builder.Set&lt;ISpecularProvider&gt;(SpecularProvider.Instance)</c> until Dovetail does.
+///         The generated <c>Imports</c> seed the application's Specular provider into the context.
 ///     </para>
 ///     <para>
-///         The <see cref="AspNetCoreOptions" /> are read from the joint context when the joint registers, and default when none were set.
-///         This stays out of the constructor until Dovetail resolves constructor parameters of exported joints from the context.
+///         Dovetail resolves the <see cref="AspNetCoreOptions" /> from the joint context when it creates the joint, and they default when none
+///         were set.
 ///     </para>
 /// </remarks>
+/// <param name="options">The options, or <see langword="null" /> for the defaults.</param>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Application)]
 [RequiresUnreferencedCode("Registering the MVC services requires access to the application's compiled assemblies.")]
-public class AspNetCoreJoint : IServiceJoint
+public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
 {
     /// <summary>
     ///     Registers the MVC services, and adds the application parts found through the Specular provider in the context.
@@ -45,8 +46,6 @@ public class AspNetCoreJoint : IServiceJoint
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(services);
 
-        var aspNetCoreOptions = context.Get<AspNetCoreOptions>() ?? new AspNetCoreOptions();
-
         services
            .AddEndpointsApiExplorer()
            .AddMvcCore()
@@ -57,7 +56,7 @@ public class AspNetCoreJoint : IServiceJoint
             context
                .Require<ISpecularProvider>()
                .GetAssemblies(s => s.DependenciesFromAssemblyOf<AspNetCoreJoint>())
-               .Where(aspNetCoreOptions.AssemblyPartFilter)
+               .Where(_options.AssemblyPartFilter)
                .SelectMany(GetApplicationPartAssemblies)
         );
 
@@ -129,4 +128,6 @@ public class AspNetCoreJoint : IServiceJoint
             yield return relatedAssembly;
         }
     }
+
+    private readonly AspNetCoreOptions _options = options ?? new AspNetCoreOptions();
 }

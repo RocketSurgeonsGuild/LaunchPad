@@ -21,7 +21,7 @@ internal static class JointTestContext
     /// <param name="provider">The provider to seed. When it is <see langword="null" /> the builder has no provider at all.</param>
     public static DovetailContextBuilder CreateBuilder(ISpecularProvider? provider)
     {
-        // Dovetail resolves joints whose category is not in the context's category set, so the set stays empty to run every joint.
+        // An empty category set loads the Application joints and the Core joints, which is every category the joints under test are in.
         var builder = DovetailContextBuilder.Create([], new Dictionary<object, object>(), []);
         return provider is null ? builder : builder.Set(provider);
     }
@@ -60,7 +60,7 @@ internal static class JointTestContext
     public static Task<ServiceCollection> ApplyServicesAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TJoint>(
         ISpecularProvider? provider = null
     )
-        where TJoint : class, IServiceJoint, new() =>
+        where TJoint : class, IServiceJoint =>
         ApplyServicesAsync(CreateBuilder(provider ?? CreateProvider()).AppendJoint<TJoint>());
 
     /// <summary>

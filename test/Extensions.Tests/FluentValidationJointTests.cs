@@ -33,7 +33,8 @@ public class FluentValidationJointTests() : LoggerTest<TestRecord>(TestRecord.Cr
         var context = await DovetailContext.FromAsync(builder, TestContext.CancellationToken);
         var services = new ServiceCollection();
 
-        new FluentValidationJoint().Register(context, services);
+        // the joint Dovetail created from the context, which resolved the options set above
+        context.Joints.OfType<FluentValidationJoint>().Single().Register(context, services);
 
         services.ShouldContain(
             x => x.ServiceType == typeof(IPipelineBehavior<,>) && x.ImplementationType!.Name.StartsWith("ValidationPipelineBehavior", StringComparison.Ordinal) && x.Lifetime == lifetime

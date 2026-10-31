@@ -18,7 +18,8 @@ public class MediatRTests() : AutoFakeTest<TestRecord>(TestRecord.Create())
     {
         var context = await DovetailContext.FromAsync(TestJoints.CreateBuilder(), TestContext.CancellationToken);
         var services = new ServiceCollection();
-        new MediatRJoint().Register(context, services);
+        // the joint Dovetail created from the context, with the default options
+        context.Joints.OfType<MediatRJoint>().Single().Register(context, services);
 
         var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 
@@ -49,7 +50,8 @@ public class MediatRTests() : AutoFakeTest<TestRecord>(TestRecord.Create())
                       );
         var context = await DovetailContext.FromAsync(builder, TestContext.CancellationToken);
         var services = new ServiceCollection();
-        new MediatRJoint().Register(context, services);
+        // the joint Dovetail created from the context, which resolved the options set above
+        context.Joints.OfType<MediatRJoint>().Single().Register(context, services);
 
         var sub = A.Fake<IPipelineBehavior<Request, Unit>>();
 

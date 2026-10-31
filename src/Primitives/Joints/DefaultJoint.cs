@@ -15,8 +15,7 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Joints;
 ///         attributes using the <see cref="ISpecularProvider" /> found in the joint context.
 ///     </para>
 ///     <para>
-///         The provider is not created here. Until Dovetail seeds it for the application, the application seeds it itself with
-///         <c>builder.Set&lt;ISpecularProvider&gt;(SpecularProvider.Instance)</c>.
+///         The provider is not created here: the generated <c>Imports</c> seed the application's Specular provider into the context.
 ///     </para>
 /// </remarks>
 /// <seealso cref="IServiceJoint" />
