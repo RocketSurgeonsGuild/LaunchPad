@@ -1,58 +1,51 @@
-﻿#if NET6_0_OR_GREATER
-using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Restful.Client;
+using Sample.Restful.Tests.Helpers;
+
 using RocketType = Sample.Restful.Client.RocketType;
 
 namespace Sample.Restful.Tests.Rockets;
 
-public class ListRocketsTests : HandleWebHostBase
+public class ListRocketsTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_List_Rockets()
     {
-        var client = new RocketClient(Factory.CreateClient());
-        await ServiceProvider.WithScoped<RocketDbContext>()
-                             .Invoke(
-                                  async z =>
-                                  {
-                                      var faker = new RocketFaker();
-                                      z.AddRange(faker.Generate(10));
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            z.AddRange(faker.Generate(10));
 
-                                      await z.SaveChangesAsync();
-                                  }
-                              );
+            await z.SaveChangesAsync();
+        }
 
         var response = await client.ListRocketsAsync();
 
         response.Result.ShouldHaveCount(10);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_List_Specific_Kinds_Of_Rockets()
     {
-        var client = new RocketClient(Factory.CreateClient());
-        await ServiceProvider.WithScoped<RocketDbContext>()
-                             .Invoke(
-                                  async z =>
-                                  {
-                                      var faker = new RocketFaker();
-                                      z.AddRange(faker.UseSeed(100).Generate(10));
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            z.AddRange(faker.UseSeed(100).Generate(10));
 
-                                      await z.SaveChangesAsync();
-                                  }
-                              );
+            await z.SaveChangesAsync();
+        }
 
         var response = await client.ListRocketsAsync(RocketType.AtlasV);
 
         response.Result.ShouldHaveCount(5);
     }
 
-    public ListRocketsTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
-    {
-    }
-
     private static readonly Faker Faker = new();
 }
-#endif

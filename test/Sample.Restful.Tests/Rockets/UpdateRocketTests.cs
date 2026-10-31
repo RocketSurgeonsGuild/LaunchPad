@@ -1,33 +1,22 @@
-﻿using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core.Domain;
 using Sample.Restful.Client;
+using Sample.Restful.Tests.Helpers;
+
 using RocketType = Sample.Core.Domain.RocketType;
 using ClientRocketType = Sample.Restful.Client.RocketType;
 
 namespace Sample.Restful.Tests.Rockets;
 
-public class UpdateRocketTests : HandleWebHostBase
+public class UpdateRocketTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Update_A_Rocket()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
-
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+        var rocket = await SeedRocketAsync(RocketType.Falcon9);
 
         var u = await client.EditRocketAsync(
             rocket.Id.Value,
@@ -45,26 +34,12 @@ public class UpdateRocketTests : HandleWebHostBase
         response.Result.Sn.ShouldBe("43210987654321");
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Patch_A_Rocket_SerialNumber()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = RocketType.AtlasV,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
-
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+        var rocket = await SeedRocketAsync(RocketType.AtlasV);
 
         var u = await client.PatchRocketAsync(
             rocket.Id.Value,
@@ -81,26 +56,12 @@ public class UpdateRocketTests : HandleWebHostBase
         response.Result.Sn.ShouldBe("123456789012345");
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Fail_To_Patch_A_Null_Rocket_SerialNumber()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = RocketType.AtlasV,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
-
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+        var rocket = await SeedRocketAsync(RocketType.AtlasV);
 
         Func<Task<Response<RocketModel>>> action = () => client.PatchRocketAsync(
             rocket.Id.Value,
@@ -114,26 +75,12 @@ public class UpdateRocketTests : HandleWebHostBase
         result.Errors["SerialNumber"][0].ErrorMessage.ShouldBe("'Serial Number' must not be empty.");
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Patch_A_Rocket_Type()
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = RocketType.AtlasV,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
-
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+        var rocket = await SeedRocketAsync(RocketType.AtlasV);
 
         var u = await client.PatchRocketAsync(
             rocket.Id.Value,
@@ -149,17 +96,11 @@ public class UpdateRocketTests : HandleWebHostBase
         response.Result.Sn.ShouldBe("12345678901234");
     }
 
-    public UpdateRocketTests(ITestOutputHelper outputHelper, TestWebHost host) : base(outputHelper, host)
-    {
-    }
-
-    private static readonly Faker Faker = new();
-
-    [Theory]
-    [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
+    [Test]
+    [MethodDataSource(nameof(RequiredFieldData))]
     public async Task Should_Validate_Required_Fields(EditRocketRequest request, string propertyName)
     {
-        var client = new RocketClient(Factory.CreateClient());
+        var client = new RocketClient(AlbaHost.Server.CreateClient());
         Func<Task> a = () => client.EditRocketAsync(Guid.NewGuid(), request);
         (await a.ShouldThrowAsync<ApiException<FluentValidationProblemDetails>>())
            .And
@@ -169,22 +110,36 @@ public class UpdateRocketTests : HandleWebHostBase
            .ShouldContain(propertyName);
     }
 
-    private class ShouldValidateUsersRequiredFieldData : TheoryData<EditRocketRequest, string>
+    public static IEnumerable<Func<(EditRocketRequest Request, string PropertyName)>> RequiredFieldData()
     {
-        public ShouldValidateUsersRequiredFieldData()
-        {
-            Add(
-                new EditRocketRequest(),
-                nameof(EditRocketRequest.SerialNumber)
-            );
-            Add(
-                new EditRocketRequest { SerialNumber = Faker.Random.String2(0, 9) },
-                nameof(EditRocketRequest.SerialNumber)
-            );
-            Add(
-                new EditRocketRequest { SerialNumber = Faker.Random.String2(600, 800) },
-                nameof(EditRocketRequest.SerialNumber)
-            );
-        }
+        yield return () => (
+            new EditRocketRequest(),
+            nameof(EditRocketRequest.SerialNumber)
+        );
+        yield return () => (
+            new EditRocketRequest { SerialNumber = Faker.Random.String2(0, 9) },
+            nameof(EditRocketRequest.SerialNumber)
+        );
+        yield return () => (
+            new EditRocketRequest { SerialNumber = Faker.Random.String2(600, 800) },
+            nameof(EditRocketRequest.SerialNumber)
+        );
     }
+
+    private async Task<ReadyRocket> SeedRocketAsync(RocketType type)
+    {
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+        var rocket = new ReadyRocket
+        {
+            Type = type,
+            SerialNumber = "12345678901234"
+        };
+        z.Add(rocket);
+
+        await z.SaveChangesAsync();
+        return rocket;
+    }
+
+    private static readonly Faker Faker = new();
 }

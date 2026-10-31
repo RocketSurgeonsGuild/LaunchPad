@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Sample.Restful.Tests.Helpers;
 
@@ -6,15 +6,17 @@ namespace Sample.Restful.Tests;
 
 public class RestfulConventionTests
 {
-    [Theory]
-    [ClassData(typeof(ApiDescriptionData<TestWebAppFixture>))]
+    public static IEnumerable<Func<ApiDescriptionData>> ApiDescriptions() => ApiDescriptionDataSource<TestWebAppFixture>.Rows();
+
+    [Test]
+    [MethodDataSource(nameof(ApiDescriptions))]
     public void Should_Have_Success_Response_Types(ApiDescriptionData description)
     {
         description.Description.SupportedResponseTypes.ShouldContain(z => z.StatusCode >= 200 && z.StatusCode < 300);
     }
 
-    [Theory]
-    [ClassData(typeof(ApiDescriptionData<TestWebAppFixture>))]
+    [Test]
+    [MethodDataSource(nameof(ApiDescriptions))]
     public void Should_Have_Not_Found_Responses(ApiDescriptionData description)
     {
         // ReSharper disable once NullableWarningSuppressionIsUsed
@@ -23,15 +25,15 @@ public class RestfulConventionTests
         description.Description.SupportedResponseTypes.ShouldContain(z => z.StatusCode == StatusCodes.Status404NotFound);
     }
 
-    [Theory]
-    [ClassData(typeof(ApiDescriptionData<TestWebAppFixture>))]
+    [Test]
+    [MethodDataSource(nameof(ApiDescriptions))]
     public void Should_Have_Validation_Responses(ApiDescriptionData description)
     {
         description.Description.SupportedResponseTypes.ShouldContain(z => z.StatusCode == StatusCodes.Status422UnprocessableEntity);
     }
 
-    [Theory]
-    [ClassData(typeof(ApiDescriptionData<TestWebAppFixture>))]
+    [Test]
+    [MethodDataSource(nameof(ApiDescriptions))]
     public void Should_Have_Bad_Request_Responses(ApiDescriptionData description)
     {
         description.Description.SupportedResponseTypes.ShouldContain(z => z.IsDefaultResponse);
