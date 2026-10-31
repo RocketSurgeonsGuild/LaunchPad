@@ -64,6 +64,6 @@ public class AspNetCoreInstrumentationJointTests
 
     private sealed class NoopMetricExporter : BaseExporter<Metric>
     {
-        public override ExportResult Export(in Batch<Metric> batch) => ExportResult.Success;
+        public override ExportResult Export(in Batch<Metric> _) => ExportResult.Success;
     }
 }

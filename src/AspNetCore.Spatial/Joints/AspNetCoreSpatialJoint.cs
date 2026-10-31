@@ -16,6 +16,6 @@ public class AspNetCoreSpatialJoint : IServiceJoint
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services)
     {
-        //        services.Configure<SwaggerGenOptions>(o => o.ConfigureForNetTopologySuite());
+        // There is nothing to register yet: the OpenAPI mapping of NetTopologySuite types that used to be sketched here is not wired up.
     }
 }
