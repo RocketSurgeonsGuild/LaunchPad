@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <NoWarn>$(NoWarn);NU5128</NoWarn>
+        <PackageType>MSBuildSdk</PackageType>
+        <NoBuildOutput>true</NoBuildOutput>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IncludeSymbols>false</IncludeSymbols>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <PackageDescription>MSBuild SDK for LaunchPad: chains Joinery.Dovetail.Sdk and adds the LaunchPad packages for what an application is and references</PackageDescription>
+        <PackageTags>$(PackageTags);sdk;msbuild</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Remove="Sdk/**" />
+        <None Include="Sdk/**" Pack="true" PackagePath="Sdk/" />
+        <Using Remove="**" />
+    </ItemGroup>
+
+    <!--
+        The packages the SDK adds to an application, each at the version of the SDK, through the property named here (an application can set
+        the property first to choose another version). Sdk/Rocket.Surgery.LaunchPad.Detection.targets decides which an application gets.
+    -->
+    <ItemGroup>
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Hosting" Property="LaunchPadHostingVersion" />
+    </ItemGroup>
+
+    <!--
+        Writes Sdk/Packages.props into the package: the version of every package above, and the version of Joinery.Dovetail.Sdk that
+        Sdk/Sdk.props chains, which is the one Directory.Packages.props pins. As in Joinery.Dovetail.Sdk, the versions are only known when
+        the SDK is packed, so the file is generated then rather than kept in the repository.
+    -->
+    <Target Name="_LaunchPadGeneratePackagesProps" BeforeTargets="_GetPackageFiles;Pack">
+        <ItemGroup>
+            <_LaunchPadDovetailSdk Include="@(PackageVersion)" Condition="'%(Identity)' == 'Joinery.Dovetail.Sdk'" />
+        </ItemGroup>
+        <PropertyGroup>
+            <_LaunchPadDovetailSdkVersion>@(_LaunchPadDovetailSdk->'%(Version)')</_LaunchPadDovetailSdkVersion>
+            <_LaunchPadPackagesProps>$(IntermediateOutputPath)Packages.props</_LaunchPadPackagesProps>
+        </PropertyGroup>
+        <Error Condition="'$(_LaunchPadDovetailSdkVersion)' == ''" Text="Directory.Packages.props pins no version of Joinery.Dovetail.Sdk, which Rocket.Surgery.LaunchPad.Sdk chains." />
+        <ItemGroup>
+            <!-- %24 is $ and %27 is ': the file reads the consumer's properties, which must not be expanded here -->
+            <_LaunchPadPackagesPropsLine Include="&lt;Project&gt;" />
+            <_LaunchPadPackagesPropsLine Include="&lt;!-- Generated when Rocket.Surgery.LaunchPad.Sdk is packed. Each version is only set when the application has not set it already. --&gt;" />
+            <_LaunchPadPackagesPropsLine Include="&lt;PropertyGroup&gt;" />
+            <_LaunchPadPackagesPropsLine
+                Include="&lt;LaunchPadDovetailSdkVersion Condition=&quot;%27%24(LaunchPadDovetailSdkVersion)%27 == %27%27&quot;&gt;$(_LaunchPadDovetailSdkVersion)&lt;/LaunchPadDovetailSdkVersion&gt;"
+            />
+            <_LaunchPadPackagesPropsLine
+                Include="@(LaunchPadSdkPackage->'&lt;%(Property) Condition=&quot;%27%24(%(Property))%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/%(Property)&gt;')"
+            />
+            <_LaunchPadPackagesPropsLine Include="&lt;/PropertyGroup&gt;" />
+            <_LaunchPadPackagesPropsLine Include="&lt;/Project&gt;" />
+        </ItemGroup>
+        <WriteLinesToFile File="$(_LaunchPadPackagesProps)" Lines="@(_LaunchPadPackagesPropsLine)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+        <ItemGroup>
+            <None Include="$(_LaunchPadPackagesProps)" Pack="true" PackagePath="Sdk" />
+            <FileWrites Include="$(_LaunchPadPackagesProps)" />
+        </ItemGroup>
+    </Target>
+</Project>

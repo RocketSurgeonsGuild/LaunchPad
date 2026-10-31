@@ -1,0 +1,2 @@
+<!-- Stops MSBuild from walking up into the repository's own Directory.Build.targets. -->
+<Project />

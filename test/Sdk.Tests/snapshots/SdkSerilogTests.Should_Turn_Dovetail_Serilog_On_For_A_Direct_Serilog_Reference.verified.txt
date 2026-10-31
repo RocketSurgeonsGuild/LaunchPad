@@ -1,0 +1,13 @@
+﻿{
+  Hosts: [
+    HostApplication
+  ],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Joinery.Dovetail.Serilog {DovetailVersion} (SDK),
+    Microsoft.Extensions.Hosting,
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Serilog
+  ]
+}
