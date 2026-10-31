@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <!-- The mappers keep the Rocket.Surgery.LaunchPad.Mapping namespace they had in the Mapping package. -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.Mapping</RootNamespace>
+        <IsTrimmable>false</IsTrimmable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
+        <PackageReference Include="NodaTime" />
+    </ItemGroup>
+</Project>

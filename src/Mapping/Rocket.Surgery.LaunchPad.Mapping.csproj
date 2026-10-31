@@ -9,10 +9,6 @@
         <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
         <PackageReference Include="System.Text.Json" />
         <PackageReference Include="Microsoft.Extensions.Options" />
-        <PackageReference Include="NodaTime" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />

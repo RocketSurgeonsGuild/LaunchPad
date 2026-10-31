@@ -1,8 +1,7 @@
 using Newtonsoft.Json;
-using NodaTime;
 using Rocket.Surgery.LaunchPad.Foundation;
 
-namespace Extensions.Tests;
+namespace NodaTime.NewtonsoftJson.Tests;
 
 public class NewtonsoftJsonNodaTimeTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {

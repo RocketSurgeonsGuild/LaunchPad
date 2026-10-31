@@ -1,13 +1,15 @@
 using Microsoft.Extensions.Time.Testing;
 
-using NodaTime;
-
 using Riok.Mapperly.Abstractions;
+
+using Rocket.Surgery.LaunchPad.Mapping;
 using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
-namespace Extensions.Tests.Mapping;
+#pragma warning disable CA1034 // Nested types should not be visible
 
-public partial class LocalDateTests() : MapperTestBase()
+namespace NodaTime.Mapping.Tests;
+
+public partial class LocalDateTimeTests() : MapperTestBase()
 {
     [Test]
     [MethodDataSource(nameof(Methods))]
@@ -15,8 +17,7 @@ public partial class LocalDateTests() : MapperTestBase()
                                                              result,
                                                              new Mapper(),
                                                              _fakeTimeProvider.GetLocalNow().DateTime,
-                                                             DateOnly.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime),
-                                                             LocalDate.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
+                                                             LocalDateTime.FromDateTime(_fakeTimeProvider.GetLocalNow().DateTime)
                                                          )
                                                         .UseParameters(result.ToString());
 
@@ -26,42 +27,43 @@ public partial class LocalDateTests() : MapperTestBase()
 
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]
+    [UseStaticMapper(typeof(NodaTimeDateTimeMapper))]
     private partial class Mapper
     {
         public partial Foo1 MapFoo1(Foo2 foo);
-        public partial Foo1 MapFoo1(Foo5 foo);
-        public partial Foo1 MapFoo1(Foo6 foo);
+        public partial Foo1 MapFoo1(Foo3 foo);
+        public partial Foo1 MapFoo1(Foo4 foo);
 
         public partial Foo2 MapFoo2(Foo1 foo);
-        public partial Foo2 MapFoo2(Foo5 foo);
-        public partial Foo2 MapFoo2(Foo6 foo);
+        public partial Foo2 MapFoo2(Foo3 foo);
+        public partial Foo2 MapFoo2(Foo4 foo);
 
-        public partial Foo5 MapFoo5(Foo1 foo);
-        public partial Foo5 MapFoo5(Foo2 foo);
-        public partial Foo5 MapFoo5(Foo6 foo);
+        public partial Foo3 MapFoo3(Foo1 foo);
+        public partial Foo3 MapFoo3(Foo2 foo);
+        public partial Foo3 MapFoo3(Foo4 foo);
 
-        public partial Foo6 MapFoo6(Foo1 foo);
-        public partial Foo6 MapFoo6(Foo2 foo);
-        public partial Foo6 MapFoo6(Foo5 foo);
+        public partial Foo4 MapFoo4(Foo1 foo);
+        public partial Foo4 MapFoo4(Foo2 foo);
+        public partial Foo4 MapFoo4(Foo3 foo);
     }
 
     private class Foo1
     {
-        public LocalDate Bar { get; set; }
+        public LocalDateTime Bar { get; set; }
     }
 
     private class Foo2
     {
-        public LocalDate? Bar { get; set; }
+        public LocalDateTime? Bar { get; set; }
     }
 
-    private class Foo5
+    private class Foo3
     {
-        public DateOnly Bar { get; set; }
+        public DateTime Bar { get; set; }
     }
 
-    private class Foo6
+    private class Foo4
     {
-        public DateOnly? Bar { get; set; }
+        public DateTime? Bar { get; set; }
     }
 }
