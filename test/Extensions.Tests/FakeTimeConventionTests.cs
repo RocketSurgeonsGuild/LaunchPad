@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Testing;
 
 namespace Extensions.Tests;
 
-public class FakeTimeConventionTests(ITestContextAccessor testContext) : ConventionFakeTest(testContext)
+public class FakeTimeConventionTests() : ConventionFakeTest()
 {
-    [Fact]
+    [Test]
     public async Task Clock_Convention_Default()
     {
         await Init(x => { x.Set(HostType.UnitTest); });
@@ -17,7 +17,7 @@ public class FakeTimeConventionTests(ITestContextAccessor testContext) : Convent
         clock.GetCurrentInstant().ShouldBe(Instant.FromUnixTimeSeconds(1577836800) + Duration.FromSeconds(1));
     }
 
-    [Fact]
+    [Test]
     public async Task Clock_Convention_Override()
     {
         await Init(x => { x.AppendConvention(new FakeTimeConvention(0, Duration.FromMinutes(1))); });

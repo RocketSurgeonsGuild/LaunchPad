@@ -8,11 +8,13 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.Conventions;
 using Rocket.Surgery.LaunchPad.Foundation;
 
+using TUnit.Core.Interfaces;
+
 namespace Extensions.Tests.Validation;
 
-public class OptionsValidationTests(ITestContextAccessor testContext) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext)), IAsyncLifetime
+public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
-    [Fact]
+    [Test]
     public async Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
@@ -22,7 +24,7 @@ public class OptionsValidationTests(ITestContextAccessor testContext) : AutoFake
         await Verify(failures);
     }
 
-    [Fact]
+    [Test]
     public void Should_Validate_Options_And_Pass()
     {
         var services = new ServiceCollection();
@@ -42,7 +44,7 @@ public class OptionsValidationTests(ITestContextAccessor testContext) : AutoFake
         a.ShouldNotThrow();
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Validate_Options_And_Throw_If_Out_Of_Bounds()
     {
         var services = new ServiceCollection();
@@ -85,7 +87,7 @@ public class OptionsValidationTests(ITestContextAccessor testContext) : AutoFake
         }
     }
 
-    public async ValueTask InitializeAsync()
+    public async Task InitializeAsync()
     {
         var conventionContextBuilder = ConventionContextBuilder
                                       .Create(Imports.Instance)
@@ -95,6 +97,4 @@ public class OptionsValidationTests(ITestContextAccessor testContext) : AutoFake
         var context = await ConventionContext.FromAsync(conventionContextBuilder);
         Populate(await new ServiceCollection().ApplyConventionsAsync(context));
     }
-
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

@@ -9,10 +9,10 @@ using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class OffsetTests(ITestContextAccessor testContext) : MapperTestBase(testContext)
+public partial class OffsetTests() : MapperTestBase()
 {
-    [Theory]
-    [MapperData<Mapper>]
+    [Test]
+    [MethodDataSource(nameof(Methods))]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(
                                                              result,
                                                              new Mapper(),
@@ -22,6 +22,8 @@ public partial class OffsetTests(ITestContextAccessor testContext) : MapperTestB
                                                         .UseParameters(result.ToString());
 
     private readonly FakeTimeProvider _fakeTimeProvider = new();
+
+    public static IEnumerable<Func<MethodResult>> Methods() => MapperData.Methods<Mapper>();
 
     [Mapper]
     [UseStaticMapper(typeof(NodaTimeMapper))]

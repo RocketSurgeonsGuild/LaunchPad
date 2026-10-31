@@ -7,9 +7,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Extensions.Tests;
 
-public class AutoRegisterOptions(ITestContextAccessor testContext) : ConventionFakeTest(testContext)
+public class AutoRegisterOptions() : ConventionFakeTest()
 {
-    [Fact]
+    [Test]
     public async Task Should_Register_Options()
     {
         await Init(x => x.ConfigureConfiguration(builder => builder.AddInMemoryCollection([new("OptionsA:A", "B"), new("OptionsB:B", "A")])));

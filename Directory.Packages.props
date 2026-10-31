@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Project>
     <PropertyGroup>
@@ -156,6 +156,8 @@
         <PackageVersion Include="xunit.v3" Version="3.2.2" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
         <PackageVersion Include="Verify.XunitV3" Version="31.20.0" />
+        <PackageVersion Include="TUnit" Version="1.76.45" />
+        <PackageVersion Include="Verify.TUnit" Version="33.3.4" />
         <PackageVersion Include="Verify.NodaTime" Version="2.3.0" />
         <PackageVersion Include="Verify.SystemJson" Version="1.4.1" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />

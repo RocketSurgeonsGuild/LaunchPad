@@ -7,12 +7,14 @@ using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class DurationTests(ITestContextAccessor testContext) : MapperTestBase(testContext)
+public partial class DurationTests() : MapperTestBase()
 {
-    [Theory]
-    [MapperData<Mapper>]
+    [Test]
+    [MethodDataSource(nameof(Methods))]
     public Task Maps_All_Methods(MethodResult result) => VerifyMethod(result, new Mapper(), TimeSpan.FromHours(1), Duration.FromMinutes(44))
                                                         .UseParameters(result.ToString());
+
+    public static IEnumerable<Func<MethodResult>> Methods() => MapperData.Methods<Mapper>();
 
     [Mapper]
     [PublicAPI]

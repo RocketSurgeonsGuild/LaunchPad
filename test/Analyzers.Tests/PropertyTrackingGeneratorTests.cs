@@ -11,9 +11,9 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
-public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
+public class PropertyTrackingGeneratorTests() : GeneratorTest()
 {
-    [Fact]
+    [Test]
     public async Task Should_Require_Partial_Type_Declaration()
     {
         var result = await Builder
@@ -50,7 +50,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Require_Partial_Parent_Type_Declaration()
     {
         var result = await Builder
@@ -90,7 +90,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_Record_With_Underlying_Properties_And_Track_Changes()
     {
         var result = await Builder
@@ -150,7 +150,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_Class_With_Underlying_Properties_And_Track_Changes()
     {
         var result = await Builder
@@ -205,7 +205,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Require_Same_Type_As_Record()
     {
         var result = await Builder
@@ -239,7 +239,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Require_Same_Type_As_Class()
     {
         var result = await Builder
@@ -276,7 +276,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Support_Nullable_Class_Property()
     {
         var result = await Builder
@@ -307,7 +307,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Support_Nullable_Struct_Property()
     {
         var result = await Builder
@@ -341,7 +341,7 @@ public class PropertyTrackingGeneratorTests(ITestContextAccessor testContext) : 
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator()
     {
         var result = await Builder
@@ -370,7 +370,7 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude()
     {
         var result = await Builder
@@ -400,10 +400,10 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_Class_Primary_Constructor() { }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_And_Exclude_Properties()
     {
         var result = await Builder
@@ -430,9 +430,9 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
         await Verify(result);
     }
 
-    [Theory]
-    [InlineData("SerialNumber", "12345")]
-    [InlineData("Type", 12345)]
+    [Test]
+    [Arguments("SerialNumber", "12345")]
+    [Arguments("Type", 12345)]
     public async Task Should_Generate_Record_With_Underlying_Properties_And_Apply_Changes(string property, object value)
     {
         var result = await Builder
@@ -477,9 +477,9 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
         await Verify(result).UseParameters(property);
     }
 
-    [Theory]
-    [InlineData("SerialNumber", "12345")]
-    [InlineData("Type", 12345)]
+    [Test]
+    [Arguments("SerialNumber", "12345")]
+    [Arguments("Type", 12345)]
     public async Task Should_Generate_Class_With_Underlying_Properties_And_Apply_Changes(string property, object value)
     {
         var result = await Builder
@@ -525,8 +525,8 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
         await Verify(result).UseParameters(property);
     }
 
-    [Theory]
-    [MemberData(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
+    [Test]
+    [MethodDataSource(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
     public async Task Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods(string name, string source)
     {
         var result = await Builder
@@ -1059,7 +1059,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         ];
     }
 
-    public override async ValueTask InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

@@ -13,9 +13,9 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 
 namespace Analyzers.Tests;
 
-public class ControllerActionBodyGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
+public class ControllerActionBodyGeneratorTests() : GeneratorTest()
 {
-    [Fact]
+    [Test]
     public async Task Should_Error_If_Class_Property_Is_Init()
     {
         var result = await Builder
@@ -60,7 +60,7 @@ public static class Save2Rocket
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Error_If_Controller_Is_Not_Partial()
     {
         var result = await Builder
@@ -114,15 +114,17 @@ public static class ListRockets
         await Verify(result);
     }
 
-    [Theory]
-    [ClassData(typeof(MethodBodyData))]
+    [Test]
+    [MethodDataSource(nameof(MethodBodies))]
     public async Task Should_Generate_Method_Bodies(string key, string[] sources) => await Verify(Builder.AddSources(sources).Build().GenerateAsync(TestContext.CancellationToken)).UseParameters(key, "");
 
-    private sealed class MethodBodyData : TheoryData<string, string[]>
+    public static IEnumerable<Func<(string Key, string[] Sources)>> MethodBodies() => MethodBodyData.Rows();
+
+    private static class MethodBodyData
     {
-        public MethodBodyData()
+        public static IEnumerable<Func<(string Key, string[] Sources)>> Rows()
         {
-            Add(
+            yield return () => (
                 "GenerateBodyForRequest",
                 [
                     defaultString,
@@ -152,7 +154,7 @@ public static class GetRocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithIdParameterAndAddBindRequired",
                 [
                     defaultString,
@@ -182,7 +184,7 @@ public static class SaveRocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithIdParameter",
                 [
                     defaultString,
@@ -213,7 +215,7 @@ public static class Save2Rocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithIdParameterMultiple",
                 [
                     defaultString,
@@ -244,7 +246,7 @@ public static class Save2Rocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyForListAction",
                 [
                     defaultString,
@@ -273,7 +275,7 @@ public static class ListRockets
                 ]
             );
 
-            Add(
+            yield return () => (
                 "GenerateBodiesWithCreatedReturn",
                 [
                     defaultString,
@@ -322,7 +324,7 @@ public static class CreateRocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithAcceptReturnType",
                 [
                     defaultString,
@@ -372,7 +374,7 @@ public static class CreateRocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithVoidReturnType",
                 [
                     defaultString,
@@ -403,7 +405,7 @@ public static class DeleteRocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithVoidReturnTypeOther",
                 [
                     defaultString,
@@ -434,7 +436,7 @@ public static class DeleteLaunchRecord
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters",
                 [
                     defaultString,
@@ -493,7 +495,7 @@ public static class GetRocketLaunchRecord
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters2",
                 [
                     defaultString,
@@ -538,7 +540,7 @@ public static class GetRocketLaunchRecord
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters3",
                 [
                     defaultString,
@@ -583,7 +585,7 @@ public static class GetRocketLaunchRecord
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodiesWithMultipleParameters4",
                 [
                     defaultString,
@@ -628,7 +630,7 @@ public static class GetRocketLaunchRecord
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithClaimsPrincipal",
                 [
                     defaultString,
@@ -663,7 +665,7 @@ public static class Save2Rocket
                     """,
                 ]
             );
-            Add(
+            yield return () => (
                 "GenerateBodyWithHttpRequest",
                 [
                     defaultString,
@@ -711,7 +713,7 @@ public enum RocketType { A, B }
 ";
     }
 
-    public override async ValueTask InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

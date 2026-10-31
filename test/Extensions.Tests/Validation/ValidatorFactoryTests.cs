@@ -3,9 +3,9 @@ using Serilog.Events;
 
 namespace Extensions.Tests.Validation;
 
-public class ValidatorFactoryTests(ITestContextAccessor outputHelper) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper, LogEventLevel.Information))
+public class ValidatorFactoryTests() : AutoFakeTest<TestRecord>(TestRecord.Create(LogEventLevel.Information))
 {
-    //    [Fact]
+    //    [Test]
     //    public void Should_Aggregate_Validators()
     //    {
     //        var sp = A.Fake<IServiceProvider>();
@@ -21,7 +21,7 @@ public class ValidatorFactoryTests(ITestContextAccessor outputHelper) : AutoFake
 
     public interface IThing
     {
-        public string? Thing { get; set; }
+        string? Thing { get; set; }
     }
 
     public class AModel : IThing
@@ -33,25 +33,16 @@ public class ValidatorFactoryTests(ITestContextAccessor outputHelper) : AutoFake
 
     private class ThingValidator : AbstractValidator<IThing>
     {
-        public ThingValidator()
-        {
-            RuleFor(x => x.Thing).NotEmpty();
-        }
+        public ThingValidator() => RuleFor(x => x.Thing).NotEmpty();
     }
 
     private class ValidatorAa : AbstractValidator<AModel>
     {
-        public ValidatorAa()
-        {
-            RuleFor(x => x.Id).NotEmpty();
-        }
+        public ValidatorAa() => RuleFor(x => x.Id).NotEmpty();
     }
 
     private class ValidatorAb : AbstractValidator<AModel>
     {
-        public ValidatorAb()
-        {
-            RuleFor(x => x.Other).NotEmpty();
-        }
+        public ValidatorAb() => RuleFor(x => x.Other).NotEmpty();
     }
 }

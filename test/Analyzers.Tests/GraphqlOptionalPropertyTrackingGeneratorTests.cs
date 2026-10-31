@@ -17,9 +17,9 @@ using Rocket.Surgery.LaunchPad.HotChocolate;
 
 namespace Analyzers.Tests;
 
-public class GraphqlOptionalPropertyTrackingGeneratorTests(ITestContextAccessor testContext) : GeneratorTest(testContext)
+public class GraphqlOptionalPropertyTrackingGeneratorTests() : GeneratorTest()
 {
-    [Fact]
+    [Test]
     public async Task Should_Require_Partial_Type_Declaration()
     {
         var result = await Builder
@@ -56,7 +56,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Require_Partial_Parent_Type_Declaration()
     {
         var result = await Builder
@@ -92,7 +92,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Require_Same_Type_As_Record()
     {
         var result = await Builder
@@ -126,7 +126,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Require_Same_Type_As_Class()
     {
         var result = await Builder
@@ -160,7 +160,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Support_Nullable_Class_Property()
     {
         var result = await Builder
@@ -191,7 +191,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Support_Nullable_Builtin_Struct_Property()
     {
         var result = await Builder
@@ -222,7 +222,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Support_Nullable_Struct_Property()
     {
         var result = await Builder
@@ -251,7 +251,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Support_Nullable_Enum_Property()
     {
         var result = await Builder
@@ -285,7 +285,7 @@ namespace Sample.Core.Operations.Rockets
         await Verify(result);
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator()
     {
         var result = Builder
@@ -321,9 +321,9 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
         await Verify(result);
     }
 
-    [Theory]
-    [InlineData(PropertyTracking.SameAssembly)]
-    [InlineData(PropertyTracking.OtherAssembly)]
+    [Test]
+    [Arguments(PropertyTracking.SameAssembly)]
+    [Arguments(PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude(
         PropertyTracking propertyTracking
     )
@@ -353,9 +353,9 @@ public partial class Request : IRequest<RocketModel>
         await Verify(result).UseParameters(propertyTracking);
     }
 
-    [Theory]
-    [InlineData(PropertyTracking.SameAssembly)]
-    [InlineData(PropertyTracking.OtherAssembly)]
+    [Test]
+    [Arguments(PropertyTracking.SameAssembly)]
+    [Arguments(PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude_Attribute(
         PropertyTracking propertyTracking
     )
@@ -389,9 +389,9 @@ public partial class Request : IRequest<RocketModel>
         await Verify(result).UseParameters(propertyTracking);
     }
 
-    [Theory]
-    [InlineData(PropertyTracking.SameAssembly)]
-    [InlineData(PropertyTracking.OtherAssembly)]
+    [Test]
+    [Arguments(PropertyTracking.SameAssembly)]
+    [Arguments(PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude_Attribute2(
         PropertyTracking propertyTracking
     )
@@ -421,11 +421,11 @@ public partial class Request : IRequest<RocketModel>
         await Verify(result).UseParameters(propertyTracking);
     }
 
-    [Theory]
-    [InlineData("SerialNumber", "12345", PropertyTracking.SameAssembly)]
-    [InlineData("Type", 12345, PropertyTracking.SameAssembly)]
-    [InlineData("SerialNumber", "12345", PropertyTracking.OtherAssembly)]
-    [InlineData("Type", 12345, PropertyTracking.OtherAssembly)]
+    [Test]
+    [Arguments("SerialNumber", "12345", PropertyTracking.SameAssembly)]
+    [Arguments("Type", 12345, PropertyTracking.SameAssembly)]
+    [Arguments("SerialNumber", "12345", PropertyTracking.OtherAssembly)]
+    [Arguments("Type", 12345, PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Record_With_Underlying_Properties_And_Create(string property, object value, PropertyTracking propertyTracking)
     {
         var valueType = value.GetType();
@@ -467,11 +467,11 @@ public record Request : IRequest<RocketModel>
         assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
     }
 
-    [Theory]
-    [InlineData("SerialNumber", "12345", PropertyTracking.SameAssembly)]
-    [InlineData("Type", 12345, PropertyTracking.SameAssembly)]
-    [InlineData("SerialNumber", "12345", PropertyTracking.OtherAssembly)]
-    [InlineData("Type", 12345, PropertyTracking.OtherAssembly)]
+    [Test]
+    [Arguments("SerialNumber", "12345", PropertyTracking.SameAssembly)]
+    [Arguments("Type", 12345, PropertyTracking.SameAssembly)]
+    [Arguments("SerialNumber", "12345", PropertyTracking.OtherAssembly)]
+    [Arguments("Type", 12345, PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Class_With_Underlying_Properties_And_Create(string property, object value, PropertyTracking propertyTracking)
     {
         var valueType = value.GetType();
@@ -512,11 +512,11 @@ public class Request : IRequest<RocketModel>
         assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
     }
 
-    [Theory]
-    [InlineData("SerialNumber", "12345", PropertyTracking.SameAssembly)]
-    [InlineData("Type", 12345, PropertyTracking.SameAssembly)]
-    [InlineData("SerialNumber", "12345", PropertyTracking.OtherAssembly)]
-    [InlineData("Type", 12345, PropertyTracking.OtherAssembly)]
+    [Test]
+    [Arguments("SerialNumber", "12345", PropertyTracking.SameAssembly)]
+    [Arguments("Type", 12345, PropertyTracking.SameAssembly)]
+    [Arguments("SerialNumber", "12345", PropertyTracking.OtherAssembly)]
+    [Arguments("Type", 12345, PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Record_With_Underlying_IPropertyTracking_Properties_And_Create(
         string property,
         object value,
@@ -561,15 +561,15 @@ public record Request : IRequest<RocketModel>
         assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
     }
 
-    [Theory]
-    [InlineData("SerialNumber", "12345", RocketModelType.Class, PropertyTracking.SameAssembly)]
-    [InlineData("SerialNumber", "12345", RocketModelType.Record, PropertyTracking.SameAssembly)]
-    [InlineData("Type", 12345, RocketModelType.Class, PropertyTracking.SameAssembly)]
-    [InlineData("Type", 12345, RocketModelType.Record, PropertyTracking.SameAssembly)]
-    [InlineData("SerialNumber", "12345", RocketModelType.Class, PropertyTracking.OtherAssembly)]
-    [InlineData("SerialNumber", "12345", RocketModelType.Record, PropertyTracking.OtherAssembly)]
-    [InlineData("Type", 12345, RocketModelType.Class, PropertyTracking.OtherAssembly)]
-    [InlineData("Type", 12345, RocketModelType.Record, PropertyTracking.OtherAssembly)]
+    [Test]
+    [Arguments("SerialNumber", "12345", RocketModelType.Class, PropertyTracking.SameAssembly)]
+    [Arguments("SerialNumber", "12345", RocketModelType.Record, PropertyTracking.SameAssembly)]
+    [Arguments("Type", 12345, RocketModelType.Class, PropertyTracking.SameAssembly)]
+    [Arguments("Type", 12345, RocketModelType.Record, PropertyTracking.SameAssembly)]
+    [Arguments("SerialNumber", "12345", RocketModelType.Class, PropertyTracking.OtherAssembly)]
+    [Arguments("SerialNumber", "12345", RocketModelType.Record, PropertyTracking.OtherAssembly)]
+    [Arguments("Type", 12345, RocketModelType.Class, PropertyTracking.OtherAssembly)]
+    [Arguments("Type", 12345, RocketModelType.Record, PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_And_Create(
         string property,
         object value,
@@ -583,7 +583,7 @@ public record Request : IRequest<RocketModel>
         var result = await AddPatchRocketModel(modelType, propertyTracking)
                           .AddSources(
                                $$""""
-                               public {{(modelType == RocketModelType.Class ? "class" : "record")}} Request : IRequest<RocketModel>
+                               public {{( modelType == RocketModelType.Class ? "class" : "record" )}} Request : IRequest<RocketModel>
                                {
                                    public Guid Id { get; init; }
                                    public string SerialNumber { get; set; } = null!;
@@ -615,8 +615,8 @@ public record Request : IRequest<RocketModel>
         assignedPropertyUnderTest.GetValue(r).ShouldBe(value);
     }
 
-    [Theory]
-    [MemberData(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
+    [Test]
+    [MethodDataSource(nameof(Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods_Data))]
     public async Task Should_Generate_Class_With_Underlying_FluentValidation_Validator_Methods(string name, string source)
     {
         var result = await Builder
@@ -1292,7 +1292,7 @@ partial class Validator : AbstractValidator<PatchRequest>
         ];
     }
 
-    public override async ValueTask InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         Builder = Builder

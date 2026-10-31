@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using FakeItEasy;
 using Microsoft.Extensions.Options;
 using Riok.Mapperly.Abstractions;
@@ -6,15 +6,15 @@ using Rocket.Surgery.LaunchPad.Mapping;
 
 namespace Extensions.Tests.Mapping;
 
-public partial class JsonElementConverterTests(ITestContextAccessor testContext) : MapperTestBase(testContext)
+public partial class JsonElementConverterTests() : MapperTestBase()
 {
-//    private class JsonElementB
-//    {
-//        public JsonElement? Bar { get; set; }
-//    }
+    //    private class JsonElementB
+    //    {
+    //        public JsonElement? Bar { get; set; }
+    //    }
 
-    [Theory]
-    [MapperData<Mapper>]
+    [Test]
+    [MethodDataSource(nameof(Methods))]
     public Task Maps_All_Methods(MethodResult result)
     {
         var stub = A.Fake<IOptionsMonitor<JsonSerializerOptions>>();
@@ -49,6 +49,8 @@ public partial class JsonElementConverterTests(ITestContextAccessor testContext)
               .UseParameters(result.ToString());
     }
 
+    public static IEnumerable<Func<MethodResult>> Methods() => MapperData.Methods<Mapper>();
+
     [Mapper]
     [PublicAPI]
     private partial class Mapper(IOptionsMonitor<JsonSerializerOptions> options)
@@ -61,12 +63,12 @@ public partial class JsonElementConverterTests(ITestContextAccessor testContext)
         public partial JsonElementA MapToJsonElementA(ByteArray source);
 
         public partial ByteArray MapToByteArray(JsonElementA source);
-//        public partial JsonElementB MapToJsonElementB(StringValue source);
-//        public partial StringValue MapToStringValue(JsonElementB source);
-//        public partial JsonElementB MapToJsonElementB(ByteArray source);
-//        public partial ByteArray MapToByteArray(JsonElementB source);
-//        public partial JsonElementB MapToJsonElementB(JsonElementA source);
-//        public partial JsonElementA MapToJsonElementA(JsonElementB source);
+        //        public partial JsonElementB MapToJsonElementB(StringValue source);
+        //        public partial StringValue MapToStringValue(JsonElementB source);
+        //        public partial JsonElementB MapToJsonElementB(ByteArray source);
+        //        public partial ByteArray MapToByteArray(JsonElementB source);
+        //        public partial JsonElementB MapToJsonElementB(JsonElementA source);
+        //        public partial JsonElementA MapToJsonElementA(JsonElementB source);
     }
 
     private class ByteArray

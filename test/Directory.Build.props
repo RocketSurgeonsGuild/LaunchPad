@@ -8,6 +8,11 @@
         <IsPackable>false</IsPackable>
         <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
+    <!-- Verify 33 and later (Verify.TUnit) fails the build without a sponsorship exemption; this is an open source project. -->
+    <PropertyGroup>
+        <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
+        <Verify_SponsorshipExemptionUntil>$([System.DateTime]::Today.AddDays(300).ToString("yyyy-MM"))</Verify_SponsorshipExemptionUntil>
+    </PropertyGroup>
     <!-- used to trigger build information -->
     <PropertyGroup>
         <GitVersion_Major Condition="'$(GitVersion_Major)' == ''">0</GitVersion_Major>

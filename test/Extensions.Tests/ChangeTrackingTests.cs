@@ -2,9 +2,9 @@ using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Extensions.Tests;
 
-public partial class ChangeTrackingTests(ITestContextAccessor testContext) : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
+public partial class ChangeTrackingTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
-    [Fact]
+    [Test]
     public void ShouldTrackChanges_For_Classes()
     {
         var tracking = new ClassWithTracking(1);
@@ -13,7 +13,7 @@ public partial class ChangeTrackingTests(ITestContextAccessor testContext) : Log
         tracking.Name.HasValue.ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void ShouldResetChanges_For_Classes()
     {
         var tracking = new ClassWithTracking(1)
@@ -24,7 +24,7 @@ public partial class ChangeTrackingTests(ITestContextAccessor testContext) : Log
         tracking.Name.HasValue.ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ShouldApplyChanges_For_Classes()
     {
         var instance = new Class(1)
@@ -40,7 +40,7 @@ public partial class ChangeTrackingTests(ITestContextAccessor testContext) : Log
         instance.Name.ShouldBe("Test");
     }
 
-    [Fact]
+    [Test]
     public void ShouldCreate_For_Classes()
     {
         var instance = new Class(1)
@@ -58,7 +58,7 @@ public partial class ChangeTrackingTests(ITestContextAccessor testContext) : Log
         instance.Description.ShouldBe("My New description");
     }
 
-    [Fact]
+    [Test]
     public void ShouldTrackChanges_For_Records()
     {
         var tracking = new RecordWithTracking(1);
@@ -67,7 +67,7 @@ public partial class ChangeTrackingTests(ITestContextAccessor testContext) : Log
         tracking.Name.HasValue.ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void ShouldResetChanges_For_Records()
     {
         var tracking = new RecordWithTracking(1)
@@ -78,7 +78,7 @@ public partial class ChangeTrackingTests(ITestContextAccessor testContext) : Log
         tracking.Name.HasValue.ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ShouldApplyChanges_For_Records()
     {
         var instance = new Record(1, "MyName");
@@ -91,7 +91,7 @@ public partial class ChangeTrackingTests(ITestContextAccessor testContext) : Log
         instance.Name.ShouldBe("Test");
     }
 
-    [Fact]
+    [Test]
     public void ShouldCreate_For_Records()
     {
         var instance = new Record(1, "MyName")

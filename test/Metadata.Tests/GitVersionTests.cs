@@ -3,9 +3,10 @@ using Rocket.Surgery.LaunchPad.Metadata;
 
 namespace Metadata.Tests;
 
-public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(testContext))
+public class GitVersionTests() : AutoFakeTest<TestRecord>(TestRecord.Create())
 {
-    [Fact(Skip = "Disabled for CI")]
+    [Test]
+    [Skip("Disabled for CI")]
     public void ReturnsInformationForVersionedAssembly()
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo().Assembly);
@@ -14,7 +15,7 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.SemVer.ShouldNotBeNullOrWhiteSpace();
     }
 
-    [Fact]
+    [Test]
     public void EqualToEachOther()
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo().Assembly);
@@ -23,14 +24,15 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.ShouldBe(version2);
     }
 
-    [Fact]
+    [Test]
     public void NotHaveAVersionForNonVersionedAssembly()
     {
         var version = GitVersion.For(typeof(string).GetTypeInfo().Assembly);
         version.HasVersion.ShouldBeFalse();
     }
 
-    [Fact(Skip = "Disabled for CI")]
+    [Test]
+    [Skip("Disabled for CI")]
     public void ForTypeInfo()
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo());
@@ -39,7 +41,8 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.HasVersion.ShouldBeTrue();
     }
 
-    [Fact(Skip = "Disabled for CI")]
+    [Test]
+    [Skip("Disabled for CI")]
     public void ForType()
     {
         var version = GitVersion.For(typeof(GitVersion));
@@ -48,7 +51,7 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.HasVersion.ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void ForManyTypesAndReduce()
     {
         var version = GitVersion.For(typeof(GitVersion), typeof(GitVersion));
@@ -57,7 +60,7 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.Count.ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void ForManyTypeInfosAndReduce()
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo(), typeof(GitVersion).GetTypeInfo());
@@ -66,7 +69,7 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.Count.ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void ForManyAssembliesAndReduce()
     {
         var version = GitVersion.For(typeof(GitVersion).GetTypeInfo().Assembly, typeof(GitVersion).GetTypeInfo().Assembly);
@@ -75,7 +78,7 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.Count.ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void ForManyTypesAndReduceEnumerable()
     {
         var version = GitVersion.For(new[] { typeof(GitVersion), typeof(GitVersion) }.AsEnumerable());
@@ -84,7 +87,7 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.Count.ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void ForManyTypeInfosAndReduceEnumerable()
     {
         var version = GitVersion.For(new[] { typeof(GitVersion).GetTypeInfo(), typeof(GitVersion).GetTypeInfo() }.AsEnumerable());
@@ -93,7 +96,7 @@ public class GitVersionTests(ITestContextAccessor testContext) : AutoFakeTest<XU
         version.Count.ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void ForManyAssembliesAndReduceEnumerable()
     {
         var version = GitVersion.For(new[] { typeof(GitVersion).GetTypeInfo().Assembly, typeof(GitVersion).GetTypeInfo().Assembly }.AsEnumerable());

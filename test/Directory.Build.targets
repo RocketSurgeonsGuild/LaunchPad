@@ -1,31 +1,45 @@
 <Project>
     <!-- The test support project is a plain library: it is not a test project, so it skips the test framework packages. -->
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.TUnit" />
         <PackageReference Include="Bogus" />
-        <PackageReference Include="Microsoft.CodeCoverage" />
         <PackageReference Include="FakeItEasy" />
         <PackageReference Include="Shouldly" />
-        <PackageReference Include="xunit.v3" />
-        <PackageReference Include="xunit.runner.visualstudio" />
-        <PackageReference Include="Verify.XunitV3" />
         <PackageReference Include="Verify.DiffPlex" />
         <PackageReference Include="Verify.NodaTime" />
         <PackageReference Include="Verify.SystemJson" />
         <PackageReference Include="Verify.NewtonsoftJson" />
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
-        <PackageReference Include="Xunit.Combinatorial" />
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true'">
         <PackageReference Include="Rocket.Surgery.Conventions" />
         <PackageReference Include="FakeItEasy.Analyzer.CSharp" />
-        <PackageReference Include="xunit.analyzers" />
         <Using Include="Rocket.Surgery.Extensions.Testing" />
         <Using Include="Bogus" />
         <Using Include="Shouldly" />
+    </ItemGroup>
+    <!--
+        The test framework is chosen per project. The library test projects set UseTUnit to true and run on TUnit with the
+        Microsoft.Testing.Platform runner (TUnit brings its own coverage and TRX extensions, so it needs neither Microsoft.NET.Test.Sdk
+        nor Microsoft.CodeCoverage). A project that leaves it unset, today the Sample.*.Tests projects, keeps the xunit v3 packages it
+        has always had until RocketSurgeonsGuild/LaunchPad#3051 moves it to TUnit; that ticket deletes the xunit group and this property.
+        Set UseTUnit in the project file and read it only in item conditions like these: a property in Directory.Build.props is evaluated
+        before the project body and would never see it. The Rocket.Surgery TUnit adapter above stays shared, as it was before the split.
+    -->
+    <ItemGroup Condition="'$(IsTestSupportProject)' != 'true' and '$(UseTUnit)' == 'true'">
+        <PackageReference Include="TUnit" />
+        <PackageReference Include="Verify.TUnit" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(IsTestSupportProject)' != 'true' and '$(UseTUnit)' != 'true'">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Microsoft.CodeCoverage" />
+        <PackageReference Include="xunit.v3" />
+        <PackageReference Include="xunit.runner.visualstudio" />
+        <PackageReference Include="Verify.XunitV3" />
+        <PackageReference Include="Xunit.Combinatorial" />
+        <PackageReference Include="xunit.analyzers" />
         <Using Include="Xunit" />
     </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
