@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <UseDovetail>true</UseDovetail>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\sample\Sample.Core\Sample.Core.csproj" />
         <ProjectReference Include="..\TestSupport\TestSupport.csproj" />
-        <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
 </Project>

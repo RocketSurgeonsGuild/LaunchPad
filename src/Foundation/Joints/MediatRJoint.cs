@@ -14,18 +14,19 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 /// <remarks>
 ///     <para>
 ///         The assemblies are found with the <see cref="ISpecularProvider" /> in the joint context.
-///         The application seeds it with <c>builder.Set&lt;ISpecularProvider&gt;(SpecularProvider.Instance)</c> until Dovetail does.
+///         The generated <c>Imports</c> seed the application's Specular provider into the context.
 ///     </para>
 ///     <para>
-///         The <see cref="FoundationOptions" /> are read from the joint context when the joint registers, and default when none were set.
-///         This stays out of the constructor until Dovetail resolves constructor parameters of exported joints from the context.
+///         Dovetail resolves the <see cref="FoundationOptions" /> from the joint context when it creates the joint, and they default when none
+///         were set.
 ///     </para>
 /// </remarks>
+/// <param name="options">The options, or <see langword="null" /> for the defaults.</param>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Core)]
-public class MediatRJoint : IServiceJoint
+public class MediatRJoint(FoundationOptions? options = null) : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
@@ -39,7 +40,6 @@ public class MediatRJoint : IServiceJoint
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(services);
 
-        var options = context.Get<FoundationOptions>() ?? new FoundationOptions();
         var assemblies = context.Require<ISpecularProvider>().GetAssemblies(x => x.DependenciesFromAssemblyOf<IMediator>()).ToArray();
         if (!assemblies.Any()) throw new ArgumentException("No assemblies found that reference MediatR");
 
@@ -47,7 +47,7 @@ public class MediatRJoint : IServiceJoint
             c =>
             {
                 c.RegisterServicesFromAssemblies(assemblies);
-                c.Lifetime = options switch
+                c.Lifetime = _options switch
                 {
                     { MediatorLifetime: ServiceLifetime.Singleton } => ServiceLifetime.Singleton,
                     { MediatorLifetime: ServiceLifetime.Scoped } => ServiceLifetime.Scoped,
@@ -57,4 +57,6 @@ public class MediatRJoint : IServiceJoint
             }
         );
     }
+
+    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

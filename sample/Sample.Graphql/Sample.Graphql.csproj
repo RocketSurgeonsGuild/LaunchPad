@@ -13,9 +13,9 @@
     <ProjectReference Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
     <PackageReference Include="HotChocolate.AspNetCore" />
+    <PackageReference Include="Joinery.Dovetail.Hosting" />
     <PackageReference Include="HotChocolate.Types.CursorPagination" />
     <PackageReference Include="HotChocolate.Types.OffsetPagination" />
     <PackageReference Include="HotChocolate.Types.Analyzers" />
@@ -24,5 +24,27 @@
     <PackageReference Include="HotChocolate.Data.Spatial" />
 
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- ASP.NET Core's entry point: ConfigureDovetail on the WebApplicationBuilder -->
+    <DovetailHost
+      Include="WebApplication"
+      HostBuilderType="global::Microsoft.AspNetCore.Builder.WebApplicationBuilder"
+      HostBuilderName="builder"
+      HostType="global::Microsoft.AspNetCore.Builder.WebApplication"
+      HelperName="global::Joinery.Dovetail.DovetailHostApplicationHelpers"
+    />
+  </ItemGroup>
+
+  <!--
+    HotChocolate.AspNetCore adds a global using for HotChocolate in its targets, and its Path collides with the unqualified System.IO.Path in the
+    DovetailConfigurationSchemaEndpointExtensions that Joinery.Dovetail.Hosting 0.4.0 emits into every ASP.NET Core application (CS0104).
+    Remove this when that template qualifies the type.
+  -->
+  <Target Name="RemoveHotChocolateGlobalUsing" BeforeTargets="GenerateGlobalUsings">
+    <ItemGroup>
+      <Using Remove="HotChocolate" />
+    </ItemGroup>
+  </Target>
 
 </Project>

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <UseDovetail>true</UseDovetail>
 
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <GraphQLStrictSchemaValidation>true</GraphQLStrictSchemaValidation>
@@ -23,6 +24,16 @@
             Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
         <Using Include="StrawberryShake" />
     </ItemGroup>
+    <!--
+        The OpenAPI XML comment generator arrives with Microsoft.AspNetCore.OpenApi through the LaunchPad projects. It reads the XML documentation of
+        every reference, which for the HotChocolate and Entity Framework packages is more than 24 MB of string literals (CS8103), and this test
+        project documents no API.
+    -->
+    <Target Name="RemoveOpenApiXmlCommentGenerator" AfterTargets="ResolveLockFileAnalyzers">
+        <ItemGroup>
+            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.AspNetCore.OpenApi.SourceGenerators'" />
+        </ItemGroup>
+    </Target>
     <Target Name="DeleteGraphqlSchema" BeforeTargets="_GenerateGraphQLCode">
         <Delete
                 Files="snapshots/FoundationTests.GraphqlSchema.received.txt"

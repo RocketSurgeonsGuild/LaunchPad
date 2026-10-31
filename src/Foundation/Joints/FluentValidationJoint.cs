@@ -24,20 +24,21 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 ///     </para>
 ///     <para>
 ///         The validators are found with the <see cref="ISpecularProvider" /> in the joint context.
-///         The application seeds it with <c>builder.Set&lt;ISpecularProvider&gt;(SpecularProvider.Instance)</c> until Dovetail does.
+///         The generated <c>Imports</c> seed the application's Specular provider into the context.
 ///     </para>
 ///     <para>
-///         The <see cref="FoundationOptions" /> are read from the joint context when the joint registers, and default when none were set.
-///         This stays out of the constructor until Dovetail resolves constructor parameters of exported joints from the context.
+///         Dovetail resolves the <see cref="FoundationOptions" /> from the joint context when it creates the joint, and they default when none
+///         were set.
 ///     </para>
 /// </remarks>
+/// <param name="options">The options, or <see langword="null" /> for the defaults.</param>
 /// <seealso cref="IServiceJoint" />
 /// <seealso cref="MediatRJoint" />
 [PublicAPI]
 [DovetailExport]
 [AfterJoint<MediatRJoint>]
 [DovetailCategory(DovetailCategory.Core)]
-public class FluentValidationJoint : IServiceJoint
+public class FluentValidationJoint(FoundationOptions? options = null) : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
@@ -49,8 +50,6 @@ public class FluentValidationJoint : IServiceJoint
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(services);
-
-        var options = context.Get<FoundationOptions>() ?? new FoundationOptions();
 
         context
            .Require<ISpecularProvider>()
@@ -65,7 +64,9 @@ public class FluentValidationJoint : IServiceJoint
             );
 
         services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
-        services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), options.MediatorLifetime));
-        services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IStreamPipelineBehavior<,>), typeof(ValidationStreamPipelineBehavior<,>), options.MediatorLifetime));
+        services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
+        services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IStreamPipelineBehavior<,>), typeof(ValidationStreamPipelineBehavior<,>), _options.MediatorLifetime));
     }
+
+    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

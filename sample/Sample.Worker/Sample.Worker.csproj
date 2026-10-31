@@ -3,7 +3,18 @@
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Joinery.Dovetail.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- the generic host's entry point: ConfigureDovetail on the HostApplicationBuilder -->
+    <DovetailHost
+      Include="HostApplication"
+      HostBuilderType="global::Microsoft.Extensions.Hosting.HostApplicationBuilder"
+      HostBuilderName="builder"
+      HostType="global::Microsoft.Extensions.Hosting.IHost"
+      HelperName="global::Joinery.Dovetail.DovetailHostApplicationHelpers"
+    />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />

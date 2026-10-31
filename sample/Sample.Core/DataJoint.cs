@@ -1,22 +1,24 @@
-﻿using Microsoft.Data.Sqlite;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Sample.Core.Domain;
-#if NET
 using Microsoft.Extensions.DependencyInjection.Extensions;
-#endif
+
+using Sample.Core.Domain;
 
 namespace Sample.Core;
 
-[LiveConvention]
-[ExportConvention]
-internal class DataConvention : IServiceConvention
+/// <summary>
+///     Registers the in memory database the samples run against. Unit tests bring their own.
+/// </summary>
+[LiveJoint]
+[DovetailExport]
+internal class DataJoint : IServiceJoint
 {
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
 #pragma warning disable CA2000
         var connection = new SqliteConnection("DataSource=:memory:");
@@ -32,9 +34,8 @@ internal class DataConvention : IServiceConvention
                          connection
                      )
             );
-#if NET
+
         // temp?
         services.TryAddScoped(provider => provider.GetRequiredService<IDbContextFactory<RocketDbContext>>().CreateDbContext());
-#endif
     }
 }
