@@ -11,10 +11,7 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
 {
     private readonly SqliteConnection _connection;
 
-    public SqliteExtension()
-    {
-        _connection = new("DataSource=:memory:");
-    }
+    public SqliteExtension() => _connection = new("DataSource=:memory:");
 
     public void Reset(IServiceProvider serviceProvider)
     {
@@ -32,20 +29,11 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
         await scope.ServiceProvider.GetRequiredService<TDbContext>().Database.EnsureCreatedAsync();
     }
 
-    public void Dispose()
-    {
-        _connection.Dispose();
-    }
+    public void Dispose() => _connection.Dispose();
 
-    public ValueTask DisposeAsync()
-    {
-        return _connection.DisposeAsync();
-    }
+    public ValueTask DisposeAsync() => _connection.DisposeAsync();
 
-    public Task Start(IAlbaHost host)
-    {
-        return Task.CompletedTask;
-    }
+    public Task Start(IAlbaHost host) => Task.CompletedTask;
 
     public IHostBuilder Configure(IHostBuilder builder)
     {

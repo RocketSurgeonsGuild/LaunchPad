@@ -20,7 +20,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             new()
             {
                 Id = rocket.Id.Value,
-                Type = RocketType.FalconHeavy,
+                Type = CoreRocketType.FalconHeavy,
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
             },
             TestContext.CancellationToken
@@ -77,7 +77,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             new()
             {
                 Id = rocket.Id.Value,
-                Type = RocketType.FalconHeavy,
+                Type = CoreRocketType.FalconHeavy,
             },
             TestContext.CancellationToken
         );
@@ -109,7 +109,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
                 new()
                 {
                     Id = faker.Random.Guid(),
-                    Type = RocketType.Falcon9,
+                    Type = CoreRocketType.Falcon9,
                 },
                 nameof(EditRocketRequest.SerialNumber)
             ),
@@ -118,7 +118,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
                 {
                     Id = faker.Random.Guid(),
                     SerialNumber = faker.Random.String2(0, 9),
-                    Type = RocketType.FalconHeavy,
+                    Type = CoreRocketType.FalconHeavy,
                 },
                 nameof(EditRocketRequest.SerialNumber)
             ),
@@ -127,7 +127,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
                 {
                     Id = faker.Random.Guid(),
                     SerialNumber = faker.Random.String2(600, 800),
-                    Type = RocketType.AtlasV,
+                    Type = CoreRocketType.AtlasV,
                 },
                 nameof(EditRocketRequest.SerialNumber)
             ),

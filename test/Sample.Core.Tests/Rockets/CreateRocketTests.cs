@@ -61,7 +61,7 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
             },
             TestContext.CancellationToken
         );
-        (await action.ShouldThrowAsync<RequestFailedException>())
+        ( await action.ShouldThrowAsync<RequestFailedException>() )
            .Title.ShouldBe("Rocket Creation Failed");
     }
 
@@ -74,7 +74,7 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         var a = () => mediator.Send(request, TestContext.CancellationToken);
-        (await a.ShouldThrowAsync<ValidationException>()).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
+        ( await a.ShouldThrowAsync<ValidationException>() ).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
     }
 
     public static IEnumerable<Func<(CreateRocket.Request Request, string PropertyName)>> RequiredFieldData()

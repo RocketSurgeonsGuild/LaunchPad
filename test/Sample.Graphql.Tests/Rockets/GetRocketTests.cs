@@ -32,7 +32,7 @@ public class GetRocketTests : GraphQlWebAppFixtureTest
         var response = await client.GetRocket.ExecuteAsync(rocket.Value, cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.Rockets!.Nodes![0].Type.ShouldBe(RocketType.Falcon9);
+        response.Data!.Rockets!.Nodes![0].Type.ShouldBe(CoreRocketType.Falcon9);
         response.Data.Rockets!.Nodes[0].SerialNumber.ShouldBe("12345678901234");
     }
 

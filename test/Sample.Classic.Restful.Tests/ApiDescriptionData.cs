@@ -13,7 +13,7 @@ internal static class ApiDescriptionDataSource<T>
     /// <summary>
     ///     The api descriptions of the web app, read once from a short lived web app for all the tests that use them.
     /// </summary>
-    public static IEnumerable<Func<ApiDescriptionData>> Rows() => Descriptions.Value.Select(description => (Func<ApiDescriptionData>)(() => description));
+    public static IEnumerable<Func<ApiDescriptionData>> Rows() => Descriptions.Value.Select(description => (Func<ApiDescriptionData>)( () => description ));
 
     private static ApiDescriptionData[] Load()
     {
@@ -30,8 +30,5 @@ public sealed class ApiDescriptionData(ApiDescription description)
 {
     public ApiDescription Description { get; } = description;
 
-    public override string ToString()
-    {
-        return $"[{Description.HttpMethod}] {Description.RelativePath}";
-    }
+    public override string ToString() => $"[{Description.HttpMethod}] {Description.RelativePath}";
 }

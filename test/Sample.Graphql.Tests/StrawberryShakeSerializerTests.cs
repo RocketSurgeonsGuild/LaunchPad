@@ -23,7 +23,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = clock.GetCurrentInstant();
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -49,7 +49,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = LocalDate.FromDateOnly(DateOnly.FromDateTime(clock.GetCurrentInstant().ToDateTimeUtc()));
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -74,7 +74,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = LocalTime.FromTimeOnly(TimeOnly.FromDateTime(clock.GetCurrentInstant().ToDateTimeUtc()));
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -99,7 +99,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = LocalDateTime.FromDateTime(clock.GetCurrentInstant().ToDateTimeUtc());
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -124,7 +124,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = OffsetDateTime.FromDateTimeOffset(clock.GetCurrentInstant().ToDateTimeOffset());
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -149,7 +149,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = new OffsetTime(LocalTime.FromTimeOnly(TimeOnly.FromDateTime(clock.GetCurrentInstant().ToDateTimeUtc())), Offset.FromHours(1));
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -162,25 +162,25 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
     }
 
     // TBD
-//    [Test]
-//    public async Task Should_Roundtrip_ZonedDateTime()
-//    {
-//        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
-//        var clock = host.Services.GetRequiredService<IClock>();
-//        var client = host.Services.GetRequiredService<IRocketClient>();
-//
-//
-//        var value = ZonedDateTime.FromDateTimeOffset(clock.GetCurrentInstant().ToDateTimeOffset()).WithZone(DateTimeZone.ForOffset(Offset.FromHours(3)));
-////        client.
-//        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-//            new NodaTimeInputsInput()
-//            {
-//                ZonedDateTime = value
-//            }
-//        );
-//
-//        await Verify(result);
-//    }
+    //    [Test]
+    //    public async Task Should_Roundtrip_ZonedDateTime()
+    //    {
+    //        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
+    //        var clock = host.Services.GetRequiredService<IClock>();
+    //        var client = host.Services.GetRequiredService<IRocketClient>();
+    //
+    //
+    //        var value = ZonedDateTime.FromDateTimeOffset(clock.GetCurrentInstant().ToDateTimeOffset()).WithZone(DateTimeZone.ForOffset(Offset.FromHours(3)));
+    ////        client.
+    //        var result = await client.GetNodaTimeTypes.ExecuteAsync(
+    //            new NodaTimeInputsInput()
+    //            {
+    //                ZonedDateTime = value
+    //            }
+    //        );
+    //
+    //        await Verify(result);
+    //    }
 
     [Test]
     public async Task Should_Roundtrip_Period()
@@ -194,7 +194,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = Period.FromHours(1);
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -218,7 +218,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = Duration.FromHours(1);
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -242,7 +242,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
 
 
         var value = Offset.FromHours(2);
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -264,7 +264,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
         );
         var client = host.Services.GetRequiredService<IRocketClient>();
 
-//        client.
+        //        client.
         var result = await client.GetNodaTimeTypes.ExecuteAsync(
             new()
             {
@@ -306,26 +306,26 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
     }
 
 
-//    [Test]
-//    public async Task Should_Roundtrip_Point()
-//    {
-//        await using var host = await AlbaHost.For<Program>(
-//            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
-//        );
-//
-//        var client = host.Services.GetRequiredService<IRocketClient>();
-//
-//        var reader = new WKTReader();
-//        var wkt = "POINT(3 4)";
-//        var result = await client.GetGeometryTypes.ExecuteAsync(
-//            new ()
-//            {
-//                Point = reader.Read(wkt)
-//            }
-//        );
-//
-//        await Verify(result).UseTextForParameters(wkt);
-//    }
+    //    [Test]
+    //    public async Task Should_Roundtrip_Point()
+    //    {
+    //        await using var host = await AlbaHost.For<Program>(
+    //            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
+    //        );
+    //
+    //        var client = host.Services.GetRequiredService<IRocketClient>();
+    //
+    //        var reader = new WKTReader();
+    //        var wkt = "POINT(3 4)";
+    //        var result = await client.GetGeometryTypes.ExecuteAsync(
+    //            new ()
+    //            {
+    //                Point = reader.Read(wkt)
+    //            }
+    //        );
+    //
+    //        await Verify(result).UseTextForParameters(wkt);
+    //    }
 
     /*
      * geometry: "POINT(1 2)"

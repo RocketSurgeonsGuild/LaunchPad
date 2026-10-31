@@ -41,10 +41,7 @@ public class CustomValidatorIntegrationTest : WebAppFixtureTest
         var client = new Grpc.Rockets.RocketsClient(AlbaHost.CreateGrpcChannel());
 
         // When
-        async Task Action()
-        {
-            await client.GetRocketsAsync(new GetRocketRequest { Id = "" });
-        }
+        async Task Action() => await client.GetRocketsAsync(new GetRocketRequest { Id = "" });
 
         // Then
         var rpcException = await Should.ThrowAsync<RpcException>(Action);

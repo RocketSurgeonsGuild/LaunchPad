@@ -48,7 +48,7 @@ public class GetLaunchRecordTests : GraphQlWebAppFixtureTest
 
         response.Data!.LaunchRecords!.Nodes![0].Partner.ShouldBe("partner");
         response.Data.LaunchRecords!.Nodes[0].Payload.ShouldBe("geo-fence-ftl");
-        response.Data.LaunchRecords!.Nodes[0].Rocket.Type.ShouldBe(RocketType.Falcon9);
+        response.Data.LaunchRecords!.Nodes[0].Rocket.Type.ShouldBe(CoreRocketType.Falcon9);
         response.Data.LaunchRecords!.Nodes[0].Rocket.SerialNumber.ShouldBe("12345678901234");
         response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.ShouldBe(record.ScheduledLaunchDate);
     }

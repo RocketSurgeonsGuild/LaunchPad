@@ -2,8 +2,6 @@ using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.LaunchPad.Primitives;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
@@ -70,7 +68,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         Func<Task> a = () => mediator.Send(request, TestContext.CancellationToken);
-        (await a.ShouldThrowAsync<ValidationException>()).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
+        ( await a.ShouldThrowAsync<ValidationException>() ).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
     }
 
     public static IEnumerable<Func<(EditRocket.Request Request, string PropertyName)>> RequiredFieldData()

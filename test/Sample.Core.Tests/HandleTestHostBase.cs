@@ -38,7 +38,7 @@ public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncIniti
         await scope.ServiceProvider.GetRequiredService<RocketDbContext>().Database.EnsureCreatedAsync(TestContext.CancellationToken);
     }
 
-    [After(HookType.Test)]
+    [After(Test)]
     public async Task CloseConnectionAsync()
     {
         if (_connection is not null) await _connection.DisposeAsync();

@@ -47,7 +47,7 @@ public class CreateRocketTests : WebAppFixtureTest
             },
             cancellationToken: TestContext.CancellationToken
         );
-        var r = (await action.ShouldThrowAsync<RpcException>());
+        var r =  await action.ShouldThrowAsync<RpcException>() ;
         r.Message.ShouldContain("Rocket Creation Failed");
     }
 }

@@ -35,14 +35,8 @@ public class CustomMessageHandlerIntegrationTest : WebAppFixtureTest
 
     private sealed class CustomMessageHandler : IValidatorErrorMessageHandler
     {
-        public Task<string> HandleAsync(IEnumerable<ValidationFailure> failures)
-        {
-            return Task.FromResult("Validation Error!");
-        }
+        public Task<string> HandleAsync(IEnumerable<ValidationFailure> failures) => Task.FromResult("Validation Error!");
 
-        public string Handle(IEnumerable<ValidationFailure> failures)
-        {
-            return "Validation Error!";
-        }
+        public string Handle(IEnumerable<ValidationFailure> failures) => "Validation Error!";
     }
 }
