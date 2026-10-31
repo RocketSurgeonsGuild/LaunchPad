@@ -100,10 +100,23 @@ internal sealed class AppProject
     }
 
     /// <summary>
+    ///     Replaces the <c>Program.cs</c> the host model gets by default.
+    /// </summary>
+    /// <param name="program">The text of <c>Program.cs</c>.</param>
+    /// <returns>This project.</returns>
+    public AppProject WithProgram(string program)
+    {
+        Program = program;
+        return this;
+    }
+
+    /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
-    public string Program =>
-        _host switch
+    public string Program
+    {
+        get =>
+        field ?? _host switch
         {
             // The generated ConfigureDovetail entry point builds the host with the joints Dovetail discovered; whether the health checks
             // are among them is what the application reports. It looks the type up by name, as the application may not reference it.
@@ -124,7 +137,8 @@ internal sealed class AppProject
             HostModel.WebAssembly => throw new NotImplementedException(),
             // a WebAssembly host cannot run on the machine the tests do
             _ => """System.Console.WriteLine("hello");""",
-        };
+        }; private set;
+    }
 
     private const string RegisteredFunction = """
 

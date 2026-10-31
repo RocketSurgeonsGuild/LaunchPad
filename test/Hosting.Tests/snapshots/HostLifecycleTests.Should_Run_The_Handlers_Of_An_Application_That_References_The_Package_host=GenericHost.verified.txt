@@ -1,0 +1,9 @@
+﻿{
+  Host: GenericHost,
+  Moments: [
+    starting,
+    started,
+    stopping,
+    stopped
+  ]
+}
