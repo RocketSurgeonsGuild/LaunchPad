@@ -7,6 +7,7 @@ using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 
 using CoreRocketType = Sample.Core.Domain.RocketType;
+using GrpcRocketType = Sample.Grpc.RocketType;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
@@ -38,7 +39,7 @@ public class UpdateRocketTests : WebAppFixtureTest
             new UpdateRocketRequest
             {
                 Id = rocket.Id.ToString(),
-                Type = RocketType.FalconHeavy,
+                Type = GrpcRocketType.FalconHeavy,
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
             },
             cancellationToken: TestContext.CancellationToken
@@ -47,7 +48,7 @@ public class UpdateRocketTests : WebAppFixtureTest
 
         // var response = await client.GetRocketAsync(rocket.Id);
         //
-        // response.Type.ShouldBe(RocketType.FalconHeavy);
+        // response.Type.ShouldBe(GrpcRocketType.FalconHeavy);
         // response.Sn.ShouldBe("43210987654321");
     }
 

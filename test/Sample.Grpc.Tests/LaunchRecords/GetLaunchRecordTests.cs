@@ -10,6 +10,7 @@ using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 
 using CoreRocketType = Sample.Core.Domain.RocketType;
+using GrpcRocketType = Sample.Grpc.RocketType;
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
@@ -50,7 +51,7 @@ public class GetLaunchRecordTests : WebAppFixtureTest
 
         response.Partner.ShouldBe("partner");
         response.Payload.ShouldBe("geo-fence-ftl");
-        response.RocketType.ShouldBe(RocketType.Falcon9);
+        response.RocketType.ShouldBe(GrpcRocketType.Falcon9);
         response.RocketSerialNumber.ShouldBe("12345678901234");
         response.ScheduledLaunchDate.ShouldBe(Timestamp.FromDateTimeOffset(record.ScheduledLaunchDate));
     }

@@ -5,6 +5,7 @@ using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
 
 using CoreRocketType = Sample.Core.Domain.RocketType;
+using GrpcRocketType = Sample.Grpc.RocketType;
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
@@ -34,7 +35,7 @@ public class GetRocketTests : WebAppFixtureTest
         var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.Id.ToString() },
             cancellationToken: TestContext.CancellationToken);
 
-        response.Type.ShouldBe(RocketType.Falcon9);
+        response.Type.ShouldBe(GrpcRocketType.Falcon9);
         response.Sn.ShouldBe("12345678901234");
     }
 }
