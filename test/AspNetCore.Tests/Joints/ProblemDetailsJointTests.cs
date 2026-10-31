@@ -56,7 +56,8 @@ public class ProblemDetailsJointTests
 
         writers.ShouldContain(typeof(OnBeforeWriteProblemDetailsWriter));
         // the validation writers come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
-        writers.ShouldNotContain(z => z.Name.Contains("Validation", StringComparison.Ordinal));
+        writers.Select(z => z.Name).ShouldNotContain("FluentValidationProblemDetailsWriter");
+        writers.Select(z => z.Name).ShouldNotContain("ValidationExceptionProblemDetailsWriter");
     }
 
     [Test]

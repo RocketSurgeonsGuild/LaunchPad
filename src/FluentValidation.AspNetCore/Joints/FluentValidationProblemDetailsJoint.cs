@@ -5,10 +5,8 @@ using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Joints;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using Rocket.Surgery.LaunchPad.Primitives;
@@ -51,7 +49,7 @@ public class FluentValidationProblemDetailsJoint : IServiceJoint
     }
 }
 
-internal class FluentValidationProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
+internal class FluentValidationProblemDetailsWriter : IProblemDetailsWriter
 {
     public ValueTask WriteAsync(ProblemDetailsContext context)
     {
@@ -76,7 +74,7 @@ internal class FluentValidationProblemDetailsWriter(IOptions<ApiBehaviorOptions>
     public bool CanWrite(ProblemDetailsContext context) => context.Exception is not IProblemDetailsData && context.HttpContext.Items[typeof(ValidationResult)] is ValidationResult;
 }
 
-internal class ValidationExceptionProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
+internal class ValidationExceptionProblemDetailsWriter : IProblemDetailsWriter
 {
     public ValueTask WriteAsync(ProblemDetailsContext context)
     {

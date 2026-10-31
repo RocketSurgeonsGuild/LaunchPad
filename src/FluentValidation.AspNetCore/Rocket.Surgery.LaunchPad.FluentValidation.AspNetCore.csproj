@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
-        <PackageDescription />
+        <PackageDescription>
+            FluentValidation for LaunchPad ASP.NET Core applications: the validation exception filter and problem details, and the experimental
+            OpenAPI schema transformer for the validation rules.
+        </PackageDescription>
         <PackageTags>$(PackageTags);fluentvalidation;openapi</PackageTags>
         <!--
             The types stay in the Rocket.Surgery.LaunchPad.AspNetCore namespaces they had in AspNetCore and in the experimental OpenAPI package.

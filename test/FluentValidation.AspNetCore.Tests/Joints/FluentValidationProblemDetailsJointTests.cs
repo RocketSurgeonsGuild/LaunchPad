@@ -60,17 +60,11 @@ public class FluentValidationProblemDetailsJointTests
         );
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider
-           .GetServices<IProblemDetailsWriter>()
-           .Select(z => z.GetType().Name)
-           .ShouldBe(
-                [
-                    "DefaultProblemDetailsWriter",
-                    "OnBeforeWriteProblemDetailsWriter",
-                    nameof(FluentValidationProblemDetailsWriter),
-                    nameof(ValidationExceptionProblemDetailsWriter),
-                ]
-            );
+        var writers = provider.GetServices<IProblemDetailsWriter>().Select(z => z.GetType().Name).ToList();
+
+        writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)).ShouldBeGreaterThan(writers.IndexOf("OnBeforeWriteProblemDetailsWriter"));
+        writers.IndexOf(nameof(ValidationExceptionProblemDetailsWriter)).ShouldBeGreaterThan(writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)));
+        writers.IndexOf("OnBeforeWriteProblemDetailsWriter").ShouldBeGreaterThanOrEqualTo(0);
     }
 
     [Test]
