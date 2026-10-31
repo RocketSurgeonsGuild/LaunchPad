@@ -19,7 +19,7 @@ public class InstrumentationJointTests
     public async Task Records_The_Hot_Chocolate_Activities()
     {
         var recorded = new List<string>();
-        var services = Services(recorded);
+        var services = ServicesRecording(recorded);
         new InstrumentationJoint().Register(await JointContext.Create(), new ServicesBuilder(services));
 
         RecordActivity(services);
@@ -31,7 +31,7 @@ public class InstrumentationJointTests
     public void Records_Nothing_From_The_Hot_Chocolate_Activity_Source_Without_The_Joint()
     {
         var recorded = new List<string>();
-        var services = Services(recorded);
+        var services = ServicesRecording(recorded);
 
         RecordActivity(services);
 
@@ -50,7 +50,7 @@ public class InstrumentationJointTests
     }
 
     // Activity sources are shared by the whole process, so what the tracer provider records is what shows that it listens to one.
-    private static IServiceCollection Services(List<string> recorded)
+    private static IServiceCollection ServicesRecording(List<string> recorded)
     {
         var services = new ServiceCollection().AddOptions().AddSingleton<IConfiguration>(new ConfigurationBuilder().Build());
         new ServicesBuilder(services).WithTracing(tracing => tracing.AddProcessor(new RecordingProcessor(recorded)));

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 using Rocket.Surgery.LaunchPad.AspNetCore.Rivets;
@@ -36,7 +37,7 @@ public class NewtonsoftJsonJointTests
     [Test]
     public async Task Applies_The_Registered_Json_Serializer_Settings_To_The_Mvc_Settings()
     {
-        var marker = new MarkerConverter();
+        var marker = new JavaScriptDateTimeConverter();
         // Unnamed configuration applies to every name, which is how Foundation.NewtonsoftJson registers its own.
         var provider = await Register(
             new ServiceCollection().AddSingleton<IConfigureOptions<JsonSerializerSettings>>(
@@ -87,14 +88,5 @@ public class NewtonsoftJsonJointTests
         var context = await DovetailContext.FromAsync(DovetailContextBuilder.Create([], new Dictionary<object, object>(), []));
         configure?.Invoke(context);
         return context;
-    }
-
-    private sealed class MarkerConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType) => false;
-
-        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => throw new NotSupportedException();
-
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => throw new NotSupportedException();
     }
 }
