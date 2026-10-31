@@ -7,8 +7,20 @@
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
-        <PackageReference Include="Rocket.Surgery.Conventions.DryIoc" />
-        <PackageReference Include="Rocket.Surgery.CommandLine" />
+        <PackageReference Include="Joinery.Dovetail.DryIoc" />
+        <PackageReference Include="Joinery.Dovetail.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Spectre.Console.Cli" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- the generic host's entry point: ConfigureDovetail on the HostApplicationBuilder -->
+        <DovetailHost
+            Include="HostApplication"
+            HostBuilderType="global::Microsoft.Extensions.Hosting.HostApplicationBuilder"
+            HostBuilderName="builder"
+            HostType="global::Microsoft.Extensions.Hosting.IHost"
+            HelperName="global::Joinery.Dovetail.DovetailHostApplicationHelpers"
+        />
     </ItemGroup>
     <ItemGroup>
         <Using Remove="JetBrains.Annotations" />
