@@ -1,0 +1,6 @@
+﻿{
+  Host: AspNetCore,
+  Templates: [
+    LaunchPadHealthChecksJoint
+  ]
+}

@@ -1,5 +1,9 @@
 ﻿[
+  build/LaunchPadAspNetCoreInstrumentationJoint.cs.template,
   build/LaunchPadHealthChecksJoint.cs.template,
+  build/LaunchPadHotChocolateInstrumentationJoint.cs.template,
+  build/LaunchPadInstrumentationJoint.cs.template,
+  build/LaunchPadRuntimeInstrumentationJoint.cs.template,
   build/Rocket.Surgery.LaunchPad.Hosting.targets,
   buildMultiTargeting/Rocket.Surgery.LaunchPad.Hosting.targets,
   buildTransitive/Rocket.Surgery.LaunchPad.Hosting.targets

@@ -15,9 +15,9 @@
         </EmbeddedResource>
     </ItemDefinitionGroup>
     <!--
-        LaunchPad.Serilog and LaunchPad.Telemetry (and LaunchPad.Primitives, which references them) still sit on Rocket.Surgery.Conventions until
-        RocketSurgeonsGuild/LaunchPad#3062 and RocketSurgeonsGuild/LaunchPad#3061 convert them (LaunchPad.Hosting no longer does, since
-        RocketSurgeonsGuild/LaunchPad#3058), and the Conventions source generator that arrives with them writes a second Imports class next to
+        LaunchPad.Serilog (and LaunchPad.Primitives, which references it) still sits on Rocket.Surgery.Conventions until
+        RocketSurgeonsGuild/LaunchPad#3062 converts it (LaunchPad.Hosting no longer does, since
+        RocketSurgeonsGuild/LaunchPad#3058), and the Conventions source generator that arrives with it writes a second Imports class next to
         the one Dovetail writes into the sample. The samples start through Dovetail, so the generator is removed from the analyzers once they
         are resolved. Remove this target with the same one in test/Directory.Build.targets when the last project has moved
         (RocketSurgeonsGuild/LaunchPad#3056).

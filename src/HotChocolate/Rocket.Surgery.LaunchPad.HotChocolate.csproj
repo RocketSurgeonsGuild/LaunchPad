@@ -15,7 +15,6 @@
     <PackageReference Include="NodaTime" />
     <!--        <PackageReference Include="Scrutor" />-->
     <PackageReference Include="Joinery.Dovetail" />
-    <PackageReference Include="Joinery.Dovetail.OpenTelemetry" />
     <PackageReference Include="Humanizer.Core" />
   </ItemGroup>
   <ItemGroup>

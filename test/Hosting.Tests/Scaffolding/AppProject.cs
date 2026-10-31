@@ -100,10 +100,21 @@ internal sealed class AppProject
     }
 
     /// <summary>
+    ///     Replaces what the application's <c>Program.cs</c> holds, for a test that reads something other than the health checks.
+    /// </summary>
+    /// <param name="program">The program.</param>
+    /// <returns>This project.</returns>
+    public AppProject WithProgram(string program)
+    {
+        _program = program;
+        return this;
+    }
+
+    /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
     public string Program =>
-        _host switch
+        _program ?? _host switch
         {
             // The generated ConfigureDovetail entry point builds the host with the joints Dovetail discovered; whether the health checks
             // are among them is what the application reports. It looks the type up by name, as the application may not reference it.
@@ -121,7 +132,6 @@ internal sealed class AppProject
                 """ + RegisteredFunction,
             // a library has nothing to run
             HostModel.None => "public static class Library;",
-            HostModel.WebAssembly => throw new NotImplementedException(),
             // a WebAssembly host cannot run on the machine the tests do
             _ => """System.Console.WriteLine("hello");""",
         };
@@ -200,7 +210,6 @@ internal sealed class AppProject
                       HostBuilderName="builder"
                       HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost" />
                 """,
-            HostModel.None => throw new NotImplementedException(),
             _ => null,
         };
 
@@ -208,4 +217,5 @@ internal sealed class AppProject
     private readonly List<(string Id, string? Version)> _packages = [];
     private readonly List<string> _projectReferences = [];
     private readonly bool _versioned;
+    private string? _program;
 }

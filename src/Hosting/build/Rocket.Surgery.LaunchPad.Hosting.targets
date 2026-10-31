@@ -29,6 +29,31 @@
             References="Microsoft.Extensions.Diagnostics.HealthChecks"
             Hosts="HostApplication;WebApplication"
         />
+        <!--
+            The instrumentation joints are OpenTelemetry joints: Joinery.Dovetail.OpenTelemetry (which Dovetail's SDK adds when
+            OpenTelemetry is referenced) is what turns OpenTelemetry on, and Joinery.Dovetail.Hosting applies them. Blazor WebAssembly
+            gets no runtime or process metrics.
+        -->
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadInstrumentationJoint"
+            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Instrumentation.Http"
+            Hosts="HostApplication;WebApplication;WebAssembly"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadRuntimeInstrumentationJoint"
+            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Instrumentation.Runtime;OpenTelemetry.Instrumentation.Process"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadAspNetCoreInstrumentationJoint"
+            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Instrumentation.AspNetCore"
+            Hosts="WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadHotChocolateInstrumentationJoint"
+            References="Joinery.Dovetail.OpenTelemetry;HotChocolate.Diagnostics"
+            Hosts="HostApplication;WebApplication"
+        />
     </ItemGroup>
     <ItemGroup>
         <DovetailTemplate
