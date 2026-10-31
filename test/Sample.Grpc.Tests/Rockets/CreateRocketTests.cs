@@ -1,14 +1,15 @@
-﻿using Grpc.Core;
+using Grpc.Core;
+
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
+
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixture webAppFixture)
-    : WebAppFixtureTest<TestWebAppFixture>(testContext, webAppFixture)
+public class CreateRocketTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Should_Create_A_Rocket()
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
@@ -25,7 +26,7 @@ public class CreateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
         response.Id.ShouldNotBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task Should_Throw_If_Rocket_Exists()
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());

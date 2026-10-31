@@ -1,37 +1,37 @@
-﻿using Grpc.Core;
-using Indago;
+using Grpc.Core;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
+
 using R = Sample.Grpc.Rockets;
 
 namespace Sample.Grpc.Tests.Rockets;
 
-public class UpdateRocketTests(ITestContextAccessor testContext, TestWebAppFixture testWebAppFixture)
-    : WebAppFixtureTest<TestWebAppFixture>(testContext, testWebAppFixture)
+public class UpdateRocketTests : WebAppFixtureTest
 {
     private static readonly Faker Faker = new();
 
-    [Fact]
+    [Test]
     public async Task Should_Update_A_Rocket()
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
 
-        var rocket = await ServiceProvider.WithScoped<RocketDbContext>()
-                                          .Invoke(
-                                               async z =>
-                                               {
-                                                   var rocket = new ReadyRocket
-                                                   {
-                                                       Type = Core.Domain.RocketType.Falcon9,
-                                                       SerialNumber = "12345678901234"
-                                                   };
-                                                   z.Add(rocket);
+        ReadyRocket rocket;
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            rocket = new ReadyRocket
+            {
+                Type = Core.Domain.RocketType.Falcon9,
+                SerialNumber = "12345678901234"
+            };
+            z.Add(rocket);
 
-                                                   await z.SaveChangesAsync();
-                                                   return rocket;
-                                               }
-                                           );
+            await z.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
         var u = await client.EditRocketAsync(
             new UpdateRocketRequest
@@ -50,8 +50,8 @@ public class UpdateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
         // response.Sn.ShouldBe("43210987654321");
     }
 
-    [Theory]
-    [ClassData(typeof(ShouldValidateUsersRequiredFieldData))]
+    [Test]
+    [MethodDataSource(nameof(RequiredFieldData))]
     public async Task Should_Validate_Required_Fields(UpdateRocketRequest request, string propertyName)
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
@@ -61,22 +61,19 @@ public class UpdateRocketTests(ITestContextAccessor testContext, TestWebAppFixtu
         e.Message.ShouldContain(propertyName);
     }
 
-    private sealed class ShouldValidateUsersRequiredFieldData : TheoryData<UpdateRocketRequest, string>
+    public static IEnumerable<Func<(UpdateRocketRequest Request, string PropertyName)>> RequiredFieldData()
     {
-        public ShouldValidateUsersRequiredFieldData()
-        {
-            Add(
-                new UpdateRocketRequest(),
-                nameof(UpdateRocketRequest.SerialNumber)
-            );
-            Add(
-                new UpdateRocketRequest { SerialNumber = Faker.Random.String2(0, 9) },
-                nameof(UpdateRocketRequest.SerialNumber)
-            );
-            Add(
-                new UpdateRocketRequest { SerialNumber = Faker.Random.String2(600, 800) },
-                nameof(UpdateRocketRequest.SerialNumber)
-            );
-        }
+        yield return () => (
+            new UpdateRocketRequest(),
+            nameof(UpdateRocketRequest.SerialNumber)
+        );
+        yield return () => (
+            new UpdateRocketRequest { SerialNumber = Faker.Random.String2(0, 9) },
+            nameof(UpdateRocketRequest.SerialNumber)
+        );
+        yield return () => (
+            new UpdateRocketRequest { SerialNumber = Faker.Random.String2(600, 800) },
+            nameof(UpdateRocketRequest.SerialNumber)
+        );
     }
 }

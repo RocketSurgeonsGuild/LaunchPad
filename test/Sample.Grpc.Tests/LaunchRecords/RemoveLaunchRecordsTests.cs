@@ -1,38 +1,38 @@
-﻿using Indago;
+using Microsoft.Extensions.DependencyInjection;
+
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Grpc.Tests.Helpers;
 using Sample.Grpc.Tests.Validation;
+
 using LR = Sample.Grpc.LaunchRecords;
 
 namespace Sample.Grpc.Tests.LaunchRecords;
 
-public class RemoveLaunchRecordsTests(ITestContextAccessor outputHelper, TestWebAppFixture webAppFixture)
-    : WebAppFixtureTest<TestWebAppFixture>(outputHelper, webAppFixture)
+public class RemoveLaunchRecordsTests : WebAppFixtureTest
 {
     private static readonly Faker Faker = new();
 
-    [Fact]
+    [Test]
     public async Task Should_Remove_LaunchRecord()
     {
         var client = new LR.LaunchRecordsClient(AlbaHost.CreateGrpcChannel());
-        var id = await ServiceProvider.WithScoped<RocketDbContext>()
-                                      .Invoke(
-                                           async z =>
-                                           {
-                                               var faker = new RocketFaker();
-                                               var rocket = faker.Generate();
-                                               var record = new LaunchRecordFaker(new[] { rocket }.ToList()).Generate();
-                                               z.Add(rocket);
-                                               z.Add(record);
+        LaunchRecord record;
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        {
+            var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
+            var faker = new RocketFaker();
+            var rocket = faker.Generate();
+            record = new LaunchRecordFaker(new[] { rocket }.ToList()).Generate();
+            z.Add(rocket);
+            z.Add(record);
 
-                                               await z.SaveChangesAsync();
-                                               return record.Id;
-                                           }
-                                       );
+            await z.SaveChangesAsync(TestContext.CancellationToken);
+        }
 
-        await client.DeleteLaunchRecordAsync(new DeleteLaunchRecordRequest { Id = id.ToString() }, cancellationToken: TestContext.CancellationToken);
+        await client.DeleteLaunchRecordAsync(new DeleteLaunchRecordRequest { Id = record.Id.ToString() }, cancellationToken: TestContext.CancellationToken);
 
-        ServiceProvider.WithScoped<RocketDbContext>().Invoke(c => c.LaunchRecords.ShouldBeEmpty());
+        await using var assertScope = ServiceProvider.CreateAsyncScope();
+        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.ShouldBeEmpty();
     }
 }
