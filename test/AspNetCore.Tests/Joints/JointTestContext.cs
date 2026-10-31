@@ -14,22 +14,18 @@ using Specular.Abstractions;
 namespace AspNetCore.Tests.Joints;
 
 /// <summary>
-///     Creates joint contexts for the joint tests, with the same categories an application has and a Specular provider
-///     seeded the way an application seeds it.
+///     Creates joint contexts for the joint tests, with a Specular provider seeded the way an application seeds it.
 /// </summary>
 internal static class JointTestContext
 {
     /// <summary>
-    ///     A joint context builder with the core and application categories and the given Specular provider.
+    ///     A joint context builder with the given Specular provider.
     /// </summary>
     /// <param name="provider">The provider to seed. When it is <see langword="null" /> the builder has no provider at all.</param>
     public static DovetailContextBuilder CreateBuilder(ISpecularProvider? provider)
     {
-        var builder = DovetailContextBuilder.Create(
-            [],
-            new Dictionary<object, object>(),
-            [DovetailCategory.Core, DovetailCategory.Application]
-        );
+        // Dovetail resolves joints whose category is not in the context's category set, so the set stays empty to run every joint.
+        var builder = DovetailContextBuilder.Create([], new Dictionary<object, object>(), []);
         return provider is null ? builder : builder.Set(provider);
     }
 

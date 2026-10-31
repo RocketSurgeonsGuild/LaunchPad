@@ -1,3 +1,5 @@
+using Joinery.Dovetail;
+
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 namespace AspNetCore.Tests.Joints;
@@ -13,7 +15,7 @@ public class AspNetCoreValidationBehaviorJointTests
                            .AppendJoint<AspNetCoreValidationBehaviorJoint>()
                            .CreateAsync();
 
-        context.Get<bool>(AspNetCoreValidationBehaviorJoint.RegisterValidationOptionsAsHealthChecksKey).ShouldBe(true);
+        context.Get<bool>(AspNetCoreValidationBehaviorJoint.RegisterValidationOptionsAsHealthChecksKey).ShouldBeTrue();
     }
 
     [Test]
@@ -21,6 +23,6 @@ public class AspNetCoreValidationBehaviorJointTests
     {
         var context = await JointTestContext.CreateBuilder().CreateAsync();
 
-        context.Get<bool>(AspNetCoreValidationBehaviorJoint.RegisterValidationOptionsAsHealthChecksKey).ShouldBeNull();
+        context.Get<bool>(AspNetCoreValidationBehaviorJoint.RegisterValidationOptionsAsHealthChecksKey).ShouldBeFalse();
     }
 }

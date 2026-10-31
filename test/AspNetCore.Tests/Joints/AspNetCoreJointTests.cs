@@ -2,6 +2,8 @@ using System.Reflection;
 
 using FakeItEasy;
 
+using Joinery.Dovetail;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -56,6 +58,18 @@ public class AspNetCoreJointTests
         var parts = GetApplicationParts(services);
         parts.ShouldContain(assemblies[0]);
         parts.ShouldContain(assemblies[1]);
+    }
+
+    [Test]
+    public async Task Should_Add_The_Application_Assembly_As_An_Application_Part_When_The_Generated_Specular_Provider_Is_Used()
+    {
+        // the provider an application seeds: the generator resolves the scan in AspNetCoreJoint to the assemblies that depend on the
+        // AspNetCore assembly, and this test assembly is one of them
+        var builder = JointTestContext.CreateBuilder(SpecularProvider.Instance).AppendJoint<AspNetCoreJoint>();
+
+        var services = await JointTestContext.ApplyServicesAsync(builder);
+
+        GetApplicationParts(services).ShouldContain(typeof(AspNetCoreJointTests).Assembly);
     }
 
     [Test]

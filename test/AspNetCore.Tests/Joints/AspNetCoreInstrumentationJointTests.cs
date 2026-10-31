@@ -55,7 +55,15 @@ public class AspNetCoreInstrumentationJointTests
                            .AppendJoint<AspNetCoreInstrumentationJoint>()
                            .CreateAsync();
         var services = new ServiceCollection();
-        await services.AddOpenTelemetry().ApplyOpenTelemetry(context);
+        var builder = services.AddOpenTelemetry();
+        await builder.ApplyOpenTelemetry(context);
+        // The SDK only enables instruments once there is a reader to collect them.
+        builder.WithMetrics(metrics => metrics.AddReader(new BaseExportingMetricReader(new NoopMetricExporter())));
         return JointTestContext.BuildServiceProvider(services);
+    }
+
+    private sealed class NoopMetricExporter : BaseExporter<Metric>
+    {
+        public override ExportResult Export(in Batch<Metric> batch) => ExportResult.Success;
     }
 }

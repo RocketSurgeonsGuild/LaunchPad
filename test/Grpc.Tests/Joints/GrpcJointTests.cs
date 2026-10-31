@@ -70,12 +70,9 @@ public class GrpcJointTests
         Attribute.GetCustomAttributes(typeof(GrpcJoint)).ShouldNotContain(z => z is LiveJointAttribute || z is UnitTestJointAttribute || z is DovetailHostTypeAttribute);
     }
 
+    // Dovetail resolves joints whose category is not in the context's category set, so the set stays empty to run every joint.
     private static async Task<IDovetailContext> CreateContextAsync() => await DovetailContextBuilder
-                                                                              .Create(
-                                                                                   [],
-                                                                                   new Dictionary<object, object>(),
-                                                                                   [DovetailCategory.Core, DovetailCategory.Application]
-                                                                               )
+                                                                              .Create([], new Dictionary<object, object>(), [])
                                                                               .AppendJoint<GrpcJoint>()
                                                                               .CreateAsync();
 
