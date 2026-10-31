@@ -7,7 +7,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Validation;
 internal class CompositeValidator
 {
     protected static readonly PropertyInfo RuleSetsExecutedProperty = typeof(ValidationResult)
-        // ReSharper disable once NullableWarningSuppressionIsUsed
+       // ReSharper disable once NullableWarningSuppressionIsUsed
        .GetProperty(nameof(ValidationResult.RuleSetsExecuted), BindingFlags.Instance | BindingFlags.Public)!;
 }
 
@@ -15,15 +15,9 @@ internal class CompositeValidator<T>(IEnumerable<IValidator> validators) : Compo
 {
     public CascadeMode CascadeMode { get; set; } = CascadeMode.Continue;
 
-    public ValidationResult Validate(T instance)
-    {
-        return Validate(new ValidationContext<T>(instance));
-    }
+    public ValidationResult Validate(T instance) => Validate(new ValidationContext<T>(instance));
 
-    public Task<ValidationResult> ValidateAsync(T instance, CancellationToken cancellation = new())
-    {
-        return ValidateAsync(new ValidationContext<T>(instance), cancellation);
-    }
+    public Task<ValidationResult> ValidateAsync(T instance, CancellationToken cancellation = new()) => ValidateAsync(new ValidationContext<T>(instance), cancellation);
 
     public ValidationResult Validate(IValidationContext context)
     {
@@ -34,7 +28,7 @@ internal class CompositeValidator<T>(IEnumerable<IValidator> validators) : Compo
                    (acc, result) =>
                    {
                        var response = new ValidationResult(acc.Errors.Union(result.Errors).OrderBy(z => z.PropertyName));
-                       RuleSetsExecutedProperty.SetValue(result, acc.RuleSetsExecuted?.Union(response.RuleSetsExecuted ?? Array.Empty<string>()).ToArray());
+                       RuleSetsExecutedProperty.SetValue(result, acc.RuleSetsExecuted?.Union(response.RuleSetsExecuted ?? []).ToArray());
                        return response;
                    }
                );
@@ -54,19 +48,13 @@ internal class CompositeValidator<T>(IEnumerable<IValidator> validators) : Compo
             (acc, result) =>
             {
                 var response = new ValidationResult(acc.Errors.Union(result.Errors).OrderBy(z => z.PropertyName));
-                RuleSetsExecutedProperty.SetValue(result, acc.RuleSetsExecuted?.Union(response.RuleSetsExecuted ?? Array.Empty<string>()).ToArray());
+                RuleSetsExecutedProperty.SetValue(result, acc.RuleSetsExecuted?.Union(response.RuleSetsExecuted ?? []).ToArray());
                 return response;
             }
         );
     }
 
-    public IValidatorDescriptor CreateDescriptor()
-    {
-        return new CompositeValidatorDescriptor(validators);
-    }
+    public IValidatorDescriptor CreateDescriptor() => new CompositeValidatorDescriptor(validators);
 
-    public bool CanValidateInstancesOfType(Type type)
-    {
-        return validators.Any(z => z.CanValidateInstancesOfType(type));
-    }
+    public bool CanValidateInstancesOfType(Type type) => validators.Any(z => z.CanValidateInstancesOfType(type));
 }

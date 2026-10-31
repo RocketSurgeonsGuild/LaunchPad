@@ -22,10 +22,7 @@ public static class FluentValidationExtensions
         this IRuleBuilder<T, TProperty?> ruleBuilder,
         bool caseSensitive,
         params string[] values
-    ) where TProperty : notnull
-    {
-        return ruleBuilder.SetValidator(new StringInValidator<T, TProperty>(values, caseSensitive));
-    }
+    ) where TProperty : notnull => ruleBuilder.SetValidator(new StringInValidator<T, TProperty>(values, caseSensitive));
 
     /// <summary>
     ///     Defines a validator on the current rule builder that ensures that the specific value is one of the values given in the list.
@@ -38,10 +35,7 @@ public static class FluentValidationExtensions
     public static IRuleBuilderOptions<T, TProperty> IsOneOf<T, TProperty>(
         this IRuleBuilder<T, TProperty> ruleBuilder,
         params string[] values
-    ) where TProperty : notnull
-    {
-        return ruleBuilder.SetValidator(new StringInValidator<T, TProperty>(values, false));
-    }
+    ) where TProperty : notnull => ruleBuilder.SetValidator(new StringInValidator<T, TProperty>(values, false));
 
     /// <summary>
     ///     Get a fluent validation validator if defined.
@@ -49,10 +43,7 @@ public static class FluentValidationExtensions
     /// <param name="serviceProvider"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static IValidator<T>? GetValidator<T>(this IServiceProvider serviceProvider)
-    {
-        return GetValidator(serviceProvider, typeof(T)) as IValidator<T> ?? null;
-    }
+    public static IValidator<T>? GetValidator<T>(this IServiceProvider serviceProvider) => GetValidator(serviceProvider, typeof(T)) as IValidator<T> ?? null;
 
     /// <summary>
     ///     Get a fluent validation validator if defined.
@@ -62,7 +53,6 @@ public static class FluentValidationExtensions
     /// <returns></returns>
     public static IValidator? GetValidator(this IServiceProvider serviceProvider, Type? type)
     {
-        if (type is null) return null;
-        return serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) as IValidator ?? null;
+        return  type is null  ?   null   :  serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) as IValidator ?? null;
     }
 }

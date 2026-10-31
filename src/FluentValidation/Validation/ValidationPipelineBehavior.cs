@@ -17,7 +17,7 @@ internal class ValidationPipelineBehavior<T, R>(IValidator<T>? validator = null)
             if (!response.IsValid) throw new ValidationException(response.Errors);
         }
 
-        return await next().ConfigureAwait(false);
+        return await next(cancellationToken).ConfigureAwait(false);
     }
 }
 

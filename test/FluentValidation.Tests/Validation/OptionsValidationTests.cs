@@ -1,7 +1,5 @@
 using DryIoc;
 
-using FluentValidation;
-
 using Joinery.Dovetail;
 
 using Microsoft.Extensions.DependencyInjection;

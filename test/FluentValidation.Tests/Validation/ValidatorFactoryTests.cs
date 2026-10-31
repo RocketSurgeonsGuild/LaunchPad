@@ -1,4 +1,3 @@
-using FluentValidation;
 using Serilog.Events;
 
 namespace FluentValidation.Tests.Validation;
