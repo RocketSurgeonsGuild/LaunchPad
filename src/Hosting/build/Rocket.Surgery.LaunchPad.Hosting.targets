@@ -15,8 +15,8 @@
              copy a referenced assembly wrote for itself), [DovetailExport] and the DovetailCategory it needs. Do not use backslashes.
           2. Add one line to _LaunchPadHostingTemplate below: Include is the name (and the file name), References the assemblies it
              compiles against (file names without extension), Hosts the host models it is for.
-          3. Add the case to test/Hosting.Tests/HostingTemplateTests.cs (and to the host models it covers), or to
-             HostingWebAssemblyTemplateTests.cs for Blazor WebAssembly.
+          3. Add the case to test/Hosting.Tests/HostingTemplateTests.cs (and to the host models it covers), to
+             HostingWebAssemblyTemplateTests.cs for Blazor WebAssembly, or to InstrumentationTemplateTests.cs for an OpenTelemetry joint.
         Nothing else changes: the metadata every template shares is set once below.
 
         NuGet imports this file into every project that gets the package, through the shim in buildTransitive/ (or buildMultiTargeting/);
@@ -52,7 +52,12 @@
         />
         <_LaunchPadHostingTemplate
             Include="LaunchPadRuntimeInstrumentationJoint"
-            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Instrumentation.Runtime;OpenTelemetry.Instrumentation.Process"
+            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Instrumentation.Runtime"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadProcessInstrumentationJoint"
+            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Instrumentation.Process"
             Hosts="HostApplication;WebApplication"
         />
         <_LaunchPadHostingTemplate

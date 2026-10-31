@@ -13,6 +13,7 @@ public class InstrumentationTemplateTests
 {
     private const string InstrumentationJoint = "LaunchPadInstrumentationJoint";
     private const string RuntimeInstrumentationJoint = "LaunchPadRuntimeInstrumentationJoint";
+    private const string ProcessInstrumentationJoint = "LaunchPadProcessInstrumentationJoint";
     private const string AspNetCoreInstrumentationJoint = "LaunchPadAspNetCoreInstrumentationJoint";
     private const string HotChocolateInstrumentationJoint = "LaunchPadHotChocolateInstrumentationJoint";
 
@@ -95,11 +96,32 @@ public class InstrumentationTemplateTests
     }
 
     /// <summary>
+    ///     The runtime and process metrics are separate joints, so an application that references the runtime instrumentation and not the
+    ///     process instrumentation (a prerelease package) still gets the runtime metrics.
+    /// </summary>
+    [Test]
+    public async Task Should_Give_An_Application_With_The_Runtime_Instrumentation_Alone_The_Runtime_Metrics()
+    {
+        var package = await PackedHosting.Pack();
+        using var tree = ThrowawayTree.OutsideTheRepository(package);
+        tree.AddProject(
+            "app",
+            Application(package, HostModel.GenericHost, instrumentation: false).AddPackage("OpenTelemetry.Instrumentation.Runtime").WithProgram(Probe(HostModel.GenericHost))
+        );
+
+        await tree.Build("app", Cancellation);
+        var output = await tree.Run("app", Cancellation);
+
+        await Verify(new { Host = HostModel.GenericHost, Templates = tree.EmittedTemplates("app"), Output = output.Trim() });
+    }
+
+    /// <summary>
     ///     The text that lands in the application.
     /// </summary>
     [Test]
     [Arguments(InstrumentationJoint)]
     [Arguments(RuntimeInstrumentationJoint)]
+    [Arguments(ProcessInstrumentationJoint)]
     [Arguments(AspNetCoreInstrumentationJoint)]
     [Arguments(HotChocolateInstrumentationJoint)]
     public async Task Should_Write_The_Instrumentation_Joint_As_An_Internal_Embedded_OpenTelemetry_Joint(string joint)

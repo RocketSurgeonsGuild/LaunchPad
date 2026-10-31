@@ -1,0 +1,15 @@
+﻿{
+  Host: GenericHost,
+  Templates: [
+    LaunchPadRuntimeInstrumentationJoint
+  ],
+  Output:
+Traces System.Net.Http:False
+Traces HotChocolate.Diagnostics:False
+Metrics System.Net.Http:False
+Metrics System.Runtime:True
+Metrics OpenTelemetry.Instrumentation.Process:False
+Metrics Microsoft.AspNetCore.Hosting:False
+RecordException HttpClient:
+RecordException AspNetCore:
+}

@@ -5,6 +5,7 @@
     LaunchPadHealthChecksJoint,
     LaunchPadHotChocolateInstrumentationJoint,
     LaunchPadInstrumentationJoint,
+    LaunchPadProcessInstrumentationJoint,
     LaunchPadRuntimeInstrumentationJoint
   ],
   Output:
