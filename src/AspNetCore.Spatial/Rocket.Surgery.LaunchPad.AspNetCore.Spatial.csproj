@@ -9,6 +9,7 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Joinery.Dovetail" />
         <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj"
             IncludeAssets="all" />
         <ProjectReference Include="..\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />

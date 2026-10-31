@@ -1,21 +1,21 @@
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     Convention to register spatial types
+///     Joint to register spatial types
 /// </summary>
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Application)]
-public class AspNetCoreSpatialConvention : IServiceConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Application)]
+public class AspNetCoreSpatialJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         //        services.Configure<SwaggerGenOptions>(o => o.ConfigureForNetTopologySuite());
     }
