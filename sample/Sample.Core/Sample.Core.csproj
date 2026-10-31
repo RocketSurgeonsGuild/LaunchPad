@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" />
+    <PackageReference Include="Joinery.Dovetail" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="StronglyTypedId" />
@@ -19,12 +20,6 @@
     <ProjectReference
       Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
-    <None
-      Include="$(MSBuildThisFileDirectory)\..\Analyzers\bin\$(Configuration)\netstandard2.0\Rocket.Surgery.Conventions.Analyzers.dll"
-      Pack="true"
-      PackagePath="analyzers/dotnet/cs"
-      Visible="false"
-    />
     <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
   </ItemGroup>
 
