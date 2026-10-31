@@ -1,14 +1,14 @@
 using System.Reflection;
 using HotChocolate.Execution;
+using HotChocolate.Execution.Configuration;
 using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Infrastructure;
-using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NodaTime;
-using NodaTime.Text;
 using NodaTime.Testing.TimeZones;
+using NodaTime.Text;
 using NodaTime.TimeZones;
 using Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 using Rocket.Surgery.LaunchPad.HotChocolate.Rivets;
@@ -128,7 +128,7 @@ public class ZoneQuery
     public Outer.Inner Nested() => new();
 }
 
-public class Outer
+public static class Outer
 {
     public class Inner
     {

@@ -22,10 +22,7 @@ namespace Rocket.Surgery.LaunchPad.Spatial.Joints;
 public class SpatialJoint : IServiceJoint, ISerilogJoint
 {
     /// <inheritdoc />
-    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration)
-    {
-        loggerConfiguration.Destructure.NetTopologySuiteTypes();
-    }
+    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration) => loggerConfiguration.Destructure.NetTopologySuiteTypes();
 
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services)

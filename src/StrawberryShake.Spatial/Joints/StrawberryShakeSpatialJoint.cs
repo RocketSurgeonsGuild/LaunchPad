@@ -14,9 +14,5 @@ namespace Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.Joints;
 public class StrawberryShakeSpatialJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IDovetailContext context, IServiceCollection services)
-    {
-        services.AddSingleton<ISerializer, GeometrySerializer>();
-        // services.AddSerializer<CoordinatesSerializer>();
-    }
+    public void Register(IDovetailContext context, IServiceCollection services) => services.AddSingleton<ISerializer, GeometrySerializer>();// services.AddSerializer<CoordinatesSerializer>();
 }

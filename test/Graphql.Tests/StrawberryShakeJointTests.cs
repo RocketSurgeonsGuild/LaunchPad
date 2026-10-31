@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.StrawberryShake;
 using Rocket.Surgery.LaunchPad.StrawberryShake.Joints;
 using Rocket.Surgery.LaunchPad.StrawberryShake.Rivets;
-using ISerializer = global::StrawberryShake.Serialization.ISerializer;
+using ISerializer = StrawberryShake.Serialization.ISerializer;
 
 namespace Graphql.Tests;
 

@@ -23,10 +23,7 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 public class NewtonsoftJsonJoint : IServiceJoint, ISerilogJoint
 {
     /// <inheritdoc />
-    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration)
-    {
-        loggerConfiguration.Destructure.NewtonsoftJsonTypes();
-    }
+    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration) => loggerConfiguration.Destructure.NewtonsoftJsonTypes();
 
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services)

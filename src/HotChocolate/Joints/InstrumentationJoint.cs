@@ -16,8 +16,5 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 public class InstrumentationJoint : IOpenTelemetryJoint
 {
     /// <inheritdoc />
-    public void Register(IDovetailContext context, IOpenTelemetryBuilder builder)
-    {
-        builder.WithTracing(b => b.AddHotChocolateInstrumentation());
-    }
+    public void Register(IDovetailContext context, IOpenTelemetryBuilder builder) => builder.WithTracing(b => b.AddHotChocolateInstrumentation());
 }

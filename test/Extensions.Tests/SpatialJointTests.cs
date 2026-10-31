@@ -9,7 +9,6 @@ using NetTopologySuite.Geometries;
 using Rocket.Surgery.LaunchPad.Spatial;
 using Rocket.Surgery.LaunchPad.Spatial.Joints;
 using Rocket.Surgery.LaunchPad.Spatial.Rivets;
-using Serilog;
 
 namespace Extensions.Tests;
 
