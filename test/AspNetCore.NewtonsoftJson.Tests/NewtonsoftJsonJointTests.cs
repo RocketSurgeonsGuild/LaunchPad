@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Reflection;
 using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
@@ -36,7 +37,12 @@ public class NewtonsoftJsonJointTests
     public async Task Applies_The_Registered_Json_Serializer_Settings_To_The_Mvc_Settings()
     {
         var marker = new MarkerConverter();
-        var provider = await Register(new ServiceCollection().Configure<JsonSerializerSettings>(settings => settings.Converters.Add(marker)));
+        // Unnamed configuration applies to every name, which is how Foundation.NewtonsoftJson registers its own.
+        var provider = await Register(
+            new ServiceCollection().AddSingleton<IConfigureOptions<JsonSerializerSettings>>(
+                new ConfigureNamedOptions<JsonSerializerSettings>(null, settings => settings.Converters.Add(marker))
+            )
+        );
 
         provider.GetRequiredService<IOptions<MvcNewtonsoftJsonOptions>>().Value.SerializerSettings.Converters.ShouldContain(marker);
     }
@@ -70,7 +76,8 @@ public class NewtonsoftJsonJointTests
 
     private static async Task<IServiceProvider> Register(IServiceCollection services)
     {
-        services.AddLogging();
+        // The host provides these; the Joint only adds the formatters on top of them.
+        services.AddLogging().AddSingleton(ArrayPool<char>.Shared);
         new NewtonsoftJsonJoint().Register(await JointContext(), services);
         return services.BuildServiceProvider();
     }
