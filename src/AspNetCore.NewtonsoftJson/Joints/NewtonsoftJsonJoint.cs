@@ -1,38 +1,28 @@
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 using Newtonsoft.Json;
-
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Primitives;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     ValidationConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     Joint that wires Newtonsoft Json into ASP.NET Core MVC.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
-/// <seealso cref="IServiceConvention" />
-/// <remarks>
-///     Creates a convention for newtonsoft json
-/// </remarks>
-/// <param name="options"></param>
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Application)]
-public class NewtonsoftJsonConvention(FoundationOptions? options = null) : IServiceConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Application)]
+public class NewtonsoftJsonJoint : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
     /// <param name="context">The context.</param>
-    /// <param name="configuration"></param>
     /// <param name="services"></param>
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
 
@@ -51,6 +41,4 @@ public class NewtonsoftJsonConvention(FoundationOptions? options = null) : IServ
                 )
             );
     }
-
-    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

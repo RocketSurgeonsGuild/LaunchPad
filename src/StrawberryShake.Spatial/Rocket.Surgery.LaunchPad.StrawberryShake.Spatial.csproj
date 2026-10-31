@@ -1,9 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <PackageDescription />
     <PackageTags>$(PackageTags)</PackageTags>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Joinery.Dovetail" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <ProjectReference Include="..\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />

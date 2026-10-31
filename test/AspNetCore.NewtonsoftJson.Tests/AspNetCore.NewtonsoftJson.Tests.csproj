@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <UseTUnit>true</UseTUnit>
+        <UseDovetail>true</UseDovetail>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\AspNetCore.NewtonsoftJson\Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
+    </ItemGroup>
+</Project>

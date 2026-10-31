@@ -2,40 +2,32 @@ using FairyBread;
 
 using FluentValidation;
 
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using MediatR;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate.Types;
-using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 
 /// <summary>
-///     The graph ql convention
+///     The graph ql Joint
 /// </summary>
 /// <remarks>
-///     The graphql convention
+///     Adds GraphQL with FairyBread validation and the LaunchPad error filter, and runs before the <see cref="HotChocolateJoint" />.
 /// </remarks>
-/// <param name="rocketChocolateOptions"></param>
-/// <param name="foundationOptions"></param>
 [PublicAPI]
-[ExportConvention]
-[BeforeConvention<HotChocolateConvention>]
-[ConventionCategory(ConventionCategory.Application)]
-public class GraphqlConvention
-(
-    RocketChocolateOptions? rocketChocolateOptions = null,
-    FoundationOptions? foundationOptions = null
-) : IServiceConvention
+[DovetailExport]
+[BeforeJoint<HotChocolateJoint>]
+[DovetailCategory(DovetailCategory.Application)]
+public class GraphqlJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         var sb = context
                 .GetOrAdd(() => services.AddGraphQL())
@@ -47,9 +39,6 @@ public class GraphqlConvention
                 .BindRuntimeType<Unit, VoidType>();
         services.Replace(ServiceDescriptor.Singleton<IValidatorRegistry, LaunchPadValidatorRegistry>());
     }
-
-    private readonly FoundationOptions _foundationOptions = foundationOptions ?? new FoundationOptions();
-    private readonly RocketChocolateOptions _rocketChocolateOptions = rocketChocolateOptions ?? new RocketChocolateOptions();
 }
 
 //class LaunchPadValidatorProvider : IValidatorProvider
