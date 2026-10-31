@@ -17,7 +17,7 @@ This is a migration in progress, so both models exist at once. The pre-migration
 - The reasons behind the two big decisions are in [`docs/adr/`](docs/adr): Joints replace conventions, and one package per integration.
 - Package IDs and namespaces stay `Rocket.Surgery.LaunchPad.*`.
 - The convention-to-Joint conversion is sequenced in batches by the epic. Convert a package only under the ticket that owns it.
-- Tests are moving to TUnit (tickets [#3050](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3050) and [#3051](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3051)); the library test projects run on TUnit and set `UseTUnit` in their project file, and the `Sample.*.Tests` projects stay on xunit until #3051 (`test/Directory.Build.targets` picks the packages from that property). Check what a test project references before assuming its framework.
+- Tests are moving to TUnit (tickets [#3050](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3050) and [#3051](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3051)); the library test projects run on TUnit and set `UseTUnit` in their project file, and the `Sample.*.Tests` projects stay on xunit until #3051 (`test/Directory.Build.targets` picks the packages from that property). The same file chooses the wiring generator per test project: a project that sets `UseDovetail` in its project file gets `Joinery.Dovetail` and Specular instead of `Rocket.Surgery.Conventions` (`Extensions.Tests` does; each conversion batch flips its own test projects and [#3056](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3056) deletes the property). Check what a test project references before assuming its framework or its wiring.
 
 ## Repository layout
 
