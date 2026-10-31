@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <!-- Test support for this repository only: nothing in here ships to NuGet, and it is a library, not a test project. -->
