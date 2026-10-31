@@ -51,8 +51,5 @@ public static class FluentValidationExtensions
     /// <param name="serviceProvider"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static IValidator? GetValidator(this IServiceProvider serviceProvider, Type? type)
-    {
-        return  type is null  ?   null   :  serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) as IValidator ?? null;
-    }
+    public static IValidator? GetValidator(this IServiceProvider serviceProvider, Type? type) => type is null ? null : serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(type)) as IValidator ?? null;
 }
