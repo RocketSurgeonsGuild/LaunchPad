@@ -87,6 +87,8 @@
     <Project Path="src/Mapping.NewtonsoftJson/Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj" />
     <Project Path="src/Mapping/Rocket.Surgery.LaunchPad.Mapping.csproj" />
     <Project Path="src/Metadata/Rocket.Surgery.LaunchPad.Metadata.csproj" />
+    <Project Path="src/NodaTime.HotChocolate/Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
+    <Project Path="src/NodaTime.StrawberryShake/Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
     <Project Path="src/NodaTime/Rocket.Surgery.LaunchPad.NodaTime.csproj" />
     <Project Path="src/NodaTime.EntityFramework/Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj" />
     <Project Path="src/NodaTime.Mapping/Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
@@ -98,7 +100,6 @@
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
     <Project Path="src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
     <Project Path="src/Telemetry/Rocket.Surgery.LaunchPad.Telemetry.csproj" />
-    <Project Path="src/WebAssembly.Hosting/Rocket.Surgery.LaunchPad.WebAssembly.Hosting.csproj" />
   </Folder>
   <Folder Name="/test/">
     <File Path="test/.editorconfig" />
@@ -114,6 +115,7 @@
     <Project Path="test/Grpc.Tests/Grpc.Tests.csproj" />
     <Project Path="test/Hosting.Tests/Hosting.Tests.csproj" />
     <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
+    <Project Path="test/NodaTime.Graphql.Tests/NodaTime.Graphql.Tests.csproj" />
     <Project Path="test/NodaTime.Tests/NodaTime.Tests.csproj" />
     <Project Path="test/NodaTime.EntityFramework.Tests/NodaTime.EntityFramework.Tests.csproj" />
     <Project Path="test/NodaTime.Mapping.Tests/NodaTime.Mapping.Tests.csproj" />

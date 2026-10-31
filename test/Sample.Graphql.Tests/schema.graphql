@@ -1,4 +1,4 @@
-﻿schema {
+schema {
   query: Query
   mutation: Mutation
 }
@@ -210,6 +210,8 @@ type NodaTimeOutputs {
   zonedDateTime: ZonedDateTime
   offset: Offset
   isoDayOfWeek: IsoDayOfWeek
+  offsetDate: OffsetDate
+  dateTimeZone: DateTimeZone
 }
 
 "Information about pagination in a connection."
@@ -514,6 +516,8 @@ input NodaTimeInputsInput {
   zonedDateTime: ZonedDateTime
   offset: Offset
   isoDayOfWeek: IsoDayOfWeek
+  offsetDate: OffsetDate
+  dateTimeZone: DateTimeZone
 }
 
 "A rocket in inventory"
