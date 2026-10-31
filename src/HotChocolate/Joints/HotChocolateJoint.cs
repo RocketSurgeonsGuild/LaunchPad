@@ -1,30 +1,29 @@
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using NodaTime;
 using NodaTime.TimeZones;
 
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
 using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Conventions;
-using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
+using Rocket.Surgery.LaunchPad.Primitives.Joints;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 
 /// <summary>
-///     Hot Chocolate convention
+///     Hot Chocolate Joint
 /// </summary>
 [PublicAPI]
-[ExportConvention]
-[AfterConvention<TimeConvention>]
-[ConventionCategory(ConventionCategory.Application)]
-public class HotChocolateConvention : IServiceConvention
+[DovetailExport]
+[AfterJoint<TimeJoint>]
+[DovetailCategory(DovetailCategory.Application)]
+public class HotChocolateJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         if (services.FirstOrDefault(z => z.ServiceType == typeof(IDateTimeZoneProvider) && z.ImplementationInstance is { }) is not
             { ImplementationInstance: IDateTimeZoneProvider dateTimeZoneProvider })

@@ -14,7 +14,8 @@
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="NodaTime" />
     <!--        <PackageReference Include="Scrutor" />-->
-    <PackageReference Include="Rocket.Surgery.Conventions" />
+    <PackageReference Include="Joinery.Dovetail" />
+    <PackageReference Include="Joinery.Dovetail.OpenTelemetry" />
     <PackageReference Include="Humanizer.Core" />
   </ItemGroup>
   <ItemGroup>

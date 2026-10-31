@@ -1,24 +1,22 @@
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.LaunchPad.Telemetry;
-using IConventionContext = Rocket.Surgery.Conventions.IConventionContext;
 
-namespace Rocket.Surgery.LaunchPad.HotChocolate.Conventions;
+namespace Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 
 /// <summary>
-///     InstrumentationConvention.
-///     Implements <see cref="IOpenTelemetryConvention" /> and <see cref="IOpenTelemetryConvention" />
+///     InstrumentationJoint.
+///     Implements <see cref="IOpenTelemetryJoint" />
 /// </summary>
-/// <seealso cref="IOpenTelemetryConvention" />
+/// <seealso cref="IOpenTelemetryJoint" />
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Application)]
-public class InstrumentationConvention : IOpenTelemetryConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Application)]
+public class InstrumentationJoint : IOpenTelemetryJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IOpenTelemetryBuilder builder)
+    public void Register(IDovetailContext context, IOpenTelemetryBuilder builder)
     {
         builder.WithTracing(b => b.AddHotChocolateInstrumentation());
     }
