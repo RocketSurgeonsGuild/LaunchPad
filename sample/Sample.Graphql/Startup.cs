@@ -1,5 +1,6 @@
 using FluentValidation;
 
+using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;

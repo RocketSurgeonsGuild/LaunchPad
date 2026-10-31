@@ -8,5 +8,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="Joinery.Dovetail.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- ASP.NET Core's entry point: ConfigureDovetail on the WebApplicationBuilder -->
+    <DovetailHost
+      Include="WebApplication"
+      HostBuilderType="global::Microsoft.AspNetCore.Builder.WebApplicationBuilder"
+      HostBuilderName="builder"
+      HostType="global::Microsoft.AspNetCore.Builder.WebApplication"
+      HelperName="global::Joinery.Dovetail.DovetailHostApplicationHelpers"
+    />
   </ItemGroup>
 </Project>

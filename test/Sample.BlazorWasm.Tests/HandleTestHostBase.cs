@@ -1,11 +1,15 @@
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using Joinery.Dovetail;
+using Joinery.Dovetail.Joints;
 
-using Rocket.Surgery.Conventions;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 using Serilog.Events;
 
 using TUnit.Core.Interfaces;
+
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Sample.BlazorWasm.Tests;
 
@@ -15,17 +19,18 @@ public abstract class HandleTestHostBase(LogEventLevel logLevel) : AutoFakeTest<
 
     public async Task InitializeAsync()
     {
-        _hostBuilder =
-            await ConventionContext.FromAsync(
-                ConventionContextBuilder
-                   .Create(Imports.Instance)
-                   .UseLogger(Logger),
-                TestContext.CancellationToken
-            );
         ExcludeSourceContext(nameof(WebAssemblyHostBuilder));
         ExcludeSourceContext(nameof(WebAssemblyHost));
-        Populate(await new ServiceCollection().ApplyConventionsAsync(_hostBuilder));
-    }
 
-    private IConventionContext _hostBuilder = null!;
+        // the imported joints: the generated Imports seed the Specular provider and, in a test project, the unit test host type
+        var context = await DovetailContext.FromAsync(Imports.Joints(), TestContext.CancellationToken);
+        var configuration = new ConfigurationManager();
+        await configuration.ApplyConfiguration(context, TestContext.CancellationToken);
+        context.Set<IConfiguration>(configuration);
+
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        await services.ApplyService(context, TestContext.CancellationToken);
+        Populate(services);
+    }
 }

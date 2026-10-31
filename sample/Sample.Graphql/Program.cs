@@ -1,11 +1,14 @@
+using HotChocolate;
 using HotChocolate.Configuration;
 using HotChocolate.Types.Spatial;
 
-using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 
 using Sample.Core.Models;
+using Sample.Graphql;
+
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +44,11 @@ builder
         options => options.IncludeExceptionDetails = true
     );
 
-var app = await builder.ConfigureRocketSurgery();
+// LaunchPad.Hosting still registers the Serilog request logging services with conventions that Dovetail does not run,
+// until its Hosting joints replace them (RocketSurgeonsGuild/LaunchPad#3058)
+builder.Services.AddSerilog(logger => logger.WriteTo.Console());
+
+var app = await builder.ConfigureDovetail();
 
 app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();

@@ -2,14 +2,23 @@
     <PropertyGroup>
         <TargetFrameworks>net10.0-browser;net11.0-browser</TargetFrameworks>
         <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
-        <ImportConventions>true</ImportConventions>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
         <PackageReference Include="System.Net.Http.Json" />
-        <PackageReference Include="Rocket.Surgery.WebAssembly.Hosting" />
+        <PackageReference Include="Joinery.Dovetail.Hosting" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Blazor WebAssembly's entry point: ConfigureDovetail on the WebAssemblyHostBuilder -->
+        <DovetailHost
+            Include="WebAssembly"
+            HostBuilderType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHostBuilder"
+            HostBuilderName="builder"
+            HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost"
+        />
     </ItemGroup>
 
     <ItemGroup>

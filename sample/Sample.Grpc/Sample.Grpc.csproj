@@ -10,13 +10,23 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" />
+    <PackageReference Include="Joinery.Dovetail.Hosting" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
-    <ProjectReference Include="..\..\src\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- ASP.NET Core's entry point: ConfigureDovetail on the WebApplicationBuilder -->
+    <DovetailHost
+      Include="WebApplication"
+      HostBuilderType="global::Microsoft.AspNetCore.Builder.WebApplicationBuilder"
+      HostBuilderName="builder"
+      HostType="global::Microsoft.AspNetCore.Builder.WebApplication"
+      HelperName="global::Joinery.Dovetail.DovetailHostApplicationHelpers"
+    />
   </ItemGroup>
 </Project>

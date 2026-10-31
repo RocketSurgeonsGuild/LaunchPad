@@ -10,6 +10,7 @@
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <PackageReference Include="Humanizer.Core" />
+        <PackageReference Include="Joinery.Dovetail.Hosting" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
         <!-- using the verified unit test for the swagger document -->
@@ -19,4 +20,14 @@
             IncludeAssets="runtime;build;native;contentfiles;analyzers;buildtransitive"
         />-->
     </ItemGroup>
+    <ItemGroup>
+        <!-- ASP.NET Core's entry point: ConfigureDovetail on the WebApplicationBuilder -->
+        <DovetailHost
+        Include="WebApplication"
+        HostBuilderType="global::Microsoft.AspNetCore.Builder.WebApplicationBuilder"
+        HostBuilderName="builder"
+        HostType="global::Microsoft.AspNetCore.Builder.WebApplication"
+        HelperName="global::Joinery.Dovetail.DovetailHostApplicationHelpers"
+      />
+      </ItemGroup>
 </Project>

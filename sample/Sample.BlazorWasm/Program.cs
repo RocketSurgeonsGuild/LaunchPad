@@ -4,14 +4,14 @@ using MediatR;
 
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-using Rocket.Surgery.WebAssembly.Hosting;
+using Sample.BlazorWasm;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress) });
 
-await ( await builder.ConfigureRocketSurgery() ).RunAsync();
+await ( await builder.ConfigureDovetail() ).RunAsync();
 
 namespace Sample.BlazorWasm
 {

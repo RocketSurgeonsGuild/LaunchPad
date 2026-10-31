@@ -5,14 +5,22 @@ using Humanizer;
 
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-using Rocket.Surgery.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+
+using Sample.Pages;
+
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-var app = await builder.ConfigureRocketSurgery();
+// LaunchPad.Hosting still registers the health checks and the Serilog request logging services with conventions that Dovetail does not run,
+// until its Hosting joints replace them (RocketSurgeonsGuild/LaunchPad#3058)
+builder.Services.AddHealthChecks();
+builder.Services.AddSerilog(logger => logger.WriteTo.Console());
+
+var app = await builder.ConfigureDovetail();
 
 if (builder.Environment.IsDevelopment())
 {
