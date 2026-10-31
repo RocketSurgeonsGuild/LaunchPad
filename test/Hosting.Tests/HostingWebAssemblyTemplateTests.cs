@@ -31,7 +31,7 @@ public class HostingWebAssemblyTemplateTests
     {
         var package = await PackedHosting.Pack();
         using var tree = ThrowawayTree.OutsideTheRepository(package);
-        tree.AddProject("app", BrowserApplication(package).AddPackage(AppProject.HealthChecks).AddPackage("Serilog.Sinks.Console"));
+        tree.AddProject("app", BrowserApplication(package).AddPackage(AppProject.HealthChecks).AddPackage(AppProject.ConsoleSink));
 
         await tree.Build("app", Cancellation);
 

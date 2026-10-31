@@ -10,7 +10,6 @@ using System.Globalization;
 using Joinery.Dovetail;
 using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Hosting;
 using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Hosting.Generated;

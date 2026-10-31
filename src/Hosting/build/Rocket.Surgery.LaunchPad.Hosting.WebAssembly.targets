@@ -30,19 +30,28 @@
         </PropertyGroup>
     </Target>
 
-    <!-- between Dovetail choosing its environment helpers and writing them (Joinery.Dovetail.Environment.targets) -->
+    <Target Name="_LaunchPadHostingBanGenericHost" BeforeTargets="CoreCompile" DependsOnTargets="_LaunchPadHostingResolveBrowserHost">
+        <ItemGroup Condition="'$(_LaunchPadHostingBanGenericHost)' == 'true'">
+            <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.Rocket.Surgery.LaunchPad.Hosting.WebAssembly.txt" />
+        </ItemGroup>
+        <PropertyGroup Condition="'$(_LaunchPadHostingBanGenericHost)' == 'true'">
+            <WarningsAsErrors>$(WarningsAsErrors);RS0030</WarningsAsErrors>
+        </PropertyGroup>
+    </Target>
+
+    <!--
+        Between Dovetail choosing its environment helpers and writing them (Joinery.Dovetail.Environment.targets). These are Dovetail's
+        internal names: if they change, the helper is written again and the ban above still holds, so the build fails on it instead of
+        losing the ban.
+    -->
     <Target
-        Name="_LaunchPadHostingBanGenericHost"
+        Name="_LaunchPadHostingRemoveGenericHostHelper"
         AfterTargets="_DovetailResolveEnvironmentHelpers"
         BeforeTargets="_DovetailGenerateEnvironmentHelpers"
         DependsOnTargets="_LaunchPadHostingResolveBrowserHost"
     >
         <ItemGroup Condition="'$(_LaunchPadHostingBanGenericHost)' == 'true'">
-            <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.Rocket.Surgery.LaunchPad.Hosting.WebAssembly.txt" />
             <_DovetailEnvironmentEmittedHelper Remove="DovetailHostingContextExtensions" />
         </ItemGroup>
-        <PropertyGroup Condition="'$(_LaunchPadHostingBanGenericHost)' == 'true'">
-            <WarningsAsErrors>$(WarningsAsErrors);RS0030</WarningsAsErrors>
-        </PropertyGroup>
     </Target>
 </Project>

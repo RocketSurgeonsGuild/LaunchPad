@@ -40,6 +40,8 @@ internal sealed class AppProject
 
     public const string BrowserConsole = "Serilog.Sinks.BrowserConsole";
 
+    public const string ConsoleSink = "Serilog.Sinks.Console";
+
     public const string BannedApiAnalyzers = "Microsoft.CodeAnalysis.BannedApiAnalyzers";
 
     private const string RootNamespace = "Throwaway";
