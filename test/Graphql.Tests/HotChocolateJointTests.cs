@@ -12,8 +12,8 @@ using NodaTime.Text;
 using NodaTime.TimeZones;
 using Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 using Rocket.Surgery.LaunchPad.HotChocolate.Rivets;
-using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.NodaTime;
+using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 
 namespace Graphql.Tests;
 
@@ -31,7 +31,7 @@ public class HotChocolateJointTests
     public async Task Reads_The_Time_Zone_Source_From_The_Context()
     {
         var provider = new DateTimeZoneCache(TestZoneSource());
-        var executor = await Executor(context: context => context.Set(new PrimitiveOptions { DateTimeZoneSource = TestZoneSource() }));
+        var executor = await Executor(context: context => context.Set(new NodaTimeOptions { DateTimeZoneSource = TestZoneSource() }));
 
         ( await ZoneOf(executor, ZonedDateTime("Fake/Zone", provider)) ).ShouldBe("Fake/Zone");
     }

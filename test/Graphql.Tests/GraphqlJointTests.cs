@@ -11,8 +11,8 @@ using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 using Rocket.Surgery.LaunchPad.HotChocolate.Rivets;
+using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
 
 namespace Graphql.Tests;
 

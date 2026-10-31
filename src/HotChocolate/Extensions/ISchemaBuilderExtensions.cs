@@ -5,7 +5,7 @@ using HotChocolate.Types.NodaTime;
 using NodaTime;
 using NodaTime.Text;
 
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.NodaTime;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
 

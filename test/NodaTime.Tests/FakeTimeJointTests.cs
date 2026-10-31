@@ -3,12 +3,10 @@ using Joinery.Dovetail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 
-using NodaTime;
-
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 using Rocket.Surgery.LaunchPad.Testing;
 
-namespace Extensions.Tests;
+namespace NodaTime.Tests;
 
 public class FakeTimeJointTests() : JointFakeTest()
 {

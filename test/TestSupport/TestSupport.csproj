@@ -22,10 +22,12 @@
     </ItemGroup>
     <ItemGroup>
         <!--
-            Only Primitives: FakeTimeJoint orders itself before TimeJoint. The web fixtures need no LaunchPad project (the old
-            AspNetCore.Testing package referenced AspNetCore and Serilog, but every web sample test already gets those through its sample
-            and Primitives). Referencing AspNetCore here would also hand its joints to the six projects that only use fake time.
+            Only Primitives and NodaTime: FakeTimeJoint orders itself before TimeJoint, which the NodaTime package owns. The web fixtures
+            need no LaunchPad project (the old AspNetCore.Testing package referenced AspNetCore and Serilog, but every web sample test
+            already gets those through its sample and Primitives). Referencing AspNetCore here would also hand its joints to the six
+            projects that only use fake time.
         -->
+        <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
     </ItemGroup>
 </Project>
