@@ -104,19 +104,3 @@ pull_request_rules:
       label:
         add:
           - ':shipit: merge'
-  - name: automatic merge for xunit pull requests
-    conditions:
-      - title~=^Bump xunit.*$
-      - author~=^dependabot(|-preview)\[bot\]$
-    actions:
-      label:
-        add:
-          - ':shipit: merge'
-  - name: automatic merge for Microsoft.NET.Test.Sdk pull requests
-    conditions:
-      - title~=^Bump Microsoft\.NET\.Test\.Sdk.*$
-      - author~=^dependabot(|-preview)\[bot\]$
-    actions:
-      label:
-        add:
-          - ':shipit: merge'
