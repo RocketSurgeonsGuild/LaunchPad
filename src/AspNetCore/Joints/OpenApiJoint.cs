@@ -1,36 +1,34 @@
 using System.Text.Json.Nodes;
+using Joinery.Dovetail;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 using Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Conventions;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     ValidationConvention.
-///     Implements the <see cref="IServiceConvention" />
+///     Registers OpenAPI document generation, with the LaunchPad schema and operation transformers.
+///     Implements the <see cref="IServiceJoint" />
 /// </summary>
-/// <seealso cref="IServiceConvention" />
-/// <seealso cref="IServiceConvention" />
+/// <seealso cref="IServiceJoint" />
 [PublicAPI]
-[ExportConvention]
-[AfterConvention<AspNetCoreConvention>]
-[ConventionCategory(ConventionCategory.Application)]
-public partial class OpenApiConvention : IServiceConvention
+[DovetailExport]
+[AfterJoint<AspNetCoreJoint>]
+[DovetailCategory(DovetailCategory.Application)]
+public partial class OpenApiJoint : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
     /// </summary>
     /// <param name="context">The context.</param>
-    /// <param name="configuration"></param>
-    /// <param name="services"></param>
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    /// <param name="services">The service collection.</param>
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(context);
 
