@@ -19,6 +19,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         IPropertySymbol[] controllerBaseProperties,
         IRestfulApiMethodMatcher? matcher,
         IReadOnlyDictionary<RestfulApiMethod, int> statusCodeMap,
+        string validationProblemDetailsType,
         MethodDeclarationSyntax syntax,
         IMethodSymbol symbol,
         IParameterSymbol parameter,
@@ -359,7 +360,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
 
         if (!knownStatusCodes.Contains(StatusCodes.Status422UnprocessableEntity))
             newSyntax = newSyntax.AddAttributeLists(
-                produces(StatusCodes.Status422UnprocessableEntity, "FluentValidationProblemDetails")
+                produces(StatusCodes.Status422UnprocessableEntity, validationProblemDetailsType)
             );
 
 
@@ -654,6 +655,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             controllerBase.GetMembers().OfType<IPropertySymbol>().Where(z => z.DeclaredAccessibility == Accessibility.Public).ToArray();
         var compilation = valueTuple.Right;
         var matchers = MatcherDefaults.GetMatchers(compilation);
+        // The FluentValidation problem details come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore, which an application may not reference.
+        var hasFluentValidation = compilation.GetTypeByMetadataName("Rocket.Surgery.LaunchPad.AspNetCore.Validation.FluentValidationProblemDetails") is { };
         var members = syntax
                      .Members
                      .OfType<MethodDeclarationSyntax>()
@@ -698,6 +701,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                 controllerBaseProperties,
                 matcher,
                 MatcherDefaults.MethodStatusCodeMap,
+                hasFluentValidation ? "FluentValidationProblemDetails" : "ValidationProblemDetails",
                 method,
                 methodSymbol,
                 request,
@@ -707,12 +711,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             newClass = newClass.AddMembers(methodBody);
         }
 
-        var additionalUsings = new[]
-        {
-            "Microsoft.AspNetCore.Mvc",
-            "FluentValidation.AspNetCore",
-            "Rocket.Surgery.LaunchPad.AspNetCore.Validation",
-        };
+        var additionalUsings = hasFluentValidation
+            ? new[] { "Microsoft.AspNetCore.Mvc", "FluentValidation.AspNetCore", "Rocket.Surgery.LaunchPad.AspNetCore.Validation", }
+            : new[] { "Microsoft.AspNetCore.Mvc", };
 
         var usings = syntax
                     .SyntaxTree.GetCompilationUnitRoot()

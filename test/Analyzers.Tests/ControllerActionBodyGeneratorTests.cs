@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 namespace Analyzers.Tests;
 
@@ -732,7 +733,8 @@ public enum RocketType { A, B }
                       typeof(HttpContext),
                       typeof(ProblemDetails),
                       typeof(IValidator),
-                      typeof(IValidatorInterceptor)
+                      typeof(IValidatorInterceptor),
+                      typeof(FluentValidationProblemDetails)
                   )
                  .AddSources(
                       @"
