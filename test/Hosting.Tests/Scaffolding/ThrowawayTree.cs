@@ -11,22 +11,16 @@ internal sealed class ThrowawayTree : IDisposable
     /// </summary>
     public const string TemplatePrefix = "LaunchPadHosting";
 
-    private ThrowawayTree(string directory, bool inRepository, PackedHosting? package)
+    private ThrowawayTree(string directory, bool inRepository)
     {
         Directory = directory;
         _inRepository = inRepository;
-        Package = package;
     }
 
     /// <summary>
     ///     The folder.
     /// </summary>
     public string Directory { get; }
-
-    /// <summary>
-    ///     The packed Hosting package the projects of this tree restore it from, for a tree outside the repository.
-    /// </summary>
-    public PackedHosting? Package { get; }
 
     /// <summary>
     ///     A tree that restores <c>Rocket.Surgery.LaunchPad.Hosting</c> from the packed package, as an application outside this repository
@@ -38,7 +32,7 @@ internal sealed class ThrowawayTree : IDisposable
     public static ThrowawayTree OutsideTheRepository(PackedHosting package)
     {
         var directory = System.IO.Directory.CreateDirectory(Path.Combine(ResolveLinks(Path.GetTempPath()), "launchpad-hosting-tests", $"app-{Guid.NewGuid():N}")).FullName;
-        var tree = new ThrowawayTree(directory, false, package);
+        var tree = new ThrowawayTree(directory, false);
 
         // The project files in the tree stand alone: nothing above them may add to them.
         tree.AddFile("Directory.Build.props", $$"""
@@ -82,7 +76,7 @@ internal sealed class ThrowawayTree : IDisposable
     public static ThrowawayTree InsideTheRepository()
     {
         var directory = System.IO.Directory.CreateDirectory(Path.Combine(Repository.Root, "artifacts", "hosting-tests", Guid.NewGuid().ToString("N"))).FullName;
-        return new(directory, true, null);
+        return new(directory, true);
     }
 
     /// <summary>
