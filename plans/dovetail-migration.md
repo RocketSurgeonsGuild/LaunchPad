@@ -169,7 +169,7 @@ Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced 
 | `EnvironmentLoggingConvention`                        | Hosting Joint when Serilog is referenced; the WebAssembly variant enriches `Environment` and `BaseAddress`: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060) |
 | `SerilogConsole/Debug/TraceLoggingConvention`         | Hosting Joints when Serilog is referenced; WebAssembly uses the Browser console sink: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060)                       |
 | `SerilogTelemetryConvention` (never exported today)   | Live Joint, emitted when `Serilog.Sinks.OpenTelemetry` is referenced: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062)                                                                                                              |
-| `InstrumentationConvention` (from Telemetry)          | `InstrumentationJoint`: [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)                                                                                                                                                            |
+| `InstrumentationConvention` (from Telemetry)          | `LaunchPadInstrumentationJoint` (HTTP client), with `LaunchPadRuntimeInstrumentationJoint` and `LaunchPadProcessInstrumentationJoint` split out so WebAssembly skips them: [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)        |
 
 ## Current package disposition
 
