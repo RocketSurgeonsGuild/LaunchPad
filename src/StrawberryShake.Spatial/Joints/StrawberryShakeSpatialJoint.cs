@@ -1,21 +1,20 @@
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
 using StrawberryShake.Serialization;
 
-namespace Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.Conventions;
+namespace Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.Joints;
 
 /// <summary>
-///     Adds support for spatial types into STJ
+///     Adds the spatial serializers to StrawberryShake
 /// </summary>
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Core)]
-public class StrawberryShakeSpatialConvention : IServiceConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Core)]
+public class StrawberryShakeSpatialJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.AddSingleton<ISerializer, GeometrySerializer>();
 //        services.AddSerializer<CoordinatesSerializer>();
