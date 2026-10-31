@@ -22,18 +22,17 @@ internal sealed record SdkEvaluation(IReadOnlyList<string> Hosts, IReadOnlyList<
 /// </summary>
 internal sealed class SdkTree : IDisposable
 {
-    public SdkTree(PackedSdk packages, IReadOnlyDictionary<string, string>? properties = null)
+    public SdkTree(PackedSdk packages)
     {
         _packages = packages;
         Directory = System.IO.Directory.CreateDirectory(Path.Combine(ResolveLinks(Path.GetTempPath()), "launchpad-sdk-tests", $"app-{Guid.NewGuid():N}")).FullName;
 
-        var extraProperties = string.Concat(( properties ?? new Dictionary<string, string>() ).Select(z => $"{Environment.NewLine}    <{z.Key}>{z.Value}</{z.Key}>"));
         // The one line of LaunchPad wiring an application has: the SDK, applied to every project below the file.
         AddFile("Directory.Build.props", $$"""
             <Project Sdk="{{PackedSdk.SdkPackageId}}">
               <PropertyGroup>
                 <NuGetAudit>false</NuGetAudit>
-                <RestoreAdditionalProjectFallbackFolders>$(RestoreAdditionalProjectFallbackFolders);{{GlobalPackagesFolder}}</RestoreAdditionalProjectFallbackFolders>{{extraProperties}}
+                <RestoreAdditionalProjectFallbackFolders>$(RestoreAdditionalProjectFallbackFolders);{{GlobalPackagesFolder}}</RestoreAdditionalProjectFallbackFolders>
               </PropertyGroup>
             </Project>
             """);
@@ -72,6 +71,17 @@ internal sealed class SdkTree : IDisposable
     public string Directory { get; }
 
     /// <summary>
+    ///     Turns central package management on, as most applications have it: the projects added after this leave their versions to the
+    ///     tree's <c>Directory.Packages.props</c>, and the packages the SDK adds keep the versions it gives them.
+    /// </summary>
+    /// <returns>This tree.</returns>
+    public SdkTree WithCentralPackageManagement()
+    {
+        _centralVersions = [with(StringComparer.OrdinalIgnoreCase)];
+        return AddFile("Directory.Packages.props", "<Project><PropertyGroup><ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally></PropertyGroup></Project>");
+    }
+
+    /// <summary>
     ///     Writes a file.
     /// </summary>
     /// <param name="relativePath">The path in the tree.</param>
@@ -93,7 +103,24 @@ internal sealed class SdkTree : IDisposable
     /// <returns>This tree.</returns>
     public SdkTree AddProject(string name, SdkApp project)
     {
-        AddFile($"{name}/{name}.csproj", project.ToXml(Repository.TargetFramework));
+        if (_centralVersions is { } versions)
+        {
+            foreach (var (id, version) in project.Packages) versions[id] = version;
+            AddFile(
+                "Directory.Packages.props",
+                $"""
+                <Project>
+                  <PropertyGroup>
+                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                  </PropertyGroup>
+                  <ItemGroup>
+                {string.Concat(versions.Select(z => $"""    <PackageVersion Include="{z.Key}" Version="{z.Value}" />{Environment.NewLine}"""))}  </ItemGroup>
+                </Project>
+                """
+            );
+        }
+
+        AddFile($"{name}/{name}.csproj", project.ToXml(Repository.TargetFramework, _centralVersions is not null));
         AddFile($"{name}/Program.cs", project.Program);
         return this;
     }
@@ -208,4 +235,5 @@ internal sealed class SdkTree : IDisposable
     private Dictionary<string, string?> BuildEnvironment => new() { ["NUGET_PACKAGES"] = Path.Combine(Directory, ".packages"), };
 
     private readonly PackedSdk _packages;
+    private Dictionary<string, string>? _centralVersions;
 }

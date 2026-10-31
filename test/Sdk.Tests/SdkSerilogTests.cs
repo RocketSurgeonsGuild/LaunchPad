@@ -43,13 +43,14 @@ public class SdkSerilogTests
     }
 
     /// <summary>
-    ///     <c>DovetailEnableSerilog</c> set to <c>false</c>, Dovetail's own switch, still turns it off.
+    ///     <c>DovetailEnableSerilog</c> set to <c>false</c> in the project, Dovetail's own switch, still turns it off: the SDK's default is set
+    ///     before the project is evaluated.
     /// </summary>
     [Test]
     public async Task Should_Leave_Dovetail_Serilog_Off_When_Opted_Out()
     {
-        using var tree = new SdkTree(await PackedSdk.Pack(), new Dictionary<string, string> { ["DovetailEnableSerilog"] = "false", });
-        tree.AddProject("app", new SdkApp(HostModel.GenericHost).AddPackage("Serilog", SerilogVersion));
+        using var tree = new SdkTree(await PackedSdk.Pack());
+        tree.AddProject("app", new SdkApp(HostModel.GenericHost).AddPackage("Serilog", SerilogVersion).SetProperty("DovetailEnableSerilog", "false"));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }

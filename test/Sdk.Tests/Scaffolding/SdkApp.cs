@@ -101,6 +101,11 @@ internal sealed class SdkApp
     }
 
     /// <summary>
+    ///     The packages the project references, with their versions.
+    /// </summary>
+    public IEnumerable<(string Id, string Version)> Packages => _packages.Select(z => (z.Id, z.Version ?? Repository.PackageVersion(z.Id)));
+
+    /// <summary>
     ///     What the application's <c>Program.cs</c> holds.
     /// </summary>
     public string Program =>
@@ -140,8 +145,9 @@ internal sealed class SdkApp
     ///     Writes the csproj.
     /// </summary>
     /// <param name="targetFramework">The target framework.</param>
+    /// <param name="centralVersions">Whether the versions are left to <c>Directory.Packages.props</c> (central package management).</param>
     /// <returns>The csproj.</returns>
-    public string ToXml(string targetFramework)
+    public string ToXml(string targetFramework, bool centralVersions = false)
     {
         var sdk = Host switch
         {
@@ -164,9 +170,9 @@ internal sealed class SdkApp
 
         xml.AppendLine("  </PropertyGroup>");
         xml.AppendLine("  <ItemGroup>");
-        foreach (var (id, version) in _packages)
+        foreach (var (id, version) in Packages)
         {
-            xml.AppendLine($"""    <PackageReference Include="{id}" Version="{version ?? Repository.PackageVersion(id)}" />""");
+            xml.AppendLine(centralVersions ? $"""    <PackageReference Include="{id}" />""" : $"""    <PackageReference Include="{id}" Version="{version}" />""");
         }
 
         foreach (var path in _projectReferences)

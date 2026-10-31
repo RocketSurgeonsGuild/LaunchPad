@@ -69,4 +69,21 @@ public class SdkHostModelTests
 
         await Verify(new { Host = host, Output = output.Trim() });
     }
+
+    /// <summary>
+    ///     Most applications manage their package versions centrally. The packages the SDK adds carry their own versions and are marked
+    ///     implicitly defined, which central package management accepts (it rejects a version on any other reference), so the application
+    ///     restores, builds and runs the joints the same way.
+    /// </summary>
+    [Test]
+    public async Task Should_Apply_The_LaunchPad_Hosting_Joints_To_An_Application_With_Central_Package_Management()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack()).WithCentralPackageManagement();
+        tree.AddProject("app", new SdkApp(HostModel.GenericHost).AddPackage(SdkApp.HealthChecks));
+
+        await tree.Build("app", Cancellation);
+        var output = await tree.Run("app", Cancellation);
+
+        await Verify(new { Evaluation = await tree.Evaluate("app", Cancellation), Output = output.Trim() });
+    }
 }
