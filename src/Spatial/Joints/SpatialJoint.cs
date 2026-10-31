@@ -1,32 +1,34 @@
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
-using Rocket.Surgery.Conventions;
-using Rocket.Surgery.Conventions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Serilog;
 using Serilog;
 
-namespace Rocket.Surgery.LaunchPad.Spatial.Conventions;
+namespace Rocket.Surgery.LaunchPad.Spatial.Joints;
 
 /// <summary>
-///     Adds support for spatial types into STJ
+///     Adds support for spatial types into System.Text.Json and Serilog
 /// </summary>
+/// <remarks>
+///     A service Joint that registers the geometry services and configures the System.Text.Json options,
+///     and a Serilog Joint that destructures the NetTopologySuite types.
+/// </remarks>
 [PublicAPI]
-[ExportConvention]
-[ConventionCategory(ConventionCategory.Core)]
-public class SpatialConvention : IServiceConvention, ISerilogConvention
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Core)]
+public class SpatialJoint : IServiceJoint, ISerilogJoint
 {
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceProvider services, LoggerConfiguration loggerConfiguration)
+    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration)
     {
         loggerConfiguration.Destructure.NetTopologySuiteTypes();
     }
 
     /// <inheritdoc />
-    public void Register(IConventionContext context, IConfiguration configuration, IServiceCollection services)
+    public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.TryAddSingleton(NtsGeometryServices.Instance);
         services.TryAddSingleton(provider => provider.GetRequiredService<NtsGeometryServices>().CreateGeometryFactory(4326));
