@@ -15,6 +15,9 @@
             IncludeAssets="all" />
         <ProjectReference
             Include="..\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
+        <!-- ValidationProblemDetailsNewtonsoftJsonConverter writes the FluentValidationProblemDetails. -->
+        <ProjectReference
+            Include="..\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     </ItemGroup>

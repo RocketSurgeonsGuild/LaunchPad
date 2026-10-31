@@ -38,18 +38,18 @@
               <Include>
                 <ModulePath>.*\.build\.dll</ModulePath>
                 <ModulePath>.*Analyzers\.Tests\.dll</ModulePath>
-                <ModulePath>.*AspNetCore\.FluentValidation\.OpenApi\.Tests\.dll</ModulePath>
                 <ModulePath>.*AspNetCore\.Tests\.dll</ModulePath>
                 <ModulePath>.*Extensions\.Tests\.dll</ModulePath>
+                <ModulePath>.*FluentValidation\.AspNetCore\.Tests\.dll</ModulePath>
                 <ModulePath>.*Metadata\.Tests\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Analyzers\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.Blazor\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.dll</ModulePath>
-                <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.FluentValidation\.OpenApi\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.NewtonsoftJson\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.Spatial\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.AspNetCore\.Testing\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.EntityFramework\.dll</ModulePath>
+                <ModulePath>.*Rocket\.Surgery\.LaunchPad\.FluentValidation\.AspNetCore\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Foundation\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Foundation\.NewtonsoftJson\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Grpc\.dll</ModulePath>
