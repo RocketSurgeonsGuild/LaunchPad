@@ -3,39 +3,28 @@ using Joinery.Dovetail.Joints;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using NodaTime;
-using NodaTime.TimeZones;
-
 using Rocket.Surgery.LaunchPad.HotChocolate.Configuration;
-using Rocket.Surgery.LaunchPad.HotChocolate.Extensions;
-using Rocket.Surgery.LaunchPad.NodaTime;
-using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 
 /// <summary>
 ///     Hot Chocolate Joint
 /// </summary>
+/// <remarks>
+///     The NodaTime types come from the <c>NodaTimeHotChocolateJoint</c> in Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.
+/// </remarks>
 [PublicAPI]
 [DovetailExport]
-[AfterJoint<TimeJoint>]
 [DovetailCategory(DovetailCategory.Application)]
 public class HotChocolateJoint : IServiceJoint
 {
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services)
     {
-        if (services.FirstOrDefault(z => z.ServiceType == typeof(IDateTimeZoneProvider) && z.ImplementationInstance is { }) is not
-            { ImplementationInstance: IDateTimeZoneProvider dateTimeZoneProvider })
-        {
-            dateTimeZoneProvider = new DateTimeZoneCache(context.Get<NodaTimeOptions>()?.DateTimeZoneSource ?? TzdbDateTimeZoneSource.Default);
-        }
-
         services
            .ConfigureOptions<HotChocolateContextDataConfigureOptions>();
         context
            .GetOrAdd(() => services.AddGraphQL())
-           .ConfigureSchema(sb => sb.AddNodaTime(dateTimeZoneProvider))
            .AddInstrumentation();
     }
 }

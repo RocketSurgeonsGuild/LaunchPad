@@ -21,7 +21,7 @@ extend scalar Geometry
 
 extend scalar DateTimeZone
     @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.DateTimeZone", valueType: true)
+    @runtimeType(name: "global::NodaTime.DateTimeZone")
 extend scalar Duration
     @serializationType(name: "global::System.String")
     @runtimeType(name: "global::NodaTime.Duration", valueType: true)
