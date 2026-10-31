@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Sample.Restful.Tests.Helpers;
 
 namespace Sample.Restful.Tests;
 
