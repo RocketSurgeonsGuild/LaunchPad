@@ -1,22 +1,26 @@
-﻿using System.Net;
+using System.Net;
+
 using FakeItEasy;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using Rocket.Surgery.LaunchPad.Hosting;
+
 using Sample.Pages.Tests.Helpers;
 
 namespace Sample.Pages.Tests;
 
-public class FoundationTests(ITestContextAccessor testContext, TestWebAppFixture factory) : WebAppFixtureTest<TestWebAppFixture>(testContext, factory)
+public class FoundationTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/", TestContext.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
-    [Fact]
+    [Test]
     public async Task StartingEvents()
     {
         var builder = Host.CreateApplicationBuilder();
