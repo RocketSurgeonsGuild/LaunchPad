@@ -1,6 +1,3 @@
-using FluentValidation;
-using FluentValidation.Results;
-
 using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Joints;
 
@@ -10,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
@@ -44,14 +40,11 @@ public class ProblemDetailsJoint : IServiceJoint
                                                               NotFoundException => StatusCodes.Status404NotFound,
                                                               RequestFailedException => StatusCodes.Status400BadRequest,
                                                               NotAuthorizedException => StatusCodes.Status403Forbidden,
-                                                              ValidationException => StatusCodes.Status422UnprocessableEntity,
                                                               _ => old?.Invoke(exception) ?? StatusCodes.Status500InternalServerError,
                                                           };
             }
         );
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, OnBeforeWriteProblemDetailsWriter>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, FluentValidationProblemDetailsWriter>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, ValidationExceptionProblemDetailsWriter>());
 
         services
            .AddOptions<ApiBehaviorOptions>()
@@ -75,49 +68,4 @@ internal class OnBeforeWriteProblemDetailsWriter(IOptions<ApiBehaviorOptions> ap
         context.ProblemDetails.Type ??= clientErrorData.Link;
         return false;
     }
-}
-
-internal class FluentValidationProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
-{
-    public ValueTask WriteAsync(ProblemDetailsContext context)
-    {
-        if (context is not { Exception: IProblemDetailsData details }
-         || context.HttpContext.Items[typeof(ValidationResult)] is not ValidationResult validationResult)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        context.ProblemDetails = new FluentValidationProblemDetails(validationResult.Errors)
-        {
-            Status = StatusCodes.Status422UnprocessableEntity,
-            Title = details.Title ?? context.ProblemDetails.Title,
-            Type = details.Link ?? context.ProblemDetails.Type,
-            Detail = context.ProblemDetails.Detail,
-            Instance = details.Instance ?? context.ProblemDetails.Instance,
-            Extensions = context.ProblemDetails.Extensions,
-        };
-        return ValueTask.CompletedTask;
-    }
-
-    public bool CanWrite(ProblemDetailsContext context) => context.Exception is not IProblemDetailsData && context.HttpContext.Items[typeof(ValidationResult)] is ValidationResult;
-}
-
-internal class ValidationExceptionProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
-{
-    public ValueTask WriteAsync(ProblemDetailsContext context)
-    {
-        if (context.Exception is not ValidationException validationException) return ValueTask.CompletedTask;
-        context.ProblemDetails = new FluentValidationProblemDetails(validationException.Errors)
-        {
-            Status = StatusCodes.Status422UnprocessableEntity,
-            Title = context.ProblemDetails.Title,
-            Type = context.ProblemDetails.Type,
-            Detail = context.ProblemDetails.Detail,
-            Instance = context.ProblemDetails.Instance,
-            Extensions = context.ProblemDetails.Extensions,
-        };
-        return ValueTask.CompletedTask;
-    }
-
-    public bool CanWrite(ProblemDetailsContext context) => context.Exception is ValidationException;
 }

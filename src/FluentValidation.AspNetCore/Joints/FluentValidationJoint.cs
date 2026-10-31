@@ -13,8 +13,9 @@ using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter and the
-///     problem details converter.
+///     Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter, the
+///     problem details converter, and the <see cref="FluentValidationProblemDetails" /> as the documented validation response of the restful api
+///     controllers.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <seealso cref="IServiceJoint" />
@@ -35,8 +36,7 @@ public class FluentValidationJoint : IServiceJoint
         services
            .Configure<MvcOptions>(mvcOptions => mvcOptions.Filters.Insert(0, new ValidationExceptionFilter()))
            .Configure<MvcJsonOptions>(options => options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()))
-           .Configure<HttpJsonOptions>(options => options.SerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()));
-
-        //        AddFluentValidationRules(services);
+           .Configure<HttpJsonOptions>(options => options.SerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()))
+           .Configure<RestfulApiOptions>(options => options.ValidationProblemDetailsType = typeof(FluentValidationProblemDetails));
     }
 }

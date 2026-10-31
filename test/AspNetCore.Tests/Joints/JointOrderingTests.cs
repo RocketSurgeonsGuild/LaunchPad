@@ -5,8 +5,6 @@ using Joinery.Dovetail.Attributes;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
-using FoundationFluentValidationJoint = Rocket.Surgery.LaunchPad.Foundation.Joints.FluentValidationJoint;
-
 namespace AspNetCore.Tests.Joints;
 
 public class JointOrderingTests
@@ -21,7 +19,6 @@ public class JointOrderingTests
                            .AppendJoint<RestfulJoint>()
                            .AppendJoint<ProblemDetailsJoint>()
                            .AppendJoint<OpenApiJoint>()
-                           .AppendJoint<FluentValidationJoint>()
                            .AppendJoint<AspNetCoreInstrumentationJoint>()
                            .AppendJoint<AspNetCoreJoint>()
                            .CreateAsync();
@@ -32,7 +29,7 @@ public class JointOrderingTests
         aspNetCore.ShouldBeGreaterThanOrEqualTo(0);
         foreach (var dependent in new[]
                  {
-                     typeof(SystemJsonTextJoint), typeof(RestfulJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint), typeof(FluentValidationJoint),
+                     typeof(SystemJsonTextJoint), typeof(RestfulJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint),
                      typeof(AspNetCoreInstrumentationJoint),
                  })
         {
@@ -41,25 +38,8 @@ public class JointOrderingTests
     }
 
     [Test]
-    public async Task Should_Run_The_Validation_Behavior_Joint_Before_The_Foundation_Fluent_Validation_Joint()
-    {
-        var context = await JointTestContext
-                           .CreateBuilder()
-                           .AppendJoint<FoundationFluentValidationJoint>()
-                           .AppendJoint<AspNetCoreValidationBehaviorJoint>()
-                           .CreateAsync();
-
-        var joints = context.Joints.Select(z => z.GetType()).ToList();
-
-        joints.IndexOf(typeof(AspNetCoreValidationBehaviorJoint)).ShouldBeLessThan(joints.IndexOf(typeof(FoundationFluentValidationJoint)));
-        joints.IndexOf(typeof(AspNetCoreValidationBehaviorJoint)).ShouldBeGreaterThanOrEqualTo(0);
-    }
-
-    [Test]
     [Arguments(typeof(AspNetCoreJoint))]
     [Arguments(typeof(AspNetCoreInstrumentationJoint))]
-    [Arguments(typeof(AspNetCoreValidationBehaviorJoint))]
-    [Arguments(typeof(FluentValidationJoint))]
     [Arguments(typeof(OpenApiJoint))]
     [Arguments(typeof(ProblemDetailsJoint))]
     [Arguments(typeof(RestfulJoint))]

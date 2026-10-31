@@ -1,4 +1,4 @@
-namespace AspNetCore.FluentValidation.OpenApi.Tests;
+namespace FluentValidation.AspNetCore.Tests.OpenApi;
 
 internal class NullableStringContainer
 {

@@ -1,4 +1,4 @@
-namespace AspNetCore.FluentValidation.OpenApi.Tests;
+namespace FluentValidation.AspNetCore.Tests.OpenApi;
 
 public record OpenApiResult(string Path, Func<Task<string>> JsonFactory)
 {

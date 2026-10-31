@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <UseDovetail>true</UseDovetail>
+        <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated</InterceptorsNamespaces>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+        <ProjectReference Include="..\..\src\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj"
+            IncludeAssets="all" />
+    </ItemGroup>
+    <!--
+        The OpenAPI XML comment generator reads the XML documentation of every reference, and several LaunchPad assemblies document their own
+        copy of the JetBrains.Annotations attributes, so the generated cache adds the same key twice and every OpenAPI document fails. The
+        types under test document no API, the same as in Sample.Graphql.Tests.
+    -->
+    <Target Name="RemoveOpenApiXmlCommentGenerator" AfterTargets="ResolveLockFileAnalyzers">
+        <ItemGroup>
+            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.AspNetCore.OpenApi.SourceGenerators'" />
+        </ItemGroup>
+    </Target>
+</Project>

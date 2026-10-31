@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore;
@@ -72,6 +73,12 @@ public class RestfulApiOptions
     ///     The factory to use for Validation results
     /// </summary>
     public int ValidationStatusCode { get; set; } = StatusCodes.Status422UnprocessableEntity;
+
+    /// <summary>
+    ///     The response type documented for the <see cref="ValidationStatusCode" />.
+    ///     A validation integration (such as Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore) replaces it with its own problem details.
+    /// </summary>
+    public Type ValidationProblemDetailsType { get; set; } = typeof(ValidationProblemDetails);
 
     internal ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> GetMatchers()
     {

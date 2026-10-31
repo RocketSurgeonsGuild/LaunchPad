@@ -9,8 +9,6 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 using Rocket.Surgery.LaunchPad.Primitives;
 
-using ValidationException = FluentValidation.ValidationException;
-
 namespace AspNetCore.Tests.Joints;
 
 public class ProblemDetailsJointTests
@@ -19,7 +17,6 @@ public class ProblemDetailsJointTests
     [Arguments(typeof(NotFoundException), StatusCodes.Status404NotFound)]
     [Arguments(typeof(RequestFailedException), StatusCodes.Status400BadRequest)]
     [Arguments(typeof(NotAuthorizedException), StatusCodes.Status403Forbidden)]
-    [Arguments(typeof(ValidationException), StatusCodes.Status422UnprocessableEntity)]
     [Arguments(typeof(InvalidOperationException), StatusCodes.Status500InternalServerError)]
     public async Task Should_Map_The_Exception_To_A_Status_Code(Type exceptionType, int expected)
     {
@@ -58,8 +55,8 @@ public class ProblemDetailsJointTests
         var writers = provider.GetServices<IProblemDetailsWriter>().Select(z => z.GetType()).ToArray();
 
         writers.ShouldContain(typeof(OnBeforeWriteProblemDetailsWriter));
-        writers.ShouldContain(typeof(FluentValidationProblemDetailsWriter));
-        writers.ShouldContain(typeof(ValidationExceptionProblemDetailsWriter));
+        // the validation writers come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
+        writers.ShouldNotContain(z => z.Name.Contains("Validation", StringComparison.Ordinal));
     }
 
     [Test]
@@ -73,7 +70,7 @@ public class ProblemDetailsJointTests
         await services.ApplyService(context);
 
         services
-           .Count(d => d.ServiceType == typeof(IProblemDetailsWriter) && d.ImplementationType == typeof(FluentValidationProblemDetailsWriter))
+           .Count(d => d.ServiceType == typeof(IProblemDetailsWriter) && d.ImplementationType == typeof(OnBeforeWriteProblemDetailsWriter))
            .ShouldBe(1);
     }
 

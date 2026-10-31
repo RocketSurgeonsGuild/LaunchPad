@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
-namespace AspNetCore.FluentValidation.OpenApi.Tests;
+namespace FluentValidation.AspNetCore.Tests.OpenApi;
 
 [Experimental(Constants.ExperimentalId)]
 public partial class PropertyRuleHandlerTests : RuleTestBase

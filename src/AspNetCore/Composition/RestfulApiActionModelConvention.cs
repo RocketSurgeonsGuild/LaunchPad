@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
-using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
@@ -45,7 +43,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
         if (requestParameter is null) return;
 
         // Likely hit the generator, no point running from here
-        if (requestParameter.Attributes.Count(z => z is BindAttribute or CustomizeValidatorAttribute) == 2)
+        if (requestParameter.Attributes.Count(z => z is BindAttribute || IsCustomizeValidatorAttribute(z)) == 2)
         {
             _propertiesToHideFromOpenApi.TryAdd(
                 requestParameter.ParameterType,
@@ -81,10 +79,6 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
         {
             var ignoreBindings = propertyAndFieldNames.Except(bindNames, StringComparer.OrdinalIgnoreCase).ToArray();
             newAttributes.Add(new BindAttribute(bindNames));
-            action.Properties.Add(
-                typeof(CustomizeValidatorAttribute),
-                bindNames
-            );
             _propertiesToHideFromOpenApi.TryAdd(requestParameter.ParameterType, ignoreBindings);
 
             var model = action.Parameters[index] = new(requestParameter.ParameterInfo, newAttributes)
@@ -99,6 +93,10 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
             }
         }
     }
+
+    // FluentValidation's [CustomizeValidator], matched by name so this package does not depend on FluentValidation.
+    private static bool IsCustomizeValidatorAttribute(object attribute) =>
+        attribute.GetType().FullName == "FluentValidation.AspNetCore.CustomizeValidatorAttribute";
 
     private static readonly ConcurrentDictionary<Type, string[]> _propertiesToHideFromOpenApi = new();
 
@@ -152,7 +150,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
 
         if (!providerLookup[_options.ValidationStatusCode].Any())
             actionModel.Filters.Add(
-                new ProducesResponseTypeAttribute(typeof(FluentValidationProblemDetails), _options.ValidationStatusCode)
+                new ProducesResponseTypeAttribute(_options.ValidationProblemDetailsType, _options.ValidationStatusCode)
             );
     }
 

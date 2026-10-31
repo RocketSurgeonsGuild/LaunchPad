@@ -18,11 +18,11 @@ public class OpenApiJointTests
     }
 
     [Test]
-    public async Task Should_Register_The_Fluent_Validation_Open_Api_Rule_Handlers()
+    public async Task Should_Not_Register_The_Fluent_Validation_Open_Api_Rule_Handlers()
     {
         var services = await JointTestContext.ApplyServicesAsync<OpenApiJoint>();
 
-        // by name: the open api package marks its types as experimental
-        services.Count(d => d.ServiceType.Name == "IPropertyRuleHandler").ShouldBe(7);
+        // they come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
+        services.ShouldNotContain(d => d.ServiceType.Name == "IPropertyRuleHandler");
     }
 }

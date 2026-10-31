@@ -4,7 +4,7 @@ using DiffEngine;
 
 using VerifyTests.DiffPlex;
 
-namespace AspNetCore.FluentValidation.OpenApi.Tests;
+namespace FluentValidation.AspNetCore.Tests.OpenApi;
 
 internal static class ModuleInitializer
 {

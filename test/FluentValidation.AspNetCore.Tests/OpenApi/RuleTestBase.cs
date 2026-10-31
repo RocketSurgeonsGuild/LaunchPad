@@ -1,4 +1,4 @@
-namespace AspNetCore.FluentValidation.OpenApi.Tests;
+namespace FluentValidation.AspNetCore.Tests.OpenApi;
 
 #pragma warning disable RSGEXP
 public abstract class RuleTestBase
