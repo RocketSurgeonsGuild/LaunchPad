@@ -3,5 +3,27 @@
         <ProjectReference Include="../../src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
+    <!--
+        Joinery.Dovetail 0.4.0 embeds the appsettings.* files of a project under their absolute path (Joinery.Dovetail.PackConfiguration.targets).
+        Rocket.Surgery.MyAssembly 1.3.0-beta.2 only gives FileExtension to the embedded resources with a relative path or a link, and then
+        reads it from all of them, so every sample that has an appsettings file fails with MSB4096 in _InjectResourcesAdditionalFiles.
+        An empty default is what the package assumes. Remove this when RocketSurgeonsGuild/LaunchPad#3057 drops Rocket.Surgery.MyAssembly.
+    -->
+    <ItemDefinitionGroup>
+        <EmbeddedResource>
+            <FileExtension />
+        </EmbeddedResource>
+    </ItemDefinitionGroup>
+    <!--
+        LaunchPad.Hosting, LaunchPad.Serilog and LaunchPad.Telemetry still sit on Rocket.Surgery.Conventions until RocketSurgeonsGuild/LaunchPad#3058
+        converts them, and the Conventions source generator that arrives with them writes a second Imports class next to the one Dovetail
+        writes into the sample. The samples start through Dovetail, so the generator is removed from the analyzers once they are resolved.
+        Remove this target with the same one in test/Directory.Build.targets when the last project has moved (RocketSurgeonsGuild/LaunchPad#3056).
+    -->
+    <Target Name="RemoveConventionsGenerator" AfterTargets="ResolveLockFileAnalyzers">
+        <ItemGroup>
+            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Rocket.Surgery.Conventions.Analyzers'" />
+        </ItemGroup>
+    </Target>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 </Project>

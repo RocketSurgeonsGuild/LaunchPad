@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
-    <!-- This project has no tests yet; Microsoft.Testing.Platform reports that as exit code 8. -->
-    <TestingPlatformCommandLineArguments>--ignore-exit-code 8</TestingPlatformCommandLineArguments>
+    <UseDovetail>true</UseDovetail>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\sample\Sample.Worker\Sample.Worker.csproj" />
     <ProjectReference Include="..\TestSupport\TestSupport.csproj" />
-  </ItemGroup>
-  <ItemGroup>
   </ItemGroup>
 </Project>
