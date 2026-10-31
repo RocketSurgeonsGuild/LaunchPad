@@ -16,7 +16,7 @@ using Serilog.Events;
 namespace Rocket.Surgery.LaunchPad.Hosting.Generated;
 
 /// <summary>
-///     Writes the events to the debug (in the background), unless <see cref="LaunchPadLoggingOptions.EnableDebugLogging" /> in
+///     Writes the events to the debug output (in the background), unless <see cref="LaunchPadLoggingOptions.EnableDebugLogging" /> in
 ///     the context turns it off, with <see cref="LaunchPadLoggingOptions.DebugMessageTemplate" />.
 /// </summary>
 [global::System.CodeDom.Compiler.GeneratedCode("LaunchPad", "generated"), global::Microsoft.CodeAnalysis.EmbeddedAttribute, global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]

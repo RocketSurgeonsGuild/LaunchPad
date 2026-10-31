@@ -16,7 +16,7 @@ using Serilog.Events;
 namespace Rocket.Surgery.LaunchPad.Hosting.Generated;
 
 /// <summary>
-///     Writes the events to the trace (in the background), unless <see cref="LaunchPadLoggingOptions.EnableTraceLogging" /> in
+///     Writes the events to the trace listeners (in the background), unless <see cref="LaunchPadLoggingOptions.EnableTraceLogging" /> in
 ///     the context turns it off, with <see cref="LaunchPadLoggingOptions.TraceMessageTemplate" />.
 /// </summary>
 [global::System.CodeDom.Compiler.GeneratedCode("LaunchPad", "generated"), global::Microsoft.CodeAnalysis.EmbeddedAttribute, global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]

@@ -15,7 +15,8 @@
              copy a referenced assembly wrote for itself), [DovetailExport] and the DovetailCategory it needs. Do not use backslashes.
           2. Add one line to _LaunchPadHostingTemplate below: Include is the name (and the file name), References the assemblies it
              compiles against (file names without extension), Hosts the host models it is for.
-          3. Add the case to test/Hosting.Tests/HostingTemplateTests.cs (and to the host models it covers).
+          3. Add the case to test/Hosting.Tests/HostingTemplateTests.cs (and to the host models it covers), or for a Serilog joint to
+             test/Hosting.Tests/SerilogTemplateTests.cs.
         Nothing else changes: the metadata every template shares is set once below.
 
         NuGet imports this file into every project that gets the package, through the shim in buildTransitive/ (or buildMultiTargeting/);
