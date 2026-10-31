@@ -1,0 +1,4 @@
+﻿{
+  Host: WebAssembly,
+  Templates: []
+}

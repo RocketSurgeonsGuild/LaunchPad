@@ -106,6 +106,7 @@
     <Project Path="test/Extensions.Tests/Extensions.Tests.csproj" />
     <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
     <Project Path="test/Grpc.Tests/Grpc.Tests.csproj" />
+    <Project Path="test/Hosting.Tests/Hosting.Tests.csproj" />
     <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />

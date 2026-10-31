@@ -21,6 +21,13 @@
         <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Joinery.Dovetail.OpenTelemetry" />
+        <!--
+            AspNetCoreInstrumentationJoint is an OpenTelemetry joint, and Joinery.Dovetail.Hosting only turns OpenTelemetry on for a generic host
+            (so for ASP.NET Core) that references OpenTelemetry.Extensions.Hosting. LaunchPad.Hosting used to bring it and no longer carries
+            dependencies for joints it does not ship (RocketSurgeonsGuild/LaunchPad#3058); RocketSurgeonsGuild/LaunchPad#3061 decides where it
+            belongs for good.
+        -->
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />
         <PackageReference Include="Specular" />

@@ -3,4 +3,11 @@
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
+    <!--
+        The templates of LaunchPad.Hosting are declared in the targets the package ships, which NuGet imports into a project that references
+        the package. A ProjectReference imports no package assets, and the samples and tests reference Hosting that way, so the targets are
+        imported into every project here. They write a template into a project that has a direct reference to Hosting and meets the
+        template's other gates, and into no other (src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets).
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets" />
 </Project>

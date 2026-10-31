@@ -1,0 +1,15 @@
+﻿{
+  Direct: {
+    Templates: [
+      LaunchPadHealthChecksJoint
+    ],
+    Output: HealthChecks:True
+  },
+  Transitive: {
+    Templates: [],
+    Output: HealthChecks:False
+  },
+  Library: {
+    Templates: []
+  }
+}
