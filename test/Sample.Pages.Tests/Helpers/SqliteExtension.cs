@@ -15,6 +15,7 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
 
     public void Reset(IServiceProvider serviceProvider)
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
         _connection.Close();
         _connection.Open();
         using var scope = serviceProvider.CreateScope();
@@ -24,6 +25,7 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
 
     public async ValueTask ResetAsync(IServiceProvider serviceProvider)
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
         await _connection.CloseAsync();
         await _connection.OpenAsync();
         await using var scope = serviceProvider.CreateAsyncScope();

@@ -9,8 +9,10 @@ using TUnit.Core.Interfaces;
 
 namespace Sample.BlazorWasm.Tests;
 
-public abstract class HandleTestHostBase(LogEventLevel logLevel = LogEventLevel.Information) : AutoFakeTest<TestRecord>(TestRecord.Create(logLevel)), IAsyncInitializer
+public abstract class HandleTestHostBase(LogEventLevel logLevel) : AutoFakeTest<TestRecord>(TestRecord.Create(logLevel)), IAsyncInitializer
 {
+    protected HandleTestHostBase() : this(LogEventLevel.Information) { }
+
     public async Task InitializeAsync()
     {
         _hostBuilder =

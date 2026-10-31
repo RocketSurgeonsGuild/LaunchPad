@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
-
-using TUnit.Core.Interfaces;
+using Sample.Classic.Restful.Tests.Helpers;
 
 namespace Sample.Classic.Restful.Tests;
 
-internal static class ApiDescriptionDataSource<T>
-    where T : class, ILaunchPadWebAppFixture, IAsyncInitializer, new()
+internal static class ApiDescriptionDataSource
 {
     /// <summary>
     ///     The api descriptions of the web app, read once from a short lived web app for all the tests that use them.
@@ -17,7 +14,7 @@ internal static class ApiDescriptionDataSource<T>
 
     private static ApiDescriptionData[] Load()
     {
-        using var host = new T();
+        using var host = new TestWebAppFixture();
         host.InitializeAsync().GetAwaiter().GetResult();
         var provider = host.AlbaHost.Services.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
         return [.. provider.ApiDescriptionGroups.Items.SelectMany(z => z.Items).Select(item => new ApiDescriptionData(item)),];

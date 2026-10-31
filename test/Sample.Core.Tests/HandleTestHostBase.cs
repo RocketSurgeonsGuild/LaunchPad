@@ -47,7 +47,9 @@ public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncIniti
         }
     }
 
-    protected HandleTestHostBase(LogEventLevel logLevel = LogEventLevel.Information) : base(TestRecord.Create(logLevel)) => ExcludeSourceContext(nameof(AutoFakeTest));
+    protected HandleTestHostBase() : this(LogEventLevel.Information) { }
+
+    protected HandleTestHostBase(LogEventLevel logLevel) : base(TestRecord.Create(logLevel)) => ExcludeSourceContext(nameof(AutoFakeTest));
 
     protected override IContainer BuildContainer(IContainer container) => container.WithDependencyInjectionAdapter().Container;
     private ConventionContextBuilder? _context;

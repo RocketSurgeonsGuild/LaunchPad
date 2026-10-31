@@ -6,7 +6,7 @@ namespace Sample.Restful.Tests;
 
 public class RestfulConventionTests
 {
-    public static IEnumerable<Func<ApiDescriptionData>> ApiDescriptions() => ApiDescriptionDataSource<TestWebAppFixture>.Rows();
+    public static IEnumerable<Func<ApiDescriptionData>> ApiDescriptions() => ApiDescriptionDataSource.Rows();
 
     [Test]
     [MethodDataSource(nameof(ApiDescriptions))]
