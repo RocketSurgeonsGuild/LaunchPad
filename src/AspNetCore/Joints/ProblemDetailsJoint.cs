@@ -1,7 +1,6 @@
 using FluentValidation;
 using FluentValidation.Results;
 
-using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Joints;
 

@@ -1,6 +1,5 @@
 using FluentValidation.AspNetCore;
 
-using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Joints;
 
