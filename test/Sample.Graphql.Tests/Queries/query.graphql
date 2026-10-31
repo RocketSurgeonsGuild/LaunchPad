@@ -1,4 +1,4 @@
-﻿query GetLaunchRecords {
+query GetLaunchRecords {
     launchRecords(first: 50) {
         nodes {
             id
@@ -101,6 +101,8 @@ query GetNodaTimeTypes($inputs: NodaTimeInputsInput!) {
         localDate
         instant
         duration
+        offsetDate
+        dateTimeZone
     }
 }
 

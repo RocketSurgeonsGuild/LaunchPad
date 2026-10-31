@@ -4,9 +4,6 @@
         <UseDovetail>true</UseDovetail>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="NodaTime.Testing" />
-    </ItemGroup>
-    <ItemGroup>
         <ProjectReference Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
         <ProjectReference Include="..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
         <ProjectReference Include="..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />

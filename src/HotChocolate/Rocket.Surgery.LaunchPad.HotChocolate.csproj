@@ -10,9 +10,7 @@
     <PackageReference Include="HotChocolate.Data" />
     <PackageReference Include="HotChocolate.Diagnostics" />
     <PackageReference Include="HotChocolate.Execution.Abstractions" />
-    <PackageReference Include="HotChocolate.Types.NodaTime" />
     <PackageReference Include="FluentValidation" />
-    <PackageReference Include="NodaTime" />
     <!--        <PackageReference Include="Scrutor" />-->
     <PackageReference Include="Joinery.Dovetail" />
     <PackageReference Include="Joinery.Dovetail.OpenTelemetry" />
@@ -20,6 +18,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
-    <ProjectReference Include="..\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
   </ItemGroup>
 </Project>

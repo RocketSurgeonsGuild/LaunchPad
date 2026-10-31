@@ -7,10 +7,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="StrawberryShake.Core" />
-        <PackageReference Include="Joinery.Dovetail" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
-        <ProjectReference Include="..\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
     </ItemGroup>
 </Project>

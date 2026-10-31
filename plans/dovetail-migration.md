@@ -130,7 +130,7 @@ Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3
 | `LaunchPad.NodaTime.Mapping`         | `NodaTimeMapper`, `NodaTimeDateTimeMapper`                                                           | Riok.Mapperly              | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
 | `LaunchPad.NodaTime.EntityFramework` | the two NodaTime value generators                                                                    | EF Core                    | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
 | `LaunchPad.NodaTime.HotChocolate`    | `AddNodaTime`, the time-zone cache setup                                                             | HotChocolate               | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
-| `LaunchPad.NodaTime.StrawberryShake` | the 14 NodaTime serializers (two exist but are not registered today)                                 | StrawberryShake            | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
+| `LaunchPad.NodaTime.StrawberryShake` | the 13 NodaTime serializers and their base, all registered (OffsetDate, DateTimeZone were not)       | StrawberryShake            | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
 | `LaunchPad.NodaTime.Serilog`         | `NodaTimeDestructuringPolicy`                                                                        | Serilog                    | [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067) |
 
 ### FluentValidation

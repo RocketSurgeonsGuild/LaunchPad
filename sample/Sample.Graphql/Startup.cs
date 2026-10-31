@@ -183,6 +183,8 @@ public class NodaTimeOutputs
     public ZonedDateTime? ZonedDateTime { get; init; }
     public Offset? Offset { get; init; }
     public IsoDayOfWeek? IsoDayOfWeek { get; init; }
+    public OffsetDate? OffsetDate { get; init; }
+    public DateTimeZone? DateTimeZone { get; init; }
 }
 
 public class NodaTimeInputs
@@ -198,6 +200,8 @@ public class NodaTimeInputs
     public ZonedDateTime? ZonedDateTime { get; init; }
     public Offset? Offset { get; init; }
     public IsoDayOfWeek? IsoDayOfWeek { get; init; }
+    public OffsetDate? OffsetDate { get; init; }
+    public DateTimeZone? DateTimeZone { get; init; }
 }
 
 public class GeometryOutputs
@@ -232,6 +236,8 @@ public class QueryTests
         ZonedDateTime = inputs.ZonedDateTime,
         Offset = inputs.Offset,
         IsoDayOfWeek = inputs.IsoDayOfWeek,
+        OffsetDate = inputs.OffsetDate,
+        DateTimeZone = inputs.DateTimeZone,
     };
 
     public GeometryOutputs GeometryTest(GeometryInputs inputs) => new()
