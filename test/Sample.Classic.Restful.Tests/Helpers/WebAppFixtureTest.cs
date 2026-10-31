@@ -1,27 +1,32 @@
 using Alba;
 
-using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
+using TUnit.Core.Interfaces;
 
 namespace Sample.Classic.Restful.Tests.Helpers;
 
-public abstract class WebAppFixtureTest<TAppFixture>
-    (ITestContextAccessor outputHelper, TAppFixture rocketSurgeryWebAppFixture)
-    : LoggerTest<XUnitTestContext>(XUnitDefaults.CreateTestContext(outputHelper)), IClassFixture<TAppFixture>, IAsyncLifetime
-    where TAppFixture : class, ILaunchPadWebAppFixture
+/// <summary>
+///     A test that runs against its own web app.
+/// </summary>
+/// <remarks>
+///     TUnit runs the tests of a class in parallel, and every test shares the in memory database of its web app, so
+///     <see cref="SharedType.None" /> gives each test a fresh <see cref="TestWebAppFixture" />. The fixture is started (and its
+///     database created) before <see cref="InitializeAsync" /> runs, so there is nothing to reset.
+/// </remarks>
+public abstract class WebAppFixtureTest() : LoggerTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
-    public virtual ValueTask InitializeAsync()
+    [ClassDataSource<TestWebAppFixture>(Shared = SharedType.None)]
+    public required TestWebAppFixture WebAppFixture { get; init; }
+
+    public virtual Task InitializeAsync()
     {
-        _rocketSurgeryWebAppFixture.SetLoggerFactory(CreateLoggerFactory());
-        return _rocketSurgeryWebAppFixture.ResetAsync();
+        WebAppFixture.SetLoggerFactory(CreateLoggerFactory());
+        return Task.CompletedTask;
     }
 
-    public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
-    protected IAlbaHost AlbaHost => _rocketSurgeryWebAppFixture.AlbaHost;
+    protected IAlbaHost AlbaHost => WebAppFixture.AlbaHost;
 
     /// <summary>
     ///     The Service Provider
     /// </summary>
     protected IServiceProvider ServiceProvider => AlbaHost.Services;
-
-    private readonly ILaunchPadWebAppFixture _rocketSurgeryWebAppFixture = rocketSurgeryWebAppFixture;
 }

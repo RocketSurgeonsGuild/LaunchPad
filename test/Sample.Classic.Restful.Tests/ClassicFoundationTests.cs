@@ -4,10 +4,9 @@ using Sample.Classic.Restful.Tests.Helpers;
 
 namespace Sample.Classic.Restful.Tests;
 
-public class ClassicFoundationTests(ITestContextAccessor testContext, TestWebAppFixture fixture)
-    : WebAppFixtureTest<TestWebAppFixture>(testContext, fixture)
+public class ClassicFoundationTests : WebAppFixtureTest
 {
-    [Fact]
+    [Test]
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/", TestContext.CancellationToken);

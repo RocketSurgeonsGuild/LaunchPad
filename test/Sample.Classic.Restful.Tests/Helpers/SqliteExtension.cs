@@ -3,7 +3,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Indago;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Classic.Restful.Tests.Helpers;
@@ -21,14 +20,16 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
     {
         _connection.Close();
         _connection.Open();
-        serviceProvider.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreated());
+        using var scope = serviceProvider.CreateScope();
+        scope.ServiceProvider.GetRequiredService<TDbContext>().Database.EnsureCreated();
     }
 
     public async ValueTask ResetAsync(IServiceProvider serviceProvider)
     {
         await _connection.CloseAsync();
         await _connection.OpenAsync();
-        await serviceProvider.WithScoped<TDbContext>().Invoke(c => c.Database.EnsureCreatedAsync());
+        await using var scope = serviceProvider.CreateAsyncScope();
+        await scope.ServiceProvider.GetRequiredService<TDbContext>().Database.EnsureCreatedAsync();
     }
 
     public void Dispose()
