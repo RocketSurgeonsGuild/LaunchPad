@@ -103,6 +103,7 @@
     <Project Path="test/AspNetCore.FluentValidation.OpenApi.Tests/AspNetCore.FluentValidation.OpenApi.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />
     <Project Path="test/Extensions.Tests/Extensions.Tests.csproj" />
+    <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
     <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />
