@@ -1,7 +1,5 @@
 using System.Reflection;
 
-using FakeItEasy;
-
 using Grpc.AspNetCore.Server;
 
 using Joinery.Dovetail;
@@ -13,14 +11,13 @@ using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.Grpc;
 using Rocket.Surgery.LaunchPad.Grpc.Joints;
-using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
 namespace Grpc.Tests.Joints;
 
 public class GrpcJointTests
 {
     [Test]
-    public async Task Should_Add_The_Validation_And_Exception_Interceptors_In_Order()
+    public async Task Should_Add_The_Exception_Interceptors_In_Order()
     {
         using var provider = await BuildAsync();
 
@@ -33,34 +30,11 @@ public class GrpcJointTests
 
         interceptors.ShouldBe(
             [
-                typeof(ValidationInterceptor),
                 typeof(NotAuthorizedInterceptor),
                 typeof(NotFoundInterceptor),
                 typeof(RequestFailedInterceptor),
             ]
         );
-    }
-
-    [Test]
-    public async Task Should_Register_The_Default_Validator_Error_Message_Handler()
-    {
-        using var provider = await BuildAsync();
-
-        provider.GetRequiredService<IValidatorErrorMessageHandler>().ShouldBeOfType<DefaultErrorMessageHandler>();
-    }
-
-    [Test]
-    public async Task Should_Keep_The_Validator_Error_Message_Handler_That_Was_Already_Registered()
-    {
-        var context = await CreateContextAsync();
-        var handler = A.Fake<IValidatorErrorMessageHandler>();
-        var services = new ServiceCollection();
-        services.AddSingleton(handler);
-
-        await services.ApplyService(context);
-        using var provider = services.AddLogging().BuildServiceProvider();
-
-        provider.GetRequiredService<IValidatorErrorMessageHandler>().ShouldBeSameAs(handler);
     }
 
     [Test]
