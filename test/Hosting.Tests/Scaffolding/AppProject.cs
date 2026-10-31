@@ -134,7 +134,6 @@ internal sealed class AppProject
                 """ + RegisteredFunction,
             // a library has nothing to run
             HostModel.None => "public static class Library;",
-            HostModel.WebAssembly => throw new NotImplementedException(),
             // a WebAssembly host cannot run on the machine the tests do
             _ => """System.Console.WriteLine("hello");""",
         }; private set;
@@ -214,7 +213,6 @@ internal sealed class AppProject
                       HostBuilderName="builder"
                       HostType="global::Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost" />
                 """,
-            HostModel.None => throw new NotImplementedException(),
             _ => null,
         };
 
