@@ -7,7 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="StrawberryShake.Core" />
-        <PackageReference Include="Rocket.Surgery.Conventions" />
+        <PackageReference Include="Joinery.Dovetail" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
