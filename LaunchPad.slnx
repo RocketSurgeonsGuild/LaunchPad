@@ -98,6 +98,7 @@
     <Project Path="src/NodaTime.Serilog/Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Sdk/Rocket.Surgery.LaunchPad.Sdk.csproj" />
+    <Project Path="src/Serilog.AspNetCore/Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj" />
     <Project Path="src/Spatial.NewtonsoftJson/Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
     <Project Path="src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
@@ -138,6 +139,7 @@
     <Project Path="test/Sample.Restful.Tests/Sample.Restful.Tests.csproj" />
     <Project Path="test/Sample.Worker.Tests/Sample.Worker.Tests.csproj" />
     <Project Path="test/Sdk.Tests/Sdk.Tests.csproj" />
+    <Project Path="test/Serilog.AspNetCore.Tests/Serilog.AspNetCore.Tests.csproj" />
     <Project Path="test/TestSupport/TestSupport.csproj" />
   </Folder>
 </Solution>

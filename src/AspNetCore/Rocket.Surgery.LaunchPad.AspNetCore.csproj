@@ -18,7 +18,6 @@
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
-        <PackageReference Include="Serilog.AspNetCore" />
         <PackageReference Include="Specular" />
         <!--
             Only the instrumentation, which depends on the OpenTelemetry API alone: LaunchPad.Hosting's ASP.NET Core instrumentation joint
