@@ -7,8 +7,9 @@
         it also has. LaunchPadEnableSerilog set to false opts it out of all of them; Dovetail's own Serilog support keeps its own switch. Only
         Serilog itself counts, as for Dovetail: LaunchPad's packages log through the logger Joinery.Dovetail.Serilog registers.
           - Rocket.Surgery.LaunchPad.Serilog.AspNetCore (request logging): an ASP.NET Core application, the WebApplication host model.
-        The Serilog destructuring packages of the other technologies (NodaTime, Newtonsoft.Json, NetTopologySuite) are added with those
-        technologies, when the project references Serilog as well.
+          - Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog (destructuring): a reference to Newtonsoft.Json.
+          - Rocket.Surgery.LaunchPad.Spatial.Serilog (destructuring): a reference to NetTopologySuite.
+        NodaTime's destructuring package, Rocket.Surgery.LaunchPad.NodaTime.Serilog, comes with NodaTime (Rocket.Surgery.LaunchPad.Detection.NodaTime.targets).
     -->
     <PropertyGroup>
         <LaunchPadEnableSerilog Condition="'$(LaunchPadEnableSerilog)' == ''">true</LaunchPadEnableSerilog>
@@ -19,6 +20,16 @@
             Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore"
             Version="$(LaunchPadSerilogAspNetCoreVersion)"
             Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebApplication')) == 'true'"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog"
+            Version="$(LaunchPadNewtonsoftJsonSerilogVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json')) == 'true'"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.Spatial.Serilog"
+            Version="$(LaunchPadSpatialSerilogVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) == 'true'"
         />
     </ItemGroup>
 </Project>

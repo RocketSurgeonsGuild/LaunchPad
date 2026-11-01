@@ -1,0 +1,8 @@
+﻿{
+  Hosts: [],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    NetTopologySuite,
+    Newtonsoft.Json
+  ]
+}

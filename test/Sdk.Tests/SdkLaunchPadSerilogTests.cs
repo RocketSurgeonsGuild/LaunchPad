@@ -6,7 +6,9 @@ namespace Sdk.Tests;
 
 /// <summary>
 ///     The LaunchPad SDK adds LaunchPad's own Serilog packages to a project that references Serilog directly, each only when its partner is
-///     there too: <c>Rocket.Surgery.LaunchPad.Serilog.AspNetCore</c> (request logging) to an ASP.NET Core application.
+///     there too: <c>Rocket.Surgery.LaunchPad.Serilog.AspNetCore</c> (request logging) to an ASP.NET Core application, and the destructuring
+///     packages <c>Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog</c> and <c>Rocket.Surgery.LaunchPad.Spatial.Serilog</c> to a project that
+///     references Newtonsoft.Json or NetTopologySuite.
 ///     <c>LaunchPadEnableSerilog</c> set to <c>false</c> opts a project out.
 /// </summary>
 /// <param name="targetFramework">The target framework of the throwaway projects.</param>
@@ -40,6 +42,30 @@ public class SdkLaunchPadSerilogTests(string targetFramework)
     }
 
     /// <summary>
+    ///     A project that references Newtonsoft.Json and NetTopologySuite as well gets their destructuring packages.
+    /// </summary>
+    [Test]
+    public async Task Should_Give_A_Project_The_Serilog_Destructuring_Of_Its_Partners()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
+        tree.AddProject("library", HostModel.None, WithPartners(WithSerilog(HostModel.None)));
+
+        await Verify(await tree.Evaluate("library", Cancellation));
+    }
+
+    /// <summary>
+    ///     The partners alone add no destructuring package: the project has not chosen Serilog.
+    /// </summary>
+    [Test]
+    public async Task Should_Not_Add_Serilog_Destructuring_Without_Serilog()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
+        tree.AddProject("library", HostModel.None, WithPartners(HostModelShape.Project(HostModel.None, targetFramework)));
+
+        await Verify(await tree.Evaluate("library", Cancellation));
+    }
+
+    /// <summary>
     ///     An ASP.NET Core application that only receives Serilog through a library it references gets nothing: the library chose Serilog,
     ///     not the application.
     /// </summary>
@@ -64,7 +90,7 @@ public class SdkLaunchPadSerilogTests(string targetFramework)
         tree.AddProject(
             "app",
             HostModel.AspNetCore,
-            WithSerilog(HostModel.AspNetCore).Property("LaunchPadEnableSerilog", "false")
+            WithPartners(WithSerilog(HostModel.AspNetCore)).Property("LaunchPadEnableSerilog", "false")
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));
@@ -74,4 +100,12 @@ public class SdkLaunchPadSerilogTests(string targetFramework)
     ///     A project of a host model that references Serilog itself, at the version <see cref="SdkSerilogTests" /> uses.
     /// </summary>
     private ProjectCreator WithSerilog(HostModel host) => HostModelShape.Project(host, targetFramework).ItemPackageReference("Serilog", SdkSerilogTests.SerilogVersion);
+
+    /// <summary>
+    ///     Adds the partners of the destructuring packages, Newtonsoft.Json and NetTopologySuite, to a project.
+    /// </summary>
+    private ProjectCreator WithPartners(ProjectCreator project) =>
+        project
+           .ItemPackageReference("Newtonsoft.Json", Repository.PackageVersion("Newtonsoft.Json", targetFramework))
+           .ItemPackageReference("NetTopologySuite", Repository.PackageVersion("NetTopologySuite", targetFramework));
 }
