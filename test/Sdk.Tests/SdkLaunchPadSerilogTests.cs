@@ -1,3 +1,5 @@
+using Microsoft.Build.Utilities.ProjectCreation;
+
 using Sdk.Tests.Scaffolding;
 
 namespace Sdk.Tests;
@@ -9,14 +11,8 @@ namespace Sdk.Tests;
 /// </summary>
 /// <param name="targetFramework">The target framework of the throwaway projects.</param>
 [TargetFrameworks]
-public class SdkSerilogPackageTests(string targetFramework)
+public class SdkLaunchPadSerilogTests(string targetFramework)
 {
-    /// <summary>
-    ///     The version of Serilog the throwaway projects reference: the repository pins none of its own, as Serilog arrives through the
-    ///     packages it does pin.
-    /// </summary>
-    private const string SerilogVersion = "4.3.0";
-
     private static CancellationToken Cancellation => TestContext.Current!.Execution.CancellationToken;
 
     /// <summary>
@@ -26,7 +22,7 @@ public class SdkSerilogPackageTests(string targetFramework)
     public async Task Should_Give_An_AspNetCore_Application_Serilog_Request_Logging()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.AspNetCore, HostModelShape.Project(HostModel.AspNetCore, targetFramework).ItemPackageReference("Serilog", SerilogVersion));
+        tree.AddProject("app", HostModel.AspNetCore, WithSerilog(HostModel.AspNetCore));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
@@ -38,7 +34,7 @@ public class SdkSerilogPackageTests(string targetFramework)
     public async Task Should_Not_Give_A_Generic_Host_Serilog_Request_Logging()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("Serilog", SerilogVersion));
+        tree.AddProject("app", HostModel.GenericHost, WithSerilog(HostModel.GenericHost));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
@@ -51,7 +47,7 @@ public class SdkSerilogPackageTests(string targetFramework)
     public async Task Should_Not_Add_Serilog_Packages_For_A_Transitive_Serilog_Reference()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("library", HostModel.None, HostModelShape.Project(HostModel.None, targetFramework).ItemPackageReference("Serilog", SerilogVersion));
+        tree.AddProject("library", HostModel.None, WithSerilog(HostModel.None));
         tree.AddProject("app", HostModel.AspNetCore, HostModelShape.Project(HostModel.AspNetCore, targetFramework).ItemProjectReference("../library/library.csproj"));
 
         await Verify(new { Application = await tree.Evaluate("app", Cancellation), Library = await tree.Evaluate("library", Cancellation) });
@@ -68,9 +64,14 @@ public class SdkSerilogPackageTests(string targetFramework)
         tree.AddProject(
             "app",
             HostModel.AspNetCore,
-            HostModelShape.Project(HostModel.AspNetCore, targetFramework).Property("LaunchPadEnableSerilog", "false").ItemPackageReference("Serilog", SerilogVersion)
+            WithSerilog(HostModel.AspNetCore).Property("LaunchPadEnableSerilog", "false")
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
+
+    /// <summary>
+    ///     A project of a host model that references Serilog itself, at the version <see cref="SdkSerilogTests" /> uses.
+    /// </summary>
+    private ProjectCreator WithSerilog(HostModel host) => HostModelShape.Project(host, targetFramework).ItemPackageReference("Serilog", SdkSerilogTests.SerilogVersion);
 }

@@ -14,7 +14,7 @@ public class SdkSerilogTests(string targetFramework)
     ///     The version of Serilog the throwaway projects reference: the repository pins none of its own, as Serilog arrives through the
     ///     packages it does pin.
     /// </summary>
-    private const string SerilogVersion = "4.3.0";
+    internal const string SerilogVersion = "4.3.0";
 
     private static CancellationToken Cancellation => TestContext.Current!.Execution.CancellationToken;
 

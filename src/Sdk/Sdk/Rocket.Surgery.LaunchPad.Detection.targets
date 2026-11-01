@@ -20,7 +20,7 @@
         />
     </ItemGroup>
 
-    <!-- The technologies with packages of their own, each in its file. -->
+    <!-- The technologies with packages of their own, each in its file, which lists its packages and their conditions. -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Serilog.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.FluentValidation.targets" />
 

@@ -3,21 +3,23 @@
         LaunchPad's FluentValidation packages, imported by Rocket.Surgery.LaunchPad.Detection.targets before it turns the
         LaunchPadSdkImplicitPackageReference items into PackageReferences.
 
-        A project that references FluentValidation directly gets the core package, and each partner package whose partner it also has.
+        A project that references FluentValidation directly (FluentValidation, or FluentValidation.DependencyInjectionExtensions, which an
+        application often references alone) gets the core package, and each partner package whose partner it also has.
         LaunchPadEnableFluentValidation set to false opts it out of all of them.
           - Rocket.Surgery.LaunchPad.FluentValidation: always.
           - Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore: an ASP.NET Core application, the WebApplication host model.
           - Rocket.Surgery.LaunchPad.FluentValidation.Grpc: a reference to Grpc.AspNetCore.
           - Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate: a reference to HotChocolate or HotChocolate.AspNetCore.
           - Rocket.Surgery.LaunchPad.FluentValidation.Blazor: a Blazor WebAssembly application (the WebAssembly host model), or a reference
-            to Microsoft.AspNetCore.Components.Web.
+            to Microsoft.AspNetCore.Components.Web. A Blazor Server application gets the components from the ASP.NET Core shared framework,
+            which is no package reference, so it references Rocket.Surgery.LaunchPad.FluentValidation.Blazor itself.
     -->
     <PropertyGroup>
         <LaunchPadEnableFluentValidation Condition="'$(LaunchPadEnableFluentValidation)' == ''">true</LaunchPadEnableFluentValidation>
     </PropertyGroup>
     <!-- An item list is only allowed in the condition of an item or an item group, not of a property. -->
     <ItemGroup
-        Condition="'$(LaunchPadEnableFluentValidation)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation')) == 'true'"
+        Condition="'$(LaunchPadEnableFluentValidation)' != 'false' and (@(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation')) == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation.DependencyInjectionExtensions')) == 'true')"
     >
         <LaunchPadSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.FluentValidation" Version="$(LaunchPadFluentValidationVersion)" />
         <LaunchPadSdkImplicitPackageReference

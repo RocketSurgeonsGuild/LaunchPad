@@ -53,18 +53,43 @@ public class SdkFluentValidationTests(string targetFramework)
     }
 
     /// <summary>
-    ///     An ASP.NET Core application that references gRPC and HotChocolate gets their packages as well.
+    ///     An application that references gRPC gets the gRPC package, and not the GraphQL one.
     /// </summary>
     [Test]
-    public async Task Should_Give_An_Application_FluentValidation_For_Grpc_And_GraphQL()
+    public async Task Should_Give_An_Application_FluentValidation_For_Grpc()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
+        tree.AddProject("app", HostModel.AspNetCore, WithFluentValidation(HostModel.AspNetCore).ItemPackageReference("Grpc.AspNetCore", Repository.PackageVersion("Grpc.AspNetCore", targetFramework)));
+
+        await Verify(await tree.Evaluate("app", Cancellation));
+    }
+
+    /// <summary>
+    ///     An application that references HotChocolate gets the GraphQL package, and not the gRPC one.
+    /// </summary>
+    [Test]
+    public async Task Should_Give_An_Application_FluentValidation_For_GraphQL()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
+        tree.AddProject("app", HostModel.AspNetCore, WithFluentValidation(HostModel.AspNetCore).ItemPackageReference("HotChocolate", Repository.PackageVersion("HotChocolate", targetFramework)));
+
+        await Verify(await tree.Evaluate("app", Cancellation));
+    }
+
+    /// <summary>
+    ///     An application that references only FluentValidation.DependencyInjectionExtensions, which brings FluentValidation along, has chosen
+    ///     FluentValidation too.
+    /// </summary>
+    [Test]
+    public async Task Should_Give_An_Application_That_References_The_Dependency_Injection_Extensions_FluentValidation()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject(
             "app",
-            HostModel.AspNetCore,
-            WithFluentValidation(HostModel.AspNetCore)
-               .ItemPackageReference("Grpc.AspNetCore", Repository.PackageVersion("Grpc.AspNetCore", targetFramework))
-               .ItemPackageReference("HotChocolate.AspNetCore", Repository.PackageVersion("HotChocolate.AspNetCore", targetFramework))
+            HostModel.GenericHost,
+            HostModelShape
+               .Project(HostModel.GenericHost, targetFramework)
+               .ItemPackageReference("FluentValidation.DependencyInjectionExtensions", Repository.PackageVersion("FluentValidation.DependencyInjectionExtensions", targetFramework))
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));
