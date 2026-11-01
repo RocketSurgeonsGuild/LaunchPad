@@ -153,7 +153,7 @@ All packages are `Rocket.Surgery.LaunchPad.<name>`. Detection uses direct packag
 | NodaTime            | `NodaTime`; `.NewtonsoftJson` (Newtonsoft.Json); `.Mapping` (Mapperly); `.EntityFramework` (EF Core); `.HotChocolate`; `.StrawberryShake`; `.Serilog` (Serilog) | [#3073](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3073) |
 | Newtonsoft.Json     | `Foundation.NewtonsoftJson`; `AspNetCore.NewtonsoftJson` (ASP.NET Core); `Mapping.NewtonsoftJson` (Mapperly); `Spatial.NewtonsoftJson` (NetTopologySuite)       | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
 | NetTopologySuite    | `Spatial`; `Spatial.NewtonsoftJson` (Newtonsoft.Json); `StrawberryShake.Spatial` (StrawberryShake)                                                              | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
-| Serilog             | Dovetail's Serilog package (through the chained SDK); `Serilog.AspNetCore` (ASP.NET Core: request logging, #3063)                                       | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
+| Serilog             | Dovetail's Serilog package (through the chained SDK); `Serilog.AspNetCore` (ASP.NET Core: request logging, #3063)                                               | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
 | FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.HotChocolate`; `.Blazor` (each when its host library is referenced)                                               | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
 
 Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced explicitly in the first release.
@@ -169,7 +169,7 @@ Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced 
 | `EnvironmentLoggingConvention`                        | Hosting Joint when Serilog is referenced; the WebAssembly variant enriches `Environment` and `BaseAddress`: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060) |
 | `SerilogConsole/Debug/TraceLoggingConvention`         | Hosting Joints when Serilog is referenced; WebAssembly uses the Browser console sink: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060)                       |
 | `SerilogTelemetryConvention` (never exported today)   | Live Joint, emitted when `Serilog.Sinks.OpenTelemetry` is referenced: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062)                                                                                                              |
-| `InstrumentationConvention` (from Telemetry)          | `LaunchPadInstrumentationJoint` (HTTP client), with `LaunchPadRuntimeInstrumentationJoint` and `LaunchPadProcessInstrumentationJoint` split out so WebAssembly skips them: [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)        |
+| `InstrumentationConvention` (from Telemetry)          | `LaunchPadInstrumentationJoint` (HTTP client), with `LaunchPadRuntimeInstrumentationJoint` and `LaunchPadProcessInstrumentationJoint` split out so WebAssembly skips them: [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)         |
 
 ## Current package disposition
 

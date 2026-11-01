@@ -28,7 +28,10 @@ public class SerilogLoggingPageFilterTests
     public void Should_Leave_Out_The_Page_Handler_When_None_Was_Selected() => Collect(null).ShouldNotContain(x => x.Name == "RazorPageHandler");
 
     // The page handler the selected handler descriptor stands for.
-    private static void OnPostSubmit() { }
+    private static void OnPostSubmit()
+    {
+        // Only its MethodInfo is used; the filter never invokes the handler
+    }
 
     private static LogEventProperty[] Collect(HandlerMethodDescriptor? handler)
     {
