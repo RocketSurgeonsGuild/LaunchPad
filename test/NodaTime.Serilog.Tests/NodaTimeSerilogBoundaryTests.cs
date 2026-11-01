@@ -10,11 +10,12 @@ public class NodaTimeSerilogBoundaryTests
         var references = typeof(NodaTimeLoggerConfigurationExtensions)
                         .Assembly.GetReferencedAssemblies()
                         .Select(x => x.Name!)
-                        .Where(x => x != "netstandard" && !x.StartsWith("System", StringComparison.Ordinal) && !x.StartsWith("Microsoft", StringComparison.Ordinal))
+                        .Where(x => x != "netstandard" && !x.StartsWith("System", StringComparison.Ordinal))
                         .Order()
                         .ToList();
 
-        // Joinery.Dovetail.Serilog is how an application gets Serilog; it brings Serilog and the ISerilogJoint the joint implements.
-        references.ShouldBe(["Joinery.Dovetail", "Joinery.Dovetail.Serilog", "NodaTime", "Serilog"]);
+        // Joinery.Dovetail.Serilog is how an application gets Serilog; it brings Serilog and the ISerilogJoint the joint implements, whose
+        // signature takes the IServiceCollection of the DependencyInjection abstractions.
+        references.ShouldBe(["Joinery.Dovetail", "Joinery.Dovetail.Serilog", "Microsoft.Extensions.DependencyInjection.Abstractions", "NodaTime", "Serilog"]);
     }
 }
