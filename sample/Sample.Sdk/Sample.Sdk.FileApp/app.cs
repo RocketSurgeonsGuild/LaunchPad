@@ -6,7 +6,7 @@
 //   - NodaTime gets it Rocket.Surgery.LaunchPad.NodaTime, whose time joint registers the NodaTime clock.
 #:package Microsoft.Extensions.Hosting@10.0.14
 #:package Microsoft.Extensions.Diagnostics.HealthChecks@10.0.14
-#:package NodaTime@3.2.2
+#:package NodaTime@3.3.7
 // The namespace Dovetail generates ConfigureDovetail() in; a file-based app would otherwise take it from the file name.
 #:property RootNamespace=Sample.Sdk.FileApp
 
