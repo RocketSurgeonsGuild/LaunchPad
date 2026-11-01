@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 
@@ -13,18 +12,15 @@ namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 ///     Joint for working with Newtonsoft Json
 /// </summary>
 /// <remarks>
-///     A service Joint that configures the Newtonsoft Json serializer settings,
-///     and a Serilog Joint that destructures the Newtonsoft Json types.
-///     The NodaTime converters are added by the NodaTime.NewtonsoftJson package.
+///     A service Joint that configures the Newtonsoft Json serializer settings.
+///     The NodaTime converters are added by the NodaTime.NewtonsoftJson package, and the Newtonsoft Json types are destructured in Serilog
+///     by the NewtonsoftJson.Serilog package.
 /// </remarks>
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Core)]
-public class NewtonsoftJsonJoint : IServiceJoint, ISerilogJoint
+public class NewtonsoftJsonJoint : IServiceJoint
 {
-    /// <inheritdoc />
-    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration) => loggerConfiguration.Destructure.NewtonsoftJsonTypes();
-
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services)
     {

@@ -5,25 +5,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
-using Serilog;
 
 namespace Rocket.Surgery.LaunchPad.Spatial.Joints;
 
 /// <summary>
-///     Adds support for spatial types into System.Text.Json and Serilog
+///     Adds support for spatial types into System.Text.Json
 /// </summary>
 /// <remarks>
-///     A service Joint that registers the geometry services and configures the System.Text.Json options,
-///     and a Serilog Joint that destructures the NetTopologySuite types.
+///     A service Joint that registers the geometry services and configures the System.Text.Json options.
+///     The NetTopologySuite types are destructured in Serilog by the Spatial.Serilog package.
 /// </remarks>
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Core)]
-public class SpatialJoint : IServiceJoint, ISerilogJoint
+public class SpatialJoint : IServiceJoint
 {
-    /// <inheritdoc />
-    public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration) => loggerConfiguration.Destructure.NetTopologySuiteTypes();
-
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services)
     {

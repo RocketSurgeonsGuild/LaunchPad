@@ -1,52 +1,15 @@
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 
-using Newtonsoft.Json.Linq;
-
-using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Spatial;
 
 using Serilog.Context;
 using Serilog.Events;
 
-namespace Extensions.Tests;
+namespace Spatial.Serilog.Tests;
 
-public class SerilogDestructuringTests : LoggerTest<TestRecord>
+public class NetTopologySuiteDestructuringTests : LoggerTest<TestRecord>
 {
-    [Test]
-    public async Task Should_Destructure_NewtonsoftJson_JObject()
-    {
-        using var _ = CaptureLogs(out var logs);
-
-        Logger.Information("This is just a test {@Data}", JObject.FromObject(new { test = true, system = new { data = "1234" } }));
-
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    public async Task Should_Destructure_NewtonsoftJson_JArray()
-    {
-        using var _ = CaptureLogs(out var logs);
-
-        Logger.Information("This is just a test {@Data}", JArray.FromObject(new object[] { 1, "2", 3d }));
-
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    public async Task Should_Destructure_NewtonsoftJson_JValue()
-    {
-        var faker = new Faker
-        {
-            Random = new(17),
-        };
-        using var _ = CaptureLogs(out var logs);
-
-        Logger.Information("This is just a test {@Data}", new JValue(faker.Random.Guid()));
-
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
     [Test]
     public async Task Should_Destructure_NetTopologySuite_AttributesTable()
     {
@@ -119,12 +82,10 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
         await Verify(logs.Select(z => z.RenderMessage())).UseParameters(type, threeD);
     }
 
-    public SerilogDestructuringTests() : base(
+    public NetTopologySuiteDestructuringTests() : base(
         new(
             LogEventLevel.Information,
-            configureLogger: (_, configuration) => configuration
-                                                  .Destructure.NewtonsoftJsonTypes()
-                                                  .Destructure.NetTopologySuiteTypes()
+            configureLogger: (_, configuration) => configuration.Destructure.NetTopologySuiteTypes()
         )
-    ) => LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
+    ) => LogContext.PushProperty("SourceContext", nameof(NetTopologySuiteDestructuringTests));
 }

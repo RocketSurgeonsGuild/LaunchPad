@@ -133,6 +133,13 @@ Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3
 | `LaunchPad.NodaTime.StrawberryShake` | the 13 NodaTime serializers and their base, all registered (OffsetDate, DateTimeZone were not)       | StrawberryShake            | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
 | `LaunchPad.NodaTime.Serilog`         | `NodaTimeDestructuringPolicy`, `Destructure.NodaTimeTypes()` and the Core `NodaTimeSerilogJoint`     | Serilog                    | [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067) |
 
+### Newtonsoft.Json and NetTopologySuite
+
+| Package                            | Contents                                                                                                           | Added when also referenced | Ticket                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------- | --------------------------------------------------------------------- |
+| `LaunchPad.NewtonsoftJson.Serilog` | `NewtonsoftJsonDestructuringPolicy`, `Destructure.NewtonsoftJsonTypes()` and the Core `NewtonsoftJsonSerilogJoint` | Serilog                    | [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071) |
+| `LaunchPad.Spatial.Serilog`        | `NetTopologySuiteDestructuringPolicy`, `Destructure.NetTopologySuiteTypes()` and the Core `SpatialSerilogJoint`    | Serilog                    | [#3071](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3071) |
+
 ### FluentValidation
 
 | Package                                   | Contents                                                                                 | Added when also referenced | Ticket                                                                |
@@ -147,14 +154,14 @@ Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3
 
 All packages are `Rocket.Surgery.LaunchPad.<name>`. Detection uses direct package references only, each technology defaults on, and `LaunchPadEnable<Tech>=false` opts out.
 
-| Technology detected | Packages added (each also needs its partner library where shown)                                                                                                | Ticket                                                                |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| (any host model)    | `Hosting`, through the chained Dovetail SDK's host detection                                                                                                    | [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072) |
-| NodaTime            | `NodaTime`; `.NewtonsoftJson` (Newtonsoft.Json); `.Mapping` (Mapperly); `.EntityFramework` (EF Core); `.HotChocolate`; `.StrawberryShake`; `.Serilog` (Serilog) | [#3073](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3073) |
-| Newtonsoft.Json     | `Foundation.NewtonsoftJson`; `AspNetCore.NewtonsoftJson` (ASP.NET Core); `Mapping.NewtonsoftJson` (Mapperly); `Spatial.NewtonsoftJson` (NetTopologySuite)       | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
-| NetTopologySuite    | `Spatial`; `Spatial.NewtonsoftJson` (Newtonsoft.Json); `StrawberryShake.Spatial` (StrawberryShake)                                                              | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
-| Serilog             | Dovetail's Serilog package (through the chained SDK); `Serilog.AspNetCore` (ASP.NET Core: request logging, #3063)                                               | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
-| FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.HotChocolate`; `.Blazor` (each when its host library is referenced)                                               | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
+| Technology detected | Packages added (each also needs its partner library where shown)                                                                                                                              | Ticket                                                                |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| (any host model)    | `Hosting`, through the chained Dovetail SDK's host detection                                                                                                                                  | [#3072](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3072) |
+| NodaTime            | `NodaTime`; `.NewtonsoftJson` (Newtonsoft.Json); `.Mapping` (Mapperly); `.EntityFramework` (EF Core); `.HotChocolate`; `.StrawberryShake`; `.Serilog` (Serilog)                               | [#3073](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3073) |
+| Newtonsoft.Json     | `Foundation.NewtonsoftJson`; `AspNetCore.NewtonsoftJson` (ASP.NET Core); `Mapping.NewtonsoftJson` (Mapperly); `Spatial.NewtonsoftJson` (NetTopologySuite); `NewtonsoftJson.Serilog` (Serilog) | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
+| NetTopologySuite    | `Spatial`; `Spatial.NewtonsoftJson` (Newtonsoft.Json); `StrawberryShake.Spatial` (StrawberryShake); `Spatial.Serilog` (Serilog)                                                               | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
+| Serilog             | Dovetail's Serilog package (through the chained SDK); `Serilog.AspNetCore` (ASP.NET Core: request logging, #3063)                                                                             | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
+| FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.HotChocolate`; `.Blazor` (each when its host library is referenced)                                                                             | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
 
 Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced explicitly in the first release.
 
