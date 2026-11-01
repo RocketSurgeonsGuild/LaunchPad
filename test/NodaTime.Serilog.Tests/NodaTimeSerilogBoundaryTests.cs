@@ -11,11 +11,16 @@ public class NodaTimeSerilogBoundaryTests
                         .Assembly.GetReferencedAssemblies()
                         .Select(x => x.Name!)
                         .Where(x => x != "netstandard" && !x.StartsWith("System", StringComparison.Ordinal))
-                        .Order()
                         .ToList();
 
-        // Joinery.Dovetail.Serilog is how an application gets Serilog; it brings Serilog and the ISerilogJoint the joint implements, whose
-        // signature takes the IServiceCollection of the DependencyInjection abstractions.
-        references.ShouldBe(["Joinery.Dovetail", "Joinery.Dovetail.Serilog", "Microsoft.Extensions.DependencyInjection.Abstractions", "NodaTime", "Serilog"]);
+        // Joinery.Dovetail.Serilog is how an application gets Serilog; it brings Serilog and the ISerilogJoint the joint implements.
+        references
+           .Where(x => !x.StartsWith("Microsoft.", StringComparison.Ordinal))
+           .Order()
+           .ShouldBe(["Joinery.Dovetail", "Joinery.Dovetail.Serilog", "NodaTime", "Serilog"]);
+        // The Dovetail types use the Microsoft.Extensions abstractions (which ones depends on the target framework), and nothing more.
+        references
+           .Where(x => x.StartsWith("Microsoft.", StringComparison.Ordinal))
+           .ShouldAllBe(x => x.StartsWith("Microsoft.Extensions.", StringComparison.Ordinal) && x.EndsWith(".Abstractions", StringComparison.Ordinal));
     }
 }
