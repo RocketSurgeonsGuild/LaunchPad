@@ -1,6 +1,9 @@
 [tools]
 # The SDK comes first: Renovate's custom managers (.github/renovate.json) read the first entry as the SDK and the runtime entry separately.
-dotnet = [{ version = "11.0.100-rc.3.26522.148" }, { version = "10.0.14", runtime = "dotnet" }]
+dotnet = [
+  { version = "11.0.100-rc.3.26522.148" },
+  { version = "10.0.14", runtime = "dotnet" },
+]
 "github:microsoft/apm" = { version = "v0.35.0", bin = "apm" }
 "github:eljulians/skillfile" = { version = "v1.9.2", bin = "skillfile" }
 hk = "2.9.0"
@@ -37,6 +40,9 @@ prereleases = true
 
 [env]
 HK_MISE = 1
+# StrawberryShake.Server runs its code generator (tools/net9/dotnet-graphql.dll, Sample.Graphql.Tests) on .NET 9, which mise does not
+# install; this lets it run on the .NET 10 runtime. Everything else targets net10.0 or net11.0 and finds its own runtime.
+DOTNET_ROLL_FORWARD = "Major"
 npm_config_cache = "{{env.HOME}}/.local/share/mise/npm-cache"
 # Microsoft Roslyn language server (Microsoft.CodeAnalysis.LanguageServer), installed by the
 # `roslyn-lsp` task from the Azure DevOps vs-impl feed. The wrapper lands on PATH below.

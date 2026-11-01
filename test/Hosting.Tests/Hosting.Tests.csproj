@@ -3,10 +3,8 @@
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <!--
             The tests pack Rocket.Surgery.LaunchPad.Hosting and build throwaway applications against the package, so the project references
-            nothing of LaunchPad itself. It takes the Dovetail wiring like every converted test project (RocketSurgeonsGuild/LaunchPad#3056
-            deletes the property).
+            nothing of LaunchPad itself.
         -->
-        <UseDovetail>true</UseDovetail>
     </PropertyGroup>
     <ItemGroup>
         <!-- Dovetail emits the lifecycle helpers (OnHostStarted and so on) into a project that references both of these -->

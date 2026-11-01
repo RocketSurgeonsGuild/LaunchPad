@@ -5,18 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Core Launch (console)",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build",
-      "program": "${workspaceFolder}/sample/Diagnostics/bin/Debug/netcoreapp3.0/Diagnostics.dll",
-      "args": ["diag", "convention", "list"],
-      "cwd": "${workspaceFolder}/sample/Diagnostics",
-      "console": "externalTerminal",
-      "stopAtEntry": false,
-      "justMyCode": false
-    },
-    {
       "name": ".NET Core Attach",
       "type": "coreclr",
       "request": "attach",

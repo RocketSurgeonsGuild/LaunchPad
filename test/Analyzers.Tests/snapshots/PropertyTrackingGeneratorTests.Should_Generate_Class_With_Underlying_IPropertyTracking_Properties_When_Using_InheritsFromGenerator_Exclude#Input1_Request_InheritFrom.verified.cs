@@ -5,7 +5,7 @@
 public partial class Request
 {
     public Guid Id { get; init; }
-    public string Something { get; set; } = null !;
+    public string Something { get; set; } = null!;
 
     public Request With(Model value) => new Request
     {

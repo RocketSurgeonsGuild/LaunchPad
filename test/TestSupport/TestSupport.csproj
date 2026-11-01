@@ -18,7 +18,6 @@
         <!-- web application fixtures -->
         <PackageReference Include="Alba" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-        <PackageReference Include="Rocket.Surgery.Hosting" />
     </ItemGroup>
     <ItemGroup>
         <!--

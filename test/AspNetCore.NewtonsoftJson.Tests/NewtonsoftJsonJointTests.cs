@@ -48,7 +48,7 @@ public class NewtonsoftJsonJointTests
         provider.GetRequiredService<IOptions<MvcNewtonsoftJsonOptions>>().Value.SerializerSettings.Converters.ShouldContain(marker);
     }
 
-    // The convention took FoundationOptions in its constructor but never read them, so the options a context carries change nothing.
+    // Before it became a joint, this wiring took FoundationOptions in its constructor but never read them, so the options a context carries change nothing.
     [Test]
     public async Task Registers_The_Same_Services_Whatever_Foundation_Options_The_Context_Has()
     {

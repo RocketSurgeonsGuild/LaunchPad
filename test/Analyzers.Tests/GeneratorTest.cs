@@ -5,7 +5,6 @@ using HotChocolate.Types;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.Conventions;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 
 using TUnit.Core.Interfaces;
@@ -32,8 +31,6 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                  .WithAssemblyLoadContext(AssemblyLoadContext)
                  .AddReferences(
                       typeof(ActivatorUtilities).Assembly,
-                      typeof(ConventionContext).Assembly,
-                      typeof(IConventionContext).Assembly,
                       typeof(ErrorAttribute<>).Assembly
                   );
 

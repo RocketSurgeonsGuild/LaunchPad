@@ -25,7 +25,7 @@ using File = ModularPipelines.FileSystem.File;
 [DependsOn<BuildSolution>]
 // T008: shared AOT-publish helper. Each demonstration host publishes its scoped, in-csproj
 // zero-warning property set (D4-pinned: PublishAot + TrimmerSingleWarn=false + TreatWarningsAsErrors)
-// for net10.0 × current RID. A failed publish (or any promoted IL2xxx/IL3xxx) throws ⇒ the named
+// for each target framework (net10.0, net11.0) × current RID. A failed publish (or any promoted IL2xxx/IL3xxx) throws ⇒ the named
 // module FAILs the build; an unsatisfied toolchain SKIPs-with-reason (aot-publish-step contract).
 public class AotPublishModule() : Module<ImmutableList<CommandResult>>
 {
@@ -34,34 +34,37 @@ public class AotPublishModule() : Module<ImmutableList<CommandResult>>
         Sourcy.DotNet.Projects.Sample_Command,
         Sourcy.DotNet.Projects.Sample_Minimal
     ];
+    // the samples target both frameworks, and publish needs one
+    private readonly IReadOnlyCollection<string> frameworks = ["net10.0", "net11.0"];
     protected override ModuleConfiguration Configure() => ModuleConfiguration.Create().WithRetryCount(3).Build();
     protected override async Task<ImmutableList<CommandResult>> ExecuteAsync(IModuleContext context, CancellationToken cancellationToken)
     {
         var rid = RuntimeInformation.RuntimeIdentifier;
 
-        var results = await Task.WhenAll(projects.Select(project =>
+        var results = await Task.WhenAll(projects.SelectMany(project => frameworks.Select(framework =>
         {
             var projectPath = new File(project.FullName);
-            return context.SubModule(projectPath.NameWithoutExtension, async () =>
+            return context.SubModule($"{projectPath.NameWithoutExtension} {framework}", async () =>
             {
 
                 var hostname = projectPath.NameWithoutExtension;
-                context.Logger.LogInformation("AOT publish [{Host}] × {Rid} (zero-warning policy)", hostname, rid);
+                context.Logger.LogInformation("AOT publish [{Host}] {Framework} × {Rid} (zero-warning policy)", hostname, framework, rid);
 
                 var result = await context.DotNet().Publish(
                     new DotNetPublishOptions
                     {
                         ProjectSolution = projectPath,
                         Configuration = "Release",
+                        Framework = framework,
                         Runtime = rid,
                     },
                     new CommandExecutionOptions(),
                     cancellationToken);
 
-                context.Logger.LogInformation("AOT publish [{Host}] PASS — zero trim/AOT warnings.", hostname);
+                context.Logger.LogInformation("AOT publish [{Host}] {Framework} PASS — zero trim/AOT warnings.", hostname, framework);
                 return result;
             });
-        }));
+        })));
         return [.. results];
     }
 }
