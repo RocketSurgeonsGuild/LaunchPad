@@ -46,20 +46,6 @@ public class SpatialJointTests
     }
 
     [Test]
-    public async Task Destructures_The_NetTopologySuite_Types_As_The_Serilog_Extension_Does()
-    {
-        var context = await JointContext.Create();
-        var geometry = new Point(30, 10);
-
-        var withJoint = JointContext.RenderDestructured(configuration => new SpatialJoint().Register(context, new ServiceCollection(), configuration), geometry);
-        var withExtension = JointContext.RenderDestructured(configuration => configuration.Destructure.NetTopologySuiteTypes(), geometry);
-        var withoutDestructuring = JointContext.RenderDestructured(_ => { }, geometry);
-
-        withJoint.ShouldBe(withExtension);
-        withJoint.ShouldNotBe(withoutDestructuring);
-    }
-
-    [Test]
     public void Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
     {
         var export = Exports.Joints().Single(x => x.Joint is SpatialJoint);

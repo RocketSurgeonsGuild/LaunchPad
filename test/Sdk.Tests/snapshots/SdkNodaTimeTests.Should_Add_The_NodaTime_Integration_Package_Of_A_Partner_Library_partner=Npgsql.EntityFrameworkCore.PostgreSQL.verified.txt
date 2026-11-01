@@ -1,0 +1,15 @@
+﻿{
+  Hosts: [
+    HostApplication
+  ],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Microsoft.Extensions.Hosting,
+    NodaTime,
+    Npgsql.EntityFrameworkCore.PostgreSQL,
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.NodaTime {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.NodaTime.EntityFramework {LaunchPadVersion} (SDK)
+  ]
+}

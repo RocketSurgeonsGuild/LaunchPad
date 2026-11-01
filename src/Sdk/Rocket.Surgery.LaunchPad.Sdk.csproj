@@ -19,12 +19,19 @@
 
     <!--
         The packages the SDK adds to an application, each at the version of the SDK, through the property named here (an application can set
-        the property first to choose another version). Sdk/Rocket.Surgery.LaunchPad.Detection.targets decides which an application gets.
+        the property first to choose another version). Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which an application gets.
         A package added here is also packed by test/Sdk.Tests (PackedSdk.Projects) and sample/Sample.Sdk/build/pack.proj, so the tests and
         the sample can restore it.
     -->
     <ItemGroup>
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Hosting" Property="LaunchPadHostingVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime" Property="LaunchPadNodaTimeVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson" Property="LaunchPadNodaTimeNewtonsoftJsonVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.Mapping" Property="LaunchPadNodaTimeMappingVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.EntityFramework" Property="LaunchPadNodaTimeEntityFrameworkVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.HotChocolate" Property="LaunchPadNodaTimeHotChocolateVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake" Property="LaunchPadNodaTimeStrawberryShakeVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.Serilog" Property="LaunchPadNodaTimeSerilogVersion" />
         <!-- Sdk/Rocket.Surgery.LaunchPad.Serilog.targets -->
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore" Property="LaunchPadSerilogAspNetCoreVersion" />
         <!-- Sdk/Rocket.Surgery.LaunchPad.FluentValidation.targets -->

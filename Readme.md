@@ -25,7 +25,6 @@ A common set of libraries used to build console and web applications.
 | Rocket.Surgery.LaunchPad.AspNetCore.Blazor | [![nuget-version-trxsi+csbl6q-badge]![nuget-downloads-trxsi+csbl6q-badge]][nuget-trxsi+csbl6q] |
 | Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi | [![nuget-version-7h+u7hskco3q-badge]![nuget-downloads-7h+u7hskco3q-badge]][nuget-7h+u7hskco3q] |
 | Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson | [![nuget-version-90qhcztnoaxa-badge]![nuget-downloads-90qhcztnoaxa-badge]][nuget-90qhcztnoaxa] |
-| Rocket.Surgery.LaunchPad.AspNetCore.Spatial | [![nuget-version-hf0rber6kqsw-badge]![nuget-downloads-hf0rber6kqsw-badge]][nuget-hf0rber6kqsw] |
 | Rocket.Surgery.LaunchPad.EntityFramework | [![nuget-version-nutptsm/tbya-badge]![nuget-downloads-nutptsm/tbya-badge]][nuget-nutptsm/tbya] |
 | Rocket.Surgery.LaunchPad.Foundation | [![nuget-version-kb2xyygxvala-badge]![nuget-downloads-kb2xyygxvala-badge]][nuget-kb2xyygxvala] |
 | Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson | [![nuget-version-m0yumfedtfoa-badge]![nuget-downloads-m0yumfedtfoa-badge]][nuget-m0yumfedtfoa] |
@@ -71,9 +70,6 @@ TBD
 [nuget-90qhcztnoaxa]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson/
 [nuget-version-90qhcztnoaxa-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-90qhcztnoaxa-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
-[nuget-hf0rber6kqsw]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.Spatial/
-[nuget-version-hf0rber6kqsw-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.AspNetCore.Spatial.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
-[nuget-downloads-hf0rber6kqsw-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.AspNetCore.Spatial.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"
 [nuget-nutptsm/tbya]: https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.EntityFramework/
 [nuget-version-nutptsm/tbya-badge]: https://img.shields.io/nuget/v/Rocket.Surgery.LaunchPad.EntityFramework.svg?color=004880&logo=nuget&style=flat-square "NuGet Version"
 [nuget-downloads-nutptsm/tbya-badge]: https://img.shields.io/nuget/dt/Rocket.Surgery.LaunchPad.EntityFramework.svg?color=004880&logo=nuget&style=flat-square "NuGet Downloads"

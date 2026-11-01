@@ -24,5 +24,5 @@ dotnet run --project Sample.Sdk.Worker
 ```
 
 `build/pack.proj` packs the SDK and the packages it adds into `artifacts/nuget-sample` at `0.0.0-sample`, the version `global.json` pins.
-Run it again after changing anything under `src/Sdk` or `src/Hosting`. The worker prints `Health: Healthy`; the web application serves
+Run it again after changing anything under `src/Sdk`, `src/Hosting` or `src/NodaTime*`. The worker prints `Health: Healthy`; the web application serves
 the same at `/health`.

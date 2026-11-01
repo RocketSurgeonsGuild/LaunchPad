@@ -8,6 +8,8 @@
         only what the project declares itself: the host model, and its own PackageReference items.
           - Rocket.Surgery.LaunchPad.Hosting: any project Dovetail found a host model for (a DovetailHost item). The package is a direct
             reference of the project, which is what its templates require.
+          - Rocket.Surgery.LaunchPad.NodaTime and its integration packages: a project that references NodaTime (see
+            Rocket.Surgery.LaunchPad.Detection.NodaTime.targets, imported below).
     -->
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
@@ -19,6 +21,9 @@
             Condition="'$(LaunchPadEnableHosting)' != 'false' and '@(DovetailHost)' != ''"
         />
     </ItemGroup>
+
+    <!-- NodaTime and its integration packages -->
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NodaTime.targets" />
 
     <!-- The technologies with packages of their own, each in its file, which lists its packages and their conditions. -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Serilog.targets" />

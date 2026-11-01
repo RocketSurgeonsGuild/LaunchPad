@@ -3,6 +3,13 @@
 <PropertyGroup>
 <LaunchPadDovetailSdkVersion Condition="'$(LaunchPadDovetailSdkVersion)' == ''">{DovetailVersion}</LaunchPadDovetailSdkVersion>
 <LaunchPadHostingVersion Condition="'$(LaunchPadHostingVersion)' == ''">{LaunchPadVersion}</LaunchPadHostingVersion>
+<LaunchPadNodaTimeVersion Condition="'$(LaunchPadNodaTimeVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeVersion>
+<LaunchPadNodaTimeNewtonsoftJsonVersion Condition="'$(LaunchPadNodaTimeNewtonsoftJsonVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeNewtonsoftJsonVersion>
+<LaunchPadNodaTimeMappingVersion Condition="'$(LaunchPadNodaTimeMappingVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeMappingVersion>
+<LaunchPadNodaTimeEntityFrameworkVersion Condition="'$(LaunchPadNodaTimeEntityFrameworkVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeEntityFrameworkVersion>
+<LaunchPadNodaTimeHotChocolateVersion Condition="'$(LaunchPadNodaTimeHotChocolateVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeHotChocolateVersion>
+<LaunchPadNodaTimeStrawberryShakeVersion Condition="'$(LaunchPadNodaTimeStrawberryShakeVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeStrawberryShakeVersion>
+<LaunchPadNodaTimeSerilogVersion Condition="'$(LaunchPadNodaTimeSerilogVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeSerilogVersion>
 <LaunchPadSerilogAspNetCoreVersion Condition="'$(LaunchPadSerilogAspNetCoreVersion)' == ''">{LaunchPadVersion}</LaunchPadSerilogAspNetCoreVersion>
 <LaunchPadFluentValidationVersion Condition="'$(LaunchPadFluentValidationVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationVersion>
 <LaunchPadFluentValidationAspNetCoreVersion Condition="'$(LaunchPadFluentValidationAspNetCoreVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationAspNetCoreVersion>
