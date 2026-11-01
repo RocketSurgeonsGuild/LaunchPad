@@ -2,7 +2,8 @@ name: samples
 
 # Builds and runs sample/Sample.Sdk, the one sample LaunchPad.slnx leaves out: it consumes LaunchPad only as packed NuGet packages, so
 # build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
-# The worker and the file-based app print their health (and the app its NodaTime clock), which this checks; the web app only builds.
+# The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
+# clock), which this checks; the web app only builds.
 
 on:
     push:
@@ -94,6 +95,12 @@ jobs:
             - name: 🚀 Run Sample.Sdk.Worker
               run: |
                   output="$(dotnet run --project Sample.Sdk.Worker --no-build)"
+                  echo "$output"
+                  grep -qx 'Health: Healthy' <<< "$output"
+            - name: 🚀 Run Sample.Sdk.Console
+              if: success() || failure()
+              run: |
+                  output="$(dotnet run --project Sample.Sdk.Console --no-build)"
                   echo "$output"
                   grep -qx 'Health: Healthy' <<< "$output"
             - name: 🚀 Run Sample.Sdk.FileApp
