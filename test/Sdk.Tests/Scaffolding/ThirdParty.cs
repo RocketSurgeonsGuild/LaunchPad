@@ -6,9 +6,15 @@ namespace Sdk.Tests.Scaffolding;
 /// </summary>
 internal static class ThirdParty
 {
+    /// <summary>
+    ///     Newtonsoft.Json, a technology of its own and the partner of LaunchPad's spatial package.
+    /// </summary>
     public const string NewtonsoftJson = "Newtonsoft.Json";
     public const string NewtonsoftJsonVersion = "13.0.4";
 
+    /// <summary>
+    ///     NetTopologySuite, a technology of its own and the partner of LaunchPad's Newtonsoft.Json converters.
+    /// </summary>
     public const string NetTopologySuite = "NetTopologySuite";
     public const string NetTopologySuiteVersion = "2.6.0";
 

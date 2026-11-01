@@ -10,6 +10,9 @@
             reference of the project, which is what its templates require.
           - Rocket.Surgery.LaunchPad.NodaTime and its integration packages: a project that references NodaTime (see
             Rocket.Surgery.LaunchPad.Detection.NodaTime.targets, imported below).
+          - Newtonsoft.Json and NetTopologySuite, and their integration packages: a project that references either (see
+            Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets and Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets,
+            imported below).
     -->
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>

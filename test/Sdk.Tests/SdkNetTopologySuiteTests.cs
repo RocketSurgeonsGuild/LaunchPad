@@ -36,7 +36,7 @@ public class SdkNetTopologySuiteTests(string targetFramework)
     public async Task Should_Add_Spatial_NewtonsoftJson_To_A_Project_That_References_Newtonsoft_Json()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, WithBoth(App(HostModel.GenericHost)));
+        tree.AddProject("app", HostModel.GenericHost, WithNetTopologySuiteAndNewtonsoftJson(App(HostModel.GenericHost)));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
@@ -52,7 +52,7 @@ public class SdkNetTopologySuiteTests(string targetFramework)
     public async Task Should_Not_Add_Spatial_NewtonsoftJson_When_Either_Technology_Is_Opted_Out(string optOut)
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, WithBoth(App(HostModel.GenericHost)).Property(optOut, "false"));
+        tree.AddProject("app", HostModel.GenericHost, WithNetTopologySuiteAndNewtonsoftJson(App(HostModel.GenericHost)).Property(optOut, "false"));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
@@ -65,7 +65,7 @@ public class SdkNetTopologySuiteTests(string targetFramework)
     public async Task Should_Add_StrawberryShake_Spatial_To_A_Project_That_References_StrawberryShake()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, WithStrawberryShake(App(HostModel.GenericHost)));
+        tree.AddProject("app", HostModel.GenericHost, WithNetTopologySuiteAndStrawberryShake(App(HostModel.GenericHost)));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
@@ -77,17 +77,17 @@ public class SdkNetTopologySuiteTests(string targetFramework)
     public async Task Should_Not_Add_Anything_When_Opted_Out()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, WithStrawberryShake(App(HostModel.GenericHost)).Property("LaunchPadEnableNetTopologySuite", "false"));
+        tree.AddProject("app", HostModel.GenericHost, WithNetTopologySuiteAndStrawberryShake(App(HostModel.GenericHost)).Property("LaunchPadEnableNetTopologySuite", "false"));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
 
-    private static ProjectCreator WithStrawberryShake(ProjectCreator project) =>
+    private static ProjectCreator WithNetTopologySuiteAndStrawberryShake(ProjectCreator project) =>
         project
            .ItemPackageReference(ThirdParty.NetTopologySuite, ThirdParty.NetTopologySuiteVersion)
            .ItemPackageReference(ThirdParty.StrawberryShake, ThirdParty.StrawberryShakeVersion);
 
-    private static ProjectCreator WithBoth(ProjectCreator project) =>
+    private static ProjectCreator WithNetTopologySuiteAndNewtonsoftJson(ProjectCreator project) =>
         project
            .ItemPackageReference(ThirdParty.NetTopologySuite, ThirdParty.NetTopologySuiteVersion)
            .ItemPackageReference(ThirdParty.NewtonsoftJson, ThirdParty.NewtonsoftJsonVersion);

@@ -41,6 +41,12 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         Path.Combine("src", "FluentValidation.Blazor", "Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj"),
         Path.Combine("src", "FluentValidation.Grpc", "Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj"),
         Path.Combine("src", "FluentValidation.HotChocolate", "Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj"),
+        Path.Combine("src", "Foundation.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj"),
+        Path.Combine("src", "AspNetCore.NewtonsoftJson", "Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj"),
+        Path.Combine("src", "Mapping.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj"),
+        Path.Combine("src", "Spatial", "Rocket.Surgery.LaunchPad.Spatial.csproj"),
+        Path.Combine("src", "Spatial.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj"),
+        Path.Combine("src", "StrawberryShake.Spatial", "Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj"),
     ];
 
     /// <summary>
