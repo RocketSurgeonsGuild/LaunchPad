@@ -3,9 +3,6 @@ using NetTopologySuite.Geometries;
 
 using Newtonsoft.Json.Linq;
 
-using NodaTime;
-using NodaTime.Testing;
-
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.Spatial;
 
@@ -62,114 +59,6 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
 
         using var _ = CaptureLogs(out var logs);
         Logger.Information("This is just a test {@Data}", value);
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_Instant()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", _clock.GetCurrentInstant());
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_LocalDateTime()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", LocalDateTime.FromDateTime(_clock.GetCurrentInstant().ToDateTimeUtc()));
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_LocalDate()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", LocalDate.FromDateTime(_clock.GetCurrentInstant().ToDateTimeUtc()));
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_LocalTime()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", LocalTime.FromHoursSinceMidnight(4));
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_OffsetDateTime()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()));
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_OffsetDate()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()).ToOffsetDate());
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_OffsetTime()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", OffsetDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()).ToOffsetTime());
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_ZonedDateTime()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", ZonedDateTime.FromDateTimeOffset(_clock.GetCurrentInstant().ToDateTimeOffset()));
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_DateTimeZone()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", DateTimeZoneProviders.Tzdb["America/New_York"]);
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_Duration()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", Duration.FromDays(1));
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_Period()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", Period.FromDays(1));
-        await Verify(logs.Select(z => z.RenderMessage()));
-    }
-
-    [Test]
-    [Skip(NodaTimeMovesOut)]
-    public async Task Should_Destructure_NodaTime_Interval()
-    {
-        using var _ = CaptureLogs(out var logs);
-        Logger.Information("This is just a test {@Data}", new Interval(_clock.GetCurrentInstant(), _clock.GetCurrentInstant()));
         await Verify(logs.Select(z => z.RenderMessage()));
     }
 
@@ -237,27 +126,5 @@ public class SerilogDestructuringTests : LoggerTest<TestRecord>
                                                   .Destructure.NewtonsoftJsonTypes()
                                                   .Destructure.NetTopologySuiteTypes()
         )
-    )
-
-    {
-        LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
-        _clock = new(
-            Instant.FromUtc(
-                2022,
-                1,
-                1,
-                4,
-                4,
-                4
-            )
-        );
-    }
-
-    /// <summary>
-    ///     The NodaTime destructuring policy left with LaunchPad.Serilog (RocketSurgeonsGuild/LaunchPad#3062); its tests run again when it
-    ///     arrives in its own package.
-    /// </summary>
-    private const string NodaTimeMovesOut = "NodaTime destructuring moves to LaunchPad.NodaTime.Serilog in RocketSurgeonsGuild/LaunchPad#3067";
-
-    private readonly FakeClock _clock;
+    ) => LogContext.PushProperty("SourceContext", nameof(SerilogDestructuringTests));
 }

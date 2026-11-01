@@ -95,6 +95,7 @@
     <Project Path="src/NodaTime.EntityFramework/Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj" />
     <Project Path="src/NodaTime.Mapping/Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
     <Project Path="src/NodaTime.NewtonsoftJson/Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj" />
+    <Project Path="src/NodaTime.Serilog/Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Sdk/Rocket.Surgery.LaunchPad.Sdk.csproj" />
     <Project Path="src/Spatial.NewtonsoftJson/Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
@@ -124,6 +125,7 @@
     <Project Path="test/NodaTime.EntityFramework.Tests/NodaTime.EntityFramework.Tests.csproj" />
     <Project Path="test/NodaTime.Mapping.Tests/NodaTime.Mapping.Tests.csproj" />
     <Project Path="test/NodaTime.NewtonsoftJson.Tests/NodaTime.NewtonsoftJson.Tests.csproj" />
+    <Project Path="test/NodaTime.Serilog.Tests/NodaTime.Serilog.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />
     <Project Path="test/Sample.Classic.Restful.Tests/Sample.Classic.Restful.Tests.csproj" />
