@@ -149,7 +149,7 @@
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="10.0.5" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.TUnit" Version="10.0.5" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="10.0.5" />
-        <PackageVersion Include="TUnit" Version="1.76.45" />
+        <PackageVersion Include="TUnit" Version="1.78.0" />
         <PackageVersion Include="Verify.TUnit" Version="33.3.4" />
         <!-- test/Sdk.Tests writes its throwaway projects with it, as Dovetail's SDK tests do -->
         <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.0" />
