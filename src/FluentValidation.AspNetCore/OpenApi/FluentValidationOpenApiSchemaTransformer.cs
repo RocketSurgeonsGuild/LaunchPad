@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
@@ -19,7 +19,7 @@ public class FluentValidationOpenApiSchemaTransformer(IEnumerable<IPropertyRuleH
                                                         schema.Properties.Where(z => z.Value is OpenApiSchema),
                                                         z => z.Key,
                                                         z => z.Key,
-                                                        (z, y) => ( validators: z.AsEnumerable(), property: y.Key, schema: (OpenApiSchema)y.Value ),
+                                                        (z, y) => (validators: z.AsEnumerable(), property: y.Key, schema: (OpenApiSchema)y.Value),
                                                         StringComparer.OrdinalIgnoreCase
                                                     ))
 

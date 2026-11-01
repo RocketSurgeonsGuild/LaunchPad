@@ -1,4 +1,3 @@
-﻿using System.Globalization;
 using FluentValidation.Validators;
 using Microsoft.OpenApi;
 

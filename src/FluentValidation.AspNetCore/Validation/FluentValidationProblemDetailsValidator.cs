@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 

@@ -2,9 +2,6 @@ using System.Text.RegularExpressions;
 
 using Argon;
 
-using FluentValidation;
-using FluentValidation.AspNetCore;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.TestHost;

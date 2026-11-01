@@ -1,4 +1,4 @@
-﻿using FluentValidation.Validators;
+using FluentValidation.Validators;
 using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
@@ -10,7 +10,7 @@ public sealed class RegularExpressionPropertyRule : IPropertyRuleHandler
     {
         if (context is not { PropertyValidator: IRegularExpressionValidator validator }) return Task.CompletedTask;
 
-        context.PropertySchema.AllOf ??= new List<IOpenApiSchema>();
+        context.PropertySchema.AllOf ??= [];
         var anyPatterns = context.PropertySchema.AllOf.Any(schema => schema.Pattern is { });
         if (context.PropertySchema is { Pattern: { } } || anyPatterns)
         {

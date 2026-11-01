@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using FluentValidation.Validators;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
@@ -40,6 +40,9 @@ public sealed class ComparisonPropertyRule : IPropertyRuleHandler
                     schemaProperty.ExclusiveMaximum = "true";
                     break;
                 }
+
+            default:
+                break;
         }
 
         return Task.CompletedTask;

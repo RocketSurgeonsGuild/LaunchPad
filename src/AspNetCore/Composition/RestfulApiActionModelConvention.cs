@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,12 @@ using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
-internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenApiSchemaTransformer
+/// <summary>
+///     An action model convention that allows <see cref="IRequest{TResponse}" /> and <see cref="IStreamRequest{TResponse}" /> to be used as parameters to
+///     controller actions.
+/// </summary>
+/// <param name="options"></param>
+internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options) : IActionModelConvention, IOpenApiSchemaTransformer
 {
     private static string? GetHttpMethod(ActionModel action)
     {
@@ -22,9 +27,7 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
                          .Distinct(StringComparer.OrdinalIgnoreCase)
                          .ToArray();
         // Not valid for actions with more than one verb
-        if (httpMethods.Length > 1) return null;
-
-        return httpMethods[0];
+        return  httpMethods.Length > 1  ?   null   :  httpMethods[0];
     }
 
     [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
@@ -47,13 +50,12 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
         {
             _propertiesToHideFromOpenApi.TryAdd(
                 requestParameter.ParameterType,
-                requestParameter
+                [.. requestParameter
                    .ParameterType.GetProperties()
                    .Select(z => z.Name)
                    .Except(
                         requestParameter.Attributes.OfType<BindAttribute>().SelectMany(z => z.Include)
-                    )
-                   .ToArray()
+                    )]
             );
             return;
         }
@@ -100,19 +102,8 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
 
     private static readonly ConcurrentDictionary<Type, string[]> _propertiesToHideFromOpenApi = new();
 
-    private readonly ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> _matchers;
-    private readonly RestfulApiOptions _options;
-
-    /// <summary>
-    ///     An action model convention that allows <see cref="IRequest{TResponse}" /> and <see cref="IStreamRequest{TResponse}" /> to be used as parameters to
-    ///     controller actions.
-    /// </summary>
-    /// <param name="options"></param>
-    public RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options)
-    {
-        _matchers = options.Value.GetMatchers();
-        _options = options.Value;
-    }
+    private readonly ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> _matchers = options.Value.GetMatchers();
+    private readonly RestfulApiOptions _options = options.Value;
 
     private void UpdateProviders(
         ActionModel actionModel
@@ -149,9 +140,11 @@ internal class RestfulApiActionModelConvention : IActionModelConvention, IOpenAp
             actionModel.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
 
         if (!providerLookup[_options.ValidationStatusCode].Any())
+        {
             actionModel.Filters.Add(
                 new ProducesResponseTypeAttribute(_options.ValidationProblemDetailsType, _options.ValidationStatusCode)
             );
+        }
     }
 
     // TODO: Make a source generator for this to work without generics

@@ -44,8 +44,10 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             ;
 
         if (!isStream)
+        {
             newSyntax = newSyntax
                .AddModifiers(Token(SyntaxKind.AsyncKeyword));
+        }
 
         var block = Block();
         var resultName = parameter.Name == "result" ? "r" : "result";
@@ -60,7 +62,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                           otherParams,
                                           z => z.Name,
                                           z => z.Name,
-                                          static (member, parameter) => ( member, parameter ),
+                                          static (member, parameter) => (member, parameter),
                                           StringComparer.OrdinalIgnoreCase
                                       )
                                      .ToArray();
@@ -70,23 +72,23 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                    par =>
                                                    {
                                                        return par switch
-                                                              {
-                                                                  IPropertySymbol { IsImplicitlyDeclared: false, } ps => controllerBaseProperties.Where(
-                                                                      p => SymbolEqualityComparer.Default.Equals(p.Type, ps.Type)
-                                                                  ),
-                                                                  IFieldSymbol { IsImplicitlyDeclared: false, } fs => controllerBaseProperties.Where(
-                                                                      p => SymbolEqualityComparer.Default.Equals(p.Type, fs.Type)
-                                                                  ),
-                                                                  _ => Enumerable.Empty<IPropertySymbol>(),
-                                                              };
+                                                       {
+                                                           IPropertySymbol { IsImplicitlyDeclared: false, } ps => controllerBaseProperties.Where(
+                                                               p => SymbolEqualityComparer.Default.Equals(p.Type, ps.Type)
+                                                           ),
+                                                           IFieldSymbol { IsImplicitlyDeclared: false, } fs => controllerBaseProperties.Where(
+                                                               p => SymbolEqualityComparer.Default.Equals(p.Type, fs.Type)
+                                                           ),
+                                                           _ => [],
+                                                       };
                                                    },
-                                                   static (member, controllerProperty) => ( member, controllerProperty )
+                                                   static (member, controllerProperty) => (member, controllerProperty)
                                                )
                                               .ToArray();
             var failed = false;
             if (!parameterType.IsRecord)
             {
-                foreach (( var member, _ ) in parameterProperties)
+                foreach ((var member, _) in parameterProperties)
                 {
                     if (member is not IPropertySymbol { SetMethod.IsInitOnly: true, }) continue;
                     context.ReportDiagnostic(
@@ -101,7 +103,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                     failed = true;
                 }
 
-                foreach (( var member, _ ) in controllerAttachedProperties)
+                foreach ((var member, _) in controllerAttachedProperties)
                 {
                     if (member is not IPropertySymbol { SetMethod.IsInitOnly: true, }) continue;
                     context.ReportDiagnostic(
@@ -223,7 +225,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             }
             else
             {
-                foreach (( var member, var s ) in parameterProperties)
+                foreach ((var member, var s) in parameterProperties)
                 {
                     block = block.AddStatements(
                         ExpressionStatement(
@@ -240,7 +242,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                     );
                 }
 
-                foreach (var s in controllerAttachedProperties)
+                foreach (var (member, controllerProperty) in controllerAttachedProperties)
                 {
                     block = block.AddStatements(
                         ExpressionStatement(
@@ -249,12 +251,12 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     IdentifierName(parameter.Name),
-                                    IdentifierName(s.member.Name)
+                                    IdentifierName(member.Name)
                                 ),
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     ThisExpression(),
-                                    IdentifierName(s.controllerProperty.Name)
+                                    IdentifierName(controllerProperty.Name)
                                 )
                             )
                         )
@@ -263,10 +265,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             }
         }
 
-        if (isUnit)
-            block = block.AddStatements(ExpressionStatement(sendRequestExpression));
-        else
-            block = block
+        block = isUnit
+            ?  block.AddStatements(ExpressionStatement(sendRequestExpression)) 
+            :  block
                .AddStatements(
                     LocalDeclarationStatement(
                         VariableDeclaration(IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList())))
@@ -290,11 +291,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                                                                     Key: "StatusCode", Value: { Kind: TypedConstantKind.Primitive, Value: int, },
                                                                 }
                                                             )
-                                                            // ReSharper disable once NullableWarningSuppressionIsUsed
+                                                           // ReSharper disable once NullableWarningSuppressionIsUsed
                                                            .Select(c => (int)c.Value.Value!);
                                        var constructorArguments = z
                                                                  .ConstructorArguments.Where(c => c is { Kind: TypedConstantKind.Primitive, Value: int, })
-                                                                  // ReSharper disable once NullableWarningSuppressionIsUsed
+                                                                 // ReSharper disable once NullableWarningSuppressionIsUsed
                                                                  .Select(c => (int)c.Value!);
 
                                        return namedArguments.Concat(constructorArguments);
@@ -311,6 +312,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             var newParam = declaredParam;
 
             if (matcher is { })
+            {
                 switch (matcher)
                 {
                     case { Method: RestfulApiMethod.List, }:
@@ -334,7 +336,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                             if (!attributes["FromRouteAttribute"].Any()) newParam = newParam.AddAttributeLists(createSimpleAttribute("FromRoute"));
                             break;
                         }
+
+                    default:
+                        break;
                 }
+            }
 
             newSyntax = newSyntax.WithParameterList(newSyntax.ParameterList.ReplaceNode(declaredParam, newParam));
         }
@@ -359,10 +365,11 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             newSyntax = newSyntax.AddAttributeLists(produces(StatusCodes.Status400BadRequest, "ProblemDetails"));
 
         if (!knownStatusCodes.Contains(StatusCodes.Status422UnprocessableEntity))
+        {
             newSyntax = newSyntax.AddAttributeLists(
                 produces(StatusCodes.Status422UnprocessableEntity, validationProblemDetailsType)
             );
-
+        }
 
         if (isStream)
         {
@@ -370,7 +377,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         }
         else
         {
-            if (symbol.GetAttribute("CreatedAttribute") is { ConstructorArguments: { Length: 1, }, } created)
+            if (symbol.GetAttribute("CreatedAttribute") is { ConstructorArguments.Length: 1, } created)
             {
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 var actionName = (string)created.ConstructorArguments[0].Value!;
@@ -381,7 +388,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                     ReturnStatement(routeResult("CreatedAtActionResult", resultName, actionName, routeValues))
                 );
             }
-            else if (symbol.GetAttribute("AcceptedAttribute") is { ConstructorArguments: { Length: 1, }, } accepted)
+            else if (symbol.GetAttribute("AcceptedAttribute") is { ConstructorArguments.Length: 1, } accepted)
             {
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 var actionName = (string)accepted.ConstructorArguments[0].Value!;
@@ -415,9 +422,9 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                    .request?.Type.GetMembers()
                    .Where(z => z is IPropertySymbol { IsImplicitlyDeclared: false, } ps && ps.Name != "EqualityContract")
                    .Select(z => z.Name)
-             ?? Enumerable.Empty<string>()
+             ?? []
             );
-            return parameterNames.Select(Helpers.Camelize).Distinct().ToImmutableArray();
+            return [.. parameterNames.Select(Helpers.Camelize).Distinct()];
         }
 
         static ExpressionSyntax getRouteValues(
@@ -521,8 +528,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
 
         static AttributeListSyntax produces(int statusCode, string? responseType = null)
         {
-            if (responseType is { })
-                return AttributeList(
+            return  responseType is { }
+                ?  AttributeList(
                     SingletonSeparatedList(
                         Attribute(
                             IdentifierName("ProducesResponseType"),
@@ -537,9 +544,8 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                             )
                         )
                     )
-                );
-
-            return AttributeList(
+                )
+                :  AttributeList(
                 SingletonSeparatedList(
                     Attribute(
                         IdentifierName("ProducesResponseType"),
@@ -647,7 +653,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
         ((ClassDeclarationSyntax syntax, INamedTypeSymbol symbol, SemanticModel semanticModel) Left, Compilation Right) valueTuple
     )
     {
-        ( var syntax, var symbol, var semanticModel ) = valueTuple.Left;
+        (var syntax, var symbol, var semanticModel) = valueTuple.Left;
         // ReSharper disable NullableWarningSuppressionIsUsed
         var controllerBase = semanticModel.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ControllerBase")!;
         // ReSharper enable NullableWarningSuppressionIsUsed
@@ -679,7 +685,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
                               var streamRequest = methodSymbol.Parameters.FirstOrDefault(
                                   p => p.Type.AllInterfaces.Any(i => i.MetadataName == "IStreamRequest`1")
                               );
-                              return ( method, symbol: methodSymbol, matcher, request: request ?? streamRequest );
+                              return (method, symbol: methodSymbol, matcher, request: request ?? streamRequest);
                           }
                       )
                      .Where(z => z is { symbol: { }, method: { }, })
@@ -693,7 +699,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
             ;
 
 
-        foreach (( var method, var methodSymbol, var matcher, var request ) in members)
+        foreach ((var method, var methodSymbol, var matcher, var request) in members)
         {
             if (request == null) continue;
             var methodBody = GenerateMethod(
@@ -713,7 +719,7 @@ public class ControllerActionBodyGenerator : IIncrementalGenerator
 
         var additionalUsings = hasFluentValidation
             ? new[] { "Microsoft.AspNetCore.Mvc", "FluentValidation.AspNetCore", "Rocket.Surgery.LaunchPad.AspNetCore.Validation", }
-            : new[] { "Microsoft.AspNetCore.Mvc", };
+            : ["Microsoft.AspNetCore.Mvc",];
 
         var usings = syntax
                     .SyntaxTree.GetCompilationUnitRoot()

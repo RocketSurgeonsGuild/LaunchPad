@@ -1,4 +1,4 @@
-﻿namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 
 [Experimental(Constants.ExperimentalId)]
 public interface IPropertyRuleHandler
