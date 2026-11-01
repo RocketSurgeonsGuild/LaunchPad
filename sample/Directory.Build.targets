@@ -35,18 +35,5 @@
             <FileExtension />
         </EmbeddedResource>
     </ItemDefinitionGroup>
-    <!--
-        No LaunchPad package sits on Rocket.Surgery.Conventions any more (LaunchPad.Hosting moved in RocketSurgeonsGuild/LaunchPad#3058,
-        LaunchPad.Telemetry in RocketSurgeonsGuild/LaunchPad#3061 and LaunchPad.Serilog in RocketSurgeonsGuild/LaunchPad#3062). When a project
-        still brings it, the Conventions source generator that arrives with it writes a second Imports class next to
-        the one Dovetail writes into the sample. The samples start through Dovetail, so the generator is removed from the analyzers once they
-        are resolved. Remove this target with the same one in test/Directory.Build.targets when the last project has moved
-        (RocketSurgeonsGuild/LaunchPad#3056).
-    -->
-    <Target Name="RemoveConventionsGenerator" AfterTargets="ResolveLockFileAnalyzers">
-        <ItemGroup>
-            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Rocket.Surgery.Conventions.Analyzers'" />
-        </ItemGroup>
-    </Target>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 </Project>

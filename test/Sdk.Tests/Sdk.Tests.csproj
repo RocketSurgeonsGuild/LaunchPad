@@ -8,10 +8,8 @@
         <TargetFramework>net11.0</TargetFramework>
         <!--
             The tests pack Rocket.Surgery.LaunchPad.Sdk and Rocket.Surgery.LaunchPad.Hosting and build throwaway applications that apply the
-            SDK the way an application outside this repository does, so the project references nothing of LaunchPad itself. It takes the
-            Dovetail wiring like every converted test project (RocketSurgeonsGuild/LaunchPad#3056 deletes the property).
+            SDK the way an application outside this repository does, so the project references nothing of LaunchPad itself.
         -->
-        <UseDovetail>true</UseDovetail>
     </PropertyGroup>
     <ItemGroup>
         <!-- writes the throwaway projects, their global.json and their package repository -->
