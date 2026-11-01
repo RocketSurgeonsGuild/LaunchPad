@@ -7,4 +7,4 @@ tags:
         description: Internal architecture and design documentation.
     hosting:
         label: Hosting
-        description: Hosting conventions for the supported application types.
+        description: Hosting joints for the supported host models.
