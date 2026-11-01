@@ -7,7 +7,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+        <!-- The oldest Roslyn the generator supports: the compiler of the .NET 10 SDK, so an application on either SDK can load it. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
     </ItemGroup>
     <!-- The generator is packed from wherever the build wrote it: an artifacts path (pack's artifacts-path option) moves it out of bin. -->
     <Target Name="_LaunchPadPackAnalyzer" BeforeTargets="_GetPackageFiles">
