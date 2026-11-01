@@ -7,7 +7,7 @@ namespace Rocket.Surgery.LaunchPad.Serilog;
 
 internal class NodaTimeDestructuringPolicy : IDestructuringPolicy
 {
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory _, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is Instant instant1)
         {
@@ -78,9 +78,15 @@ internal class NodaTimeDestructuringPolicy : IDestructuringPolicy
         if (value is Interval interval)
         {
             var values = new List<LogEventProperty>();
-            if (interval.HasStart) values.Add(new("Start", _.CreatePropertyValue(interval.Start)));
+            if (interval.HasStart)
+            {
+                values.Add(new("Start", propertyValueFactory.CreatePropertyValue(interval.Start)));
+            }
 
-            if (interval.HasEnd) values.Add(new("End", _.CreatePropertyValue(interval.End)));
+            if (interval.HasEnd)
+            {
+                values.Add(new("End", propertyValueFactory.CreatePropertyValue(interval.End)));
+            }
 
             result = new StructureValue(values);
             return true;
