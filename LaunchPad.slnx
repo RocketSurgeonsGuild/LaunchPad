@@ -83,7 +83,6 @@
     <Project Path="src/Grpc/Rocket.Surgery.LaunchPad.Grpc.csproj" />
     <Project Path="src/Hosting/Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <Project Path="src/HotChocolate/Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
-    <Project Path="src/Metadata/Rocket.Surgery.LaunchPad.Metadata.csproj" />
     <Project Path="src/NodaTime.HotChocolate/Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <Project Path="src/NodaTime.StrawberryShake/Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
     <Project Path="src/NodaTime/Rocket.Surgery.LaunchPad.NodaTime.csproj" />
@@ -98,7 +97,6 @@
     <File Path="test/Directory.Build.props" />
     <File Path="test/Directory.Build.targets" />
     <Project Path="test/Analyzers.Tests/Analyzers.Tests.csproj" />
-    <Project Path="test/AspNetCore.NewtonsoftJson.Tests/AspNetCore.NewtonsoftJson.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />
     <Project Path="test/Extensions.Tests/Extensions.Tests.csproj" />
     <Project Path="test/FluentValidation.AspNetCore.Tests/FluentValidation.AspNetCore.Tests.csproj" />
@@ -109,13 +107,9 @@
     <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
     <Project Path="test/Grpc.Tests/Grpc.Tests.csproj" />
     <Project Path="test/Hosting.Tests/Hosting.Tests.csproj" />
-    <Project Path="test/Metadata.Tests/Metadata.Tests.csproj" />
     <Project Path="test/NodaTime.Graphql.Tests/NodaTime.Graphql.Tests.csproj" />
     <Project Path="test/NodaTime.Tests/NodaTime.Tests.csproj" />
     <Project Path="test/NodaTime.EntityFramework.Tests/NodaTime.EntityFramework.Tests.csproj" />
-    <Project Path="test/NodaTime.Mapping.Tests/NodaTime.Mapping.Tests.csproj" />
-    <Project Path="test/NewtonsoftJson.Serilog.Tests/NewtonsoftJson.Serilog.Tests.csproj" />
-    <Project Path="test/NodaTime.NewtonsoftJson.Tests/NodaTime.NewtonsoftJson.Tests.csproj" />
     <Project Path="test/NodaTime.Serilog.Tests/NodaTime.Serilog.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />

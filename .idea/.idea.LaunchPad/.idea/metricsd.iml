@@ -2,7 +2,7 @@
 <module external.system.id="pyproject.toml" type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/../../apm_modules/dotnet/skills/tests/dotnet-test/code-testing-agent/fixtures/python-workspace-integrity">
-      <sourceFolder url="file://$MODULE_DIR$/../../apm_modules/dotnet/skills/tests/dotnet-test/code-testing-agent/fixtures/python-workspace-integrity/src" />
+      <sourceFolder url="file://$MODULE_DIR$/../../apm_modules/dotnet/skills/tests/dotnet-test/code-testing-agent/fixtures/python-workspace-integrity/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
