@@ -10,10 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddControllersAsServices();
 
-// LaunchPad.Hosting still registers the Serilog request logging services with a convention that Dovetail does not run,
-// until its Serilog joint replaces it (RocketSurgeonsGuild/LaunchPad#3062)
-builder.Services.AddSerilog(logger => logger.WriteTo.Console());
-
 var app = await builder.ConfigureDovetail();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();

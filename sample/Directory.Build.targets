@@ -4,6 +4,27 @@
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
     <!--
+        The server applications log through Serilog: Joinery.Dovetail.Serilog creates the logger, and the packages of the enrichers and sinks
+        turn on the Serilog joints LaunchPad.Hosting writes into an application (src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets).
+        The OpenTelemetry sink is left out, so the samples export no logs. The LaunchPad SDK adds these packages to an application
+        (RocketSurgeonsGuild/LaunchPad#3075); the samples name them until it does.
+    -->
+    <ItemGroup Condition="'$(OutputType)' == 'Exe' and '$(UsingMicrosoftNETSdkBlazorWebAssembly)' != 'true'">
+        <PackageReference Include="Joinery.Dovetail.Serilog" />
+        <PackageReference Include="Serilog.Enrichers.AssemblyName" />
+        <PackageReference Include="Serilog.Enrichers.Demystifier" />
+        <PackageReference Include="Serilog.Enrichers.Environment" />
+        <PackageReference Include="Serilog.Enrichers.Process" />
+        <PackageReference Include="Serilog.Enrichers.Span" />
+        <PackageReference Include="Serilog.Enrichers.Thread" />
+        <PackageReference Include="Serilog.Exceptions" />
+        <PackageReference Include="Serilog.Extensions.Hosting" />
+        <PackageReference Include="Serilog.Sinks.Async" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.Debug" />
+        <PackageReference Include="Serilog.Sinks.Trace" />
+    </ItemGroup>
+    <!--
         Joinery.Dovetail 0.4.0 embeds the appsettings.* files of a project under their absolute path (Joinery.Dovetail.PackConfiguration.targets).
         Rocket.Surgery.MyAssembly 1.3.0-beta.2 only gives FileExtension to the embedded resources with a relative path or a link, and then
         reads it from all of them, so every sample that has an appsettings file fails with MSB4096 in _InjectResourcesAdditionalFiles.
@@ -15,9 +36,9 @@
         </EmbeddedResource>
     </ItemDefinitionGroup>
     <!--
-        LaunchPad.Serilog (and LaunchPad.Primitives, which references it) still sits on Rocket.Surgery.Conventions until
-        RocketSurgeonsGuild/LaunchPad#3062 converts it (LaunchPad.Hosting no longer does, since
-        RocketSurgeonsGuild/LaunchPad#3058), and the Conventions source generator that arrives with it writes a second Imports class next to
+        No LaunchPad package sits on Rocket.Surgery.Conventions any more (LaunchPad.Hosting moved in RocketSurgeonsGuild/LaunchPad#3058,
+        LaunchPad.Telemetry in RocketSurgeonsGuild/LaunchPad#3061 and LaunchPad.Serilog in RocketSurgeonsGuild/LaunchPad#3062). When a project
+        still brings it, the Conventions source generator that arrives with it writes a second Imports class next to
         the one Dovetail writes into the sample. The samples start through Dovetail, so the generator is removed from the analyzers once they
         are resolved. Remove this target with the same one in test/Directory.Build.targets when the last project has moved
         (RocketSurgeonsGuild/LaunchPad#3056).
