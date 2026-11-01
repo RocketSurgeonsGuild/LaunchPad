@@ -131,7 +131,11 @@ internal sealed class ThrowawayTree : IDisposable
     /// <param name="name">The name of the project.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The output of the application.</returns>
-    public Task<string> Run(string name, CancellationToken cancellationToken = default) => Run(name, "", cancellationToken);
+    public Task<string> Run(string name, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(name);
+        return Run(name, string.Empty, cancellationToken);
+    }
 
     /// <summary>
     ///     Runs a project that was built with command line arguments, and returns what it wrote.

@@ -1,5 +1,8 @@
 using Hosting.Tests.Scaffolding;
 
+// a test assembly exposes nothing to other languages
+[assembly: CLSCompliant(false)]
+
 namespace Hosting.Tests;
 
 /// <summary>
@@ -194,7 +197,10 @@ public class SerilogTemplateTests
                          .AddPackage(package.PackageId, package.Version)
                          .AddPackage(DovetailSerilog)
                          .WithProgram(SerilogProgram);
-        if (!everything) return application;
+        if (!everything)
+        {
+            return application;
+        }
 
         foreach (var id in EveryPackage)
         {
@@ -347,7 +353,10 @@ public class SerilogTemplateTests
         {
             public static readonly HashSet<string> Stable = ["ApplicationName", "AssemblyName", "Data", "EnvironmentName", "Pushed", "SourceContext"];
             public List<LogEvent> Events { get; } = [];
-            public void Emit(LogEvent logEvent) => Events.Add(logEvent);
+            public void Emit(LogEvent logEvent)
+            {
+                if (logEvent is not null) Events.Add(logEvent);
+            }
         }
         """";
 }
