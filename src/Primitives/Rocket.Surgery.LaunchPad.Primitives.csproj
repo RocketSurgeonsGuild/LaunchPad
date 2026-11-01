@@ -24,6 +24,5 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Serilog\Rocket.Surgery.LaunchPad.Serilog.csproj" />
-        <ProjectReference Include="..\Telemetry\Rocket.Surgery.LaunchPad.Telemetry.csproj" />
     </ItemGroup>
 </Project>

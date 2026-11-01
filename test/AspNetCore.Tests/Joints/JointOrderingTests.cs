@@ -19,7 +19,6 @@ public class JointOrderingTests
                            .AppendJoint<RestfulJoint>()
                            .AppendJoint<ProblemDetailsJoint>()
                            .AppendJoint<OpenApiJoint>()
-                           .AppendJoint<AspNetCoreInstrumentationJoint>()
                            .AppendJoint<AspNetCoreJoint>()
                            .CreateAsync();
 
@@ -30,7 +29,6 @@ public class JointOrderingTests
         foreach (var dependent in new[]
                  {
                      typeof(SystemJsonTextJoint), typeof(RestfulJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint),
-                     typeof(AspNetCoreInstrumentationJoint),
                  })
         {
             joints.IndexOf(dependent).ShouldBeGreaterThan(aspNetCore, dependent.Name);
@@ -39,7 +37,6 @@ public class JointOrderingTests
 
     [Test]
     [Arguments(typeof(AspNetCoreJoint))]
-    [Arguments(typeof(AspNetCoreInstrumentationJoint))]
     [Arguments(typeof(OpenApiJoint))]
     [Arguments(typeof(ProblemDetailsJoint))]
     [Arguments(typeof(RestfulJoint))]

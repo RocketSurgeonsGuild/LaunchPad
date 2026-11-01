@@ -64,7 +64,6 @@
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Spatial\.NewtonsoftJson\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.StrawberryShake\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.StrawberryShake\.Spatial\.dll</ModulePath>
-                <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Telemetry\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.Testing\.dll</ModulePath>
                 <ModulePath>.*Rocket\.Surgery\.LaunchPad\.WebAssembly\.Hosting\.dll</ModulePath>
                 <ModulePath>.*Sample\.BlazorServer\.dll</ModulePath>
