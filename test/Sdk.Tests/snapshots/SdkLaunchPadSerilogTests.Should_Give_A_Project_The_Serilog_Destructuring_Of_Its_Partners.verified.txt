@@ -5,7 +5,10 @@
     Joinery.Dovetail.Serilog {DovetailVersion} (SDK),
     NetTopologySuite,
     Newtonsoft.Json,
+    Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Spatial {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.Spatial.Serilog {LaunchPadVersion} (SDK),
     Serilog
   ]

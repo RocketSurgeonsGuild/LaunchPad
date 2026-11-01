@@ -3,6 +3,9 @@
   PackageReferences: [
     Joinery.Dovetail {DovetailVersion} (SDK),
     NetTopologySuite,
-    Newtonsoft.Json
+    Newtonsoft.Json,
+    Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Spatial {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson {LaunchPadVersion} (SDK)
   ]
 }

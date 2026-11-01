@@ -8,6 +8,7 @@
     Microsoft.Extensions.Hosting,
     Newtonsoft.Json,
     NodaTime,
+    Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
   ]
 }

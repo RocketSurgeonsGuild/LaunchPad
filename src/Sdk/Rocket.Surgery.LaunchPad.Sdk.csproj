@@ -42,6 +42,12 @@
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor" Property="LaunchPadFluentValidationBlazorVersion" />
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc" Property="LaunchPadFluentValidationGrpcVersion" />
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate" Property="LaunchPadFluentValidationHotChocolateVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson" Property="LaunchPadFoundationNewtonsoftJsonVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson" Property="LaunchPadAspNetCoreNewtonsoftJsonVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson" Property="LaunchPadMappingNewtonsoftJsonVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Spatial" Property="LaunchPadSpatialVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson" Property="LaunchPadSpatialNewtonsoftJsonVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.StrawberryShake.Spatial" Property="LaunchPadStrawberryShakeSpatialVersion" />
     </ItemGroup>
 
     <!--

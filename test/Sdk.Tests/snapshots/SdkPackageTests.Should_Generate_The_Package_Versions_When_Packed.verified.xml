@@ -18,5 +18,11 @@
 <LaunchPadFluentValidationBlazorVersion Condition="'$(LaunchPadFluentValidationBlazorVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationBlazorVersion>
 <LaunchPadFluentValidationGrpcVersion Condition="'$(LaunchPadFluentValidationGrpcVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationGrpcVersion>
 <LaunchPadFluentValidationHotChocolateVersion Condition="'$(LaunchPadFluentValidationHotChocolateVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationHotChocolateVersion>
+<LaunchPadFoundationNewtonsoftJsonVersion Condition="'$(LaunchPadFoundationNewtonsoftJsonVersion)' == ''">{LaunchPadVersion}</LaunchPadFoundationNewtonsoftJsonVersion>
+<LaunchPadAspNetCoreNewtonsoftJsonVersion Condition="'$(LaunchPadAspNetCoreNewtonsoftJsonVersion)' == ''">{LaunchPadVersion}</LaunchPadAspNetCoreNewtonsoftJsonVersion>
+<LaunchPadMappingNewtonsoftJsonVersion Condition="'$(LaunchPadMappingNewtonsoftJsonVersion)' == ''">{LaunchPadVersion}</LaunchPadMappingNewtonsoftJsonVersion>
+<LaunchPadSpatialVersion Condition="'$(LaunchPadSpatialVersion)' == ''">{LaunchPadVersion}</LaunchPadSpatialVersion>
+<LaunchPadSpatialNewtonsoftJsonVersion Condition="'$(LaunchPadSpatialNewtonsoftJsonVersion)' == ''">{LaunchPadVersion}</LaunchPadSpatialNewtonsoftJsonVersion>
+<LaunchPadStrawberryShakeSpatialVersion Condition="'$(LaunchPadStrawberryShakeSpatialVersion)' == ''">{LaunchPadVersion}</LaunchPadStrawberryShakeSpatialVersion>
 </PropertyGroup>
 </Project>

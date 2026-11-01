@@ -7,6 +7,7 @@
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
     Microsoft.Extensions.Hosting,
     Newtonsoft.Json,
+    Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
   ]
 }

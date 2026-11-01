@@ -24,6 +24,9 @@
 
     <!-- NodaTime and its integration packages -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NodaTime.targets" />
+    <!-- Newtonsoft.Json, NetTopologySuite and their integration packages -->
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets" />
 
     <!-- The technologies with packages of their own, each in its file, which lists its packages and their conditions. -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Serilog.targets" />
