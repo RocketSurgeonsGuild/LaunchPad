@@ -131,7 +131,7 @@ Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3
 | `LaunchPad.NodaTime.EntityFramework` | the two NodaTime value generators                                                                    | EF Core                    | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
 | `LaunchPad.NodaTime.HotChocolate`    | `AddNodaTime`, the time-zone cache setup                                                             | HotChocolate               | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
 | `LaunchPad.NodaTime.StrawberryShake` | the 13 NodaTime serializers and their base, all registered (OffsetDate, DateTimeZone were not)       | StrawberryShake            | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
-| `LaunchPad.NodaTime.Serilog`         | `NodaTimeDestructuringPolicy`                                                                        | Serilog                    | [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067) |
+| `LaunchPad.NodaTime.Serilog`         | `NodaTimeDestructuringPolicy`, `Destructure.NodaTimeTypes()` and the Core `NodaTimeSerilogJoint`     | Serilog                    | [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067) |
 
 ### FluentValidation
 
@@ -169,7 +169,7 @@ Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced 
 | `EnvironmentLoggingConvention`                        | Hosting Joint when Serilog is referenced; the WebAssembly variant enriches `Environment` and `BaseAddress`: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060) |
 | `SerilogConsole/Debug/TraceLoggingConvention`         | Hosting Joints when Serilog is referenced; WebAssembly uses the Browser console sink: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062), [#3060](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3060)                       |
 | `SerilogTelemetryConvention` (never exported today)   | Live Joint, emitted when `Serilog.Sinks.OpenTelemetry` is referenced: [#3062](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3062)                                                                                                              |
-| `InstrumentationConvention` (from Telemetry)          | `LaunchPadInstrumentationJoint` (HTTP client), with `LaunchPadRuntimeInstrumentationJoint` and `LaunchPadProcessInstrumentationJoint` split out so WebAssembly skips them: [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)        |
+| `InstrumentationConvention` (from Telemetry)          | `LaunchPadInstrumentationJoint` (HTTP client), with `LaunchPadRuntimeInstrumentationJoint` and `LaunchPadProcessInstrumentationJoint` split out so WebAssembly skips them: [#3061](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3061)         |
 
 ## Current package disposition
 
