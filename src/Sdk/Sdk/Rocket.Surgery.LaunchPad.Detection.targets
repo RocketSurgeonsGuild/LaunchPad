@@ -20,6 +20,10 @@
         />
     </ItemGroup>
 
+    <!-- The technologies with packages of their own, each in its file. -->
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Serilog.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.FluentValidation.targets" />
+
     <!--
         Last: every LaunchPadSdkImplicitPackageReference above becomes a PackageReference, unless the project references the package itself.
         Dovetail's SDK expands its own DovetailSdkImplicitPackageReference items before this file is imported, so LaunchPad keeps a list of

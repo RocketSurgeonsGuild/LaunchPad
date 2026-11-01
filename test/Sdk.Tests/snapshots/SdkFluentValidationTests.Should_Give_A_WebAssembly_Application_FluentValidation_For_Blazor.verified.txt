@@ -1,0 +1,14 @@
+﻿{
+  Hosts: [
+    WebAssembly
+  ],
+  PackageReferences: [
+    FluentValidation,
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Microsoft.AspNetCore.Components.WebAssembly,
+    Rocket.Surgery.LaunchPad.FluentValidation {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.FluentValidation.Blazor {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
+  ]
+}

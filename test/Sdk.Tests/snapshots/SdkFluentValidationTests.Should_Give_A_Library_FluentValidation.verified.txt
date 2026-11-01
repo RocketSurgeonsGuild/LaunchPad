@@ -1,0 +1,8 @@
+﻿{
+  Hosts: [],
+  PackageReferences: [
+    FluentValidation,
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Rocket.Surgery.LaunchPad.FluentValidation {LaunchPadVersion} (SDK)
+  ]
+}

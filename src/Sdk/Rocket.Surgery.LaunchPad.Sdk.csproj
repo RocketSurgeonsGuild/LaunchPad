@@ -25,6 +25,14 @@
     -->
     <ItemGroup>
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Hosting" Property="LaunchPadHostingVersion" />
+        <!-- Sdk/Rocket.Surgery.LaunchPad.Serilog.targets -->
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore" Property="LaunchPadSerilogAspNetCoreVersion" />
+        <!-- Sdk/Rocket.Surgery.LaunchPad.FluentValidation.targets -->
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation" Property="LaunchPadFluentValidationVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore" Property="LaunchPadFluentValidationAspNetCoreVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor" Property="LaunchPadFluentValidationBlazorVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc" Property="LaunchPadFluentValidationGrpcVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate" Property="LaunchPadFluentValidationHotChocolateVersion" />
     </ItemGroup>
 
     <!--

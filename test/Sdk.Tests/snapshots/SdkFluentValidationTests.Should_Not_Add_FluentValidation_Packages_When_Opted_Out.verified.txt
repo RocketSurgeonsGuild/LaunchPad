@@ -1,0 +1,12 @@
+﻿{
+  Hosts: [
+    WebApplication
+  ],
+  PackageReferences: [
+    FluentValidation,
+    Grpc.AspNetCore,
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
+  ]
+}

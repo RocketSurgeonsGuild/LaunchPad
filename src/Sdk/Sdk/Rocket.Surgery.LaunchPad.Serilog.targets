@@ -1,0 +1,21 @@
+<Project>
+    <!--
+        LaunchPad's Serilog packages, imported by Rocket.Surgery.LaunchPad.Detection.targets before it turns the
+        LaunchPadSdkImplicitPackageReference items into PackageReferences.
+
+        A project that references Serilog directly (the same detection as Dovetail's DovetailEnableSerilog) gets each package whose partner
+        it also has. LaunchPadEnableSerilog set to false opts it out of all of them; Dovetail's own Serilog support keeps its own switch.
+          - Rocket.Surgery.LaunchPad.Serilog.AspNetCore (request logging): an ASP.NET Core application, the WebApplication host model.
+    -->
+    <PropertyGroup>
+        <LaunchPadEnableSerilog Condition="'$(LaunchPadEnableSerilog)' == ''">true</LaunchPadEnableSerilog>
+    </PropertyGroup>
+    <!-- An item list is only allowed in the condition of an item or an item group, not of a property. -->
+    <ItemGroup Condition="'$(LaunchPadEnableSerilog)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'">
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore"
+            Version="$(LaunchPadSerilogAspNetCoreVersion)"
+            Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebApplication')) == 'true'"
+        />
+    </ItemGroup>
+</Project>

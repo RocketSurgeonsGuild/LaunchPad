@@ -1,0 +1,10 @@
+﻿{
+  Hosts: [],
+  PackageReferences: [
+    FluentValidation,
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Microsoft.AspNetCore.Components.Web,
+    Rocket.Surgery.LaunchPad.FluentValidation {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.FluentValidation.Blazor {LaunchPadVersion} (SDK)
+  ]
+}
