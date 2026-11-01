@@ -14,12 +14,8 @@
     <ItemGroup>
         <PackageReference Include="Humanizer.Core" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-        <ProjectReference
-            Include="..\AspNetCore.FluentValidation.OpenApi\Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi.csproj" />
-        <ProjectReference Include="..\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
-        <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Serilog.AspNetCore" />

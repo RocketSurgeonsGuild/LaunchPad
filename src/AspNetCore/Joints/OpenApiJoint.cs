@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
-using Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
@@ -42,7 +41,6 @@ public partial class OpenApiJoint : IServiceJoint
                                 options.AddOperationTransformer<AuthorizeFilter>();
                             }
         );
-        services.AddFluentValidationOpenApi();
     }
 
     [LoggerMessage(

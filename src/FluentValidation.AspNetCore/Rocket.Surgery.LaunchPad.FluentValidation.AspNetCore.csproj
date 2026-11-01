@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription>
+            FluentValidation for LaunchPad ASP.NET Core applications: the validation exception filter and problem details, and the experimental
+            OpenAPI schema transformer for the validation rules.
+        </PackageDescription>
+        <PackageTags>$(PackageTags);fluentvalidation;openapi</PackageTags>
+        <!--
+            The types stay in the Rocket.Surgery.LaunchPad.AspNetCore namespaces they had in AspNetCore and in the experimental OpenAPI package.
+            A namespace of Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore (the default root namespace here, and so the base of Dovetail's
+            export namespace) would shadow FluentValidation.* in LaunchPad code. The export class is named for the package so it does not
+            collide with the host package's, the same as AspNetCore.NewtonsoftJson.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore</RootNamespace>
+        <DovetailExportClassName>FluentValidationExports</DovetailExportClassName>
+        <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <ProjectReference Include="..\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
+        <PackageReference Include="FluentValidation.AspNetCore" />
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <InternalsVisibleTo Include="FluentValidation.AspNetCore.Tests" />
+    </ItemGroup>
+    <!--
+        The OpenAPI XML comment generator arrives with Microsoft.AspNetCore.OpenApi and intercepts the AddOpenApi call in AddFluentValidationOpenApi.
+        Its cache holds the XML documentation of every reference, several LaunchPad assemblies document their own copy of the JetBrains.Annotations
+        attributes, and the same key added twice fails every OpenAPI document. This package has no API of its own to describe in a document.
+    -->
+    <Target Name="RemoveOpenApiXmlCommentGenerator" AfterTargets="ResolveLockFileAnalyzers">
+        <ItemGroup>
+            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.AspNetCore.OpenApi.SourceGenerators'" />
+        </ItemGroup>
+    </Target>
+</Project>
