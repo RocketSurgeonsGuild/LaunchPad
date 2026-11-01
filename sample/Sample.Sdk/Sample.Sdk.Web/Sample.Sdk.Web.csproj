@@ -3,4 +3,6 @@
     Rocket.Surgery.LaunchPad.Hosting and Rocket.Surgery.LaunchPad.AspNetCore. ASP.NET Core has the health checks in its framework, so the
     health check joint needs no reference.
 -->
-<Project Sdk="Microsoft.NET.Sdk.Web" />
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="0.0.0-sample" />
+</Project>

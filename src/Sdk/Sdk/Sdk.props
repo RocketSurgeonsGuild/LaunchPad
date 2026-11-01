@@ -1,8 +1,9 @@
 <Project>
     <!--
-        Rocket.Surgery.LaunchPad.Sdk is applied in an application's Directory.Build.props, <Project Sdk="Rocket.Surgery.LaunchPad.Sdk">, with
-        its version pinned in global.json under msbuild-sdks, and is the only SDK entry the application needs: it chains Joinery.Dovetail.Sdk.
-        Like Dovetail's SDK it does not import Microsoft.NET.Sdk; each project names its own.
+        Rocket.Surgery.LaunchPad.Sdk is applied next to the SDK a project names, <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="..." /> in a
+        project or #:sdk Rocket.Surgery.LaunchPad.Sdk@... in a file-based app, or once for every project in a Directory.Build.props,
+        <Project Sdk="Rocket.Surgery.LaunchPad.Sdk"> with its version pinned in global.json under msbuild-sdks. It is the only SDK entry the
+        application needs: it chains Joinery.Dovetail.Sdk. Like Dovetail's SDK it does not import Microsoft.NET.Sdk; each project names its own.
     -->
 
     <!-- The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. -->
@@ -18,19 +19,19 @@
     </PropertyGroup>
 
     <!--
+        Dovetail's host detection runs through CustomAfterMicrosoftCommonTargets, after the whole project has been evaluated, as it reads
+        properties the project sets (OutputType). LaunchPad's detection reads what Dovetail's found (the DovetailHost items), so it has to come
+        after it: MSBuild imports the files of the list in order. It is added before Dovetail's Sdk.props is imported, which puts host detection
+        in front of it and the file that turns the DovetailSdkImplicitPackageReference items of both into PackageReferences behind it.
+    -->
+    <PropertyGroup>
+        <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.targets</CustomAfterMicrosoftCommonTargets>
+    </PropertyGroup>
+
+    <!--
         The version of the import wins over a Joinery.Dovetail.Sdk entry in global.json. To chain another version, set
         LaunchPadDovetailSdkVersion before this file is imported: as a global property, or in a Directory.Build.props that imports the SDK
         with <Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" /> after setting it.
     -->
     <Import Project="Sdk.props" Sdk="Joinery.Dovetail.Sdk" Version="$(LaunchPadDovetailSdkVersion)" />
-
-    <!--
-        Dovetail's host detection runs through CustomAfterMicrosoftCommonTargets, after the whole project has been evaluated, as it reads
-        properties the project sets (OutputType). LaunchPad's detection reads what Dovetail's found (the DovetailHost items), so it is
-        registered after it: MSBuild imports the files of the list in order. Dovetail's Sdk.targets, which Sdk.targets imports, then registers
-        the file that turns the DovetailSdkImplicitPackageReference items of both into PackageReferences, after this one.
-    -->
-    <PropertyGroup>
-        <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.targets</CustomAfterMicrosoftCommonTargets>
-    </PropertyGroup>
 </Project>

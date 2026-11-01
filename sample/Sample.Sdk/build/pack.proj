@@ -1,6 +1,7 @@
 <!--
-    Packs Rocket.Surgery.LaunchPad.Sdk and the packages it adds into artifacts/nuget-sample at the version global.json pins for the SDK, so
-    this sample consumes LaunchPad exactly as published packages, never through a ProjectReference or an import from src/.
+    Packs Rocket.Surgery.LaunchPad.Sdk and the packages it adds into artifacts/nuget-sample at the version the sample's <Sdk> elements and
+    #:sdk directive name, so this sample consumes LaunchPad exactly as published packages, never through a ProjectReference or an import
+    from src/.
 
         dotnet msbuild build/pack.proj
 
@@ -11,7 +12,6 @@
     <LaunchPadSampleVersion>0.0.0-sample</LaunchPadSampleVersion>
     <LaunchPadSampleFeed>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '..', '..', 'artifacts', 'nuget-sample'))</LaunchPadSampleFeed>
     <LaunchPadSamplePackagesFolder>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '.nuget', 'packages'))</LaunchPadSamplePackagesFolder>
-    <_LaunchPadSampleGlobalJson>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\global.json'))</_LaunchPadSampleGlobalJson>
     <!-- The package icon is a file the release pipeline puts in .temp, which a checkout does not have. -->
     <_LaunchPadSampleProperties>Configuration=Release;Version=$(LaunchPadSampleVersion);PackageOutputPath=$(LaunchPadSampleFeed);PackageIcon=</_LaunchPadSampleProperties>
   </PropertyGroup>
@@ -40,10 +40,6 @@
   </ItemGroup>
 
   <Target Name="Pack">
-    <Error
-      Text="global.json must pin Rocket.Surgery.LaunchPad.Sdk to '$(LaunchPadSampleVersion)' (the version this file packs)."
-      Condition="!$(_LaunchPadSampleGlobalJson.Contains('&quot;$(LaunchPadSampleVersion)&quot;'))" />
-
     <ItemGroup>
       <_LaunchPadSampleStalePackage Include="$(LaunchPadSampleFeed)*.nupkg;$(LaunchPadSampleFeed)*.snupkg" />
       <_LaunchPadSampleStaleCacheDirectory Include="$([System.IO.Directory]::GetDirectories('$(LaunchPadSamplePackagesFolder)', 'rocket.surgery.launchpad*'))"
