@@ -12,9 +12,7 @@
 // The namespace Dovetail generates ConfigureDovetail() in; a file-based app would otherwise take it from the file name.
 #:property RootNamespace=Sample.Sdk.FileApp
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 
 using NodaTime;
 
