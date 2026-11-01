@@ -8,8 +8,8 @@ using Rocket.Surgery.LaunchPad.Foundation;
 public partial class Request
 {
     public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null !;
-    public AddressModel Address { get; set; } = null !;
+    public string SerialNumber { get; set; } = null!;
+    public AddressModel Address { get; set; } = null!;
 
     public Request With(Model value) => new Request
     {

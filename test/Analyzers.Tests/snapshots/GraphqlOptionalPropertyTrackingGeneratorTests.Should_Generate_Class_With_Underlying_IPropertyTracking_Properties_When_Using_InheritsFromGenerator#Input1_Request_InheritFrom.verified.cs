@@ -5,7 +5,7 @@
 public partial record Request
 {
     public Guid Id { get; init; }
-    public string SerialNumber { get; set; } = null !;
+    public string SerialNumber { get; set; } = null!;
     public int Type { get; set; }
 
     public Request With(Model value) => this with
