@@ -10,7 +10,7 @@ namespace Sdk.Tests.Scaffolding;
 /// </summary>
 /// <param name="Feed">The folder holding the packages; a folder with .nupkg files is a NuGet feed.</param>
 /// <param name="Version">The version of every package in the feed.</param>
-/// <param name="SdkFiles">The files in the SDK package, without the package bookkeeping.</param>
+/// <param name="SdkFiles">The files in the SDK package, without the package bookkeeping or the icon CI adds.</param>
 /// <param name="PackagesProps">The text of the props file the SDK generates when it is packed.</param>
 internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<string> SdkFiles, string PackagesProps)
 {
@@ -103,7 +103,7 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         var files = archive
                    .Entries
                    .Select(z => z.FullName)
-                   .Where(z => !z.StartsWith("_rels/", StringComparison.Ordinal) && !z.StartsWith("package/", StringComparison.Ordinal) && z != "[Content_Types].xml")
+                   .Where(z => !z.StartsWith("_rels/", StringComparison.Ordinal) && !z.StartsWith("package/", StringComparison.Ordinal) && !z.StartsWith("images/", StringComparison.Ordinal) && z != "[Content_Types].xml")
                    .Order(StringComparer.Ordinal)
                    .ToArray();
         using var reader = new StreamReader(archive.GetEntry("Sdk/Packages.props")?.Open() ?? throw new InvalidOperationException("The SDK has no Sdk/Packages.props"));

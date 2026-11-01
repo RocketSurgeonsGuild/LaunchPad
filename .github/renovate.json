@@ -14,9 +14,9 @@
     },
     {
       "customType": "regex",
-      "description": "The extra .NET runtime pinned in mise (Renovate's mise manager ignores the runtime element)",
+      "description": "The extra ASP.NET Core runtime pinned in mise (it carries the .NET runtime too; Renovate's mise manager ignores the runtime element)",
       "managerFilePatterns": ["/^\\.config/mise\\.toml$/"],
-      "matchStrings": ["version = \"(?<currentValue>[^\"]+)\", runtime = \"dotnet\""],
+      "matchStrings": ["version = \"(?<currentValue>[^\"]+)\", runtime = \"aspnetcore\""],
       "depNameTemplate": "dotnet-runtime",
       "datasourceTemplate": "dotnet-version",
       "versioningTemplate": "semver"
