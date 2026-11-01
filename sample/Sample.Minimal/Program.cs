@@ -4,8 +4,6 @@ using Rocket.Surgery.LaunchPad.AspNetCore;
 
 using Sample.Minimal;
 
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddControllersAsServices();
@@ -14,14 +12,7 @@ var app = await builder.ConfigureDovetail();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
-// Should this move into an extension method?
-app.UseSerilogRequestLogging(
-    x =>
-    {
-        x.GetLevel = LaunchPadHelpers.DefaultGetLevel;
-        x.EnrichDiagnosticContext = LaunchPadHelpers.DefaultEnrichDiagnosticContext;
-    }
-);
+app.UseLaunchPadRequestLogging();
 
 app.UseRouting();
 app.MapOpenApi();

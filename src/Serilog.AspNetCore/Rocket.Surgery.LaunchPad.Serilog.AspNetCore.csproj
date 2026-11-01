@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription>
+            Serilog request logging for LaunchPad ASP.NET Core applications: the request logging middleware with LaunchPad's levels and properties,
+            and the MVC and Razor Pages filters that add the action and page handler to the request's log event.
+        </PackageDescription>
+        <PackageTags>$(PackageTags);serilog;logging</PackageTags>
+        <!--
+            The types stay in the Rocket.Surgery.LaunchPad.AspNetCore namespaces they had in AspNetCore. A namespace of
+            Rocket.Surgery.LaunchPad.Serilog.AspNetCore (the default root namespace here, and so the base of Dovetail's export namespace) would
+            shadow Serilog.* in LaunchPad code. The export class is named for the package so it does not collide with the host package's, the same
+            as FluentValidation.AspNetCore.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore</RootNamespace>
+        <DovetailExportClassName>SerilogExports</DovetailExportClassName>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Serilog.AspNetCore" />
+        <InternalsVisibleTo Include="Serilog.AspNetCore.Tests" />
+    </ItemGroup>
+</Project>

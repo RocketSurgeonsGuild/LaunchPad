@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\src\FluentValidation.Grpc\Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj" />
     <ProjectReference Include="..\..\src\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\Serilog.AspNetCore\Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -44,8 +44,6 @@ public class AspNetCoreJointTests
         filters.ShouldContain(typeof(NotFoundExceptionFilter));
         filters.ShouldContain(typeof(NotAuthorizedExceptionFilter));
         filters.ShouldContain(typeof(RequestFailedExceptionFilter));
-        filters.ShouldContain(typeof(SerilogLoggingActionFilter));
-        filters.ShouldContain(typeof(SerilogLoggingPageFilter));
     }
 
     [Test]
