@@ -26,6 +26,13 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     [
         Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
+        Path.Combine("src", "NodaTime", "Rocket.Surgery.LaunchPad.NodaTime.csproj"),
+        Path.Combine("src", "NodaTime.NewtonsoftJson", "Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj"),
+        Path.Combine("src", "NodaTime.Mapping", "Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj"),
+        Path.Combine("src", "NodaTime.EntityFramework", "Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj"),
+        Path.Combine("src", "NodaTime.HotChocolate", "Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj"),
+        Path.Combine("src", "NodaTime.StrawberryShake", "Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj"),
+        Path.Combine("src", "NodaTime.Serilog", "Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj"),
     ];
 
     /// <summary>

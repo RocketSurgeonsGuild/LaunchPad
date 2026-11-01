@@ -25,6 +25,13 @@
     -->
     <ItemGroup>
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Hosting" Property="LaunchPadHostingVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime" Property="LaunchPadNodaTimeVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson" Property="LaunchPadNodaTimeNewtonsoftJsonVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.Mapping" Property="LaunchPadNodaTimeMappingVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.EntityFramework" Property="LaunchPadNodaTimeEntityFrameworkVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.HotChocolate" Property="LaunchPadNodaTimeHotChocolateVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake" Property="LaunchPadNodaTimeStrawberryShakeVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.Serilog" Property="LaunchPadNodaTimeSerilogVersion" />
     </ItemGroup>
 
     <!--

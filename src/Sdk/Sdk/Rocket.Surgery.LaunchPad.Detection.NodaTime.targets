@@ -1,0 +1,62 @@
+<Project>
+    <!--
+        Imported by Rocket.Surgery.LaunchPad.Detection.targets, before it expands the LaunchPadSdkImplicitPackageReference items into
+        PackageReferences.
+
+        A project that references NodaTime itself gets Rocket.Surgery.LaunchPad.NodaTime, and the NodaTime integration package of every
+        partner library it also references itself. LaunchPadEnableNodaTime set to false opts the project out of all of them. A partner is
+        any of the packages an application references for it:
+          - Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson: Newtonsoft.Json
+          - Rocket.Surgery.LaunchPad.NodaTime.Mapping: Riok.Mapperly
+          - Rocket.Surgery.LaunchPad.NodaTime.EntityFramework: EF Core, or one of its providers
+          - Rocket.Surgery.LaunchPad.NodaTime.HotChocolate: HotChocolate, or its ASP.NET Core server
+          - Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake: one of the StrawberryShake client packages
+          - Rocket.Surgery.LaunchPad.NodaTime.Serilog: Serilog, as Dovetail's SDK reads it for Joinery.Dovetail.Serilog
+    -->
+    <PropertyGroup>
+        <LaunchPadEnableNodaTime Condition="'$(LaunchPadEnableNodaTime)' == ''">true</LaunchPadEnableNodaTime>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(LaunchPadEnableNodaTime)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NodaTime')) == 'true'">
+        <LaunchPadSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.NodaTime" Version="$(LaunchPadNodaTimeVersion)" />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson"
+            Version="$(LaunchPadNodaTimeNewtonsoftJsonVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json')) == 'true'"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.NodaTime.Mapping"
+            Version="$(LaunchPadNodaTimeMappingVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Riok.Mapperly')) == 'true'"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.NodaTime.EntityFramework"
+            Version="$(LaunchPadNodaTimeEntityFrameworkVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.Relational')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.SqlServer')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.Sqlite')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.InMemory')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.Cosmos')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Npgsql.EntityFrameworkCore.PostgreSQL')) == 'true'"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.NodaTime.HotChocolate"
+            Version="$(LaunchPadNodaTimeHotChocolateVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate.AspNetCore')) == 'true'"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake"
+            Version="$(LaunchPadNodaTimeStrawberryShakeVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Core')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Server')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Blazor')) == 'true'
+                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Maui')) == 'true'"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.NodaTime.Serilog"
+            Version="$(LaunchPadNodaTimeSerilogVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'"
+        />
+    </ItemGroup>
+</Project>
