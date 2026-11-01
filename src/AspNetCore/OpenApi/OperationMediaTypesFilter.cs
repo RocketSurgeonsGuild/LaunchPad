@@ -10,15 +10,15 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
         // The content dictionary's value type differs between Microsoft.OpenApi 2.x (net10.0, OpenApiMediaType) and 3.x (net11.0,
         // IOpenApiMediaType), so skip missing content instead of substituting an empty dictionary of one particular type.
         var contentCollections =
-            operation
-               .Responses.Values.Select(x => x.Content)
+            ( operation.Responses?.Values ?? Enumerable.Empty<IOpenApiResponse>() )
+               .Select(x => x.Content)
                .Append(operation.RequestBody?.Content)
                .Where(x => x is not null && x.ContainsKey("text/plain"))
                .Select(x => x!)
                .ToArray();
         var patchCollections =
-            operation
-               .Responses.Values.Select(x => x.Content)
+            ( operation.Responses?.Values ?? Enumerable.Empty<IOpenApiResponse>() )
+               .Select(x => x.Content)
                .Append(operation.RequestBody?.Content)
                .Where(x => x is not null && x.Keys.Any(z => z.Contains("patch", StringComparison.OrdinalIgnoreCase)))
                .Select(x => x!)

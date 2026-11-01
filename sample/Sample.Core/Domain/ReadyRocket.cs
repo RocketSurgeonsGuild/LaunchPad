@@ -24,11 +24,7 @@ public class ReadyRocket // : IReadyRocket
             builder.HasKey(x => x.Id);
             builder.Property(z => z.Id)
                    .ValueGeneratedOnAdd()
-#if NET8_0_OR_GREATER
-                   .HasValueGenerator((property, @base) => StronglyTypedIdValueGenerator.Create(RocketId.New)(property, @base.ContainingEntityType));
-#else
                    .HasValueGenerator(StronglyTypedIdValueGenerator.Create(RocketId.New));
-#endif
             builder.ToTable("Rockets");
         }
     }

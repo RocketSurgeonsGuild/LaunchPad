@@ -1,0 +1,667 @@
+﻿{
+  openapi: 3.1.1,
+  info: {
+    title: Sample.Minimal | v1,
+    version: 1.0.0
+  },
+  servers: [
+    {
+      url: http://localhost/
+    }
+  ],
+  paths: {
+    /launch-records: {
+      get: {
+        tags: [
+          LaunchRecordEndpoints
+        ],
+        operationId: ListLaunchRecords,
+        parameters: [
+          {
+            name: rocketType,
+            in: query,
+            schema: {
+              $ref: #/components/schemas/RocketType
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  type: array,
+                  items: {
+                    $ref: #/components/schemas/LaunchRecordModel
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      post: {
+        tags: [
+          LaunchRecordEndpoints
+        ],
+        operationId: CreateLaunchRecord,
+        requestBody: {
+          content: {
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/Request
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          201: {
+            description: Created,
+            headers: {
+              location: {
+                description: The location of the entity that was created,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/Response
+                }
+              }
+            }
+          },
+          400: {
+            description: Bad Request
+          }
+        }
+      }
+    },
+    /launch-records/{id}: {
+      get: {
+        tags: [
+          LaunchRecordEndpoints
+        ],
+        operationId: GetLaunchRecord,
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              type: string,
+              format: uuid
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/LaunchRecordModel
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found
+          }
+        }
+      },
+      put: {
+        tags: [
+          LaunchRecordEndpoints
+        ],
+        operationId: EditLaunchRecord,
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/LaunchRecordId
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/Request
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/LaunchRecordModel
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found
+          },
+          400: {
+            description: Bad Request
+          }
+        }
+      },
+      patch: {
+        tags: [
+          LaunchRecordEndpoints
+        ],
+        operationId: PatchLaunchRecord,
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/LaunchRecordId
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/PatchRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/LaunchRecordModel
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found
+          },
+          400: {
+            description: Bad Request
+          }
+        }
+      },
+      delete: {
+        tags: [
+          LaunchRecordEndpoints
+        ],
+        operationId: DeleteLaunchRecord,
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/LaunchRecordId
+            }
+          }
+        ],
+        responses: {
+          204: {
+            description: No Content
+          },
+          404: {
+            description: Not Found
+          }
+        }
+      }
+    },
+    /rockets: {
+      get: {
+        tags: [
+          RocketEndpoints
+        ],
+        parameters: [
+          {
+            name: rocketType,
+            in: query,
+            schema: {
+              $ref: #/components/schemas/RocketType
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  type: array,
+                  items: {
+                    $ref: #/components/schemas/RocketModel
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      post: {
+        tags: [
+          RocketEndpoints
+        ],
+        requestBody: {
+          content: {
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/Request
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          201: {
+            description: Created,
+            headers: {
+              location: {
+                description: The location of the entity that was created,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/Response
+                }
+              }
+            }
+          },
+          400: {
+            description: Bad Request
+          }
+        }
+      }
+    },
+    /rockets/{id}: {
+      get: {
+        tags: [
+          RocketEndpoints
+        ],
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/RocketId
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found
+          }
+        }
+      },
+      put: {
+        tags: [
+          RocketEndpoints
+        ],
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/RocketId
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/Request
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found
+          },
+          400: {
+            description: Bad Request
+          }
+        }
+      },
+      patch: {
+        tags: [
+          RocketEndpoints
+        ],
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/RocketId
+            }
+          }
+        ],
+        requestBody: {
+          content: {
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/PatchRequest
+              }
+            }
+          },
+          required: true
+        },
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/RocketModel
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found
+          },
+          400: {
+            description: Bad Request
+          }
+        }
+      },
+      delete: {
+        tags: [
+          RocketEndpoints
+        ],
+        parameters: [
+          {
+            name: id,
+            in: path,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/RocketId
+            }
+          }
+        ],
+        responses: {
+          204: {
+            description: No Content
+          },
+          404: {
+            description: Not Found
+          }
+        }
+      }
+    }
+  },
+  components: {
+    schemas: {
+      AssignedOfdouble: {
+        required: [
+          value
+        ],
+        type: object,
+        properties: {
+          value: {
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              number,
+              string
+            ],
+            format: double
+          },
+          hasValue: {
+            type: boolean
+          }
+        }
+      },
+      AssignedOfInstant: {
+        required: [
+          value
+        ],
+        type: object,
+        properties: {
+          value: {
+            $ref: #/components/schemas/Instant
+          },
+          hasValue: {
+            type: boolean
+          }
+        }
+      },
+      AssignedOfRocketId: {
+        required: [
+          value
+        ],
+        type: object,
+        properties: {
+          value: {
+            $ref: #/components/schemas/RocketId
+          },
+          hasValue: {
+            type: boolean
+          }
+        }
+      },
+      AssignedOfstring: {
+        required: [
+          value
+        ],
+        type: object,
+        properties: {
+          value: {
+            type: [
+              null,
+              string
+            ]
+          },
+          hasValue: {
+            type: boolean
+          }
+        }
+      },
+      LaunchRecordModel: {
+        type: object,
+        properties: {
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
+          partner: {
+            type: string
+          },
+          payload: {
+            type: string
+          },
+          payloadWeightKg: {
+            pattern: ^-?(?:0|[1-9]\d*)$,
+            type: [
+              integer,
+              string
+            ],
+            format: int64
+          },
+          actualLaunchDate: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/Instant
+              }
+            ]
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/Instant
+          },
+          rocketSerialNumber: {
+            type: string
+          },
+          rocketType: {
+            $ref: #/components/schemas/RocketType
+          }
+        }
+      },
+      PatchRequest: {
+        required: [
+          id
+        ],
+        type: object,
+        properties: {
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
+          partner: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          payload: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          payloadWeightKg: {
+            $ref: #/components/schemas/AssignedOfdouble
+          },
+          actualLaunchDate: {
+            $ref: #/components/schemas/AssignedOfInstant
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/AssignedOfInstant
+          },
+          rocketId: {
+            $ref: #/components/schemas/AssignedOfRocketId
+          }
+        },
+        x-schema-id: EditLaunchRecordPatchRequest
+      },
+      Request: {
+        required: [
+          partner,
+          rocketId,
+          payload,
+          scheduledLaunchDate
+        ],
+        type: object,
+        properties: {
+          rocketId: {
+            $ref: #/components/schemas/RocketId
+          },
+          partner: {
+            type: [
+              null,
+              string
+            ]
+          },
+          payload: {
+            type: [
+              null,
+              string
+            ]
+          },
+          payloadWeightKg: {
+            minimum: 0,
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              number,
+              string
+            ],
+            format: double
+          },
+          actualLaunchDate: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/Instant
+              }
+            ]
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/Instant
+          }
+        },
+        x-schema-id: CreateLaunchRecordRequest
+      },
+      Response: {
+        type: object,
+        properties: {
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          }
+        },
+        x-schema-id: CreateLaunchRecordResponse
+      },
+      RocketModel: {
+        type: object,
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          },
+          sn: {
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType
+          }
+        }
+      },
+      RocketType: {
+        enum: [
+          falcon9,
+          falconHeavy,
+          atlasV
+        ]
+      }
+    }
+  },
+  tags: [
+    {
+      name: LaunchRecordEndpoints
+    },
+    {
+      name: RocketEndpoints
+    }
+  ]
+}

@@ -25,11 +25,7 @@ public class LaunchRecord // : ILaunchRecord
             builder.HasKey(x => x.Id);
             builder.Property(z => z.Id)
                    .ValueGeneratedOnAdd()
-#if NET8_0_OR_GREATER
-                   .HasValueGenerator((property, @base) => StronglyTypedIdValueGenerator.Create(LaunchRecordId.New)(property, @base.ContainingEntityType));
-#else
                    .HasValueGenerator(StronglyTypedIdValueGenerator.Create(LaunchRecordId.New));
-#endif
         }
     }
 }
