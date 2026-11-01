@@ -20,6 +20,13 @@
     <!-- the SDK, and every package it can add to an application -->
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Sdk\Rocket.Surgery.LaunchPad.Sdk.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.NewtonsoftJson\Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.Mapping\Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.EntityFramework\Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.HotChocolate\Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.StrawberryShake\Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.Serilog\Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj" />
   </ItemGroup>
 
   <Target Name="Pack">
