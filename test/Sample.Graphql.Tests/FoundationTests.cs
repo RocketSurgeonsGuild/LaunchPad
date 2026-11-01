@@ -26,6 +26,16 @@ public class FoundationTests() : LoggerTest<TestRecord>(TestRecord.Create())
     }
 
     [Test]
+    public async Task Starts_Without_The_Test_Services()
+    {
+        // LaunchPadExtension and GraphQlExtension register services (HTTP logging among them) the sample has to register itself when it
+        // runs; the database stands in for the one the sample only registers live
+        await using var host = await AlbaHost.For<Program>(new SqliteExtension<RocketDbContext>());
+        var response = await host.Server.CreateClient().GetAsync("/graphql/index.html", TestContext.CancellationToken);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
+
+    [Test]
     [Skip("snapshots not consistent atm")]
     public async Task GraphqlSchema()
     {

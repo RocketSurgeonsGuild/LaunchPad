@@ -10,6 +10,8 @@ using Sample.Graphql;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpLogging(_ => { });
+
 builder
    .Services
    .AddGraphQLServer()
