@@ -33,6 +33,14 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         Path.Combine("src", "NodaTime.HotChocolate", "Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj"),
         Path.Combine("src", "NodaTime.StrawberryShake", "Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj"),
         Path.Combine("src", "NodaTime.Serilog", "Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj"),
+        Path.Combine("src", "Serilog.AspNetCore", "Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj"),
+        Path.Combine("src", "NewtonsoftJson.Serilog", "Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog.csproj"),
+        Path.Combine("src", "Spatial.Serilog", "Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj"),
+        Path.Combine("src", "FluentValidation", "Rocket.Surgery.LaunchPad.FluentValidation.csproj"),
+        Path.Combine("src", "FluentValidation.AspNetCore", "Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj"),
+        Path.Combine("src", "FluentValidation.Blazor", "Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj"),
+        Path.Combine("src", "FluentValidation.Grpc", "Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj"),
+        Path.Combine("src", "FluentValidation.HotChocolate", "Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj"),
     ];
 
     /// <summary>

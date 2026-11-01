@@ -32,6 +32,16 @@
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.HotChocolate" Property="LaunchPadNodaTimeHotChocolateVersion" />
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake" Property="LaunchPadNodaTimeStrawberryShakeVersion" />
         <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.Serilog" Property="LaunchPadNodaTimeSerilogVersion" />
+        <!-- Sdk/Rocket.Surgery.LaunchPad.Serilog.targets -->
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore" Property="LaunchPadSerilogAspNetCoreVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog" Property="LaunchPadNewtonsoftJsonSerilogVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Spatial.Serilog" Property="LaunchPadSpatialSerilogVersion" />
+        <!-- Sdk/Rocket.Surgery.LaunchPad.FluentValidation.targets -->
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation" Property="LaunchPadFluentValidationVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore" Property="LaunchPadFluentValidationAspNetCoreVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor" Property="LaunchPadFluentValidationBlazorVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc" Property="LaunchPadFluentValidationGrpcVersion" />
+        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate" Property="LaunchPadFluentValidationHotChocolateVersion" />
     </ItemGroup>
 
     <!--

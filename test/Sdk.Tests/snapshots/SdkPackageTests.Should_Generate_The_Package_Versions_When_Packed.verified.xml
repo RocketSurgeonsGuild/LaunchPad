@@ -10,5 +10,13 @@
 <LaunchPadNodaTimeHotChocolateVersion Condition="'$(LaunchPadNodaTimeHotChocolateVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeHotChocolateVersion>
 <LaunchPadNodaTimeStrawberryShakeVersion Condition="'$(LaunchPadNodaTimeStrawberryShakeVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeStrawberryShakeVersion>
 <LaunchPadNodaTimeSerilogVersion Condition="'$(LaunchPadNodaTimeSerilogVersion)' == ''">{LaunchPadVersion}</LaunchPadNodaTimeSerilogVersion>
+<LaunchPadSerilogAspNetCoreVersion Condition="'$(LaunchPadSerilogAspNetCoreVersion)' == ''">{LaunchPadVersion}</LaunchPadSerilogAspNetCoreVersion>
+<LaunchPadNewtonsoftJsonSerilogVersion Condition="'$(LaunchPadNewtonsoftJsonSerilogVersion)' == ''">{LaunchPadVersion}</LaunchPadNewtonsoftJsonSerilogVersion>
+<LaunchPadSpatialSerilogVersion Condition="'$(LaunchPadSpatialSerilogVersion)' == ''">{LaunchPadVersion}</LaunchPadSpatialSerilogVersion>
+<LaunchPadFluentValidationVersion Condition="'$(LaunchPadFluentValidationVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationVersion>
+<LaunchPadFluentValidationAspNetCoreVersion Condition="'$(LaunchPadFluentValidationAspNetCoreVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationAspNetCoreVersion>
+<LaunchPadFluentValidationBlazorVersion Condition="'$(LaunchPadFluentValidationBlazorVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationBlazorVersion>
+<LaunchPadFluentValidationGrpcVersion Condition="'$(LaunchPadFluentValidationGrpcVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationGrpcVersion>
+<LaunchPadFluentValidationHotChocolateVersion Condition="'$(LaunchPadFluentValidationHotChocolateVersion)' == ''">{LaunchPadVersion}</LaunchPadFluentValidationHotChocolateVersion>
 </PropertyGroup>
 </Project>

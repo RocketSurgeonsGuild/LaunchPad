@@ -27,6 +27,14 @@
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.HotChocolate\Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.StrawberryShake\Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.Serilog\Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Serilog.AspNetCore\Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NewtonsoftJson.Serilog\Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Spatial.Serilog\Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Blazor\Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Grpc\Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.HotChocolate\Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
   </ItemGroup>
 
   <Target Name="Pack">
