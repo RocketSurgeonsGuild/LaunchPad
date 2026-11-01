@@ -1,0 +1,13 @@
+# LaunchPad
+
+> A simple starting point for building .NET applications on Specular and Dovetail.
+
+## Documentation Sets
+
+- [Abridged documentation](https://rocketsurgeonsguild.github.io/LaunchPad/pr-preview/pr-3126/llms-small.txt): a compact version of the documentation for LaunchPad, with non-essential content removed
+- [Complete documentation](https://rocketsurgeonsguild.github.io/LaunchPad/pr-preview/pr-3126/llms-full.txt): the full documentation for LaunchPad
+
+## Notes
+
+- The complete documentation includes all content from the official documentation
+- The content is automatically generated from the same source as the official documentation

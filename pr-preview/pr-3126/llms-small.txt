@@ -1,0 +1,19 @@
+<SYSTEM>This is the abridged developer documentation for LaunchPad</SYSTEM>
+
+# LaunchPad
+
+> A simple starting point for building .NET applications on Specular and Dovetail.
+
+
+
+# Concepts
+
+> The ideas behind LaunchPad and how it builds on Specular and Dovetail.
+
+This section is a placeholder. The concepts behind LaunchPad will land here.
+
+# Getting Started
+
+> Get started building an application with LaunchPad.
+
+This section is a placeholder. Guides for building applications with LaunchPad will land here.
