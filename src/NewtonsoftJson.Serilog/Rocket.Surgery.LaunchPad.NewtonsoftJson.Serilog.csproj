@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription />
+        <PackageTags>$(PackageTags)</PackageTags>
+        <!--
+            The types keep the Rocket.Surgery.LaunchPad.Foundation namespace they had in the Foundation.NewtonsoftJson package. The export class
+            is named for the package.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.Foundation</RootNamespace>
+        <DovetailExportClassName>NewtonsoftJsonSerilogExports</DovetailExportClassName>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- Serilog comes with Dovetail's Serilog package, which also brings the ISerilogJoint the joint implements. -->
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Joinery.Dovetail.Serilog" />
+        <PackageReference Include="Newtonsoft.Json" />
+    </ItemGroup>
+</Project>

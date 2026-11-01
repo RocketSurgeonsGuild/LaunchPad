@@ -3,7 +3,7 @@ using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Mathematics;
 
-namespace Extensions.Tests;
+namespace Spatial.Serilog.Tests;
 
 internal class FeatureFactory
 {

@@ -73,7 +73,6 @@
     <File Path="src/Directory.Build.targets" />
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <Project Path="src/AspNetCore.NewtonsoftJson/Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
-    <Project Path="src/AspNetCore.Spatial/Rocket.Surgery.LaunchPad.AspNetCore.Spatial.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <Project Path="src/FluentValidation.AspNetCore/Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
@@ -95,11 +94,13 @@
     <Project Path="src/NodaTime.EntityFramework/Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj" />
     <Project Path="src/NodaTime.Mapping/Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
     <Project Path="src/NodaTime.NewtonsoftJson/Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj" />
+    <Project Path="src/NewtonsoftJson.Serilog/Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog.csproj" />
     <Project Path="src/NodaTime.Serilog/Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Sdk/Rocket.Surgery.LaunchPad.Sdk.csproj" />
     <Project Path="src/Serilog.AspNetCore/Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj" />
     <Project Path="src/Spatial.NewtonsoftJson/Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
+    <Project Path="src/Spatial.Serilog/Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj" />
     <Project Path="src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
     <Project Path="src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
@@ -125,6 +126,7 @@
     <Project Path="test/NodaTime.Tests/NodaTime.Tests.csproj" />
     <Project Path="test/NodaTime.EntityFramework.Tests/NodaTime.EntityFramework.Tests.csproj" />
     <Project Path="test/NodaTime.Mapping.Tests/NodaTime.Mapping.Tests.csproj" />
+    <Project Path="test/NewtonsoftJson.Serilog.Tests/NewtonsoftJson.Serilog.Tests.csproj" />
     <Project Path="test/NodaTime.NewtonsoftJson.Tests/NodaTime.NewtonsoftJson.Tests.csproj" />
     <Project Path="test/NodaTime.Serilog.Tests/NodaTime.Serilog.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
@@ -140,6 +142,7 @@
     <Project Path="test/Sample.Worker.Tests/Sample.Worker.Tests.csproj" />
     <Project Path="test/Sdk.Tests/Sdk.Tests.csproj" />
     <Project Path="test/Serilog.AspNetCore.Tests/Serilog.AspNetCore.Tests.csproj" />
+    <Project Path="test/Spatial.Serilog.Tests/Spatial.Serilog.Tests.csproj" />
     <Project Path="test/TestSupport/TestSupport.csproj" />
   </Folder>
 </Solution>

@@ -9,7 +9,7 @@ namespace Rocket.Surgery.LaunchPad.Spatial;
 public static class NetTopologySuiteLoggerConfigurationExtensions
 {
     /// <summary>
-    ///     Enable destructuring of JSON.NET dynamic objects.
+    ///     Enable destructuring of the NetTopologySuite geometries, features and attribute tables.
     /// </summary>
     /// <param name="configuration">The logger configuration to apply configuration to.</param>
     /// <returns>An object allowing configuration to continue.</returns>
