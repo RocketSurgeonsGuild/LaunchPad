@@ -16,7 +16,8 @@
           2. Add one line to _LaunchPadHostingTemplate below: Include is the name (and the file name), References the assemblies it
              compiles against (file names without extension), Hosts the host models it is for.
           3. Add the case to test/Hosting.Tests/HostingTemplateTests.cs (and to the host models it covers), to
-             HostingWebAssemblyTemplateTests.cs for Blazor WebAssembly, or to InstrumentationTemplateTests.cs for an OpenTelemetry joint.
+             HostingWebAssemblyTemplateTests.cs for Blazor WebAssembly, InstrumentationTemplateTests.cs for an OpenTelemetry joint, or
+             SerilogTemplateTests.cs for a Serilog joint.
         Nothing else changes: the metadata every template shares is set once below.
 
         NuGet imports this file into every project that gets the package, through the shim in buildTransitive/ (or buildMultiTargeting/);
@@ -28,6 +29,41 @@
         <_LaunchPadHostingTemplate
             Include="LaunchPadHealthChecksJoint"
             References="Microsoft.Extensions.Diagnostics.HealthChecks"
+            Hosts="HostApplication;WebApplication"
+        />
+        <!--
+            The Serilog joints configure the logger Joinery.Dovetail.Serilog creates, so each needs it, and the packages of its own enrichers
+            or sinks: an application chooses them by referencing them.
+        -->
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogEnrichmentJoint" References="Joinery.Dovetail.Serilog" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogSystemTextJsonJoint" References="Joinery.Dovetail.Serilog" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogApplicationStateJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Extensions.Logging"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogEnvironmentEnrichersJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Enrichers.Environment;Serilog.Enrichers.Process;Serilog.Enrichers.Thread;Serilog.Enrichers.AssemblyName"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogSpanJoint" References="Joinery.Dovetail.Serilog;Serilog.Enrichers.Span" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogExceptionsJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Exceptions;Serilog.Enrichers.Demystifier"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogConsoleJoint" References="Joinery.Dovetail.Serilog;Serilog.Sinks.Console;Serilog.Sinks.Async" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogDebugJoint" References="Joinery.Dovetail.Serilog;Serilog.Sinks.Debug;Serilog.Sinks.Async" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate Include="LaunchPadSerilogTraceJoint" References="Joinery.Dovetail.Serilog;Serilog.Sinks.Trace;Serilog.Sinks.Async" Hosts="HostApplication;WebApplication" />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogDiagnosticContextJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Extensions.Hosting"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadSerilogOpenTelemetryJoint"
+            References="Joinery.Dovetail.Serilog;Serilog.Sinks.OpenTelemetry"
             Hosts="HostApplication;WebApplication"
         />
         <_LaunchPadHostingTemplate

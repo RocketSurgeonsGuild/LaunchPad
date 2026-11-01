@@ -97,7 +97,6 @@
     <Project Path="src/NodaTime.NewtonsoftJson/Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Sdk/Rocket.Surgery.LaunchPad.Sdk.csproj" />
-    <Project Path="src/Serilog/Rocket.Surgery.LaunchPad.Serilog.csproj" />
     <Project Path="src/Spatial.NewtonsoftJson/Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
     <Project Path="src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
