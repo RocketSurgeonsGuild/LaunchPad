@@ -34,6 +34,6 @@ Run it again after changing anything under `src/` that those packages are packed
 application serves the same at `/health`; the file-based app prints `Health: Healthy` and `Clock: SystemClock`, the NodaTime clock
 LaunchPad.NodaTime registered without the app referencing it or NodaTime.
 
-The file-based app has no project file and is not part of `Sample.Sdk.slnx`: `dotnet run` builds it from the one file. Its two `#:sdk`
-directives become the same `<Project Sdk="Microsoft.NET.Sdk">` and `<Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="0.0.0-sample" />`
-the projects have, and `Directory.Build.props` above it gives it their shared settings.
+The file-based app has no project file and is not part of `Sample.Sdk.slnx`: `dotnet run` builds it from the one file. Its one `#:sdk`
+directive is enough: the SDK brings `Microsoft.NET.Sdk`, which the directive replaces, and `Directory.Build.props` above it gives it the
+projects' shared settings.
