@@ -1,6 +1,7 @@
 <Project>
     <!--
-        NodaTime, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references NodaTime directly gets:
+        NodaTime, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references NodaTime directly, and every file-based
+        app, gets:
           - Rocket.Surgery.LaunchPad.NodaTime, which also destructures the NodaTime types in the Serilog logger Dovetail creates
           - Rocket.Surgery.LaunchPad.NodaTime.HotChocolate, when it also references HotChocolate
           - Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake, when it also references a StrawberryShake client package

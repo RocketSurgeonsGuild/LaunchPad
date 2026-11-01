@@ -14,6 +14,9 @@
           - Rocket.Surgery.LaunchPad.Hosting: any project Dovetail found a host model for (a DovetailHost item). The package is a direct
             reference of the project, which is what its templates require.
           - Rocket.Surgery.LaunchPad.AspNetCore: an ASP.NET Core application (the WebApplication host model).
+          - Rocket.Surgery.LaunchPad.Foundation: a file-based app (dotnet run app.cs, FileBasedProgram), which also counts as referencing
+            NodaTime. Together with Rocket.Surgery.LaunchPad.Hosting (Dovetail finds a generic host for it) that gives a single-file app the
+            usual LaunchPad application without a #:package directive.
 
         Every package is a DovetailSdkImplicitPackageReference item. Dovetail's SDK turns those into PackageReferences, unless the project
         references the package itself, in a file its Sdk.targets registers after this one.
@@ -22,6 +25,7 @@
     -->
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
+        <LaunchPadEnableFoundation Condition="'$(LaunchPadEnableFoundation)' == ''">true</LaunchPadEnableFoundation>
         <LaunchPadEnableAspNetCore Condition="'$(LaunchPadEnableAspNetCore)' == ''">true</LaunchPadEnableAspNetCore>
         <LaunchPadEnableNodaTime Condition="'$(LaunchPadEnableNodaTime)' == ''">true</LaunchPadEnableNodaTime>
         <LaunchPadEnableNetTopologySuite Condition="'$(LaunchPadEnableNetTopologySuite)' == ''">true</LaunchPadEnableNetTopologySuite>
@@ -39,7 +43,7 @@
         />
         <_LaunchPadTechnology
             Include="NodaTime"
-            Condition="'$(LaunchPadEnableNodaTime)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NodaTime')) == 'true'"
+            Condition="'$(LaunchPadEnableNodaTime)' != 'false' and ('$(FileBasedProgram)' == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'NodaTime')) == 'true')"
         />
         <_LaunchPadTechnology
             Include="NetTopologySuite"
@@ -81,6 +85,11 @@
             Include="Rocket.Surgery.LaunchPad.Hosting"
             Version="$(LaunchPadVersion)"
             Condition="'$(LaunchPadEnableHosting)' != 'false' and '@(DovetailHost)' != ''"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.Foundation"
+            Version="$(LaunchPadVersion)"
+            Condition="'$(LaunchPadEnableFoundation)' != 'false' and '$(FileBasedProgram)' == 'true'"
         />
         <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.AspNetCore"
