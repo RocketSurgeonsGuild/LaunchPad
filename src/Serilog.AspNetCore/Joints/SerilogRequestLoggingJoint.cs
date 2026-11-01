@@ -19,8 +19,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <remarks>
-///     The diagnostic context is only added when none is registered yet, so the one LaunchPad.Hosting writes into an application that references
-///     Joinery.Dovetail.Serilog is kept. It writes to the Serilog <see cref="Logger" /> in the container, or to the static logger when there is none.
+///     The diagnostic context is added with <c>TryAdd</c>, the same as the one LaunchPad.Hosting writes into an application that references
+///     Joinery.Dovetail.Serilog, so whichever registers first is used. Both bind the properties through the Serilog <see cref="Logger" /> in the
+///     container; this one falls back to the static logger when there is none.
 /// </remarks>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]

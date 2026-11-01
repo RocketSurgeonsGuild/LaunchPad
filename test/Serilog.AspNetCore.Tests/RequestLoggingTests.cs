@@ -1,19 +1,6 @@
-using System.Collections.Concurrent;
-
-using Joinery.Dovetail.Joints;
-
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-
-using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
-
-using Serilog.AspNetCore.Tests.Joints;
-using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.AspNetCore.Tests;
@@ -131,63 +118,4 @@ public class RequestLoggingController : ControllerBase
 {
     [HttpGet("{id:int}")]
     public ActionResult<int> Get(int id) => id;
-}
-
-/// <summary>
-///     An ASP.NET Core application on the test server, with a Serilog logger in the container that writes to a sink the test reads, and the
-///     <see cref="SerilogRequestLoggingJoint" /> applied.
-/// </summary>
-internal sealed class RequestLoggingHost(WebApplication app, CapturingSink sink) : IAsyncDisposable
-{
-    public static async Task<RequestLoggingHost> StartAsync(Action<WebApplication> map)
-    {
-        var sink = new CapturingSink();
-        var builder = WebApplication.CreateSlimBuilder();
-        builder.WebHost.UseTestServer();
-
-        var logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
-        builder.Services.AddSingleton(logger).AddSingleton<ILogger>(logger);
-        builder.Services.AddRouting().AddHealthChecks();
-        builder.Services.AddControllers().AddApplicationPart(typeof(RequestLoggingController).Assembly);
-        await builder.Services.ApplyService(await JointTestContext.CreateBuilder().AppendJoint<SerilogRequestLoggingJoint>().CreateAsync());
-
-        var app = builder.Build();
-        app.UseLaunchPadRequestLogging();
-        map(app);
-        await app.StartAsync();
-        return new(app, sink);
-    }
-
-    public HttpClient Client { get; } = app.GetTestClient();
-    public CapturingSink Sink => sink;
-
-    public async ValueTask DisposeAsync()
-    {
-        Client.Dispose();
-        await app.StopAsync();
-        await app.DisposeAsync();
-    }
-}
-
-internal sealed class CapturingSink : ILogEventSink
-{
-    public void Emit(LogEvent logEvent) => _events.Enqueue(logEvent);
-
-    /// <summary>
-    ///     The event the request logging middleware wrote. It is written once the response has completed, which can be after the client has
-    ///     the response, so this waits a little for it.
-    /// </summary>
-    public async Task<LogEvent> SingleRequestEventAsync()
-    {
-        for (var attempt = 0; attempt < 50; attempt++)
-        {
-            var events = _events.Where(x => x.MessageTemplate.Text.StartsWith("HTTP ", StringComparison.Ordinal)).ToArray();
-            if (events.Length > 0) return events.ShouldHaveSingleItem();
-            await Task.Delay(20);
-        }
-
-        throw new ShouldAssertException("The request logging middleware wrote no event to the logger in the container.");
-    }
-
-    private readonly ConcurrentQueue<LogEvent> _events = new();
 }

@@ -153,7 +153,7 @@ All packages are `Rocket.Surgery.LaunchPad.<name>`. Detection uses direct packag
 | NodaTime            | `NodaTime`; `.NewtonsoftJson` (Newtonsoft.Json); `.Mapping` (Mapperly); `.EntityFramework` (EF Core); `.HotChocolate`; `.StrawberryShake`; `.Serilog` (Serilog) | [#3073](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3073) |
 | Newtonsoft.Json     | `Foundation.NewtonsoftJson`; `AspNetCore.NewtonsoftJson` (ASP.NET Core); `Mapping.NewtonsoftJson` (Mapperly); `Spatial.NewtonsoftJson` (NetTopologySuite)       | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
 | NetTopologySuite    | `Spatial`; `Spatial.NewtonsoftJson` (Newtonsoft.Json); `StrawberryShake.Spatial` (StrawberryShake)                                                              | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
-| Serilog             | Dovetail's Serilog package (through the chained SDK); the Serilog integration packages (request logging, destructuring)                                         | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
+| Serilog             | Dovetail's Serilog package (through the chained SDK); `Serilog.AspNetCore` (ASP.NET Core: request logging, #3063)                                       | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
 | FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.HotChocolate`; `.Blazor` (each when its host library is referenced)                                               | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
 
 Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced explicitly in the first release.
