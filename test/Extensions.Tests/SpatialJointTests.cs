@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
-using Rocket.Surgery.LaunchPad.Spatial;
 using Rocket.Surgery.LaunchPad.Spatial.Joints;
 using Rocket.Surgery.LaunchPad.Spatial.Rivets;
 

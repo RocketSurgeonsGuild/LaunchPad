@@ -1,6 +1,3 @@
-using Rocket.Surgery.LaunchPad.AspNetCore;
-
-using Sample.Grpc;
 using Sample.Grpc.Services;
 
 var builder = WebApplication.CreateBuilder(args);

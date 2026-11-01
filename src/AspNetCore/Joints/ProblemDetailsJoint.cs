@@ -1,6 +1,3 @@
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

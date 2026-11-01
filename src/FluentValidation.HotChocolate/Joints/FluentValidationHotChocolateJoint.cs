@@ -1,10 +1,6 @@
 using FairyBread;
 
 using FluentValidation;
-
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

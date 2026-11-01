@@ -8,6 +8,5 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
-        <ProjectReference Include="..\..\src\NodaTime.EntityFramework\Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj" />
     </ItemGroup>
 </Project>

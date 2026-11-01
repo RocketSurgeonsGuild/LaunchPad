@@ -5,8 +5,4 @@
     <ItemGroup>
         <PackageReference Include="NodaTime.Testing" />
     </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
-        <ProjectReference Include="..\..\src\NodaTime.NewtonsoftJson\Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj" />
-    </ItemGroup>
 </Project>

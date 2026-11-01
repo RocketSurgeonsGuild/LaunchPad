@@ -1,6 +1,3 @@
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
 using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi;

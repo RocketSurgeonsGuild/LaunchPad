@@ -6,6 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.Text.Json" />
+      <PackageReference Include="Joinery.Dovetail.Serilog" />
         <PackageReference Include="NetTopologySuite" />
         <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" />
         <PackageReference Include="Joinery.Dovetail" />

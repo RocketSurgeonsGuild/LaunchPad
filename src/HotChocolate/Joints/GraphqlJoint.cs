@@ -1,11 +1,4 @@
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
-
-using Rocket.Surgery.LaunchPad.HotChocolate.Types;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 
@@ -26,7 +19,6 @@ public class GraphqlJoint : IServiceJoint
     {
         context
            .GetOrAdd(() => services.AddGraphQL())
-           .AddErrorFilter<GraphqlErrorFilter>()
-           .BindRuntimeType<Unit, VoidType>();
+           .AddErrorFilter<GraphqlErrorFilter>();
     }
 }

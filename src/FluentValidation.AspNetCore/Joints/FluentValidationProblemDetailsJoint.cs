@@ -1,9 +1,5 @@
 using FluentValidation;
 using FluentValidation.Results;
-
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

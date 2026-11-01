@@ -1,9 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

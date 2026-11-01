@@ -15,7 +15,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Grpc.AspNetCore" />
-        <PackageReference Include="Joinery.Dovetail" />
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Grpc.Tests" />

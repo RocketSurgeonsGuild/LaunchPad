@@ -1,6 +1,3 @@
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
 using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;

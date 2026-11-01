@@ -6,6 +6,9 @@
         <RootNamespace>$(MSBuildProjectName.Replace('.Abstractions', '').Replace('.Attributes', ''))</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
+      <Using Include="Joinery.Dovetail" />
+      <Using Include="Joinery.Dovetail.Attributes" />
+      <Using Include="Joinery.Dovetail.Joints" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.AspNetCore" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Extensions" />

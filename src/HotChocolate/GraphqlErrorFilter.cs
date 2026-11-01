@@ -1,7 +1,5 @@
 using HotChocolate;
 
-using Rocket.Surgery.LaunchPad.Primitives;
-
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
 internal class GraphqlErrorFilter : IErrorFilter

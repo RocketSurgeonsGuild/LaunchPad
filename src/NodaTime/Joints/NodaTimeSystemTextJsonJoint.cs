@@ -1,8 +1,4 @@
 using System.Text.Json;
-
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -22,6 +18,7 @@ namespace Rocket.Surgery.LaunchPad.NodaTime.Joints;
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Core)]
+[AfterJoint<TimeJoint>]
 public class NodaTimeSystemTextJsonJoint : IServiceJoint
 {
     /// <inheritdoc />

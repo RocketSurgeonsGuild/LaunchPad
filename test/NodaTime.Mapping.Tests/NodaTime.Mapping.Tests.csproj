@@ -5,8 +5,4 @@
     <ItemGroup>
         <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
     </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\Mapping\Rocket.Surgery.LaunchPad.Mapping.csproj" />
-        <ProjectReference Include="..\..\src\NodaTime.Mapping\Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
-    </ItemGroup>
 </Project>

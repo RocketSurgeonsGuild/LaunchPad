@@ -11,7 +11,6 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
-        <PackageReference Include="FluentValidation" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     </ItemGroup>
 </Project>

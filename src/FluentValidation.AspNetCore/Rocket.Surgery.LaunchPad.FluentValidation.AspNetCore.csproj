@@ -23,7 +23,6 @@
         <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="..\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
         <PackageReference Include="FluentValidation.AspNetCore" />
-        <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <InternalsVisibleTo Include="FluentValidation.AspNetCore.Tests" />
     </ItemGroup>

@@ -13,6 +13,7 @@
     <ItemGroup>
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="NodaTime" />
+      <PackageReference Include="Joinery.Dovetail.Serilog" />
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" />
     </ItemGroup>
 </Project>

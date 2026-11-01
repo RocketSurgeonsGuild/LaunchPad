@@ -11,12 +11,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
-    <ProjectReference Include="..\..\src\Serilog.AspNetCore\Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\FluentValidation.HotChocolate\Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\NodaTime.HotChocolate\Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
-    <ProjectReference Include="..\..\src\Spatial.Serilog\Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
     <PackageReference Include="HotChocolate.AspNetCore" />

@@ -19,9 +19,7 @@
         <ProjectReference Include="..\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="FluentValidation" />
         <PackageReference Include="Grpc.AspNetCore" />
-        <PackageReference Include="Joinery.Dovetail" />
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="FluentValidation.Grpc.Tests" />

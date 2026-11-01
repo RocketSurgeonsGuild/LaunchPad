@@ -16,8 +16,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="FairyBread" />
-        <PackageReference Include="FluentValidation" />
         <PackageReference Include="HotChocolate" />
-        <PackageReference Include="Joinery.Dovetail" />
     </ItemGroup>
 </Project>

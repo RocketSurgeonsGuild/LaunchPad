@@ -1,6 +1,4 @@
 using System.Text.Json;
-using Joinery.Dovetail.Attributes;
-using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NetTopologySuite;

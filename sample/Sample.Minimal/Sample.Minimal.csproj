@@ -10,7 +10,6 @@
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
-        <ProjectReference Include="..\..\src\Serilog.AspNetCore\Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <PackageReference Include="Humanizer.Core" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />

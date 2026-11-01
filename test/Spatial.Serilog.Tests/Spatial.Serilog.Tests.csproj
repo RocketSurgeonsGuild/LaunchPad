@@ -4,7 +4,6 @@
         <UseDovetail>true</UseDovetail>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Spatial.Serilog\Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj" />
         <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
     </ItemGroup>
 </Project>

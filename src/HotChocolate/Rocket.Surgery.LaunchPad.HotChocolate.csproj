@@ -13,7 +13,4 @@
     <PackageReference Include="Joinery.Dovetail" />
     <PackageReference Include="Humanizer.Core" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
-  </ItemGroup>
 </Project>
