@@ -22,7 +22,4 @@
         <PackageReference Include="System.Reactive.Observable.Aliases" />
         <PackageReference Include="System.Text.Json" />
     </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Telemetry\Rocket.Surgery.LaunchPad.Telemetry.csproj" />
-    </ItemGroup>
 </Project>

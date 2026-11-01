@@ -22,7 +22,6 @@ public class JointOrderingTests
                            .AppendJoint<ProblemDetailsJoint>()
                            .AppendJoint<OpenApiJoint>()
                            .AppendJoint<FluentValidationJoint>()
-                           .AppendJoint<AspNetCoreInstrumentationJoint>()
                            .AppendJoint<AspNetCoreJoint>()
                            .CreateAsync();
 
@@ -33,7 +32,6 @@ public class JointOrderingTests
         foreach (var dependent in new[]
                  {
                      typeof(SystemJsonTextJoint), typeof(RestfulJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint), typeof(FluentValidationJoint),
-                     typeof(AspNetCoreInstrumentationJoint),
                  })
         {
             joints.IndexOf(dependent).ShouldBeGreaterThan(aspNetCore, dependent.Name);
@@ -57,7 +55,6 @@ public class JointOrderingTests
 
     [Test]
     [Arguments(typeof(AspNetCoreJoint))]
-    [Arguments(typeof(AspNetCoreInstrumentationJoint))]
     [Arguments(typeof(AspNetCoreValidationBehaviorJoint))]
     [Arguments(typeof(FluentValidationJoint))]
     [Arguments(typeof(OpenApiJoint))]

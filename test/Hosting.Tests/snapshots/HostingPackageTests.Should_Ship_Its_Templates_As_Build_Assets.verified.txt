@@ -1,7 +1,12 @@
 ﻿[
   build/BannedSymbols.Rocket.Surgery.LaunchPad.Hosting.WebAssembly.txt,
+  build/LaunchPadAspNetCoreInstrumentationJoint.cs.template,
   build/LaunchPadBrowserConsoleLoggingJoint.cs.template,
   build/LaunchPadHealthChecksJoint.cs.template,
+  build/LaunchPadHotChocolateInstrumentationJoint.cs.template,
+  build/LaunchPadInstrumentationJoint.cs.template,
+  build/LaunchPadProcessInstrumentationJoint.cs.template,
+  build/LaunchPadRuntimeInstrumentationJoint.cs.template,
   build/LaunchPadSerilogApplicationStateJoint.cs.template,
   build/LaunchPadSerilogConsoleJoint.cs.template,
   build/LaunchPadSerilogDebugJoint.cs.template,

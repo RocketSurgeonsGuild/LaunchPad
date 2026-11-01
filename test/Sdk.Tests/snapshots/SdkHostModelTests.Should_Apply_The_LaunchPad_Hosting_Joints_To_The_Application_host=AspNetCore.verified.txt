@@ -1,0 +1,4 @@
+﻿{
+  Host: AspNetCore,
+  Output: HealthChecks:True
+}

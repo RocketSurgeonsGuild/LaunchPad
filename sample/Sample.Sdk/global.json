@@ -1,0 +1,10 @@
+{
+  "sdk": {
+    "rollForward": "latestFeature",
+    "allowPrerelease": true,
+    "version": "11.0.100-rc.3.26522.148"
+  },
+  "msbuild-sdks": {
+    "Rocket.Surgery.LaunchPad.Sdk": "0.0.0-sample"
+  }
+}

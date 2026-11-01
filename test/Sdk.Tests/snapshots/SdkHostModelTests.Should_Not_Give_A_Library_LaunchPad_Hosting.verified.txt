@@ -1,0 +1,6 @@
+﻿{
+  Hosts: [],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK)
+  ]
+}
