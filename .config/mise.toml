@@ -6,7 +6,7 @@ dotnet = [
 ]
 "github:microsoft/apm" = { version = "v0.35.0", bin = "apm" }
 "github:eljulians/skillfile" = { version = "v1.9.2", bin = "skillfile" }
-hk = "2.9.0"
+hk = "2.11.0"
 pkl = "0.32.2"
 node = "26.13.0"
 actionlint = "1.7.12"
