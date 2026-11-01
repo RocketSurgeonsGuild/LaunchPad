@@ -5,11 +5,9 @@
   PackageReferences: [
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
-    Microsoft.EntityFrameworkCore,
     Microsoft.Extensions.Hosting,
-    NodaTime,
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.NodaTime {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.NodaTime.EntityFramework {LaunchPadVersion} (SDK)
+    Rocket.Surgery.LaunchPad.StrawberryShake {LaunchPadVersion} (SDK),
+    StrawberryShake.Server
   ]
 }

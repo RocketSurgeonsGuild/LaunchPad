@@ -31,22 +31,12 @@ public class SdkNodaTimeTests(string targetFramework)
     /// </summary>
     /// <param name="partner">The partner library.</param>
     [Test]
-    [Arguments("Newtonsoft.Json")]
-    [Arguments("Riok.Mapperly")]
-    [Arguments("Microsoft.EntityFrameworkCore")]
-    [Arguments("Microsoft.EntityFrameworkCore.Relational")]
-    [Arguments("Microsoft.EntityFrameworkCore.SqlServer")]
-    [Arguments("Microsoft.EntityFrameworkCore.Sqlite")]
-    [Arguments("Microsoft.EntityFrameworkCore.InMemory")]
-    [Arguments("Microsoft.EntityFrameworkCore.Cosmos")]
-    [Arguments("Npgsql.EntityFrameworkCore.PostgreSQL")]
     [Arguments("HotChocolate")]
     [Arguments("HotChocolate.AspNetCore")]
     [Arguments("StrawberryShake.Core")]
     [Arguments("StrawberryShake.Server")]
     [Arguments("StrawberryShake.Blazor")]
     [Arguments("StrawberryShake.Maui")]
-    [Arguments("Serilog")]
     public async Task Should_Add_The_NodaTime_Integration_Package_Of_A_Partner_Library(string partner)
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
@@ -66,7 +56,7 @@ public class SdkNodaTimeTests(string targetFramework)
     public async Task Should_Not_Add_A_NodaTime_Integration_Package_Without_NodaTime()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("Newtonsoft.Json"));
+        tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("HotChocolate"));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
@@ -83,7 +73,7 @@ public class SdkNodaTimeTests(string targetFramework)
         tree.AddProject(
             "app",
             HostModel.GenericHost,
-            HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemProjectReference("../library/library.csproj").ItemPackageReference("Newtonsoft.Json")
+            HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemProjectReference("../library/library.csproj").ItemPackageReference("HotChocolate")
         );
 
         await Verify(new { Application = await tree.Evaluate("app", Cancellation), Library = await tree.Evaluate("library", Cancellation) });
@@ -103,18 +93,21 @@ public class SdkNodaTimeTests(string targetFramework)
                .Project(HostModel.GenericHost, targetFramework)
                .Property("LaunchPadEnableNodaTime", "false")
                .ItemPackageReference("NodaTime", PinnedVersion("NodaTime"))
-               .ItemPackageReference("Newtonsoft.Json")
+               .ItemPackageReference("HotChocolate")
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
 
     /// <summary>
-    ///     <c>Rocket.Surgery.LaunchPad.NodaTime.Serilog</c> brings Dovetail's Serilog package with it, so a project that turns Dovetail's
-    ///     Serilog support off with <c>DovetailEnableSerilog</c> does not get it either: the opt-out still holds.
+    ///     Opting the partner technology out keeps its integration package out, and leaves the NodaTime package itself.
     /// </summary>
+    /// <param name="optOut">The property set to <c>false</c>.</param>
+    /// <param name="partner">The partner library the project references.</param>
     [Test]
-    public async Task Should_Not_Add_LaunchPad_NodaTime_Serilog_When_Dovetail_Serilog_Is_Opted_Out()
+    [Arguments("LaunchPadEnableHotChocolate", "HotChocolate")]
+    [Arguments("LaunchPadEnableStrawberryShake", "StrawberryShake.Server")]
+    public async Task Should_Not_Add_The_NodaTime_Integration_Package_When_The_Partner_Is_Opted_Out(string optOut, string partner)
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject(
@@ -122,9 +115,9 @@ public class SdkNodaTimeTests(string targetFramework)
             HostModel.GenericHost,
             HostModelShape
                .Project(HostModel.GenericHost, targetFramework)
-               .Property("DovetailEnableSerilog", "false")
+               .Property(optOut, "false")
                .ItemPackageReference("NodaTime", PinnedVersion("NodaTime"))
-               .ItemPackageReference("Serilog")
+               .ItemPackageReference(partner)
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));

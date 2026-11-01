@@ -9,6 +9,7 @@
     NetTopologySuite,
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.Spatial {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.StrawberryShake {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.StrawberryShake.Spatial {LaunchPadVersion} (SDK),
     StrawberryShake.Server
   ]

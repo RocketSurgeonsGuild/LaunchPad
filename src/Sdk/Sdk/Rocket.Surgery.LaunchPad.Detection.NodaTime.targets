@@ -1,62 +1,23 @@
 <Project>
     <!--
-        Imported by Rocket.Surgery.LaunchPad.Detection.targets.
-
-        A project that references NodaTime itself gets Rocket.Surgery.LaunchPad.NodaTime, and the NodaTime integration package of every
-        partner library it also references itself. LaunchPadEnableNodaTime set to false opts the project out of all of them. A partner is
-        any of the packages an application references for it:
-          - Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson: Newtonsoft.Json
-          - Rocket.Surgery.LaunchPad.NodaTime.Mapping: Riok.Mapperly
-          - Rocket.Surgery.LaunchPad.NodaTime.EntityFramework: EF Core, or one of its providers
-          - Rocket.Surgery.LaunchPad.NodaTime.HotChocolate: HotChocolate, or its ASP.NET Core server
-          - Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake: one of the StrawberryShake client packages
-          - Rocket.Surgery.LaunchPad.NodaTime.Serilog: Serilog, read as Dovetail's SDK reads it for Joinery.Dovetail.Serilog. The package brings
-            Joinery.Dovetail.Serilog with it, so DovetailEnableSerilog set to false leaves it out as well.
+        NodaTime, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references NodaTime directly gets:
+          - Rocket.Surgery.LaunchPad.NodaTime, which also destructures the NodaTime types in the Serilog logger Dovetail creates
+          - Rocket.Surgery.LaunchPad.NodaTime.HotChocolate, when it also references HotChocolate
+          - Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake, when it also references a StrawberryShake client package
+        LaunchPadEnableNodaTime set to false opts a project out, the integration packages included; LaunchPadEnableHotChocolate or
+        LaunchPadEnableStrawberryShake set to false keeps that integration package out.
     -->
-    <PropertyGroup>
-        <LaunchPadEnableNodaTime Condition="'$(LaunchPadEnableNodaTime)' == ''">true</LaunchPadEnableNodaTime>
-    </PropertyGroup>
-    <ItemGroup Condition="'$(LaunchPadEnableNodaTime)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NodaTime')) == 'true'">
+    <ItemGroup Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'NodaTime')) == 'true'">
         <DovetailSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.NodaTime" Version="$(LaunchPadVersion)" />
-        <DovetailSdkImplicitPackageReference
-            Include="Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson"
-            Version="$(LaunchPadVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json')) == 'true'"
-        />
-        <DovetailSdkImplicitPackageReference
-            Include="Rocket.Surgery.LaunchPad.NodaTime.Mapping"
-            Version="$(LaunchPadVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Riok.Mapperly')) == 'true'"
-        />
-        <DovetailSdkImplicitPackageReference
-            Include="Rocket.Surgery.LaunchPad.NodaTime.EntityFramework"
-            Version="$(LaunchPadVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.Relational')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.SqlServer')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.Sqlite')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.InMemory')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.EntityFrameworkCore.Cosmos')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'Npgsql.EntityFrameworkCore.PostgreSQL')) == 'true'"
-        />
         <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.NodaTime.HotChocolate"
             Version="$(LaunchPadVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate.AspNetCore')) == 'true'"
+            Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'HotChocolate')) == 'true'"
         />
         <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake"
             Version="$(LaunchPadVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Core')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Server')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Blazor')) == 'true'
-                    or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Maui')) == 'true'"
-        />
-        <DovetailSdkImplicitPackageReference
-            Include="Rocket.Surgery.LaunchPad.NodaTime.Serilog"
-            Version="$(LaunchPadVersion)"
-            Condition="'$(DovetailEnableSerilog)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'"
+            Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'StrawberryShake')) == 'true'"
         />
     </ItemGroup>
 </Project>

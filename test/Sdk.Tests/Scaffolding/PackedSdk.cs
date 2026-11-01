@@ -20,33 +20,30 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     public const string SdkPackageId = "Rocket.Surgery.LaunchPad.Sdk";
 
     /// <summary>
-    ///     The projects packed into the feed: the SDK, and every package it can add to an application.
+    ///     The projects packed into the feed: the SDK, every package it can add to an application, and the LaunchPad packages
+    ///     those depend on, so an application that restores them finds each in the feed.
     /// </summary>
     private static readonly string[] Projects =
     [
         Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
+        Path.Combine("src", "Primitives", "Rocket.Surgery.LaunchPad.Primitives.csproj"),
+        Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),
+        Path.Combine("src", "Foundation", "Rocket.Surgery.LaunchPad.Foundation.csproj"),
+        Path.Combine("src", "AspNetCore", "Rocket.Surgery.LaunchPad.AspNetCore.csproj"),
         Path.Combine("src", "NodaTime", "Rocket.Surgery.LaunchPad.NodaTime.csproj"),
-        Path.Combine("src", "NodaTime.NewtonsoftJson", "Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj"),
-        Path.Combine("src", "NodaTime.Mapping", "Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj"),
-        Path.Combine("src", "NodaTime.EntityFramework", "Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj"),
         Path.Combine("src", "NodaTime.HotChocolate", "Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj"),
         Path.Combine("src", "NodaTime.StrawberryShake", "Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj"),
-        Path.Combine("src", "NodaTime.Serilog", "Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj"),
-        Path.Combine("src", "Serilog.AspNetCore", "Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj"),
-        Path.Combine("src", "NewtonsoftJson.Serilog", "Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog.csproj"),
-        Path.Combine("src", "Spatial.Serilog", "Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj"),
+        Path.Combine("src", "Spatial", "Rocket.Surgery.LaunchPad.Spatial.csproj"),
+        Path.Combine("src", "StrawberryShake", "Rocket.Surgery.LaunchPad.StrawberryShake.csproj"),
+        Path.Combine("src", "StrawberryShake.Spatial", "Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj"),
+        Path.Combine("src", "HotChocolate", "Rocket.Surgery.LaunchPad.HotChocolate.csproj"),
+        Path.Combine("src", "Grpc", "Rocket.Surgery.LaunchPad.Grpc.csproj"),
         Path.Combine("src", "FluentValidation", "Rocket.Surgery.LaunchPad.FluentValidation.csproj"),
         Path.Combine("src", "FluentValidation.AspNetCore", "Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj"),
         Path.Combine("src", "FluentValidation.Blazor", "Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj"),
         Path.Combine("src", "FluentValidation.Grpc", "Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj"),
         Path.Combine("src", "FluentValidation.HotChocolate", "Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj"),
-        Path.Combine("src", "Foundation.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj"),
-        Path.Combine("src", "AspNetCore.NewtonsoftJson", "Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj"),
-        Path.Combine("src", "Mapping.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj"),
-        Path.Combine("src", "Spatial", "Rocket.Surgery.LaunchPad.Spatial.csproj"),
-        Path.Combine("src", "Spatial.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj"),
-        Path.Combine("src", "StrawberryShake.Spatial", "Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj"),
     ];
 
     /// <summary>

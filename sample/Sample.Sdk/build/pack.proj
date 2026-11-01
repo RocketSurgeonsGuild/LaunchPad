@@ -17,30 +17,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- the SDK, and every package it can add to an application -->
+    <!-- the SDK, every package it can add to an application, and the LaunchPad packages those depend on -->
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Sdk\Rocket.Surgery.LaunchPad.Sdk.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.NewtonsoftJson\Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.Mapping\Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.EntityFramework\Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.HotChocolate\Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.StrawberryShake\Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime.Serilog\Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Serilog.AspNetCore\Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NewtonsoftJson.Serilog\Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Spatial.Serilog\Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\StrawberryShake\Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Blazor\Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Grpc\Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.HotChocolate\Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Foundation.NewtonsoftJson\Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\AspNetCore.NewtonsoftJson\Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Mapping.NewtonsoftJson\Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Spatial.NewtonsoftJson\Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\StrawberryShake.Spatial\Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
   </ItemGroup>
 
   <Target Name="Pack">

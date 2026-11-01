@@ -29,35 +29,6 @@ public class SdkNetTopologySuiteTests(string targetFramework)
     }
 
     /// <summary>
-    ///     Newtonsoft.Json is the partner of the spatial package, and the other way round: a project that references both gets the GeoJSON
-    ///     converters for Newtonsoft.Json, as well as what each technology adds on its own.
-    /// </summary>
-    [Test]
-    public async Task Should_Add_Spatial_NewtonsoftJson_To_A_Project_That_References_Newtonsoft_Json()
-    {
-        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, WithNetTopologySuiteAndNewtonsoftJson(App(HostModel.GenericHost)));
-
-        await Verify(await tree.Evaluate("app", Cancellation));
-    }
-
-    /// <summary>
-    ///     Opting either technology out keeps the package they share out: <c>LaunchPadEnableNetTopologySuite</c> or
-    ///     <c>LaunchPadEnableNewtonsoftJson</c> set to <c>false</c> leaves only what the other technology adds on its own.
-    /// </summary>
-    /// <param name="optOut">The property set to <c>false</c>.</param>
-    [Test]
-    [Arguments("LaunchPadEnableNetTopologySuite")]
-    [Arguments("LaunchPadEnableNewtonsoftJson")]
-    public async Task Should_Not_Add_Spatial_NewtonsoftJson_When_Either_Technology_Is_Opted_Out(string optOut)
-    {
-        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, WithNetTopologySuiteAndNewtonsoftJson(App(HostModel.GenericHost)).Property(optOut, "false"));
-
-        await Verify(await tree.Evaluate("app", Cancellation));
-    }
-
-    /// <summary>
     ///     StrawberryShake is the partner of LaunchPad's StrawberryShake integration: a project that references a StrawberryShake client
     ///     package gets the spatial serializers for its GraphQL clients.
     /// </summary>
@@ -86,11 +57,6 @@ public class SdkNetTopologySuiteTests(string targetFramework)
         project
            .ItemPackageReference(ThirdParty.NetTopologySuite, ThirdParty.NetTopologySuiteVersion)
            .ItemPackageReference(ThirdParty.StrawberryShake, ThirdParty.StrawberryShakeVersion);
-
-    private static ProjectCreator WithNetTopologySuiteAndNewtonsoftJson(ProjectCreator project) =>
-        project
-           .ItemPackageReference(ThirdParty.NetTopologySuite, ThirdParty.NetTopologySuiteVersion)
-           .ItemPackageReference(ThirdParty.NewtonsoftJson, ThirdParty.NewtonsoftJsonVersion);
 
     private ProjectCreator App(HostModel host) => HostModelShape.Project(host, targetFramework);
 }

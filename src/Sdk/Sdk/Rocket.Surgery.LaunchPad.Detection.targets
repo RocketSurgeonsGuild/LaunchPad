@@ -4,37 +4,95 @@
         project has been evaluated and Dovetail has declared the host it found, and still during evaluation, so NuGet restores the packages
         added here.
 
-        Each package is added on its own condition and defaults on; LaunchPadEnable<Tech> set to false opts a project out. Detection reads
-        only what the project declares itself: the host model, and its own PackageReference items.
+        Detection reads only what the project declares itself: the host model, and its own PackageReference items. A library the project
+        receives through another package or project chose that library, not the project, so it adds nothing.
+
+        Each technology LaunchPad has a package for is a _LaunchPadTechnology item, declared below when the project references it. The files
+        imported after it add the packages of one technology each, and the integration package of a technology with each partner technology
+        the project also has (Rocket.Surgery.LaunchPad.NodaTime.HotChocolate for NodaTime and HotChocolate). LaunchPadEnable<Tech> set to
+        false opts a project out of a technology: its own package, and every integration package it is part of.
           - Rocket.Surgery.LaunchPad.Hosting: any project Dovetail found a host model for (a DovetailHost item). The package is a direct
             reference of the project, which is what its templates require.
-          - Rocket.Surgery.LaunchPad.NodaTime and its integration packages: a project that references NodaTime (see
-            Rocket.Surgery.LaunchPad.Detection.NodaTime.targets, imported below).
-          - Newtonsoft.Json and NetTopologySuite, and their integration packages: a project that references either (see
-            Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets and Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets,
-            imported below).
+          - Rocket.Surgery.LaunchPad.AspNetCore: an ASP.NET Core application (the WebApplication host model).
 
         Every package is a DovetailSdkImplicitPackageReference item. Dovetail's SDK turns those into PackageReferences, unless the project
         references the package itself, in a file its Sdk.targets registers after this one.
+
+        The conditions are on items: MSBuild evaluates every property before any item, so a property cannot read PackageReference.
     -->
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
+        <LaunchPadEnableAspNetCore Condition="'$(LaunchPadEnableAspNetCore)' == ''">true</LaunchPadEnableAspNetCore>
+        <LaunchPadEnableNodaTime Condition="'$(LaunchPadEnableNodaTime)' == ''">true</LaunchPadEnableNodaTime>
+        <LaunchPadEnableNetTopologySuite Condition="'$(LaunchPadEnableNetTopologySuite)' == ''">true</LaunchPadEnableNetTopologySuite>
+        <LaunchPadEnableFluentValidation Condition="'$(LaunchPadEnableFluentValidation)' == ''">true</LaunchPadEnableFluentValidation>
+        <LaunchPadEnableGrpc Condition="'$(LaunchPadEnableGrpc)' == ''">true</LaunchPadEnableGrpc>
+        <LaunchPadEnableHotChocolate Condition="'$(LaunchPadEnableHotChocolate)' == ''">true</LaunchPadEnableHotChocolate>
+        <LaunchPadEnableStrawberryShake Condition="'$(LaunchPadEnableStrawberryShake)' == ''">true</LaunchPadEnableStrawberryShake>
     </PropertyGroup>
+
+    <!-- The technologies the project references itself and has not opted out of. -->
+    <ItemGroup>
+        <_LaunchPadTechnology
+            Include="AspNetCore"
+            Condition="'$(LaunchPadEnableAspNetCore)' != 'false' and @(DovetailHost->AnyHaveMetadataValue('Identity', 'WebApplication')) == 'true'"
+        />
+        <_LaunchPadTechnology
+            Include="NodaTime"
+            Condition="'$(LaunchPadEnableNodaTime)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NodaTime')) == 'true'"
+        />
+        <_LaunchPadTechnology
+            Include="NetTopologySuite"
+            Condition="'$(LaunchPadEnableNetTopologySuite)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) == 'true'"
+        />
+        <!-- FluentValidation, or FluentValidation.DependencyInjectionExtensions, which an application often references alone -->
+        <_LaunchPadTechnology
+            Include="FluentValidation"
+            Condition="'$(LaunchPadEnableFluentValidation)' != 'false'
+                   and (@(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation.DependencyInjectionExtensions')) == 'true')"
+        />
+        <!-- a gRPC server: LaunchPad's package is the interceptors of an ASP.NET Core gRPC service -->
+        <_LaunchPadTechnology
+            Include="Grpc"
+            Condition="'$(LaunchPadEnableGrpc)' != 'false'
+                   and (@(PackageReference->AnyHaveMetadataValue('Identity', 'Grpc.AspNetCore')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'Grpc.AspNetCore.Server')) == 'true')"
+        />
+        <_LaunchPadTechnology
+            Include="HotChocolate"
+            Condition="'$(LaunchPadEnableHotChocolate)' != 'false'
+                   and (@(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate.AspNetCore')) == 'true')"
+        />
+        <!-- a StrawberryShake client package: the one for servers and consoles, Blazor or MAUI, or the core they share -->
+        <_LaunchPadTechnology
+            Include="StrawberryShake"
+            Condition="'$(LaunchPadEnableStrawberryShake)' != 'false'
+                   and (@(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Core')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Server')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Blazor')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Maui')) == 'true')"
+        />
+    </ItemGroup>
+
     <ItemGroup>
         <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Hosting"
             Version="$(LaunchPadVersion)"
             Condition="'$(LaunchPadEnableHosting)' != 'false' and '@(DovetailHost)' != ''"
         />
+        <DovetailSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.AspNetCore"
+            Version="$(LaunchPadVersion)"
+            Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'AspNetCore')) == 'true'"
+        />
     </ItemGroup>
 
-    <!-- NodaTime and its integration packages -->
-    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NodaTime.targets" />
-    <!-- Newtonsoft.Json, NetTopologySuite and their integration packages -->
-    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets" />
-    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets" />
-
     <!-- The technologies with packages of their own, each in its file, which lists its packages and their conditions. -->
-    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Serilog.targets" />
-    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.FluentValidation.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NodaTime.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.FluentValidation.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.GraphQL.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.Grpc.targets" />
 </Project>

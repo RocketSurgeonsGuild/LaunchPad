@@ -9,6 +9,7 @@
     Microsoft.Extensions.Hosting,
     NodaTime,
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.HotChocolate {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.NodaTime {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.NodaTime.HotChocolate {LaunchPadVersion} (SDK)
   ]

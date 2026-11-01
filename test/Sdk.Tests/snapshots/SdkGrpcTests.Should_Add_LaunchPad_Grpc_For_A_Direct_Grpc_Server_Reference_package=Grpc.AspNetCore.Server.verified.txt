@@ -3,11 +3,11 @@
     WebApplication
   ],
   PackageReferences: [
+    Grpc.AspNetCore.Server,
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
-    Newtonsoft.Json,
-    Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.AspNetCore {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Grpc {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
   ]
 }

@@ -6,10 +6,8 @@
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
     Microsoft.Extensions.Hosting,
-    NodaTime,
-    Riok.Mapperly,
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.NodaTime {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.NodaTime.Mapping {LaunchPadVersion} (SDK)
+    Rocket.Surgery.LaunchPad.StrawberryShake {LaunchPadVersion} (SDK),
+    StrawberryShake.Core
   ]
 }

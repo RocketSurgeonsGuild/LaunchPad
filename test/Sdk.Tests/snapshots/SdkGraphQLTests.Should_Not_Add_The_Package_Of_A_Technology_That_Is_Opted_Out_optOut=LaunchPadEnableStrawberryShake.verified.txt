@@ -1,13 +1,14 @@
 ﻿{
   Hosts: [
-    WebApplication
+    HostApplication
   ],
   PackageReferences: [
+    HotChocolate,
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
-    Joinery.Dovetail.Serilog {DovetailVersion} (SDK),
+    Microsoft.Extensions.Hosting,
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.Serilog.AspNetCore {LaunchPadVersion} (SDK),
-    Serilog
+    Rocket.Surgery.LaunchPad.HotChocolate {LaunchPadVersion} (SDK),
+    StrawberryShake.Server
   ]
 }
