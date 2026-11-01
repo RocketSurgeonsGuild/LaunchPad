@@ -4,8 +4,6 @@ using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Sample.BlazorWasm;
-
 namespace Sample.BlazorWasm.Tests;
 
 public class FoundationTests : HandleTestHostBase

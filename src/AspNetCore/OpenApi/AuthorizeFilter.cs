@@ -15,7 +15,11 @@ internal class AuthorizeFilter : IOpenApiOperationTransformer
 
     private static void AddAuthenticateHeader(OpenApiOperation operation, string statusCode)
     {
-        if (operation.Responses?.TryGetValue(statusCode, out var value) is not true || value is not OpenApiResponse response) return;
+        if (operation.Responses?.TryGetValue(statusCode, out var value) is not true || value is not OpenApiResponse response)
+        {
+            return;
+        }
+
         // Microsoft.OpenApi leaves the headers null until one is added
         response.Headers ??= new Dictionary<string, IOpenApiHeader>(StringComparer.Ordinal);
         response.Headers["www-authenticate"] = new OpenApiHeader

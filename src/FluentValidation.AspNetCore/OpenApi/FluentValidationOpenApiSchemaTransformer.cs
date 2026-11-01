@@ -10,7 +10,11 @@ public class FluentValidationOpenApiSchemaTransformer(IEnumerable<IPropertyRuleH
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         // Microsoft.OpenApi leaves the properties of a schema that has none (a scalar, an array) null
-        if (schema.Properties is not { Count: > 0 } properties) return;
+        if (schema.Properties is not { Count: > 0 } properties)
+        {
+            return;
+        }
+
         var validatorType = typeof(IValidator<>).MakeGenericType(context.JsonTypeInfo.Type);
         if (context.ApplicationServices.GetService(validatorType) is not IValidator validator) return;
 
