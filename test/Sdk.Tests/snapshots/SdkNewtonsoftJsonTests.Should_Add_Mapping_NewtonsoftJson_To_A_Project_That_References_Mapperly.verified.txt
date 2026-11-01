@@ -1,0 +1,10 @@
+﻿{
+  Hosts: [],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Newtonsoft.Json,
+    Riok.Mapperly,
+    Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson {LaunchPadVersion} (SDK)
+  ]
+}

@@ -1,0 +1,34 @@
+<Project>
+    <!--
+        NetTopologySuite, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references NetTopologySuite directly gets:
+          - Rocket.Surgery.LaunchPad.Spatial
+          - Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson, when it also references Newtonsoft.Json
+          - Rocket.Surgery.LaunchPad.StrawberryShake.Spatial, when it also references a StrawberryShake client package
+        LaunchPadEnableNetTopologySuite set to false opts a project out, the variants included. Spatial.NewtonsoftJson belongs to both
+        technologies, so LaunchPadEnableNewtonsoftJson set to false keeps it out too. The Serilog destructuring package,
+        Rocket.Surgery.LaunchPad.Spatial.Serilog, comes with Serilog (Rocket.Surgery.LaunchPad.Serilog.targets).
+
+        The conditions are on the items: MSBuild evaluates every property before any item, so a property cannot read PackageReference.
+    -->
+    <PropertyGroup>
+        <LaunchPadEnableNetTopologySuite Condition="'$(LaunchPadEnableNetTopologySuite)' == ''">true</LaunchPadEnableNetTopologySuite>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(LaunchPadEnableNetTopologySuite)' != 'false'">
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.Spatial"
+            Version="$(LaunchPadSpatialVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite'))"
+        />
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson"
+            Version="$(LaunchPadSpatialNewtonsoftJsonVersion)"
+            Condition="'$(LaunchPadEnableNewtonsoftJson)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) and @(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json'))"
+        />
+        <!-- a StrawberryShake client package: the one for servers and consoles, Blazor or MAUI, or the core they share -->
+        <LaunchPadSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.StrawberryShake.Spatial"
+            Version="$(LaunchPadStrawberryShakeSpatialVersion)"
+            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) and (@(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Server')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Blazor')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Maui')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Core')))"
+        />
+    </ItemGroup>
+</Project>

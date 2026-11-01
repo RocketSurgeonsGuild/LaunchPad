@@ -1,0 +1,15 @@
+﻿{
+  Hosts: [
+    HostApplication
+  ],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Microsoft.Extensions.Hosting,
+    NetTopologySuite,
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Spatial {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.StrawberryShake.Spatial {LaunchPadVersion} (SDK),
+    StrawberryShake.Server
+  ]
+}

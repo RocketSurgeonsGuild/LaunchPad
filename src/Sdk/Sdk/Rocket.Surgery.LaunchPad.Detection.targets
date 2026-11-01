@@ -10,6 +10,9 @@
             reference of the project, which is what its templates require.
           - Rocket.Surgery.LaunchPad.NodaTime and its integration packages: a project that references NodaTime (see
             Rocket.Surgery.LaunchPad.Detection.NodaTime.targets, imported below).
+          - Newtonsoft.Json and NetTopologySuite, and their integration packages: a project that references either (see
+            Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets and Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets,
+            imported below).
     -->
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
@@ -24,6 +27,9 @@
 
     <!-- NodaTime and its integration packages -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NodaTime.targets" />
+    <!-- Newtonsoft.Json, NetTopologySuite and their integration packages -->
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets" />
 
     <!-- The technologies with packages of their own, each in its file, which lists its packages and their conditions. -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Serilog.targets" />
