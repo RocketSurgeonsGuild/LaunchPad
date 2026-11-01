@@ -9,8 +9,6 @@ using Rocket.Surgery.LaunchPad.Spatial;
 using Rocket.Surgery.LaunchPad.StrawberryShake;
 using Rocket.Surgery.LaunchPad.StrawberryShake.Spatial;
 
-using StrawberryShake.Serialization;
-
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Graphql.Tests;
@@ -47,10 +45,7 @@ public class StrawberryShakeSerializerTests
     }
 
     [Test]
-    public void Should_Parse_A_Number_As_Its_Enum()
-    {
-        new StageSerializer().Parse(1).ShouldBe(Stage.Ascent);
-    }
+    public void Should_Parse_A_Number_As_Its_Enum() => new StageSerializer().Parse(1).ShouldBe(Stage.Ascent);
 
     [Test]
     public void Should_Round_Trip_A_Geometry_As_GeoJson()

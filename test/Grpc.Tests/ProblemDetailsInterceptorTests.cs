@@ -38,7 +38,7 @@ public class ProblemDetailsInterceptorTests
     [MethodDataSource(nameof(Interceptors))]
     public async Task Should_Return_The_Response_When_Nothing_Throws(Interceptor interceptor, Exception exception, StatusCode statusCode)
     {
-        var response = await interceptor.UnaryServerHandler<string, string>("request", A.Fake<ServerCallContext>(), (request, _) => Task.FromResult($"{request} handled"));
+        var response = await interceptor.UnaryServerHandler("request", A.Fake<ServerCallContext>(), (request, _) => Task.FromResult($"{request} handled"));
 
         response.ShouldBe("request handled");
     }

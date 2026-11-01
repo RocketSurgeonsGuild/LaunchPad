@@ -41,7 +41,7 @@ public class ProblemDetailsExceptionFilterTests
     {
         var context = CreateContext(new NotFoundException("no rocket"));
 
-        await ((IAsyncExceptionFilter)new NotFoundExceptionFilter(Factory())).OnExceptionAsync(context);
+        await new NotFoundExceptionFilter(Factory()).OnExceptionAsync(context);
 
         context.ExceptionHandled.ShouldBeTrue();
         context.Result.ShouldBeOfType<ObjectResult>().StatusCode.ShouldBe(StatusCodes.Status404NotFound);

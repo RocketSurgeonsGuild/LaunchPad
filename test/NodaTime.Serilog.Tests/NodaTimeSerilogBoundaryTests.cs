@@ -23,6 +23,6 @@ public class NodaTimeSerilogBoundaryTests
         // configures the System.Text.Json options through Microsoft.Extensions.Options; nothing more.
         references
            .Where(x => x.StartsWith("Microsoft.", StringComparison.Ordinal))
-           .ShouldAllBe(x => x.StartsWith("Microsoft.Extensions.", StringComparison.Ordinal) && (x.EndsWith(".Abstractions", StringComparison.Ordinal) || x == "Microsoft.Extensions.Options"));
+           .ShouldAllBe(x => x.StartsWith("Microsoft.Extensions.", StringComparison.Ordinal) && ( x.EndsWith(".Abstractions", StringComparison.Ordinal) || x == "Microsoft.Extensions.Options" ));
     }
 }

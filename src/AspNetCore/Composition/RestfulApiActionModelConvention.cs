@@ -27,7 +27,7 @@ internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> optio
                          .Distinct(StringComparer.OrdinalIgnoreCase)
                          .ToArray();
         // Not valid for actions with more than one verb
-        return  httpMethods.Length > 1  ?   null   :  httpMethods[0];
+        return httpMethods.Length > 1 ? null : httpMethods[0];
     }
 
     [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]

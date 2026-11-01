@@ -37,10 +37,7 @@ public class NodaTimeStrawberryShakeSerializerTests
 
     [Test]
     [MethodDataSource(nameof(Serializers))]
-    public void Should_Format_The_Value_As_The_Server_Writes_It(ISerializer serializer, object value, object serialized)
-    {
-        ((IInputValueFormatter)serializer).Format(value).ShouldBe(serialized);
-    }
+    public void Should_Format_The_Value_As_The_Server_Writes_It(ISerializer serializer, object value, object serialized) => ( (IInputValueFormatter)serializer ).Format(value).ShouldBe(serialized);
 
     [Test]
     [MethodDataSource(nameof(Serializers))]
@@ -69,22 +66,13 @@ public class NodaTimeStrawberryShakeSerializerTests
 
     [Test]
     [MethodDataSource(nameof(Serializers))]
-    public void Should_Be_Named_For_The_Scalar_It_Serializes(ISerializer serializer, object value, object serialized)
-    {
-        serializer.TypeName.ShouldBe(value is DateTimeZone ? "DateTimeZone" : value.GetType().Name);
-    }
+    public void Should_Be_Named_For_The_Scalar_It_Serializes(ISerializer serializer, object value, object serialized) => serializer.TypeName.ShouldBe(value is DateTimeZone ? "DateTimeZone" : value.GetType().Name);
 
     [Test]
-    public void Should_Reject_Text_That_Does_Not_Match_The_Pattern()
-    {
-        Should.Throw<UnparsableValueException>(() => new InstantSerializer().Parse("yesterday"));
-    }
+    public void Should_Reject_Text_That_Does_Not_Match_The_Pattern() => Should.Throw<UnparsableValueException>(() => new InstantSerializer().Parse("yesterday"));
 
     [Test]
-    public void Should_Reject_An_Unknown_Time_Zone()
-    {
-        Should.Throw<DateTimeZoneNotFoundException>(() => new DateTimeZoneSerializer(Provider()).Parse("Nowhere/Never"));
-    }
+    public void Should_Reject_An_Unknown_Time_Zone() => Should.Throw<DateTimeZoneNotFoundException>(() => new DateTimeZoneSerializer(Provider()).Parse("Nowhere/Never"));
 
     private const string TestZoneId = "Test/Plus3";
 

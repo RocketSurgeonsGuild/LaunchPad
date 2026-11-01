@@ -44,10 +44,7 @@ public class OnBeforeWriteProblemDetailsWriterTests
     }
 
     [Test]
-    public async Task Should_Never_Write()
-    {
-        await Should.ThrowAsync<NotImplementedException>(() => Writer().WriteAsync(CreateContext(new())).AsTask());
-    }
+    public async Task Should_Never_Write() => await Should.ThrowAsync<NotImplementedException>(() => Writer().WriteAsync(CreateContext(new())).AsTask());
 
     // ApiBehaviorOptions has no client error mapping until MVC configures it, which is what an application gets
     private static OnBeforeWriteProblemDetailsWriter Writer()

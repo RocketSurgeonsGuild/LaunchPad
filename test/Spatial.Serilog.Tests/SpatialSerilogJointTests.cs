@@ -52,8 +52,5 @@ public class SpatialSerilogJointTests
     }
 
     [Test]
-    public void The_Spatial_Joint_Is_No_Longer_A_Serilog_Joint()
-    {
-        typeof(SpatialJoint).IsAssignableTo(typeof(ISerilogJoint)).ShouldBeFalse();
-    }
+    public void The_Spatial_Joint_Is_No_Longer_A_Serilog_Joint() => typeof(SpatialJoint).IsAssignableTo(typeof(ISerilogJoint)).ShouldBeFalse();
 }

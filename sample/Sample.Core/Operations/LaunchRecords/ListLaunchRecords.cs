@@ -38,7 +38,7 @@ public static partial class ListLaunchRecords
                        .AsQueryable();
             if (request.RocketType.HasValue) query = query.Where(z => z.Rocket.Type == request.RocketType);
 
-            return Project(query).ToAsyncEnumerable();
+            return Project(query).AsAsyncEnumerable();
         }
     }
 

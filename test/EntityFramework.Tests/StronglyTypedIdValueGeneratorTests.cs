@@ -29,7 +29,7 @@ public class StronglyTypedIdValueGeneratorTests
 
         rocket.Id.ShouldBe(RocketContext.GeneratedId);
         await context.SaveChangesAsync();
-        (await context.Set<Rocket>().SingleAsync()).Id.ShouldBe(RocketContext.GeneratedId);
+        ( await context.Set<Rocket>().SingleAsync() ).Id.ShouldBe(RocketContext.GeneratedId);
     }
 
     private readonly record struct RocketId(int Value);

@@ -47,8 +47,8 @@ public class AssignedTests
         var right = new Assigned<int>(3);
 
         left.Equals(right).ShouldBeTrue();
-        (left == right).ShouldBeTrue();
-        (left != right).ShouldBeFalse();
+        ( left == right ).ShouldBeTrue();
+        ( left != right ).ShouldBeFalse();
         left.Equals((object)right).ShouldBeTrue();
         left.GetHashCode().ShouldBe(right.GetHashCode());
     }
@@ -56,8 +56,8 @@ public class AssignedTests
     [Test]
     public void Should_Not_Be_Equal_When_The_Values_Differ()
     {
-        (new Assigned<int>(3) == new Assigned<int>(4)).ShouldBeFalse();
-        (new Assigned<int>(3) != new Assigned<int>(4)).ShouldBeTrue();
+        ( new Assigned<int>(3) == new Assigned<int>(4) ).ShouldBeFalse();
+        ( new Assigned<int>(3) != new Assigned<int>(4) ).ShouldBeTrue();
     }
 
     [Test]
@@ -85,8 +85,5 @@ public class AssignedTests
     }
 
     [Test]
-    public void Should_Not_Equal_Another_Type()
-    {
-        new Assigned<int>(3).Equals((object)3).ShouldBeFalse();
-    }
+    public void Should_Not_Equal_Another_Type() => new Assigned<int>(3).Equals((object)3).ShouldBeFalse();
 }

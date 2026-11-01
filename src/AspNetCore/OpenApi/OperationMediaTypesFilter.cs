@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
-    internal class OperationMediaTypesFilter : IOpenApiOperationTransformer
-    {
-        public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+internal class OperationMediaTypesFilter : IOpenApiOperationTransformer
+{
+    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
         // The content dictionary's value type differs between Microsoft.OpenApi 2.x (net10.0, OpenApiMediaType) and 3.x (net11.0,
         // IOpenApiMediaType), so skip missing content instead of substituting an empty dictionary of one particular type.

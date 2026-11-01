@@ -1,5 +1,4 @@
 using Riok.Mapperly.Abstractions;
-using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
 namespace Sample.Core.Models;
 
