@@ -27,7 +27,8 @@
     <!--
         Dovetail's host detection runs through CustomAfterMicrosoftCommonTargets, after the whole project has been evaluated, as it reads
         properties the project sets (OutputType). LaunchPad's detection reads what Dovetail's found (the DovetailHost items), so it is
-        registered after it: MSBuild imports the files of the list in order.
+        registered after it: MSBuild imports the files of the list in order. Dovetail's Sdk.targets, which Sdk.targets imports, then registers
+        the file that turns the DovetailSdkImplicitPackageReference items of both into PackageReferences, after this one.
     -->
     <PropertyGroup>
         <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.targets</CustomAfterMicrosoftCommonTargets>

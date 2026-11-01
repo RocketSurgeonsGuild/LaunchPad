@@ -16,17 +16,17 @@
         <LaunchPadEnableNewtonsoftJson Condition="'$(LaunchPadEnableNewtonsoftJson)' == ''">true</LaunchPadEnableNewtonsoftJson>
     </PropertyGroup>
     <ItemGroup Condition="'$(LaunchPadEnableNewtonsoftJson)' != 'false'">
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson"
             Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json'))"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson"
             Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json')) and @(FrameworkReference->AnyHaveMetadataValue('Identity', 'Microsoft.AspNetCore.App'))"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson"
             Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json')) and @(PackageReference->AnyHaveMetadataValue('Identity', 'Riok.Mapperly'))"
