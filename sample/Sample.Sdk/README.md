@@ -18,7 +18,7 @@ version under `msbuild-sdks` in `global.json`).
 | -------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `Sample.Sdk.Worker`  | `OutputType=Exe`        | find a generic host, add `Joinery.Dovetail.Hosting` and `Rocket.Surgery.LaunchPad.Hosting`, and write the health check joint            |
 | `Sample.Sdk.Web`     | `Microsoft.NET.Sdk.Web` | find an ASP.NET Core host, add the same packages and `Rocket.Surgery.LaunchPad.AspNetCore`; the health checks come with the framework |
-| `Sample.Sdk.FileApp` | file-based app          | read its `#:package` directives: a generic host like the worker, plus `Rocket.Surgery.LaunchPad.NodaTime` for its NodaTime reference  |
+| `Sample.Sdk.FileApp` | file-based app          | add what a console application needs with no `#:package` for it: the generic host, `Rocket.Surgery.LaunchPad.Foundation`, `Hosting` and `NodaTime`, and Dovetail's Serilog and OpenTelemetry packages |
 
 ## Running it
 
@@ -32,7 +32,7 @@ dotnet run Sample.Sdk.FileApp/app.cs
 Run it again after changing anything under `src/` that those packages are packed from, and after changing the SDK itself also run
 `dotnet build-server shutdown`: MSBuild nodes that are still running keep the SDK files they read before. The worker prints `Health: Healthy`; the web
 application serves the same at `/health`; the file-based app prints `Health: Healthy` and `Clock: SystemClock`, the NodaTime clock
-LaunchPad.NodaTime registered without the app referencing it.
+LaunchPad.NodaTime registered without the app referencing it or NodaTime.
 
 The file-based app has no project file and is not part of `Sample.Sdk.slnx`: `dotnet run` builds it from the one file. Its two `#:sdk`
 directives become the same `<Project Sdk="Microsoft.NET.Sdk">` and `<Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="0.0.0-sample" />`
