@@ -20,7 +20,7 @@ public class SdkNodaTimeTests(string targetFramework)
     public async Task Should_Add_LaunchPad_NodaTime_For_A_Direct_NodaTime_Reference()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("NodaTime", Version("NodaTime")));
+        tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("NodaTime", PinnedVersion("NodaTime")));
 
         await Verify(await tree.Evaluate("app", Cancellation));
     }
@@ -34,12 +34,18 @@ public class SdkNodaTimeTests(string targetFramework)
     [Arguments("Newtonsoft.Json")]
     [Arguments("Riok.Mapperly")]
     [Arguments("Microsoft.EntityFrameworkCore")]
+    [Arguments("Microsoft.EntityFrameworkCore.Relational")]
     [Arguments("Microsoft.EntityFrameworkCore.SqlServer")]
+    [Arguments("Microsoft.EntityFrameworkCore.Sqlite")]
+    [Arguments("Microsoft.EntityFrameworkCore.InMemory")]
+    [Arguments("Microsoft.EntityFrameworkCore.Cosmos")]
     [Arguments("Npgsql.EntityFrameworkCore.PostgreSQL")]
     [Arguments("HotChocolate")]
     [Arguments("HotChocolate.AspNetCore")]
+    [Arguments("StrawberryShake.Core")]
     [Arguments("StrawberryShake.Server")]
     [Arguments("StrawberryShake.Blazor")]
+    [Arguments("StrawberryShake.Maui")]
     [Arguments("Serilog")]
     public async Task Should_Add_The_NodaTime_Integration_Package_Of_A_Partner_Library(string partner)
     {
@@ -47,7 +53,7 @@ public class SdkNodaTimeTests(string targetFramework)
         tree.AddProject(
             "app",
             HostModel.GenericHost,
-            HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("NodaTime", Version("NodaTime")).ItemPackageReference(partner)
+            HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("NodaTime", PinnedVersion("NodaTime")).ItemPackageReference(partner)
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));
@@ -73,7 +79,7 @@ public class SdkNodaTimeTests(string targetFramework)
     public async Task Should_Not_Add_LaunchPad_NodaTime_For_A_Transitive_NodaTime_Reference()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("library", HostModel.None, HostModelShape.Project(HostModel.None, targetFramework).ItemPackageReference("NodaTime", Version("NodaTime")));
+        tree.AddProject("library", HostModel.None, HostModelShape.Project(HostModel.None, targetFramework).ItemPackageReference("NodaTime", PinnedVersion("NodaTime")));
         tree.AddProject(
             "app",
             HostModel.GenericHost,
@@ -96,8 +102,29 @@ public class SdkNodaTimeTests(string targetFramework)
             HostModelShape
                .Project(HostModel.GenericHost, targetFramework)
                .Property("LaunchPadEnableNodaTime", "false")
-               .ItemPackageReference("NodaTime", Version("NodaTime"))
+               .ItemPackageReference("NodaTime", PinnedVersion("NodaTime"))
                .ItemPackageReference("Newtonsoft.Json")
+        );
+
+        await Verify(await tree.Evaluate("app", Cancellation));
+    }
+
+    /// <summary>
+    ///     <c>Rocket.Surgery.LaunchPad.NodaTime.Serilog</c> brings Dovetail's Serilog package with it, so a project that turns Dovetail's
+    ///     Serilog support off with <c>DovetailEnableSerilog</c> does not get it either: the opt-out still holds.
+    /// </summary>
+    [Test]
+    public async Task Should_Not_Add_LaunchPad_NodaTime_Serilog_When_Dovetail_Serilog_Is_Opted_Out()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
+        tree.AddProject(
+            "app",
+            HostModel.GenericHost,
+            HostModelShape
+               .Project(HostModel.GenericHost, targetFramework)
+               .Property("DovetailEnableSerilog", "false")
+               .ItemPackageReference("NodaTime", PinnedVersion("NodaTime"))
+               .ItemPackageReference("Serilog")
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));
@@ -111,7 +138,7 @@ public class SdkNodaTimeTests(string targetFramework)
     public async Task Should_Apply_The_LaunchPad_NodaTime_Joints_To_The_Application()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("NodaTime", Version("NodaTime")));
+        tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework).ItemPackageReference("NodaTime", PinnedVersion("NodaTime")));
         await File.WriteAllTextAsync(
             Path.Combine(tree.Directory, "app", "Program.cs"),
             $$"""
@@ -129,5 +156,5 @@ public class SdkNodaTimeTests(string targetFramework)
         await Verify(output.Trim());
     }
 
-    private string Version(string packageId) => Repository.PackageVersion(packageId, targetFramework);
+    private string PinnedVersion(string packageId) => Repository.PackageVersion(packageId, targetFramework);
 }

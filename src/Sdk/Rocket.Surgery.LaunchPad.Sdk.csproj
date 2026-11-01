@@ -19,7 +19,7 @@
 
     <!--
         The packages the SDK adds to an application, each at the version of the SDK, through the property named here (an application can set
-        the property first to choose another version). Sdk/Rocket.Surgery.LaunchPad.Detection.targets decides which an application gets.
+        the property first to choose another version). Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which an application gets.
         A package added here is also packed by test/Sdk.Tests (PackedSdk.Projects) and sample/Sample.Sdk/build/pack.proj, so the tests and
         the sample can restore it.
     -->

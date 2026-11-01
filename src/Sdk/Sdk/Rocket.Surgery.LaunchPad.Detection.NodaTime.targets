@@ -11,7 +11,8 @@
           - Rocket.Surgery.LaunchPad.NodaTime.EntityFramework: EF Core, or one of its providers
           - Rocket.Surgery.LaunchPad.NodaTime.HotChocolate: HotChocolate, or its ASP.NET Core server
           - Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake: one of the StrawberryShake client packages
-          - Rocket.Surgery.LaunchPad.NodaTime.Serilog: Serilog, as Dovetail's SDK reads it for Joinery.Dovetail.Serilog
+          - Rocket.Surgery.LaunchPad.NodaTime.Serilog: Serilog, read as Dovetail's SDK reads it for Joinery.Dovetail.Serilog. The package brings
+            Joinery.Dovetail.Serilog with it, so DovetailEnableSerilog set to false leaves it out as well.
     -->
     <PropertyGroup>
         <LaunchPadEnableNodaTime Condition="'$(LaunchPadEnableNodaTime)' == ''">true</LaunchPadEnableNodaTime>
@@ -56,7 +57,7 @@
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.NodaTime.Serilog"
             Version="$(LaunchPadNodaTimeSerilogVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'"
+            Condition="'$(DovetailEnableSerilog)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'"
         />
     </ItemGroup>
 </Project>
