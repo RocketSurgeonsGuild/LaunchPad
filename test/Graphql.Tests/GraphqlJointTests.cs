@@ -33,7 +33,7 @@ public class GraphqlJointTests
         result.Errors.ShouldHaveSingleItem().Code.ShouldBe("NOTFOUND");
     }
 
-    // The convention this joint replaced took FoundationOptions and an empty RocketChocolateOptions in its constructor but never read them,
+    // Before it became a joint, this wiring took FoundationOptions and an empty RocketChocolateOptions in its constructor but never read them,
     // so the options a context carries change nothing.
     [Test]
     public async Task Registers_The_Same_Services_Whatever_Foundation_Options_The_Context_Has()
