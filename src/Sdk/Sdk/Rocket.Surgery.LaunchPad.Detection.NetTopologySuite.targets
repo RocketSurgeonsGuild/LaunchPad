@@ -14,20 +14,20 @@
         <LaunchPadEnableNetTopologySuite Condition="'$(LaunchPadEnableNetTopologySuite)' == ''">true</LaunchPadEnableNetTopologySuite>
     </PropertyGroup>
     <ItemGroup Condition="'$(LaunchPadEnableNetTopologySuite)' != 'false'">
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Spatial"
-            Version="$(LaunchPadSpatialVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite'))"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson"
-            Version="$(LaunchPadSpatialNewtonsoftJsonVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="'$(LaunchPadEnableNewtonsoftJson)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) and @(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json'))"
         />
         <!-- a StrawberryShake client package: the one for servers and consoles, Blazor or MAUI, or the core they share -->
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.StrawberryShake.Spatial"
-            Version="$(LaunchPadStrawberryShakeSpatialVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) and (@(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Server')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Blazor')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Maui')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Core')))"
         />
     </ItemGroup>

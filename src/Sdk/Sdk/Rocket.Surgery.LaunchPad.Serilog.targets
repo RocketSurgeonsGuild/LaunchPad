@@ -1,7 +1,6 @@
 <Project>
     <!--
-        LaunchPad's Serilog packages, imported by Rocket.Surgery.LaunchPad.Detection.targets before it turns the
-        LaunchPadSdkImplicitPackageReference items into PackageReferences.
+        LaunchPad's Serilog packages, imported by Rocket.Surgery.LaunchPad.Detection.targets.
 
         A project that references Serilog directly (the same detection as Dovetail's DovetailEnableSerilog) gets each package whose partner
         it also has. LaunchPadEnableSerilog set to false opts it out of all of them; Dovetail's own Serilog support keeps its own switch. Only
@@ -16,19 +15,19 @@
     </PropertyGroup>
     <!-- An item list is only allowed in the condition of an item or an item group, not of a property. -->
     <ItemGroup Condition="'$(LaunchPadEnableSerilog)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'">
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore"
-            Version="$(LaunchPadSerilogAspNetCoreVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebApplication')) == 'true'"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog"
-            Version="$(LaunchPadNewtonsoftJsonSerilogVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json')) == 'true'"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Spatial.Serilog"
-            Version="$(LaunchPadSpatialSerilogVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) == 'true'"
         />
     </ItemGroup>
