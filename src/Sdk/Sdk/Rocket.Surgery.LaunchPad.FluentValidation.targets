@@ -1,7 +1,6 @@
 <Project>
     <!--
-        LaunchPad's FluentValidation packages, imported by Rocket.Surgery.LaunchPad.Detection.targets before it turns the
-        LaunchPadSdkImplicitPackageReference items into PackageReferences.
+        LaunchPad's FluentValidation packages, imported by Rocket.Surgery.LaunchPad.Detection.targets.
 
         A project that references FluentValidation directly (FluentValidation, or FluentValidation.DependencyInjectionExtensions, which an
         application often references alone) gets the core package, and each partner package whose partner it also has.
@@ -21,23 +20,23 @@
     <ItemGroup
         Condition="'$(LaunchPadEnableFluentValidation)' != 'false' and (@(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation')) == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation.DependencyInjectionExtensions')) == 'true')"
     >
-        <LaunchPadSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.FluentValidation" Version="$(LaunchPadVersion)" />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.FluentValidation" Version="$(LaunchPadVersion)" />
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore"
             Version="$(LaunchPadVersion)"
             Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebApplication')) == 'true'"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc"
             Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Grpc.AspNetCore')) == 'true'"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate"
             Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate')) == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate.AspNetCore')) == 'true'"
         />
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor"
             Version="$(LaunchPadVersion)"
             Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebAssembly')) == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.AspNetCore.Components.Web')) == 'true'"

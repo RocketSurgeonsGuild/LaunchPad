@@ -13,12 +13,15 @@
           - Newtonsoft.Json and NetTopologySuite, and their integration packages: a project that references either (see
             Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets and Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets,
             imported below).
+
+        Every package is a DovetailSdkImplicitPackageReference item. Dovetail's SDK turns those into PackageReferences, unless the project
+        references the package itself, in a file its Sdk.targets registers after this one.
     -->
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
     </PropertyGroup>
     <ItemGroup>
-        <LaunchPadSdkImplicitPackageReference
+        <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Hosting"
             Version="$(LaunchPadVersion)"
             Condition="'$(LaunchPadEnableHosting)' != 'false' and '@(DovetailHost)' != ''"
@@ -34,17 +37,4 @@
     <!-- The technologies with packages of their own, each in its file, which lists its packages and their conditions. -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Serilog.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.FluentValidation.targets" />
-
-    <!--
-        Last: every LaunchPadSdkImplicitPackageReference above becomes a PackageReference, unless the project references the package itself.
-        Dovetail's SDK expands its own DovetailSdkImplicitPackageReference items before this file is imported, so LaunchPad keeps a list of
-        its own.
-    -->
-    <ItemGroup>
-        <PackageReference
-            Include="@(LaunchPadSdkImplicitPackageReference)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', '%(LaunchPadSdkImplicitPackageReference.Identity)')) != 'true'"
-            IsImplicitlyDefined="true"
-        />
-    </ItemGroup>
 </Project>
