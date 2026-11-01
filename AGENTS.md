@@ -37,7 +37,8 @@ The solution is `LaunchPad.slnx`, and it builds cleanly on CI (linux x64). On ma
 
 ## Build, test and format
 
-- Tools come from mise: `mise install` installs what `.config/mise.toml` pins (the .NET SDK that `global.json` asks for, node, hk, biome, oxfmt and so on). `global.json` also selects the Microsoft.Testing.Platform test runner. mise sets `DOTNET_ROLL_FORWARD=Major`, so StrawberryShake's .NET 9 code generator runs on the .NET 10 runtime.
+- Tools come from mise. `mise install` installs what `.config/mise.toml` pins: the .NET SDK that `global.json` asks for, node, hk, biome, oxfmt and so on. `global.json` also selects the Microsoft.Testing.Platform test runner.
+- mise sets `DOTNET_ROLL_FORWARD=Major`. StrawberryShake's code generator targets .NET 9, and this lets it run on the .NET 10 runtime.
 - Build with `mise run build`, which runs `dotnet run build/Build.cs`. The docs site has its own tasks: `mise run docs`, `mise run docs:build` and `mise run docs:preview`.
 - Package versions are central: add them to `Directory.Packages.props` (samples have their own `sample/Directory.Packages.props`) and never put a `Version` in a `.csproj`.
 - Formatting and linting run through hk (`.config/hk.pkl`): `hk check` verifies and `hk fix` applies fixes. Biome formats JavaScript, TypeScript and JSON, oxfmt formats YAML, Markdown, CSS and HTML (style and ignores in `.oxfmtrc.json`), tombi formats TOML and `dotnet format` handles C#. Generated agent files are excluded.
