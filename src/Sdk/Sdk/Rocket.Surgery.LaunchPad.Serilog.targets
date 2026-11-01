@@ -18,17 +18,17 @@
     <ItemGroup Condition="'$(LaunchPadEnableSerilog)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'">
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore"
-            Version="$(LaunchPadSerilogAspNetCoreVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebApplication')) == 'true'"
         />
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog"
-            Version="$(LaunchPadNewtonsoftJsonSerilogVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json')) == 'true'"
         />
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Spatial.Serilog"
-            Version="$(LaunchPadSpatialSerilogVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) == 'true'"
         />
     </ItemGroup>

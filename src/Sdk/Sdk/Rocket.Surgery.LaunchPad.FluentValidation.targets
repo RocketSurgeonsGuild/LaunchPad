@@ -21,25 +21,25 @@
     <ItemGroup
         Condition="'$(LaunchPadEnableFluentValidation)' != 'false' and (@(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation')) == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation.DependencyInjectionExtensions')) == 'true')"
     >
-        <LaunchPadSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.FluentValidation" Version="$(LaunchPadFluentValidationVersion)" />
+        <LaunchPadSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.FluentValidation" Version="$(LaunchPadVersion)" />
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore"
-            Version="$(LaunchPadFluentValidationAspNetCoreVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebApplication')) == 'true'"
         />
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc"
-            Version="$(LaunchPadFluentValidationGrpcVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'Grpc.AspNetCore')) == 'true'"
         />
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate"
-            Version="$(LaunchPadFluentValidationHotChocolateVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate')) == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'HotChocolate.AspNetCore')) == 'true'"
         />
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor"
-            Version="$(LaunchPadFluentValidationBlazorVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="@(DovetailHost->AnyHaveMetadataValue('Identity', 'WebAssembly')) == 'true' or @(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.AspNetCore.Components.Web')) == 'true'"
         />
     </ItemGroup>

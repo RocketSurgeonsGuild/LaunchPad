@@ -18,42 +18,14 @@
     </ItemGroup>
 
     <!--
-        The packages the SDK adds to an application, each at the version of the SDK, through the property named here (an application can set
-        the property first to choose another version). Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which an application gets.
-        A package added here is also packed by test/Sdk.Tests (PackedSdk.Projects) and sample/Sample.Sdk/build/pack.proj, so the tests and
-        the sample can restore it.
-    -->
-    <ItemGroup>
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Hosting" Property="LaunchPadHostingVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime" Property="LaunchPadNodaTimeVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson" Property="LaunchPadNodaTimeNewtonsoftJsonVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.Mapping" Property="LaunchPadNodaTimeMappingVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.EntityFramework" Property="LaunchPadNodaTimeEntityFrameworkVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.HotChocolate" Property="LaunchPadNodaTimeHotChocolateVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake" Property="LaunchPadNodaTimeStrawberryShakeVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NodaTime.Serilog" Property="LaunchPadNodaTimeSerilogVersion" />
-        <!-- Sdk/Rocket.Surgery.LaunchPad.Serilog.targets -->
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Serilog.AspNetCore" Property="LaunchPadSerilogAspNetCoreVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog" Property="LaunchPadNewtonsoftJsonSerilogVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Spatial.Serilog" Property="LaunchPadSpatialSerilogVersion" />
-        <!-- Sdk/Rocket.Surgery.LaunchPad.FluentValidation.targets -->
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation" Property="LaunchPadFluentValidationVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore" Property="LaunchPadFluentValidationAspNetCoreVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor" Property="LaunchPadFluentValidationBlazorVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc" Property="LaunchPadFluentValidationGrpcVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate" Property="LaunchPadFluentValidationHotChocolateVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson" Property="LaunchPadFoundationNewtonsoftJsonVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson" Property="LaunchPadAspNetCoreNewtonsoftJsonVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson" Property="LaunchPadMappingNewtonsoftJsonVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Spatial" Property="LaunchPadSpatialVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson" Property="LaunchPadSpatialNewtonsoftJsonVersion" />
-        <LaunchPadSdkPackage Include="Rocket.Surgery.LaunchPad.StrawberryShake.Spatial" Property="LaunchPadStrawberryShakeSpatialVersion" />
-    </ItemGroup>
+        Writes Sdk/Packages.props into the package: LaunchPadVersion, the version of the SDK, which every LaunchPad package it adds to an
+        application shares, and the version of Joinery.Dovetail.Sdk that Sdk/Sdk.props chains, which is the one Directory.Packages.props
+        pins. An application can set either first to choose another. As in Joinery.Dovetail.Sdk, the versions are only known when the SDK
+        is packed, so the file is generated then rather than kept in the repository.
 
-    <!--
-        Writes Sdk/Packages.props into the package: the version of every package above, and the version of Joinery.Dovetail.Sdk that
-        Sdk/Sdk.props chains, which is the one Directory.Packages.props pins. As in Joinery.Dovetail.Sdk, the versions are only known when
-        the SDK is packed, so the file is generated then rather than kept in the repository.
+        Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which packages an application gets. A package
+        added there is also packed by test/Sdk.Tests (PackedSdk.Projects) and sample/Sample.Sdk/build/pack.proj, so the tests and the
+        sample can restore it.
     -->
     <Target Name="_LaunchPadGeneratePackagesProps" BeforeTargets="_GetPackageFiles;Pack">
         <ItemGroup>
@@ -73,7 +45,7 @@
                 Include="&lt;LaunchPadDovetailSdkVersion Condition=&quot;%27%24(LaunchPadDovetailSdkVersion)%27 == %27%27&quot;&gt;$(_LaunchPadDovetailSdkVersion)&lt;/LaunchPadDovetailSdkVersion&gt;"
             />
             <_LaunchPadPackagesPropsLine
-                Include="@(LaunchPadSdkPackage->'&lt;%(Property) Condition=&quot;%27%24(%(Property))%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/%(Property)&gt;')"
+                Include="&lt;LaunchPadVersion Condition=&quot;%27%24(LaunchPadVersion)%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/LaunchPadVersion&gt;"
             />
             <_LaunchPadPackagesPropsLine Include="&lt;/PropertyGroup&gt;" />
             <_LaunchPadPackagesPropsLine Include="&lt;/Project&gt;" />

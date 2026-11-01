@@ -20,7 +20,7 @@
     <ItemGroup>
         <LaunchPadSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.Hosting"
-            Version="$(LaunchPadHostingVersion)"
+            Version="$(LaunchPadVersion)"
             Condition="'$(LaunchPadEnableHosting)' != 'false' and '@(DovetailHost)' != ''"
         />
     </ItemGroup>
