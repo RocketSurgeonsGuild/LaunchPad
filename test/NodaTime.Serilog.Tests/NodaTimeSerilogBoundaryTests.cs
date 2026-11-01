@@ -1,4 +1,4 @@
-using Rocket.Surgery.LaunchPad.Serilog;
+using Rocket.Surgery.LaunchPad.NodaTime;
 
 namespace NodaTime.Serilog.Tests;
 

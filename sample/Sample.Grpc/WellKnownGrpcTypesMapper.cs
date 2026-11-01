@@ -4,7 +4,7 @@ using NodaTime;
 
 using Riok.Mapperly.Abstractions;
 using Duration = NodaTime.Duration;
-using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
+using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 using WktDuration = Google.Protobuf.WellKnownTypes.Duration;
 
 namespace Sample.Grpc;

@@ -4,6 +4,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
+using Serilog;
+using Serilog.Core;
+using Serilog.Extensions.Hosting;
+
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>

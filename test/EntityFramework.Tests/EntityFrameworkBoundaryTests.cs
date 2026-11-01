@@ -1,6 +1,6 @@
 using Rocket.Surgery.LaunchPad.EntityFramework;
 
-namespace NodaTime.EntityFramework.Tests;
+namespace EntityFramework.Tests;
 
 public class EntityFrameworkBoundaryTests
 {

@@ -1,5 +1,5 @@
 using Riok.Mapperly.Abstractions;
-using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
+using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
 namespace Sample.Core.Models;
 
