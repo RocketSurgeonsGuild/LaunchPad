@@ -43,7 +43,7 @@ public class SpatialSerilogJointTests
     [Test]
     public void Is_Exported_As_A_Core_Serilog_Joint_Without_Ordering_Or_Gating()
     {
-        var export = SpatialSerilogExports.Joints().Single(x => x.Joint is SpatialSerilogJoint);
+        var export = Exports.Joints().Single(x => x.Joint is SpatialSerilogJoint);
 
         export.Joint.ShouldBeAssignableTo<ISerilogJoint>();
         export.HostType.ShouldBe(DovetailHostType.Undefined);
@@ -52,8 +52,5 @@ public class SpatialSerilogJointTests
     }
 
     [Test]
-    public void The_Spatial_Joint_Is_No_Longer_A_Serilog_Joint()
-    {
-        typeof(SpatialJoint).IsAssignableTo(typeof(ISerilogJoint)).ShouldBeFalse();
-    }
+    public void The_Spatial_Joint_Is_No_Longer_A_Serilog_Joint() => typeof(SpatialJoint).IsAssignableTo(typeof(ISerilogJoint)).ShouldBeFalse();
 }

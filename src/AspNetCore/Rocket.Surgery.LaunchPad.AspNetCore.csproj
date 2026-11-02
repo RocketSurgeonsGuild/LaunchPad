@@ -19,6 +19,7 @@
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Specular" />
+        <PackageReference Include="Serilog.AspNetCore" />
         <!--
             Only the instrumentation, which depends on the OpenTelemetry API alone: LaunchPad.Hosting's ASP.NET Core instrumentation joint
             uses it once the application turns OpenTelemetry on (it references Joinery.Dovetail.OpenTelemetry).

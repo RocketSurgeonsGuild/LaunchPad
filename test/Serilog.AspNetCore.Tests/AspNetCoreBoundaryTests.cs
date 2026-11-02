@@ -5,12 +5,13 @@ namespace Serilog.AspNetCore.Tests;
 public class AspNetCoreBoundaryTests
 {
     [Test]
-    public void AspNetCore_Does_Not_Reference_Serilog()
+    public void AspNetCore_Carries_Serilog_Request_Logging()
     {
         var references = typeof(RestfulApiOptions).Assembly.GetReferencedAssemblies().Select(x => x.Name).ToList();
 
-        references.ShouldNotContain("Serilog");
-        references.ShouldNotContain("Serilog.AspNetCore");
-        references.ShouldNotContain("Serilog.Extensions.Hosting");
+        // Serilog is a library every LaunchPad application references, so the request logging ships in the ASP.NET Core package itself.
+        references.ShouldContain("Serilog");
+        references.ShouldContain("Serilog.AspNetCore");
+        typeof(LaunchPadRequestLoggingExtensions).Assembly.ShouldBe(typeof(RestfulApiOptions).Assembly);
     }
 }

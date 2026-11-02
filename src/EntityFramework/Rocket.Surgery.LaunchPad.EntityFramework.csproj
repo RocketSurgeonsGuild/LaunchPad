@@ -7,4 +7,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
+  <ItemGroup>
+    <Using Remove="Joinery.Dovetail" />
+    <Using Remove="Joinery.Dovetail.Attributes" />
+    <Using Remove="Joinery.Dovetail.Joints" />
+  </ItemGroup>
 </Project>

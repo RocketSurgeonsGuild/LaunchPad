@@ -1,3 +1,15 @@
 <Project>
+    <!--
+        Microsoft.AspNetCore.OpenApi's XML comment generator intercepts every AddOpenApi call in the assembly it compiles and bakes in a
+        transformer over the XML documentation of all that assembly's references. In a LaunchPad package (OpenApiJoint calls AddOpenApi) that
+        documents LaunchPad's dependencies in every application's OpenAPI document, and it throws: the packages each compile
+        JetBrains.Annotations.Sources, so the same T:JetBrains.Annotations.* entries arrive from several assemblies and /openapi/v1.json fails
+        with "An item with the same key has already been added". The application's own generator documents the application.
+    -->
+    <Target Name="_LaunchPadDisableOpenApiXmlComments" BeforeTargets="CoreCompile">
+        <ItemGroup>
+            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.AspNetCore.OpenApi.SourceGenerators'" />
+        </ItemGroup>
+    </Target>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 </Project>

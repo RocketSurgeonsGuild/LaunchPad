@@ -27,10 +27,10 @@ public class StronglyTypedIdValueGenerator<T> : ValueGenerator<T>
 public static class StronglyTypedIdValueGenerator
 {
     /// <summary>
-    ///     Create a value generator for the given type
+    ///     Create a value generator for the given type, in the shape <c>PropertyBuilder.HasValueGenerator</c> takes.
     /// </summary>
-    /// <param name="factory"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static Func<IProperty, IEntityType, ValueGenerator> Create<T>(Func<T> factory) where T : struct => (_, _) => new StronglyTypedIdValueGenerator<T>(factory);
+    /// <param name="factory">Creates each new id.</param>
+    /// <typeparam name="T">The strongly typed id.</typeparam>
+    /// <returns>The value generator factory.</returns>
+    public static Func<IReadOnlyProperty, ITypeBase, ValueGenerator> Create<T>(Func<T> factory) where T : struct => (_, _) => new StronglyTypedIdValueGenerator<T>(factory);
 }

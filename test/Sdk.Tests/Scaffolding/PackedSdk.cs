@@ -10,7 +10,7 @@ namespace Sdk.Tests.Scaffolding;
 /// </summary>
 /// <param name="Feed">The folder holding the packages; a folder with .nupkg files is a NuGet feed.</param>
 /// <param name="Version">The version of every package in the feed.</param>
-/// <param name="SdkFiles">The files in the SDK package, without the package bookkeeping.</param>
+/// <param name="SdkFiles">The files in the SDK package, without the package bookkeeping or the icon CI adds.</param>
 /// <param name="PackagesProps">The text of the props file the SDK generates when it is packed.</param>
 internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<string> SdkFiles, string PackagesProps)
 {
@@ -20,33 +20,30 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     public const string SdkPackageId = "Rocket.Surgery.LaunchPad.Sdk";
 
     /// <summary>
-    ///     The projects packed into the feed: the SDK, and every package it can add to an application.
+    ///     The projects packed into the feed: the SDK, every package it can add to an application, and the LaunchPad packages
+    ///     those depend on, so an application that restores them finds each in the feed.
     /// </summary>
     private static readonly string[] Projects =
     [
         Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
+        Path.Combine("src", "Primitives", "Rocket.Surgery.LaunchPad.Primitives.csproj"),
+        Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),
+        Path.Combine("src", "Foundation", "Rocket.Surgery.LaunchPad.Foundation.csproj"),
+        Path.Combine("src", "AspNetCore", "Rocket.Surgery.LaunchPad.AspNetCore.csproj"),
         Path.Combine("src", "NodaTime", "Rocket.Surgery.LaunchPad.NodaTime.csproj"),
-        Path.Combine("src", "NodaTime.NewtonsoftJson", "Rocket.Surgery.LaunchPad.NodaTime.NewtonsoftJson.csproj"),
-        Path.Combine("src", "NodaTime.Mapping", "Rocket.Surgery.LaunchPad.NodaTime.Mapping.csproj"),
-        Path.Combine("src", "NodaTime.EntityFramework", "Rocket.Surgery.LaunchPad.NodaTime.EntityFramework.csproj"),
         Path.Combine("src", "NodaTime.HotChocolate", "Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj"),
         Path.Combine("src", "NodaTime.StrawberryShake", "Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj"),
-        Path.Combine("src", "NodaTime.Serilog", "Rocket.Surgery.LaunchPad.NodaTime.Serilog.csproj"),
-        Path.Combine("src", "Serilog.AspNetCore", "Rocket.Surgery.LaunchPad.Serilog.AspNetCore.csproj"),
-        Path.Combine("src", "NewtonsoftJson.Serilog", "Rocket.Surgery.LaunchPad.NewtonsoftJson.Serilog.csproj"),
-        Path.Combine("src", "Spatial.Serilog", "Rocket.Surgery.LaunchPad.Spatial.Serilog.csproj"),
+        Path.Combine("src", "Spatial", "Rocket.Surgery.LaunchPad.Spatial.csproj"),
+        Path.Combine("src", "StrawberryShake", "Rocket.Surgery.LaunchPad.StrawberryShake.csproj"),
+        Path.Combine("src", "StrawberryShake.Spatial", "Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj"),
+        Path.Combine("src", "HotChocolate", "Rocket.Surgery.LaunchPad.HotChocolate.csproj"),
+        Path.Combine("src", "Grpc", "Rocket.Surgery.LaunchPad.Grpc.csproj"),
         Path.Combine("src", "FluentValidation", "Rocket.Surgery.LaunchPad.FluentValidation.csproj"),
         Path.Combine("src", "FluentValidation.AspNetCore", "Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj"),
         Path.Combine("src", "FluentValidation.Blazor", "Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj"),
         Path.Combine("src", "FluentValidation.Grpc", "Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj"),
         Path.Combine("src", "FluentValidation.HotChocolate", "Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj"),
-        Path.Combine("src", "Foundation.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Foundation.NewtonsoftJson.csproj"),
-        Path.Combine("src", "AspNetCore.NewtonsoftJson", "Rocket.Surgery.LaunchPad.AspNetCore.NewtonsoftJson.csproj"),
-        Path.Combine("src", "Mapping.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Mapping.NewtonsoftJson.csproj"),
-        Path.Combine("src", "Spatial", "Rocket.Surgery.LaunchPad.Spatial.csproj"),
-        Path.Combine("src", "Spatial.NewtonsoftJson", "Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson.csproj"),
-        Path.Combine("src", "StrawberryShake.Spatial", "Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj"),
     ];
 
     /// <summary>
@@ -106,7 +103,7 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         var files = archive
                    .Entries
                    .Select(z => z.FullName)
-                   .Where(z => !z.StartsWith("_rels/", StringComparison.Ordinal) && !z.StartsWith("package/", StringComparison.Ordinal) && z != "[Content_Types].xml")
+                   .Where(z => !z.StartsWith("_rels/", StringComparison.Ordinal) && !z.StartsWith("package/", StringComparison.Ordinal) && !z.StartsWith("images/", StringComparison.Ordinal) && z != "[Content_Types].xml")
                    .Order(StringComparer.Ordinal)
                    .ToArray();
         using var reader = new StreamReader(archive.GetEntry("Sdk/Packages.props")?.Open() ?? throw new InvalidOperationException("The SDK has no Sdk/Packages.props"));

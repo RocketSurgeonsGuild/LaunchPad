@@ -1,0 +1,140 @@
+name: samples
+
+# Builds and runs sample/Sample.Sdk, the one sample LaunchPad.slnx leaves out: it consumes LaunchPad only as packed NuGet packages, so
+# build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
+# The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
+# clock), which this checks; the web app only builds.
+
+on:
+    push:
+        branches:
+            - main
+            - next
+        tags:
+            - v*
+    pull_request:
+        branches:
+            - main
+            - next
+    merge_group:
+        branches:
+            - main
+            - next
+
+permissions:
+    contents: read
+
+# A newer run for the same branch (or pull request head) cancels this one; tags and merge-queue refs are unique.
+concurrency:
+    group: samples-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    # The sample only builds from src/, sample/Sample.Sdk/ and the root Directory.*.props/targets (which src/ packs with), plus the
+    # toolchain (.config/mise.toml, global.json, NuGet.config) and this workflow. Anything else skips it; tags always build it.
+    changes:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pull-requests: read
+        outputs:
+            samples: ${{ startsWith(github.ref, 'refs/tags/') || steps.filter.outputs.samples == 'true' }}
+        steps:
+            - name: Checkout
+              if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+              uses: actions/checkout@v7
+            - name: 🔎 Detect sample changes
+              id: filter
+              if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+              uses: dorny/paths-filter@v4
+              with:
+                  filters: |
+                      samples:
+                          - 'src/**'
+                          - 'sample/Sample.Sdk/**'
+                          - 'Directory.*.props'
+                          - 'Directory.*.targets'
+                          - '.config/mise.toml'
+                          - 'global.json'
+                          - 'NuGet.config'
+                          - '.github/workflows/samples.yml'
+
+    sample:
+        name: Sample.Sdk
+        needs: changes
+        if: needs.changes.outputs.samples == 'true'
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: sample/Sample.Sdk
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: '0'
+            - name: 🛠️ Setup mise
+              uses: jdx/mise-action@v5
+              env:
+                  # One install at a time: mise downloads dotnet-install.sh to one shared path for every dotnet version, so the
+                  # SDK and runtime installs overwrite it under each other ("failed to execute command") when they run in parallel.
+                  MISE_JOBS: '1'
+              with:
+                  install: true
+                  # Only dotnet (the SDK and the runtime): the sample needs none of the other tools.
+                  install_args: dotnet
+                  cache: true
+                  # Restore only, from the key build.yml saves on main: build.yml is the single cache writer.
+                  cache_key: mise-{{platform}}-{{cache_period}}-aspnetcore
+                  cache_save: false
+                  experimental: true
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+            - name: 📦 Pack LaunchPad
+              run: dotnet msbuild build/pack.proj -bl:../../artifacts/logs/Sample.Sdk.pack.binlog
+            - name: ⚙️ Build Sample.Sdk
+              run: dotnet build Sample.Sdk.slnx -bl:../../artifacts/logs/Sample.Sdk.binlog
+            - name: 🚀 Run Sample.Sdk.Worker
+              run: |
+                  output="$(dotnet run --project Sample.Sdk.Worker --no-build)"
+                  echo "$output"
+                  grep -qx 'Health: Healthy' <<< "$output"
+            - name: 🚀 Run Sample.Sdk.Console
+              if: success() || failure()
+              run: |
+                  output="$(dotnet run --project Sample.Sdk.Console --no-build)"
+                  echo "$output"
+                  grep -qx 'Health: Healthy' <<< "$output"
+            - name: 🚀 Run Sample.Sdk.FileApp
+              if: success() || failure()
+              run: |
+                  output="$(dotnet run Sample.Sdk.FileApp/app.cs)"
+                  echo "$output"
+                  grep -qx 'Health: Healthy' <<< "$output"
+                  grep -qx 'Clock: SystemClock' <<< "$output"
+            - name: 🏺 Publish logs
+              if: always()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: samples-logs
+                  path: artifacts/logs/
+
+    # The ruleset requires a check named `samples`. The sample job reports under its own name, so this job stands in for it and passes
+    # only when it did, or when nothing the sample builds from changed.
+    samples:
+        name: samples
+        needs: [changes, sample]
+        if: always()
+        runs-on: ubuntu-latest
+        steps:
+            - name: ✅ Samples built
+              run: |
+                  echo "changes: $CHANGES (samples: $SAMPLES), sample: $SAMPLE"
+                  if [ "$CHANGES" = success ] && [ "$SAMPLES" != true ] && [ "$SAMPLE" = skipped ]; then
+                      echo "Nothing the samples build from changed."
+                  elif [ "$SAMPLE" != success ]; then
+                      echo "::error::The sample didn't succeed ($SAMPLE)."
+                      exit 1
+                  fi
+              env:
+                  CHANGES: ${{ needs.changes.result }}
+                  SAMPLES: ${{ needs.changes.outputs.samples }}
+                  SAMPLE: ${{ needs.sample.result }}

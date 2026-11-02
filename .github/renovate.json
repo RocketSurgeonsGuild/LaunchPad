@@ -14,9 +14,9 @@
     },
     {
       "customType": "regex",
-      "description": "The extra .NET runtime pinned in mise (Renovate's mise manager ignores the runtime element)",
+      "description": "The extra ASP.NET Core runtime pinned in mise (it carries the .NET runtime too; Renovate's mise manager ignores the runtime element)",
       "managerFilePatterns": ["/^\\.config/mise\\.toml$/"],
-      "matchStrings": ["version = \"(?<currentValue>[^\"]+)\", runtime = \"dotnet\""],
+      "matchStrings": ["version = \"(?<currentValue>[^\"]+)\", runtime = \"aspnetcore\""],
       "depNameTemplate": "dotnet-runtime",
       "datasourceTemplate": "dotnet-version",
       "versioningTemplate": "semver"
@@ -32,13 +32,7 @@
     },
     {
       "description": "net10.0 assets stay on the 10.0.x release train; the net11.0 group in Directory.Packages.props moves along 11.0.x",
-      "matchPackageNames": [
-        "Microsoft.AspNetCore.*",
-        "Microsoft.EntityFrameworkCore*",
-        "Microsoft.Extensions.*",
-        "System.Net.Http.Json",
-        "System.Text.Json"
-      ],
+      "matchPackageNames": ["Microsoft.AspNetCore.*", "Microsoft.EntityFrameworkCore*", "Microsoft.Extensions.*", "System.Net.Http.Json", "System.Text.Json"],
       "matchCurrentVersion": "/^10\\./",
       "allowedVersions": "<11.0.0"
     },

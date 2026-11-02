@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
+using Serilog;
+
 namespace Rocket.Surgery.LaunchPad.AspNetCore;
 
 /// <summary>

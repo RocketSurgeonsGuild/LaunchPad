@@ -11,7 +11,7 @@ namespace Rocket.Surgery.LaunchPad.Spatial.Joints;
 /// </summary>
 /// <remarks>
 ///     A service Joint that registers the geometry services and configures the System.Text.Json options.
-///     The NetTopologySuite types are destructured in Serilog by the Spatial.Serilog package.
+///     The NetTopologySuite types are destructured in Serilog by the <see cref="SpatialSerilogJoint" /> of this package.
 /// </remarks>
 [PublicAPI]
 [DovetailExport]

@@ -47,7 +47,9 @@ public class LaunchPadExtension(ILoggerFactory loggerFactory) : IAlbaExtension
     {
         builder.ConfigureLogging((_, loggingBuilder) => loggingBuilder.Services.AddSingleton(loggerFactory));
         builder.ConfigureServices(s => s.AddSingleton(z => (TestServer)z.GetRequiredService<IServer>()));
-        builder.ConfigureServices(s => s.AddHttpLogging(options => options.LoggingFields = HttpLoggingFields.All));
+        // Not the response body: logging it buffers every response through a ResponseBufferingStream, which ASP.NET Core 11 pools
+        // (dotnet/aspnetcore#65147). With it on, CI saw one request's bytes turn up in another's request and response bodies.
+        builder.ConfigureServices(s => s.AddHttpLogging(options => options.LoggingFields = HttpLoggingFields.All & ~HttpLoggingFields.ResponseBody));
 
         return builder;
     }

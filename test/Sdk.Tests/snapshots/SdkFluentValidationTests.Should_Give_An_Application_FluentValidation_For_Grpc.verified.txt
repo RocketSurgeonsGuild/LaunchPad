@@ -7,9 +7,11 @@
     Grpc.AspNetCore,
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Rocket.Surgery.LaunchPad.AspNetCore {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.FluentValidation {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.FluentValidation.Grpc {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Grpc {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
   ]
 }

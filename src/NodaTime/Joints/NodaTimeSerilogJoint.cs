@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
 
-namespace Rocket.Surgery.LaunchPad.Serilog.Joints;
+namespace Rocket.Surgery.LaunchPad.NodaTime.Joints;
 
 /// <summary>
 ///     A joint that destructures the NodaTime types in the logger Dovetail creates, the way

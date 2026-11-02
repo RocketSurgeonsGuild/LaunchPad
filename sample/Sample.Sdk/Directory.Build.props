@@ -1,9 +1,9 @@
 <!--
-    The only LaunchPad wiring in this sample: applying Rocket.Surgery.LaunchPad.Sdk here (version pinned by global.json's msbuild-sdks)
-    chains Joinery.Dovetail.Sdk, so every project below finds its host model and gets Dovetail and LaunchPad.Hosting for it. No project
-    references LaunchPad or Dovetail itself.
+    Settings every project here shares. The LaunchPad wiring is in each project: <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="..." />
+    next to its own SDK (#:sdk in the file-based app) chains Joinery.Dovetail.Sdk, so every project finds its host model and gets Dovetail
+    and LaunchPad.Hosting for it. No project references LaunchPad or Dovetail itself.
 -->
-<Project Sdk="Rocket.Surgery.LaunchPad.Sdk">
+<Project>
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
