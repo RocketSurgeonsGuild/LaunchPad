@@ -5,7 +5,7 @@ using Hosting.Tests.Scaffolding;
 namespace Sdk.Tests.Scaffolding;
 
 /// <summary>
-///     <c>Rocket.Surgery.LaunchPad.Sdk</c> (and <c>Rocket.Surgery.LaunchPad.Sdk.Web</c>) and the packages it adds to an application, packed from the repository into a feed of their own,
+///     <c>Rocket.Surgery.LaunchPad.Sdk</c> and the packages it adds to an application, packed from the repository into a feed of their own,
 ///     once for all the tests. The version is unique to the run, so a copy an earlier run left in a packages folder cannot stand in for it.
 /// </summary>
 /// <param name="Feed">The folder holding the packages; a folder with .nupkg files is a NuGet feed.</param>
@@ -20,18 +20,12 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     public const string SdkPackageId = "Rocket.Surgery.LaunchPad.Sdk";
 
     /// <summary>
-    ///     The id of the web application SDK package, which chains the SDK.
-    /// </summary>
-    public const string WebSdkPackageId = "Rocket.Surgery.LaunchPad.Sdk.Web";
-
-    /// <summary>
     ///     The projects packed into the feed: the SDK, every package it can add to an application, and the LaunchPad packages
     ///     those depend on, so an application that restores them finds each in the feed.
     /// </summary>
     private static readonly string[] Projects =
     [
         Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
-        Path.Combine("src", "Sdk.Web", "Rocket.Surgery.LaunchPad.Sdk.Web.csproj"),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
         Path.Combine("src", "Primitives", "Rocket.Surgery.LaunchPad.Primitives.csproj"),
         Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),

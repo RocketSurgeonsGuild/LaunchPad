@@ -18,20 +18,13 @@ and its `#:sdk` equivalent in the file-based app. The LaunchPad SDK chains `Join
 <Project Sdk="Rocket.Surgery.LaunchPad.Sdk/0.0.0-sample">
 ```
 
-`Sample.Sdk.Web` does the same for a web application with `Rocket.Surgery.LaunchPad.Sdk.Web`, which brings `Microsoft.NET.Sdk.Web` and
-the LaunchPad SDK:
-
-```xml
-<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/0.0.0-sample">
-```
-
 It could equally be applied once for every project, in a `Directory.Build.props` (`<Project Sdk="Rocket.Surgery.LaunchPad.Sdk">`, with its
 version under `msbuild-sdks` in `global.json`).
 
 | Project              | Shape                   | The SDK should...                                                                                                                       |
 | -------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `Sample.Sdk.Worker`  | `OutputType=Exe`        | find a generic host, add `Joinery.Dovetail.Hosting` and `Rocket.Surgery.LaunchPad.Hosting`, and write the health check joint            |
-| `Sample.Sdk.Web`     | `Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/…"` | bring `Microsoft.NET.Sdk.Web`, then find an ASP.NET Core host, add the same packages and `Rocket.Surgery.LaunchPad.AspNetCore`; the health checks come with the framework |
+| `Sample.Sdk.Web`     | `Microsoft.NET.Sdk.Web` | find an ASP.NET Core host, add the same packages and `Rocket.Surgery.LaunchPad.AspNetCore`; the health checks come with the framework |
 | `Sample.Sdk.Console` | `Sdk="Rocket.Surgery.LaunchPad.Sdk/…"` | bring `Microsoft.NET.Sdk`, then the same as `Sample.Sdk.Worker` |
 | `Sample.Sdk.FileApp` | file-based app          | add what a console application needs with no `#:package` for it: the generic host, `Rocket.Surgery.LaunchPad.Foundation`, `Hosting` and `NodaTime`, and Dovetail's Serilog and OpenTelemetry packages |
 
@@ -42,7 +35,6 @@ dotnet msbuild build/pack.proj
 dotnet run --project Sample.Sdk.Worker
 dotnet run --project Sample.Sdk.Console
 dotnet run Sample.Sdk.FileApp/app.cs
-dotnet run --project Sample.Sdk.Web    # then GET /health
 ```
 
 `build/pack.proj` packs the SDK and the packages it adds into `artifacts/nuget-sample` at `0.0.0-sample`, the version the projects name.

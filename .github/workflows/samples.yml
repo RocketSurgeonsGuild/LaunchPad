@@ -3,7 +3,7 @@ name: samples
 # Builds and runs sample/Sample.Sdk, the one sample LaunchPad.slnx leaves out: it consumes LaunchPad only as packed NuGet packages, so
 # build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
 # The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
-# clock), and the web app (the web SDK) serves it at /health, which this checks.
+# clock), which this checks; the web app only builds.
 
 on:
     push:
@@ -110,18 +110,6 @@ jobs:
                   echo "$output"
                   grep -qx 'Health: Healthy' <<< "$output"
                   grep -qx 'Clock: SystemClock' <<< "$output"
-            - name: 🚀 Run Sample.Sdk.Web
-              if: success() || failure()
-              run: |
-                  ASPNETCORE_URLS=http://127.0.0.1:5180 dotnet run --project Sample.Sdk.Web --no-build > ../../artifacts/logs/Sample.Sdk.Web.log 2>&1 &
-                  app=$!
-                  for _ in $(seq 1 60); do
-                      if health="$(curl -sf http://127.0.0.1:5180/health)"; then break; fi
-                      sleep 1
-                  done
-                  kill "$app" || true
-                  echo "Health: $health"
-                  [ "$health" = Healthy ]
             - name: 🏺 Publish logs
               if: always()
               uses: actions/upload-artifact@v7

@@ -4,8 +4,7 @@
         project or #:sdk Rocket.Surgery.LaunchPad.Sdk@... in a file-based app, or once for every project in a Directory.Build.props,
         <Project Sdk="Rocket.Surgery.LaunchPad.Sdk"> with its version pinned in global.json under msbuild-sdks. It is the only SDK entry the
         application needs: it chains Joinery.Dovetail.Sdk, which brings Microsoft.NET.Sdk when no other SDK has (a file-based app whose only
-        #:sdk directive is this one, or a project whose only SDK is this one). A web application names Rocket.Surgery.LaunchPad.Sdk.Web as
-        its only SDK instead, which imports Microsoft.NET.Sdk.Web and then this SDK.
+        #:sdk directive is this one).
     -->
 
     <!-- The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. -->
