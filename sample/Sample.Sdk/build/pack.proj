@@ -17,8 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- the SDK, every package it can add to an application, and the LaunchPad packages those depend on -->
+    <!-- the SDK, the web application SDK that chains it, every package it can add to an application, and the LaunchPad packages those depend on -->
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Sdk\Rocket.Surgery.LaunchPad.Sdk.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Sdk.Web\Rocket.Surgery.LaunchPad.Sdk.Web.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />

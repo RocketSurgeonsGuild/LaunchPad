@@ -1,0 +1,14 @@
+<Project>
+    <!--
+        A web application's only SDK, <Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web">: Microsoft.NET.Sdk.Web, then
+        Rocket.Surgery.LaunchPad.Sdk, as <Project Sdk="Microsoft.NET.Sdk.Web"> with <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" /> imports
+        them. The Dovetail SDK that Rocket.Surgery.LaunchPad.Sdk chains finds UsingMicrosoftNETSdk set by then, so it does not bring
+        Microsoft.NET.Sdk a second time, and both detect the WebApplication host as usual.
+    -->
+
+    <!-- LaunchPadSdkVersion: the version of Rocket.Surgery.LaunchPad.Sdk chained below, generated when the SDK is packed -->
+    <Import Project="$(MSBuildThisFileDirectory)Packages.props" />
+
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.Web" />
+    <Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" Version="$(LaunchPadSdkVersion)" />
+</Project>
