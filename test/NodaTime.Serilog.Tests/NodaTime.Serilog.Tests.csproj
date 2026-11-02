@@ -6,4 +6,7 @@
     <ItemGroup>
         <PackageReference Include="NodaTime.Testing" />
     </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    </ItemGroup>
 </Project>

@@ -1,0 +1,14 @@
+﻿{
+  Hosts: [
+    HostApplication
+  ],
+  PackageReferences: [
+    HotChocolate,
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Microsoft.Extensions.Hosting,
+    NodaTime,
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.NodaTime {LaunchPadVersion} (SDK)
+  ]
+}

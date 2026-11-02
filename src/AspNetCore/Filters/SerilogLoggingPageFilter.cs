@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 
+using Serilog;
+
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
 internal class SerilogLoggingPageFilter(IDiagnosticContext diagnosticContext) : IPageFilter

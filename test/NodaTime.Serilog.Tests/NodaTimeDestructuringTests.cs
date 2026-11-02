@@ -1,6 +1,6 @@
 using NodaTime.Testing;
 
-using Rocket.Surgery.LaunchPad.Serilog;
+using Rocket.Surgery.LaunchPad.NodaTime;
 
 using Serilog.Context;
 using Serilog.Events;

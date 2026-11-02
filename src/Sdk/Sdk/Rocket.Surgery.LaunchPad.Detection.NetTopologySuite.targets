@@ -1,34 +1,17 @@
 <Project>
     <!--
         NetTopologySuite, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references NetTopologySuite directly gets:
-          - Rocket.Surgery.LaunchPad.Spatial
-          - Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson, when it also references Newtonsoft.Json
+          - Rocket.Surgery.LaunchPad.Spatial, which also destructures the geometries in the Serilog logger Dovetail creates
           - Rocket.Surgery.LaunchPad.StrawberryShake.Spatial, when it also references a StrawberryShake client package
-        LaunchPadEnableNetTopologySuite set to false opts a project out, the variants included. Spatial.NewtonsoftJson belongs to both
-        technologies, so LaunchPadEnableNewtonsoftJson set to false keeps it out too. The Serilog destructuring package,
-        Rocket.Surgery.LaunchPad.Spatial.Serilog, comes with Serilog (Rocket.Surgery.LaunchPad.Serilog.targets).
-
-        The conditions are on the items: MSBuild evaluates every property before any item, so a property cannot read PackageReference.
+        LaunchPadEnableNetTopologySuite set to false opts a project out, the integration package included; LaunchPadEnableStrawberryShake
+        set to false keeps the integration package out.
     -->
-    <PropertyGroup>
-        <LaunchPadEnableNetTopologySuite Condition="'$(LaunchPadEnableNetTopologySuite)' == ''">true</LaunchPadEnableNetTopologySuite>
-    </PropertyGroup>
-    <ItemGroup Condition="'$(LaunchPadEnableNetTopologySuite)' != 'false'">
-        <DovetailSdkImplicitPackageReference
-            Include="Rocket.Surgery.LaunchPad.Spatial"
-            Version="$(LaunchPadVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite'))"
-        />
-        <DovetailSdkImplicitPackageReference
-            Include="Rocket.Surgery.LaunchPad.Spatial.NewtonsoftJson"
-            Version="$(LaunchPadVersion)"
-            Condition="'$(LaunchPadEnableNewtonsoftJson)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) and @(PackageReference->AnyHaveMetadataValue('Identity', 'Newtonsoft.Json'))"
-        />
-        <!-- a StrawberryShake client package: the one for servers and consoles, Blazor or MAUI, or the core they share -->
+    <ItemGroup Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) == 'true'">
+        <DovetailSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.Spatial" Version="$(LaunchPadVersion)" />
         <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.StrawberryShake.Spatial"
             Version="$(LaunchPadVersion)"
-            Condition="@(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) and (@(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Server')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Blazor')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Maui')) or @(PackageReference->AnyHaveMetadataValue('Identity', 'StrawberryShake.Core')))"
+            Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'StrawberryShake')) == 'true'"
         />
     </ItemGroup>
 </Project>

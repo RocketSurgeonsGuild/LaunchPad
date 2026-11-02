@@ -8,7 +8,7 @@ using Riok.Mapperly.Abstractions;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
+using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -38,7 +38,7 @@ public static partial class ListLaunchRecords
                        .AsQueryable();
             if (request.RocketType.HasValue) query = query.Where(z => z.Rocket.Type == request.RocketType);
 
-            return Project(query).ToAsyncEnumerable();
+            return Project(query).AsAsyncEnumerable();
         }
     }
 

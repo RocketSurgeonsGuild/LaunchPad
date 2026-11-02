@@ -1,0 +1,15 @@
+<Project>
+    <!--
+        gRPC, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references a gRPC server package directly
+        (Grpc.AspNetCore, or Grpc.AspNetCore.Server) gets Rocket.Surgery.LaunchPad.Grpc, the interceptors that turn LaunchPad's exceptions
+        into gRPC status codes. LaunchPadEnableGrpc set to false opts a project out. The FluentValidation integration package is added by
+        the FluentValidation file.
+    -->
+    <ItemGroup>
+        <DovetailSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.Grpc"
+            Version="$(LaunchPadVersion)"
+            Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'Grpc')) == 'true'"
+        />
+    </ItemGroup>
+</Project>

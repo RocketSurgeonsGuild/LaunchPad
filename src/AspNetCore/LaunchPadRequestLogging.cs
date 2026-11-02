@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Http;
 
+using Serilog;
+using Serilog.Events;
+
 namespace Rocket.Surgery.LaunchPad.AspNetCore;
 
 /// <summary>

@@ -9,7 +9,7 @@ using MediatR;
 using Riok.Mapperly.Abstractions;
 
 using Sample.Core.Operations.LaunchRecords;
-using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
+using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
 namespace Sample.Grpc.Services;
 

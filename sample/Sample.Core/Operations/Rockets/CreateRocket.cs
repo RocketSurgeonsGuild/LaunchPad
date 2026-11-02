@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 using Riok.Mapperly.Abstractions;
 
-using Rocket.Surgery.LaunchPad.Mapping;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;

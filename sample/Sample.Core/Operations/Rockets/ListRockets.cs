@@ -8,7 +8,7 @@ using Riok.Mapperly.Abstractions;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using NodaTimeMapper = Rocket.Surgery.LaunchPad.Mapping.NodaTimeMapper;
+using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
 namespace Sample.Core.Operations.Rockets;
 

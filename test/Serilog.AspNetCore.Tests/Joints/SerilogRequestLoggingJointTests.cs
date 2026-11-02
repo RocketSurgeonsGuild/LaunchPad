@@ -22,7 +22,7 @@ public class SerilogRequestLoggingJointTests
     [Test]
     public void Is_Exported_As_An_Application_Joint_That_Runs_After_The_AspNetCore_Joint()
     {
-        var export = SerilogExports.Joints().Single(x => x.Joint is SerilogRequestLoggingJoint);
+        var export = Exports.Joints().Single(x => x.Joint is SerilogRequestLoggingJoint);
 
         export.HostType.ShouldBe(DovetailHostType.Undefined);
         export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(

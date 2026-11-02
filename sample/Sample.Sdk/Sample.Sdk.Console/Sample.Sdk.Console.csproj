@@ -1,0 +1,13 @@
+<!--
+    The project SDK syntax: Rocket.Surgery.LaunchPad.Sdk is the project's only SDK, named with its version in the Sdk attribute. It brings
+    Microsoft.NET.Sdk through the Dovetail SDK it chains, and OutputType=Exe makes it find a generic host, as for Sample.Sdk.Worker.
+-->
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk/0.0.0-sample">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.14" />
+  </ItemGroup>
+</Project>

@@ -1,2 +1,5 @@
 solution: LaunchPad.slnx
+# Without this, TestSolution writes ModularPipelines' default runsettings, which covers every assembly the tests load
+# (Dovetail, Specular, the testing libraries, Sdk.Tests' scratch apps) and the JetBrains annotations compiled into each one.
+runSettings: test/coverage.runsettings
 packageIconUrl: https://raw.githubusercontent.com/RocketSurgeonsGuild/graphics/master/png/social-square-thrust-rounded.png

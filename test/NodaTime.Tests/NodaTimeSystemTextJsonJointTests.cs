@@ -3,6 +3,7 @@ using System.Text.Json;
 
 using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -76,12 +77,15 @@ public class NodaTimeSystemTextJsonJointTests
     }
 
     [Test]
-    public void Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
+    public void Is_Exported_As_A_Core_Joint_That_Runs_After_The_Time_Joint()
     {
         var export = NodaTimeExports.Joints().Single(x => x.Joint is NodaTimeSystemTextJsonJoint);
 
         export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldBeEmpty();
+        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
+            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
+            x => x.Type.ShouldBe(typeof(TimeJoint))
+        );
         export.Category.ToString().ShouldBe(DovetailCategory.Core);
         typeof(NodaTimeSystemTextJsonJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Core);
     }

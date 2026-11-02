@@ -46,10 +46,12 @@ jobs:
                   # One cache for every tool: restored here, before anything installs, and saved in the post step
                   # (cache_save_post), after the next step's tools and the pruning at the end of the job. The key is fixed
                   # rather than hashed from the tool versions, so a bump doesn't start a new multi-GB cache; it rolls over
-                  # every cache_max_age_days to pick up bumps. Only main saves it (pull requests and the merge queue each
-                  # have their own cache scope, so saving there would make one per ref); every ref can restore main's.
+                  # every cache_max_age_days to pick up bumps. mise keys a dotnet install by version alone, so changing a
+                  # tool's options (the extra runtime moving from `dotnet` to `aspnetcore`) needs the key's suffix bumped.
+                  # Only main saves it (pull requests and the merge queue each have their own cache scope, so saving there
+                  # would make one per ref); every ref can restore main's.
                   cache: true
-                  cache_key: mise-{{platform}}-{{cache_period}}
+                  cache_key: mise-{{platform}}-{{cache_period}}-aspnetcore
                   cache_max_age_days: 7
                   cache_save: ${{ github.ref == 'refs/heads/main' }}
                   cache_save_post: true

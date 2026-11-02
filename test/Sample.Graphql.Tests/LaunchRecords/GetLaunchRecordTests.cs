@@ -7,6 +7,7 @@ using Sample.Core.Models;
 using Sample.Graphql.Tests.Helpers;
 
 using CoreRocketType = Sample.Core.Domain.RocketType;
+using GraphQlRocketType = Sample.Graphql.Tests.RocketType;
 
 namespace Sample.Graphql.Tests.LaunchRecords;
 

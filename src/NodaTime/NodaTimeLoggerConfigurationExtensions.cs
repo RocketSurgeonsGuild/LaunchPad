@@ -3,7 +3,7 @@ using NodaTime;
 using Serilog;
 using Serilog.Configuration;
 
-namespace Rocket.Surgery.LaunchPad.Serilog;
+namespace Rocket.Surgery.LaunchPad.NodaTime;
 
 /// <summary>
 ///     Adds the Destructure.NodaTimeTypes() extension to <see cref="LoggerConfiguration" />.

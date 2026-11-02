@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Sample.Sdk.Console/Sample.Sdk.Console.csproj" />
   <Project Path="Sample.Sdk.Web/Sample.Sdk.Web.csproj" />
   <Project Path="Sample.Sdk.Worker/Sample.Sdk.Worker.csproj" />
 </Solution>

@@ -3,12 +3,12 @@
   Readme.md,
   Rocket.Surgery.LaunchPad.Sdk.nuspec,
   Sdk/Packages.props,
+  Sdk/Rocket.Surgery.LaunchPad.Detection.FluentValidation.targets,
+  Sdk/Rocket.Surgery.LaunchPad.Detection.GraphQL.targets,
+  Sdk/Rocket.Surgery.LaunchPad.Detection.Grpc.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets,
-  Sdk/Rocket.Surgery.LaunchPad.Detection.NewtonsoftJson.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.NodaTime.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.targets,
-  Sdk/Rocket.Surgery.LaunchPad.FluentValidation.targets,
-  Sdk/Rocket.Surgery.LaunchPad.Serilog.targets,
   Sdk/Sdk.props,
   Sdk/Sdk.targets
 ]

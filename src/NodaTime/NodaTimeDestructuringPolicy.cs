@@ -3,7 +3,7 @@ using NodaTime.Text;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Rocket.Surgery.LaunchPad.Serilog;
+namespace Rocket.Surgery.LaunchPad.NodaTime;
 
 internal class NodaTimeDestructuringPolicy : IDestructuringPolicy
 {

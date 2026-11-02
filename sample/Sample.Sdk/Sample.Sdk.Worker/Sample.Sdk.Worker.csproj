@@ -4,6 +4,7 @@
     because it references the health checks.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="0.0.0-sample" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
   </PropertyGroup>

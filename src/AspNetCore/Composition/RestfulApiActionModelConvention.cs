@@ -27,7 +27,7 @@ internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> optio
                          .Distinct(StringComparer.OrdinalIgnoreCase)
                          .ToArray();
         // Not valid for actions with more than one verb
-        return  httpMethods.Length > 1  ?   null   :  httpMethods[0];
+        return httpMethods.Length > 1 ? null : httpMethods[0];
     }
 
     [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
@@ -163,7 +163,8 @@ internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> optio
 
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (!_propertiesToHideFromOpenApi.TryGetValue(context.JsonTypeInfo.Type, out var propertiesToRemove)) return Task.CompletedTask;
+        if (!_propertiesToHideFromOpenApi.TryGetValue(context.JsonTypeInfo.Type, out var propertiesToRemove) || schema.Properties is null)
+            return Task.CompletedTask;
 
         foreach (var property in propertiesToRemove
                                 .Join(schema.Properties, z => z, z => z.Key, (_, b) => b.Key, StringComparer.OrdinalIgnoreCase)

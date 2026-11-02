@@ -8,6 +8,7 @@
     Microsoft.Extensions.Hosting,
     NetTopologySuite,
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.StrawberryShake {LaunchPadVersion} (SDK),
     StrawberryShake.Server
   ]
 }

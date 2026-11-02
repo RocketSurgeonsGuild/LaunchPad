@@ -6,9 +6,9 @@ using Joinery.Dovetail.Joints;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.LaunchPad.Serilog;
-using Rocket.Surgery.LaunchPad.Serilog.Joints;
-using Rocket.Surgery.LaunchPad.Serilog.Rivets;
+using Rocket.Surgery.LaunchPad.NodaTime;
+using Rocket.Surgery.LaunchPad.NodaTime.Joints;
+using Rocket.Surgery.LaunchPad.NodaTime.Rivets;
 
 namespace NodaTime.Serilog.Tests;
 
@@ -41,7 +41,7 @@ public class NodaTimeSerilogJointTests
     [Test]
     public void Is_Exported_As_A_Core_Serilog_Joint_Without_Ordering_Or_Gating()
     {
-        var export = NodaTimeSerilogExports.Joints().Single(x => x.Joint is NodaTimeSerilogJoint);
+        var export = NodaTimeExports.Joints().Single(x => x.Joint is NodaTimeSerilogJoint);
 
         export.Joint.ShouldBeAssignableTo<ISerilogJoint>();
         export.HostType.ShouldBe(DovetailHostType.Undefined);
