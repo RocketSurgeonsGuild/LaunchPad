@@ -24,17 +24,16 @@ public class SdkFileBasedAppTests(string targetFramework)
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         var folder = Directory.CreateDirectory(Path.Combine(tree.Directory, "fileapp")).FullName;
-        // Microsoft.Extensions.Hosting stays until the Joinery.Dovetail.Sdk version LaunchPad chains adds it to file-based apps itself.
+        // No Microsoft.Extensions.Hosting: the Joinery.Dovetail.Sdk LaunchPad chains adds the generic host to a file-based app.
         await File.WriteAllTextAsync(
             Path.Combine(folder, "app.cs"),
             $$"""
-            #:package Microsoft.Extensions.Hosting@{{PinnedVersion("Microsoft.Extensions.Hosting")}}
             #:package {{HostModelShape.HealthChecks}}@{{PinnedVersion(HostModelShape.HealthChecks)}}
             #:property TargetFramework={{targetFramework}}
             #:property RootNamespace={{HostModelShape.RootNamespace}}
             using {{HostModelShape.RootNamespace}};
 
-            using var host = await Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder(args).ConfigureDovetail();
+            using var host = await Host.CreateApplicationBuilder(args).ConfigureDovetail();
             System.Console.WriteLine($"HealthChecks:{host.Services.GetService(typeof(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckService)) is not null}");
             System.Console.WriteLine($"Clock:{host.Services.GetService(typeof(NodaTime.IClock))?.GetType().Name}");
             System.Console.WriteLine($"Foundation:{typeof(Rocket.Surgery.LaunchPad.Foundation.FoundationOptions).Assembly.GetName().Name}");
