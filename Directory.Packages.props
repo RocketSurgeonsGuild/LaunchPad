@@ -139,9 +139,9 @@
         <PackageVersion Include="OpenTelemetry" Version="1.20.1" />
 
         <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1" />
-        <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.20.1" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.20.2" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.20.1" />
-        <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.20.1" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.20.2" />
         <PackageVersion Include="Alba" Version="8.5.3" />
         <PackageVersion Include="Bogus" Version="35.6.5" />
         <PackageVersion Include="FakeItEasy" Version="9.0.1" />
