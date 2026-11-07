@@ -1,5 +1,5 @@
 using System.Globalization;
-using System.Text.RegularExpressions;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -36,17 +36,56 @@ internal static class Helpers
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public static string Pascalize(string input) =>
-        Regex.Replace(
-            input,
-            "(?:^|_| +)(.)",
-            match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture),
-            RegexOptions.None,
-            PascalizeTimeout
-        );
+    /// <remarks>
+    ///     Behaves exactly like <c>Regex.Replace(input, "(?:^|_| +)(.)", m => m.Groups[1].Value.ToUpperInvariant())</c>, which this replaced:
+    ///     the first character, and the character after an underscore or a run of spaces, is upper-cased and the separator dropped; a
+    ///     separator with nothing (or a line break) after it stays, a run of spaces as one.
+    /// </remarks>
+    public static string Pascalize(string input)
+    {
+        var builder = new StringBuilder(input.Length);
+        var index = 0;
+        while (index < input.Length)
+        {
+            var current = input[index];
+            if (index == 0 && current != '\n')
+            {
+                builder.Append(char.ToUpper(current, CultureInfo.InvariantCulture));
+                index++;
+            }
+            else if (current == '_' && index + 1 < input.Length && input[index + 1] != '\n')
+            {
+                builder.Append(char.ToUpper(input[index + 1], CultureInfo.InvariantCulture));
+                index += 2;
+            }
+            else if (current == ' ')
+            {
+                var end = index;
+                while (end < input.Length && input[end] == ' ')
+                {
+                    end++;
+                }
 
-    // Generator input is short identifiers; the timeout only bounds a pathological one.
-    private static readonly TimeSpan PascalizeTimeout = TimeSpan.FromSeconds(1);
+                if (end < input.Length && input[end] != '\n')
+                {
+                    builder.Append(char.ToUpper(input[end], CultureInfo.InvariantCulture));
+                    index = end + 1;
+                }
+                else
+                {
+                    builder.Append(' ');
+                    index = end;
+                }
+            }
+            else
+            {
+                builder.Append(current);
+                index++;
+            }
+        }
+
+        return builder.ToString();
+    }
 
     internal static AttributeListSyntax ExcludeFromCodeCoverage =
         AttributeList(SingletonSeparatedList(Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))));
