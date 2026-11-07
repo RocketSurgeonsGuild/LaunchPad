@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.StrawberryShake.Spatial](/LaunchPad/api/rocket.surgery.launchpad.strawberryshake.spatial.md)
-- Version: `2.0.1-beta.314`
+- Version: `2.0.1-beta.315`
 - Namespace: `Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
