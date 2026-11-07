@@ -1,0 +1,65 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import nugetIcon from '@assets/icons/nuget-logo-icon.svg';
+
+interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer" class="nuget-btn">
+  <Image src={nugetIcon} alt="" class="nuget-btn-icon" width={14} height={14} />
+  <span>nuget</span>
+  <Icon name="external" class="nuget-btn-ext" size="0.75rem" />
+</a>
+
+<style>
+  .nuget-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--api-border);
+    text-decoration: none;
+    font-size: var(--api-text-sm);
+    font-weight: 600;
+    color: var(--sl-color-gray-2);
+    transition: border-color 0.15s, color 0.15s;
+  }
+  /* The site's primary button (Starlight's LinkButton "primary"). */
+  .nuget-btn {
+    background: var(--sl-color-text-accent);
+    border-color: var(--sl-color-text-accent);
+    color: var(--sl-color-black);
+  }
+  .nuget-btn:hover {
+    border-color: color-mix(in srgb, var(--sl-color-text-accent) 85%, var(--sl-color-white));
+    background: color-mix(in srgb, var(--sl-color-text-accent) 85%, var(--sl-color-white));
+    color: var(--sl-color-black);
+  }
+  .nuget-btn-icon {
+    display: block;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+  }
+  /* Monochrome, in the button's text color. */
+  .nuget-btn-icon {
+    filter: brightness(0);
+  }
+  :global([data-theme='light']) .nuget-btn-icon {
+    filter: brightness(0) invert(1);
+  }
+  .nuget-btn-ext {
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+  :global(.nuget-btn-ext > svg) {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+</style>
