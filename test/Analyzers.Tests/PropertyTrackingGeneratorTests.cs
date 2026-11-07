@@ -1059,6 +1059,37 @@ partial class Validator : AbstractValidator<PatchRequest>
         ];
     }
 
+    [Test]
+    public async Task Should_Stamp_The_Generator_Version_From_Its_Typed_Assembly_Information()
+    {
+        var result = await Builder
+                          .AddSources(
+                               """
+                               public record Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                               }
+                               public partial record PatchRocket : IPropertyTracking<Request>, IRequest<RocketModel>
+                               {
+                               }
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
+
+        // The generator's identity and version, read from AssemblyInfo.Dependencies rather than the generator assembly.
+        const string generatorVersion = AssemblyInfo.Dependencies.Rocket_Surgery_LaunchPad_Analyzers.Attributes.FileVersion;
+        generatorVersion.ShouldNotBeNullOrWhiteSpace();
+        output!
+           .SyntaxTrees.ShouldContain(
+                tree => tree.ToString().Contains(
+                    $"""GeneratedCode("{typeof(PropertyTrackingGenerator).Namespace}", "{generatorVersion}")""",
+                    StringComparison.Ordinal
+                )
+            );
+    }
+
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();

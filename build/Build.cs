@@ -3,7 +3,6 @@
 #:package Sourcy.Git
 #:package Sourcy.DotNet
 #:package Rocket.Surgery.ModularPipelines.Extensions
-#:package Rocket.Surgery.MyAssembly
 #:include ./Samples.cs
 #:property ImportConventions=true
 #:property JsonSerializerIsReflectionEnabledByDefault=true
@@ -17,5 +16,5 @@ using Rocket.Surgery.ModularPipelines.Extensions.Modules;
 
 var pipelineBuilder = Pipeline.CreateBuilder(args);
 PluginRegistry.Register(new ConventionsPlugin(ConventionContextBuilder.Create(Imports.Instance)
-.AddIfMissing(nameof(MyAssembly.Project.BuildScriptsRoot), MyAssembly.Project.BuildScriptsRoot)));
+.AddIfMissing(nameof(AssemblyInfo.Project.BuildScriptsRoot), AssemblyInfo.Project.BuildScriptsRoot)));
 await pipelineBuilder.Build().RunAsync();

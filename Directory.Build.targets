@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
+    <!--
+        Each project's generated AssemblyInfo class lives in a namespace named after its assembly, the one name no two projects share (two can
+        share a RootNamespace: Rocket.Surgery.LaunchPad.AspNetCore and Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore do). In a shared
+        namespace a project that sees another's internals (a test through InternalsVisibleTo) binds typeof(AssemblyInfo) to the wrong copy, or
+        to two, and Specular, which can anchor an assembly with that type, scans the wrong one or fails to compile.
+    -->
+    <PropertyGroup>
+        <AssemblyInfoNamespace Condition="'$(AssemblyInfoNamespace)' == ''">$(AssemblyName)</AssemblyInfoNamespace>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
