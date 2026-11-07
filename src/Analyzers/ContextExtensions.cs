@@ -43,6 +43,11 @@ internal static class Helpers
     /// </remarks>
     public static string Pascalize(string input)
     {
+        if (input is null)
+        {
+            throw new ArgumentNullException(nameof(input));
+        }
+
         var builder = new StringBuilder(input.Length);
         var index = 0;
         while (index < input.Length)
