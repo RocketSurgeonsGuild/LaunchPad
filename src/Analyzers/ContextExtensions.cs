@@ -48,45 +48,59 @@ internal static class Helpers
             throw new ArgumentNullException(nameof(input));
         }
 
-        var builder = new StringBuilder(input.Length);
-        var index = 0;
-        while (index < input.Length)
+        var builder = new StringBuilder();
+        var atStart = true;
+        var pendingUnderscore = false;
+        var pendingSpace = false;
+        foreach (var current in input)
         {
-            var current = input[index];
-            if (index == 0 && current != '\n')
+            if (atStart)
             {
-                builder.Append(char.ToUpper(current, CultureInfo.InvariantCulture));
-                index++;
+                atStart = false;
+                builder.Append(current == '\n' ? current : char.ToUpper(current, CultureInfo.InvariantCulture));
+                continue;
             }
-            else if (current == '_' && index + 1 < input.Length && input[index + 1] != '\n')
+
+            if (pendingUnderscore || pendingSpace)
             {
-                builder.Append(char.ToUpper(input[index + 1], CultureInfo.InvariantCulture));
-                index += 2;
+                if (pendingSpace && current == ' ')
+                {
+                    continue;
+                }
+
+                var separator = pendingUnderscore ? '_' : ' ';
+                pendingUnderscore = false;
+                pendingSpace = false;
+                if (current != '\n')
+                {
+                    builder.Append(char.ToUpper(current, CultureInfo.InvariantCulture));
+                    continue;
+                }
+
+                builder.Append(separator);
+            }
+
+            if (current == '_')
+            {
+                pendingUnderscore = true;
             }
             else if (current == ' ')
             {
-                var end = index;
-                while (end < input.Length && input[end] == ' ')
-                {
-                    end++;
-                }
-
-                if (end < input.Length && input[end] != '\n')
-                {
-                    builder.Append(char.ToUpper(input[end], CultureInfo.InvariantCulture));
-                    index = end + 1;
-                }
-                else
-                {
-                    builder.Append(' ');
-                    index = end;
-                }
+                pendingSpace = true;
             }
             else
             {
                 builder.Append(current);
-                index++;
             }
+        }
+
+        if (pendingUnderscore)
+        {
+            builder.Append('_');
+        }
+        else if (pendingSpace)
+        {
+            builder.Append(' ');
         }
 
         return builder.ToString();
