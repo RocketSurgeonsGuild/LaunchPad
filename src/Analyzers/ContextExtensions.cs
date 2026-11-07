@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Reflection;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -27,9 +26,9 @@ internal static class Helpers
     public static string Camelize(string input)
     {
         var word = Pascalize(input);
-        #pragma warning disable CA1308
-        return word.Length > 0 ? string.Concat(word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture), word.Substring(1)) : word;
-        #pragma warning restore CA1308
+#pragma warning disable CA1308
+        return word.Length > 0 ? string.Concat(word[..1].ToLower(CultureInfo.InvariantCulture), word[1..]) : word;
+#pragma warning restore CA1308
     }
 
     /// <summary>
@@ -37,10 +36,7 @@ internal static class Helpers
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public static string Pascalize(string input)
-    {
-        return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
-    }
+    public static string Pascalize(string input) => Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
 
     internal static AttributeListSyntax ExcludeFromCodeCoverage =
         AttributeList(SingletonSeparatedList(Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))));
@@ -57,13 +53,13 @@ internal static class Helpers
                                         AttributeArgument(
                                             LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                Literal(typeof(Helpers).Assembly.GetName().Name)
+                                                Literal(AssemblyInfo.Project.AssemblyName)
                                             )
                                         ),
                                         AttributeArgument(
                                             LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                Literal(typeof(Helpers).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "generated")
+                                                Literal(AssemblyInfo.Attributes.FileVersion)
                                             )
                                         ),
                                     ]
@@ -76,5 +72,5 @@ internal static class Helpers
         );
 
     internal static AttributeListSyntax CompilerAttributes =
-        AttributeList(SeparatedList([..ExcludeFromCodeCoverage.Attributes, ..CompilerGenerated.Attributes,]));
+        AttributeList(SeparatedList([.. ExcludeFromCodeCoverage.Attributes, .. CompilerGenerated.Attributes,]));
 }

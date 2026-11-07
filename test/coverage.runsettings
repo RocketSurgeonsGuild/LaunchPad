@@ -127,7 +127,7 @@
                 <ModulePath>.*[\\/]Rocket\.Surgery\.MSBuild\.GitVersion\.dll</ModulePath>
                 <ModulePath>.*[\\/]Rocket\.Surgery\.MSBuild\.GlobalAnalyzerConfig\.dll</ModulePath>
                 <ModulePath>.*[\\/]Rocket\.Surgery\.MSBuild\.SourceLink\.dll</ModulePath>
-                <ModulePath>.*[\\/]Rocket\.Surgery\.MyAssembly\.dll</ModulePath>
+                <ModulePath>.*[\\/]Rocket\.Surgery\.AssemblyInfo\.dll</ModulePath>
                 <ModulePath>.*[\\/]Rocket\.Surgery\.Nuke\.dll</ModulePath>
                 <ModulePath>.*[\\/]Roslynator\.Analyzers\.dll</ModulePath>
                 <ModulePath>.*[\\/]Roslynator\.CodeAnalysis\.Analyzers\.dll</ModulePath>

@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using DiffEngine;
@@ -6,7 +5,6 @@ using DiffEngine;
 using Microsoft.CodeAnalysis;
 
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
-using Rocket.Surgery.LaunchPad.Analyzers;
 
 using VerifyTests.DiffPlex;
 
@@ -39,7 +37,8 @@ public static class ModuleInitializer
         VerifierSettings.AddScrubber(
             (builder, counter) =>
             {
-                if (typeof(InheritFromGenerator).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>() is { Version: { Length: > 0 } version })
+                // The generator stamps its own file version into [GeneratedCode]; read it from the typed dependency information, not the assembly.
+                if (AssemblyInfo.Dependencies.Rocket_Surgery_LaunchPad_Analyzers.Attributes.FileVersion is { Length: > 0 } version)
                     builder.Replace(version, "version");
             }
         );
