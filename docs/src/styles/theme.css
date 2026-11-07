@@ -1,0 +1,39 @@
+/* LaunchPad brand theme.
+   Overrides Starlight's base color scale (--sl-color-*) with the "Deep Space" (dark, default) and "Mission Control" (light)
+   palettes: a navy ground with a rocket-flame orange accent. Starlight derives every UI surface (nav, sidebar, hairlines, body
+   text, links, badges, etc.) from these few tokens, and the API reference styles (api-reference-site.css) take their accent from
+   them, so this file is the single source of truth for docs branding -- see
+   https://starlight.astro.build/guides/css-and-tailwind/#theming for the variable contract. */
+
+/* Deep Space (dark mode, default). */
+:root {
+    --sl-color-white: #ffffff;
+    --sl-color-gray-1: #eef1f7;
+    --sl-color-gray-2: #d3d9e6;
+    --sl-color-gray-3: #9aa4b8;
+    --sl-color-gray-4: #69738a;
+    --sl-color-gray-5: #283149;
+    --sl-color-gray-6: #161c2b;
+    --sl-color-black: #0f1420;
+
+    --sl-color-accent-low: #3d1f10;
+    --sl-color-accent: #ff7a3d;
+    --sl-color-accent-high: #ffb38a;
+}
+
+/* Mission Control (light mode). */
+:root[data-theme='light'] {
+    --sl-color-white: #10182b;
+    --sl-color-gray-1: #1d2638;
+    --sl-color-gray-2: #343e55;
+    --sl-color-gray-3: #5d6780;
+    --sl-color-gray-4: #8a93a8;
+    --sl-color-gray-5: #d9deea;
+    --sl-color-gray-6: #eef1f7;
+    --sl-color-gray-7: #f7f8fb;
+    --sl-color-black: #ffffff;
+
+    --sl-color-accent-low: #fde4d6;
+    --sl-color-accent: #d9531c;
+    --sl-color-accent-high: #9a3a12;
+}

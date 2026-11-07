@@ -29,9 +29,16 @@ oxfmt = "0.75.0"
 
 [tasks]
 build = { run = "dotnet run build/Build.cs" }
-docs = { run = "npm run dev --workspace docs", description = "Start the Astro/Starlight dev server" }
+"docs:api" = { run = "api-reference --solution LaunchPad.slnx --output docs/src/data/api", tools = { "dotnet:Rocket.Surgery.ApiReference" = "0.1.14" }, description = "Generate the C# API reference JSON (docs/src/data/api) from the Release build output: build first (mise run build, or dotnet build LaunchPad.slnx -c Release)" }
+docs = { run = [
+  "dotnet build LaunchPad.slnx -c Release",
+  "mise run docs:api",
+  "npm run dev --workspace docs",
+], description = "Build the solution, generate the API reference and start the Astro/Starlight dev server" }
 "docs:preview" = { run = "npm run preview --workspace docs", description = "Preview built Starlight site" }
-"docs:build" = { run = "npm run build --workspace docs", description = "Build the Starlight site" }
+"docs:build" = { run = "npm run build --workspace docs", depends = [
+  "docs:api",
+], description = "Build the Starlight site (the API reference JSON comes from the docs:api task, so build the solution first)" }
 "roslyn-lsp" = { run = "bash build/scripts/install-roslyn-lsp.sh", description = "Install the Microsoft Roslyn language server for this RID" }
 "pkl-vscode" = { run = "bash build/scripts/install-pkl-vscode.sh", description = "Install the Pkl VS Code extension (not in marketplace; installed from VSIX)" }
 

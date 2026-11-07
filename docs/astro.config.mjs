@@ -46,6 +46,7 @@ export default defineConfig({
                 // Adds the docs version switcher (src/components/VersionSelect.astro) next to the theme picker.
                 ThemeSelect: "./src/components/overrides/ThemeSelect.astro",
             },
+            customCss: ["./src/styles/theme.css", "./src/styles/api-reference-site.css", "./src/styles/api-reference.css"],
             plugins: [
                 starlightAutoDrafts(),
                 starlightGithubAlerts(),
@@ -64,17 +65,27 @@ export default defineConfig({
                             items: [{ autogenerate: { directory: "concepts" } }],
                         },
                         {
+                            label: "API Reference",
+                            link: "/api/",
+                            icon: "code-branch",
+                            items: [{ label: "Search C# APIs", link: "/api/" }],
+                        },
+                        {
                             label: "Changelog",
                             link: "/changelog/",
                             icon: "list-format",
                         },
                     ],
                     {
-                        exclude: ["/tags/**", "/changelog/**"],
+                        // The API reference pages (src/pages/api/) build their own package/namespace/type sidebar.
+                        exclude: ["/tags/**", "/changelog/**", "/api", "/api/**"],
                     },
                 ),
                 starlightLinksValidator({
                     errorOnRelativeLinks: false,
+                    // The API reference pages are Astro routes (src/pages/api/) generated from the build's JSON, not
+                    // content entries, so this plugin can't see them.
+                    exclude: ["/api", "/api/**"],
                 }),
                 starlightHeadingBadges(),
                 starlightImageZoom(),

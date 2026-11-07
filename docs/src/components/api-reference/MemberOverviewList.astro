@@ -1,0 +1,365 @@
+---
+/**
+ * MemberOverviewList — condensed member summary for the type overview page.
+ *
+ * Renders a compact table per member kind (constructors, properties, methods, etc.)
+ * with name, return type, and one-line summary. Each group links to the
+ * dedicated member-kind detail page for full documentation.
+ */
+import AnchorHeading from './AnchorHeading.astro';
+import DocContent from './DocContent.astro';
+import ReadableText from '@components/ReadableText.astro';
+import { hasAttribute } from '@utils/api-attributes';
+import {
+  groupMembersByKind,
+  memberKindLabels,
+  memberKindSlugs,
+  typeHref,
+  resolveTypeLink,
+  shortTypeName,
+  resolveMemberAnchorMap,
+  memberDisplayName,
+} from '@utils/packages';
+
+interface Props {
+  members: any[];
+  typeName: string;
+  typeArity?: number;
+  /** The type's page slug (`typeSlugOf`), when it differs from its name. */
+  typeSlug?: string;
+  allTypes?: any[];
+  packageName?: string;
+}
+
+const { members = [], typeName, typeArity = 0, typeSlug, allTypes = [], packageName = '' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const groups = groupMembersByKind(members);
+const anchorByMember = resolveMemberAnchorMap(members);
+
+/** Build the href for a member-kind detail page. */
+function kindPageHref(kind: string): string {
+  const slug = memberKindSlugs[kind];
+  if (!slug) return '#';
+  const typeBase = typeHref(base, packageName, { name: typeName, slug: typeSlug, genericParameters: Array.from({ length: typeArity }, () => ({ name: '' })) });
+  return `${typeBase}${slug}/`;
+}
+---
+
+{
+  groups.size > 0 && (
+    <div class="mol">
+      {[...groups.entries()].map(([kind, items]) => {
+        const kindHref = kindPageHref(kind);
+        return (
+          <section class="mol-group">
+            <AnchorHeading id={`members-${kind}`} text={memberKindLabels[kind] ?? kind}>
+              <span class="api-count-badge">{items.length}</span>
+            </AnchorHeading>
+            <div
+              class="mol-table not-content"
+              role="table"
+              aria-label={`${memberKindLabels[kind] ?? kind} for ${typeName}`}
+            >
+              {items.map((m: any) => {
+                const rawDisplayName = memberDisplayName(m);
+                const displayName =
+                  m.name === '.ctor' ? rawDisplayName.replace('.ctor', typeName) : rawDisplayName;
+                const memberAnchor = anchorByMember.get(m)!.exact;
+                const memberHref = kindHref !== '#' ? `${kindHref}#${memberAnchor}` : undefined;
+                const returnShort =
+                  m.returnType && m.returnType !== 'void' ? shortTypeName(m.returnType) : null;
+                const returnLink = m.returnType
+                  ? resolveTypeLink(m.returnType, allTypes, base, packageName)
+                  : null;
+                const summary = m.docs?.summary;
+                const isObsolete = hasAttribute(m.attributes, 'Obsolete');
+                const isExperimental = hasAttribute(m.attributes, 'Experimental');
+                const isPolyglotExport = hasAttribute(m.attributes, 'AspireExport');
+                const isPolyglotIgnored = hasAttribute(m.attributes, 'AspireExportIgnore');
+
+                // Badges
+                const badges: string[] = [];
+                if (m.isStatic && !m.isExtension) badges.push('static');
+                if (m.isExtension) badges.push('extension');
+                if (m.isAbstract) badges.push('abstract');
+                if (m.isVirtual) badges.push('virtual');
+
+                // Property accessor info
+                if ((m.kind === 'property' || m.kind === 'indexer') && (m.hasGet || m.hasSet)) {
+                  const parts: string[] = [];
+                  if (m.hasGet) parts.push('get');
+                  if (m.hasSet) parts.push(m.isInitOnly ? 'init' : 'set');
+                  badges.push(parts.join('; '));
+                }
+
+                const rowAttrs = memberHref ? { 'data-member-href': memberHref } : {};
+
+                return (
+                  // Always a <div> — `role="row"` isn't an allowed ARIA role on
+                  // an <a>, and nesting the return-type link (below) inside a
+                  // row-level <a> would also produce an invalid nested link.
+                  // The member name is the real, focusable link (WCAG 4.1.2);
+                  // a click handler makes the rest of the row clickable too.
+                  <div
+                    {...rowAttrs}
+                    class={`mol-row${isObsolete ? ' mol-obsolete' : ''}${memberHref ? ' mol-row-link' : ''}`}
+                    role="row"
+                    id={memberAnchor}
+                  >
+                    <div class="mol-name-col" role="cell">
+                      {memberHref ? (
+                        <a href={memberHref} class="mol-name-link">
+                          <code class="mol-name"><ReadableText text={displayName} /></code>
+                        </a>
+                      ) : (
+                        <code class="mol-name"><ReadableText text={displayName} /></code>
+                      )}
+                      {badges.map((b) => (
+                        <span
+                          class={`api-mod-badge mol-badge${b === 'extension' ? ' api-ext-badge' : ''}`}
+                        >
+                          {b}
+                        </span>
+                      ))}
+                      {isObsolete && (
+                        <span class="api-mod-badge mol-badge mol-badge-obsolete">obsolete</span>
+                      )}
+                      {isExperimental && (
+                        <span class="api-mod-badge mol-badge mol-badge-experimental">
+                          experimental
+                        </span>
+                      )}
+                      {isPolyglotExport && <span class="api-mod-badge mol-badge">ats export</span>}
+                      {isPolyglotIgnored && (
+                        <span class="api-mod-badge mol-badge">ats ignored</span>
+                      )}
+                    </div>
+                    {returnShort && (
+                      <div class="mol-type-col" role="cell">
+                        {returnLink ? (
+                          <a href={returnLink.href} class="mol-type-link">
+                            <ReadableText text={returnShort} />
+                          </a>
+                        ) : (
+                          <code class="mol-type"><ReadableText text={returnShort} /></code>
+                        )}
+                      </div>
+                    )}
+                    {summary && (
+                      <div class="mol-desc-col" role="cell">
+                        <DocContent
+                          content={summary}
+                          allTypes={allTypes}
+                          packageName={packageName}
+                          tag="span"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <a href={kindHref} class="mol-view-all">
+              View all {memberKindLabels[kind]?.toLowerCase() ?? kind}
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+          </section>
+        );
+      })}
+    </div>
+  )
+}
+
+<style>
+  .mol {
+    margin: 0.5rem 0;
+  }
+  .mol-group {
+    margin-bottom: 2.5rem;
+  }
+  .mol-group:last-child {
+    margin-bottom: 1rem;
+  }
+  .mol-group :global(.anchor-heading) {
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--sl-color-gray-5);
+  }
+  .mol-group :global(.anchor-heading h2) {
+    font-size: 1.25rem;
+  }
+  /* Prevent the anchor-link icon from causing layout shifts */
+  .mol-group :global(.anchor-heading .sl-anchor-link) {
+    vertical-align: middle;
+  }
+
+  /* Rows */
+  .mol-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .mol-row {
+    display: grid;
+    grid-template-columns: minmax(160px, auto) 1fr;
+    gap: 0.35rem 1.25rem;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--api-border-subtle);
+    border-radius: var(--api-radius-md);
+    align-items: baseline;
+    transition: background 0.12s;
+  }
+  .mol-row:last-child {
+    border-bottom: none;
+  }
+  .mol-row-link {
+    cursor: pointer;
+  }
+  .mol-row-link:hover {
+    background: var(--api-surface);
+  }
+  .mol-row-link:hover .mol-name {
+    color: var(--sl-color-text-accent);
+  }
+  .mol-name-link {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mol-name-link:hover {
+    text-decoration: none;
+  }
+  .mol-obsolete {
+    opacity: 0.6;
+  }
+
+  /* Name column */
+  .mol-name-col {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .mol-name {
+    font-weight: 600;
+    font-size: var(--api-text-md);
+    color: var(--sl-color-text);
+    background: none;
+    padding: 0;
+    display: block;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  /* Badges */
+  .mol-badge {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.35rem;
+  }
+  .mol-badge-obsolete {
+    color: var(--sl-color-orange);
+    border-color: var(--sl-color-orange);
+  }
+  .mol-badge-experimental {
+    color: var(--sl-color-purple);
+    border-color: var(--sl-color-purple);
+  }
+
+  /* Return type column */
+  .mol-type-col {
+    font-size: var(--api-text-base);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+  .mol-type-link {
+    color: var(--sl-color-text-accent);
+    text-decoration: none;
+  }
+  .mol-type-link:hover {
+    text-decoration: underline;
+  }
+  .mol-type {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--sl-color-gray-2);
+  }
+
+  /* Description column */
+  .mol-desc-col {
+    grid-column: 1 / -1;
+    font-size: var(--api-text-base);
+    color: var(--sl-color-gray-2);
+    line-height: 1.5;
+    /* Truncate long summaries */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* "View all" link */
+  .mol-view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    font-size: var(--api-text-base);
+    font-weight: 500;
+    color: var(--sl-color-text-accent);
+    text-decoration: none;
+    transition: gap 0.15s ease;
+    min-height: var(--aspire-touch-target);
+  }
+  .mol-view-all:hover {
+    text-decoration: underline;
+    gap: 0.55rem;
+  }
+
+  /* Responsive: stack on narrow screens */
+  @media (max-width: 40rem) {
+    .mol-row {
+      grid-template-columns: 1fr;
+    }
+    .mol-type-col {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+</style>
+
+<script>
+  // The member name is the real, focusable link (see markup above). This
+  // makes the rest of the row clickable too, without putting an ARIA "row"
+  // role on an <a> or nesting the return-type link inside another link.
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('a, button')) return;
+
+    const row = target.closest('[data-member-href]') as HTMLElement | null;
+    if (!row) return;
+
+    const href = row.dataset.memberHref;
+    if (href) window.location.href = href;
+  });
+</script>

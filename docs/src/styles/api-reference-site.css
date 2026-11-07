@@ -1,0 +1,16 @@
+/*
+ * The design tokens the API reference components (ported from aspire.dev, see src/components/api-reference/) use, mapped
+ * onto this site's Starlight theme.
+ */
+:root {
+    --aspire-text-body: 1rem;
+    --aspire-text-small: 0.875rem;
+    --aspire-text-meta: 0.75rem;
+    --aspire-text-control: 0.8125rem;
+    --aspire-touch-target: 2.125rem;
+    --aspire-color-purple: var(--sl-color-accent);
+    --aspire-color-primary: var(--sl-color-accent);
+    --aspire-color-secondary: var(--sl-color-accent-high);
+    --aspire-color-light: var(--sl-color-accent-low);
+    --aspire-action-focus: var(--sl-color-accent-high);
+}
