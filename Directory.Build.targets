@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
+    <!--
+        Each project's generated AssemblyInfo class lives in its own root namespace (set here, after the SDK has defaulted RootNamespace).
+        In the global namespace every project would have the same AssemblyInfo, so a project that sees another's internals (a test through
+        InternalsVisibleTo) would bind typeof(AssemblyInfo) to its own copy, and Specular, which can anchor an assembly with that type,
+        would scan the wrong one.
+    -->
+    <PropertyGroup>
+        <AssemblyInfoNamespace Condition="'$(AssemblyInfoNamespace)' == ''">$(RootNamespace)</AssemblyInfoNamespace>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>

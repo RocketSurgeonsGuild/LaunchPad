@@ -36,7 +36,17 @@ internal static class Helpers
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public static string Pascalize(string input) => Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
+    public static string Pascalize(string input) =>
+        Regex.Replace(
+            input,
+            "(?:^|_| +)(.)",
+            match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture),
+            RegexOptions.None,
+            PascalizeTimeout
+        );
+
+    // Generator input is short identifiers; the timeout only bounds a pathological one.
+    private static readonly TimeSpan PascalizeTimeout = TimeSpan.FromSeconds(1);
 
     internal static AttributeListSyntax ExcludeFromCodeCoverage =
         AttributeList(SingletonSeparatedList(Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))));
