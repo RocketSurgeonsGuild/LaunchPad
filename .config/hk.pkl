@@ -100,7 +100,10 @@ steps {
   ["tombi"] = Builtins.tombi
   ["tombi-format"] = Builtins.tombi_format
   ["xmllint"] = Builtins.xmllint
-  ["byte-order-marker"] = Builtins.byte_order_marker
+  // The schema the GraphQL sample's build writes keeps the BOM the build gives it; stripping it here only makes the next build put it back.
+  ["byte-order-marker"] = (Builtins.byte_order_marker) {
+    exclude = List("test/Sample.Graphql.Tests/schema.graphql")
+  }
   ["case-conflict"] = Builtins.check_case_conflict
   ["merge-conflict"] = Builtins.check_merge_conflict
   ["symlinks"] = Builtins.check_symlinks
