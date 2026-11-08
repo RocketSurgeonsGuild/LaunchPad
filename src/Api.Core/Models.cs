@@ -151,6 +151,12 @@ internal sealed record OperationModel(
     string? CreatedLocationRoute,
     EquatableArray<string> CreatedLocationTokens,
     string? VisibleHandler,
+    string GraphQLField,
+    bool GraphQLIsQuery,
+    string? ResponseGraphQLName,
+    string WireGraphQLName,
+    bool WireNeedsGraphQLName,
+    EquatableArray<SelectionModel> Selection,
     bool RequestIsMessage,
     bool ResponseIsMessage,
     LocationInfo? Location
@@ -176,6 +182,7 @@ internal sealed record HostModel(
     bool DeclaresBaseType,
     string? DeclaredRoute,
     bool DeclaresApiController,
+    bool DeclaresGraphQLType,
     ProfileModel? Profile,
     EquatableArray<OperationModel> Operations,
     EquatableArray<DiagnosticInfo> Diagnostics,
@@ -216,3 +223,6 @@ internal static class RouteText
         }
     }
 }
+
+/// <summary>A field of a GraphQL selection set; a leaf (scalar) has no children.</summary>
+internal sealed record SelectionModel(string Field, EquatableArray<SelectionModel> Children);

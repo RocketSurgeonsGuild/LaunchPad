@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>GraphQLClientHost</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Functional.ImmediateHandlers.Contracts/Api.Functional.ImmediateHandlers.Contracts.csproj" />
+    </ItemGroup>
+</Project>

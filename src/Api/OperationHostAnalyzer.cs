@@ -46,6 +46,19 @@ public sealed class OperationHostAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        if (kind == HostKind.GraphQLQuery)
+        {
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    ApiDiagnostics.HostTransportUnknown,
+                    location,
+                    host.Name,
+                    "GraphQL query hosts aren't generated: queries usually return IQueryable for paging, filtering and projections, so write them by hand; list mutations on a *Mutations host"
+                )
+            );
+            return;
+        }
+
         if (context.Compilation.GetTypeByMetadataName(GeneratorMarkerNamespace + "." + kind + "Generator") is null)
         {
             context.ReportDiagnostic(

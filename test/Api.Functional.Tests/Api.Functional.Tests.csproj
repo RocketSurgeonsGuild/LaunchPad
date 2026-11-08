@@ -30,5 +30,11 @@
         <ProjectReference Include="../Api.Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GrpcClient/Api.Functional.ImmediateHandlers.GrpcClient.csproj" Aliases="immediatehandlersgrpcclient" />
         <ProjectReference Include="../Api.Functional/Foundatio/Api.Functional.Foundatio.GrpcClient/Api.Functional.Foundatio.GrpcClient.csproj" Aliases="foundatiogrpcclient" />
         <ProjectReference Include="../Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GrpcClient/Api.Functional.ZeroAlloc.GrpcClient.csproj" Aliases="zeroallocgrpcclient" />
+        <ProjectReference Include="../Api.Functional/MediatR/Api.Functional.MediatR.GraphQLClient/Api.Functional.MediatR.GraphQLClient.csproj" Aliases="mediatrgraphqlclient" />
+        <ProjectReference Include="../Api.Functional/Mediator/Api.Functional.Mediator.GraphQLClient/Api.Functional.Mediator.GraphQLClient.csproj" Aliases="mediatorgraphqlclient" />
+        <ProjectReference Include="../Api.Functional/ChannelMediator/Api.Functional.ChannelMediator.GraphQLClient/Api.Functional.ChannelMediator.GraphQLClient.csproj" Aliases="channelmediatorgraphqlclient" />
+        <ProjectReference Include="../Api.Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GraphQLClient/Api.Functional.ImmediateHandlers.GraphQLClient.csproj" Aliases="immediatehandlersgraphqlclient" />
+        <ProjectReference Include="../Api.Functional/Foundatio/Api.Functional.Foundatio.GraphQLClient/Api.Functional.Foundatio.GraphQLClient.csproj" Aliases="foundatiographqlclient" />
+        <ProjectReference Include="../Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GraphQLClient/Api.Functional.ZeroAlloc.GraphQLClient.csproj" Aliases="zeroallocgraphqlclient" />
     </ItemGroup>
 </Project>

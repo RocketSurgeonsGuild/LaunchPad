@@ -73,10 +73,12 @@
     <File Path="src/Directory.Build.targets" />
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <Project Path="src/Api/Rocket.Surgery.LaunchPad.Api.csproj" />
+    <Project Path="src/Api.Client.GraphQL/Rocket.Surgery.LaunchPad.Api.Client.GraphQL.csproj" />
     <Project Path="src/Api.Client.Grpc/Rocket.Surgery.LaunchPad.Api.Client.Grpc.csproj" />
     <Project Path="src/Api.Client.Http/Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" />
     <Project Path="src/Api.Controllers/Rocket.Surgery.LaunchPad.Api.Controllers.csproj" />
     <Project Path="src/Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" />
+    <Project Path="src/Api.GraphQL/Rocket.Surgery.LaunchPad.Api.GraphQL.csproj" />
     <Project Path="src/Api.Grpc/Rocket.Surgery.LaunchPad.Api.Grpc.csproj" />
     <Project Path="src/Api.MinimalApi/Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
@@ -137,6 +139,14 @@
     <Project Path="test/Api.Functional/Mediator/Api.Functional.Mediator.GrpcClient/Api.Functional.Mediator.GrpcClient.csproj" />
     <Project Path="test/Api.Functional/Mediator/Api.Functional.Mediator.GrpcClientHost/Api.Functional.Mediator.GrpcClientHost.csproj" />
     <Project Path="test/Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GrpcClient/Api.Functional.ZeroAlloc.GrpcClient.csproj" />
+    <Project Path="test/Api.Functional/ChannelMediator/Api.Functional.ChannelMediator.GraphQLClient/Api.Functional.ChannelMediator.GraphQLClient.csproj" />
+    <Project Path="test/Api.Functional/Foundatio/Api.Functional.Foundatio.GraphQLClient/Api.Functional.Foundatio.GraphQLClient.csproj" />
+    <Project Path="test/Api.Functional/Foundatio/Api.Functional.Foundatio.GraphQLClientHost/Api.Functional.Foundatio.GraphQLClientHost.csproj" />
+    <Project Path="test/Api.Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GraphQLClient/Api.Functional.ImmediateHandlers.GraphQLClient.csproj" />
+    <Project Path="test/Api.Functional/MediatR/Api.Functional.MediatR.GraphQLClient/Api.Functional.MediatR.GraphQLClient.csproj" />
+    <Project Path="test/Api.Functional/Mediator/Api.Functional.Mediator.GraphQLClient/Api.Functional.Mediator.GraphQLClient.csproj" />
+    <Project Path="test/Api.Functional/Mediator/Api.Functional.Mediator.GraphQLClientHost/Api.Functional.Mediator.GraphQLClientHost.csproj" />
+    <Project Path="test/Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GraphQLClient/Api.Functional.ZeroAlloc.GraphQLClient.csproj" />
     <Project Path="test/Api.Functional.Tests/Api.Functional.Tests.csproj" />
     <Project Path="test/Api.Generators.Tests/Api.Generators.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />

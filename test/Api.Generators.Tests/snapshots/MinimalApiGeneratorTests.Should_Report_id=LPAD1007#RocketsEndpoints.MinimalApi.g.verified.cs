@@ -3,6 +3,8 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using Microsoft.AspNetCore.Builder;
+
 [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.MinimalApi", "version")]
 public static partial class RocketsEndpoints
 {
@@ -13,7 +15,7 @@ public static partial class RocketsEndpoints
     public static global::Microsoft.AspNetCore.Routing.RouteGroupBuilder MapRocketsEndpoints(this global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints)
     {
         global::System.ArgumentNullException.ThrowIfNull(endpoints);
-        var group = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGroup(endpoints, "/api/rockets");
+        var group = endpoints.MapGroup("/api/rockets");
         global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithTags(group, "Rockets");
         return group;
     }

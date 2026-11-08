@@ -70,6 +70,7 @@ internal static class HostReader
             host.BaseType is { SpecialType: not SpecialType.System_Object },
             host.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.RouteAttribute"))?.ConstructorArguments.FirstOrDefault().Value as string,
             host.GetAttributes().Any(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.ApiControllerAttribute")),
+            host.GetAttributes().Any(a => a.AttributeClass.Is(KnownNames.ExtendObjectTypeAttribute)),
             profile.Profile,
             operations.ToEquatableArray(),
             diagnostics.ToEquatableArray(),
@@ -124,6 +125,13 @@ internal static class HostReader
         // gRPC carries the whole request as one message: no route, no query string, so none of the HTTP binding rules apply.
         var isHttp = HostInference.IsHttp(hostKind);
         var route = isHttp ? explicitRoute ?? Constrain(Naming.DefaultPath(remainder, hostNoun, verb, hasId), members) : "";
+        // GraphQL: a GET is a query, anything else a mutation, unless [ApiOperation(GraphQLOperation)] says otherwise (Query = 1, Mutation = 2).
+        var graphQLIsQuery = Int(apiOperation, "GraphQLOperation") switch
+        {
+            1 => true,
+            2 => false,
+            _ => verb == HttpVerb.Get,
+        };
         if (!isHttp) verb = HttpVerb.Post;
         var tokens = RouteText.Tokens(route).ToArray();
 
@@ -239,6 +247,15 @@ internal static class HostReader
             null,
             EquatableArray<string>.Empty,
             hostKind.IsClient() ? FindHandWrittenHandler(request, closedHandler, compilation)?.ToDisplayString() : null,
+            Naming.CamelCase(String(apiOperation, "GraphQLName") ?? String(args, "Name") ?? name),
+            graphQLIsQuery,
+            // A nested response (CreateRocket.Response) gets its container in front, or every nested Response would be one GraphQL type.
+            responseNotNull is INamedTypeSymbol { ContainingType: { } outer } nested ? outer.Name + nested.Name : null,
+            // The input type's GraphQL name: a nested one gets its container in front (named explicitly by the server), any other follows
+            // HotChocolate's rule of adding Input.
+            wireType.ContainingType is { } wireOuter ? wireOuter.Name + wireType.Name : wireType.Name.EndsWith("Input", StringComparison.Ordinal) ? wireType.Name : wireType.Name + "Input",
+            wireType.ContainingType is { },
+            hostKind == HostKind.GraphQLClient && responseNotNull is { } ? Selection(responseNotNull, 0, []) : EquatableArray<SelectionModel>.Empty,
             IsMessage(wireType),
             responseNotNull is { } && IsMessage(responseNotNull),
             location
@@ -524,6 +541,56 @@ internal static class HostReader
          || type.AllInterfaces.Any(i => i.Is("System.IParsable`1"))
          || TryParseMethods(type).Any(m => m.Parameters.Length is 2 or 3 && m.Parameters[^1].RefKind == RefKind.Out),
     };
+
+    // The selection a GraphQL client asks for: every readable public property, recursively, with scalars as leaves. Collections select their
+    // elements; a type already on the path (a cycle) or deeper than four levels is left out.
+    private static EquatableArray<SelectionModel> Selection(ITypeSymbol type, int depth, ImmutableHashSet<string> path)
+    {
+        type = Element(type) is var element && IsCollection(type, out var item) ? item : element;
+        if (IsLeaf(type) || depth > 4 || path.Contains(type.ToDisplayString())) return EquatableArray<SelectionModel>.Empty;
+        var inner = path.Add(type.ToDisplayString());
+        var properties = new List<IPropertySymbol>();
+        for (var current = type as INamedTypeSymbol; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType)
+        {
+            properties.AddRange(
+                current.GetMembers()
+                       .OfType<IPropertySymbol>()
+                       .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
+                       .Where(p => properties.All(existing => existing.Name != p.Name))
+            );
+        }
+
+        return properties.Select(p => (Property: p, Children: Selection(p.Type, depth + 1, inner)))
+                         .Where(p => IsLeaf(Leaf(p.Property.Type)) || !p.Children.IsEmpty)
+                         .Select(p => new SelectionModel(Naming.CamelCase(p.Property.Name), p.Children))
+                         .ToEquatableArray();
+    }
+
+    private static ITypeSymbol Leaf(ITypeSymbol type) => IsCollection(Element(type), out var item) ? Element(item) : Element(type);
+
+    private static bool IsCollection(ITypeSymbol type, out ITypeSymbol item)
+    {
+        item = type;
+        if (type is IArrayTypeSymbol array)
+        {
+            item = array.ElementType;
+            return true;
+        }
+
+        if (type.SpecialType == SpecialType.System_String) return false;
+        var enumerable = type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Collections_Generic_IEnumerable_T } self
+            ? self
+            : type.AllInterfaces.FirstOrDefault(i => i.OriginalDefinition.SpecialType == SpecialType.System_Collections_Generic_IEnumerable_T);
+        if (enumerable is null) return false;
+        item = enumerable.TypeArguments[0];
+        return true;
+    }
+
+    // A scalar on a GraphQL server: what binds from a route or query value, NodaTime's types, and strongly typed ids (a type with one Value).
+    private static bool IsLeaf(ITypeSymbol type) =>
+        IsSimple(type)
+     || type.ContainingNamespace?.ToDisplayString() is { } ns && ( ns == "System" || ns.StartsWith("NodaTime", StringComparison.Ordinal) )
+     || type.GetMembers("Value").OfType<IPropertySymbol>().Any(p => !p.IsStatic) && type.GetMembers().OfType<IPropertySymbol>().Count(p => !p.IsStatic) == 1;
 
     private static string NormalizeRoute(string route) => string.Join("/", route.Trim('/').Split('/').Select(s => s.StartsWith("{", StringComparison.Ordinal) ? "{}" : s.ToLowerInvariant()));
 

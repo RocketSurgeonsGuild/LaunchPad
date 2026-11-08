@@ -3,6 +3,8 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using Microsoft.AspNetCore.Builder;
+
 namespace Sample.Server
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.MinimalApi", "version")]
@@ -15,10 +17,10 @@ namespace Sample.Server
         public static global::Microsoft.AspNetCore.Routing.RouteGroupBuilder MapRocketsEndpoints(this global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints)
         {
             global::System.ArgumentNullException.ThrowIfNull(endpoints);
-            var group = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGroup(endpoints, "/api/rockets");
+            var group = endpoints.MapGroup("/api/rockets");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithTags(group, "Rockets");
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id:guid}", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__GetRocketRequestDelegate));
+                var endpoint = group.MapMethods("/{id:guid}", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__GetRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__GetRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Results<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.Rockets.RocketModel>, global::Microsoft.AspNetCore.Http.HttpResults.NotFound>>(method, builder));
@@ -33,7 +35,7 @@ namespace Sample.Server
             }
 
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__ListRocketsRequestDelegate));
+                var endpoint = group.MapMethods("", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__ListRocketsRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__ListRockets), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.NdjsonResult<global::Sample.Contracts.Rockets.RocketModel>>(method, builder));
@@ -47,7 +49,7 @@ namespace Sample.Server
             }
 
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "", new string[] { "POST" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__CreateRocketRequestDelegate));
+                var endpoint = group.MapMethods("", new string[] { "POST" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__CreateRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__CreateRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Created<global::Sample.Contracts.Rockets.CreateRocket.Response>>(method, builder));
@@ -62,7 +64,7 @@ namespace Sample.Server
             }
 
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id:guid}", new string[] { "PUT" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__EditRocketRequestDelegate));
+                var endpoint = group.MapMethods("/{id:guid}", new string[] { "PUT" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__EditRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__EditRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.Rockets.RocketModel>>(method, builder));
@@ -78,7 +80,7 @@ namespace Sample.Server
             }
 
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id:guid}", new string[] { "DELETE" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__DeleteRocketRequestDelegate));
+                var endpoint = group.MapMethods("/{id:guid}", new string[] { "DELETE" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__DeleteRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__DeleteRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Ok<bool>>(method, builder));

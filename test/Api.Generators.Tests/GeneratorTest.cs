@@ -1,4 +1,6 @@
 extern alias controllers;
+extern alias graphql;
+extern alias graphqlclient;
 extern alias grpc;
 extern alias grpcclient;
 extern alias httpclient;
@@ -159,6 +161,25 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithGenerator<grpcclient::Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator>()
            .AddReferences(GrpcAssemblies)
            .AddReferences(typeof(ProtoBuf.Grpc.ClientFactory.ServicesExtensions).Assembly, typeof(Grpc.Net.ClientFactory.GrpcClientFactoryOptions).Assembly);
+
+    /// <summary>A server compilation running the GraphQL mutation generator.</summary>
+    protected GeneratorTestContextBuilder GraphQLServer(Mediator mediator, GeneratorTestResults contracts) =>
+        Server(mediator, contracts, withMinimalApi: false)
+           .WithGenerator<graphql::Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator>()
+           .AddReferences(
+                typeof(HotChocolate.Types.ExtendObjectTypeAttribute).Assembly,
+                typeof(HotChocolate.GraphQLNameAttribute).Assembly,
+                typeof(HotChocolate.Resolvers.IResolverContext).Assembly,
+                typeof(HotChocolate.Execution.Configuration.IRequestExecutorBuilder).Assembly,
+                typeof(SchemaRequestExecutorBuilderExtensions).Assembly,
+                typeof(HotChocolate.Authorization.AuthorizeAttribute).Assembly,
+                typeof(HotChocolate.Types.IInputObjectTypeDescriptor<>).Assembly,
+                typeof(HotChocolate.Language.OperationType).Assembly
+            );
+
+    /// <summary>A client compilation running the GraphQL client generator.</summary>
+    protected GeneratorTestContextBuilder GraphQLClient(Mediator mediator, GeneratorTestResults contracts) =>
+        Client(mediator, contracts, withHttp: false).WithGenerator<graphqlclient::Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator>();
 
     private static readonly Assembly[] GrpcAssemblies =
         [typeof(ProtoBuf.Grpc.CallContext).Assembly, typeof(Grpc.Core.CallOptions).Assembly, typeof(ProtoBuf.Serializer).Assembly];

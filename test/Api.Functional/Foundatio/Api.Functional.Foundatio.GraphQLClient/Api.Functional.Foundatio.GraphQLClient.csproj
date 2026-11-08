@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>Client</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Functional.Foundatio.GraphQLClientHost/Api.Functional.Foundatio.GraphQLClientHost.csproj" />
+        <PackageReference Include="Foundatio.Mediator" />
+    </ItemGroup>
+</Project>

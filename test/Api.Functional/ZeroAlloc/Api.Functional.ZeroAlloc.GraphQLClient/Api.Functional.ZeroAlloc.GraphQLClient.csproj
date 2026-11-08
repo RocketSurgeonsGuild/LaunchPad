@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>GraphQLClientHost</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Functional.ZeroAlloc.Contracts/Api.Functional.ZeroAlloc.Contracts.csproj" />
+        <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />
+    </ItemGroup>
+</Project>

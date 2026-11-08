@@ -97,7 +97,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
                                new[]
                                    {
                                        ThrowIfNull("endpoints"),
-                                       Var("group", Invoke(Member("global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions", "MapGroup"), Id("endpoints"), Literal("/" + host.BaseRoute))),
+                                       Var("group", Invoke(Member(Id("endpoints"), "MapGroup"), Literal("/" + host.BaseRoute))),
                                        Statement(Invoke(Member(OpenApi, "WithTags"), Id("group"), Literal(Naming.HostNoun(host.Name)))),
                                    }
                                   .Concat(mapped.Select(m => Mapping(host, profile, m.Operation, m.Service, duplicateNames.Contains(m.Operation.EndpointName))))
@@ -119,7 +119,8 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
 
         var endpoints = Class(host.Name, Modifiers(Accessibility(host.Accessibility), SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword), members)
            .AddAttributeLists(GeneratedCode("Rocket.Surgery.LaunchPad.Api.MinimalApi", typeof(MinimalApiGenerator).Assembly.GetName().Version));
-        return Render(host.Namespace, [endpoints]);
+        // MapGroup and MapMethods are called as extensions: HotChocolate.AspNetCore declares a class with the same full name as theirs.
+        return Render(host.Namespace, [endpoints], ["Microsoft.AspNetCore.Builder"]);
     }
 
     // One endpoint: MapMethods over the generated request delegate, plus the metadata ApiExplorer and OpenAPI read from a typed handler.
@@ -133,8 +134,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             Var(
                 "endpoint",
                 Invoke(
-                    Member("global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions", "MapMethods"),
-                    Id("group"),
+                    Member(Id("group"), "MapMethods"),
                     Literal(operation.Route.Length == 0 ? "" : "/" + operation.Route.Trim('/')),
                     NewArray(Type("string"), [Literal(ServerEmit.Verb(operation.Verb))]),
                     New(Type($"{Http}.RequestDelegate"), Id($"__{operation.Name}RequestDelegate"))

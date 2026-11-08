@@ -172,4 +172,32 @@ internal static class Contracts
             public partial class RocketsGrpcClient;
         }
         """;
+
+    public const string MutationHost = """
+        #nullable enable
+        using Rocket.Surgery.LaunchPad.Api;
+        using Sample.Contracts.Rockets;
+
+        namespace Sample.Server
+        {
+            [Operation<CreateRocket.Request>]
+            [Operation<EditRocket.Request>]
+            [Operation<DeleteRocket.Request>]
+            public partial class RocketsMutations;
+        }
+        """;
+
+    public const string GraphQLClientHost = """
+        #nullable enable
+        using Rocket.Surgery.LaunchPad.Api;
+        using Sample.Contracts.Rockets;
+
+        namespace Sample.Client
+        {
+            [Operation<CreateRocket.Request>]
+            [Operation<EditRocket.Request>]
+            [Operation<DeleteRocket.Request>]
+            public partial class RocketsGraphQLClient;
+        }
+        """;
 }

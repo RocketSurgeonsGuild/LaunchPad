@@ -351,10 +351,19 @@ internal static class ApiSyntax
     ///     The text of a generated file: the header, <c>#nullable enable</c>, <c>#pragma warning disable CS1591</c>, then the members in
     ///     <paramref name="namespace" />, normalized.
     /// </summary>
-    public static string Render(string? @namespace, IEnumerable<MemberDeclarationSyntax> members, params AttributeListSyntax[] assemblyAttributes)
+    public static string Render(string? @namespace, IEnumerable<MemberDeclarationSyntax> members, params AttributeListSyntax[] assemblyAttributes) =>
+        Render(@namespace, members, [], assemblyAttributes);
+
+    /// <summary>
+    ///     As <see cref="Render(string?, IEnumerable{MemberDeclarationSyntax}, AttributeListSyntax[])" />, with <c>using</c> directives. Generated
+    ///     code names types fully, so a using only brings extension methods into reach: needed where two assemblies declare a static class of
+    ///     the same full name (HotChocolate.AspNetCore's and ASP.NET Core's Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions).
+    /// </summary>
+    public static string Render(string? @namespace, IEnumerable<MemberDeclarationSyntax> members, IEnumerable<string> usings, params AttributeListSyntax[] assemblyAttributes)
     {
         var body = List(members);
         var unit = CompilationUnit()
+                  .WithUsings(List(usings.Select(u => UsingDirective(Name(u)))))
                   .WithAttributeLists(List(assemblyAttributes.Select(a => a.WithTarget(AttributeTargetSpecifier(Token(SyntaxKind.AssemblyKeyword))))))
                   .WithMembers(@namespace is { } ns ? SingletonList<MemberDeclarationSyntax>(NamespaceDeclaration(Name(ns)).WithMembers(body)) : body)
                   .NormalizeWhitespace(eol: "\n");

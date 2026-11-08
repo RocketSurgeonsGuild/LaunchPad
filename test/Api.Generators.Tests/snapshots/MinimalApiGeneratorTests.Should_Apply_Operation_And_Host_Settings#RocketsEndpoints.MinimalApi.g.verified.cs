@@ -3,6 +3,8 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using Microsoft.AspNetCore.Builder;
+
 [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.MinimalApi", "version")]
 public static partial class RocketsEndpoints
 {
@@ -13,10 +15,10 @@ public static partial class RocketsEndpoints
     public static global::Microsoft.AspNetCore.Routing.RouteGroupBuilder MapRocketsEndpoints(this global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints)
     {
         global::System.ArgumentNullException.ThrowIfNull(endpoints);
-        var group = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGroup(endpoints, "/api/v2/fleet");
+        var group = endpoints.MapGroup("/api/v2/fleet");
         global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithTags(group, "Rockets");
         {
-            var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/search", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__SearchRocketsRequestDelegate));
+            var endpoint = group.MapMethods("/search", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__SearchRocketsRequestDelegate));
             var method = typeof(RocketsEndpoints).GetMethod(nameof(__SearchRockets), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
             global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
             endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.RocketModel[]>>(method, builder));
@@ -36,7 +38,7 @@ public static partial class RocketsEndpoints
         }
 
         {
-            var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id}/launch", new string[] { "POST" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__LaunchRocketRequestDelegate));
+            var endpoint = group.MapMethods("/{id}/launch", new string[] { "POST" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__LaunchRocketRequestDelegate));
             var method = typeof(RocketsEndpoints).GetMethod(nameof(__LaunchRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
             global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
             endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Accepted<global::Sample.Contracts.RocketModel>>(method, builder));

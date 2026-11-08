@@ -19,6 +19,7 @@
         <PackageReference Include="ZeroAlloc.Mediator" />
         <PackageReference Include="protobuf-net.Grpc.AspNetCore" />
         <PackageReference Include="protobuf-net.Grpc.ClientFactory" />
+        <PackageReference Include="HotChocolate" />
         <PackageReference Include="Immediate.Handlers" IncludeAssets="compile;runtime" />
         <!-- Each generator assembly carries its own copy of the shared core; only the base one is visible unaliased. -->
         <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" />
@@ -27,6 +28,8 @@
         <ProjectReference Include="..\..\src\Api.Client.Http\Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" Aliases="httpclient" />
         <ProjectReference Include="..\..\src\Api.Controllers\Rocket.Surgery.LaunchPad.Api.Controllers.csproj" Aliases="controllers" />
         <ProjectReference Include="..\..\src\Api.Grpc\Rocket.Surgery.LaunchPad.Api.Grpc.csproj" Aliases="grpc" />
+        <ProjectReference Include="..\..\src\Api.GraphQL\Rocket.Surgery.LaunchPad.Api.GraphQL.csproj" Aliases="graphql" />
+        <ProjectReference Include="..\..\src\Api.Client.GraphQL\Rocket.Surgery.LaunchPad.Api.Client.GraphQL.csproj" Aliases="graphqlclient" />
         <ProjectReference Include="..\..\src\Api.Client.Grpc\Rocket.Surgery.LaunchPad.Api.Client.Grpc.csproj" Aliases="grpcclient" />
     </ItemGroup>
 </Project>
