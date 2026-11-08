@@ -1,6 +1,6 @@
 # Mediator-agnostic API generators: orientation, design and plan
 
-Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC server and client hosts built and round-tripping for all six mediators. Phase 2 is complete pending review. Phase 3 built: GraphQL mutation hosts and clients (queries left out, decided 2026-11-08), the old mutation generator removed, Sample.Graphql migrated. Server-side API versioning built for Minimal API and controller hosts (6).
+Status: **phases 1–3 built 2026-11-08.** Phase 1: base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide. Phase 2: controller hosts (the old controller generator and `RestfulApiController` removed, the Restful samples migrated) and code-first gRPC server and client hosts. Phase 3: GraphQL mutation hosts and clients (queries left out, decided 2026-11-08), the old mutation generator removed, Sample.Graphql migrated. Server-side API versioning built for Minimal API and controller hosts (6). Phase 4 decided, not built (5).
 
 Related: [ADR-0002 one package per integration](../adr/0002-package-per-integration.md), [ADR-0003 explicit operation hosts](../adr/0003-explicit-operation-hosts.md), and the terms _operation_, _operation host_, _group_, _transport_, _contracts project_ and _mediator profile_ in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -298,7 +298,7 @@ These were verified against each library's source: MediatR v12.5.0, Mediator 3.0
 #### 4.4.5 Left open, not built
 
 - `ClientHandlerTemplate` for a custom profile without a handler interface; until then such a profile reports LPAD1011 and generates no handlers (the typed client still works).
-- A Result/ErrorOr mapping hook: response mapping is one core function (`ResponsePlan Map(OperationModel)`), so a later `ResponsePlan` kind can be added without touching binding or emitters.
+- Union results (phase 4, 5): response mapping is one core function (`ResponsePlan Map(OperationModel)`), so a union `ResponsePlan` kind can be added without touching binding or emitters.
 
 ### 4.5 Pipeline and caching
 
@@ -468,7 +468,26 @@ Order of work:
 - GraphQL query and mutation hosts with explicit input names and `Add{Host}(this IRequestExecutorBuilder)`. This removes `GraphqlMutationActionBodyGenerator` and migrates `Sample.Graphql` (`Input` + `Create()`).
 - GraphQL client hosts (document + variables over `HttpClient`, reading `data.{field}`).
 
-**Phase 4, design notes only:** Result/ErrorOr mapping hook, OpenAPI enrichment, proto-based gRPC, subscriptions.
+**Phase 4, decided 2026-11-08, not built.** Three items. Subscriptions were dropped: stream operations on GraphQL hosts stay LPAD1015.
+
+_Union results_ (depends on [#3147](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3147), which standardizes LaunchPad's union types: native unions on .NET 11+, a generated equivalent on .NET 10 until .NET 12):
+
+- A handler may return a union of its value and error cases instead of throwing. Generated servers and clients support it on every transport; `NotFoundException` and null → 404 keep working for existing handlers.
+- The value case answers 200 (201 with `[Creates]`). An error case's status comes from its type name: `NotFound` → 404, `Invalid`/`Validation` → 400, `Unauthorized` → 401, `Forbidden` → 403, `Conflict` → 409, with the matching gRPC status and GraphQL code.
+- An attribute on the case type overrides the status (HTTP status, gRPC status, GraphQL code). An error case that matches no name and has no attribute is an **error** diagnostic.
+- On the wire each transport carries the case name and the case's members in its own error shape: HTTP ProblemDetails with a `case` extension and the members as extensions; gRPC the status plus a `case` trailer with the serialized case; GraphQL an error with `extensions.code` set to the case name and the members in `extensions`. Generated clients rebuild the union from the case name, so cases sharing a status stay distinct.
+
+_OpenAPI transformers:_
+
+- Each server host gets generated Microsoft.AspNetCore.OpenApi `IOpenApiOperationTransformer`/`IOpenApiSchemaTransformer` classes, registered by a generated `Add{Host}OpenApi(OpenApiOptions)`: operation ids, summaries and remarks, union and authorization responses (401/403), the 201 `Location`, and strongly typed id schemas.
+- LaunchPad's existing OpenAPI filters (`src/AspNetCore/OpenApi`) skip generated endpoints, so nothing is applied twice; they keep serving hand-written endpoints.
+- FluentValidation rules join the request schemas at runtime: the generated transformer resolves `IValidator<TRequest>` when the document is built and a helper in `Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore` translates its rule descriptors (`NotEmpty` → required, `Length` → `minLength`/`maxLength`, …). Validators aren't analysed at compile time.
+
+_Proto-first gRPC_, alongside the code-first hosts of phase 2, which stay:
+
+- A host deriving a Grpc.Tools service base (`partial class RocketsService : Rockets.RocketsBase`) is proto-first; any other gRPC host is code-first. It lists its operations with `[Operation<T>]` as usual, each matched to an rpc of the base class by name; an unmatched entry is a diagnostic.
+- Client hosts over the proto-generated client (`Rockets.RocketsClient`) generate mediator handlers, so `mediator.Send` works on the client as on every other transport.
+- Proto messages are mapped to and from requests and responses with ZeroAlloc.Mapping (1.6.13, approved 2026-11-08 for apps with proto-first hosts): the generator emits `[Map<ProtoMessage, Request>]` and `[Map<Response, ProtoMessage>]` on a generated `static partial` mapper and ZeroAlloc.Mapping writes the bodies; users add their own `[Map]`/`[TryMap]` for nested and well-known types. Without the package referenced, proto-first hosts are a diagnostic.
 
 Before each phase I restate its plan and wait for a go-ahead.
 
@@ -508,13 +527,13 @@ Before each phase I restate its plan and wait for a go-ahead.
 - **Functional tests** start each server with `UseTestServer()` instead of `WebApplicationFactory`, because six servers share one test project and a `Program` entry point each would collide.
 
 - **gRPC messages.** protobuf-net.Grpc only carries classes and needs a parameterless constructor. The generator wraps any request, response or stream item that isn't a class in the contract's nested `Message<T>`, and sets `UseConstructor = false` for the carried classes that have none (positional records) from the generated `Map{Host}()`/`Add{Host}()`. Contracts still need `[DataContract]`/`[ProtoContract]` with ordered members (LPAD1014): field numbers are part of the wire format, so the generator doesn't invent them. Only the request and response types themselves are configured, not the types of their members.
-- **gRPC and HTTP client hosts for the same requests can't share a project**, since each generates a handler per request; LPAD1018 only sees the hosts of one generator, so this isn't diagnosed yet.
+- **Client hosts of different transports are different APIs** (decided 2026-11-08). LPAD1018 checks the client hosts of one transport; a project that calls the same request over HTTP and gRPC is talking to two APIs, so no cross-transport diagnostic is planned.
 
 - **Summaries from XML documentation** (2026-11-08): the operation's `Summary`/`Description`, then `[ApiOperation]`, then the `<summary>`/`<remarks>` of the request type or its containing type. The compiler gives generators documentation only for source symbols, so the base package's targets add the referenced projects' XML documentation files (beside the reference, or one folder up for a reference assembly) as additional files with `LaunchPadApiDocumentation="true"`; packages opt in the same way. The files are parsed once per change into an index of type summaries and remarks.
 - **Generated code is built with SyntaxFactory** (2026-11-08), through the `ApiSyntax` helpers in the core (names, invocations, awaits, locals, attributes, doc comments, partial hooks, the compilation unit and its header), and normalized. Doc comments are written in after normalizing, which would otherwise reformat them. The fixed helper sources (JSON and NDJSON helpers, the attribute declarations) are constant text, since nothing in them comes from the model.
 
-- **Server-side API versioning** (2026-11-08). An operation's version is its `[Operation<T>(Version)]`, else its host's. Minimal API hosts build one `ApiVersionSet` from their operations' versions (`NewApiVersionSet().HasApiVersion(…).Build()`) and call `WithApiVersionSet` and `MapToApiVersion` on each endpoint; controller hosts get `[ApiVersion]` per version on the class and `[MapToApiVersion]` per action. Versioning is emitted only when the server compilation references Asp.Versioning (`Asp.Versioning.Builder.ApiVersionSet` for Minimal API, `Asp.Versioning.ApiVersionAttribute` for controllers); otherwise LPAD1024 warns per versioned operation. `Version` on gRPC and GraphQL hosts is LPAD1021. Controllers are checked against `Asp.Versioning.Abstractions`, which `Asp.Versioning.Http` also brings in, so a controller project with only that package gets the attributes but no MVC versioning until it adds `Asp.Versioning.Mvc`. The functional test runs the MediatR fixture as Minimal API and as controllers (`Asp.Versioning.Mvc`, approved 2026-11-08): the client round-trips with each operation's version, and unsupported or missing versions answer 400.
+- **Server-side API versioning** (2026-11-08). An operation's version is its `[Operation<T>(Version)]`, else its host's. Minimal API hosts build one `ApiVersionSet` from their operations' versions (`NewApiVersionSet().HasApiVersion(…).Build()`) and call `WithApiVersionSet` and `MapToApiVersion` on each endpoint; controller hosts get `[ApiVersion]` per version on the class and `[MapToApiVersion]` per action. Versioning is emitted only when the server compilation references Asp.Versioning (`Asp.Versioning.Builder.ApiVersionSet` from `Asp.Versioning.Http` for Minimal API, `Asp.Versioning.ApiVersioningApplicationModelProvider` from `Asp.Versioning.Mvc` for controllers, since MVC ignores the attributes without it); otherwise LPAD1024 warns per versioned operation. `Version` on gRPC and GraphQL hosts is LPAD1021. The functional test runs the MediatR fixture as Minimal API and as controllers (`Asp.Versioning.Mvc`, approved 2026-11-08): the client round-trips with each operation's version, and unsupported or missing versions answer 400.
 
-**Open:**
+- **AOT for Minimal API** (2026-11-08): generate the request delegates ourselves (parameter binding with `TryParse`, body reading and result writing through `JsonTypeInfo`, explicit OpenAPI metadata), since RDG can't see generated endpoints (4.6).
 
-- **AOT for Minimal API — decided 2026-11-08:** generate the request delegates ourselves (parameter binding with `TryParse`, body reading and result writing through `JsonTypeInfo`, explicit OpenAPI metadata), since RDG can't see generated endpoints (4.6).
+**Open:** none. Phase 4 is decided and waits to be scheduled.

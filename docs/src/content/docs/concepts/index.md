@@ -21,3 +21,4 @@ that picks the right packages for a project. These pages explain the vocabulary 
 | [Direct reference](./integration-packages/#direct-references) | A reference the project declares itself, as opposed to one it receives transitively.           |
 | [Template](./templates/)                                      | Source written into a project only when its host model and references match.                   |
 | [LaunchPad SDK](./launchpad-sdk/)                             | The MSBuild SDK that chooses LaunchPad packages from what a project references.                |
+| [Operation](./operations/)                                    | A mediator request and its response, exposed over a transport through an operation host.       |
