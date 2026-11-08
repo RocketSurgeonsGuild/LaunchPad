@@ -2,7 +2,7 @@
 
 - Kind: `enum`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-beta.320`
+- Version: `2.0.1-beta.321`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Composition`
 - Target framework: `net10.0`
 

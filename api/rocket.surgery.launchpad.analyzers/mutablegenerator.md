@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Analyzers](/LaunchPad/api/rocket.surgery.launchpad.analyzers.md)
-- Version: `2.0.1-beta.320`
+- Version: `2.0.1-beta.321`
 - Namespace: `Rocket.Surgery.LaunchPad.Analyzers`
 - Target framework: `netstandard2.0`
 - Implements: `IIncrementalGenerator`
