@@ -95,6 +95,7 @@
         <PackageVersion Include="protobuf-net.Grpc.ClientFactory" Version="1.3.14" />
         <!-- API versioning for the API generators' Minimal API and controller hosts; used by their tests. -->
         <PackageVersion Include="Asp.Versioning.Http" Version="10.2.3" />
+        <PackageVersion Include="Asp.Versioning.Mvc" Version="10.2.1" />
 
 
 

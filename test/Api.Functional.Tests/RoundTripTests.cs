@@ -163,9 +163,11 @@ public class RoundTripTests
     }
 
     [Test]
-    public async Task Should_Map_Api_Versions(CancellationToken cancellationToken)
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Should_Map_Api_Versions(bool controllers, CancellationToken cancellationToken)
     {
-        await using var server = await mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(versioned: true);
+        await using var server = await mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(controllers, versioned: true);
         await using var client = mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create(server.GetTestServer().CreateHandler());
         var versioned = client.GetRequiredService<mediatrclient::Api.Functional.MediatR.Client.VersionedRocketsClient>();
         using var http = server.GetTestClient();

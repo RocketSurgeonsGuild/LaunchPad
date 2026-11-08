@@ -20,9 +20,15 @@ public static class ServerApp
         if (grpc) ProtoBuf.Grpc.Server.ServicesExtensions.AddCodeFirstGrpc(builder.Services);
         // HotChocolate needs a query type; the generated mutations extend the Mutation type.
         if (graphql) builder.Services.AddGraphQLServer().AddQueryType(d => d.Name("Query").Field("ping").Resolve("pong")).AddMutationType().AddRocketsMutations();
-        if (versioned) builder.Services.AddApiVersioning();
+        if (versioned)
+        {
+            var versioning = builder.Services.AddApiVersioning();
+            if (controllers) versioning.AddMvc();
+        }
+
         var app = builder.Build();
-        if (versioned) app.MapVersionedRocketsEndpoints();
+        // With controllers, VersionedRocketsController answers the same routes instead.
+        if (versioned && !controllers) app.MapVersionedRocketsEndpoints();
         if (graphql)
         {
             app.MapGraphQL();
@@ -104,3 +110,9 @@ public sealed class Handlers(RocketStore store)
 [Operation<GetRocket.Request>(Version = "2.0")]
 [Operation<CreateRocket.Request>]
 public static partial class VersionedRocketsEndpoints;
+
+// The same versions on a controller host, mapped with Asp.Versioning.Mvc.
+[OperationHost(Group = "versioned-rockets", Version = "1.0")]
+[Operation<GetRocket.Request>(Version = "2.0")]
+[Operation<CreateRocket.Request>]
+public partial class VersionedRocketsController;
