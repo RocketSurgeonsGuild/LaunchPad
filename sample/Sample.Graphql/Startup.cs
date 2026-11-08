@@ -8,8 +8,6 @@ using HotChocolate.Data.Sorting;
 using NetTopologySuite.Geometries;
 
 using NodaTime;
-
-using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 
 using Sample.Core.Domain;

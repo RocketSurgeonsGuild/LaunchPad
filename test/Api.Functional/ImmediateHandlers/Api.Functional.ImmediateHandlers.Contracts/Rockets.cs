@@ -1,5 +1,4 @@
 using System.Runtime.Serialization;
-using Rocket.Surgery.LaunchPad.Api;
 
 namespace Api.Functional.ImmediateHandlers.Contracts;
 

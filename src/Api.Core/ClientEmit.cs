@@ -12,7 +12,7 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 internal static class ClientEmit
 {
     private const string Ct = "cancellationToken";
-    internal static readonly string[] sourceArray = new[] { "mediator", "message", "callContext", "cancellationToken", "responseType", "skipAuthorization" };
+    internal static readonly string[] sourceArray = ["mediator", "message", "callContext", "cancellationToken", "responseType", "skipAuthorization"];
 
     public static IEnumerable<OperationModel> HandledOperations(HostModel host, ProfileModel profile) =>
         profile.ClientEmitter == ClientEmitter.None ? [] : host.Operations.Where(o => o.Handlers && o.InputType is null);

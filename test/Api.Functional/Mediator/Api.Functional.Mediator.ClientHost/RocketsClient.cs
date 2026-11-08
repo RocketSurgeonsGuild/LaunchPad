@@ -1,5 +1,4 @@
 using Api.Functional.Mediator.Contracts;
-using Rocket.Surgery.LaunchPad.Api;
 
 namespace Api.Functional.Mediator.ClientHost;
 

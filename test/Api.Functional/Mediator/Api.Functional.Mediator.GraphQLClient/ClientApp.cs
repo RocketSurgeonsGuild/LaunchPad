@@ -1,5 +1,4 @@
 using Api.Functional.Mediator.Contracts;
-using Api.Functional.Mediator.GraphQLClientHost;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 namespace Api.Functional.Mediator.GraphQLClient;

@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 
-using Rocket.Surgery.LaunchPad.Api;
-
 using Sample.Core.Operations.LaunchRecords;
 
 namespace Sample.Restful.Controllers;

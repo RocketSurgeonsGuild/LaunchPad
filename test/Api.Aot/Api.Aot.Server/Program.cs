@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using Api.Aot.Contracts;
 using Mediator;
-using Rocket.Surgery.LaunchPad.Api;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 builder.Services.AddMediator();

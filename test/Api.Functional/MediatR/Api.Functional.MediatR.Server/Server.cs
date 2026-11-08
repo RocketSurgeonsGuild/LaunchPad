@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Surgery.LaunchPad.Api;
 namespace Api.Functional.MediatR.Server;
 
 public static class ServerApp

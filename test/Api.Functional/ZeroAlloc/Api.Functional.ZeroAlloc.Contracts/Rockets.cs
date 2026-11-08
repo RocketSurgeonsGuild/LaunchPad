@@ -1,5 +1,4 @@
 using System.Runtime.Serialization;
-using Rocket.Surgery.LaunchPad.Api;
 using ZeroAlloc.Mediator;
 namespace Api.Functional.ZeroAlloc.Contracts;
 

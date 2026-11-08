@@ -1,5 +1,3 @@
-using Rocket.Surgery.LaunchPad.Api;
-
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Minimal;

@@ -1,5 +1,4 @@
 using Api.Functional.ImmediateHandlers.Contracts;
-using Rocket.Surgery.LaunchPad.Api;
 
 namespace Api.Functional.ImmediateHandlers.GrpcClient;
 
