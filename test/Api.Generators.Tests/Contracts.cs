@@ -13,6 +13,7 @@ internal static class Contracts
         Mediator.ZeroAlloc => Shared("using ZeroAlloc.Mediator;", "IRequest<RocketModel?>", "IStreamRequest<RocketModel>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest", "readonly record struct"),
         Mediator.Foundatio => Markerless("using Foundatio.Mediator;", "IRequest<RocketModel?>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest<bool>"),
         Mediator.ImmediateHandlers => Markerless("", "", "", "", ""),
+        Mediator.Custom => throw new NotImplementedException(),
         _ => throw new ArgumentOutOfRangeException(nameof(mediator)),
     };
 
