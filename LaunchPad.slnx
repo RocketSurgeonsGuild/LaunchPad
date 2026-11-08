@@ -74,6 +74,7 @@
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <Project Path="src/Api/Rocket.Surgery.LaunchPad.Api.csproj" />
     <Project Path="src/Api.Client.Http/Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" />
+    <Project Path="src/Api.Controllers/Rocket.Surgery.LaunchPad.Api.Controllers.csproj" />
     <Project Path="src/Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" />
     <Project Path="src/Api.MinimalApi/Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />

@@ -172,15 +172,21 @@ internal sealed record HostModel(
     string? Version,
     bool JsonWebDefaults,
     bool DeclaresBaseType,
-    bool DeclaresRoute,
+    string? DeclaredRoute,
+    bool DeclaresApiController,
     ProfileModel? Profile,
     EquatableArray<OperationModel> Operations,
     EquatableArray<DiagnosticInfo> Diagnostics,
     LocationInfo? Location
 )
 {
-    /// <summary>The route the host's operations live under, e.g. api/rockets.</summary>
-    public string BaseRoute => RouteText.Join(RoutePrefix, Group);
+    /// <summary>
+    ///     The route the host's operations live under, e.g. api/rockets. A controller's own <c>[Route]</c> replaces prefix and group; its
+    ///     <c>[controller]</c> token is the host's noun, as MVC fills it in.
+    /// </summary>
+    public string BaseRoute => DeclaredRoute is { } declared
+        ? declared.Replace("[controller]", Naming.HostNoun(Name)).Trim('/')
+        : RouteText.Join(RoutePrefix, Group);
 }
 
 internal static class RouteText

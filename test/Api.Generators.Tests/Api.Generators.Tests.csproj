@@ -23,5 +23,6 @@
         <ProjectReference Include="..\..\src\Api.CodeFixes\Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" Aliases="codefixes" />
         <ProjectReference Include="..\..\src\Api.MinimalApi\Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" Aliases="minimalapi" />
         <ProjectReference Include="..\..\src\Api.Client.Http\Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" Aliases="httpclient" />
+        <ProjectReference Include="..\..\src\Api.Controllers\Rocket.Surgery.LaunchPad.Api.Controllers.csproj" Aliases="controllers" />
     </ItemGroup>
 </Project>

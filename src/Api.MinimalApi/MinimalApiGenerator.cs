@@ -24,7 +24,8 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     private const string Http = "global::Microsoft.AspNetCore.Http";
     private const string Results = Http + ".HttpResults";
     private const string Ct = "__cancellationToken";
-    private const string Generated = "global::Rocket.Surgery.LaunchPad.Api.Generated";
+    // Each transport package emits its helpers into its own namespace, so a project can reference several of them.
+    private const string Generated = "global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi";
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -58,7 +59,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         {
             var items = duplicate.ToArray();
             output.ReportDiagnostic(
-                DiagnosticInfo.Create(ApiDiagnostics.DuplicateRoute, items[1].Operation.Location, Verb(duplicate.Key.Verb), duplicate.Key.Route, items[0].Host.Name, items[1].Host.Name)
+                DiagnosticInfo.Create(ApiDiagnostics.DuplicateRoute, items[1].Operation.Location, ServerEmit.Verb(duplicate.Key.Verb), duplicate.Key.Route, items[0].Host.Name, items[1].Host.Name)
                               .ToDiagnostic()
             );
         }
@@ -87,7 +88,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             if (ServerDispatch.ServiceType(profile, operation) is not { } service)
             {
                 output.ReportDiagnostic(
-                    DiagnosticInfo.Create(ApiDiagnostics.FeatureSkipped, operation.Location, operation.Name, host.Name, $"the {profile.Name} profile cannot dispatch {KindName(operation.Kind)} operations")
+                    DiagnosticInfo.Create(ApiDiagnostics.FeatureSkipped, operation.Location, operation.Name, host.Name, $"the {profile.Name} profile cannot dispatch {ServerEmit.KindName(operation.Kind)} operations")
                                   .ToDiagnostic()
                 );
                 continue;
@@ -121,7 +122,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         var (returnType, _) = ReturnType(profile, operation);
         w.Open("");
         w.Line(
-            $"var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, {SourceWriter.Literal(operation.Route.Length == 0 ? "" : "/" + operation.Route.Trim('/'))}, new[] {{ {SourceWriter.Literal(Verb(operation.Verb))} }}, new {Http}.RequestDelegate(__{operation.Name}RequestDelegate));"
+            $"var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, {SourceWriter.Literal(operation.Route.Length == 0 ? "" : "/" + operation.Route.Trim('/'))}, new[] {{ {SourceWriter.Literal(ServerEmit.Verb(operation.Verb))} }}, new {Http}.RequestDelegate(__{operation.Name}RequestDelegate));"
         );
         // The typed handler is what ApiExplorer and OpenAPI read: its parameters, their binding attributes and its result type.
         w.Line($"var method = typeof({host.Name}).GetMethod(nameof(__{operation.Name}), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;");
@@ -130,7 +131,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         // ApiExplorer reads each parameter's binding from IParameterBindingMetadata, which the Request Delegate Generator would have added.
         w.Line("var parameters = method.GetParameters();");
         var index = 0;
-        foreach (var parameter in HandlerParameters(operation, service))
+        foreach (var parameter in ServerEmit.HandlerParameters(operation, service, Ct))
         {
             w.Line($"global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new {Generated}.ApiParameterBindingMetadata(parameters[{index}], {( parameter.HasTryParse ? "true" : "false" )}, {( parameter.IsOptional ? "true" : "false" )}));");
             index++;
@@ -171,9 +172,9 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     private static void WriteHandler(SourceWriter w, HostModel host, ProfileModel profile, OperationModel operation, string service)
     {
         var (returnType, isAsync) = ReturnType(profile, operation);
-        w.Line($"/// <summary>Handles <c>{Verb(operation.Verb)} /{RouteText.Join(host.BaseRoute, operation.Route)}</c>.</summary>");
-        w.Open($"private static {( isAsync ? "async " : "" )}{returnType} __{operation.Name}({string.Join(", ", HandlerParameters(operation, service).Select(p => $"{p.Attribute} {p.Type} {p.Name}"))})");
-        WriteRequest(w, operation);
+        w.Line($"/// <summary>Handles <c>{ServerEmit.Verb(operation.Verb)} /{RouteText.Join(host.BaseRoute, operation.Route)}</c>.</summary>");
+        w.Open($"private static {( isAsync ? "async " : "" )}{returnType} __{operation.Name}({string.Join(", ", ServerEmit.HandlerParameters(operation, service, Ct).Select(p => $"{p.Attribute} {p.Type} {p.Name}"))})");
+        ServerEmit.WriteRequest(w, operation);
         WriteDispatchAndResult(w, host, profile, operation);
         w.Close();
     }
@@ -197,7 +198,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
                     WriteParse(w, member, $"httpContext.Request.Headers[{SourceWriter.Literal(member.WireName)}]", "header");
                     break;
                 case BindingSource.Service:
-                    w.Line($"var {Parameter(member)} = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{member.TypeWithoutNullable}>(httpContext.RequestServices);");
+                    w.Line($"var {ServerEmit.Parameter(member)} = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{member.TypeWithoutNullable}>(httpContext.RequestServices);");
                     break;
                 case BindingSource.Body:
                 case BindingSource.Ignored:
@@ -214,7 +215,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         }
 
         w.Line($"var {ServerDispatch.SenderParameter} = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{service}>(httpContext.RequestServices);");
-        var arguments = HandlerParameters(operation, service).Select(p => p.Name);
+        var arguments = ServerEmit.HandlerParameters(operation, service, Ct).Select(p => p.Name);
         var (_, isAsync) = ReturnType(profile, operation);
         w.Line($"var __result = {( isAsync ? "await " : "" )}__{operation.Name}({string.Join(", ", arguments)}){( isAsync ? ".ConfigureAwait(false)" : "" )};");
         w.Line("await __result.ExecuteAsync(httpContext).ConfigureAwait(false);");
@@ -224,7 +225,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     // Parses one route, query or header value into a local named after the member. A missing required value or an unparsable one is a 400.
     private static void WriteParse(SourceWriter w, MemberModel member, string source, string what)
     {
-        var name = Parameter(member);
+        var name = ServerEmit.Parameter(member);
         var raw = "__raw_" + member.Name;
         var literal = SourceWriter.Literal(member.WireName);
         if (member.IsCollection)
@@ -277,67 +278,6 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         _ => throw new ArgumentOutOfRangeException(nameof(member)),
     };
 
-    private static IEnumerable<(string Attribute, string Type, string Name, bool HasTryParse, bool IsOptional)> HandlerParameters(OperationModel operation, string service)
-    {
-        foreach (var member in operation.Members)
-        {
-            switch (member.Source)
-            {
-                case BindingSource.Route:
-                    yield return ($"[global::Microsoft.AspNetCore.Mvc.FromRoute(Name = {SourceWriter.Literal(member.WireName)})]", member.Type, Parameter(member), member.ParseKind != ParseKind.String, member.IsNullable);
-                    break;
-                case BindingSource.Query:
-                    if (!operation.HasBody) yield return ($"[global::Microsoft.AspNetCore.Mvc.FromQuery(Name = {SourceWriter.Literal(member.WireName)})]", member.Type, Parameter(member), member.ParseKind != ParseKind.String, member.IsNullable);
-                    break;
-                case BindingSource.Header:
-                    yield return ($"[global::Microsoft.AspNetCore.Mvc.FromHeader(Name = {SourceWriter.Literal(member.WireName)})]", member.Type, Parameter(member), member.ParseKind != ParseKind.String, member.IsNullable);
-                    break;
-                case BindingSource.Service:
-                    yield return ("[global::Microsoft.AspNetCore.Mvc.FromServices]", member.Type, Parameter(member), false, false);
-                    break;
-                case BindingSource.Body:
-                case BindingSource.Ignored:
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (operation.HasBody) yield return ("[global::Microsoft.AspNetCore.Mvc.FromBody]", operation.WireType, "__body", false, false);
-        yield return ("[global::Microsoft.AspNetCore.Mvc.FromServices]", service, ServerDispatch.SenderParameter, false, false);
-        yield return ("", "global::System.Threading.CancellationToken", Ct, false, false);
-    }
-
-    // Builds `__request` from the bound parameters: constructor arguments and initializers for GET/DELETE, the body with route/header/service
-    // values applied on top for POST/PUT/PATCH.
-    private static void WriteRequest(SourceWriter w, OperationModel operation)
-    {
-        var bound = operation.Members.Where(m => m.Source is BindingSource.Route or BindingSource.Header or BindingSource.Service || !operation.HasBody && m.Source == BindingSource.Query).ToArray();
-        if (operation.HasBody)
-        {
-            w.Line("var __wire = __body;");
-            if (bound.Length > 0)
-            {
-                if (operation.RequestSupportsWith)
-                {
-                    w.Line($"__wire = __wire with {{ {string.Join(", ", bound.Select(m => $"{m.Name} = {Parameter(m)}"))} }};");
-                }
-                else
-                {
-                    foreach (var member in bound) w.Line($"__wire.{member.Name} = {Parameter(member)};");
-                }
-            }
-        }
-        else
-        {
-            var arguments = operation.Members.Where(m => m.ConstructorIndex >= 0).OrderBy(m => m.ConstructorIndex).Select(m => bound.Contains(m) ? Parameter(m) : "default!");
-            var initializers = bound.Where(m => m.ConstructorIndex < 0).Select(m => $"{m.Name} = {Parameter(m)}").ToArray();
-            w.Line($"var __wire = new {operation.WireType}({string.Join(", ", arguments)}){( initializers.Length > 0 ? " { " + string.Join(", ", initializers) + " }" : "" )};");
-        }
-
-        w.Line(operation.InputType is { } ? "var __request = __wire.Create();" : "var __request = __wire;");
-    }
-
     private static void WriteDispatchAndResult(SourceWriter w, HostModel host, ProfileModel profile, OperationModel operation)
     {
         var call = ServerDispatch.Call(profile, operation, "__request", Ct);
@@ -361,31 +301,12 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         var value = operation.ResponseIsNullableValueType ? "__response.Value" : "__response";
         var success = operation.SuccessStatusCode switch
         {
-            201 when operation.CreatedLocationRoute is { } route => $"{Http}.TypedResults.Created({Location(host, route, operation)}, {value})",
+            201 when operation.CreatedLocationRoute is { } route => $"{Http}.TypedResults.Created({ServerEmit.Location(host.BaseRoute, route, operation, Generated)}, {value})",
             201 => $"{Http}.TypedResults.Created((string?)null, {value})",
             202 => $"{Http}.TypedResults.Accepted((string?)null, {value})",
             _ => $"{Http}.TypedResults.Ok({value})",
         };
         w.Line(operation.ResponseNullable ? $"return __response is null ? {Http}.TypedResults.NotFound() : {success};" : $"return {success};");
-    }
-
-    private static string Location(HostModel host, string route, OperationModel operation)
-    {
-        var path = "/" + RouteText.Join(host.BaseRoute, route);
-        var tokens = RouteText.Tokens(route).ToArray();
-        var parts = new List<string>();
-        var position = 0;
-        for (var index = 0; index < tokens.Length; index++)
-        {
-            var start = path.IndexOf('{', position);
-            var end = path.IndexOf('}', start);
-            parts.Add(SourceWriter.Literal(path[position..start]));
-            parts.Add($"global::System.Uri.EscapeDataString({Generated}.ApiFormat.Value(__response.{operation.CreatedLocationTokens[index]}))");
-            position = end + 1;
-        }
-
-        parts.Add(SourceWriter.Literal(path[position..]));
-        return string.Join(" + ", parts.Where(p => p != "\"\""));
     }
 
     private static (string Type, bool IsAsync) ReturnType(ProfileModel profile, OperationModel operation)
@@ -422,32 +343,11 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         return type.StartsWith(task, StringComparison.Ordinal) ? type.Substring(task.Length, type.Length - task.Length - 1) : type;
     }
 
-    private static string Verb(HttpVerb verb) => verb switch
-    {
-        HttpVerb.Get => "GET",
-        HttpVerb.Post => "POST",
-        HttpVerb.Put => "PUT",
-        HttpVerb.Patch => "PATCH",
-        HttpVerb.Delete => "DELETE",
-        _ => throw new ArgumentOutOfRangeException(nameof(verb)),
-    };
-
-    private static string KindName(RequestKind kind) => kind switch
-    {
-        RequestKind.Unary => "unary",
-        RequestKind.Void => "void",
-        RequestKind.Stream => "stream",
-        RequestKind.Infer => "unknown",
-        _ => throw new ArgumentOutOfRangeException(nameof(kind)),
-    };
-
-    private static string Parameter(MemberModel member) => "@" + Naming.CamelCase(member.Name);
-
     private const string ServerHelpers = """
 // <auto-generated/>
 #nullable enable
 #pragma warning disable
-namespace Rocket.Surgery.LaunchPad.Api.Generated
+namespace Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi
 {
     /// <summary>Formats a value for a URL the same way generated clients do: invariant culture, enums by name, booleans in lowercase.</summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]

@@ -63,7 +63,8 @@ internal static class HostReader
             // JsonOptionsPreset: Web = 0, Default = 1.
             Int(hostArgs, "JsonOptions") is not 1,
             host.BaseType is { SpecialType: not SpecialType.System_Object },
-            host.GetAttributes().Any(a => a.AttributeClass?.Name == "RouteAttribute"),
+            host.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.RouteAttribute"))?.ConstructorArguments.FirstOrDefault().Value as string,
+            host.GetAttributes().Any(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.ApiControllerAttribute")),
             profile.Profile,
             operations.ToEquatableArray(),
             diagnostics.ToEquatableArray(),

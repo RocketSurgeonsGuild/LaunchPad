@@ -23,7 +23,7 @@ The generators work with MediatR, [martinothamar/Mediator](https://github.com/ma
 Immediate.Handlers, Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
 scanning assemblies, and the generated server endpoints are native AOT safe.
 
-This page covers the Minimal API server and the HTTP client. MVC controllers, gRPC and GraphQL follow the same model and arrive in later
+This page covers the Minimal API and MVC controller servers and the HTTP client. gRPC and GraphQL follow the same model and arrive in later
 releases.
 
 ## Packages
@@ -32,6 +32,7 @@ releases.
 | ------------------------------------------ | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `Rocket.Surgery.LaunchPad.Api`             | contracts projects that customise                        | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes. |
 | `Rocket.Surgery.LaunchPad.Api.MinimalApi`  | the server                                               | Minimal API endpoints for `*Endpoints` hosts.                                    |
+| `Rocket.Surgery.LaunchPad.Api.Controllers` | the server                                               | MVC controller actions for `*Controller` hosts.                                  |
 | `Rocket.Surgery.LaunchPad.Api.Client.Http` | the client (see [placement](#where-a-client-host-lives)) | A typed HTTP client and mediator handlers for `*Client` hosts.                   |
 
 All three are analyzer-only development dependencies. The attributes are generated into each project that uses them, as `internal` types,
@@ -165,6 +166,29 @@ matching response member (LPAD1023).
 
 The client has the same kind of hook, `partial void Configure{Operation}(HttpRequestMessage request)`, plus
 `static partial void ConfigureJsonOptions(JsonSerializerOptions options)` for its serializer settings.
+
+### MVC controllers
+
+A `partial` class named `*Controller` (or deriving from `ControllerBase`) gets one action per operation, on the same routes as a Minimal API
+host would:
+
+```csharp
+[Operation<GetRocket.Request>]
+[CreateOperation<CreateRocket.Request, GetRocket.Request>]
+public partial class RocketsController;   // → [ApiController, Route("api/rockets")] RocketsController : ControllerBase
+
+// Program.cs
+builder.Services.AddControllers();
+app.MapControllers();
+```
+
+- The generator adds `[ApiController]`, `[Route("{RoutePrefix}/{Group}")]` and the `ControllerBase` base only when the host doesn't declare
+  them. A host's own `[Route]` replaces prefix and group (`[controller]` is the host's noun), and its hand-written actions, filters and
+  attributes stay as they are.
+- Actions return MVC results, so responses use MVC's formatters and `AddJsonOptions` settings, and carry `[ProducesResponseType]` for
+  ApiExplorer. Binding failures answer 400 through `[ApiController]`.
+- The mediator is resolved inside the action, so the host's constructor is yours.
+- MVC only discovers `public` controllers.
 
 ## Binding and responses
 

@@ -1,3 +1,4 @@
+extern alias controllers;
 extern alias httpclient;
 extern alias minimalapi;
 using System.Net.Http.Json;
@@ -105,7 +106,12 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
               .Select(d => d.Id)
               .Distinct()];
 
-    protected GeneratorTestContextBuilder Server(Mediator mediator, GeneratorTestResults contracts) =>
+    protected GeneratorTestContextBuilder Server(Mediator mediator, GeneratorTestResults contracts, bool withMinimalApi = true) =>
+        ( withMinimalApi ? ServerBase().WithGenerator<minimalapi::Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator>() : ServerBase() )
+       .AddCompilationReferences(contracts)
+       .AddReferences(MediatorAssemblies(mediator));
+
+    private GeneratorTestContextBuilder ServerBase() =>
         GeneratorTestContextBuilder
            .Create()
            .WithLogger(Logger)
@@ -113,10 +119,7 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithProjectName("Server")
            .AddPreprocessorSymbol("NET7_0_OR_GREATER")
            .AddSources(AttributeSources)
-           .WithGenerator<minimalapi::Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator>()
            .WithAnalyzer<OperationHostAnalyzer>()
-           .AddCompilationReferences(contracts)
-           .AddReferences(MediatorAssemblies(mediator))
            .AddReferences(FrameworkReferences)
            .AddReferences(
                 typeof(WebApplication).Assembly,
@@ -134,6 +137,12 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                 typeof(Microsoft.Extensions.Options.IOptions<>).Assembly,
                 typeof(ActivatorUtilities).Assembly
             );
+
+    /// <summary>A server compilation running the controller generator instead of the Minimal API one.</summary>
+    protected GeneratorTestContextBuilder Controllers(Mediator mediator, GeneratorTestResults contracts) =>
+        Server(mediator, contracts, withMinimalApi: false)
+           .WithGenerator<controllers::Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator>()
+           .AddReferences(typeof(Microsoft.AspNetCore.Mvc.ControllerBase).Assembly, typeof(Microsoft.AspNetCore.Mvc.JsonOptions).Assembly);
 
     protected GeneratorTestContextBuilder Client(Mediator mediator, GeneratorTestResults contracts) =>
         GeneratorTestContextBuilder

@@ -8,7 +8,8 @@ namespace Api.Functional.Foundatio.Server;
 
 public static class ServerApp
 {
-    public static async Task<WebApplication> StartAsync()
+    /// <summary>Starts the server with the generated Minimal API endpoints, or with the generated controllers on the same routes.</summary>
+    public static async Task<WebApplication> StartAsync(bool controllers = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -16,8 +17,10 @@ public static class ServerApp
         builder.Services.AddProblemDetails();
         // Scoped to this assembly: the test process also loads the client's handler module.
         builder.Services.AddMediator(b => b.AddAssembly(typeof(GetRocketHandler).Assembly));
+        if (controllers) builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
         var app = builder.Build();
-        app.MapRocketsEndpoints();
+        if (controllers) app.MapControllers();
+        else app.MapRocketsEndpoints();
         await app.StartAsync();
         return app;
     }
@@ -29,6 +32,13 @@ public static class ServerApp
 [Operation<EditRocket.Request>]
 [Operation<DeleteRocket.Request>]
 public static partial class RocketsEndpoints;
+
+[Operation<GetRocket.Request>]
+[Operation<ListRockets.Request>]
+[CreateOperation<CreateRocket.Request, GetRocket.Request>]
+[Operation<EditRocket.Request>]
+[Operation<DeleteRocket.Request>]
+public partial class RocketsController;
 
 // One class per request: Foundatio's generator names its wrappers after the message's simple name, which LaunchPad's nested X.Request types share.
 public sealed class GetRocketHandler(RocketStore store)

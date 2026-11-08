@@ -124,4 +124,20 @@ internal static class Contracts
             public partial class RocketsClient;
         }
         """;
+
+    public const string ControllerHost = """
+        #nullable enable
+        using Rocket.Surgery.LaunchPad.Api;
+        using Sample.Contracts.Rockets;
+
+        namespace Sample.Server
+        {
+            [Operation<GetRocket.Request>]
+            [Operation<ListRockets.Request>]
+            [CreateOperation<CreateRocket.Request, GetRocket.Request>]
+            [Operation<EditRocket.Request>]
+            [Operation<DeleteRocket.Request>]
+            public partial class RocketsController;
+        }
+        """;
 }

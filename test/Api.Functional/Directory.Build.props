@@ -19,6 +19,7 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.TestHost" />
         <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.MinimalApi/Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.Controllers/Rocket.Surgery.LaunchPad.Api.Controllers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <Compile Include="$(MSBuildThisFileDirectory)Shared/RocketStore.cs" Link="RocketStore.cs" />
     </ItemGroup>
     <ItemGroup Condition="'$(ApiFunctionalRole)' == 'ClientHost'">

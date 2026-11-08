@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../Api.Core/ApiGenerator.props" />
+    <PropertyGroup>
+        <PackageDescription>Generates ASP.NET Core MVC controller actions for LaunchPad operation hosts: list operations with [Operation&lt;TRequest&gt;] on a partial *Controller class. Works with any mediator.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;mvc;controllers;mediator</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- PrivateAssets none: the base package's analyzer (the attributes) must flow to whoever references this package. -->
+        <ProjectReference Include="../Api/Rocket.Surgery.LaunchPad.Api.csproj" ReferenceOutputAssembly="false" PrivateAssets="none" />
+    </ItemGroup>
+</Project>

@@ -8,15 +8,18 @@ namespace Api.Functional.MediatR.Server;
 
 public static class ServerApp
 {
-    public static async Task<WebApplication> StartAsync()
+    /// <summary>Starts the server with the generated Minimal API endpoints, or with the generated controllers on the same routes.</summary>
+    public static async Task<WebApplication> StartAsync(bool controllers = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton<RocketStore>();
         builder.Services.AddProblemDetails();
         builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Handlers>());
+        if (controllers) builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
         var app = builder.Build();
-        app.MapRocketsEndpoints();
+        if (controllers) app.MapControllers();
+        else app.MapRocketsEndpoints();
         await app.StartAsync();
         return app;
     }
@@ -28,6 +31,13 @@ public static class ServerApp
 [Operation<EditRocket.Request>]
 [Operation<DeleteRocket.Request>]
 public static partial class RocketsEndpoints;
+
+[Operation<GetRocket.Request>]
+[Operation<ListRockets.Request>]
+[CreateOperation<CreateRocket.Request, GetRocket.Request>]
+[Operation<EditRocket.Request>]
+[Operation<DeleteRocket.Request>]
+public partial class RocketsController;
 
 public sealed class Handlers(RocketStore store)
     : IRequestHandler<GetRocket.Request, RocketModel?>, IStreamRequestHandler<ListRockets.Request, RocketModel>, IRequestHandler<CreateRocket.Request, CreateRocket.Response>,

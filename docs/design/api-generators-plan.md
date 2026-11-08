@@ -1,6 +1,6 @@
 # Mediator-agnostic API generators: orientation, design and plan
 
-Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress. Open from phase 1: server-side API versioning (6).
+Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators; removing the old controller generator, migrating the Restful samples and gRPC still to do. Open from phase 1: server-side API versioning (6).
 
 Related: [ADR-0002 one package per integration](../adr/0002-package-per-integration.md), [ADR-0003 explicit operation hosts](../adr/0003-explicit-operation-hosts.md), and the terms _operation_, _operation host_, _group_, _transport_, _contracts project_ and _mediator profile_ in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -60,7 +60,7 @@ Read: `GENERATORS.md`, `ChannelMediator.ApiGenerators.Abstraction/*`, and its fo
 
 ## 3. Things in LaunchPad that fight this design
 
-1. **The old controller and GraphQL generators overlap.** They are MediatR-only, not cache-friendly, and depend on user-written partial signatures. **Decided:** replaced, one transport per phase (controllers in phase 2, GraphQL in phase 3), together with `RestfulApiController`'s MediatR plumbing. `GraphqlOptionalPropertyTrackingGenerator` stays, because `Input` types (4.3) are built with its `Create()`. Their diagnostics (`LPAD0003`–`LPAD0007`) are retired, not reused.
+1. **The old controller and GraphQL generators overlap.** They are MediatR-only, not cache-friendly, and depend on user-written partial signatures. **Decided:** replaced, one transport per phase (controllers in phase 2, GraphQL in phase 3), together with `RestfulApiController`'s MediatR plumbing. `GraphqlOptionalPropertyTrackingGenerator` stays, because `Input` types (4.3) are built with its `Create()`. Of their diagnostics only `LPAD0003` and `LPAD0004` are the controller generator's alone and retire with it; `LPAD0002` and `LPAD0005`–`LPAD0007` are shared with the generators that stay (corrected 2026-11-08). Retired IDs are not reused.
 2. **The analyzer ships inside Foundation, which depends on MediatR.** **Decided:** new packages (4.1), following ADR-0002: a base package that emits the attributes, plus one package per transport.
 3. **Attributes are emitted, not shipped.** They become per-compilation `internal` types marked `[Embedded]`, so contracts, servers and clients each get their own copy and nothing reaches runtime. The generator reads `[ApiOperation]` from referenced contracts by metadata name; **phase 1's spike must prove** that works on the .NET 10 and 11 compilers.
 4. **Nested request names.** For `GetRocket.Request`, names come from the containing type when the type's own name is a role word (`Request`, `Command`, `Query`, `Message`). A non-nested `GetRocketRequest` drops the role suffix. Either way the operation is called `GetRocket`.
