@@ -203,8 +203,9 @@ app.MapRocketsEndpoints();
   and call `AddApiVersioning().AddMvc()`.
 
 A request for a version the endpoint isn't mapped to, or with no version, answers 400 with Asp.Versioning's problem details. To accept
-unversioned requests, set `AssumeDefaultVersionWhenUnspecified` and `DefaultApiVersion` in `AddApiVersioning(options => ...)`. With no
-Asp.Versioning in the server project, versions aren't mapped and LPAD1024 warns. gRPC and GraphQL hosts have no API versions; `Version` on
+unversioned requests, set `AssumeDefaultVersionWhenUnspecified` and `DefaultApiVersion` in `AddApiVersioning(options => ...)`. Without
+the package for the host's transport (`Asp.Versioning.Http` for Minimal API, `Asp.Versioning.Mvc` for controllers), versions aren't mapped
+and LPAD1024 warns. gRPC and GraphQL hosts have no API versions; `Version` on
 them is LPAD1021.
 
 ### MVC controllers
@@ -395,32 +396,32 @@ filters don't apply.
 
 ## Diagnostics
 
-| ID       | Severity | Meaning                                                                                       |
-| -------- | -------- | --------------------------------------------------------------------------------------------- |
-| LPAD1001 | Error    | The request matches no request kind of the profile and has no `Response`.                     |
-| LPAD1002 | Error    | No mediator profile, or several built-in ones match.                                          |
-| LPAD1003 | Error    | A route token has no matching member.                                                         |
-| LPAD1004 | Error    | An `[ApiRoute]` member isn't in the route.                                                    |
-| LPAD1005 | Error    | A complex member is bound from the route or query string.                                     |
-| LPAD1006 | Error    | The request can't be built from the bound values.                                             |
-| LPAD1007 | Error    | A route, query or header member isn't parsable.                                               |
-| LPAD1008 | Error    | Two operations share a verb and route.                                                        |
-| LPAD1009 | Error    | A GraphQL field is declared on two mutation hosts.                                            |
-| LPAD1010 | Error    | The host isn't `partial` (Minimal API: `static partial`). Has a code fix.                     |
-| LPAD1011 | Warning  | The profile has no handler interface, so no mediator handler is generated.                    |
-| LPAD1012 | Error    | The client host is in the wrong project for its mediator.                                     |
-| LPAD1013 | Warning  | A hand-written handler for a client operation is visible.                                     |
-| LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.                      |
-| LPAD1015 | Warning  | A stream operation on a GraphQL host is skipped.                                              |
-| LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.                                |
-| LPAD1017 | Error    | The host's transport can't be inferred, or its package isn't referenced.                      |
-| LPAD1018 | Error    | Two client hosts generate handlers for the same operation.                                    |
-| LPAD1019 | Error    | A query operation is listed on a mutation host.                                               |
-| LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.                        |
-| LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                           |
-| LPAD1022 | Error    | A client host declares its own constructor.                                                   |
-| LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`. |
-| LPAD1024 | Warning  | An operation has an API version, but the server doesn't reference Asp.Versioning.             |
+| ID       | Severity | Meaning                                                                                             |
+| -------- | -------- | --------------------------------------------------------------------------------------------------- |
+| LPAD1001 | Error    | The request matches no request kind of the profile and has no `Response`.                           |
+| LPAD1002 | Error    | No mediator profile, or several built-in ones match.                                                |
+| LPAD1003 | Error    | A route token has no matching member.                                                               |
+| LPAD1004 | Error    | An `[ApiRoute]` member isn't in the route.                                                          |
+| LPAD1005 | Error    | A complex member is bound from the route or query string.                                           |
+| LPAD1006 | Error    | The request can't be built from the bound values.                                                   |
+| LPAD1007 | Error    | A route, query or header member isn't parsable.                                                     |
+| LPAD1008 | Error    | Two operations share a verb and route.                                                              |
+| LPAD1009 | Error    | A GraphQL field is declared on two mutation hosts.                                                  |
+| LPAD1010 | Error    | The host isn't `partial` (Minimal API: `static partial`). Has a code fix.                           |
+| LPAD1011 | Warning  | The profile has no handler interface, so no mediator handler is generated.                          |
+| LPAD1012 | Error    | The client host is in the wrong project for its mediator.                                           |
+| LPAD1013 | Warning  | A hand-written handler for a client operation is visible.                                           |
+| LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.                            |
+| LPAD1015 | Warning  | A stream operation on a GraphQL host is skipped.                                                    |
+| LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.                                      |
+| LPAD1017 | Error    | The host's transport can't be inferred, or its package isn't referenced.                            |
+| LPAD1018 | Error    | Two client hosts generate handlers for the same operation.                                          |
+| LPAD1019 | Error    | A query operation is listed on a mutation host.                                                     |
+| LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.                              |
+| LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                                 |
+| LPAD1022 | Error    | A client host declares its own constructor.                                                         |
+| LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`.       |
+| LPAD1024 | Warning  | An operation has an API version, but the server lacks the Asp.Versioning package for its transport. |
 
 ## Limitations
 

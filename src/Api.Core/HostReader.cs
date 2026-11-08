@@ -71,11 +71,12 @@ internal static class HostReader
             host.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.RouteAttribute"))?.ConstructorArguments.FirstOrDefault().Value as string,
             host.GetAttributes().Any(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.ApiControllerAttribute")),
             host.GetAttributes().Any(a => a.AttributeClass.Is(KnownNames.ExtendObjectTypeAttribute)),
-            // Asp.Versioning maps the versions: its Minimal API version sets, or its attributes for controllers.
+            // Asp.Versioning maps the versions: its Minimal API version sets, or for controllers its MVC application model, which applies the
+            // attributes (Asp.Versioning.Http alone brings the attributes in, but MVC then ignores them).
             kind switch
             {
                 HostKind.MinimalApi => compilation.GetTypeByMetadataName("Asp.Versioning.Builder.ApiVersionSet") is { },
-                HostKind.Controller => compilation.GetTypeByMetadataName("Asp.Versioning.ApiVersionAttribute") is { },
+                HostKind.Controller => compilation.GetTypeByMetadataName("Asp.Versioning.ApiVersioningApplicationModelProvider") is { },
                 HostKind.Unknown or HostKind.GrpcService or HostKind.GraphQLQuery or HostKind.GraphQLMutation or HostKind.HttpClient or HostKind.GrpcClient or HostKind.GraphQLClient => false,
                 _ => false,
             },
