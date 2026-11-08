@@ -1,0 +1,86 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
+      {
+        Id: LPAD1010,
+        Title: Operation host must be partial,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (8,48)-(8,61),
+        MessageFormat: Operation host {0} must be {1},
+        Message: Operation host RocketsClient must be partial,
+        Category: LaunchPad.Api
+      }
+    ]
+  },
+  CodeFixes: {
+    Rocket.Surgery.LaunchPad.Api.Generators.MakeHostPartialCodeFix: [
+      {
+        CodeActions: [
+          {
+            Title: Make the operation host partial,
+            Tags: null
+          }
+        ],
+        Diagnostic: {
+          Id: LPAD1010,
+          Title: Operation host must be partial,
+          Severity: Error,
+          WarningLevel: 0,
+          Location: Input0.cs: (8,48)-(8,61),
+          MessageFormat: Operation host {0} must be {1},
+          Message: Operation host RocketsClient must be partial,
+          Category: LaunchPad.Api
+        },
+        Document: Input0.cs
+      }
+    ]
+  },
+  FinalDiagnostics: [
+    {
+      Id: CS0260,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (8,48)-(8,61),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0260),
+      MessageFormat: Missing partial modifier on declaration of type '{0}'; another partial declaration of this type exists,
+      Message: Missing partial modifier on declaration of type 'RocketsClient'; another partial declaration of this type exists,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: LPAD1010,
+      Title: Operation host must be partial,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (8,48)-(8,61),
+      MessageFormat: Operation host {0} must be {1},
+      Message: Operation host RocketsClient must be partial,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS0103,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api.Client.Http/Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator/Sample.Host.RocketsClient.ZeroAlloc.g.cs: (13,358)-(13,367),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
+      MessageFormat: The name '{0}' does not exist in the current context,
+      Message: The name '_services' does not exist in the current context,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator: []
+  }
+}

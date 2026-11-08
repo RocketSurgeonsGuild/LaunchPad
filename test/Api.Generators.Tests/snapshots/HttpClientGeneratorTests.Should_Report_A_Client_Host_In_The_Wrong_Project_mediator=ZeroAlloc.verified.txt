@@ -1,3 +1,0 @@
-﻿[
-  Client host RocketsClient uses the ZeroAlloc.Mediator mediator profile: the generated handlers extend the mediator that ZeroAlloc.Mediator.Generator generates, so the host must be in a project that runs ZeroAlloc.Mediator.Generator
-]

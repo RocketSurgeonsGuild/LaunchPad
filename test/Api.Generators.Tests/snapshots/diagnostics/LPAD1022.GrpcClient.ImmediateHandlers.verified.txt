@@ -1,0 +1,46 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
+      {
+        Id: LPAD1022,
+        Title: Client host declares a constructor,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,56)-(8,73),
+        MessageFormat: Client host {0} gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+        Message: Client host RocketsGrpcClient gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+        Category: LaunchPad.Api
+      }
+    ]
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1022,
+      Title: Client host declares a constructor,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,56)-(8,73),
+      MessageFormat: Client host {0} gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+      Message: Client host RocketsGrpcClient gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS8618,
+      Title: Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,83)-(8,100),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8618),
+      MessageFormat: Non-nullable {0} '{1}' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the {0} as nullable.,
+      Message: Non-nullable field '__contract' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the field as nullable.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator: []
+  }
+}

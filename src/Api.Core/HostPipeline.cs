@@ -76,10 +76,12 @@ internal static class HostPipeline
         };
     }
 
-    /// <summary>The marker the base package's analyzer looks for to know this transport's generator is referenced.</summary>
+    /// <summary>
+    ///     The marker the base package's analyzer looks for to know this transport's generator is referenced. Its <c>[Embedded]</c> attribute
+    ///     comes from the base package's generator, which every transport package brings along.
+    /// </summary>
     public static void EmitMarker(IncrementalGeneratorPostInitializationContext context, params HostKind[] kinds)
     {
-        context.AddEmbeddedAttributeDefinition();
         var markers = kinds.Select(
             kind => (MemberDeclarationSyntax)ApiSyntax.Class(kind + "Generator", ApiSyntax.Modifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword), [])
                                                      .AddAttributeLists(ApiSyntax.Embedded)

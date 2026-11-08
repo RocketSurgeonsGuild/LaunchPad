@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1011,
+      Title: Mediator profile has no handler interface,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (10,5)-(10,36),
+      MessageFormat: The {0} mediator profile has no handler interface for {1}, so no mediator handler is generated; call {2} directly,
+      Message: The MyMediator mediator profile has no handler interface for Sample.Contracts.Rockets.CreateRocket.Request, so no mediator handler is generated; call RocketsGraphQLClient.CreateRocket directly,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator: [
+      {
+        Id: LPAD1011,
+        Title: Mediator profile has no handler interface,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (10,5)-(10,36),
+        MessageFormat: The {0} mediator profile has no handler interface for {1}, so no mediator handler is generated; call {2} directly,
+        Message: The MyMediator mediator profile has no handler interface for Sample.Contracts.Rockets.CreateRocket.Request, so no mediator handler is generated; call RocketsGraphQLClient.CreateRocket directly,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

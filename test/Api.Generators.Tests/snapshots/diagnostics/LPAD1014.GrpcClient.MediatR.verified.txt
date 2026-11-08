@@ -1,0 +1,51 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,33),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.GetRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,33),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.RocketModel? is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator: [
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,33),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.GetRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,33),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.RocketModel? is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

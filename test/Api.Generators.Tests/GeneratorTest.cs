@@ -34,6 +34,9 @@ public enum Mediator
     ImmediateHandlers,
     Foundatio,
     ZeroAlloc,
+
+    /// <summary>No built-in mediator: the compilation describes its own with <c>[assembly: MediatorProfile]</c>.</summary>
+    Custom,
 }
 
 /// <summary>
@@ -43,6 +46,12 @@ public enum Mediator
 public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
     public AssemblyLoadContext AssemblyLoadContext { get; } = new CollectibleTestAssemblyLoadContext();
+
+    /// <summary>
+    ///     The test appends <see cref="AttributeSources" /> to its own host source, so the compilation has one document. Code fix tests need it:
+    ///     the harness doesn't keep several documents paired between the compilations it compares, and reports a swap as an edit.
+    /// </summary>
+    protected bool AttributesInHostSource { get; set; }
 
     public virtual Task InitializeAsync()
     {
@@ -59,13 +68,20 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
        .Select(path => (MetadataReference)MetadataReference.CreateFromFile(path))];
 
     // The harness runs every generator in its own driver, but in a real build the transport generators see the base package's post-init
-    // output (the attributes). Emit that output once and hand it to server and client compilations as ordinary sources.
-    private static readonly string[] AttributeSources = [.. CSharpGeneratorDriver
-                                                        .Create(new AttributesGenerator())
-                                                        .RunGenerators(CSharpCompilation.Create("Attributes", references: FrameworkReferences))
-                                                        .GetRunResult()
-                                                        .GeneratedTrees
-                                                        .Select(tree => tree.GetText().ToString())];
+    // output (the attributes). Emit that output once and hand it to server and client compilations as one ordinary source: the harness
+    // doesn't keep the order of several sources between the compilations it builds for a code fix, and would report the swap as an edit.
+    // The embedded attribute's own file goes last, after the files with using directives.
+    protected static readonly string AttributeSources = string.Join(
+        "\n",
+        CSharpGeneratorDriver
+           .Create(new AttributesGenerator())
+           .RunGenerators(CSharpCompilation.Create("Attributes", references: FrameworkReferences))
+           .GetRunResult()
+           .GeneratedTrees
+           .OrderBy(tree => tree.FilePath.EndsWith("Microsoft.CodeAnalysis.EmbeddedAttribute.cs", StringComparison.Ordinal))
+           .ThenBy(tree => tree.FilePath, StringComparer.Ordinal)
+           .Select(tree => tree.GetText().ToString())
+    );
 
     protected static Assembly[] MediatorAssemblies(Mediator mediator) => mediator switch
     {
@@ -75,11 +91,12 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
         Mediator.ImmediateHandlers => [typeof(Immediate.Handlers.Shared.IHandler<,>).Assembly],
         Mediator.Foundatio => [typeof(Foundatio.Mediator.IMediator).Assembly],
         Mediator.ZeroAlloc => [typeof(ZeroAlloc.Mediator.IRequest<>).Assembly],
+        Mediator.Custom => [],
         _ => throw new ArgumentOutOfRangeException(nameof(mediator)),
     };
 
     /// <summary>Compiles a contracts project with the base package's attributes and returns it as a reference.</summary>
-    protected async Task<GeneratorTestResults> CompileContracts(Mediator mediator, string source)
+    protected async Task<GeneratorTestResults> CompileContracts(Mediator mediator, string source, params Assembly[] references)
     {
         var result = await GeneratorTestContextBuilder
                           .Create()
@@ -88,12 +105,21 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                           .WithProjectName("Contracts")
                           .WithGenerator<AttributesGenerator>()
                           .AddReferences(MediatorAssemblies(mediator))
+                          .AddReferences(references)
                           .AddSources(source)
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
         AssertCompiles(result);
         return result;
     }
+
+    /// <summary>
+    ///     Snapshots the whole generator result: every added source, the generator, analyzer and compilation diagnostics. Only the .NET SDK's
+    ///     default <c>NoWarn</c> (CS1701 and CS1702, assembly-version unification) is left out: a real build never shows it, and which references
+    ///     raise it differs between target frameworks.
+    /// </summary>
+    protected static SettingsTask Verify(GeneratorTestResults result, [System.Runtime.CompilerServices.CallerFilePath] string sourceFile = "") =>
+        Verifier.Verify(result with { FinalDiagnostics = result.FinalDiagnostics.RemoveAll(d => d.Id is "CS1701" or "CS1702") }, sourceFile: sourceFile);
 
     /// <summary>Fails with the final compilation's errors listed, so a broken emitter shows what it broke.</summary>
     protected static void AssertCompiles(GeneratorTestResults result)
@@ -102,13 +128,6 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
         if (errors.Length > 0) throw new InvalidOperationException("The generated code does not compile:\n" + string.Join("\n", errors));
     }
 
-    /// <summary>Every diagnostic: from the generators, the analyzers and the final compilation.</summary>
-    protected static string[] DiagnosticIds(GeneratorTestResults result) =>
-        [.. result.Results.Values.SelectMany(r => r.Diagnostics)
-              .Concat(result.AnalyzerResults.Values.SelectMany(r => r.Diagnostics))
-              .Concat(result.FinalDiagnostics)
-              .Select(d => d.Id)
-              .Distinct()];
 
     protected GeneratorTestContextBuilder Server(Mediator mediator, GeneratorTestResults contracts, bool withMinimalApi = true) =>
         ( withMinimalApi ? ServerBase().WithGenerator<minimalapi::Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator>() : ServerBase() )
@@ -122,7 +141,7 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithAssemblyLoadContext(AssemblyLoadContext)
            .WithProjectName("Server")
            .AddPreprocessorSymbol("NET7_0_OR_GREATER")
-           .AddSources(AttributeSources)
+           .AddSources(AttributesInHostSource ? [] : [AttributeSources])
            .WithAnalyzer<OperationHostAnalyzer>()
            .AddReferences(FrameworkReferences)
            .AddReferences(
@@ -196,7 +215,7 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithAssemblyLoadContext(AssemblyLoadContext)
            .WithProjectName("Client")
            .AddPreprocessorSymbol("NET7_0_OR_GREATER")
-           .AddSources(AttributeSources)
+           .AddSources(AttributesInHostSource ? [] : [AttributeSources])
            .WithAnalyzer<OperationHostAnalyzer>()
            .AddReferences(FrameworkReferences)
            .AddReferences(

@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1020,
+      Title: Input type has no Create method,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,65),
+      MessageFormat: Input type {0} needs a public parameterless Create() method returning {1},
+      Message: Input type Sample.Contracts.Rockets.RocketModel needs a public parameterless Create() method returning Sample.Contracts.Rockets.CreateRocket.Request,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator: [
+      {
+        Id: LPAD1020,
+        Title: Input type has no Create method,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,5)-(8,65),
+        MessageFormat: Input type {0} needs a public parameterless Create() method returning {1},
+        Message: Input type Sample.Contracts.Rockets.RocketModel needs a public parameterless Create() method returning Sample.Contracts.Rockets.CreateRocket.Request,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

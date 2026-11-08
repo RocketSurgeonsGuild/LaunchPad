@@ -25,6 +25,8 @@ public sealed class MakeHostPartialCodeFix : CodeFixProvider
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         foreach (var diagnostic in context.Diagnostics)
         {
+            // Only a diagnostic in this document: its span means nothing in another one.
+            if (diagnostic.Location.SourceTree?.FilePath is { } path && root?.SyntaxTree.FilePath is { } here && path != here) continue;
             if (root?.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<ClassDeclarationSyntax>() is not { Parent: not ClassDeclarationSyntax } declaration) continue;
             var makeStatic = diagnostic.Properties.TryGetValue("static", out var value) && value == "true";
             var title = makeStatic ? "Make the operation host static partial" : "Make the operation host partial";

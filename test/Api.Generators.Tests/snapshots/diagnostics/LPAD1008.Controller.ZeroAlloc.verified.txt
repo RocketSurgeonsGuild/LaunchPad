@@ -1,0 +1,63 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1008,
+      Title: Duplicate route,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,36)-(8,65),
+      MessageFormat: {0} {1} is declared by both {2} and {3},
+      Message: GET rockets/{id:guid} is declared by both GetRocket and FindRocket,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS0234,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api.Controllers/Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator/Sample.Host.RocketsController.Controller.g.cs: (22,155)-(22,164),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
+      MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
+      Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0234,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api.Controllers/Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator/Sample.Host.RocketsController.Controller.g.cs: (36,155)-(36,164),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
+      MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
+      Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator: [
+      {
+        Id: LPAD1008,
+        Title: Duplicate route,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,36)-(8,65),
+        MessageFormat: {0} {1} is declared by both {2} and {3},
+        Message: GET rockets/{id:guid} is declared by both GetRocket and FindRocket,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

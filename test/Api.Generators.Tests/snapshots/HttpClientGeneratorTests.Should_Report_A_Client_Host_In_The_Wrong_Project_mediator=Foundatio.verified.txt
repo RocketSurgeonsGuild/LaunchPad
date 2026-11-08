@@ -1,3 +1,0 @@
-﻿[
-  Client host RocketsClient uses the Foundatio.Mediator mediator profile: this project runs Foundatio.Mediator, which can't see the generated handlers; move the host to a library that references the contracts but not Foundatio.Mediator, and reference that library from the application
-]

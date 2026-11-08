@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
+      {
+        Id: LPAD1017,
+        Title: Operation host transport cannot be inferred,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (3,52)-(3,66),
+        MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
+        Message: The transport of operation host RocketsQueries cannot be inferred: GraphQL query hosts aren't generated: queries usually return IQueryable for paging, filtering and projections, so write them by hand; list mutations on a *Mutations host. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
+        Category: LaunchPad.Api
+      }
+    ]
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1017,
+      Title: Operation host transport cannot be inferred,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (3,52)-(3,66),
+      MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
+      Message: The transport of operation host RocketsQueries cannot be inferred: GraphQL query hosts aren't generated: queries usually return IQueryable for paging, filtering and projections, so write them by hand; list mutations on a *Mutations host. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator: []
+  }
+}

@@ -1,0 +1,51 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1024,
+      Title: API version is not mapped,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (3,1)-(3,46),
+      MessageFormat: {0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Message: GetRocket has API version 2.0, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1024,
+      Title: API version is not mapped,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (4,1)-(4,32),
+      MessageFormat: {0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Message: CreateRocket has API version 1.0, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator: [
+      {
+        Id: LPAD1024,
+        Title: API version is not mapped,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (3,1)-(3,46),
+        MessageFormat: {0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+        Message: GetRocket has API version 2.0, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1024,
+        Title: API version is not mapped,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (4,1)-(4,32),
+        MessageFormat: {0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+        Message: CreateRocket has API version 1.0, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

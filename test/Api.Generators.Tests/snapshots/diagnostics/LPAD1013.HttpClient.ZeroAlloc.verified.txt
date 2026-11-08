@@ -1,0 +1,47 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1013,
+      Title: A hand-written handler is visible next to the generated one,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,33),
+      MessageFormat: {0} already has a handler, {1}, and {2} generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+      Message: Sample.Contracts.Rockets.GetRocket.Request already has a handler, Sample.Contracts.Rockets.GetRocket.Handler, and RocketsClient generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS0103,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api.Client.Http/Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator/Sample.Host.RocketsClient.ZeroAlloc.g.cs: (13,358)-(13,367),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
+      MessageFormat: The name '{0}' does not exist in the current context,
+      Message: The name '_services' does not exist in the current context,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator: [
+      {
+        Id: LPAD1013,
+        Title: A hand-written handler is visible next to the generated one,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,33),
+        MessageFormat: {0} already has a handler, {1}, and {2} generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+        Message: Sample.Contracts.Rockets.GetRocket.Request already has a handler, Sample.Contracts.Rockets.GetRocket.Handler, and RocketsClient generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

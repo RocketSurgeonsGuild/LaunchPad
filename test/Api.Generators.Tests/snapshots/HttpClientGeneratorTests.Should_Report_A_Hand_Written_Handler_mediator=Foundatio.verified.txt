@@ -1,3 +1,0 @@
-﻿[
-  Sample.Contracts.Rockets.GetRocket.Request already has a handler, Sample.Contracts.Rockets.GetRocket.Handler, and RocketsClient generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references
-]

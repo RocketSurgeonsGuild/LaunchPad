@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1003,
+      Title: Route token has no matching member,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,55),
+      MessageFormat: The route '{0}' of operation {1} has the token '{2}', but {3} has no member with that name,
+      Message: The route '{rocketId}' of operation GetRocket has the token 'rocketId', but Sample.Contracts.Rockets.GetRocket.Request has no member with that name,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator: [
+      {
+        Id: LPAD1003,
+        Title: Route token has no matching member,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,5)-(8,55),
+        MessageFormat: The route '{0}' of operation {1} has the token '{2}', but {3} has no member with that name,
+        Message: The route '{rocketId}' of operation GetRocket has the token 'rocketId', but Sample.Contracts.Rockets.GetRocket.Request has no member with that name,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

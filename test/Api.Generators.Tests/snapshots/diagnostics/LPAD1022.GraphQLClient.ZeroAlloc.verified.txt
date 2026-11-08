@@ -1,0 +1,62 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
+      {
+        Id: LPAD1022,
+        Title: Client host declares a constructor,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,59)-(8,79),
+        MessageFormat: Client host {0} gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+        Message: Client host RocketsGraphQLClient gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+        Category: LaunchPad.Api
+      }
+    ]
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1022,
+      Title: Client host declares a constructor,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,59)-(8,79),
+      MessageFormat: Client host {0} gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+      Message: Client host RocketsGraphQLClient gets a generated constructor taking the transport's client factory; remove the constructors it declares,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS8618,
+      Title: Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,89)-(8,109),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8618),
+      MessageFormat: Non-nullable {0} '{1}' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the {0} as nullable.,
+      Message: Non-nullable field '__httpClientFactory' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the field as nullable.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry
+      ]
+    },
+    {
+      Id: CS0103,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api.Client.GraphQL/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (13,377)-(13,386),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
+      MessageFormat: The name '{0}' does not exist in the current context,
+      Message: The name '_services' does not exist in the current context,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator: []
+  }
+}

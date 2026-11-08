@@ -18,6 +18,6 @@ public class CombinedGeneratorTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        AssertCompiles(result);
+        await Verify(result);
     }
 }

@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1001,
+      Title: Operation response could not be found,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {0} does not match any request kind of the {1} mediator profile, and no response type is set with [ApiOperation(Response = ...)],
+      Message: Sample.Contracts.Rockets.OrphanRocket.Request does not match any request kind of the Foundatio.Mediator mediator profile, and no response type is set with [ApiOperation(Response = ...)],
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator: [
+      {
+        Id: LPAD1001,
+        Title: Operation response could not be found,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,5)-(8,36),
+        MessageFormat: {0} does not match any request kind of the {1} mediator profile, and no response type is set with [ApiOperation(Response = ...)],
+        Message: Sample.Contracts.Rockets.OrphanRocket.Request does not match any request kind of the Foundatio.Mediator mediator profile, and no response type is set with [ApiOperation(Response = ...)],
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

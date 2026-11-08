@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1002,
+      Title: No mediator profile,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,56)-(8,73),
+      MessageFormat: Operation host {0} needs a mediator profile: {1},
+      Message: Operation host RocketsController needs a mediator profile: several mediators are referenced (MediatR, ZeroAlloc.Mediator); add [assembly: MediatorProfile] to choose one,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator: [
+      {
+        Id: LPAD1002,
+        Title: No mediator profile,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,56)-(8,73),
+        MessageFormat: Operation host {0} needs a mediator profile: {1},
+        Message: Operation host RocketsController needs a mediator profile: several mediators are referenced (MediatR, ZeroAlloc.Mediator); add [assembly: MediatorProfile] to choose one,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1007,
+      Title: Route or query member is not parsable,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,39),
+      MessageFormat: {0}.{1} of type {2} is bound from the {3} but the type has no TryParse method and does not implement IParsable<T>,
+      Message: Request.Code of type Sample.Contracts.Rockets.Unparsable is bound from the query string but the type has no TryParse method and does not implement IParsable<T>,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator: [
+      {
+        Id: LPAD1007,
+        Title: Route or query member is not parsable,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input1.cs: (8,5)-(8,39),
+        MessageFormat: {0}.{1} of type {2} is bound from the {3} but the type has no TryParse method and does not implement IParsable<T>,
+        Message: Request.Code of type Sample.Contracts.Rockets.Unparsable is bound from the query string but the type has no TryParse method and does not implement IParsable<T>,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

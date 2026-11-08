@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1015,
+      Title: Stream operation on a GraphQL host,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,59),
+      MessageFormat: {0} is a stream operation and is skipped on GraphQL host {1},
+      Message: ListRockets is a stream operation and is skipped on GraphQL host RocketsMutations,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator: [
+      {
+        Id: LPAD1015,
+        Title: Stream operation on a GraphQL host,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,59),
+        MessageFormat: {0} is a stream operation and is skipped on GraphQL host {1},
+        Message: ListRockets is a stream operation and is skipped on GraphQL host RocketsMutations,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

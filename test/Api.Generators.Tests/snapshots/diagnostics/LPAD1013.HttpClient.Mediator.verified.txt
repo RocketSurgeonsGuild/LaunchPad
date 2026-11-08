@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1013,
+      Title: A hand-written handler is visible next to the generated one,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,33),
+      MessageFormat: {0} already has a handler, {1}, and {2} generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+      Message: Sample.Contracts.Rockets.GetRocket.Request already has a handler, Sample.Contracts.Rockets.GetRocket.Handler, and RocketsClient generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator: [
+      {
+        Id: LPAD1013,
+        Title: A hand-written handler is visible next to the generated one,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,33),
+        MessageFormat: {0} already has a handler, {1}, and {2} generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+        Message: Sample.Contracts.Rockets.GetRocket.Request already has a handler, Sample.Contracts.Rockets.GetRocket.Handler, and RocketsClient generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

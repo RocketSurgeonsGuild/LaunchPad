@@ -1,0 +1,47 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
+      {
+        Id: LPAD1021,
+        Title: Operation host setting does not apply,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,41),
+        MessageFormat: [OperationHost({0})] has no effect on {1}, which is a {2} host,
+        Message: [OperationHost(RoutePrefix)] has no effect on RocketsGrpcClient, which is a gRPC client host,
+        Category: LaunchPad.Api
+      }
+    ]
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1021,
+      Title: Operation host setting does not apply,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,41),
+      MessageFormat: [OperationHost({0})] has no effect on {1}, which is a {2} host,
+      Message: [OperationHost(RoutePrefix)] has no effect on RocketsGrpcClient, which is a gRPC client host,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS0103,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api.Client.Grpc/Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator/Sample.Host.RocketsGrpcClient.ZeroAlloc.g.cs: (13,362)-(13,371),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
+      MessageFormat: The name '{0}' does not exist in the current context,
+      Message: The name '_services' does not exist in the current context,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator: []
+  }
+}

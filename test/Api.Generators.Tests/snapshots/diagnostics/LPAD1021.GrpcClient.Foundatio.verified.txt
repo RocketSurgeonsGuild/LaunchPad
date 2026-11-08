@@ -1,0 +1,31 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
+      {
+        Id: LPAD1021,
+        Title: Operation host setting does not apply,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,41),
+        MessageFormat: [OperationHost({0})] has no effect on {1}, which is a {2} host,
+        Message: [OperationHost(RoutePrefix)] has no effect on RocketsGrpcClient, which is a gRPC client host,
+        Category: LaunchPad.Api
+      }
+    ]
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1021,
+      Title: Operation host setting does not apply,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,41),
+      MessageFormat: [OperationHost({0})] has no effect on {1}, which is a {2} host,
+      Message: [OperationHost(RoutePrefix)] has no effect on RocketsGrpcClient, which is a gRPC client host,
+      Category: LaunchPad.Api
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator: []
+  }
+}

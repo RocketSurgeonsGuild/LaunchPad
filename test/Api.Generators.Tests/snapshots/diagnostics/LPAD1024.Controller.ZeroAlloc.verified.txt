@@ -1,0 +1,47 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1024,
+      Title: API version is not mapped,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,38)-(8,66),
+      MessageFormat: {0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Message: GetRocket has API version 1.0, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS0234,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api.Controllers/Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator/Sample.Host.RocketsController.Controller.g.cs: (22,155)-(22,164),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
+      MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
+      Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator: [
+      {
+        Id: LPAD1024,
+        Title: API version is not mapped,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,38)-(8,66),
+        MessageFormat: {0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+        Message: GetRocket has API version 1.0, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}
