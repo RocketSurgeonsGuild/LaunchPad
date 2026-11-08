@@ -1,3 +1,4 @@
+using Api.Aot.ClientLib;
 using Api.Aot.Contracts;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,5 +1,6 @@
 using System.Runtime.Serialization;
 using Foundatio.Mediator;
+using Rocket.Surgery.LaunchPad.Api;
 
 namespace Api.Functional.Foundatio.Contracts;
 

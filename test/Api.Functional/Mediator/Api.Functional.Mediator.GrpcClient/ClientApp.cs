@@ -1,4 +1,5 @@
 using Api.Functional.Mediator.Contracts;
+using Api.Functional.Mediator.GrpcClientHost;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 namespace Api.Functional.Mediator.GrpcClient;

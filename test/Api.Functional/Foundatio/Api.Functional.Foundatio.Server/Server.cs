@@ -3,6 +3,7 @@ using Foundatio.Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Api;
 namespace Api.Functional.Foundatio.Server;
 
 public static class ServerApp

@@ -1,3 +1,4 @@
+using Api.Functional.Mediator.ClientHost;
 using Api.Functional.Mediator.Contracts;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;

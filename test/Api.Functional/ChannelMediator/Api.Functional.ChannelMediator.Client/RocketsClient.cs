@@ -1,4 +1,5 @@
 using Api.Functional.ChannelMediator.Contracts;
+using Rocket.Surgery.LaunchPad.Api;
 
 namespace Api.Functional.ChannelMediator.Client;
 

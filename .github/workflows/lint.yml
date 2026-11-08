@@ -47,6 +47,15 @@ jobs:
             # hk's xmllint step needs the xmllint binary, which isn't on the runner image (or in mise).
             - name: 📦 Install xmllint
               run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends libxml2-utils
+            # dotnet format only loads analyzers that are already built. The API generators are project references, so unbuilt
+            # they emit nothing: the attributes and partial-method declarations they generate are missing, and IDE0005 and the
+            # CS0759 fix then delete the `using Rocket.Surgery.LaunchPad.Api;` directives and `partial` hooks that need them.
+            - name: 🔧 Build the API generators
+              run: |
+                  for project in src/Api/*.csproj src/Api.MinimalApi/*.csproj src/Api.Controllers/*.csproj src/Api.Grpc/*.csproj \
+                      src/Api.GraphQL/*.csproj src/Api.Client.Http/*.csproj src/Api.Client.Grpc/*.csproj src/Api.Client.GraphQL/*.csproj; do
+                      dotnet build "$project"
+                  done
             # merge_group: hard gate only — no autofix in the merge queue.
             - name: 🧹 Lint (hk check) — merge_group
               if: github.event_name == 'merge_group'

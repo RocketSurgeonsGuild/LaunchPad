@@ -1,4 +1,5 @@
 using Api.Functional.Foundatio.Contracts;
+using Rocket.Surgery.LaunchPad.Api;
 
 namespace Api.Functional.Foundatio.GraphQLClientHost;
 

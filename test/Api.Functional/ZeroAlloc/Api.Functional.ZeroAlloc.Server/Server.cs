@@ -2,6 +2,7 @@ using Api.Functional.ZeroAlloc.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Api;
 using ZeroAlloc.Mediator;
 namespace Api.Functional.ZeroAlloc.Server;
 

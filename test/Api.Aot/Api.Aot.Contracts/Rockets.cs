@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Mediator;
+using Rocket.Surgery.LaunchPad.Api;
 namespace Api.Aot.Contracts;
 
 public sealed record RocketModel(Guid Id, string Name);

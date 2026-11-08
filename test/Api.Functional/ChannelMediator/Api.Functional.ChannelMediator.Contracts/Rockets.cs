@@ -1,5 +1,6 @@
 using System.Runtime.Serialization;
 using ChannelMediator;
+using Rocket.Surgery.LaunchPad.Api;
 namespace Api.Functional.ChannelMediator.Contracts;
 
 [DataContract] public sealed record RocketModel([property: DataMember(Order = 1)] Guid Id, [property: DataMember(Order = 2)] string Name);
