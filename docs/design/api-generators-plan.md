@@ -1,6 +1,6 @@
 # Mediator-agnostic API generators: orientation, design and plan
 
-Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators; removing the old controller generator, migrating the Restful samples and gRPC still to do. Open from phase 1: server-side API versioning (6).
+Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC still to do. Open from phase 1: server-side API versioning (6).
 
 Related: [ADR-0002 one package per integration](../adr/0002-package-per-integration.md), [ADR-0003 explicit operation hosts](../adr/0003-explicit-operation-hosts.md), and the terms _operation_, _operation host_, _group_, _transport_, _contracts project_ and _mediator profile_ in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -87,6 +87,12 @@ Read: `GENERATORS.md`, `ChannelMediator.ApiGenerators.Abstraction/*`, and its fo
 20. **Immediate.Handlers responses lose their nullability.** Requests implement nothing, and `[ApiOperation(Response = typeof(T))]` can't say `T?`. **Decided:** the server prefers the `[Handler]` method's return type when it is the same type (it carries the annotation), searching next to the request and next to the host; the client treats the response as non-nullable, so 404 throws.
 21. **Multi-targeted projects and the format hook.** The `Unmerged change` markers of item 17 also appear in any project with several target frameworks when a fix differs per framework (seen in `Api.Functional.Tests`). hk's `merge-conflict` step runs before `dotnet-format` writes them, so they can be committed. Not fixed in the hook: changing `hk.pkl` runs `hk-test` inside the commit hook, which writes to the main repository's `.git/config`.
 22. **Sample.Minimal's documented responses change.** The hand-written endpoints declared `NotFound` and `BadRequest` result types; the generated ones declare 400 (ProblemDetails) whenever they bind a value, and 404 only for nullable responses. Its handlers throw `NotFoundException` for missing entities, which still answers 404 at runtime but is no longer in the OpenAPI document. Lists now stream NDJSON instead of returning a JSON array, and OpenAPI tags are the host noun (`Rockets`).
+
+23. **Removing `RestfulApiController` (decided 2026-11-08: delete).** Removed with it: `ControllerActionBodyGenerator`, its `Composition` types and `[Created]`/`[Accepted]` attributes, LPAD0003 and LPAD0004; and in `Rocket.Surgery.LaunchPad.AspNetCore` the public `RestfulApiController`, `RestfulApiOptions`, `RestfulJoint`, the `Composition` types and the `RestfulApiApplicationModelProvider`/`RestfulApiActionModelConvention` conventions. Consequences, all breaking:
+    - Apps call `AddControllers()` themselves; `RestfulJoint` used to.
+    - FluentValidation's joint no longer sets a validation problem details type (there is no option to set).
+    - The OpenAPI documents of controllers no longer list 404, 422 and a default response on every action, because that convention is gone. Generated actions document their success response, 404 only for nullable responses, and 400 when they bind a value. Missing entities still answer 404 and validation failures 422 at runtime.
+    - In `Sample.Restful`, `RemoveRocket` is now `DeleteRocket`; `EditLaunchRecord` and `PatchLaunchRecord` document their 200 `LaunchRecordModel` response instead of 204; routes keep `/Rocket` and `/LaunchRecord` (the hosts declare `[Route("[controller]")]`) but lose the `:guid` constraints.
 
 ## 4. Design
 

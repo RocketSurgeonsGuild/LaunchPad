@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
-using Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
@@ -30,7 +29,6 @@ public partial class OpenApiJoint : IServiceJoint
         services.AddOpenApi(options =>
                             {
                                 options.AddSchemaTransformer<NestedTypeSchemaFilter>();
-                                options.AddSchemaTransformer<RestfulApiActionModelConvention>();
                                 options.AddSchemaTransformer<ProblemDetailsSchemaFilter>();
                                 options.AddSchemaTransformer<StronglyTypedIdSchemaFilter>();
                                 options.AddOperationTransformer<OperationIdFilter>();

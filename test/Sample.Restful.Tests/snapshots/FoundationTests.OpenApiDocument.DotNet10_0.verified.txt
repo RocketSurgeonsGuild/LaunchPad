@@ -111,6 +111,9 @@
           actualLaunchDate: {
             $ref: #/components/schemas/AssignedOfInstant
           },
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
           partner: {
             $ref: #/components/schemas/AssignedOfstring
           },
@@ -132,48 +135,6 @@
         ],
         type: object,
         x-schema-id: EditLaunchRecordPatchRequest
-      },
-      ProblemDetails: {
-        properties: {
-          detail: {
-            type: [
-              null,
-              string
-            ]
-          },
-          instance: {
-            type: [
-              null,
-              string
-            ]
-          },
-          status: {
-            format: int32,
-            pattern: ^-?(?:0|[1-9]\d*)$,
-            type: [
-              null,
-              integer,
-              string
-            ]
-          },
-          title: {
-            type: [
-              null,
-              string
-            ]
-          },
-          type: {
-            type: [
-              null,
-              string
-            ]
-          }
-        },
-        required: [
-          type,
-          title
-        ],
-        type: object
       },
       Request: {
         properties: {
@@ -253,6 +214,56 @@
           falconHeavy,
           atlasV
         ]
+      },
+      ValidationProblemDetails: {
+        properties: {
+          detail: {
+            type: [
+              null,
+              string
+            ]
+          },
+          errors: {
+            additionalProperties: {
+              items: {
+                type: string
+              },
+              type: array
+            },
+            type: object
+          },
+          instance: {
+            type: [
+              null,
+              string
+            ]
+          },
+          status: {
+            format: int32,
+            pattern: ^-?(?:0|[1-9]\d*)$,
+            type: [
+              null,
+              integer,
+              string
+            ]
+          },
+          title: {
+            type: [
+              null,
+              string
+            ]
+          },
+          type: {
+            type: [
+              null,
+              string
+            ]
+          }
+        },
+        required: [
+          errors
+        ],
+        type: object
       }
     }
   },
@@ -277,15 +288,7 @@
         responses: {
           200: {
             content: {
-              application/json: {
-                schema: {
-                  items: {
-                    $ref: #/components/schemas/LaunchRecordModel
-                  },
-                  type: array
-                }
-              },
-              text/json: {
+              application/x-ndjson: {
                 schema: {
                   items: {
                     $ref: #/components/schemas/LaunchRecordModel
@@ -298,50 +301,16 @@
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Search for launch records,
         tags: [
           LaunchRecord
         ]
@@ -375,11 +344,6 @@
                 schema: {
                   $ref: #/components/schemas/Response
                 }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/Response
-                }
               }
             },
             description: Created,
@@ -394,65 +358,16 @@
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Create a new launch record,
         tags: [
           LaunchRecord
         ]
@@ -467,7 +382,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -478,65 +392,16 @@
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Remove a launch record,
         tags: [
           LaunchRecord
         ]
@@ -549,7 +414,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -561,76 +425,22 @@
                 schema: {
                   $ref: #/components/schemas/LaunchRecordModel
                 }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/LaunchRecordModel
-                }
               }
             },
             description: OK
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Load details of a specific launch record,
         tags: [
           LaunchRecord
         ]
@@ -643,7 +453,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -669,70 +478,28 @@
           required: true
         },
         responses: {
-          204: {
-            description: No Content
-          },
-          400: {
+          200: {
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/LaunchRecordModel
                 }
-              },
-              text/json: {
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Update a given launch record,
         tags: [
           LaunchRecord
         ]
@@ -745,7 +512,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -771,70 +537,28 @@
           required: true
         },
         responses: {
-          204: {
-            description: No Content
-          },
-          400: {
+          200: {
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/LaunchRecordModel
                 }
-              },
-              text/json: {
+              }
+            },
+            description: OK
+          },
+          400: {
+            content: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Update a given launch record,
         tags: [
           LaunchRecord
         ]
@@ -855,15 +579,7 @@
         responses: {
           200: {
             content: {
-              application/json: {
-                schema: {
-                  items: {
-                    $ref: #/components/schemas/RocketModel
-                  },
-                  type: array
-                }
-              },
-              text/json: {
+              application/x-ndjson: {
                 schema: {
                   items: {
                     $ref: #/components/schemas/RocketModel
@@ -876,50 +592,16 @@
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Search for rockets,
         tags: [
           Rocket
         ]
@@ -953,11 +635,6 @@
                 schema: {
                   $ref: #/components/schemas/Response
                 }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/Response
-                }
               }
             },
             description: Created,
@@ -972,65 +649,16 @@
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Create a new rocket,
         tags: [
           Rocket
         ]
@@ -1038,14 +666,13 @@
     },
     /Rocket/{id}: {
       delete: {
-        operationId: RemoveRocket,
+        operationId: DeleteRocket,
         parameters: [
           {
             in: path,
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -1056,65 +683,16 @@
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Remove a rocket,
         tags: [
           Rocket
         ]
@@ -1127,7 +705,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -1139,76 +716,22 @@
                 schema: {
                   $ref: #/components/schemas/RocketModel
                 }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/RocketModel
-                }
               }
             },
             description: OK
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Load details of a specific rocket,
         tags: [
           Rocket
         ]
@@ -1221,7 +744,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -1253,76 +775,22 @@
                 schema: {
                   $ref: #/components/schemas/RocketModel
                 }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/RocketModel
-                }
               }
             },
             description: OK
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Update a given rocket,
         tags: [
           Rocket
         ]
@@ -1335,7 +803,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -1367,76 +834,22 @@
                 schema: {
                   $ref: #/components/schemas/RocketModel
                 }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/RocketModel
-                }
               }
             },
             description: OK
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Update a given rocket,
         tags: [
           Rocket
         ]
@@ -1451,7 +864,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -1459,15 +871,7 @@
         responses: {
           200: {
             content: {
-              application/json: {
-                schema: {
-                  items: {
-                    $ref: #/components/schemas/LaunchRecordModel
-                  },
-                  type: array
-                }
-              },
-              text/json: {
+              application/x-ndjson: {
                 schema: {
                   items: {
                     $ref: #/components/schemas/LaunchRecordModel
@@ -1480,65 +884,16 @@
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Get the launch records for a given rocket,
         tags: [
           Rocket
         ]
@@ -1553,7 +908,6 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           },
@@ -1562,7 +916,6 @@
             name: launchRecordId,
             required: true,
             schema: {
-              format: uuid,
               type: string
             }
           }
@@ -1574,76 +927,22 @@
                 schema: {
                   $ref: #/components/schemas/LaunchRecordModel
                 }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/LaunchRecordModel
-                }
               }
             },
             description: OK
           },
           400: {
             content: {
-              application/json: {
+              application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  $ref: #/components/schemas/ValidationProblemDetails
                 }
               }
             },
             description: Bad Request
-          },
-          404: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: Not Found
-          },
-          422: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
-                }
-              }
-            },
-            description: Unprocessable Entity
-          },
-          default: {
-            content: {
-              application/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              },
-              text/json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
-                }
-              }
-            },
-            description: 
           }
         },
+        summary: Get a specific launch record for a given rocket,
         tags: [
           Rocket
         ]

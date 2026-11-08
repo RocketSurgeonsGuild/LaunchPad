@@ -16,7 +16,6 @@ public class JointOrderingTests
         var context = await JointTestContext
                            .CreateBuilder()
                            .AppendJoint<SystemJsonTextJoint>()
-                           .AppendJoint<RestfulJoint>()
                            .AppendJoint<ProblemDetailsJoint>()
                            .AppendJoint<OpenApiJoint>()
                            .AppendJoint<AspNetCoreJoint>()
@@ -28,7 +27,7 @@ public class JointOrderingTests
         aspNetCore.ShouldBeGreaterThanOrEqualTo(0);
         foreach (var dependent in new[]
                  {
-                     typeof(SystemJsonTextJoint), typeof(RestfulJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint),
+                     typeof(SystemJsonTextJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint),
                  })
         {
             joints.IndexOf(dependent).ShouldBeGreaterThan(aspNetCore, dependent.Name);
@@ -39,7 +38,6 @@ public class JointOrderingTests
     [Arguments(typeof(AspNetCoreJoint))]
     [Arguments(typeof(OpenApiJoint))]
     [Arguments(typeof(ProblemDetailsJoint))]
-    [Arguments(typeof(RestfulJoint))]
     [Arguments(typeof(SystemJsonTextJoint))]
     public void Should_Be_An_Application_Joint_That_Runs_In_Every_Host_Type(Type joint)
     {

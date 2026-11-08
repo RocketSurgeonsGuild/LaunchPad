@@ -7,8 +7,6 @@ using Joinery.Dovetail.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-
-using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 using Rocket.Surgery.LaunchPad.AspNetCore.Rivets;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
@@ -31,15 +29,6 @@ public class FluentValidationJointTests
             x => x.Type.ShouldBe(typeof(AspNetCoreJoint))
         );
         typeof(FluentValidationJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
-    }
-
-    [Test]
-    public async Task Should_Describe_Validation_Failures_With_The_Fluent_Validation_Problem_Details()
-    {
-        var services = await JointTestContext.ApplyServicesAsync<FluentValidationJoint>();
-        using var provider = JointTestContext.BuildServiceProvider(services);
-
-        provider.GetRequiredService<IOptions<RestfulApiOptions>>().Value.ValidationProblemDetailsType.ShouldBe(typeof(FluentValidationProblemDetails));
     }
 
     [Test]

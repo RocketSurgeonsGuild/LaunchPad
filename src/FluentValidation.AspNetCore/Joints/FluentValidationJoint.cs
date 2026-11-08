@@ -32,7 +32,6 @@ public class FluentValidationJoint : IServiceJoint
         services
            .Configure<MvcOptions>(mvcOptions => mvcOptions.Filters.Insert(0, new ValidationExceptionFilter()))
            .Configure<MvcJsonOptions>(options => options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()))
-           .Configure<HttpJsonOptions>(options => options.SerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()))
-           .Configure<RestfulApiOptions>(options => options.ValidationProblemDetailsType = typeof(FluentValidationProblemDetails));
+           .Configure<HttpJsonOptions>(options => options.SerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()));
     }
 }
