@@ -467,18 +467,11 @@ This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) s
 
 [Section titled “Packages”](#packages)
 
-| Package                                       | Reference it from                                        | What it does                                                                     |
-| --------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.Api`                | contracts projects that customise                        | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes. |
-| `Rocket.Surgery.LaunchPad.Api.MinimalApi`     | the server                                               | Minimal API endpoints for `*Endpoints` hosts.                                    |
-| `Rocket.Surgery.LaunchPad.Api.Controllers`    | the server                                               | MVC controller actions for `*Controller` hosts.                                  |
-| `Rocket.Surgery.LaunchPad.Api.Grpc`           | the server                                               | Code-first gRPC services (protobuf-net.Grpc) for `*Service` hosts.               |
-| `Rocket.Surgery.LaunchPad.Api.Client.Grpc`    | the client                                               | Code-first gRPC clients and mediator handlers for `*GrpcClient` hosts.           |
-| `Rocket.Surgery.LaunchPad.Api.GraphQL`        | the server                                               | HotChocolate mutations for `*Mutations` hosts.                                   |
-| `Rocket.Surgery.LaunchPad.Api.Client.GraphQL` | the client                                               | GraphQL mutation clients and mediator handlers for `*GraphQLClient` hosts.       |
-| `Rocket.Surgery.LaunchPad.Api.Client.Http`    | the client (see [placement](#where-a-client-host-lives)) | A typed HTTP client and mediator handlers for `*Client` hosts.                   |
+| Package                        | Reference it from                          | What it does                                                                                                                                                                                                                                                                                                |
+| ------------------------------ | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Rocket.Surgery.LaunchPad.Api` | contracts that customise, servers, clients | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes, and the generators: Minimal API (`*Endpoints`), MVC (`*Controller`), gRPC (`*Service`, `*GrpcClient`), GraphQL (`*Mutations`, `*GraphQLClient`) and HTTP clients (`*Client`, see [placement](#where-a-client-host-lives)). |
 
-All three are analyzer-only development dependencies. The attributes are generated into each project that uses them, as `internal` types, so nothing reaches your runtime dependencies. The transport packages bring the base package with them.
+It’s an analyzer-only development dependency. The attributes are generated into each project that uses them, as `internal` types, so nothing reaches your runtime dependencies. One generator per transport runs in every project that references the package, and each writes code only for the hosts of its kind, using that transport’s library (ASP.NET Core, protobuf-net.Grpc, HotChocolate or Microsoft.Extensions.Http).
 
 ## Quick start
 
@@ -561,7 +554,7 @@ The transport comes from the host itself; the first rule that matches wins:
 | is named `*GrpcClient` / `*GraphQLClient`      | gRPC / GraphQL client    |
 | is named `*Client`                             | HTTP client              |
 
-A host that matches nothing, or whose transport’s package isn’t referenced, is LPAD1017. A Minimal API host must be `static partial` and a client host `partial`; LPAD1010 has a code fix that adds the modifiers.
+A host that matches nothing, or whose transport’s library isn’t referenced, is LPAD1017. A Minimal API host must be `static partial` and a client host `partial`; LPAD1010 has a code fix that adds the modifiers.
 
 ### Names, groups and routes
 
@@ -836,7 +829,7 @@ LaunchPad’s nested `X.Request` types share a simple name, so each `[JsonSerial
 | LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.                            |
 | LPAD1015 | Warning  | A stream operation on a GraphQL host is skipped.                                                    |
 | LPAD1016 | Info     | An operation is skipped because the profile can’t dispatch it.                                      |
-| LPAD1017 | Error    | The host’s transport can’t be inferred, or its package isn’t referenced.                            |
+| LPAD1017 | Error    | The host’s transport can’t be inferred, or its library isn’t referenced.                            |
 | LPAD1018 | Error    | Two client hosts generate handlers for the same operation.                                          |
 | LPAD1019 | Error    | A query operation is listed on a mutation host.                                                     |
 | LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.                              |
