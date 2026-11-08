@@ -114,7 +114,8 @@ internal static class HostReader
         var (inferredVerb, creates, remainder) = Naming.InferVerb(name);
         var verb = Naming.TryParseVerb(String(args, "Verb") ?? String(apiOperation, "Verb"), out var explicitVerb) ? explicitVerb : inferredVerb;
         var hasId = members.Any(m => string.Equals(m.Name, "Id", StringComparison.OrdinalIgnoreCase));
-        var route = String(args, "Route") ?? String(apiOperation, "Path") ?? Naming.DefaultPath(remainder, hostNoun, verb, hasId);
+        var explicitRoute = String(args, "Route") ?? String(apiOperation, "Path");
+        var route = explicitRoute ?? Constrain(Naming.DefaultPath(remainder, hostNoun, verb, hasId), members);
         var tokens = RouteText.Tokens(route).ToArray();
 
         var boundMembers = Bind(wireType, members, tokens, verb, route, name, location, diagnostics, out var bindingFailed);
@@ -437,6 +438,43 @@ internal static class HostReader
 
         return result;
     }
+
+    // A default route's tokens get the constraint of their member's type ({id:guid}), as hand-written routes usually do; a strongly typed id
+    // counts as the type of its Value. Routes written by the user are left as they are.
+    private static string Constrain(string route, List<RawMember> members)
+    {
+        foreach (var token in RouteText.Tokens(route).ToArray())
+        {
+            var member = members.FirstOrDefault(m => string.Equals(m.Name, token, StringComparison.OrdinalIgnoreCase));
+            if (member is null || RouteConstraint(member.Type) is not { } constraint) continue;
+            route = route.Replace("{" + token + "}", "{" + token + ":" + constraint + "}");
+        }
+
+        return route;
+    }
+
+    private static string? RouteConstraint(ITypeSymbol type)
+    {
+        var underlying = Element(type);
+        var value = underlying.GetMembers("Value").OfType<IPropertySymbol>().FirstOrDefault(p => p is { IsStatic: false, DeclaredAccessibility: Accessibility.Public });
+        var constraint = BuiltInConstraint(underlying);
+        return constraint ?? ( value is { } && underlying.SpecialType == SpecialType.None ? BuiltInConstraint(value.Type) : null );
+    }
+
+    // A table, not a switch over SpecialType: the repository's IDE0072 fixer would fill a partial switch with throwing arms.
+    private static readonly Dictionary<SpecialType, string> Constraints = new()
+    {
+        [SpecialType.System_Int32] = "int",
+        [SpecialType.System_Int64] = "long",
+        [SpecialType.System_Boolean] = "bool",
+        [SpecialType.System_Decimal] = "decimal",
+        [SpecialType.System_Double] = "double",
+        [SpecialType.System_Single] = "float",
+        [SpecialType.System_DateTime] = "datetime",
+    };
+
+    private static string? BuiltInConstraint(ITypeSymbol type) =>
+        Constraints.TryGetValue(type.SpecialType, out var constraint) ? constraint : type.ToDisplayString() == "System.Guid" ? "guid" : null;
 
     private static bool Has(string?[] attributes, params string[] names) => attributes.Any(a => a is { } && names.Any(n => a == n || a == n.Replace("`1", "")));
 

@@ -16,7 +16,7 @@ public static partial class RocketsEndpoints
         var group = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGroup(endpoints, "/api/rockets");
         global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithTags(group, "Rockets");
         {
-            var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id}", new[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__GetRocketRequestDelegate));
+            var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id:guid}", new[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__GetRocketRequestDelegate));
             var method = typeof(RocketsEndpoints).GetMethod(nameof(__GetRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
             global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
             endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.RocketModel>>(method, builder));
@@ -31,7 +31,7 @@ public static partial class RocketsEndpoints
         return group;
     }
 
-    /// <summary>Handles <c>GET /api/rockets/{id}</c>.</summary>
+    /// <summary>Handles <c>GET /api/rockets/{id:guid}</c>.</summary>
     private static async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.RocketModel>> __GetRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, [global::Microsoft.AspNetCore.Mvc.FromServices] global::MediatR.ISender __sender,  global::System.Threading.CancellationToken __cancellationToken)
     {
         var __wire = new global::Sample.Contracts.GetRocket.Request(@id);

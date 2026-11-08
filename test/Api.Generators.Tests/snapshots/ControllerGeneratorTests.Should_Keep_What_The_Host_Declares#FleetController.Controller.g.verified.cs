@@ -7,8 +7,8 @@
 [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Controllers", "version")]
 public partial class FleetController
 {
-    /// <summary>Handles <c>GET /v1/Fleet/{id}/rocket</c> by sending <see cref="Sample.Contracts.Rockets.GetRocket.Request" />.</summary>
-    [global::Microsoft.AspNetCore.Mvc.HttpGet("{id}/rocket")]
+    /// <summary>Handles <c>GET /v1/Fleet/{id:guid}/rocket</c> by sending <see cref="Sample.Contracts.Rockets.GetRocket.Request" />.</summary>
+    [global::Microsoft.AspNetCore.Mvc.HttpGet("{id:guid}/rocket")]
     [global::Microsoft.AspNetCore.Routing.EndpointName("GetRocket")]
     [global::Microsoft.AspNetCore.Http.EndpointSummary("Load a rocket")]
     [global::Microsoft.AspNetCore.Http.Tags("search")]
@@ -40,8 +40,8 @@ public partial class FleetController
         return new global::Microsoft.AspNetCore.Mvc.CreatedResult("/v1/Fleet/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiFormat.Value(__response.Id)) + "/rocket", __response);
     }
 
-    /// <summary>Handles <c>DELETE /v1/Fleet/{id}/rocket</c> by sending <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" />.</summary>
-    [global::Microsoft.AspNetCore.Mvc.HttpDelete("{id}/rocket")]
+    /// <summary>Handles <c>DELETE /v1/Fleet/{id:guid}/rocket</c> by sending <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" />.</summary>
+    [global::Microsoft.AspNetCore.Mvc.HttpDelete("{id:guid}/rocket")]
     [global::Microsoft.AspNetCore.Routing.EndpointName("DeleteRocket")]
     [global::Microsoft.AspNetCore.Http.EndpointSummary("Remove a rocket")]
     [global::Microsoft.AspNetCore.Http.EndpointDescription("Gone for good.")]

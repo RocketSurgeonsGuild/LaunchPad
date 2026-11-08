@@ -38,7 +38,7 @@ namespace Sample.Client
         /// <summary>Adjusts the JSON options, e.g. to insert a <c>JsonSerializerContext</c> for trimming and native AOT.</summary>
         static partial void ConfigureJsonOptions(global::System.Text.Json.JsonSerializerOptions options);
 
-        /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to <c>GET /api/rockets/{id}</c>.</summary>
+        /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to <c>GET /api/rockets/{id:guid}</c>.</summary>
         public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
         {
             global::System.ArgumentNullException.ThrowIfNull(request);
@@ -91,7 +91,7 @@ namespace Sample.Client
         /// <summary>Adjusts the request for <c>CreateRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
         partial void ConfigureCreateRocket(global::System.Net.Http.HttpRequestMessage request);
 
-        /// <summary>Sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> to <c>PUT /api/rockets/{id}</c>.</summary>
+        /// <summary>Sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> to <c>PUT /api/rockets/{id:guid}</c>.</summary>
         public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
         {
             global::System.ArgumentNullException.ThrowIfNull(request);
@@ -108,7 +108,7 @@ namespace Sample.Client
         /// <summary>Adjusts the request for <c>EditRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
         partial void ConfigureEditRocket(global::System.Net.Http.HttpRequestMessage request);
 
-        /// <summary>Sends <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> to <c>DELETE /api/rockets/{id}</c>.</summary>
+        /// <summary>Sends <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> to <c>DELETE /api/rockets/{id:guid}</c>.</summary>
         public async global::System.Threading.Tasks.Task DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
         {
             global::System.ArgumentNullException.ThrowIfNull(request);

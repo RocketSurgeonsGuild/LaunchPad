@@ -36,7 +36,7 @@ public partial class FleetClient
     /// <summary>Adjusts the JSON options, e.g. to insert a <c>JsonSerializerContext</c> for trimming and native AOT.</summary>
     static partial void ConfigureJsonOptions(global::System.Text.Json.JsonSerializerOptions options);
 
-    /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to <c>GET /api/fleet/{id}/rocket</c>.</summary>
+    /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to <c>GET /api/fleet/{id:guid}/rocket</c>.</summary>
     public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
     {
         global::System.ArgumentNullException.ThrowIfNull(request);

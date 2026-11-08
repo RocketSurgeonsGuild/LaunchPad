@@ -121,7 +121,8 @@ client host `partial`; LPAD1010 has a code fix that adds the modifiers.
 - The **group** is the host name without its suffix, in kebab-case: `RocketsEndpoints` and `RocketsClient` are both `rockets`. Name the
   server and client hosts alike, or set `[OperationHost(Group = "...")]` on both.
 - The **route** is `RoutePrefix / group / path`. The prefix defaults to `api`. The path is REST style: the verb prefix and the group noun are
-  dropped from the operation name, and `{id}` comes first when the request has an `Id`.
+  dropped from the operation name, and `{id}` comes first when the request has an `Id`. Tokens get the constraint of their member's
+  type (`{id:guid}` for a `Guid`, or for a strongly typed id whose `Value` is one); a `Route` you write is used as written.
 
 | Operation (group `rockets`) | Verb and route                         | Success |
 | --------------------------- | -------------------------------------- | ------- |

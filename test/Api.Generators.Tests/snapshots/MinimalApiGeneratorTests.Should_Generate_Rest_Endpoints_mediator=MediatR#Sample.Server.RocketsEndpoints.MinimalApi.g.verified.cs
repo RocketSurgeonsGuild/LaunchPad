@@ -18,7 +18,7 @@ namespace Sample.Server
             var group = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGroup(endpoints, "/api/rockets");
             global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithTags(group, "Rockets");
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id}", new[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__GetRocketRequestDelegate));
+                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id:guid}", new[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__GetRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__GetRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Results<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.Rockets.RocketModel>, global::Microsoft.AspNetCore.Http.HttpResults.NotFound>>(method, builder));
@@ -59,7 +59,7 @@ namespace Sample.Server
                 ConfigureCreateRocket(endpoint);
             }
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id}", new[] { "PUT" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__EditRocketRequestDelegate));
+                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id:guid}", new[] { "PUT" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__EditRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__EditRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.Rockets.RocketModel>>(method, builder));
@@ -74,7 +74,7 @@ namespace Sample.Server
                 ConfigureEditRocket(endpoint);
             }
             {
-                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id}", new[] { "DELETE" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__DeleteRocketRequestDelegate));
+                var endpoint = global::Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapMethods(group, "/{id:guid}", new[] { "DELETE" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__DeleteRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__DeleteRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
                 global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
                 endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.NoContent>(method, builder));
@@ -89,7 +89,7 @@ namespace Sample.Server
             return group;
         }
 
-        /// <summary>Handles <c>GET /api/rockets/{id}</c>.</summary>
+        /// <summary>Handles <c>GET /api/rockets/{id:guid}</c>.</summary>
         private static async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Http.HttpResults.Results<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.Rockets.RocketModel>, global::Microsoft.AspNetCore.Http.HttpResults.NotFound>> __GetRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, [global::Microsoft.AspNetCore.Mvc.FromServices] global::MediatR.ISender __sender,  global::System.Threading.CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.Rockets.GetRocket.Request(@id);
@@ -160,7 +160,7 @@ namespace Sample.Server
         /// <summary>Customises the generated <c>CreateRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
         static partial void ConfigureCreateRocket(global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder endpoint);
 
-        /// <summary>Handles <c>PUT /api/rockets/{id}</c>.</summary>
+        /// <summary>Handles <c>PUT /api/rockets/{id:guid}</c>.</summary>
         private static async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.Rockets.RocketModel>> __EditRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, [global::Microsoft.AspNetCore.Mvc.FromBody] global::Sample.Contracts.Rockets.EditRocket.Request __body, [global::Microsoft.AspNetCore.Mvc.FromServices] global::MediatR.ISender __sender,  global::System.Threading.CancellationToken __cancellationToken)
         {
             var __wire = __body;
@@ -191,7 +191,7 @@ namespace Sample.Server
         /// <summary>Customises the generated <c>EditRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
         static partial void ConfigureEditRocket(global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder endpoint);
 
-        /// <summary>Handles <c>DELETE /api/rockets/{id}</c>.</summary>
+        /// <summary>Handles <c>DELETE /api/rockets/{id:guid}</c>.</summary>
         private static async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Http.HttpResults.NoContent> __DeleteRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, [global::Microsoft.AspNetCore.Mvc.FromServices] global::MediatR.ISender __sender,  global::System.Threading.CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.Rockets.DeleteRocket.Request(@id);

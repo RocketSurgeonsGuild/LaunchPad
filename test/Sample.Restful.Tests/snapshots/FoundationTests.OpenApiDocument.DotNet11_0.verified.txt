@@ -393,6 +393,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -425,6 +426,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -464,6 +466,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -523,6 +526,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -681,13 +685,14 @@
     },
     /Rocket/{id}: {
       delete: {
-        operationId: DeleteRocket,
+        operationId: RemoveRocket,
         parameters: [
           {
             in: path,
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -720,6 +725,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -759,6 +765,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -818,6 +825,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }
@@ -879,6 +887,7 @@
             name: id,
             required: true,
             schema: {
+              format: uuid,
               type: string
             }
           }

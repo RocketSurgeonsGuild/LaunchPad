@@ -13,7 +13,7 @@ namespace Sample.Restful.Controllers;
 [CreateOperation<CreateRocket.Request, GetRocket.Request>(Summary = "Create a new rocket")]
 [Operation<EditRocket.Request>(Summary = "Update a given rocket")]
 [Operation<EditRocket.PatchRequest>(Summary = "Update a given rocket")]
-[Operation<DeleteRocket.Request>(Summary = "Remove a rocket")]
+[Operation<DeleteRocket.Request>(Name = "RemoveRocket", Summary = "Remove a rocket")]
 [Operation<GetRocketLaunchRecords.Request>(Summary = "Get the launch records for a given rocket")]
 [Operation<GetRocketLaunchRecord.Request>(Route = "{id}/launch-records/{launchRecordId}", Summary = "Get a specific launch record for a given rocket")]
 public partial class RocketController;

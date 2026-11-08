@@ -92,7 +92,7 @@ Read: `GENERATORS.md`, `ChannelMediator.ApiGenerators.Abstraction/*`, and its fo
     - Apps call `AddControllers()` themselves; `RestfulJoint` used to.
     - FluentValidation's joint no longer sets a validation problem details type (there is no option to set).
     - The OpenAPI documents of controllers no longer list 404, 422 and a default response on every action, because that convention is gone. Generated actions document their success response, 404 only for nullable responses, and 400 when they bind a value. Missing entities still answer 404 and validation failures 422 at runtime.
-    - In `Sample.Restful`, `RemoveRocket` is now `DeleteRocket`; `EditLaunchRecord` and `PatchLaunchRecord` document their 200 `LaunchRecordModel` response instead of 204; routes keep `/Rocket` and `/LaunchRecord` (the hosts declare `[Route("[controller]")]`) but lose the `:guid` constraints.
+    - In `Sample.Restful`, `EditLaunchRecord` and `PatchLaunchRecord` document their 200 `LaunchRecordModel` response instead of 204. Routes keep `/Rocket` and `/LaunchRecord` (the hosts declare `[Route("[controller]")]`) and their `{id:guid}` constraints, and `RemoveRocket` keeps its name (`Name = "RemoveRocket"`).
 
 ## 4. Design
 
@@ -496,6 +496,7 @@ Before each phase I restate its plan and wait for a go-ahead.
 - **Request bodies** are read with a success flag, not compared to `null`, so struct requests (ZeroAlloc) work.
 - **Immediate.Handlers streams** are handlers returning `ValueTask<IAsyncEnumerable<T>>`, dispatched like any other operation.
 - **Nested verb-only request names** take the container's noun: `EditRocket.PatchRequest` → `PatchRocket`.
+- **Default routes carry type constraints** (`{id:guid}`, `{id:int}`, …), inferred from the bound member's type; a strongly typed id counts as the type of its `Value`. Routes written with `Route`/`Path` are used as written.
 - **Functional tests** start each server with `UseTestServer()` instead of `WebApplicationFactory`, because six servers share one test project and a `Program` entry point each would collide.
 
 **Open:**

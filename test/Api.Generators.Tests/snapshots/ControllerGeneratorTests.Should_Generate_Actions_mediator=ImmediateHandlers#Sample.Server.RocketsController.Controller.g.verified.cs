@@ -11,8 +11,8 @@ namespace Sample.Server
     [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Controllers", "version")]
     public partial class RocketsController : global::Microsoft.AspNetCore.Mvc.ControllerBase
     {
-        /// <summary>Handles <c>GET /api/rockets/{id}</c> by sending <see cref="Sample.Contracts.Rockets.GetRocket.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpGet("{id}")]
+        /// <summary>Handles <c>GET /api/rockets/{id:guid}</c> by sending <see cref="Sample.Contracts.Rockets.GetRocket.Request" />.</summary>
+        [global::Microsoft.AspNetCore.Mvc.HttpGet("{id:guid}")]
         [global::Microsoft.AspNetCore.Routing.EndpointName("GetRocket")]
         [global::Microsoft.AspNetCore.Http.EndpointSummary("Load a rocket")]
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Sample.Contracts.Rockets.RocketModel), 200, "application/json")]
@@ -53,8 +53,8 @@ namespace Sample.Server
             return new global::Microsoft.AspNetCore.Mvc.CreatedResult("/api/rockets/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiFormat.Value(__response.Id)), __response);
         }
 
-        /// <summary>Handles <c>PUT /api/rockets/{id}</c> by sending <see cref="Sample.Contracts.Rockets.EditRocket.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpPut("{id}")]
+        /// <summary>Handles <c>PUT /api/rockets/{id:guid}</c> by sending <see cref="Sample.Contracts.Rockets.EditRocket.Request" />.</summary>
+        [global::Microsoft.AspNetCore.Mvc.HttpPut("{id:guid}")]
         [global::Microsoft.AspNetCore.Routing.EndpointName("EditRocket")]
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Sample.Contracts.Rockets.RocketModel), 200, "application/json")]
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails), 400, "application/problem+json")]
@@ -68,8 +68,8 @@ namespace Sample.Server
             return new global::Microsoft.AspNetCore.Mvc.OkObjectResult(__response);
         }
 
-        /// <summary>Handles <c>DELETE /api/rockets/{id}</c> by sending <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpDelete("{id}")]
+        /// <summary>Handles <c>DELETE /api/rockets/{id:guid}</c> by sending <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" />.</summary>
+        [global::Microsoft.AspNetCore.Mvc.HttpDelete("{id:guid}")]
         [global::Microsoft.AspNetCore.Routing.EndpointName("DeleteRocket")]
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(bool), 200, "application/json")]
         [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails), 400, "application/problem+json")]
