@@ -10,10 +10,8 @@ namespace Sample.Client
     {
         /// <summary>The name of the <see cref="global::System.Net.Http.HttpClient" /> this client sends through.</summary>
         public const string HttpClientName = "RocketsClient";
-
         private static readonly global::System.Text.Json.JsonSerializerOptions __jsonOptions = CreateJsonOptions();
         private readonly global::System.Net.Http.IHttpClientFactory __httpClientFactory;
-
         /// <summary>Creates the client. Register it with <c>services.AddRocketsClient()</c>.</summary>
         public RocketsClient(global::System.Net.Http.IHttpClientFactory httpClientFactory)
         {
@@ -25,8 +23,8 @@ namespace Sample.Client
         {
             var options = new global::System.Text.Json.JsonSerializerOptions(global::System.Text.Json.JsonSerializerDefaults.Web);
             ConfigureJsonOptions(options);
-            // Reflection-based metadata unless a JsonSerializerContext was supplied; native AOT apps add one in ConfigureJsonOptions.
-            if (global::System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault) options.TypeInfoResolver ??= ReflectionTypeInfoResolver();
+            if (global::System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault)
+                options.TypeInfoResolver ??= ReflectionTypeInfoResolver();
             options.MakeReadOnly();
             return options;
         }
@@ -34,10 +32,8 @@ namespace Sample.Client
         [global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
         [global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
         private static global::System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver? ReflectionTypeInfoResolver() => global::System.Text.Json.JsonSerializerOptions.Default.TypeInfoResolver;
-
         /// <summary>Adjusts the JSON options, e.g. to insert a <c>JsonSerializerContext</c> for trimming and native AOT.</summary>
         static partial void ConfigureJsonOptions(global::System.Text.Json.JsonSerializerOptions options);
-
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to <c>GET /api/rockets/{id:guid}</c>.</summary>
         public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
         {
@@ -53,7 +49,6 @@ namespace Sample.Client
 
         /// <summary>Adjusts the request for <c>GetRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
         partial void ConfigureGetRocket(global::System.Net.Http.HttpRequestMessage request);
-
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.ListRockets.Request" /> to <c>GET /api/rockets</c>.</summary>
         public async global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken cancellationToken = default)
         {
@@ -67,12 +62,12 @@ namespace Sample.Client
             using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
             await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
             var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
-            await foreach (var __item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.ConfigureAwait(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.ReadNdjsonAsync(__response, __typeInfo, cancellationToken), false)) yield return __item;
+            await foreach (var __item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.ConfigureAwait(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.ReadNdjsonAsync(__response, __typeInfo, cancellationToken), false))
+                yield return __item;
         }
 
         /// <summary>Adjusts the request for <c>ListRockets</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
         partial void ConfigureListRockets(global::System.Net.Http.HttpRequestMessage request);
-
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.CreateRocket.Request" /> to <c>POST /api/rockets</c>.</summary>
         public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
         {
@@ -89,7 +84,6 @@ namespace Sample.Client
 
         /// <summary>Adjusts the request for <c>CreateRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
         partial void ConfigureCreateRocket(global::System.Net.Http.HttpRequestMessage request);
-
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> to <c>PUT /api/rockets/{id:guid}</c>.</summary>
         public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
         {
@@ -106,7 +100,6 @@ namespace Sample.Client
 
         /// <summary>Adjusts the request for <c>EditRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
         partial void ConfigureEditRocket(global::System.Net.Http.HttpRequestMessage request);
-
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> to <c>DELETE /api/rockets/{id:guid}</c>.</summary>
         public async global::System.Threading.Tasks.Task<bool> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
         {
@@ -122,13 +115,14 @@ namespace Sample.Client
 
         /// <summary>Adjusts the request for <c>DeleteRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
         partial void ConfigureDeleteRocket(global::System.Net.Http.HttpRequestMessage request);
-
         /// <summary>Handles <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> by sending it through <see cref="RocketsClient.GetRocket" />.</summary>
         public sealed class GetRocketHandler : global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.GetRocket.Request, global::Sample.Contracts.Rockets.RocketModel>
         {
             private readonly RocketsClient __client;
-
-            public GetRocketHandler(RocketsClient client) => __client = client;
+            public GetRocketHandler(RocketsClient client)
+            {
+                __client = client;
+            }
 
             public global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> HandleAsync(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => new global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel>(__client.GetRocket(request, cancellationToken));
         }
@@ -137,8 +131,10 @@ namespace Sample.Client
         public sealed class ListRocketsHandler : global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.ListRockets.Request, global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>>
         {
             private readonly RocketsClient __client;
-
-            public ListRocketsHandler(RocketsClient client) => __client = client;
+            public ListRocketsHandler(RocketsClient client)
+            {
+                __client = client;
+            }
 
             public global::System.Threading.Tasks.ValueTask<global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>> HandleAsync(global::Sample.Contracts.Rockets.ListRockets.Request request, global::System.Threading.CancellationToken cancellationToken) => new global::System.Threading.Tasks.ValueTask<global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>>(__client.ListRockets(request, cancellationToken));
         }
@@ -147,8 +143,10 @@ namespace Sample.Client
         public sealed class CreateRocketHandler : global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.CreateRocket.Request, global::Sample.Contracts.Rockets.CreateRocket.Response>
         {
             private readonly RocketsClient __client;
-
-            public CreateRocketHandler(RocketsClient client) => __client = client;
+            public CreateRocketHandler(RocketsClient client)
+            {
+                __client = client;
+            }
 
             public global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> HandleAsync(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => new global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response>(__client.CreateRocket(request, cancellationToken));
         }
@@ -157,8 +155,10 @@ namespace Sample.Client
         public sealed class EditRocketHandler : global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>
         {
             private readonly RocketsClient __client;
-
-            public EditRocketHandler(RocketsClient client) => __client = client;
+            public EditRocketHandler(RocketsClient client)
+            {
+                __client = client;
+            }
 
             public global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> HandleAsync(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => new global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel>(__client.EditRocket(request, cancellationToken));
         }
@@ -167,8 +167,10 @@ namespace Sample.Client
         public sealed class DeleteRocketHandler : global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.DeleteRocket.Request, bool>
         {
             private readonly RocketsClient __client;
-
-            public DeleteRocketHandler(RocketsClient client) => __client = client;
+            public DeleteRocketHandler(RocketsClient client)
+            {
+                __client = client;
+            }
 
             public global::System.Threading.Tasks.ValueTask<bool> HandleAsync(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => new global::System.Threading.Tasks.ValueTask<bool>(__client.DeleteRocket(request, cancellationToken));
         }

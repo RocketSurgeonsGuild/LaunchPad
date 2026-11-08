@@ -231,7 +231,7 @@ sealed class OperationHostAttribute : Attribute                     // optional,
 
 A setting on `[OperationHost]` that doesn't apply to the inferred transport (e.g. `ClientName` on a controller) is warning LPAD1021.
 
-**Created responses.** `[CreateOperation<CreateRocket.Request, GetRocket.Request>]` takes the same named arguments as `[Operation<T>]` and declares an operation that answers `201 Created` with a `Location` header pointing at the second operation. The route values come from the response members whose names match the location operation's route tokens (`CreateRocket.Response.Id` → `{id}`). The location operation must be exposed by a host of the same transport in the compilation, and every one of its route tokens must match a response member (LPAD1023). Without `CreateOperation`, a `Create*` operation still answers 201, just without `Location`. Client hosts treat `[CreateOperation<,>]` like `[Operation<T>]` and read the body.
+**Created responses.** `[Creates(typeof(GetRocket.Request))]` (or `[Creates<GetRocket.Request>]` on .NET 7+) on a response type: every operation that returns it answers `201 Created`, with a `Location` for the target request's GET operation on the same host, or else on any other host of the same transport. The route values come from the response members whose names match the target's route tokens (`CreateRocket.Response.Id` → `{id}`). Without a reachable target, or with a token no member matches, it answers 201 without a `Location` and warns (LPAD1023). Replaced `[CreateOperation<TRequest, TLocationRequest>]` on 2026-11-08, so that anything with a location can be generated from the contracts alone.
 
 ### 4.4 Mediator profiles
 
@@ -384,31 +384,31 @@ public static class RocketsClientServiceCollectionExtensions
 
 ### 4.8 Diagnostics (`LPAD1xxx`, category `LaunchPad.Api`)
 
-| ID       | Severity | Rule                                                                                                                 |
-| -------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
-| LPAD1001 | Error    | Listed request doesn't match the profile and its response can't be found.                                            |
-| LPAD1002 | Error    | No mediator profile, or several built-ins match.                                                                     |
-| LPAD1003 | Error    | Route token with no matching member.                                                                                 |
-| LPAD1004 | Error    | `[FromRoute]` member not in the route.                                                                               |
-| LPAD1005 | Error    | Complex member bound from route/query.                                                                               |
-| LPAD1006 | Error    | Request can't be constructed, or a route value can't be applied.                                                     |
-| LPAD1007 | Error    | Route/query member type isn't parsable.                                                                              |
-| LPAD1008 | Error    | Same verb + full route on two hosts of one transport.                                                                |
-| LPAD1009 | Error    | Duplicate GraphQL field name.                                                                                        |
-| LPAD1010 | Error    | Host isn't `partial` (Minimal API: `static partial`). Code fix adds the modifiers.                                   |
-| LPAD1011 | Warning  | Profile has no handler interface; no mediator handlers generated.                                                    |
-| LPAD1012 | Error    | Client host is in the wrong project for its profile (4.4.4).                                                         |
-| LPAD1013 | Warning  | A non-generated handler for the operation is visible next to the generated one.                                      |
-| LPAD1014 | Warning  | gRPC request/response lacks `[DataContract]`/`[ProtoContract]` ordering.                                             |
-| LPAD1015 | Warning  | Stream operation on a GraphQL host (skipped).                                                                        |
-| LPAD1016 | Info     | Feature skipped because the profile lacks it.                                                                        |
-| LPAD1017 | Error    | Host transport can't be inferred, is ambiguous, or its library/generator package isn't referenced.                   |
-| LPAD1018 | Error    | Two client hosts register handlers for the same operation.                                                           |
-| LPAD1019 | Error    | Operation's GraphQL kind doesn't match the query/mutation host.                                                      |
-| LPAD1020 | Error    | `Input` type has no parameterless `Create()` returning the request.                                                  |
-| LPAD1021 | Warning  | `[OperationHost]` setting doesn't apply to the inferred transport.                                                   |
-| LPAD1022 | Error    | Client host declares constructors but none takes the transport's client factory.                                     |
-| LPAD1023 | Error    | `CreateOperation` location target isn't exposed on this transport, or a route token has no matching response member. |
+| ID       | Severity | Rule                                                                                                                                                  |
+| -------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LPAD1001 | Error    | Listed request doesn't match the profile and its response can't be found.                                                                             |
+| LPAD1002 | Error    | No mediator profile, or several built-ins match.                                                                                                      |
+| LPAD1003 | Error    | Route token with no matching member.                                                                                                                  |
+| LPAD1004 | Error    | `[FromRoute]` member not in the route.                                                                                                                |
+| LPAD1005 | Error    | Complex member bound from route/query.                                                                                                                |
+| LPAD1006 | Error    | Request can't be constructed, or a route value can't be applied.                                                                                      |
+| LPAD1007 | Error    | Route/query member type isn't parsable.                                                                                                               |
+| LPAD1008 | Error    | Same verb + full route on two hosts of one transport.                                                                                                 |
+| LPAD1009 | Error    | Duplicate GraphQL field name.                                                                                                                         |
+| LPAD1010 | Error    | Host isn't `partial` (Minimal API: `static partial`). Code fix adds the modifiers.                                                                    |
+| LPAD1011 | Warning  | Profile has no handler interface; no mediator handlers generated.                                                                                     |
+| LPAD1012 | Error    | Client host is in the wrong project for its profile (4.4.4).                                                                                          |
+| LPAD1013 | Warning  | A non-generated handler for the operation is visible next to the generated one.                                                                       |
+| LPAD1014 | Warning  | gRPC request/response lacks `[DataContract]`/`[ProtoContract]` ordering.                                                                              |
+| LPAD1015 | Warning  | Stream operation on a GraphQL host (skipped).                                                                                                         |
+| LPAD1016 | Info     | Feature skipped because the profile lacks it.                                                                                                         |
+| LPAD1017 | Error    | Host transport can't be inferred, is ambiguous, or its library/generator package isn't referenced.                                                    |
+| LPAD1018 | Error    | Two client hosts register handlers for the same operation.                                                                                            |
+| LPAD1019 | Error    | Operation's GraphQL kind doesn't match the query/mutation host.                                                                                       |
+| LPAD1020 | Error    | `Input` type has no parameterless `Create()` returning the request.                                                                                   |
+| LPAD1021 | Warning  | `[OperationHost]` setting doesn't apply to the inferred transport.                                                                                    |
+| LPAD1022 | Error    | Client host declares constructors but none takes the transport's client factory.                                                                      |
+| LPAD1023 | Warning  | A `[Creates]` response has no location target on this transport, or a route token has no matching response member; it answers 201 without a Location. |
 
 ### 4.9 Testing
 
@@ -487,7 +487,7 @@ Before each phase I restate its plan and wait for a go-ahead.
     - `ChannelMediator`, `Immediate.Handlers` and `Foundatio.Mediator`
     - `ZeroAlloc.Mediator` and `ZeroAlloc.Mediator.Generator` 6.6.5
 
-- Created responses: `[CreateOperation<TRequest, TLocationRequest>]` (4.3).
+- Created responses: `[Creates]` on the response type (4.3); it replaced `[CreateOperation<TRequest, TLocationRequest>]`.
 
 **Decided during phase 1:**
 
@@ -501,6 +501,9 @@ Before each phase I restate its plan and wait for a go-ahead.
 
 - **gRPC messages.** protobuf-net.Grpc only carries classes and needs a parameterless constructor. The generator wraps any request, response or stream item that isn't a class in the contract's nested `Message<T>`, and sets `UseConstructor = false` for the carried classes that have none (positional records) from the generated `Map{Host}()`/`Add{Host}()`. Contracts still need `[DataContract]`/`[ProtoContract]` with ordered members (LPAD1014): field numbers are part of the wire format, so the generator doesn't invent them. Only the request and response types themselves are configured, not the types of their members.
 - **gRPC and HTTP client hosts for the same requests can't share a project**, since each generates a handler per request; LPAD1018 only sees the hosts of one generator, so this isn't diagnosed yet.
+
+- **Summaries from XML documentation** (2026-11-08): the operation's `Summary`/`Description`, then `[ApiOperation]`, then the `<summary>`/`<remarks>` of the request type or its containing type. The compiler gives generators documentation only for source symbols, so the base package's targets add the referenced projects' XML documentation files (beside the reference, or one folder up for a reference assembly) as additional files with `LaunchPadApiDocumentation="true"`; packages opt in the same way. The files are parsed once per change into an index of type summaries and remarks.
+- **Generated code is built with SyntaxFactory** (2026-11-08), through the `ApiSyntax` helpers in the core (names, invocations, awaits, locals, attributes, doc comments, partial hooks, the compilation unit and its header), and normalized. Doc comments are written in after normalizing, which would otherwise reformat them. The fixed helper sources (JSON and NDJSON helpers, the attribute declarations) are constant text, since nothing in them comes from the model.
 
 **Open:**
 

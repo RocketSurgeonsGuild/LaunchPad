@@ -42,20 +42,23 @@ so nothing reaches your runtime dependencies. The transport packages bring the b
 
 ## Quick start
 
-**Contracts**: plain mediator requests. Nothing is required; `[ApiOperation]` only adds metadata both sides should agree on.
+**Contracts**: plain mediator requests. Nothing is required: XML documentation becomes the OpenAPI summary, `[ApiOperation]` adds metadata
+both sides should agree on, and `[Creates]` marks a response that identifies a new resource.
 
 ```csharp
 namespace Rockets.Contracts;
 
 public static class GetRocket
 {
-    [ApiOperation(Summary = "Load a rocket")]
+    /// <summary>Load a rocket.</summary>
     public sealed record Request(Guid Id) : IRequest<RocketModel?>;
 }
 
 public static class CreateRocket
 {
     public sealed record Request(string Name) : IRequest<Response>;
+
+    [Creates(typeof(GetRocket.Request))]   // answers 201 with a Location for GetRocket
     public sealed record Response(Guid Id);
 }
 ```
@@ -65,7 +68,7 @@ public static class CreateRocket
 ```csharp
 [Operation<GetRocket.Request>]
 [Operation<ListRockets.Request>]
-[CreateOperation<CreateRocket.Request, GetRocket.Request>]
+[Operation<CreateRocket.Request>]
 [Operation<EditRocket.Request>]
 [Operation<DeleteRocket.Request>]
 public static partial class RocketsEndpoints;
@@ -163,9 +166,15 @@ public static partial class FleetEndpoints
 | `Input`                                                      | Bind a transport-specific input type and convert it with its `Create()` (LPAD1020). |
 | `Handlers`                                                   | `false` to generate no mediator handler (client only).                              |
 
-`[CreateOperation<TRequest, TLocation>]` answers `201 Created` with a `Location` header pointing at the `TLocation` operation, filled from
-the response's members (`CreateRocket.Response.Id` → `{id}`). The target must be on the same host, and each of its route tokens needs a
-matching response member (LPAD1023).
+`[Creates(typeof(TRequest))]` (or `[Creates<TRequest>]` where generic attributes are available) on a response type makes every operation that
+returns it answer `201 Created`, with a `Location` header for `TRequest`'s GET operation, filled from the response's members
+(`CreateRocket.Response.Id` → `{id}`). The target is looked for on the same host first, then on any other host of the same transport. When no
+host exposes it, or a route value has no matching member, the operation still answers 201, without a `Location`, and LPAD1023 says why.
+
+Summaries and descriptions come from, in order: the operation's `Summary`/`Description`, `[ApiOperation]`, and the `<summary>`/`<remarks>` of
+the request type or of the type that contains it (`GetRocket` for `GetRocket.Request`). For a request in a referenced project, the base
+package's build targets hand that project's XML documentation file to the generators, so turn on `GenerateDocumentationFile` there. A
+contracts package can be added with `<AdditionalFiles Include="path/to/Contracts.xml" LaunchPadApiDocumentation="true" />`.
 
 The client has the same kind of hook, `partial void Configure{Operation}(HttpRequestMessage request)`, plus
 `static partial void ConfigureJsonOptions(JsonSerializerOptions options)` for its serializer settings.
@@ -177,7 +186,7 @@ host would:
 
 ```csharp
 [Operation<GetRocket.Request>]
-[CreateOperation<CreateRocket.Request, GetRocket.Request>]
+[Operation<CreateRocket.Request>]
 public partial class RocketsController;   // → [ApiController, Route("api/rockets")] RocketsController : ControllerBase
 
 // Program.cs
@@ -314,28 +323,28 @@ filters don't apply.
 
 ## Diagnostics
 
-| ID       | Severity | Meaning                                                                    |
-| -------- | -------- | -------------------------------------------------------------------------- |
-| LPAD1001 | Error    | The request matches no request kind of the profile and has no `Response`.  |
-| LPAD1002 | Error    | No mediator profile, or several built-in ones match.                       |
-| LPAD1003 | Error    | A route token has no matching member.                                      |
-| LPAD1004 | Error    | An `[ApiRoute]` member isn't in the route.                                 |
-| LPAD1005 | Error    | A complex member is bound from the route or query string.                  |
-| LPAD1006 | Error    | The request can't be built from the bound values.                          |
-| LPAD1007 | Error    | A route, query or header member isn't parsable.                            |
-| LPAD1008 | Error    | Two operations share a verb and route.                                     |
-| LPAD1010 | Error    | The host isn't `partial` (Minimal API: `static partial`). Has a code fix.  |
-| LPAD1011 | Warning  | The profile has no handler interface, so no mediator handler is generated. |
-| LPAD1012 | Error    | The client host is in the wrong project for its mediator.                  |
-| LPAD1013 | Warning  | A hand-written handler for a client operation is visible.                  |
-| LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.   |
-| LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.             |
-| LPAD1017 | Error    | The host's transport can't be inferred, or its package isn't referenced.   |
-| LPAD1018 | Error    | Two client hosts generate handlers for the same operation.                 |
-| LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.     |
-| LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.        |
-| LPAD1022 | Error    | A client host declares its own constructor.                                |
-| LPAD1023 | Error    | A `CreateOperation`'s location target or route values are missing.         |
+| ID       | Severity | Meaning                                                                                       |
+| -------- | -------- | --------------------------------------------------------------------------------------------- |
+| LPAD1001 | Error    | The request matches no request kind of the profile and has no `Response`.                     |
+| LPAD1002 | Error    | No mediator profile, or several built-in ones match.                                          |
+| LPAD1003 | Error    | A route token has no matching member.                                                         |
+| LPAD1004 | Error    | An `[ApiRoute]` member isn't in the route.                                                    |
+| LPAD1005 | Error    | A complex member is bound from the route or query string.                                     |
+| LPAD1006 | Error    | The request can't be built from the bound values.                                             |
+| LPAD1007 | Error    | A route, query or header member isn't parsable.                                               |
+| LPAD1008 | Error    | Two operations share a verb and route.                                                        |
+| LPAD1010 | Error    | The host isn't `partial` (Minimal API: `static partial`). Has a code fix.                     |
+| LPAD1011 | Warning  | The profile has no handler interface, so no mediator handler is generated.                    |
+| LPAD1012 | Error    | The client host is in the wrong project for its mediator.                                     |
+| LPAD1013 | Warning  | A hand-written handler for a client operation is visible.                                     |
+| LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.                      |
+| LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.                                |
+| LPAD1017 | Error    | The host's transport can't be inferred, or its package isn't referenced.                      |
+| LPAD1018 | Error    | Two client hosts generate handlers for the same operation.                                    |
+| LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.                        |
+| LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                           |
+| LPAD1022 | Error    | A client host declares its own constructor.                                                   |
+| LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`. |
 
 LPAD1009, LPAD1015 and LPAD1019 belong to the GraphQL transport.
 

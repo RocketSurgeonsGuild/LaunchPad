@@ -13,6 +13,7 @@ namespace ZeroAlloc.Mediator
         global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> Send(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken ct = default);
         global::System.Threading.Tasks.ValueTask<global::ZeroAlloc.Mediator.Unit> Send(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken ct = default);
     }
+
     internal partial class MediatorService
     {
         public global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel?> Send(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken ct) => new(global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Sample.Client.RocketsClient>(_services).GetRocket(request, ct));

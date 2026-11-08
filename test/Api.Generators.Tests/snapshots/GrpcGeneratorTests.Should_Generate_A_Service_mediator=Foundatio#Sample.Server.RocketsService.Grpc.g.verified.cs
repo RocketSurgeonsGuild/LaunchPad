@@ -12,26 +12,26 @@ namespace Sample.Server
     {
         [global::ProtoBuf.Grpc.Configuration.Operation("GetRocket")]
         global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-
         [global::ProtoBuf.Grpc.Configuration.Operation("ListRockets")]
         global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-
         [global::ProtoBuf.Grpc.Configuration.Operation("CreateRocket")]
         global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-
         [global::ProtoBuf.Grpc.Configuration.Operation("EditRocket")]
         global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-
         [global::ProtoBuf.Grpc.Configuration.Operation("DeleteRocket")]
         global::System.Threading.Tasks.ValueTask<IRocketsServiceContract.Message<bool>> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-
         /// <summary>Carries a request, response or stream item that isn't a class, which protobuf-net.Grpc requires.</summary>
         [global::System.Runtime.Serialization.DataContract]
         public sealed class Message<T>
         {
-            public Message() { }
+            public Message()
+            {
+            }
 
-            public Message(T value) => Value = value;
+            public Message(T value)
+            {
+                Value = value;
+            }
 
             [global::System.Runtime.Serialization.DataMember(Order = 1)]
             public T Value { get; set; } = default!;
@@ -42,11 +42,11 @@ namespace Sample.Server
     public partial class RocketsService : IRocketsServiceContract
     {
         private static int __grpcModelConfigured;
-
         /// <summary>Lets protobuf-net create the carried messages that have no parameterless constructor (positional records).</summary>
         internal static void ConfigureGrpcModel()
         {
-            if (global::System.Threading.Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1) return;
+            if (global::System.Threading.Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
+                return;
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.GetRocket.Request));
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.RocketModel));
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.ListRockets.Request));
@@ -58,7 +58,8 @@ namespace Sample.Server
 
         private static void __CreateWithoutConstructor([global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] global::System.Type type)
         {
-            if (type.GetConstructor(global::System.Type.EmptyTypes) is null) global::ProtoBuf.Meta.RuntimeTypeModel.Default[type].UseConstructor = false;
+            if (type.GetConstructor(global::System.Type.EmptyTypes) == null)
+                global::ProtoBuf.Meta.RuntimeTypeModel.Default[type].UseConstructor = false;
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> through the mediator.</summary>
@@ -68,7 +69,8 @@ namespace Sample.Server
             var __cancellationToken = context.CancellationToken;
             var __request = request;
             var __response = await __sender.InvokeAsync(__request, __cancellationToken).ConfigureAwait(false);
-            if (__response is null) throw new global::Grpc.Core.RpcException(new global::Grpc.Core.Status(global::Grpc.Core.StatusCode.NotFound, "GetRocket found nothing"));
+            if (__response is null)
+                throw new global::Grpc.Core.RpcException(new global::Grpc.Core.Status(global::Grpc.Core.StatusCode.NotFound, "GetRocket found nothing"));
             return __response;
         }
 
@@ -78,7 +80,8 @@ namespace Sample.Server
             var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Foundatio.Mediator.IMediator>(global::Grpc.Core.ServerCallContextExtensions.GetHttpContext(context.ServerCallContext!).RequestServices);
             var __cancellationToken = context.CancellationToken;
             var __request = request;
-            await foreach (var __item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation(await __sender.InvokeAsync<global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>>(__request, __cancellationToken).ConfigureAwait(false), __cancellationToken).ConfigureAwait(false)) yield return __item;
+            await foreach (var __item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation(await __sender.InvokeAsync<global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>>(__request, __cancellationToken).ConfigureAwait(false), __cancellationToken).ConfigureAwait(false))
+                yield return __item;
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.CreateRocket.Request" /> through the mediator.</summary>
@@ -112,10 +115,10 @@ namespace Sample.Server
         }
     }
 
-    /// <summary>Maps <see cref="RocketsService" />. Register code-first gRPC with <c>services.AddCodeFirstGrpc()</c>.</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", "version")]
     public static class RocketsServiceEndpointRouteBuilderExtensions
     {
+        /// <summary>Maps <see cref="RocketsService" />. Register code-first gRPC with <c>services.AddCodeFirstGrpc()</c>.</summary>
         public static global::Microsoft.AspNetCore.Builder.GrpcServiceEndpointConventionBuilder MapRocketsService(this global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints)
         {
             RocketsService.ConfigureGrpcModel();

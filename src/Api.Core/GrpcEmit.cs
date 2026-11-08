@@ -1,3 +1,8 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
+
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
 /// <summary>
@@ -16,77 +21,108 @@ internal static class GrpcEmit
     public static string ServiceName(HostModel host) =>
         string.Concat(host.Group.Split(['-', '/', '.'], StringSplitOptions.RemoveEmptyEntries).Select(part => char.ToUpperInvariant(part[0]) + part[1..]));
 
-    public static string Message(HostModel host, string type) => $"{ContractName(host)}.Message<{type}>";
+    public static TypeSyntax Message(HostModel host, string type) => SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName(ContractName(host)), SyntaxFactory.GenericName(SyntaxFactory.Identifier("Message")).AddTypeArgumentListArguments(Type(type)));
 
-    public static string WireRequest(HostModel host, OperationModel operation) => operation.RequestIsMessage ? operation.WireType : Message(host, operation.WireType);
+    public static TypeSyntax WireRequest(HostModel host, OperationModel operation) => operation.RequestIsMessage ? Type(operation.WireType) : Message(host, operation.WireType);
 
-    public static string WireResponse(HostModel host, OperationModel operation) =>
-        operation.ResponseIsMessage ? operation.ResponseTypeNotNull! : Message(host, operation.ResponseTypeNotNull!);
+    public static TypeSyntax WireResponse(HostModel host, OperationModel operation) =>
+        operation.ResponseIsMessage ? Type(operation.ResponseTypeNotNull!) : Message(host, operation.ResponseTypeNotNull!);
 
-    public static (string ReturnType, string Parameters) Signature(HostModel host, OperationModel operation, bool withDefault)
+    /// <summary>A contract method's return type and parameters (<c>request</c>, <c>context</c>).</summary>
+    public static (TypeSyntax ReturnType, ParameterListSyntax Parameters) Signature(HostModel host, OperationModel operation, bool withDefault)
     {
-        var parameters = $"{WireRequest(host, operation)} request, global::ProtoBuf.Grpc.CallContext context{( withDefault ? " = default" : "" )}";
+        var parameters = Parameters(
+            Parameter(WireRequest(host, operation), "request"),
+            Parameter(Type("global::ProtoBuf.Grpc.CallContext"), "context", defaultValue: withDefault ? Default : null)
+        );
         var returnType = operation.Kind switch
         {
-            RequestKind.Stream => $"global::System.Collections.Generic.IAsyncEnumerable<{WireResponse(host, operation)}>",
-            RequestKind.Void => "global::System.Threading.Tasks.ValueTask",
-            RequestKind.Unary or RequestKind.Infer => $"global::System.Threading.Tasks.ValueTask<{WireResponse(host, operation)}>",
+            RequestKind.Stream => AsyncEnumerable(WireResponse(host, operation)),
+            RequestKind.Void => ValueTask(),
+            RequestKind.Unary or RequestKind.Infer => ValueTask(WireResponse(host, operation)),
             _ => throw new ArgumentOutOfRangeException(nameof(operation)),
         };
         return (returnType, parameters);
     }
 
-    public static void WriteContract(SourceWriter w, HostModel host, IEnumerable<OperationModel> operations, Version? version)
+    public static InterfaceDeclarationSyntax Contract(HostModel host, IEnumerable<OperationModel> operations, Version? version)
     {
-        w.Line($"/// <summary>The gRPC contract of <see cref=\"{host.Name}\" />: service <c>{ServiceName(host)}</c>, one operation per listed request.</summary>");
-        w.Line($"[global::ProtoBuf.Grpc.Configuration.Service({SourceWriter.Literal(ServiceName(host))})]");
-        w.Line($"[global::System.CodeDom.Compiler.GeneratedCode(\"Rocket.Surgery.LaunchPad.Api\", \"{version}\")]");
-        w.Open($"{host.Accessibility} interface {ContractName(host)}");
-        foreach (var operation in operations)
-        {
-            var (returnType, parameters) = Signature(host, operation, withDefault: true);
-            w.Line($"[global::ProtoBuf.Grpc.Configuration.Operation({SourceWriter.Literal(operation.Name)})]");
-            w.Line($"{returnType} {operation.Name}({parameters});");
-            w.Line();
-        }
-
-        w.Line("/// <summary>Carries a request, response or stream item that isn't a class, which protobuf-net.Grpc requires.</summary>");
-        w.Line("[global::System.Runtime.Serialization.DataContract]");
-        w.Open("public sealed class Message<T>");
-        w.Line("public Message() { }");
-        w.Line();
-        w.Line("public Message(T value) => Value = value;");
-        w.Line();
-        w.Line("[global::System.Runtime.Serialization.DataMember(Order = 1)]");
-        w.Line("public T Value { get; set; } = default!;");
-        w.Close();
-        w.Close();
+        var members = operations.Select(
+                                     operation =>
+                                     {
+                                         var (returnType, parameters) = Signature(host, operation, withDefault: true);
+                                         return (MemberDeclarationSyntax)ApiSyntax.Signature(returnType, operation.Name, parameters)
+                                                                                .AddAttributeLists(Attribute("global::ProtoBuf.Grpc.Configuration.Operation", Arg(Literal(operation.Name))));
+                                     }
+                                 )
+                                .Append(MessageClass());
+        return Interface(ContractName(host), Modifiers(Accessibility(host.Accessibility)), members)
+              .AddAttributeLists(Attribute("global::ProtoBuf.Grpc.Configuration.Service", Arg(Literal(ServiceName(host)))), GeneratedCode("Rocket.Surgery.LaunchPad.Api", version))
+              .Summary($"The gRPC contract of <see cref=\"{host.Name}\" />: service <c>{ServiceName(host)}</c>, one operation per listed request.");
     }
+
+    private static ClassDeclarationSyntax MessageClass() =>
+        Class(
+                "Message",
+                Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.SealedKeyword),
+                [
+                    Constructor("Message", Parameters(), []),
+                    Constructor("Message", Parameters(Parameter(SyntaxFactory.IdentifierName("T"), "value")), [Statement(Assign(Id("Value"), Id("value")))]),
+                    AutoProperty(Modifiers(SyntaxKind.PublicKeyword), SyntaxFactory.IdentifierName("T"), "Value", NullForgiving(Default))
+                       .AddAttributeLists(Attribute("global::System.Runtime.Serialization.DataMember", Arg("Order", Literal(1)))),
+                ]
+            )
+           .WithTypeParameterList(SyntaxFactory.TypeParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.TypeParameter("T"))))
+           .AddAttributeLists(Attribute("global::System.Runtime.Serialization.DataContract"))
+           .Summary("Carries a request, response or stream item that isn't a class, which protobuf-net.Grpc requires.");
 
     /// <summary>
     ///     <c>ConfigureGrpcModel()</c> on the host: positional records have no parameterless constructor, so protobuf-net is told to create the
     ///     carried classes without one. Called by the generated <c>Map{Host}()</c> / <c>Add{Host}()</c>, before protobuf-net builds its
     ///     serializers.
     /// </summary>
-    public static void WriteModelConfiguration(SourceWriter w, IEnumerable<OperationModel> operations)
+    public static IEnumerable<MemberDeclarationSyntax> ModelConfiguration(IEnumerable<OperationModel> operations)
     {
         var types = operations.SelectMany(o => new[] { o.RequestIsMessage ? o.WireType : null, o.ResponseIsMessage ? o.ResponseTypeNotNull : null })
                               .OfType<string>()
                               .Distinct()
                               .ToArray();
-        w.Line("private static int __grpcModelConfigured;");
-        w.Line();
-        w.Line("/// <summary>Lets protobuf-net create the carried messages that have no parameterless constructor (positional records).</summary>");
-        w.Open("internal static void ConfigureGrpcModel()");
-        w.Line("if (global::System.Threading.Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1) return;");
-        foreach (var type in types) w.Line($"__CreateWithoutConstructor(typeof({type}));");
-        w.Close();
-        w.Line();
-        w.Line(
-            "private static void __CreateWithoutConstructor([global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] global::System.Type type)"
+        yield return Field(Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword), SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)), "__grpcModelConfigured");
+        yield return Method(
+                Modifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword),
+                VoidType,
+                "ConfigureGrpcModel",
+                Parameters(),
+                new[]
+                    {
+                        If(
+                            Equal(Invoke(Member("global::System.Threading.Interlocked", "Exchange"), [RefArgument("__grpcModelConfigured"), SyntaxFactory.Argument(Literal(1))]), Literal(1)),
+                            Return()
+                        ),
+                    }
+                   .Concat(types.Select(type => Statement(Invoke(Id("__CreateWithoutConstructor"), TypeOf(Type(type))))))
+            )
+           .Summary("Lets protobuf-net create the carried messages that have no parameterless constructor (positional records).");
+        var dynamicallyAccessed = Attribute(
+            "global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers",
+            Arg(Member("global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes", "PublicParameterlessConstructor"))
         );
-        w.Open("");
-        w.Line("if (type.GetConstructor(global::System.Type.EmptyTypes) is null) global::ProtoBuf.Meta.RuntimeTypeModel.Default[type].UseConstructor = false;");
-        w.Close();
+        yield return Method(
+            Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword),
+            VoidType,
+            "__CreateWithoutConstructor",
+            Parameters(Parameter(Type("global::System.Type"), "type", dynamicallyAccessed)),
+            [
+                If(
+                    IsNull(Invoke(Member(Id("type"), "GetConstructor"), Member("global::System.Type", "EmptyTypes"))),
+                    Statement(
+                        Assign(
+                            Member(SyntaxFactory.ElementAccessExpression(Member("global::ProtoBuf.Meta.RuntimeTypeModel", "Default")).AddArgumentListArguments(SyntaxFactory.Argument(Id("type"))), "UseConstructor"),
+                            False
+                        )
+                    )
+                ),
+            ]
+        );
     }
 }

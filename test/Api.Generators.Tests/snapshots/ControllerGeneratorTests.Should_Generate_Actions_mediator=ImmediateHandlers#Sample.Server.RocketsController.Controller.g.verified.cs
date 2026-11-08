@@ -61,7 +61,10 @@ namespace Sample.Server
         public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.ActionResult<global::Sample.Contracts.Rockets.RocketModel>> EditRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, [global::Microsoft.AspNetCore.Mvc.FromBody] global::Sample.Contracts.Rockets.EditRocket.Request __body, global::System.Threading.CancellationToken __cancellationToken)
         {
             var __wire = __body;
-            __wire = __wire with { Id = @id };
+            __wire = __wire with
+            {
+                Id = @id
+            };
             var __request = __wire;
             var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>>(HttpContext.RequestServices);
             var __response = await __sender.HandleAsync(__request, __cancellationToken).ConfigureAwait(false);

@@ -1,4 +1,7 @@
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
 
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
@@ -8,8 +11,8 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 /// </summary>
 internal static class ClientEmit
 {
-    private const string Tasks = "global::System.Threading.Tasks";
     private const string Ct = "cancellationToken";
+    internal static readonly string[] sourceArray = new[] { "mediator", "message", "callContext", "cancellationToken", "responseType", "skipAuthorization" };
 
     public static IEnumerable<OperationModel> HandledOperations(HostModel host, ProfileModel profile) =>
         profile.ClientEmitter == ClientEmitter.None ? [] : host.Operations.Where(o => o.Handlers && o.InputType is null);
@@ -54,10 +57,11 @@ internal static class ClientEmit
         if (foundatio.Count > 0) output.AddSource("Rocket.Surgery.LaunchPad.Api.Generated.FoundatioModule.g.cs", WriteFoundatioModule(foundatio, assemblyName));
     }
 
-    /// <summary>The nested mediator handler classes, for profiles that implement a handler interface; returns the handled operations.</summary>
-    public static OperationModel[] WriteHandlers(SourceWriter w, HostModel host, ProfileModel profile, SourceProductionContext output)
+    /// <summary>The nested mediator handler classes, for profiles that implement a handler interface, and the operations that get a handler.</summary>
+    public static (IReadOnlyList<MemberDeclarationSyntax> Handlers, OperationModel[] Handled) Handlers(HostModel host, ProfileModel profile, SourceProductionContext output)
     {
         var handled = HandledOperations(host, profile).ToArray();
+        var handlers = new List<MemberDeclarationSyntax>();
         if (profile.ClientEmitter is ClientEmitter.HandlerInterface or ClientEmitter.HandlerInterfaceDiscovered)
         {
             foreach (var operation in handled)
@@ -68,8 +72,7 @@ internal static class ClientEmit
                     continue;
                 }
 
-                w.Line();
-                WriteHandler(w, host, profile, operation);
+                handlers.Add(Handler(host, operation));
             }
         }
         else if (profile.ClientEmitter == ClientEmitter.None)
@@ -80,170 +83,201 @@ internal static class ClientEmit
             }
         }
 
-        return handled;
+        return (handlers, handled);
     }
 
     /// <summary>Inside <c>Add{Host}()</c>: registers the client class and the handlers, and checks Foundatio's registry.</summary>
-    public static void WriteRegistrations(SourceWriter w, HostModel host, ProfileModel profile, OperationModel[] handled)
+    public static IEnumerable<StatementSyntax> Registrations(HostModel host, ProfileModel profile, OperationModel[] handled)
     {
-        w.Line($"global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient<{host.Name}>(services);");
+        yield return Statement(Invoke(GenericMember(Name(ServiceCollectionDescriptors), "TryAddTransient", SyntaxFactory.IdentifierName(host.Name)), Id("services")));
         if (profile.ClientEmitter == ClientEmitter.HandlerInterface)
         {
             foreach (var operation in handled.Where(o => o.HandlerInterface is { }))
             {
-                w.Line(
-                    $"global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Describe(typeof({operation.HandlerInterface}), typeof({host.Name}.{operation.Name}Handler), global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.{profile.HandlerLifetime}));"
+                var descriptor = Invoke(
+                    Member("global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor", "Describe"),
+                    TypeOf(Type(operation.HandlerInterface!)),
+                    TypeOf(SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName(host.Name), SyntaxFactory.IdentifierName(operation.Name + "Handler"))),
+                    Member("global::Microsoft.Extensions.DependencyInjection.ServiceLifetime", profile.HandlerLifetime)
                 );
+                yield return Statement(Invoke(Member(ServiceCollectionDescriptors, "TryAdd"), Id("services"), descriptor));
             }
         }
 
-        if (profile.ClientEmitter == ClientEmitter.Foundatio && handled.Length > 0) WriteFoundatioCheck(w, host, handled[0]);
+        if (profile.ClientEmitter == ClientEmitter.Foundatio && handled.Length > 0) yield return FoundatioCheck(host, handled[0]);
     }
 
-    private static void WriteHandler(SourceWriter w, HostModel host, ProfileModel profile, OperationModel operation)
+    private static ClassDeclarationSyntax Handler(HostModel host, OperationModel operation)
     {
         var returnType = operation.HandlerMethodReturnType!;
-        var handleMethod = operation.HandlerMethodName ?? "Handle";
-        w.Line($"/// <summary>Handles <see cref=\"{Cref(operation.RequestType)}\" /> by sending it through <see cref=\"{host.Name}.{operation.Name}\" />.</summary>");
-        w.Open($"public sealed class {operation.Name}Handler : {operation.HandlerInterface}");
-        w.Line($"private readonly {host.Name} __client;");
-        w.Line();
-        w.Line($"public {operation.Name}Handler({host.Name} client) => __client = client;");
-        w.Line();
-        var call = $"__client.{operation.Name}(request, {Ct})";
+        var call = Invoke(Member(Id("__client"), operation.Name), Id("request"), Id(Ct));
         var isValueTask = returnType.StartsWith(Tasks + ".ValueTask", StringComparison.Ordinal);
-        var returnsValue = returnType.Contains("<");
-        string body;
-        if (operation.Kind == RequestKind.Stream)
-        {
-            // Immediate.Handlers' stream handlers return ValueTask<IAsyncEnumerable<T>>.
-            body = isValueTask ? $" => new {returnType}({call});" : $" => {call};";
-        }
-        else if (operation.Kind == RequestKind.Void && returnsValue)
-        {
-            // A Unit-returning void handler: the client method returns a Task, the handler returns Unit.
-            body = null!;
-            w.Open($"public async {returnType} {handleMethod}({operation.RequestType} request, global::System.Threading.CancellationToken {Ct})");
-            w.Line($"await {call}.ConfigureAwait(false);");
-            w.Line("return default;");
-            w.Close();
-        }
-        else
-        {
-            body = isValueTask ? $" => new {returnType}({call});" : $" => {call};";
-        }
-
-        if (body is { }) w.Line($"public {returnType} {handleMethod}({operation.RequestType} request, global::System.Threading.CancellationToken {Ct}){body}");
-        w.Close();
+        var parameters = Parameters(Parameter(Type(operation.RequestType), "request"), Parameter(Type(CancellationTokenType), Ct));
+        var name = operation.HandlerMethodName ?? "Handle";
+        // A Unit-returning void handler awaits the client and returns Unit; a ValueTask handler wraps the client's Task (or stream: Immediate.Handlers).
+        var handle = operation.Kind == RequestKind.Void && returnType.Contains("<")
+            ? Method(Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword), Type(returnType), name, parameters, [Statement(Await(call)), Return(Default)])
+            : Method(Modifiers(SyntaxKind.PublicKeyword), Type(returnType), name, parameters, isValueTask ? New(Type(returnType), call) : call);
+        return Class(
+                   operation.Name + "Handler",
+                   Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.SealedKeyword),
+                   [
+                       Field(Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.ReadOnlyKeyword), SyntaxFactory.IdentifierName(host.Name), "__client"),
+                       Constructor(operation.Name + "Handler", Parameters(Parameter(SyntaxFactory.IdentifierName(host.Name), "client")), [Statement(Assign(Id("__client"), Id("client")))]),
+                       handle,
+                   ],
+                   Type(operation.HandlerInterface!)
+               )
+              .Summary($"Handles <see cref=\"{Cref(operation.RequestType)}\" /> by sending it through <see cref=\"{host.Name}.{operation.Name}\" />.");
     }
 
     // AddMediator() builds and freezes Foundatio's handler registry from the [FoundatioModule] assemblies it scans. If this host's assembly wasn't
     // among them (AddMediator ran before the assembly was loaded, or was given an assembly list without it), the handlers are missing for good:
     // fail here with what to do instead of at the first Send.
-    private static void WriteFoundatioCheck(SourceWriter w, HostModel host, OperationModel first)
+    private static StatementSyntax FoundatioCheck(HostModel host, OperationModel first)
     {
         var message = $"Foundatio's handler registry was built without {host.Name}'s handlers. Call services.Add{host.Name}() before services.AddMediator(), "
                     + $"and if AddMediator is given assemblies, include the one that declares {host.Name}.";
-        w.Open("foreach (var __descriptor in services)");
+        var registry = Type("global::Foundatio.Mediator.HandlerRegistry");
+        var descriptor = Id("__descriptor");
         // ImplementationInstance throws on a keyed descriptor.
-        w.Line("if (__descriptor.IsKeyedService || __descriptor.ServiceType != typeof(global::Foundatio.Mediator.HandlerRegistry) || __descriptor.ImplementationInstance is not global::Foundatio.Mediator.HandlerRegistry __registry) continue;");
-        w.Line($"if (!global::System.Linq.Enumerable.Any(__registry.Registrations, r => r.HandlerClassName == {SourceWriter.Literal(FoundatioHandlerName(host, first))})) throw new global::System.InvalidOperationException({SourceWriter.Literal(message)});");
-        w.Line("break;");
-        w.Close();
+        var notTheRegistry = Or(
+            Or(Member(descriptor, "IsKeyedService"), NotEqual(Member(descriptor, "ServiceType"), TypeOf(registry))),
+            SyntaxFactory.IsPatternExpression(
+                Member(descriptor, "ImplementationInstance"),
+                SyntaxFactory.UnaryPattern(SyntaxFactory.DeclarationPattern(registry, SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("__registry"))))
+            )
+        );
+        var hasHandler = Invoke(
+            Member("global::System.Linq.Enumerable", "Any"),
+            Member(Id("__registry"), "Registrations"),
+            Lambda("r", Equal(Member(Id("r"), "HandlerClassName"), Literal(FoundatioHandlerName(host, first))))
+        );
+        return ForEach(
+            "__descriptor",
+            Id("services"),
+            Block(
+                If(notTheRegistry, Continue),
+                If(Not(hasHandler), Throw(New(Type("global::System.InvalidOperationException"), Literal(message)))),
+                Break
+            )
+        );
     }
 
     private static string FoundatioHandlerName(HostModel host, OperationModel operation) => $"{host.Name}_{operation.Name}_Handler";
 
-    private static string FoundatioModuleClass(string assemblyName) =>
-        "global::Rocket.Surgery.LaunchPad.Api.Generated." + new string([.. assemblyName.Select(c => char.IsLetterOrDigit(c) ? c : '_')]) + "_MediatorHandlers";
+    private static string FoundatioModuleClass(string assemblyName) => new string([.. assemblyName.Select(c => char.IsLetterOrDigit(c) ? c : '_')]) + "_MediatorHandlers";
 
     // ZeroAlloc generates `internal partial interface IMediator` and `internal partial class MediatorService` per project with one Send overload
     // per handler it sees in syntax; it can't see ours, so the missing overloads are added to its partials and route to the client.
     private static string WriteZeroAlloc(HostModel host)
     {
-        var w = new SourceWriter();
-        w.Line("// <auto-generated/>").Line("#nullable enable").Line("#pragma warning disable CS1591").Line();
-        w.Open("namespace ZeroAlloc.Mediator");
         var operations = host.Operations.Where(o => o.Handlers && o.InputType is null).ToArray();
-        w.Open("internal partial interface IMediator");
-        foreach (var operation in operations) w.Line(ZeroAllocSignature(operation, true) + ";");
-        w.Close();
-        w.Open("internal partial class MediatorService");
-        foreach (var operation in operations)
-        {
-            var client = $"global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{host.FullyQualifiedName}>(_services)";
-            var call = $"{client}.{operation.Name}(request, ct)";
-            switch (operation.Kind)
-            {
-                case RequestKind.Stream:
-                    w.Line($"public {ZeroAllocSignature(operation, false)} => {call};");
-                    break;
-                case RequestKind.Void:
-                    w.Open($"public async {ZeroAllocSignature(operation, false)}");
-                    w.Line($"await {call}.ConfigureAwait(false);");
-                    w.Line("return default;");
-                    w.Close();
-                    break;
-                case RequestKind.Unary:
-                case RequestKind.Infer:
-                default:
-                    w.Line($"public {ZeroAllocSignature(operation, false)} => new({call});");
-                    break;
-            }
-        }
-
-        w.Close();
-        w.Close();
-        return w.ToString();
+        var contract = Interface("IMediator", Modifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword), operations.Select(o => (MemberDeclarationSyntax)ZeroAllocSignature(o, withDefault: true)));
+        var implementation = Class(
+            "MediatorService",
+            Modifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword),
+            operations.Select(
+                operation =>
+                {
+                    var call = Invoke(Member(GetRequiredService(Type(host.FullyQualifiedName), Id("_services")), operation.Name), Id("request"), Id("ct"));
+                    var signature = ZeroAllocSignature(operation, withDefault: false).WithModifiers(Modifiers(SyntaxKind.PublicKeyword)).WithSemicolonToken(default);
+                    return (MemberDeclarationSyntax)( operation.Kind switch
+                    {
+                        RequestKind.Stream => signature.WithExpressionBody(SyntaxFactory.ArrowExpressionClause(call)).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        RequestKind.Void => signature.AddModifiers(SyntaxFactory.Token(SyntaxKind.AsyncKeyword)).WithBody(Block(Statement(Await(call)), Return(Default))),
+                        RequestKind.Unary or RequestKind.Infer => signature.WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.ImplicitObjectCreationExpression().AddArgumentListArguments(SyntaxFactory.Argument(call))))
+                                                                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        _ => throw new ArgumentOutOfRangeException(nameof(operation)),
+                    } );
+                }
+            )
+        );
+        return Render("ZeroAlloc.Mediator", [contract, implementation]);
     }
 
-    private static string ZeroAllocSignature(OperationModel operation, bool withDefault)
+    private static MethodDeclarationSyntax ZeroAllocSignature(OperationModel operation, bool withDefault)
     {
-        var ct = "global::System.Threading.CancellationToken ct" + ( withDefault ? " = default" : "" );
+        var parameters = Parameters(
+            Parameter(Type(operation.RequestType), "request"),
+            Parameter(Type(CancellationTokenType), "ct", defaultValue: withDefault ? Default : null)
+        );
         return operation.Kind == RequestKind.Stream
-            ? $"global::System.Collections.Generic.IAsyncEnumerable<{operation.ResponseType}> CreateStream({operation.RequestType} request, {ct})"
-            : $"{Tasks}.ValueTask<{( operation.Kind == RequestKind.Void ? "global::ZeroAlloc.Mediator.Unit" : operation.ResponseType )}> Send({operation.RequestType} request, {ct})";
+            ? Signature(AsyncEnumerable(Type(operation.ResponseType!)), "CreateStream", parameters)
+            : Signature(ValueTask(Type(operation.Kind == RequestKind.Void ? "global::ZeroAlloc.Mediator.Unit" : operation.ResponseType!)), "Send", parameters);
     }
 
     // Foundatio's AddMediator() scans loaded assemblies for [FoundatioModule] and calls the first static *_MediatorHandlers.AddHandlers it finds.
     // The client library doesn't run Foundatio's generator, so this is the only module class in it.
     private static string WriteFoundatioModule(List<(HostModel Host, OperationModel Operation)> operations, string assemblyName)
     {
-        var w = new SourceWriter();
-        w.Line("// <auto-generated/>").Line("#nullable enable").Line("#pragma warning disable").Line();
-        w.Line("[assembly: global::Foundatio.Mediator.FoundatioModule]");
-        w.Line();
-        w.Open("namespace Rocket.Surgery.LaunchPad.Api.Generated");
-        w.Open($"public static class {FoundatioModuleClass(assemblyName).Split('.').Last()}");
-        w.Open("public static void AddHandlers(global::Microsoft.Extensions.DependencyInjection.IServiceCollection services, global::Foundatio.Mediator.HandlerRegistry registry)");
-        foreach (var (host, operation) in operations)
-        {
-            var handlerName = FoundatioHandlerName(host, operation);
-            w.Line("registry.AddHandler(new global::Foundatio.Mediator.HandlerRegistration(");
-            w.Line($"    global::Foundatio.Mediator.MessageTypeKey.Get(typeof({operation.RequestType})),");
-            w.Line($"    {SourceWriter.Literal(handlerName)},");
-            w.Line("    static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>");
-            w.Line("    {");
-            w.Line($"        var client = ({host.FullyQualifiedName})((global::System.IServiceProvider)mediator).GetService(typeof({host.FullyQualifiedName}))!;");
-            w.Line(
-                operation.Kind == RequestKind.Void
-                    ? $"        await client.{operation.Name}(({operation.RequestType})message, cancellationToken).ConfigureAwait(false); return null;"
-                    : operation.Kind == RequestKind.Stream
-                        ? $"        return client.{operation.Name}(({operation.RequestType})message, cancellationToken);"
-                        : $"        return await client.{operation.Name}(({operation.RequestType})message, cancellationToken).ConfigureAwait(false);"
-            );
-            w.Line("    },");
-            w.Line("    null,");
-            w.Line("    true,");
-            w.Line($"    sourceHandlerName: {SourceWriter.Literal(host.Name)},");
-            w.Line($"    methodName: {SourceWriter.Literal(operation.Name)}));");
-        }
-
-        w.Close();
-        w.Close();
-        w.Close();
-        return w.ToString();
+        var registrations = operations.Select(
+            pair =>
+            {
+                var (host, operation) = pair;
+                var message = Cast(Type(operation.RequestType), Id("message"));
+                var client = Invoke(Member(Id("client"), operation.Name), message, Id("cancellationToken"));
+                var handle = SyntaxFactory.ParenthesizedLambdaExpression()
+                                          .WithModifiers(Modifiers(SyntaxKind.StaticKeyword, SyntaxKind.AsyncKeyword))
+                                          .WithParameterList(
+                                               SyntaxFactory.ParameterList(
+                                                   SyntaxFactory.SeparatedList(
+sourceArray.Select(p => SyntaxFactory.Parameter(SyntaxFactory.Identifier(p)))
+                                                   )
+                                               )
+                                           )
+                                          .WithBlock(
+                                               Block(
+                                                   new[]
+                                                       {
+                                                           Var(
+                                                               "client",
+                                                               NullForgiving(
+                                                                   Cast(
+                                                                       Type(host.FullyQualifiedName),
+                                                                       Invoke(Member(Parenthesized(Cast(Type("global::System.IServiceProvider"), Id("mediator"))), "GetService"), TypeOf(Type(host.FullyQualifiedName)))
+                                                                   )
+                                                               )
+                                                           ),
+                                                       }.Concat(
+                                                       operation.Kind switch
+                                                       {
+                                                           RequestKind.Void => [Statement(Await(client)), Return(Null)],
+                                                           RequestKind.Stream => [Return(client)],
+                                                           RequestKind.Unary or RequestKind.Infer => [Return(Await(client))],
+                                                           _ => throw new ArgumentOutOfRangeException(nameof(operations)),
+                                                       }
+                                                   )
+                                               )
+                                           );
+                var registration = New(
+                    Type("global::Foundatio.Mediator.HandlerRegistration"),
+                    [
+                        Invoke(Member("global::Foundatio.Mediator.MessageTypeKey", "Get"), TypeOf(Type(operation.RequestType))),
+                        Literal(FoundatioHandlerName(host, operation)),
+                        handle,
+                        Null,
+                        True,
+                    ]
+                );
+                registration = registration.AddArgumentListArguments(
+                    SyntaxFactory.Argument(Literal(host.Name)).WithNameColon(SyntaxFactory.NameColon("sourceHandlerName")),
+                    SyntaxFactory.Argument(Literal(operation.Name)).WithNameColon(SyntaxFactory.NameColon("methodName"))
+                );
+                return Statement(Invoke(Member(Id("registry"), "AddHandler"), registration));
+            }
+        );
+        var addHandlers = Method(
+            Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword),
+            VoidType,
+            "AddHandlers",
+            Parameters(
+                Parameter(Type("global::Microsoft.Extensions.DependencyInjection.IServiceCollection"), "services"),
+                Parameter(Type("global::Foundatio.Mediator.HandlerRegistry"), "registry")
+            ),
+            registrations
+        );
+        var module = Class(FoundatioModuleClass(assemblyName), Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword), [addHandlers]);
+        return Render("Rocket.Surgery.LaunchPad.Api.Generated", [module], Attribute("global::Foundatio.Mediator.FoundatioModule"));
     }
-
-    public static string Cref(string type) => type.Replace("global::", "").Replace('<', '{').Replace('>', '}');
 }
