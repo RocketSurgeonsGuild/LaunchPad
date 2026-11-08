@@ -1,0 +1,508 @@
+<SYSTEM>This is the full developer documentation for LaunchPad</SYSTEM>
+
+# LaunchPad
+
+> A simple starting point for building .NET applications on Specular and Dovetail.
+
+One line to opt in
+
+Name the [LaunchPad SDK](concepts/launchpad-sdk/) next to your project’s SDK. It finds the host model and adds the LaunchPad and Dovetail packages that fit.
+
+Wiring as Joints
+
+Health checks, logging, telemetry, validation and time are [Joints](concepts/joints/) that Dovetail resolves at build time. No reflection, trimming and Native AOT safe.
+
+Reference it, get it
+
+Referencing NodaTime, FluentValidation, HotChocolate or a Serilog sink is enough: the matching [integration packages](concepts/integration-packages/) and [templates](concepts/templates/) come with it.
+
+C# API reference
+
+Every public type of every package, generated from the build: [browse the API](api/).
+
+# Concepts
+
+> The ideas behind LaunchPad and how it builds on Specular and Dovetail.
+
+LaunchPad assembles two libraries into ready-to-use wiring for .NET applications:
+
+* [Dovetail](https://rocketsurgeonsguild.github.io/Dovetail/) composes an application at build time from **Joints**, and its SDK works out what kind of application a project is.
+* [Specular](https://rocketsurgeonsguild.github.io/Specular/) scans assemblies without reflection, so the wiring stays trimming and Native AOT safe.
+
+LaunchPad adds the Joints most applications want (health checks, logging, telemetry, validation, time, serialization) and an SDK that picks the right packages for a project. These pages explain the vocabulary the rest of the documentation uses.
+
+| Term                                                          | In one line                                                                                    |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [Joint](./joints/)                                            | A unit of application wiring that Dovetail resolves and applies at build time.                 |
+| [Host model](./host-models/)                                  | The kind of application a project is, decided at build time. It determines which Joints apply. |
+| [Integration package](./integration-packages/)                | A package that adds support for one third-party technology on one surface.                     |
+| [Direct reference](./integration-packages/#direct-references) | A reference the project declares itself, as opposed to one it receives transitively.           |
+| [Template](./templates/)                                      | Source written into a project only when its host model and references match.                   |
+| [LaunchPad SDK](./launchpad-sdk/)                             | The MSBuild SDK that chooses LaunchPad packages from what a project references.                |
+
+# Host models
+
+> The host model is the kind of application a project is, decided at build time from its SDK and references. It determines which Joints apply.
+
+A **host model** is the kind of application a project is. Dovetail’s SDK decides it at build time from the project’s SDK, its `OutputType` and the assemblies it references, and declares it as a `DovetailHost` item. LaunchPad reads that decision to choose packages and [templates](../templates/); nothing about it is decided at run time.
+
+| Host model        | A project that is…                                                    | `ConfigureDovetail()` is generated for |
+| ----------------- | --------------------------------------------------------------------- | -------------------------------------- |
+| `HostApplication` | a generic host application: a worker, a console app, a file-based app | `HostApplicationBuilder`               |
+| `WebApplication`  | an ASP.NET Core application (`Microsoft.NET.Sdk.Web`)                 | `WebApplicationBuilder`                |
+| `WebAssembly`     | a Blazor WebAssembly application                                      | `WebAssemblyHostBuilder`               |
+| `Maui`            | a .NET MAUI application (`UseMaui`)                                   | `MauiAppBuilder`                       |
+| `Uno`             | an Uno Platform application with the `Hosting` feature                | Uno’s `IApplicationBuilder`            |
+
+A library has no host model. It still exports its Joints, and they apply in every application that references it.
+
+## What the host model decides
+
+[Section titled “What the host model decides”](#what-the-host-model-decides)
+
+* **Packages.** The [LaunchPad SDK](../launchpad-sdk/) adds `Rocket.Surgery.LaunchPad.Hosting` to any project with a host model, and `Rocket.Surgery.LaunchPad.AspNetCore` to a `WebApplication`.
+* **Templates.** Each template names the host models it is for. The Serilog console sink Joint, for example, is written into generic host and ASP.NET Core applications, and the browser console Joint only into Blazor WebAssembly ones.
+* **The entry point.** `ConfigureDovetail()` is generated for the host builder of the project’s host model.
+
+Dovetail’s [host reference](https://rocketsurgeonsguild.github.io/Dovetail/reference/dovetail-host/) describes how each one is detected and how to declare one yourself.
+
+# Integration packages
+
+> An integration package adds LaunchPad support for one third-party technology on one surface. The SDK adds them from a project's direct references.
+
+An **integration package** adds LaunchPad support for one third-party technology on one surface. NodaTime has one package for the clock and serialization, `Rocket.Surgery.LaunchPad.NodaTime`, and one for each library it works with: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate`, `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`, `Rocket.Surgery.LaunchPad.NodaTime.EntityFramework` and so on. One technology usually has several.
+
+Each package exports the [Joints](../joints/) for its pair of technologies and depends on both. Nothing in it is optional, so a package is tested, versioned and found like any other. The alternative, one package per technology that ships its integrations as templates, was rejected for that reason (see [ADR 0002](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0002-package-per-integration.md)). The cost is many small packages, which the [LaunchPad SDK](../launchpad-sdk/) chooses for you.
+
+## The packages the SDK chooses
+
+[Section titled “The packages the SDK chooses”](#the-packages-the-sdk-chooses)
+
+| The project references          | The SDK adds                                                                                 |
+| ------------------------------- | -------------------------------------------------------------------------------------------- |
+| a [host model](../host-models/) | `Rocket.Surgery.LaunchPad.Hosting`                                                           |
+| the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`                                                        |
+| `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
+| `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
+| `FluentValidation`              | `.FluentValidation`, and its ASP.NET Core, gRPC, HotChocolate and Blazor packages with those |
+| `HotChocolate`                  | `.HotChocolate`                                                                              |
+| `StrawberryShake`               | `.StrawberryShake`                                                                           |
+| `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
+
+A file-based app (`dotnet run app.cs`) also gets `Rocket.Surgery.LaunchPad.Foundation` and counts as referencing NodaTime.
+
+Each technology can be turned off with its `LaunchPadEnable<Technology>` property, which removes its own package and every integration package it is part of:
+
+```xml
+<PropertyGroup>
+  <LaunchPadEnableNodaTime>false</LaunchPadEnableNodaTime>
+</PropertyGroup>
+```
+
+The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`, `LaunchPadEnableNetTopologySuite`, `LaunchPadEnableFluentValidation`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and `LaunchPadEnableStrawberryShake`.
+
+## Direct references
+
+[Section titled “Direct references”](#direct-references)
+
+A **direct reference** is a package or project reference a project declares itself, as opposed to one it only receives through another package or project. The SDK and the [templates](../templates/) act on direct references only: a library the project receives transitively was chosen by whoever referenced it, not by the project, so it adds nothing to the project.
+
+If a technology arrives only transitively and you want its LaunchPad support, reference it directly.
+
+# Joints
+
+> A Joint is a unit of application wiring that Dovetail resolves and applies at build time. LaunchPad ships its wiring as Joints.
+
+A **Joint** is a unit of application wiring: a class that registers services, adds configuration, sets up logging or telemetry, or configures the host. Dovetail’s source generator finds every Joint an application can see, its own and those of the packages and projects it references, orders them, and writes the code that applies them. Nothing is discovered by reflection at run time.
+
+LaunchPad used to call these *conventions* (`Rocket.Surgery.Conventions`). Every LaunchPad convention is now a Joint, and the old convention packages are gone.
+
+## What a Joint looks like
+
+[Section titled “What a Joint looks like”](#what-a-joint-looks-like)
+
+A Joint implements one or more of Dovetail’s Joint interfaces and is marked for export. LaunchPad’s NodaTime package registers the clock this way:
+
+```csharp
+[PublicAPI]
+[DovetailExport]
+[DovetailCategory(DovetailCategory.Core)]
+public class TimeJoint : IServiceJoint, ISetupJoint
+{
+    public void Register(IDovetailContext context, IServiceCollection services)
+    {
+        // Try add so that unit tests can insert fakes
+        services.TryAddSingleton(TimeProvider.System);
+        services.TryAddSingleton<IClock>(SystemClock.Instance);
+        services.TryAddSingleton<IDateTimeZoneProvider>(new DateTimeZoneCache(context.Require<NodaTimeOptions>().DateTimeZoneSource));
+    }
+
+
+    void ISetupJoint.Register(IDovetailContext context) => _ = context.GetOrAdd(() => new NodaTimeOptions());
+}
+```
+
+* `IServiceJoint` registers services. Other interfaces cover configuration, logging, OpenTelemetry and the host builder.
+* `ISetupJoint` runs first and puts defaults into the `IDovetailContext`, here the `NodaTimeOptions` an application may override.
+* `[DovetailExport]` makes the Joint visible to the applications that reference the package.
+* `[DovetailCategory]` puts the Joint in a category, which is part of its metadata. A Joint that declares none is in the `Application` category; LaunchPad’s foundational Joints, like this one, declare `Core`.
+
+## Applying the Joints
+
+[Section titled “Applying the Joints”](#applying-the-joints)
+
+An application applies its Joints once, where it builds its host:
+
+```csharp
+var app = await WebApplication.CreateBuilder(args).ConfigureDovetail();
+```
+
+`ConfigureDovetail()` is generated into the application for its [host model](../host-models/). It runs every Joint the application imports, in order, then builds the host.
+
+## Where Joints come from
+
+[Section titled “Where Joints come from”](#where-joints-come-from)
+
+* **Packages.** Each LaunchPad [integration package](../integration-packages/) exports the Joints for its technology.
+* **Templates.** Joints that only make sense for some host models, or only when another library is present, are [templates](../templates/) written into the application itself.
+* **Your own code.** An application or library can define Joints of its own the same way. See [Writing a Joint](../../guides/writing-a-joint/).
+
+Dovetail’s documentation covers the Joint interfaces, ordering and the context in depth: [Defining Joints](https://rocketsurgeonsguild.github.io/Dovetail/concepts/defining-joints/).
+
+# LaunchPad SDK
+
+> The MSBuild SDK an application opts into so that the right LaunchPad packages are chosen from what the project references. It builds on Dovetail's SDK.
+
+The **LaunchPad SDK**, `Rocket.Surgery.LaunchPad.Sdk`, is an MSBuild SDK an application opts into so that the right LaunchPad packages are chosen from what the project references. It is the only LaunchPad entry the application needs: no `PackageReference` to LaunchPad or Dovetail.
+
+## How it builds on Dovetail’s SDK
+
+[Section titled “How it builds on Dovetail’s SDK”](#how-it-builds-on-dovetails-sdk)
+
+The LaunchPad SDK chains `Joinery.Dovetail.Sdk`, so there is no second SDK entry. When a project builds:
+
+1. Dovetail’s SDK decides the project’s [host model](../host-models/) and adds `Joinery.Dovetail.Hosting`, plus `Joinery.Dovetail.Serilog` and `Joinery.Dovetail.OpenTelemetry` when the project references Serilog or OpenTelemetry. LaunchPad turns Serilog on by default.
+2. The LaunchPad SDK reads that host model and the project’s [direct references](../integration-packages/#direct-references), and adds the [integration packages](../integration-packages/#the-packages-the-sdk-chooses) that match.
+3. NuGet restores everything both SDKs added, so the packages behave like ordinary references. A package the project already references itself is left alone.
+
+All of it happens while MSBuild evaluates the project, before restore. Nothing is decided at run time.
+
+## Opting in
+
+[Section titled “Opting in”](#opting-in)
+
+Name the SDK next to the one the project already uses:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
+</Project>
+```
+
+or make it the project’s SDK (it brings `Microsoft.NET.Sdk` through Dovetail’s):
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk/1.0.0">
+```
+
+or apply it to every project in a `Directory.Build.props`, with the version pinned in `global.json`:
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk">
+```
+
+```json
+{
+    "msbuild-sdks": {
+        "Rocket.Surgery.LaunchPad.Sdk": "1.0.0"
+    }
+}
+```
+
+A file-based app uses the directive form, `#:sdk Rocket.Surgery.LaunchPad.Sdk@1.0.0`, and gets what a console application needs without a `#:package` directive for LaunchPad.
+
+[Getting started](../../guides/) walks through each of these.
+
+## Choosing another Dovetail version
+
+[Section titled “Choosing another Dovetail version”](#choosing-another-dovetail-version)
+
+The SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is imported: as a global property, or in a `Directory.Build.props` that sets it and then imports the SDK with `<Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" />`.
+
+# Templates
+
+> A template is source shipped inside a package and written into a consuming project only when its host model and references match, so unused wiring never compiles in.
+
+A **template** is source shipped inside a package, as a `*.cs.template` file, and written into a consuming project only when that project’s [host model](../host-models/) and references match. Unused wiring never compiles in, and the package that ships the template depends on none of the libraries the template uses.
+
+`Rocket.Surgery.LaunchPad.Hosting` ships its [Joints](../joints/) this way. Each one is a template with three gates, and every gate has to pass:
+
+* **Hosts**: the project declares one of the host models the template is for.
+* **References**: every assembly the template compiles against is among the project’s references.
+* **Direct reference**: the project references `Rocket.Surgery.LaunchPad.Hosting` itself (see [direct references](../integration-packages/#direct-references)). A project that only receives the package through a library gets nothing.
+
+## The Hosting templates
+
+[Section titled “The Hosting templates”](#the-hosting-templates)
+
+| Joint                                         | Written when the project references                                  | Host models                                    |
+| --------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------- |
+| `LaunchPadHealthChecksJoint`                  | `Microsoft.Extensions.Diagnostics.HealthChecks`                      | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogEnrichmentJoint`             | `Joinery.Dovetail.Serilog`                                           | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogSystemTextJsonJoint`         | `Joinery.Dovetail.Serilog`                                           | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogApplicationStateJoint`       | `Serilog.Extensions.Logging`                                         | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogEnvironmentEnrichersJoint`   | the Serilog environment, process, thread and assembly name enrichers | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogSpanJoint`                   | `Serilog.Enrichers.Span`                                             | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogExceptionsJoint`             | `Serilog.Exceptions` and `Serilog.Enrichers.Demystifier`             | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogConsoleJoint`                | `Serilog.Sinks.Console` and `Serilog.Sinks.Async`                    | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogDebugJoint`                  | `Serilog.Sinks.Debug` and `Serilog.Sinks.Async`                      | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogTraceJoint`                  | `Serilog.Sinks.Trace` and `Serilog.Sinks.Async`                      | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogDiagnosticContextJoint`      | `Serilog.Extensions.Hosting`                                         | generic host, ASP.NET Core                     |
+| `LaunchPadSerilogOpenTelemetryJoint`          | `Serilog.Sinks.OpenTelemetry`                                        | generic host, ASP.NET Core                     |
+| `LaunchPadBrowserConsoleLoggingJoint`         | `Serilog.Sinks.BrowserConsole`                                       | Blazor WebAssembly                             |
+| `LaunchPadWebAssemblyEnvironmentLoggingJoint` | `Joinery.Dovetail.Serilog`                                           | Blazor WebAssembly                             |
+| `LaunchPadInstrumentationJoint`               | `OpenTelemetry.Instrumentation.Http`                                 | generic host, ASP.NET Core, Blazor WebAssembly |
+| `LaunchPadRuntimeInstrumentationJoint`        | `OpenTelemetry.Instrumentation.Runtime`                              | generic host, ASP.NET Core                     |
+| `LaunchPadProcessInstrumentationJoint`        | `OpenTelemetry.Instrumentation.Process`                              | generic host, ASP.NET Core                     |
+| `LaunchPadAspNetCoreInstrumentationJoint`     | `OpenTelemetry.Instrumentation.AspNetCore`                           | ASP.NET Core                                   |
+| `LaunchPadHotChocolateInstrumentationJoint`   | `HotChocolate.Diagnostics`                                           | generic host, ASP.NET Core                     |
+
+The Serilog Joints need `Joinery.Dovetail.Serilog` and the OpenTelemetry Joints need `Joinery.Dovetail.OpenTelemetry`, which Dovetail’s SDK adds when the project references Serilog or OpenTelemetry. So choosing a sink or an instrumentation is a matter of referencing its package: the Joint that turns it on comes with it.
+
+## Templates or packages
+
+[Section titled “Templates or packages”](#templates-or-packages)
+
+Templates are reserved for gating by host model inside `LaunchPad.Hosting`, where there is no package boundary to draw. Support for a third-party technology ships as an [integration package](../integration-packages/) instead.
+
+The template mechanism itself is Dovetail’s: [Shipping templates](https://rocketsurgeonsguild.github.io/Dovetail/guides/shipping-templates/).
+
+# Getting Started
+
+> Build an application with the LaunchPad SDK, from an empty project to one that applies LaunchPad's Joints.
+
+An application uses LaunchPad through the [LaunchPad SDK](../concepts/launchpad-sdk/). It names the SDK once, and the SDK adds the LaunchPad and Dovetail packages that match the project: its [host model](../concepts/host-models/) and the libraries it references directly.
+
+In the snippets, replace `1.0.0` with the version of `Rocket.Surgery.LaunchPad.Sdk` you use.
+
+## A worker or console application
+
+[Section titled “A worker or console application”](#a-worker-or-console-application)
+
+Add the SDK next to the one the project already names:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+  </ItemGroup>
+</Project>
+```
+
+and build the host with `ConfigureDovetail()`, which applies every [Joint](../concepts/joints/) the application imports:
+
+```csharp
+using var host = await Host.CreateApplicationBuilder(args).ConfigureDovetail();
+await host.RunAsync();
+```
+
+`ConfigureDovetail()` is generated into the project’s root namespace, so add a `using` for it if `Program.cs` is in another one.
+
+The SDK finds a generic host (`HostApplication`) and adds `Joinery.Dovetail.Hosting`, which generates `ConfigureDovetail()`, and `Rocket.Surgery.LaunchPad.Hosting`, whose [templates](../concepts/templates/) bring health checks, logging and telemetry Joints when their libraries are referenced.
+
+## An ASP.NET Core application
+
+[Section titled “An ASP.NET Core application”](#an-aspnet-core-application)
+
+The same line in a `Microsoft.NET.Sdk.Web` project gives the `WebApplication` host model, which also gets `Rocket.Surgery.LaunchPad.AspNetCore`:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
+</Project>
+```
+
+```csharp
+var app = await WebApplication.CreateBuilder(args).ConfigureDovetail();
+app.MapHealthChecks("/health");
+await app.RunAsync();
+```
+
+ASP.NET Core has the health checks in its shared framework, so `LaunchPadHealthChecksJoint` registers them without another reference.
+
+## Every project in a repository
+
+[Section titled “Every project in a repository”](#every-project-in-a-repository)
+
+Apply the SDK once in `Directory.Build.props`:
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk">
+</Project>
+```
+
+and pin its version in `global.json`:
+
+```json
+{
+    "msbuild-sdks": {
+        "Rocket.Surgery.LaunchPad.Sdk": "1.0.0"
+    }
+}
+```
+
+Libraries get nothing from the SDK until they reference a technology LaunchPad has a package for: a library has no host model.
+
+## A file-based app
+
+[Section titled “A file-based app”](#a-file-based-app)
+
+A single `.cs` file run with `dotnet run app.cs` names the SDK with a directive and needs no `#:package` for LaunchPad:
+
+```csharp
+#:sdk Rocket.Surgery.LaunchPad.Sdk@1.0.0
+#:property RootNamespace=MyApp
+
+
+using MyApp;
+
+
+using var host = await Host.CreateApplicationBuilder(args).ConfigureDovetail();
+await host.RunAsync();
+```
+
+It gets the generic host, `Rocket.Surgery.LaunchPad.Foundation`, `Hosting` and `NodaTime`, and Dovetail’s Serilog and OpenTelemetry packages. `RootNamespace` names the namespace `ConfigureDovetail()` is generated in; a file-based app would otherwise take it from the file name.
+
+## Next
+
+[Section titled “Next”](#next)
+
+* [Choosing integration packages](./choosing-packages/): what the SDK adds for each technology, and how to turn one off.
+* [Writing a Joint](./writing-a-joint/): add wiring of your own.
+* The [samples](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/main/sample/Sample.Sdk) consume LaunchPad only through the SDK, the way an application outside the repository does.
+
+# Choosing integration packages
+
+> Turn on LaunchPad support for a technology by referencing it, see what the SDK added, and opt a project out.
+
+With the [LaunchPad SDK](../../concepts/launchpad-sdk/) a project turns on LaunchPad support for a technology by referencing the technology itself. There is no LaunchPad package to look up: the SDK adds the [integration packages](../../concepts/integration-packages/) that match.
+
+## Turning a technology on
+
+[Section titled “Turning a technology on”](#turning-a-technology-on)
+
+Reference the library directly from the project that uses it:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="NodaTime" Version="3.3.7" />
+  <PackageReference Include="HotChocolate.AspNetCore" Version="15.1.20" />
+</ItemGroup>
+```
+
+This project gets `Rocket.Surgery.LaunchPad.NodaTime`, `Rocket.Surgery.LaunchPad.HotChocolate` and, because it has both, `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate`. The table of what each technology adds is in [Integration packages](../../concepts/integration-packages/#the-packages-the-sdk-chooses).
+
+Only [direct references](../../concepts/integration-packages/#direct-references) count. If NodaTime reaches the project only through another library, the project gets no NodaTime package; reference NodaTime itself to get one.
+
+## Seeing what was added
+
+[Section titled “Seeing what was added”](#seeing-what-was-added)
+
+The packages the SDK adds are ordinary `PackageReference` items marked `IsImplicitlyDefined`, so they show up in `dotnet list package` and in the IDE’s dependencies like any other. A package the project references itself is left as the project wrote it, which is also how to pin one to another version.
+
+## Turning a technology off
+
+[Section titled “Turning a technology off”](#turning-a-technology-off)
+
+Set the technology’s `LaunchPadEnable<Technology>` property to `false`. That removes its own package and every integration package it is part of:
+
+```xml
+<PropertyGroup>
+  <!-- keeps NodaTime, drops Rocket.Surgery.LaunchPad.NodaTime and Rocket.Surgery.LaunchPad.NodaTime.HotChocolate -->
+  <LaunchPadEnableNodaTime>false</LaunchPadEnableNodaTime>
+</PropertyGroup>
+```
+
+`LaunchPadEnableHosting` and `LaunchPadEnableAspNetCore` turn off the packages that come with the host model. Dovetail’s own packages have properties of their own, such as `DovetailEnableSerilog` and `DovetailEnableOpenTelemetry`.
+
+## Logging and telemetry sinks
+
+[Section titled “Logging and telemetry sinks”](#logging-and-telemetry-sinks)
+
+Serilog sinks and enrichers and OpenTelemetry instrumentations are chosen the same way: reference the package, and the [template](../../concepts/templates/) that turns it on is written into the application.
+
+```xml
+<ItemGroup>
+  <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+  <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
+  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.20.1" />
+</ItemGroup>
+```
+
+gives an ASP.NET Core application `LaunchPadSerilogConsoleJoint` and `LaunchPadAspNetCoreInstrumentationJoint`.
+
+# Writing a Joint
+
+> Add wiring of your own to an application or a library as a Joint that Dovetail applies with LaunchPad's.
+
+Wiring of your own, in an application or in a library it references, is a [Joint](../../concepts/joints/) like LaunchPad’s. Dovetail finds it at build time and `ConfigureDovetail()` applies it with the rest.
+
+## A service Joint
+
+[Section titled “A service Joint”](#a-service-joint)
+
+```csharp
+using Joinery.Dovetail;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+using Microsoft.Extensions.DependencyInjection;
+
+
+namespace MyCompany.Orders;
+
+
+[DovetailExport]
+public sealed class OrdersJoint : IServiceJoint
+{
+    public void Register(IDovetailContext context, IServiceCollection services) =>
+        services.AddSingleton<IOrderRepository, OrderRepository>();
+}
+```
+
+* In an **application**, the Joint is applied by the application’s own `ConfigureDovetail()`.
+* In a **library**, `[DovetailExport]` exports it, and every application that references the library applies it. The library needs `Joinery.Dovetail` (or the [LaunchPad SDK](../../concepts/launchpad-sdk/), which adds it when the library references a technology LaunchPad supports).
+
+## Options from the context
+
+[Section titled “Options from the context”](#options-from-the-context)
+
+A Joint can read settings from the `IDovetailContext`, which the application can fill before the Joints run. LaunchPad’s own Joints do this for their options; `TimeJoint` reads `NodaTimeOptions`:
+
+```csharp
+public sealed class OrdersJoint : IServiceJoint, ISetupJoint
+{
+    // runs before any IServiceJoint, so the default is there for every Joint that asks
+    void ISetupJoint.Register(IDovetailContext context) => _ = context.GetOrAdd(() => new OrdersOptions());
+
+
+    public void Register(IDovetailContext context, IServiceCollection services) =>
+        services.AddSingleton(context.Require<OrdersOptions>());
+}
+```
+
+## Ordering and categories
+
+[Section titled “Ordering and categories”](#ordering-and-categories)
+
+Dovetail orders the Joints it applies. A Joint can declare what it must run after, and a `[DovetailCategory]`; one without a category is in the `Application` category. Dovetail’s documentation covers the interfaces, ordering, categories and injecting dependencies: [Defining Joints](https://rocketsurgeonsguild.github.io/Dovetail/concepts/defining-joints/).
+
+## Testing a Joint
+
+[Section titled “Testing a Joint”](#testing-a-joint)
+
+LaunchPad’s own tests check a Joint through Dovetail’s generated exports: that it is exported, in the right category, and registers what it should. See [Unit tests](https://rocketsurgeonsguild.github.io/Dovetail/concepts/unit-tests/) in Dovetail’s documentation.
