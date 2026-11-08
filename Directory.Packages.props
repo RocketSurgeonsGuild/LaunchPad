@@ -130,9 +130,6 @@
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="10.3.1" />
 
-    <PackageVersion Include="System.Reactive" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.Reactive.Testing" Version="7.0.0" />
-    <PackageVersion Include="System.Reactive.Observable.Aliases" Version="7.0.0" />
         <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.7.1" />
         <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />
 
