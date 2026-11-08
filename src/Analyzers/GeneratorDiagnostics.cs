@@ -31,24 +31,6 @@ internal static class GeneratorDiagnostics
         true
     );
 
-    public static DiagnosticDescriptor ParameterMustExist { get; } = new(
-        "LPAD0006",
-        "The parameter must exist in order for this request to process",
-        "The parameter of type {0} must exist in order to fulfill this request {1}",
-        "LaunchPad",
-        DiagnosticSeverity.Error,
-        true
-    );
-
-    public static DiagnosticDescriptor PropertyMustBeSettableForTheRequest { get; } = new(
-        "LPAD0007",
-        "The property must be settable on a request class, init is not supported.",
-        "The property {0} must be settable on a request class {1}, init is not supported",
-        "LaunchPad",
-        DiagnosticSeverity.Error,
-        true
-    );
-
     public static DiagnosticDescriptor ValidatorShouldCallGeneratedValidationMethod { get; } = new(
         "LPAD0008",
         "The validator should call the generated method",

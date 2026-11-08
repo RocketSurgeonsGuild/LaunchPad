@@ -9,7 +9,6 @@ namespace Sample.Server
     [global::HotChocolate.Types.ExtendObjectType("Mutation")]
     public partial class RocketsMutations
     {
-        /// <summary>The <c>createRocket</c> mutation: sends <see cref="Sample.Contracts.Rockets.CreateRocket.Request" /> through the mediator.</summary>
         [global::HotChocolate.GraphQLName("createRocket")]
         public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::HotChocolate.Resolvers.IResolverContext context, global::System.Threading.CancellationToken cancellationToken)
         {
@@ -19,7 +18,6 @@ namespace Sample.Server
             return await __sender.Send(__request, cancellationToken).ConfigureAwait(false);
         }
 
-        /// <summary>The <c>editRocket</c> mutation: sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> through the mediator.</summary>
         [global::HotChocolate.GraphQLName("editRocket")]
         public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::HotChocolate.Resolvers.IResolverContext context, global::System.Threading.CancellationToken cancellationToken)
         {
@@ -29,7 +27,6 @@ namespace Sample.Server
             return await __sender.Send(__request, cancellationToken).ConfigureAwait(false);
         }
 
-        /// <summary>The <c>deleteRocket</c> mutation: sends <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> through the mediator.</summary>
         [global::HotChocolate.GraphQLName("deleteRocket")]
         public async global::System.Threading.Tasks.Task<bool> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::HotChocolate.Resolvers.IResolverContext context, global::System.Threading.CancellationToken cancellationToken)
         {

@@ -167,7 +167,7 @@ public sealed class GraphQLMutationGenerator : IIncrementalGenerator
                             ),
                             body
                         )
-                       .WithAttributeLists(SyntaxFactory.List(attributes))
-                       .Summary($"The <c>{operation.GraphQLField}</c> mutation: sends <see cref=\"{Cref(operation.RequestType)}\" /> through the mediator.");
+                       .WithAttributeLists(SyntaxFactory.List(attributes));
+        // No doc comment: HotChocolate would describe the field with it when the operation has no summary of its own.
     }
 }

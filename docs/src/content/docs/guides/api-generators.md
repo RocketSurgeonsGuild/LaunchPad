@@ -23,19 +23,20 @@ The generators work with MediatR, [martinothamar/Mediator](https://github.com/ma
 Immediate.Handlers, Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
 scanning assemblies, and the generated server endpoints are native AOT safe.
 
-This page covers the Minimal API, MVC controller and gRPC servers and the HTTP and gRPC clients. GraphQL follows the same model and arrives
-in a later release.
+This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) servers and their clients.
 
 ## Packages
 
-| Package                                    | Reference it from                                        | What it does                                                                     |
-| ------------------------------------------ | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.Api`             | contracts projects that customise                        | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes. |
-| `Rocket.Surgery.LaunchPad.Api.MinimalApi`  | the server                                               | Minimal API endpoints for `*Endpoints` hosts.                                    |
-| `Rocket.Surgery.LaunchPad.Api.Controllers` | the server                                               | MVC controller actions for `*Controller` hosts.                                  |
-| `Rocket.Surgery.LaunchPad.Api.Grpc`        | the server                                               | Code-first gRPC services (protobuf-net.Grpc) for `*Service` hosts.               |
-| `Rocket.Surgery.LaunchPad.Api.Client.Grpc` | the client                                               | Code-first gRPC clients and mediator handlers for `*GrpcClient` hosts.           |
-| `Rocket.Surgery.LaunchPad.Api.Client.Http` | the client (see [placement](#where-a-client-host-lives)) | A typed HTTP client and mediator handlers for `*Client` hosts.                   |
+| Package                                       | Reference it from                                        | What it does                                                                     |
+| --------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `Rocket.Surgery.LaunchPad.Api`                | contracts projects that customise                        | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes. |
+| `Rocket.Surgery.LaunchPad.Api.MinimalApi`     | the server                                               | Minimal API endpoints for `*Endpoints` hosts.                                    |
+| `Rocket.Surgery.LaunchPad.Api.Controllers`    | the server                                               | MVC controller actions for `*Controller` hosts.                                  |
+| `Rocket.Surgery.LaunchPad.Api.Grpc`           | the server                                               | Code-first gRPC services (protobuf-net.Grpc) for `*Service` hosts.               |
+| `Rocket.Surgery.LaunchPad.Api.Client.Grpc`    | the client                                               | Code-first gRPC clients and mediator handlers for `*GrpcClient` hosts.           |
+| `Rocket.Surgery.LaunchPad.Api.GraphQL`        | the server                                               | HotChocolate mutations for `*Mutations` hosts.                                   |
+| `Rocket.Surgery.LaunchPad.Api.Client.GraphQL` | the client                                               | GraphQL mutation clients and mediator handlers for `*GraphQLClient` hosts.       |
+| `Rocket.Surgery.LaunchPad.Api.Client.Http`    | the client (see [placement](#where-a-client-host-lives)) | A typed HTTP client and mediator handlers for `*Client` hosts.                   |
 
 All three are analyzer-only development dependencies. The attributes are generated into each project that uses them, as `internal` types,
 so nothing reaches your runtime dependencies. The transport packages bring the base package with them.
@@ -235,6 +236,50 @@ var rocket = await mediator.Send(new GetRocket.Request(id));   // null when the 
 - `partial void Configure{Operation}(ref CallOptions options)` on the client sets headers, deadlines and credentials per call.
 - An HTTP and a gRPC client host for the same requests can't share a project: the mediator would see two handlers for each request.
 
+### GraphQL mutations
+
+A `partial` class named `*Mutations` (or with `[ExtendObjectType(OperationTypeNames.Mutation)]`) gets one HotChocolate mutation per
+operation, taking the request as its single `request` argument:
+
+```csharp
+[ExtendObjectType(OperationTypeNames.Mutation)]
+[Operation<CreateRocket.Request>]
+[Operation<EditRocket.PatchRequest>(Input = typeof(EditRocketPatchRequest))]
+[Operation<DeleteRocket.Request>]
+public partial class RocketMutation;
+
+builder.Services.AddGraphQLServer().AddQueryType().AddMutationType().AddRocketMutation();
+// mutation { createRocket(request: { name: "Falcon" }) { id } }
+```
+
+- Field names are the operation names in camelCase, or `[ApiOperation(GraphQLName)]`. A field declared on two mutation hosts is LPAD1009.
+- `Add{Host}()` names nested inputs and responses after their container (`CreateRocketRequest`, `CreateRocketResponse`), so the many nested
+  `Request` types don't collide; other inputs keep HotChocolate's `…Input` names. LaunchPad.HotChocolate's `NestedTypeNameTypeInterceptor`
+  leaves those names as they are.
+- A void operation answers `Boolean!` (`true`). A stream isn't a mutation (LPAD1015, skipped).
+- An operation is a mutation unless its verb is GET; one inferred as a query on a mutation host is LPAD1019. Set
+  `[ApiOperation(GraphQLOperation = GraphQLOperation.Mutation)]` to keep it.
+- `Input` types work as on HTTP. An input implementing LaunchPad's `IOptionalTracking<TRequest>` gets its `Create()` from another generator,
+  which counts.
+- The summary (or XML documentation) is the field's description; `Policy`, `Roles` and `AllowAnonymous` become HotChocolate authorization.
+
+**Queries aren't generated.** They usually return `IQueryable` with paging, filtering and projections, which a mediator response can't; a
+`*Queries` host is LPAD1017. Write queries by hand.
+
+A `partial` class named `*GraphQLClient` gets one method per mutation. It posts a generated document, with the selection set built from the
+response type (every readable property, scalars as leaves), to its `HttpClient`, whose base address is the GraphQL endpoint:
+
+```csharp
+[Operation<CreateRocket.Request>]
+public partial class RocketsGraphQLClient;
+
+services.AddRocketsGraphQLClient().ConfigureHttpClient(c => c.BaseAddress = new Uri("https://rockets.example/graphql"));
+// sends: mutation CreateRocket($request: CreateRocketRequest!) { createRocket(request: $request) { id } }
+```
+
+GraphQL errors throw `HttpRequestException` with their messages; an error with the code `NOTFOUND` (LaunchPad's error filter) returns
+`null` for a nullable response. Enum values are written in HotChocolate's UPPER_SNAKE_CASE.
+
 ## Binding and responses
 
 - Route tokens bind to the request member of the same name; a token without a member is LPAD1003, an `[ApiRoute]` member missing from the
@@ -333,20 +378,21 @@ filters don't apply.
 | LPAD1006 | Error    | The request can't be built from the bound values.                                             |
 | LPAD1007 | Error    | A route, query or header member isn't parsable.                                               |
 | LPAD1008 | Error    | Two operations share a verb and route.                                                        |
+| LPAD1009 | Error    | A GraphQL field is declared on two mutation hosts.                                            |
 | LPAD1010 | Error    | The host isn't `partial` (Minimal API: `static partial`). Has a code fix.                     |
 | LPAD1011 | Warning  | The profile has no handler interface, so no mediator handler is generated.                    |
 | LPAD1012 | Error    | The client host is in the wrong project for its mediator.                                     |
 | LPAD1013 | Warning  | A hand-written handler for a client operation is visible.                                     |
 | LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.                      |
+| LPAD1015 | Warning  | A stream operation on a GraphQL host is skipped.                                              |
 | LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.                                |
 | LPAD1017 | Error    | The host's transport can't be inferred, or its package isn't referenced.                      |
 | LPAD1018 | Error    | Two client hosts generate handlers for the same operation.                                    |
+| LPAD1019 | Error    | A query operation is listed on a mutation host.                                               |
 | LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.                        |
 | LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                           |
 | LPAD1022 | Error    | A client host declares its own constructor.                                                   |
 | LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`. |
-
-LPAD1009, LPAD1015 and LPAD1019 belong to the GraphQL transport.
 
 ## Limitations
 

@@ -110,7 +110,10 @@ internal static class HostReader
 
         // An input type that the transport carries instead of the request, converted with Create().
         var input = Type(args, "Input") as INamedTypeSymbol;
-        if (input is { } && !input.GetMembers("Create").OfType<IMethodSymbol>().Any(m => m is { IsStatic: false, Parameters.Length: 0, DeclaredAccessibility: Accessibility.Public } && SymbolEqualityComparer.Default.Equals(m.ReturnType, request)))
+        // Create() is declared by the input, or generated for it: LaunchPad's IOptionalTracking<TRequest> inputs get theirs from another
+        // generator, whose output this one can't see.
+        var generatesCreate = input?.AllInterfaces.Any(i => i is { Name: "IOptionalTracking", Arity: 1 } && SymbolEqualityComparer.Default.Equals(i.TypeArguments[0], request)) == true;
+        if (input is { } && !generatesCreate && !input.GetMembers("Create").OfType<IMethodSymbol>().Any(m => m is { IsStatic: false, Parameters.Length: 0, DeclaredAccessibility: Accessibility.Public } && SymbolEqualityComparer.Default.Equals(m.ReturnType, request)))
         {
             diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.InputWithoutCreate, location, input.ToDisplayString(), request.ToDisplayString()));
             return null;

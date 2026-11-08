@@ -30,6 +30,9 @@ builder
    .AddExecutableTypes()
    .AddQueryType()
    .AddMutationType()
+   // The generated mutations, with their input and response types named.
+   .AddRocketMutation()
+   .AddLaunchRecordMutation()
    .ModifyOptions(
         options =>
         {

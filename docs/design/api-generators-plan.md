@@ -1,6 +1,6 @@
 # Mediator-agnostic API generators: orientation, design and plan
 
-Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC server and client hosts built and round-tripping for all six mediators. Phase 2 is complete pending review. Open from phase 1: server-side API versioning (6).
+Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC server and client hosts built and round-tripping for all six mediators. Phase 2 is complete pending review. Phase 3 built: GraphQL mutation hosts and clients (queries left out, decided 2026-11-08), the old mutation generator removed, Sample.Graphql migrated. Open: server-side API versioning (6).
 
 Related: [ADR-0002 one package per integration](../adr/0002-package-per-integration.md), [ADR-0003 explicit operation hosts](../adr/0003-explicit-operation-hosts.md), and the terms _operation_, _operation host_, _group_, _transport_, _contracts project_ and _mediator profile_ in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -93,6 +93,12 @@ Read: `GENERATORS.md`, `ChannelMediator.ApiGenerators.Abstraction/*`, and its fo
     - FluentValidation's joint no longer sets a validation problem details type (there is no option to set).
     - The OpenAPI documents of controllers no longer list 404, 422 and a default response on every action, because that convention is gone. Generated actions document their success response, 404 only for nullable responses, and 400 when they bind a value. Missing entities still answer 404 and validation failures 422 at runtime.
     - In `Sample.Restful`, `EditLaunchRecord` and `PatchLaunchRecord` document their 200 `LaunchRecordModel` response instead of 204. Routes keep `/Rocket` and `/LaunchRecord` (the hosts declare `[Route("[controller]")]`) and their `{id:guid}` constraints, and `RemoveRocket` keeps its name (`Name = "RemoveRocket"`).
+
+24. **HotChocolate.AspNetCore declares `Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions`,** the same full name as ASP.NET Core's class with `MapGroup` and `MapMethods`. Generated Minimal API code naming that class fully was ambiguous in any app that also references HotChocolate. **Fixed:** those calls are extension calls, with `using Microsoft.AspNetCore.Builder;` in the generated file.
+25. **GraphQL queries aren't generated (decided 2026-11-08).** Hand-written queries return `IQueryable` with paging, filtering and projections, which a mediator response can't express. `*Queries` hosts are LPAD1017 with that reason; GraphQL clients skip query operations (LPAD1016).
+26. **`NestedTypeNameTypeInterceptor` prefixed explicit names again** (`CreateRocketCreateRocketRequest`). **Fixed:** it leaves a name that already starts with the declaring type.
+27. **Generators can't see each other's `Create()`.** `GraphqlOptionalPropertyTrackingGenerator` writes `Create()` on `IOptionalTracking<TRequest>` inputs, so LPAD1020 accepts that interface as the promise of one.
+28. **Void GraphQL mutations answer `Boolean!`,** not LaunchPad's `Void` scalar (which needed MediatR's `Unit`); `Sample.Graphql`'s deletes changed accordingly, and the test client's schema with them. HotChocolate describes a field with its resolver's XML documentation, so generated resolvers carry none.
 
 ## 4. Design
 
