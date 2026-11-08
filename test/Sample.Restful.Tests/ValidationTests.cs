@@ -4,6 +4,9 @@ using System.Text.Json;
 
 using Sample.Restful.Tests.Helpers;
 
+// a test assembly exposes nothing to other languages
+[assembly: CLSCompliant(false)]
+
 namespace Sample.Restful.Tests;
 
 // The operations validate their requests in the mediator; the shared ValidationProblemDetailsJoint turns a rejected request into a 422.
