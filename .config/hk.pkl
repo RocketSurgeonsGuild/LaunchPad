@@ -60,11 +60,27 @@ local excludedDiagnosticsString = excludeDiagnostics.join(" ")
 // Has a real verify mode, so it can run in `check` as well as `fix`.
 local dotnetFormat: Step = new Step {
   glob = "**/*.cs"
+  exclude = List(apiCore)
   check =
     "dotnet format \(solution) --exclude-diagnostics \(excludedDiagnosticsString) --verify-no-changes --include {{files}}"
   fix =
     "dotnet format \(solution) --exclude-diagnostics \(excludedDiagnosticsString) --include {{files}}"
 }
+
+// The API generators' shared core is linked as source into every Rocket.Surgery.LaunchPad.Api* project. Formatted through the
+// solution, each file is fixed once per project and Roslyn writes "Unmerged change" markers when the copies differ; formatted
+// through one project that links it, each file is fixed once.
+local apiCore = "src/Api.Core"
+local dotnetFormatApiCore: Step = new Step {
+  glob = "\(apiCore)/**/*.cs"
+  depends = new Listing<String> { "dotnet-format" }
+  check =
+    "dotnet format \(apiCoreProject) --exclude-diagnostics \(excludedDiagnosticsString) --verify-no-changes --include {{files}}"
+  fix =
+    "dotnet format \(apiCoreProject) --exclude-diagnostics \(excludedDiagnosticsString) --include {{files}}"
+}
+// Links the core and references no other project that does, so the workspace holds one copy of each file.
+local apiCoreProject = "src/Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj"
 
 // JetBrains ReSharper `cleanupcode` (`jb` global tool, resolved via mise).
 // Fix-only: cleanupcode rewrites files in place and has no verify mode, so we only set `fix`.
@@ -96,6 +112,7 @@ steps {
   ["detect-private-key"] = Builtins.detect_private_key
   ["large-files"] = Builtins.check_added_large_files
   ["dotnet-format"] = dotnetFormat
+  ["dotnet-format-api-core"] = dotnetFormatApiCore
   // YAML, Markdown and CSS/HTML only: biome formats JS/TS/JSON and tombi formats TOML. Style and ignores live in .oxfmtrc.json.
   ["oxfmt"] = (Builtins.oxfmt) {
     glob =

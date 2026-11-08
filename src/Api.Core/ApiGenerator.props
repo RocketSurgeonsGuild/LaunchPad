@@ -1,0 +1,33 @@
+<Project>
+    <!-- Shared by every Rocket.Surgery.LaunchPad.Api* analyzer project: netstandard2.0 analyzers on the .NET 10 SDK's Roslyn, with the shared core linked in as source. -->
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <DevelopmentDependency>true</DevelopmentDependency>
+        <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Api.Generators</RootNamespace>
+        <!-- Generators are not public API; the generated code is documented instead. -->
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
+        <!-- The oldest Roslyn the generators support: the compiler of the .NET 10 SDK, so an application on either SDK can load them. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
+        <Compile Include="$(MSBuildThisFileDirectory)**/*.cs" Link="Core/%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
+    </ItemGroup>
+    <!-- Packed from wherever the build wrote it: an artifacts path moves it out of bin. -->
+    <Target Name="_LaunchPadApiPackAnalyzer" BeforeTargets="_GetPackageFiles">
+        <ItemGroup>
+            <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        </ItemGroup>
+    </Target>
+</Project>

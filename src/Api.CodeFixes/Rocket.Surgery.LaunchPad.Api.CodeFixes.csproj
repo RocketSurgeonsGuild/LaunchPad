@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../Api.Core/ApiGenerator.props" />
+    <PropertyGroup>
+        <!-- Packed inside Rocket.Surgery.LaunchPad.Api; code fixes live apart from generators because generators must not reference Workspaces (RS1038). -->
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+</Project>

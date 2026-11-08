@@ -1,0 +1,165 @@
+using Microsoft.CodeAnalysis;
+
+namespace Rocket.Surgery.LaunchPad.Api.Generators;
+
+/// <summary>
+///     Every diagnostic the API generators report. One table, shared by every generator package, so IDs never collide.
+/// </summary>
+internal static class ApiDiagnostics
+{
+    private const string Category = "LaunchPad.Api";
+
+    public static DiagnosticDescriptor ResponseNotFound { get; } = Error(
+        "LPAD1001",
+        "Operation response could not be found",
+        "{0} does not match any request kind of the {1} mediator profile, and no response type is set with [ApiOperation(Response = ...)]"
+    );
+
+    public static DiagnosticDescriptor NoMediatorProfile { get; } = Error(
+        "LPAD1002",
+        "No mediator profile",
+        "Operation host {0} needs a mediator profile: {1}"
+    );
+
+    public static DiagnosticDescriptor RouteTokenWithoutMember { get; } = Error(
+        "LPAD1003",
+        "Route token has no matching member",
+        "The route '{0}' of operation {1} has the token '{2}', but {3} has no member with that name"
+    );
+
+    public static DiagnosticDescriptor RouteMemberNotInRoute { get; } = Error(
+        "LPAD1004",
+        "Route member is not in the route",
+        "{0}.{1} is marked [ApiRoute] but the route '{2}' has no '{{{3}}}' token"
+    );
+
+    public static DiagnosticDescriptor ComplexMemberNotBindable { get; } = Error(
+        "LPAD1005",
+        "Complex member bound from the route or query string",
+        "{0}.{1} of type {2} cannot be bound from the {3}; use a body verb, [ApiBody] or [ApiIgnore]"
+    );
+
+    public static DiagnosticDescriptor RequestNotConstructible { get; } = Error(
+        "LPAD1006",
+        "Request cannot be constructed",
+        "{0} cannot be built for {1}: member {2} is neither a constructor parameter nor settable"
+    );
+
+    public static DiagnosticDescriptor MemberNotParsable { get; } = Error(
+        "LPAD1007",
+        "Route or query member is not parsable",
+        "{0}.{1} of type {2} is bound from the {3} but the type has no TryParse method and does not implement IParsable<T>"
+    );
+
+    public static DiagnosticDescriptor DuplicateRoute { get; } = Error(
+        "LPAD1008",
+        "Duplicate route",
+        "{0} {1} is declared by both {2} and {3}"
+    );
+
+    public static DiagnosticDescriptor DuplicateGraphQLField { get; } = Error(
+        "LPAD1009",
+        "Duplicate GraphQL field",
+        "The GraphQL field '{0}' is declared twice on {1}"
+    );
+
+    public static DiagnosticDescriptor HostMustBePartial { get; } = Error(
+        "LPAD1010",
+        "Operation host must be partial",
+        "Operation host {0} must be {1}"
+    );
+
+    public static DiagnosticDescriptor NoHandlerInterface { get; } = Warning(
+        "LPAD1011",
+        "Mediator profile has no handler interface",
+        "The {0} mediator profile has no handler interface for {1}, so no mediator handler is generated; call {2} directly"
+    );
+
+    public static DiagnosticDescriptor ClientHostInWrongProject { get; } = Error(
+        "LPAD1012",
+        "Client host is in the wrong project for its mediator",
+        "Client host {0} uses the {1} mediator profile: {2}"
+    );
+
+    public static DiagnosticDescriptor HandWrittenHandlerVisible { get; } = Warning(
+        "LPAD1013",
+        "A hand-written handler is visible next to the generated one",
+        "{0} already has a handler, {1}, and {2} generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references"
+    );
+
+    public static DiagnosticDescriptor GrpcSerialization { get; } = Warning(
+        "LPAD1014",
+        "gRPC type lacks serialization attributes",
+        "{0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members"
+    );
+
+    public static DiagnosticDescriptor StreamOnGraphQL { get; } = Warning(
+        "LPAD1015",
+        "Stream operation on a GraphQL host",
+        "{0} is a stream operation and is skipped on GraphQL host {1}"
+    );
+
+    public static DiagnosticDescriptor FeatureSkipped { get; } = Info(
+        "LPAD1016",
+        "Feature skipped",
+        "{0} is skipped on {1}: {2}"
+    );
+
+    public static DiagnosticDescriptor HostTransportUnknown { get; } = Error(
+        "LPAD1017",
+        "Operation host transport cannot be inferred",
+        "The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client."
+    );
+
+    public static DiagnosticDescriptor DuplicateClientHandler { get; } = Error(
+        "LPAD1018",
+        "Two client hosts generate a handler for the same operation",
+        "{0} is declared with handlers on both {1} and {2}; set Handlers = false on one of them"
+    );
+
+    public static DiagnosticDescriptor WrongGraphQLHostKind { get; } = Error(
+        "LPAD1019",
+        "Operation is on the wrong GraphQL host kind",
+        "{0} is a GraphQL {1} but {2} is a {3} host"
+    );
+
+    public static DiagnosticDescriptor InputWithoutCreate { get; } = Error(
+        "LPAD1020",
+        "Input type has no Create method",
+        "Input type {0} needs a public parameterless Create() method returning {1}"
+    );
+
+    public static DiagnosticDescriptor HostSettingNotApplicable { get; } = Warning(
+        "LPAD1021",
+        "Operation host setting does not apply",
+        "[OperationHost({0})] has no effect on {1}, which is a {2} host"
+    );
+
+    public static DiagnosticDescriptor ClientHostConstructor { get; } = Error(
+        "LPAD1022",
+        "Client host declares a constructor",
+        "Client host {0} gets a generated constructor taking the transport's client factory; remove the constructors it declares"
+    );
+
+    public static DiagnosticDescriptor CreatedLocationInvalid { get; } = Error(
+        "LPAD1023",
+        "CreateOperation location is invalid",
+        "CreateOperation {0} points at {1}, but {2}"
+    );
+
+    public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
+    [
+        ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
+        MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, NoHandlerInterface, ClientHostInWrongProject,
+        HandWrittenHandlerVisible, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, DuplicateClientHandler,
+        WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, ClientHostConstructor, CreatedLocationInvalid,
+    ];
+
+    public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);
+
+    private static DiagnosticDescriptor Error(string id, string title, string message) => new(id, title, message, Category, DiagnosticSeverity.Error, true);
+
+    private static DiagnosticDescriptor Warning(string id, string title, string message) => new(id, title, message, Category, DiagnosticSeverity.Warning, true);
+
+    private static DiagnosticDescriptor Info(string id, string title, string message) => new(id, title, message, Category, DiagnosticSeverity.Info, true);
+}

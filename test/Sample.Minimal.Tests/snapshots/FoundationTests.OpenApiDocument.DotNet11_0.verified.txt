@@ -13,7 +13,7 @@
     /launch-records: {
       get: {
         tags: [
-          LaunchRecordEndpoints
+          LaunchRecords
         ],
         operationId: ListLaunchRecords,
         parameters: [
@@ -33,7 +33,7 @@
           200: {
             description: OK,
             content: {
-              application/json: {
+              application/x-ndjson: {
                 schema: {
                   type: array,
                   items: {
@@ -42,12 +42,22 @@
                 }
               }
             }
+          },
+          400: {
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       post: {
         tags: [
-          LaunchRecordEndpoints
+          LaunchRecords
         ],
         operationId: CreateLaunchRecord,
         requestBody: {
@@ -80,7 +90,14 @@
             }
           },
           400: {
-            description: Bad Request
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       }
@@ -88,7 +105,7 @@
     /launch-records/{id}: {
       get: {
         tags: [
-          LaunchRecordEndpoints
+          LaunchRecords
         ],
         operationId: GetLaunchRecord,
         parameters: [
@@ -97,8 +114,7 @@
             in: path,
             required: true,
             schema: {
-              type: string,
-              format: uuid
+              $ref: #/components/schemas/LaunchRecordId
             }
           }
         ],
@@ -113,14 +129,21 @@
               }
             }
           },
-          404: {
-            description: Not Found
+          400: {
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       put: {
         tags: [
-          LaunchRecordEndpoints
+          LaunchRecords
         ],
         operationId: EditLaunchRecord,
         parameters: [
@@ -155,16 +178,20 @@
             }
           },
           400: {
-            description: Bad Request
-          },
-          404: {
-            description: Not Found
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       patch: {
         tags: [
-          LaunchRecordEndpoints
+          LaunchRecords
         ],
         operationId: PatchLaunchRecord,
         parameters: [
@@ -199,16 +226,20 @@
             }
           },
           400: {
-            description: Bad Request
-          },
-          404: {
-            description: Not Found
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       delete: {
         tags: [
-          LaunchRecordEndpoints
+          LaunchRecords
         ],
         operationId: DeleteLaunchRecord,
         parameters: [
@@ -225,8 +256,15 @@
           204: {
             description: No Content
           },
-          404: {
-            description: Not Found
+          400: {
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       }
@@ -234,8 +272,9 @@
     /rockets: {
       get: {
         tags: [
-          RocketEndpoints
+          Rockets
         ],
+        operationId: ListRockets,
         parameters: [
           {
             name: rocketType,
@@ -253,7 +292,7 @@
           200: {
             description: OK,
             content: {
-              application/json: {
+              application/x-ndjson: {
                 schema: {
                   type: array,
                   items: {
@@ -262,13 +301,24 @@
                 }
               }
             }
+          },
+          400: {
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       post: {
         tags: [
-          RocketEndpoints
+          Rockets
         ],
+        operationId: CreateRocket,
         requestBody: {
           content: {
             application/json: {
@@ -299,7 +349,14 @@
             }
           },
           400: {
-            description: Bad Request
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       }
@@ -307,8 +364,9 @@
     /rockets/{id}: {
       get: {
         tags: [
-          RocketEndpoints
+          Rockets
         ],
+        operationId: GetRocket,
         parameters: [
           {
             name: id,
@@ -330,15 +388,23 @@
               }
             }
           },
-          404: {
-            description: Not Found
+          400: {
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       put: {
         tags: [
-          RocketEndpoints
+          Rockets
         ],
+        operationId: EditRocket,
         parameters: [
           {
             name: id,
@@ -371,17 +437,22 @@
             }
           },
           400: {
-            description: Bad Request
-          },
-          404: {
-            description: Not Found
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       patch: {
         tags: [
-          RocketEndpoints
+          Rockets
         ],
+        operationId: PatchRocket,
         parameters: [
           {
             name: id,
@@ -414,17 +485,22 @@
             }
           },
           400: {
-            description: Bad Request
-          },
-          404: {
-            description: Not Found
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
       delete: {
         tags: [
-          RocketEndpoints
+          Rockets
         ],
+        operationId: DeleteRocket,
         parameters: [
           {
             name: id,
@@ -439,8 +515,15 @@
           204: {
             description: No Content
           },
-          404: {
-            description: Not Found
+          400: {
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       }
@@ -590,6 +673,48 @@
         },
         x-schema-id: EditLaunchRecordPatchRequest
       },
+      ProblemDetails: {
+        required: [
+          type,
+          title
+        ],
+        type: object,
+        properties: {
+          type: {
+            type: [
+              null,
+              string
+            ]
+          },
+          title: {
+            type: [
+              null,
+              string
+            ]
+          },
+          status: {
+            pattern: ^-?(?:0|[1-9]\d*)$,
+            type: [
+              null,
+              integer,
+              string
+            ],
+            format: int32
+          },
+          detail: {
+            type: [
+              null,
+              string
+            ]
+          },
+          instance: {
+            type: [
+              null,
+              string
+            ]
+          }
+        }
+      },
       Request: {
         required: [
           partner,
@@ -673,10 +798,10 @@
   },
   tags: [
     {
-      name: LaunchRecordEndpoints
+      name: LaunchRecords
     },
     {
-      name: RocketEndpoints
+      name: Rockets
     }
   ]
 }

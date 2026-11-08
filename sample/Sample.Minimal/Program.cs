@@ -20,8 +20,8 @@ app.MapOpenApi();
 app
    .UseSwaggerUI()
    .UseReDoc();
-app.UseLaunchRecords();
-app.UseRockets();
+app.MapLaunchRecordsEndpoints();
+app.MapRocketsEndpoints();
 
 app.UseAuthorization();
 app.MapHealthChecks(

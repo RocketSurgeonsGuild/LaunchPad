@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    </ItemGroup>
+    <ItemGroup>
+        <!--
+            One server and one client application per mediator. Each is aliased: several of them carry the same generated types (Mediator's
+            and ZeroAlloc's mediators, the generated helpers), and the tests only reach them through ServerApp and ClientApp.
+        -->
+        <ProjectReference Include="../Api.Functional/Abstractions/Api.Functional.Abstractions.csproj" />
+        <ProjectReference Include="../Api.Functional/MediatR/Api.Functional.MediatR.Server/Api.Functional.MediatR.Server.csproj" Aliases="mediatrserver" />
+        <ProjectReference Include="../Api.Functional/MediatR/Api.Functional.MediatR.Client/Api.Functional.MediatR.Client.csproj" Aliases="mediatrclient" />
+        <ProjectReference Include="../Api.Functional/Mediator/Api.Functional.Mediator.Server/Api.Functional.Mediator.Server.csproj" Aliases="mediatorserver" />
+        <ProjectReference Include="../Api.Functional/Mediator/Api.Functional.Mediator.Client/Api.Functional.Mediator.Client.csproj" Aliases="mediatorclient" />
+        <ProjectReference Include="../Api.Functional/ChannelMediator/Api.Functional.ChannelMediator.Server/Api.Functional.ChannelMediator.Server.csproj" Aliases="channelmediatorserver" />
+        <ProjectReference Include="../Api.Functional/ChannelMediator/Api.Functional.ChannelMediator.Client/Api.Functional.ChannelMediator.Client.csproj" Aliases="channelmediatorclient" />
+        <ProjectReference Include="../Api.Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Server/Api.Functional.ImmediateHandlers.Server.csproj" Aliases="immediatehandlersserver" />
+        <ProjectReference Include="../Api.Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Client/Api.Functional.ImmediateHandlers.Client.csproj" Aliases="immediatehandlersclient" />
+        <ProjectReference Include="../Api.Functional/Foundatio/Api.Functional.Foundatio.Server/Api.Functional.Foundatio.Server.csproj" Aliases="foundatioserver" />
+        <ProjectReference Include="../Api.Functional/Foundatio/Api.Functional.Foundatio.Client/Api.Functional.Foundatio.Client.csproj" Aliases="foundatioclient" />
+        <ProjectReference Include="../Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Server/Api.Functional.ZeroAlloc.Server.csproj" Aliases="zeroallocserver" />
+        <ProjectReference Include="../Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Client/Api.Functional.ZeroAlloc.Client.csproj" Aliases="zeroallocclient" />
+    </ItemGroup>
+</Project>

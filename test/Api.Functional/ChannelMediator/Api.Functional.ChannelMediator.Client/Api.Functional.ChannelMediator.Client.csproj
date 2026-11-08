@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>ClientHost</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Functional.ChannelMediator.Contracts/Api.Functional.ChannelMediator.Contracts.csproj" />
+    </ItemGroup>
+</Project>

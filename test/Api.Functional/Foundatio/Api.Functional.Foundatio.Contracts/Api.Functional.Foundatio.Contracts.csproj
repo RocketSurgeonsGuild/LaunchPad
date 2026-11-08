@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>Contracts</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Foundatio.Mediator.Abstractions" />
+    </ItemGroup>
+</Project>

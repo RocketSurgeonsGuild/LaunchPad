@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>Client</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Functional.Mediator.ClientHost/Api.Functional.Mediator.ClientHost.csproj" />
+        <PackageReference Include="Mediator.SourceGenerator" PrivateAssets="all" />
+    </ItemGroup>
+</Project>

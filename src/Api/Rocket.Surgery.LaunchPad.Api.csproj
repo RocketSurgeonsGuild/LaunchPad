@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../Api.Core/ApiGenerator.props" />
+    <PropertyGroup>
+        <PackageDescription>Attributes and analyzers for LaunchPad's mediator-agnostic API generators: mark request types with [ApiOperation] and list operations on operation hosts with [Operation&lt;TRequest&gt;]. Add a transport package to generate servers or clients.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;minimal-api;mediator</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- build/ for direct references, buildTransitive/ for the transport packages that depend on this one. -->
+        <None Include="build/Rocket.Surgery.LaunchPad.Api.targets" Pack="true" PackagePath="build;buildTransitive" />
+        <ProjectReference Include="../Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" ReferenceOutputAssembly="false" Private="false" />
+    </ItemGroup>
+    <Target Name="_LaunchPadApiPackCodeFixes" BeforeTargets="_GetPackageFiles">
+        <MSBuild Projects="../Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" Targets="GetTargetPath" Properties="Configuration=$(Configuration)">
+            <Output TaskParameter="TargetOutputs" ItemName="_LaunchPadApiCodeFixesPath" />
+        </MSBuild>
+        <ItemGroup>
+            <None Include="@(_LaunchPadApiCodeFixesPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        </ItemGroup>
+    </Target>
+</Project>

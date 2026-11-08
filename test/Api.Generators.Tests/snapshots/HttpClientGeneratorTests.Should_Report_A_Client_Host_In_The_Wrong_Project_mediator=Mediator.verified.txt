@@ -1,0 +1,3 @@
+﻿[
+  Client host RocketsClient uses the Mediator mediator profile: this project runs Mediator.SourceGenerator, which can't see the generated handlers; move the host to a library that references the contracts but not Mediator.SourceGenerator, and reference that library from the application
+]

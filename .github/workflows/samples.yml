@@ -4,6 +4,8 @@ name: samples
 # build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
 # The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
 # clock), which this checks; the web app only builds.
+# It also publishes the API generators' native AOT check (test/Api.Aot): a server and a client that must publish without a trimming or AOT
+# warning and complete a round trip.
 
 on:
     push:
@@ -39,6 +41,7 @@ jobs:
             pull-requests: read
         outputs:
             samples: ${{ startsWith(github.ref, 'refs/tags/') || steps.filter.outputs.samples == 'true' }}
+            api-aot: ${{ startsWith(github.ref, 'refs/tags/') || steps.filter.outputs.api-aot == 'true' }}
         steps:
             - name: Checkout
               if: ${{ !startsWith(github.ref, 'refs/tags/') }}
@@ -52,6 +55,15 @@ jobs:
                       samples:
                           - 'src/**'
                           - 'sample/Sample.Sdk/**'
+                          - 'Directory.*.props'
+                          - 'Directory.*.targets'
+                          - '.config/mise.toml'
+                          - 'global.json'
+                          - 'NuGet.config'
+                          - '.github/workflows/samples.yml'
+                      api-aot:
+                          - 'src/Api*/**'
+                          - 'test/Api.Aot/**'
                           - 'Directory.*.props'
                           - 'Directory.*.targets'
                           - '.config/mise.toml'
@@ -117,24 +129,59 @@ jobs:
                   name: samples-logs
                   path: artifacts/logs/
 
-    # The ruleset requires a check named `samples`. The sample job reports under its own name, so this job stands in for it and passes
-    # only when it did, or when nothing the sample builds from changed.
+    api-aot:
+        name: API generators native AOT
+        needs: changes
+        if: needs.changes.outputs.api-aot == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: '0'
+            - name: 🛠️ Setup mise
+              uses: jdx/mise-action@v5
+              env:
+                  MISE_JOBS: '1'
+              with:
+                  install: true
+                  install_args: dotnet
+                  cache: true
+                  cache_key: mise-{{platform}}-{{cache_period}}-aspnetcore
+                  cache_save: false
+                  experimental: true
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+            - name: 🚀 Publish and run the native AOT round trip
+              run: test/Api.Aot/verify.sh
+
+    # The ruleset requires a check named `samples`. The jobs above report under their own names, so this job stands in for them and passes
+    # when each one that had to run succeeded.
     samples:
         name: samples
-        needs: [changes, sample]
+        needs: [changes, sample, api-aot]
         if: always()
         runs-on: ubuntu-latest
         steps:
             - name: ✅ Samples built
               run: |
-                  echo "changes: $CHANGES (samples: $SAMPLES), sample: $SAMPLE"
-                  if [ "$CHANGES" = success ] && [ "$SAMPLES" != true ] && [ "$SAMPLE" = skipped ]; then
-                      echo "Nothing the samples build from changed."
-                  elif [ "$SAMPLE" != success ]; then
-                      echo "::error::The sample didn't succeed ($SAMPLE)."
-                      exit 1
+                  echo "changes: $CHANGES (samples: $SAMPLES, api-aot: $API_AOT), sample: $SAMPLE, api-aot: $AOT"
+                  failed=0
+                  if [ "$CHANGES" != success ]; then
+                      echo "::error::Detecting changes didn't succeed ($CHANGES)."
+                      failed=1
                   fi
+                  if [ "$SAMPLES" = true ] && [ "$SAMPLE" != success ]; then
+                      echo "::error::The sample didn't succeed ($SAMPLE)."
+                      failed=1
+                  fi
+                  if [ "$API_AOT" = true ] && [ "$AOT" != success ]; then
+                      echo "::error::The native AOT check didn't succeed ($AOT)."
+                      failed=1
+                  fi
+                  exit $failed
               env:
                   CHANGES: ${{ needs.changes.result }}
                   SAMPLES: ${{ needs.changes.outputs.samples }}
+                  API_AOT: ${{ needs.changes.outputs.api-aot }}
                   SAMPLE: ${{ needs.sample.result }}
+                  AOT: ${{ needs.api-aot.result }}

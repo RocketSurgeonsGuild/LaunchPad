@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <PublishAot>true</PublishAot>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Aot.Contracts/Api.Aot.Contracts.csproj" />
+        <PackageReference Include="Mediator.SourceGenerator" PrivateAssets="all" />
+        <ProjectReference Include="../../../src/Api.MinimalApi/Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+</Project>

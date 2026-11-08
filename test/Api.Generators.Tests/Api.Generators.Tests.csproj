@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <DefineConstants>$(DefineConstants);ROSLYN_CURRENT</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
+        <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
+        <PackageReference Include="Verify.SourceGenerators" />
+        <!-- Referenced so their assemblies can be handed to test compilations; none of their generators run on this project. -->
+        <PackageReference Include="MediatR" />
+        <PackageReference Include="Mediator.Abstractions" />
+        <PackageReference Include="ChannelMediator" />
+        <PackageReference Include="Foundatio.Mediator.Abstractions" />
+        <PackageReference Include="ZeroAlloc.Mediator" />
+        <PackageReference Include="Immediate.Handlers" IncludeAssets="compile;runtime" />
+        <!-- Each generator assembly carries its own copy of the shared core; only the base one is visible unaliased. -->
+        <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" />
+        <ProjectReference Include="..\..\src\Api.CodeFixes\Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" Aliases="codefixes" />
+        <ProjectReference Include="..\..\src\Api.MinimalApi\Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" Aliases="minimalapi" />
+        <ProjectReference Include="..\..\src\Api.Client.Http\Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" Aliases="httpclient" />
+    </ItemGroup>
+</Project>
