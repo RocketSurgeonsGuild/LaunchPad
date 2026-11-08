@@ -64,9 +64,6 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
     [MethodDataSource(nameof(RequiredFieldData))]
     public async Task Should_Validate_Required_Fields(CreateRocket.Request request, string propertyName)
     {
-        ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(propertyName);
-
         await using var scope = ServiceProvider.CreateAsyncScope();
 
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
