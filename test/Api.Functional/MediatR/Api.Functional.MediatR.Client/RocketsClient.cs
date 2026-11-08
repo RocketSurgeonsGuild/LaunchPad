@@ -5,7 +5,7 @@ namespace Api.Functional.MediatR.Client;
 
 [Operation<GetRocket.Request>]
 [Operation<ListRockets.Request>]
-[CreateOperation<CreateRocket.Request, GetRocket.Request>]
+[Operation<CreateRocket.Request>]
 [Operation<EditRocket.Request>]
 [Operation<DeleteRocket.Request>]
 public partial class RocketsClient;

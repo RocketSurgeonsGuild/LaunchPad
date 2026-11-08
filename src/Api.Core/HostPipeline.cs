@@ -21,11 +21,10 @@ internal static class HostPipeline
 {
     public static IncrementalValueProvider<EquatableArray<HostModel>> Hosts(IncrementalGeneratorInitializationContext context, params HostKind[] kinds)
     {
-        var operations = context.SyntaxProvider.ForAttributeWithMetadataName(KnownNames.OperationAttribute, IsClass, HostName).Collect();
-        var creates = context.SyntaxProvider.ForAttributeWithMetadataName(KnownNames.CreateOperationAttribute, IsClass, HostName).Collect();
-        var names = operations.Combine(creates)
-                              .Select(static (pair, _) => pair.Left.Concat(pair.Right).Distinct().OrderBy(n => n, StringComparer.Ordinal).ToEquatableArray())
-                              .WithTrackingName("HostNames");
+        var names = context.SyntaxProvider.ForAttributeWithMetadataName(KnownNames.OperationAttribute, IsClass, HostName)
+                           .Collect()
+                           .Select(static (hosts, _) => hosts.Distinct().OrderBy(n => n, StringComparer.Ordinal).ToEquatableArray())
+                           .WithTrackingName("HostNames");
 
         return names.Combine(context.CompilationProvider)
                     .Select(
@@ -39,6 +38,8 @@ internal static class HostPipeline
                                    .OfType<INamedTypeSymbol>()
                                    .Where(host => kinds.Contains(HostInference.Infer(host, compilation).Kind))
                                    .Select(host => HostReader.Read(host, compilation, profile, cancellationToken))
+                                   .ToArray()
+                                   .ResolveCreatedLocations()
                                    .ToEquatableArray();
                          }
                      )

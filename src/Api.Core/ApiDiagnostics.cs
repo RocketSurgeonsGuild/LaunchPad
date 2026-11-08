@@ -141,10 +141,10 @@ internal static class ApiDiagnostics
         "Client host {0} gets a generated constructor taking the transport's client factory; remove the constructors it declares"
     );
 
-    public static DiagnosticDescriptor CreatedLocationInvalid { get; } = Error(
+    public static DiagnosticDescriptor CreatedLocationInvalid { get; } = Warning(
         "LPAD1023",
-        "CreateOperation location is invalid",
-        "CreateOperation {0} points at {1}, but {2}"
+        "A created resource has no Location",
+        "{0} answers 201 Created without a Location: {1}"
     );
 
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =

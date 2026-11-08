@@ -36,7 +36,7 @@ internal static class Contracts
             public static class CreateRocket
             {
                 public {{kind}} Request(string Name) : {{create}};
-                public sealed record Response(System.Guid Id);
+                [Creates(typeof(GetRocket.Request))] public sealed record Response(System.Guid Id);
             }
 
             public static class EditRocket { public {{kind}} Request(System.Guid Id, string Name) : {{edit}}; }
@@ -75,7 +75,7 @@ internal static class Contracts
                 {
                     [ApiOperation(Name = "CreateRocket"{{Response(create, "Response")}})]
                     public sealed record Request(string Name){{Marker(create, "")}};
-                    public sealed record Response(System.Guid Id);
+                    [Creates(typeof(GetRocket.Request))] public sealed record Response(System.Guid Id);
                 }
 
                 public static class EditRocket
@@ -102,7 +102,7 @@ internal static class Contracts
         {
             [Operation<GetRocket.Request>]
             [Operation<ListRockets.Request>]
-            [CreateOperation<CreateRocket.Request, GetRocket.Request>]
+            [Operation<CreateRocket.Request>]
             [Operation<EditRocket.Request>]
             [Operation<DeleteRocket.Request>]
             public static partial class RocketsEndpoints;
@@ -134,7 +134,7 @@ internal static class Contracts
         {
             [Operation<GetRocket.Request>]
             [Operation<ListRockets.Request>]
-            [CreateOperation<CreateRocket.Request, GetRocket.Request>]
+            [Operation<CreateRocket.Request>]
             [Operation<EditRocket.Request>]
             [Operation<DeleteRocket.Request>]
             public partial class RocketsController;

@@ -25,7 +25,7 @@ internal static class HostReader
         }
 
         var entries = host.GetAttributes()
-                          .Where(a => a.AttributeClass is { IsGenericType: true } c && ( c.Is(KnownNames.OperationAttribute) || c.Is(KnownNames.CreateOperationAttribute) ))
+                          .Where(a => a.AttributeClass is { IsGenericType: true } c && c.Is(KnownNames.OperationAttribute))
                           .ToArray();
 
         var operations = new List<OperationModel>();
@@ -37,7 +37,6 @@ internal static class HostReader
                 if (ReadOperation(entry, host, hostNoun, kind, mediator, hostHandlers, compilation, diagnostics) is { } operation) operations.Add(operation);
             }
 
-            ResolveCreatedLocations(operations, diagnostics);
             foreach (var duplicate in operations.Where(_ => HostInference.IsHttp(kind)).GroupBy(o => (o.Verb, Route: NormalizeRoute(o.Route))).Where(g => g.Count() > 1))
             {
                 var first = duplicate.First();
@@ -168,12 +167,11 @@ internal static class HostReader
             }
         }
 
-        string? createdTarget = null;
-        if (entry.AttributeClass.Is(KnownNames.CreateOperationAttribute) && entry.AttributeClass.TypeArguments[1] is INamedTypeSymbol locationRequest)
-        {
-            createdTarget = Naming.OperationName(locationRequest.Name, locationRequest.ContainingType?.Name);
-            successStatus = 201;
-        }
+        // [Creates(typeof(GetRocket.Request))] on the response: 201 Created, with a Location once the target's operation is found.
+        var responseType = response is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } wrapped ? wrapped.TypeArguments[0] : response;
+        var createsAttribute = responseType?.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is(KnownNames.CreatesAttribute) || a.AttributeClass.Is(KnownNames.CreatesGenericAttribute));
+        var createdTarget = createsAttribute?.AttributeClass is { IsGenericType: true } generic ? generic.TypeArguments[0] : createsAttribute?.ConstructorArguments.FirstOrDefault().Value as ITypeSymbol;
+        if (createdTarget is { } && Int(apiOperation, "SuccessStatusCode") is not > 0) successStatus = 201;
 
         if (hostKind is HostKind.GrpcService or HostKind.GrpcClient)
         {
@@ -230,7 +228,7 @@ internal static class HostReader
             handlerInterface,
             handlerReturnType,
             kindModel?.HandleMethod,
-            createdTarget,
+            createdTarget?.FullyQualified(),
             null,
             EquatableArray<string>.Empty,
             hostKind.IsClient() ? FindHandWrittenHandler(request, closedHandler, compilation)?.ToDisplayString() : null,
@@ -238,32 +236,6 @@ internal static class HostReader
             responseNotNull is { } && IsMessage(responseNotNull),
             location
         );
-    }
-
-    // A CreateOperation's Location points at another operation of the same host; its route values come from response members.
-    private static void ResolveCreatedLocations(List<OperationModel> operations, List<DiagnosticInfo> diagnostics)
-    {
-        for (var i = 0; i < operations.Count; i++)
-        {
-            var operation = operations[i];
-            if (operation.CreatedLocationOperation is not { } targetName) continue;
-            var target = operations.FirstOrDefault(o => o.Name == targetName);
-            if (target is null)
-            {
-                diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.CreatedLocationInvalid, operation.Location, operation.Name, targetName, "it is not declared on the same host"));
-                continue;
-            }
-
-            var missing = target.RouteTokens.FirstOrDefault(t => operation.ResponseMembers.All(m => !string.Equals(m, t, StringComparison.OrdinalIgnoreCase)));
-            if (missing is { })
-            {
-                diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.CreatedLocationInvalid, operation.Location, operation.Name, targetName, $"its response has no member for the route token '{missing}'"));
-                continue;
-            }
-
-            var tokenMembers = target.RouteTokens.Select(t => operation.ResponseMembers.First(m => string.Equals(m, t, StringComparison.OrdinalIgnoreCase)));
-            operations[i] = operation with { CreatedLocationRoute = target.Route, CreatedLocationTokens = tokenMembers.ToEquatableArray() };
-        }
     }
 
     // A handler someone wrote for the request, declared next to it: in its containing type or its namespace, in any assembly (LPAD1013).

@@ -33,7 +33,7 @@ public class ControllerGeneratorTests() : GeneratorTest()
                                [ApiController]
                                [Route("v1/[controller]")]
                                [Operation<GetRocket.Request>(Policy = new[] { "rockets.read" }, Tags = new[] { "search" })]
-                               [CreateOperation<CreateRocket.Request, GetRocket.Request>(Roles = new[] { "pilot" }, AuthenticationSchemes = new[] { "Bearer" })]
+                               [Operation<CreateRocket.Request>(Roles = new[] { "pilot" }, AuthenticationSchemes = new[] { "Bearer" })]
                                [Operation<DeleteRocket.Request>(AllowAnonymous = true, Summary = "Remove a rocket", Description = "Gone for good.")]
                                public partial class FleetController : ControllerBase
                                {

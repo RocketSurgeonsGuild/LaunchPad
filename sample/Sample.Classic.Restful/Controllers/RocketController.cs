@@ -10,7 +10,7 @@ namespace Sample.Classic.Restful.Controllers;
 [Route("[controller]")]
 [Operation<ListRockets.Request>(Summary = "Search for rockets")]
 [Operation<GetRocket.Request>(Summary = "Load details of a specific rocket")]
-[CreateOperation<CreateRocket.Request, GetRocket.Request>(Summary = "Create a new rocket")]
+[Operation<CreateRocket.Request>(Summary = "Create a new rocket")]
 [Operation<EditRocket.Request>(Summary = "Update a given rocket")]
 [Operation<EditRocket.PatchRequest>(Summary = "Update a given rocket")]
 [Operation<DeleteRocket.Request>(Name = "RemoveRocket", Summary = "Remove a rocket")]

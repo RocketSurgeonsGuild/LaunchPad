@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Riok.Mapperly.Abstractions;
 
+using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
@@ -39,6 +40,7 @@ public static partial class CreateRocket
     /// <summary>
     ///     The identifier of the rocket that was created
     /// </summary>
+    [Creates(typeof(GetRocket.Request))]
     public record Response
     {
         /// <summary>

@@ -2,30 +2,8 @@
   AnalyzerDiagnostics: {
     Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
   },
-  FinalDiagnostics: [
-    {
-      Id: LPAD1023,
-      Title: CreateOperation location is invalid,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Input2.cs: (3,1)-(3,55),
-      MessageFormat: CreateOperation {0} points at {1}, but {2},
-      Message: CreateOperation GetRocket points at FindRocket, but it is not declared on the same host,
-      Category: LaunchPad.Api
-    }
-  ],
+  FinalDiagnostics: [],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator: [
-      {
-        Id: LPAD1023,
-        Title: CreateOperation location is invalid,
-        Severity: Error,
-        WarningLevel: 0,
-        Location: Input2.cs: (3,1)-(3,55),
-        MessageFormat: CreateOperation {0} points at {1}, but {2},
-        Message: CreateOperation GetRocket points at FindRocket, but it is not declared on the same host,
-        Category: LaunchPad.Api
-      }
-    ]
+    Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator: []
   }
 }

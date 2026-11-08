@@ -10,7 +10,7 @@ namespace Sample.Restful.Controllers;
 [Route("[controller]")]
 [Operation<ListLaunchRecords.Request>(Summary = "Search for launch records")]
 [Operation<GetLaunchRecord.Request>(Summary = "Load details of a specific launch record")]
-[CreateOperation<CreateLaunchRecord.Request, GetLaunchRecord.Request>(Summary = "Create a new launch record")]
+[Operation<CreateLaunchRecord.Request>(Summary = "Create a new launch record")]
 [Operation<EditLaunchRecord.Request>(Summary = "Update a given launch record")]
 [Operation<EditLaunchRecord.PatchRequest>(Summary = "Update a given launch record")]
 [Operation<DeleteLaunchRecord.Request>(Summary = "Remove a launch record")]

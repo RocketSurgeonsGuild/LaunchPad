@@ -301,7 +301,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         var value = operation.ResponseIsNullableValueType ? "__response.Value" : "__response";
         var success = operation.SuccessStatusCode switch
         {
-            201 when operation.CreatedLocationRoute is { } route => $"{Http}.TypedResults.Created({ServerEmit.Location(host.BaseRoute, route, operation, Generated)}, {value})",
+            201 when operation.CreatedLocationRoute is { } route => $"{Http}.TypedResults.Created({ServerEmit.Location(route, operation, Generated)}, {value})",
             201 => $"{Http}.TypedResults.Created((string?)null, {value})",
             202 => $"{Http}.TypedResults.Accepted((string?)null, {value})",
             _ => $"{Http}.TypedResults.Ok({value})",

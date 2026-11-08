@@ -35,7 +35,7 @@ public sealed class OperationHostAnalyzer : DiagnosticAnalyzer
     private static void Analyze(SymbolAnalysisContext context)
     {
         if (context.Symbol is not INamedTypeSymbol host) return;
-        var entries = host.GetAttributes().Where(a => a.AttributeClass is { } c && ( c.Is(KnownNames.OperationAttribute) || c.Is(KnownNames.CreateOperationAttribute) )).ToArray();
+        var entries = host.GetAttributes().Where(a => a.AttributeClass is { } c && c.Is(KnownNames.OperationAttribute)).ToArray();
         if (entries.Length == 0) return;
 
         var location = host.Locations.FirstOrDefault() ?? Location.None;

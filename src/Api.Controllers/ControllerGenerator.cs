@@ -117,7 +117,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         if (operation.AllowAnonymous) w.Line("[global::Microsoft.AspNetCore.Authorization.AllowAnonymous]");
         foreach (var produces in Produces(operation)) w.Line(produces);
 
-        var parameters = ServerEmit.HandlerParameters(operation, null, Ct).Select(p =>  $"{p.Attribute} {p.Type} {p.Name}" .TrimStart());
+        var parameters = ServerEmit.HandlerParameters(operation, null, Ct).Select(p => $"{p.Attribute} {p.Type} {p.Name}".TrimStart());
         // A stream is returned synchronously unless producing it awaits (Foundatio's InvokeAsync<IAsyncEnumerable<T>>, Immediate.Handlers).
         var streamAwaits = ServerDispatch.Call(profile, operation, "__request", Ct).StartsWith("await ", StringComparison.Ordinal);
         var returnType = operation.Kind switch
@@ -185,7 +185,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         var value = operation.ResponseIsNullableValueType ? "__response.Value" : "__response";
         var success = operation.SuccessStatusCode switch
         {
-            201 when operation.CreatedLocationRoute is { } route => $"new {Mvc}.CreatedResult({ServerEmit.Location(host.BaseRoute, route, operation, Generated)}, {value})",
+            201 when operation.CreatedLocationRoute is { } route => $"new {Mvc}.CreatedResult({ServerEmit.Location(route, operation, Generated)}, {value})",
             201 => $"new {Mvc}.ObjectResult({value}) {{ StatusCode = 201 }}",
             202 => $"new {Mvc}.AcceptedResult((string?)null, {value})",
             _ => $"new {Mvc}.OkObjectResult({value})",

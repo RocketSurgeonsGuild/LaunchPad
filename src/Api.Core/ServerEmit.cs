@@ -74,10 +74,10 @@ internal static class ServerEmit
         w.Line(operation.InputType is { } ? "var __request = __wire.Create();" : "var __request = __wire;");
     }
 
-    /// <summary>The Location of a created resource: <paramref name="baseRoute" /> plus the target route, filled from <c>__response</c>'s members.</summary>
-    public static string Location(string baseRoute, string route, OperationModel operation, string generatedNamespace)
+    /// <summary>The Location of a created resource: the target operation's full route, filled from <c>__response</c>'s members.</summary>
+    public static string Location(string route, OperationModel operation, string generatedNamespace)
     {
-        var path = "/" + RouteText.Join(baseRoute, route);
+        var path = "/" + route.Trim('/');
         var tokens = RouteText.Tokens(route).ToArray();
         var parts = new List<string>();
         var position = 0;

@@ -147,7 +147,7 @@ internal sealed record OperationModel(
     string? HandlerInterface,
     string? HandlerMethodReturnType,
     string? HandlerMethodName,
-    string? CreatedLocationOperation,
+    string? CreatedLocationRequest,
     string? CreatedLocationRoute,
     EquatableArray<string> CreatedLocationTokens,
     string? VisibleHandler,

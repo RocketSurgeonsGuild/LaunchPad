@@ -22,7 +22,7 @@ public static class CreateRocket
 {
     [ApiOperation(Response = typeof(Response))]
     [DataContract] public sealed record Request([property: DataMember(Order = 1)] string Name);
-    [DataContract] public sealed record Response([property: DataMember(Order = 1)] Guid Id);
+    [Creates(typeof(GetRocket.Request))][DataContract] public sealed record Response([property: DataMember(Order = 1)] Guid Id);
 }
 
 public static class EditRocket

@@ -19,7 +19,8 @@ internal static class KnownNames
 {
     public const string Namespace = "Rocket.Surgery.LaunchPad.Api";
     public const string OperationAttribute = Namespace + ".OperationAttribute`1";
-    public const string CreateOperationAttribute = Namespace + ".CreateOperationAttribute`2";
+    public const string CreatesAttribute = Namespace + ".CreatesAttribute";
+    public const string CreatesGenericAttribute = Namespace + ".CreatesAttribute`1";
     public const string OperationHostAttribute = Namespace + ".OperationHostAttribute";
     public const string ApiOperationAttribute = Namespace + ".ApiOperationAttribute";
     public const string MediatorProfileAttribute = Namespace + ".MediatorProfileAttribute";

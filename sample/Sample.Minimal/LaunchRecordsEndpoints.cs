@@ -8,7 +8,7 @@ namespace Sample.Minimal;
 [OperationHost(RoutePrefix = "")]
 [Operation<ListLaunchRecords.Request>]
 [Operation<GetLaunchRecord.Request>]
-[CreateOperation<CreateLaunchRecord.Request, GetLaunchRecord.Request>]
+[Operation<CreateLaunchRecord.Request>]
 [Operation<EditLaunchRecord.Request>]
 [Operation<EditLaunchRecord.PatchRequest>]
 [Operation<DeleteLaunchRecord.Request>]

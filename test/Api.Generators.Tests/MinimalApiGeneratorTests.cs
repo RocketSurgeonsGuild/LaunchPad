@@ -122,7 +122,7 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
     [Arguments("LPAD1010", "[Operation<GetRocket.Request>]", "public partial class RocketsEndpoints;")]
     [Arguments("LPAD1017", "[Operation<GetRocket.Request>]", "public static partial class Rockets;")]
     [Arguments("LPAD1020", "[Operation<GetRocket.Request>(Input = typeof(RocketModel))]", "public static partial class RocketsEndpoints;")]
-    [Arguments("LPAD1023", "[CreateOperation<GetRocket.Request, FindRocket.Request>]", "public static partial class RocketsEndpoints;")]
+    [Arguments("LPAD1023", "[Operation<CreateRocket.Request>]", "public static partial class RocketsEndpoints;")]
     public async Task Should_Report(string id, string attributes, string declaration)
     {
         var contracts = await CompileContracts(
@@ -138,6 +138,11 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
                 public static class GetRocket { public sealed record Request(System.Guid Id) : IRequest<RocketModel>; }
                 public static class FindRocket { public sealed record Request(System.Guid Id) : IRequest<RocketModel>; }
                 public static class SearchRockets { public sealed record Request(Unparsable Filter) : IRequest<RocketModel[]>; }
+                public static class CreateRocket
+                {
+                    public sealed record Request(string Name) : IRequest<Response>;
+                    [Rocket.Surgery.LaunchPad.Api.Creates(typeof(FindRocket.Request))] public sealed record Response(System.Guid Id);
+                }
             }
             """
         );

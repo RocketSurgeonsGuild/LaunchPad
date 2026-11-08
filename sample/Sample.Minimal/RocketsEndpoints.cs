@@ -8,7 +8,7 @@ namespace Sample.Minimal;
 [OperationHost(RoutePrefix = "")]
 [Operation<ListRockets.Request>]
 [Operation<GetRocket.Request>]
-[CreateOperation<CreateRocket.Request, GetRocket.Request>]
+[Operation<CreateRocket.Request>]
 [Operation<EditRocket.Request>]
 [Operation<EditRocket.PatchRequest>]
 [Operation<DeleteRocket.Request>]

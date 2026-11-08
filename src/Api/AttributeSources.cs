@@ -52,6 +52,19 @@ namespace Rocket.Surgery.LaunchPad.Api
         public int SuccessStatusCode { get; set; }
     }
 
+    /// <summary>
+    ///     On a response type: the response identifies a resource that <paramref name="request" />'s type loads, e.g.
+    ///     <c>[Creates(typeof(GetRocket.Request))]</c> on <c>CreateRocket.Response</c>. Every operation that returns it answers 201 Created, with a
+    ///     Location for that request's operation wherever the transport exposes it; its route values come from the response's members.
+    /// </summary>
+    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
+    [global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Struct, Inherited = false)]
+    internal sealed class CreatesAttribute : global::System.Attribute
+    {
+        public CreatesAttribute(global::System.Type request) { Request = request; }
+        public global::System.Type Request { get; }
+    }
+
     /// <summary>Optional settings for an operation host. The transport itself is inferred from the host's base type, attributes or name.</summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     [global::System.AttributeUsage(global::System.AttributeTargets.Class, Inherited = false)]
@@ -155,10 +168,13 @@ namespace Rocket.Surgery.LaunchPad.Api
         public bool Handlers { get; set; }
     }
 
-    /// <summary>Lists an operation that answers 201 Created with a Location header pointing at <typeparamref name="TLocationRequest" />.</summary>
+    /// <summary>
+    ///     On a response type: the response identifies a resource that <typeparamref name="TRequest" /> loads. Every operation that returns it
+    ///     answers 201 Created, with a Location for <typeparamref name="TRequest" />'s operation wherever the transport exposes it.
+    /// </summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
-    [global::System.AttributeUsage(global::System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-    internal sealed class CreateOperationAttribute<TRequest, TLocationRequest> : OperationAttribute<TRequest> { }
+    [global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Struct, Inherited = false)]
+    internal sealed class CreatesAttribute<TRequest> : global::System.Attribute { }
 }
 #endif
 """;
