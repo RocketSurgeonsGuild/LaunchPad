@@ -8,5 +8,5 @@ namespace Api.Aot.ClientLib;
 [Operation<DeleteRocket.Request>]
 public partial class RocketsClient
 {
-    static void ConfigureJsonOptions(System.Text.Json.JsonSerializerOptions options) => options.TypeInfoResolverChain.Insert(0, RocketsJsonContext.Default);
+    private static void ConfigureJsonOptions(System.Text.Json.JsonSerializerOptions options) => options.TypeInfoResolverChain.Insert(0, RocketsJsonContext.Default);
 }
