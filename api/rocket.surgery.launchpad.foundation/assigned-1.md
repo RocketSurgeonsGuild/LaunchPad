@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-beta.315`
+- Version: `2.0.1-beta.320`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net10.0`
 - Implements: `IEquatable<Assigned<T>>`

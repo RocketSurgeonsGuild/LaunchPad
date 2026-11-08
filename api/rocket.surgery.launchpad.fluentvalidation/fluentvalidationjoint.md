@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.md)
-- Version: `2.0.1-beta.315`
+- Version: `2.0.1-beta.320`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`

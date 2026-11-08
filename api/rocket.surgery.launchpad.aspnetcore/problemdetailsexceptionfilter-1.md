@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-beta.315`
+- Version: `2.0.1-beta.320`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Filters`
 - Target framework: `net10.0`
 - Implements: `IAsyncExceptionFilter`, `IExceptionFilter`, `IFilterMetadata`
