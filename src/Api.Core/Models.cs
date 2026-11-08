@@ -151,6 +151,8 @@ internal sealed record OperationModel(
     string? CreatedLocationRoute,
     EquatableArray<string> CreatedLocationTokens,
     string? VisibleHandler,
+    bool RequestIsMessage,
+    bool ResponseIsMessage,
     LocationInfo? Location
 )
 {

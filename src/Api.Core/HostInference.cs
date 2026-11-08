@@ -126,6 +126,9 @@ internal static class HostInference
         _ => throw new ArgumentOutOfRangeException(nameof(kind)),
     };
 
+    /// <summary>Whether the transport is HTTP with routes and verbs (Minimal API, MVC, the HTTP client).</summary>
+    public static bool IsHttp(this HostKind kind) => kind is HostKind.MinimalApi or HostKind.Controller or HostKind.HttpClient;
+
     public static bool IsClient(this HostKind kind) => kind is HostKind.HttpClient or HostKind.GrpcClient or HostKind.GraphQLClient;
 
     private static (HostKind, string?) Require(HostKind kind, Compilation compilation, string metadataName, string library) =>

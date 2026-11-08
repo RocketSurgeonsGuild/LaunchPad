@@ -26,5 +26,7 @@
         <ProjectReference Include="..\..\src\Api.MinimalApi\Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" Aliases="minimalapi" />
         <ProjectReference Include="..\..\src\Api.Client.Http\Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" Aliases="httpclient" />
         <ProjectReference Include="..\..\src\Api.Controllers\Rocket.Surgery.LaunchPad.Api.Controllers.csproj" Aliases="controllers" />
+        <ProjectReference Include="..\..\src\Api.Grpc\Rocket.Surgery.LaunchPad.Api.Grpc.csproj" Aliases="grpc" />
+        <ProjectReference Include="..\..\src\Api.Client.Grpc\Rocket.Surgery.LaunchPad.Api.Client.Grpc.csproj" Aliases="grpcclient" />
     </ItemGroup>
 </Project>

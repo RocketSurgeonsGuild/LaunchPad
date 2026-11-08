@@ -1,4 +1,6 @@
 extern alias controllers;
+extern alias grpc;
+extern alias grpcclient;
 extern alias httpclient;
 extern alias minimalapi;
 using System.Net.Http.Json;
@@ -144,7 +146,29 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithGenerator<controllers::Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator>()
            .AddReferences(typeof(Microsoft.AspNetCore.Mvc.ControllerBase).Assembly, typeof(Microsoft.AspNetCore.Mvc.JsonOptions).Assembly);
 
-    protected GeneratorTestContextBuilder Client(Mediator mediator, GeneratorTestResults contracts) =>
+    /// <summary>A server compilation running the gRPC service generator.</summary>
+    protected GeneratorTestContextBuilder GrpcServer(Mediator mediator, GeneratorTestResults contracts) =>
+        Server(mediator, contracts, withMinimalApi: false)
+           .WithGenerator<grpc::Rocket.Surgery.LaunchPad.Api.Generators.GrpcServiceGenerator>()
+           .AddReferences(GrpcAssemblies)
+           .AddReferences(typeof(Grpc.AspNetCore.Server.GrpcServiceOptions).Assembly);
+
+    /// <summary>A client compilation running the gRPC client generator.</summary>
+    protected GeneratorTestContextBuilder GrpcClient(Mediator mediator, GeneratorTestResults contracts) =>
+        Client(mediator, contracts, withHttp: false)
+           .WithGenerator<grpcclient::Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator>()
+           .AddReferences(GrpcAssemblies)
+           .AddReferences(typeof(ProtoBuf.Grpc.ClientFactory.ServicesExtensions).Assembly, typeof(Grpc.Net.ClientFactory.GrpcClientFactoryOptions).Assembly);
+
+    private static readonly Assembly[] GrpcAssemblies =
+        [typeof(ProtoBuf.Grpc.CallContext).Assembly, typeof(Grpc.Core.CallOptions).Assembly, typeof(ProtoBuf.Serializer).Assembly];
+
+    protected GeneratorTestContextBuilder Client(Mediator mediator, GeneratorTestResults contracts, bool withHttp = true) =>
+        ( withHttp ? ClientBase().WithGenerator<httpclient::Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator>() : ClientBase() )
+       .AddCompilationReferences(contracts)
+       .AddReferences(MediatorAssemblies(mediator));
+
+    private GeneratorTestContextBuilder ClientBase() =>
         GeneratorTestContextBuilder
            .Create()
            .WithLogger(Logger)
@@ -152,10 +176,7 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithProjectName("Client")
            .AddPreprocessorSymbol("NET7_0_OR_GREATER")
            .AddSources(AttributeSources)
-           .WithGenerator<httpclient::Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator>()
            .WithAnalyzer<OperationHostAnalyzer>()
-           .AddCompilationReferences(contracts)
-           .AddReferences(MediatorAssemblies(mediator))
            .AddReferences(FrameworkReferences)
            .AddReferences(
                 typeof(IHttpClientFactory).Assembly,

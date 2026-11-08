@@ -24,5 +24,11 @@
         <ProjectReference Include="../Api.Functional/Foundatio/Api.Functional.Foundatio.Client/Api.Functional.Foundatio.Client.csproj" Aliases="foundatioclient" />
         <ProjectReference Include="../Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Server/Api.Functional.ZeroAlloc.Server.csproj" Aliases="zeroallocserver" />
         <ProjectReference Include="../Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Client/Api.Functional.ZeroAlloc.Client.csproj" Aliases="zeroallocclient" />
+        <ProjectReference Include="../Api.Functional/MediatR/Api.Functional.MediatR.GrpcClient/Api.Functional.MediatR.GrpcClient.csproj" Aliases="mediatrgrpcclient" />
+        <ProjectReference Include="../Api.Functional/Mediator/Api.Functional.Mediator.GrpcClient/Api.Functional.Mediator.GrpcClient.csproj" Aliases="mediatorgrpcclient" />
+        <ProjectReference Include="../Api.Functional/ChannelMediator/Api.Functional.ChannelMediator.GrpcClient/Api.Functional.ChannelMediator.GrpcClient.csproj" Aliases="channelmediatorgrpcclient" />
+        <ProjectReference Include="../Api.Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GrpcClient/Api.Functional.ImmediateHandlers.GrpcClient.csproj" Aliases="immediatehandlersgrpcclient" />
+        <ProjectReference Include="../Api.Functional/Foundatio/Api.Functional.Foundatio.GrpcClient/Api.Functional.Foundatio.GrpcClient.csproj" Aliases="foundatiogrpcclient" />
+        <ProjectReference Include="../Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GrpcClient/Api.Functional.ZeroAlloc.GrpcClient.csproj" Aliases="zeroallocgrpcclient" />
     </ItemGroup>
 </Project>

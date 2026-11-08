@@ -1,16 +1,21 @@
 extern alias channelmediatorclient;
+extern alias channelmediatorgrpcclient;
 extern alias channelmediatorserver;
 extern alias foundatioclient;
+extern alias foundatiogrpcclient;
 extern alias foundatioserver;
 extern alias immediatehandlersclient;
+extern alias immediatehandlersgrpcclient;
 extern alias immediatehandlersserver;
 extern alias mediatorclient;
+extern alias mediatorgrpcclient;
 extern alias mediatorserver;
 extern alias mediatrclient;
+extern alias mediatrgrpcclient;
 extern alias mediatrserver;
 extern alias zeroallocclient;
+extern alias zeroallocgrpcclient;
 extern alias zeroallocserver;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +28,14 @@ namespace Api.Functional.Tests;
 /// </summary>
 public class RoundTripTests
 {
-    private static readonly Dictionary<string, (Func<bool, Task<WebApplication>> Server, Func<HttpMessageHandler, ServiceProvider> Client)> Applications = new()
+    private static readonly Dictionary<string, (Func<bool, bool, Task<WebApplication>> Server, Func<HttpMessageHandler, ServiceProvider> Client, Func<HttpMessageHandler, ServiceProvider> GrpcClient)> Applications = new()
     {
-        ["MediatR"] = (mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync, mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create),
-        ["Mediator"] = (mediatorserver::Api.Functional.Mediator.Server.ServerApp.StartAsync, mediatorclient::Api.Functional.Mediator.Client.ClientApp.Create),
-        ["ChannelMediator"] = (channelmediatorserver::Api.Functional.ChannelMediator.Server.ServerApp.StartAsync, channelmediatorclient::Api.Functional.ChannelMediator.Client.ClientApp.Create),
-        ["ImmediateHandlers"] = (immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.ServerApp.StartAsync, immediatehandlersclient::Api.Functional.ImmediateHandlers.Client.ClientApp.Create),
-        ["Foundatio"] = (foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync, foundatioclient::Api.Functional.Foundatio.Client.ClientApp.Create),
-        ["ZeroAlloc"] = (zeroallocserver::Api.Functional.ZeroAlloc.Server.ServerApp.StartAsync, zeroallocclient::Api.Functional.ZeroAlloc.Client.ClientApp.Create),
+        ["MediatR"] = (mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync, mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create, mediatrgrpcclient::Api.Functional.MediatR.GrpcClient.ClientApp.Create),
+        ["Mediator"] = (mediatorserver::Api.Functional.Mediator.Server.ServerApp.StartAsync, mediatorclient::Api.Functional.Mediator.Client.ClientApp.Create, mediatorgrpcclient::Api.Functional.Mediator.GrpcClient.ClientApp.Create),
+        ["ChannelMediator"] = (channelmediatorserver::Api.Functional.ChannelMediator.Server.ServerApp.StartAsync, channelmediatorclient::Api.Functional.ChannelMediator.Client.ClientApp.Create, channelmediatorgrpcclient::Api.Functional.ChannelMediator.GrpcClient.ClientApp.Create),
+        ["ImmediateHandlers"] = (immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.ServerApp.StartAsync, immediatehandlersclient::Api.Functional.ImmediateHandlers.Client.ClientApp.Create, immediatehandlersgrpcclient::Api.Functional.ImmediateHandlers.GrpcClient.ClientApp.Create),
+        ["Foundatio"] = (foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync, foundatioclient::Api.Functional.Foundatio.Client.ClientApp.Create, foundatiogrpcclient::Api.Functional.Foundatio.GrpcClient.ClientApp.Create),
+        ["ZeroAlloc"] = (zeroallocserver::Api.Functional.ZeroAlloc.Server.ServerApp.StartAsync, zeroallocclient::Api.Functional.ZeroAlloc.Client.ClientApp.Create, zeroallocgrpcclient::Api.Functional.ZeroAlloc.GrpcClient.ClientApp.Create),
     };
 
     [Test]
@@ -48,8 +53,8 @@ public class RoundTripTests
     [Arguments("ZeroAlloc", true)]
     public async Task Should_Round_Trip_Through_The_Client_Mediator(string mediator, bool controllers, CancellationToken cancellationToken)
     {
-        var (startServer, createClient) = Applications[mediator];
-        await using var server = await startServer(controllers);
+        var (startServer, createClient, _) = Applications[mediator];
+        await using var server = await startServer(controllers, false);
         await using var client = createClient(server.GetTestServer().CreateHandler());
         var rockets = client.GetRequiredService<IRocketsDriver>();
 
@@ -82,8 +87,8 @@ public class RoundTripTests
     [Arguments("ZeroAlloc", true)]
     public async Task Should_Answer_Created_With_A_Location(string mediator, bool controllers, CancellationToken cancellationToken)
     {
-        var (startServer, _) = Applications[mediator];
-        await using var server = await startServer(controllers);
+        var (startServer, _, _) = Applications[mediator];
+        await using var server = await startServer(controllers, false);
         using var http = server.GetTestClient();
 
         using var response = await http.PostAsync("api/rockets", new StringContent("""{"name":"Falcon"}""", System.Text.Encoding.UTF8, "application/json"), cancellationToken);
@@ -97,10 +102,34 @@ public class RoundTripTests
     [Test]
     public async Task Should_Explain_A_Foundatio_Registry_Built_Without_The_Client_Handlers()
     {
-        await using var server = await foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync(false);
+        await using var server = await foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync(false, false);
 
         var exception = Should.Throw<InvalidOperationException>(() => foundatioclient::Api.Functional.Foundatio.Client.LateRegistration.Create(server.GetTestServer().CreateHandler()));
 
         exception.Message.ShouldStartWith("Foundatio's handler registry was built without RocketsClient's handlers. Call services.AddRocketsClient() before services.AddMediator()");
+    }
+
+    [Test]
+    [Arguments("MediatR")]
+    [Arguments("Mediator")]
+    [Arguments("ChannelMediator")]
+    [Arguments("ImmediateHandlers")]
+    [Arguments("Foundatio")]
+    [Arguments("ZeroAlloc")]
+    public async Task Should_Round_Trip_Over_Grpc(string mediator, CancellationToken cancellationToken)
+    {
+        var (startServer, _, createClient) = Applications[mediator];
+        await using var server = await startServer(false, true);
+        await using var client = createClient(server.GetTestServer().CreateHandler());
+        var rockets = client.GetRequiredService<IRocketsDriver>();
+
+        var id = await rockets.CreateRocket("Falcon", cancellationToken);
+        ( await rockets.GetRocket(id, cancellationToken) ).ShouldBe(new Rocket(id, "Falcon"));
+        ( await rockets.EditRocket(id, "Falcon 9", cancellationToken) ).ShouldBe(new Rocket(id, "Falcon 9"));
+        var listed = new List<Rocket>();
+        await foreach (var rocket in rockets.ListRockets("Falcon 9", cancellationToken)) listed.Add(rocket);
+        listed.ShouldBe([new Rocket(id, "Falcon 9")]);
+        await rockets.DeleteRocket(id, cancellationToken);
+        ( await rockets.GetRocket(id, cancellationToken) ).ShouldBeNull();
     }
 }

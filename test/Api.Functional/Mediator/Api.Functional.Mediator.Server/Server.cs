@@ -8,8 +8,8 @@ namespace Api.Functional.Mediator.Server;
 
 public static class ServerApp
 {
-    /// <summary>Starts the server with the generated Minimal API endpoints, or with the generated controllers on the same routes.</summary>
-    public static async Task<WebApplication> StartAsync(bool controllers = false)
+    /// <summary>Starts the server with the generated Minimal API endpoints, the generated controllers on the same routes, or the generated gRPC service.</summary>
+    public static async Task<WebApplication> StartAsync(bool controllers = false, bool grpc = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -17,8 +17,10 @@ public static class ServerApp
         builder.Services.AddProblemDetails();
         builder.Services.AddMediator();
         if (controllers) builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
+        if (grpc) ProtoBuf.Grpc.Server.ServicesExtensions.AddCodeFirstGrpc(builder.Services);
         var app = builder.Build();
-        if (controllers) app.MapControllers();
+        if (grpc) app.MapRocketsService();
+        else if (controllers) app.MapControllers();
         else app.MapRocketsEndpoints();
         await app.StartAsync();
         return app;
@@ -38,6 +40,13 @@ public static partial class RocketsEndpoints;
 [Operation<EditRocket.Request>]
 [Operation<DeleteRocket.Request>]
 public partial class RocketsController;
+
+[Operation<GetRocket.Request>]
+[Operation<ListRockets.Request>]
+[Operation<CreateRocket.Request>]
+[Operation<EditRocket.Request>]
+[Operation<DeleteRocket.Request>]
+public partial class RocketsService;
 
 public sealed class Handlers(RocketStore store)
     : IQueryHandler<GetRocket.Request, RocketModel?>, IStreamQueryHandler<ListRockets.Request, RocketModel>, ICommandHandler<CreateRocket.Request, CreateRocket.Response>,

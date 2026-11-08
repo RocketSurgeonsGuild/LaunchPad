@@ -1,6 +1,6 @@
 # Mediator-agnostic API generators: orientation, design and plan
 
-Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC still to do. Open from phase 1: server-side API versioning (6).
+Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC server and client hosts built and round-tripping for all six mediators. Phase 2 is complete pending review. Open from phase 1: server-side API versioning (6).
 
 Related: [ADR-0002 one package per integration](../adr/0002-package-per-integration.md), [ADR-0003 explicit operation hosts](../adr/0003-explicit-operation-hosts.md), and the terms _operation_, _operation host_, _group_, _transport_, _contracts project_ and _mediator profile_ in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -498,6 +498,9 @@ Before each phase I restate its plan and wait for a go-ahead.
 - **Nested verb-only request names** take the container's noun: `EditRocket.PatchRequest` → `PatchRocket`.
 - **Default routes carry type constraints** (`{id:guid}`, `{id:int}`, …), inferred from the bound member's type; a strongly typed id counts as the type of its `Value`. Routes written with `Route`/`Path` are used as written.
 - **Functional tests** start each server with `UseTestServer()` instead of `WebApplicationFactory`, because six servers share one test project and a `Program` entry point each would collide.
+
+- **gRPC messages.** protobuf-net.Grpc only carries classes and needs a parameterless constructor. The generator wraps any request, response or stream item that isn't a class in the contract's nested `Message<T>`, and sets `UseConstructor = false` for the carried classes that have none (positional records) from the generated `Map{Host}()`/`Add{Host}()`. Contracts still need `[DataContract]`/`[ProtoContract]` with ordered members (LPAD1014): field numbers are part of the wire format, so the generator doesn't invent them. Only the request and response types themselves are configured, not the types of their members.
+- **gRPC and HTTP client hosts for the same requests can't share a project**, since each generates a handler per request; LPAD1018 only sees the hosts of one generator, so this isn't diagnosed yet.
 
 **Open:**
 

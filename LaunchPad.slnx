@@ -73,9 +73,11 @@
     <File Path="src/Directory.Build.targets" />
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <Project Path="src/Api/Rocket.Surgery.LaunchPad.Api.csproj" />
+    <Project Path="src/Api.Client.Grpc/Rocket.Surgery.LaunchPad.Api.Client.Grpc.csproj" />
     <Project Path="src/Api.Client.Http/Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" />
     <Project Path="src/Api.Controllers/Rocket.Surgery.LaunchPad.Api.Controllers.csproj" />
     <Project Path="src/Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" />
+    <Project Path="src/Api.Grpc/Rocket.Surgery.LaunchPad.Api.Grpc.csproj" />
     <Project Path="src/Api.MinimalApi/Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
@@ -127,6 +129,14 @@
     <Project Path="test/Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Client/Api.Functional.ZeroAlloc.Client.csproj" />
     <Project Path="test/Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Contracts/Api.Functional.ZeroAlloc.Contracts.csproj" />
     <Project Path="test/Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Server/Api.Functional.ZeroAlloc.Server.csproj" />
+    <Project Path="test/Api.Functional/ChannelMediator/Api.Functional.ChannelMediator.GrpcClient/Api.Functional.ChannelMediator.GrpcClient.csproj" />
+    <Project Path="test/Api.Functional/Foundatio/Api.Functional.Foundatio.GrpcClient/Api.Functional.Foundatio.GrpcClient.csproj" />
+    <Project Path="test/Api.Functional/Foundatio/Api.Functional.Foundatio.GrpcClientHost/Api.Functional.Foundatio.GrpcClientHost.csproj" />
+    <Project Path="test/Api.Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GrpcClient/Api.Functional.ImmediateHandlers.GrpcClient.csproj" />
+    <Project Path="test/Api.Functional/MediatR/Api.Functional.MediatR.GrpcClient/Api.Functional.MediatR.GrpcClient.csproj" />
+    <Project Path="test/Api.Functional/Mediator/Api.Functional.Mediator.GrpcClient/Api.Functional.Mediator.GrpcClient.csproj" />
+    <Project Path="test/Api.Functional/Mediator/Api.Functional.Mediator.GrpcClientHost/Api.Functional.Mediator.GrpcClientHost.csproj" />
+    <Project Path="test/Api.Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GrpcClient/Api.Functional.ZeroAlloc.GrpcClient.csproj" />
     <Project Path="test/Api.Functional.Tests/Api.Functional.Tests.csproj" />
     <Project Path="test/Api.Generators.Tests/Api.Generators.Tests.csproj" />
     <Project Path="test/AspNetCore.Tests/AspNetCore.Tests.csproj" />

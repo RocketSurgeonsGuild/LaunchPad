@@ -23,8 +23,8 @@ The generators work with MediatR, [martinothamar/Mediator](https://github.com/ma
 Immediate.Handlers, Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
 scanning assemblies, and the generated server endpoints are native AOT safe.
 
-This page covers the Minimal API and MVC controller servers and the HTTP client. gRPC and GraphQL follow the same model and arrive in later
-releases.
+This page covers the Minimal API, MVC controller and gRPC servers and the HTTP and gRPC clients. GraphQL follows the same model and arrives
+in a later release.
 
 ## Packages
 
@@ -33,6 +33,8 @@ releases.
 | `Rocket.Surgery.LaunchPad.Api`             | contracts projects that customise                        | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes. |
 | `Rocket.Surgery.LaunchPad.Api.MinimalApi`  | the server                                               | Minimal API endpoints for `*Endpoints` hosts.                                    |
 | `Rocket.Surgery.LaunchPad.Api.Controllers` | the server                                               | MVC controller actions for `*Controller` hosts.                                  |
+| `Rocket.Surgery.LaunchPad.Api.Grpc`        | the server                                               | Code-first gRPC services (protobuf-net.Grpc) for `*Service` hosts.               |
+| `Rocket.Surgery.LaunchPad.Api.Client.Grpc` | the client                                               | Code-first gRPC clients and mediator handlers for `*GrpcClient` hosts.           |
 | `Rocket.Surgery.LaunchPad.Api.Client.Http` | the client (see [placement](#where-a-client-host-lives)) | A typed HTTP client and mediator handlers for `*Client` hosts.                   |
 
 All three are analyzer-only development dependencies. The attributes are generated into each project that uses them, as `internal` types,
@@ -191,6 +193,39 @@ app.MapControllers();
 - The mediator is resolved inside the action, so the host's constructor is yours.
 - MVC only discovers `public` controllers.
 
+### gRPC
+
+A `partial` class named `*Service` becomes a code-first gRPC service with [protobuf-net.Grpc](https://protobuf-net.github.io/protobuf-net.Grpc/),
+and a `partial` class named `*GrpcClient` its client. Both generate the same contract (a `[Service]` interface named after the group, one
+operation per request), so the contracts project needs no gRPC reference.
+
+```csharp
+// server
+[Operation<GetRocket.Request>]
+[Operation<ListRockets.Request>]
+public partial class RocketsService;
+
+builder.Services.AddCodeFirstGrpc();
+app.MapRocketsService();
+
+// client
+[Operation<GetRocket.Request>]
+[Operation<ListRockets.Request>]
+public partial class RocketsGrpcClient;
+
+services.AddRocketsGrpcClient(options => options.Address = new Uri("https://rockets.example/"));
+var rocket = await mediator.Send(new GetRocket.Request(id));   // null when the server answers NotFound
+```
+
+- The whole request is the message: route, query and header binding don't apply.
+- Requests and responses need `[DataContract]` with ordered `[DataMember]`s, or `[ProtoContract]` (LPAD1014). Positional records work: the
+  generated code lets protobuf-net create them without a parameterless constructor.
+- A request, response or stream item that isn't a class (a struct request, a `bool` response) travels in a one-field message the generator
+  wraps and unwraps, because protobuf-net.Grpc only carries classes. Void operations answer `Empty`.
+- A `null` response answers `NotFound`, which the client returns as `null`. Streams are server streaming.
+- `partial void Configure{Operation}(ref CallOptions options)` on the client sets headers, deadlines and credentials per call.
+- An HTTP and a gRPC client host for the same requests can't share a project: the mediator would see two handlers for each request.
+
 ## Binding and responses
 
 - Route tokens bind to the request member of the same name; a token without a member is LPAD1003, an `[ApiRoute]` member missing from the
@@ -293,6 +328,7 @@ filters don't apply.
 | LPAD1011 | Warning  | The profile has no handler interface, so no mediator handler is generated. |
 | LPAD1012 | Error    | The client host is in the wrong project for its mediator.                  |
 | LPAD1013 | Warning  | A hand-written handler for a client operation is visible.                  |
+| LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.   |
 | LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.             |
 | LPAD1017 | Error    | The host's transport can't be inferred, or its package isn't referenced.   |
 | LPAD1018 | Error    | Two client hosts generate handlers for the same operation.                 |
@@ -301,7 +337,7 @@ filters don't apply.
 | LPAD1022 | Error    | A client host declares its own constructor.                                |
 | LPAD1023 | Error    | A `CreateOperation`'s location target or route values are missing.         |
 
-LPAD1009, LPAD1014, LPAD1015 and LPAD1019 belong to the gRPC and GraphQL transports.
+LPAD1009, LPAD1015 and LPAD1019 belong to the GraphQL transport.
 
 ## Limitations
 

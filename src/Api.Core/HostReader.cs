@@ -38,7 +38,7 @@ internal static class HostReader
             }
 
             ResolveCreatedLocations(operations, diagnostics);
-            foreach (var duplicate in operations.GroupBy(o => (o.Verb, Route: NormalizeRoute(o.Route))).Where(g => g.Count() > 1))
+            foreach (var duplicate in operations.Where(_ => HostInference.IsHttp(kind)).GroupBy(o => (o.Verb, Route: NormalizeRoute(o.Route))).Where(g => g.Count() > 1))
             {
                 var first = duplicate.First();
                 foreach (var other in duplicate.Skip(1))
@@ -115,7 +115,10 @@ internal static class HostReader
         var verb = Naming.TryParseVerb(String(args, "Verb") ?? String(apiOperation, "Verb"), out var explicitVerb) ? explicitVerb : inferredVerb;
         var hasId = members.Any(m => string.Equals(m.Name, "Id", StringComparison.OrdinalIgnoreCase));
         var explicitRoute = String(args, "Route") ?? String(apiOperation, "Path");
-        var route = explicitRoute ?? Constrain(Naming.DefaultPath(remainder, hostNoun, verb, hasId), members);
+        // gRPC carries the whole request as one message: no route, no query string, so none of the HTTP binding rules apply.
+        var isHttp = HostInference.IsHttp(hostKind);
+        var route = isHttp ? explicitRoute ?? Constrain(Naming.DefaultPath(remainder, hostNoun, verb, hasId), members) : "";
+        if (!isHttp) verb = HttpVerb.Post;
         var tokens = RouteText.Tokens(route).ToArray();
 
         var boundMembers = Bind(wireType, members, tokens, verb, route, name, location, diagnostics, out var bindingFailed);
@@ -172,6 +175,18 @@ internal static class HostReader
             successStatus = 201;
         }
 
+        if (hostKind is HostKind.GrpcService or HostKind.GrpcClient)
+        {
+            // protobuf-net needs a contract with ordered members for every user type it carries; primitives are wrapped by the generator.
+            // A void operation (Unit included) answers Empty.
+            var carriedResponse = requestKind == RequestKind.Void ? null : response is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } n ? n.TypeArguments[0] : response;
+            var carried = new[] { wireType, carriedResponse };
+            foreach (var type in carried.OfType<ITypeSymbol>().Distinct<ITypeSymbol>(SymbolEqualityComparer.Default).Where(NeedsContract))
+            {
+                diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.GrpcSerialization, location, type.ToDisplayString()));
+            }
+        }
+
         var responseIsNullableValueType = response is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T };
         var responseNullable = response is { } && ( response.NullableAnnotation == NullableAnnotation.Annotated || responseIsNullableValueType );
         var responseNotNull = response is INamedTypeSymbol nullableValue && responseIsNullableValueType
@@ -219,6 +234,8 @@ internal static class HostReader
             null,
             EquatableArray<string>.Empty,
             hostKind.IsClient() ? FindHandWrittenHandler(request, closedHandler, compilation)?.ToDisplayString() : null,
+            IsMessage(wireType),
+            responseNotNull is { } && IsMessage(responseNotNull),
             location
         );
     }
@@ -475,6 +492,14 @@ internal static class HostReader
 
     private static string? BuiltInConstraint(ITypeSymbol type) =>
         Constraints.TryGetValue(type.SpecialType, out var constraint) ? constraint : type.ToDisplayString() == "System.Guid" ? "guid" : null;
+
+    // A class protobuf-net.Grpc can use as a message as it is; anything else (structs, primitives, strings) is wrapped by the generator.
+    private static bool IsMessage(ITypeSymbol type) => type is INamedTypeSymbol { TypeKind: TypeKind.Class, SpecialType: SpecialType.None, IsAbstract: false };
+
+    private static bool NeedsContract(ITypeSymbol type) =>
+        type is INamedTypeSymbol { SpecialType: SpecialType.None, TypeKind: TypeKind.Class or TypeKind.Struct } named
+     && named.ContainingNamespace?.ToDisplayString() is not ( "System" or "System.Collections.Generic" )
+     && !named.GetAttributes().Any(a => a.AttributeClass.Is("System.Runtime.Serialization.DataContractAttribute") || a.AttributeClass.Is("ProtoBuf.ProtoContractAttribute"));
 
     private static bool Has(string?[] attributes, params string[] names) => attributes.Any(a => a is { } && names.Any(n => a == n || a == n.Replace("`1", "")));
 

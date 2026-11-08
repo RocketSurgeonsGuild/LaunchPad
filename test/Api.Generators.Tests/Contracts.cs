@@ -140,4 +140,36 @@ internal static class Contracts
             public partial class RocketsController;
         }
         """;
+
+    public const string GrpcServiceHost = """
+        #nullable enable
+        using Rocket.Surgery.LaunchPad.Api;
+        using Sample.Contracts.Rockets;
+
+        namespace Sample.Server
+        {
+            [Operation<GetRocket.Request>]
+            [Operation<ListRockets.Request>]
+            [Operation<CreateRocket.Request>]
+            [Operation<EditRocket.Request>]
+            [Operation<DeleteRocket.Request>]
+            public partial class RocketsService;
+        }
+        """;
+
+    public const string GrpcClientHost = """
+        #nullable enable
+        using Rocket.Surgery.LaunchPad.Api;
+        using Sample.Contracts.Rockets;
+
+        namespace Sample.Client
+        {
+            [Operation<GetRocket.Request>]
+            [Operation<ListRockets.Request>]
+            [Operation<CreateRocket.Request>]
+            [Operation<EditRocket.Request>]
+            [Operation<DeleteRocket.Request>]
+            public partial class RocketsGrpcClient;
+        }
+        """;
 }
