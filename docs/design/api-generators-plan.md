@@ -470,20 +470,20 @@ Order of work:
 
 **Phase 4, decided 2026-11-08, not built.** Three items. Subscriptions were dropped: stream operations on GraphQL hosts stay LPAD1015.
 
-_Union results_ (depends on [#3147](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3147), which standardizes LaunchPad's union types: native unions on .NET 11+, a generated equivalent on .NET 10 until .NET 12):
+_Union results_ ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148); depends on [#3147](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3147), which standardizes LaunchPad's union types: native unions on .NET 11+, a generated equivalent on .NET 10 until .NET 12):
 
 - A handler may return a union of its value and error cases instead of throwing. Generated servers and clients support it on every transport; `NotFoundException` and null → 404 keep working for existing handlers.
 - The value case answers 200 (201 with `[Creates]`). An error case's status comes from its type name: `NotFound` → 404, `Invalid`/`Validation` → 400, `Unauthorized` → 401, `Forbidden` → 403, `Conflict` → 409, with the matching gRPC status and GraphQL code.
 - An attribute on the case type overrides the status (HTTP status, gRPC status, GraphQL code). An error case that matches no name and has no attribute is an **error** diagnostic.
 - On the wire each transport carries the case name and the case's members in its own error shape: HTTP ProblemDetails with a `case` extension and the members as extensions; gRPC the status plus a `case` trailer with the serialized case; GraphQL an error with `extensions.code` set to the case name and the members in `extensions`. Generated clients rebuild the union from the case name, so cases sharing a status stay distinct.
 
-_OpenAPI transformers:_
+_OpenAPI transformers_ ([#3149](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3149)):
 
 - Each server host gets generated Microsoft.AspNetCore.OpenApi `IOpenApiOperationTransformer`/`IOpenApiSchemaTransformer` classes, registered by a generated `Add{Host}OpenApi(OpenApiOptions)`: operation ids, summaries and remarks, union and authorization responses (401/403), the 201 `Location`, and strongly typed id schemas.
 - LaunchPad's existing OpenAPI filters (`src/AspNetCore/OpenApi`) skip generated endpoints, so nothing is applied twice; they keep serving hand-written endpoints.
 - FluentValidation rules join the request schemas at runtime: the generated transformer resolves `IValidator<TRequest>` when the document is built and a helper in `Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore` translates its rule descriptors (`NotEmpty` → required, `Length` → `minLength`/`maxLength`, …). Validators aren't analysed at compile time.
 
-_Proto-first gRPC_, alongside the code-first hosts of phase 2, which stay:
+_Proto-first gRPC_ ([#3150](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3150)), alongside the code-first hosts of phase 2, which stay:
 
 - A host deriving a Grpc.Tools service base (`partial class RocketsService : Rockets.RocketsBase`) is proto-first; any other gRPC host is code-first. It lists its operations with `[Operation<T>]` as usual, each matched to an rpc of the base class by name; an unmatched entry is a diagnostic.
 - Client hosts over the proto-generated client (`Rockets.RocketsClient`) generate mediator handlers, so `mediator.Send` works on the client as on every other transport.
