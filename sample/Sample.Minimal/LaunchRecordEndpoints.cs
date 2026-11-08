@@ -1,11 +1,9 @@
-using MediatR;
-
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Minimal;
 

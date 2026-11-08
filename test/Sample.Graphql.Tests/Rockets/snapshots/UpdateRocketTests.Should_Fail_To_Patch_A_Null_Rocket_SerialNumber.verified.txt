@@ -1,8 +1,8 @@
 ﻿{
   Errors: [
     {
-      Message: 'Serial Number Value' must not be empty.,
-      Code: FairyBread_ValidationError,
+      Message: SerialNumber must not be empty.,
+      Code: VALIDATION,
       Path: [
         patchRocket
       ],
@@ -13,19 +13,9 @@
         }
       ],
       Extensions: {
-        argumentName: request,
-        attemptedValue: null,
-        code: FairyBread_ValidationError,
-        errorCode: NotNullValidator,
-        errorMessage: 'Serial Number Value' must not be empty.,
-        formattedMessagePlaceholderValues: {
-          PropertyName: Serial Number Value,
-          PropertyPath: SerialNumber.Value,
-          PropertyValue: null
-        },
-        propertyName: SerialNumber.Value,
-        severity: Error,
-        validatorName: Validator
+        code: VALIDATION,
+        errorCode: null,
+        propertyName: SerialNumber
       }
     }
   ]

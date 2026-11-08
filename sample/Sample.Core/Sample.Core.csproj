@@ -13,13 +13,34 @@
     <PackageReference Include="StronglyTypedId" />
     <PackageReference Include="StronglyTypedId.Templates" />
     <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
+    <!-- ZeroAlloc.Mediator generates the mediator from the handlers in this project; the generators stay out of the projects that reference it -->
+    <PackageReference Include="ZeroAlloc.Mediator" />
+    <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />
+    <PackageReference Include="ZeroAlloc.Mediator.Validation" />
+    <PackageReference Include="ZeroAlloc.Validation" />
+    <PackageReference Include="ZeroAlloc.Validation.Inject" PrivateAssets="all" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <!-- The generated mediator is internal, so the applications that send through it need to see this assembly's internals -->
+    <InternalsVisibleTo Include="Sample.BlazorServer" />
+    <InternalsVisibleTo Include="Sample.Classic.Restful" />
+    <InternalsVisibleTo Include="Sample.Command" />
+    <InternalsVisibleTo Include="Sample.Graphql.Executable" />
+    <InternalsVisibleTo Include="Sample.Grpc" />
+    <InternalsVisibleTo Include="Sample.Minimal" />
+    <InternalsVisibleTo Include="Sample.Pages" />
+    <InternalsVisibleTo Include="Sample.Restful" />
+    <InternalsVisibleTo Include="Sample.Worker" />
+    <InternalsVisibleTo Include="Sample.Core.Tests" />
+    <InternalsVisibleTo Include="Sample.Worker.Tests" />
+    <!-- lets FakeItEasy fake the internal mediator in the tests -->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference
       Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
-    <ProjectReference Include="..\..\src\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
     <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
   </ItemGroup>

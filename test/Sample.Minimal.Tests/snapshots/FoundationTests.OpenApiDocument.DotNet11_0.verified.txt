@@ -591,12 +591,6 @@
         x-schema-id: EditLaunchRecordPatchRequest
       },
       Request: {
-        required: [
-          partner,
-          rocketId,
-          payload,
-          scheduledLaunchDate
-        ],
         type: object,
         properties: {
           rocketId: {
@@ -615,7 +609,6 @@
             ]
           },
           payloadWeightKg: {
-            minimum: 0,
             pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
             type: [
               number,

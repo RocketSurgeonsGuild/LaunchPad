@@ -1,14 +1,10 @@
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using Rocket.Surgery.LaunchPad.Primitives;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
-
 using Serilog.Events;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
@@ -61,7 +57,7 @@ public class RemoveLaunchRecordsTests() : HandleTestHostBase(LogEventLevel.Verbo
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        Func<Task> action = () => mediator.Send(new DeleteLaunchRecord.Request(id), TestContext.CancellationToken);
+        Func<Task> action = async () => await mediator.Send(new DeleteLaunchRecord.Request(id), TestContext.CancellationToken);
         await action.ShouldThrowAsync<NotAuthorizedException>();
     }
 

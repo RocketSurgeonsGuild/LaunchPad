@@ -3,7 +3,6 @@ using HotChocolate.Execution;
 using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Infrastructure;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
@@ -15,14 +14,6 @@ namespace Graphql.Tests;
 
 public class GraphqlJointTests
 {
-    [Test]
-    public async Task Binds_The_Mediatr_Unit_To_The_Void_Scalar()
-    {
-        var executor = await Executor();
-
-        executor.Schema.ToString().ShouldContain("scalar Void");
-    }
-
     [Test]
     public async Task Gives_Not_Found_Exceptions_The_Notfound_Code()
     {
@@ -44,7 +35,7 @@ public class GraphqlJointTests
         var withOptions = new ServiceCollection();
         await Register(
             withOptions,
-            context => context.Set(new FoundationOptions { MediatorLifetime = ServiceLifetime.Singleton, ValidatorLifetime = ServiceLifetime.Transient }).Set(new RocketChocolateOptions())
+            context => context.Set(new FoundationOptions { ValidatorLifetime = ServiceLifetime.Transient }).Set(new RocketChocolateOptions())
         );
 
         withOptions.Select(x => (x.ServiceType, x.Lifetime)).ShouldBe(withoutOptions.Select(x => (x.ServiceType, x.Lifetime)));
@@ -99,7 +90,5 @@ public class GraphqlJointTests
     public class Query
     {
         public string Missing() => throw new NotFoundException("nothing here");
-
-        public Unit Nothing() => Unit.Value;
     }
 }

@@ -1,5 +1,4 @@
 using System.Reflection;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Rocket.Surgery.LaunchPad.AspNetCore;
@@ -95,7 +94,7 @@ public class RestfulApiMethodBuilderTests() : LoggerTest<TestRecord>(TestRecord.
     [Arguments(nameof(OneParameter), 0, typeof(Guid))]
     [Arguments(nameof(TwoParameter), 1, typeof(object))]
     [Arguments(nameof(ThreeParameter), 2, typeof(int))]
-    [Arguments(nameof(MyActionName), 1, typeof(IBaseRequest))]
+    [Arguments(nameof(MyActionName), 1, typeof(BaseRequest))]
     public void Matches_Parameter_Type(string methodName, int parameterIndex, Type type)
     {
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.List);
@@ -148,7 +147,7 @@ public class RestfulApiMethodBuilderTests() : LoggerTest<TestRecord>(TestRecord.
         var builder = new RestfulApiMethodBuilder(RestfulApiMethod.Create);
         builder
            .MatchParameterName(^2, "id")
-           .MatchParameterType(^1, typeof(IBaseRequest));
+           .MatchParameterType(^1, typeof(BaseRequest));
 
         builder.IsMatch(CreateActionModel(name)).ShouldBe(toBe);
     }
@@ -196,9 +195,11 @@ public class RestfulApiMethodBuilderTests() : LoggerTest<TestRecord>(TestRecord.
 
     private Task<ActionResult<object>> ThreeParameter(long id, object two, int three) => throw new NotImplementedException();
 
-    private sealed class Request : IRequest;
+    private class BaseRequest;
 
-    private sealed class RequestResponse : IRequest<string>;
+    private sealed class Request : BaseRequest;
+
+    private sealed class RequestResponse : BaseRequest;
 
     private sealed class Matching
     {

@@ -1,22 +1,17 @@
-using System.Collections.Concurrent;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Composition;
 
 /// <summary>
-///     An action model convention that allows <see cref="IRequest{TResponse}" /> and <see cref="IStreamRequest{TResponse}" /> to be used as parameters to
-///     controller actions.
+///     An action model convention that documents the response types of <see cref="RestfulApiController" /> actions from their name and shape.
 /// </summary>
 /// <param name="options"></param>
-internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options) : IActionModelConvention, IOpenApiSchemaTransformer
+internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> options) : IActionModelConvention
 {
     private static string? GetHttpMethod(ActionModel action)
     {
@@ -29,78 +24,6 @@ internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> optio
         // Not valid for actions with more than one verb
         return httpMethods.Length > 1 ? null : httpMethods[0];
     }
-
-    [RequiresUnreferencedCode("DynamicBehavior is incompatible with trimming.")]
-    private static void ExtractParameterDetails(ActionModel action)
-    {
-        var requestParameter = action.Parameters.FirstOrDefault(
-                z => z
-                    .ParameterInfo.ParameterType.GetInterfaces()
-                    .Any(
-                         i => i.IsGenericType
-                          && ( typeof(IRequest<>) == i.GetGenericTypeDefinition()
-                              || typeof(IStreamRequest<>) == i.GetGenericTypeDefinition() )
-                     )
-            )
-            ;
-        if (requestParameter is null) return;
-
-        // Likely hit the generator, no point running from here
-        if (requestParameter.Attributes.Count(z => z is BindAttribute || IsCustomizeValidatorAttribute(z)) == 2)
-        {
-            _propertiesToHideFromOpenApi.TryAdd(
-                requestParameter.ParameterType,
-                [.. requestParameter
-                   .ParameterType.GetProperties()
-                   .Select(z => z.Name)
-                   .Except(
-                        requestParameter.Attributes.OfType<BindAttribute>().SelectMany(z => z.Include)
-                    )]
-            );
-            return;
-        }
-
-        var index = action.Parameters.IndexOf(requestParameter);
-        var newAttributes = requestParameter.Attributes.ToList();
-        var otherParams = action
-                         .Parameters
-                         .Except(new[] { requestParameter, })
-                         .Select(z => z.ParameterName)
-                         .ToArray();
-
-        var propertyAndFieldNames = requestParameter
-                                   .ParameterType
-                                   .GetProperties()
-                                   .Select(z => z.Name)
-                                   .ToArray();
-        var bindNames = propertyAndFieldNames
-                       .Except(otherParams, StringComparer.OrdinalIgnoreCase)
-                       .ToArray();
-
-        if (propertyAndFieldNames.Length != bindNames.Length)
-        {
-            var ignoreBindings = propertyAndFieldNames.Except(bindNames, StringComparer.OrdinalIgnoreCase).ToArray();
-            newAttributes.Add(new BindAttribute(bindNames));
-            _propertiesToHideFromOpenApi.TryAdd(requestParameter.ParameterType, ignoreBindings);
-
-            var model = action.Parameters[index] = new(requestParameter.ParameterInfo, newAttributes)
-            {
-                Action = requestParameter.Action,
-                BindingInfo = requestParameter.BindingInfo,
-                ParameterName = requestParameter.ParameterName,
-            };
-            foreach (var item in requestParameter.Properties)
-            {
-                model.Properties.Add(item);
-            }
-        }
-    }
-
-    // FluentValidation's [CustomizeValidator], matched by name so this package does not depend on FluentValidation.
-    private static bool IsCustomizeValidatorAttribute(object attribute) =>
-        attribute.GetType().FullName == "FluentValidation.AspNetCore.CustomizeValidatorAttribute";
-
-    private static readonly ConcurrentDictionary<Type, string[]> _propertiesToHideFromOpenApi = new();
 
     private readonly ILookup<RestfulApiMethod, IRestfulApiMethodMatcher> _matchers = options.Value.GetMatchers();
     private readonly RestfulApiOptions _options = options.Value;
@@ -158,22 +81,5 @@ internal class RestfulApiActionModelConvention(IOptions<RestfulApiOptions> optio
             return;
 
         UpdateProviders(action);
-        ExtractParameterDetails(action);
-    }
-
-    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
-    {
-        if (!_propertiesToHideFromOpenApi.TryGetValue(context.JsonTypeInfo.Type, out var propertiesToRemove) || schema.Properties is null)
-            return Task.CompletedTask;
-
-        foreach (var property in propertiesToRemove
-                                .Join(schema.Properties, z => z, z => z.Key, (_, b) => b.Key, StringComparer.OrdinalIgnoreCase)
-                                .ToArray()
-                )
-        {
-            schema.Properties.Remove(property);
-        }
-
-        return Task.CompletedTask;
     }
 }

@@ -1,6 +1,5 @@
-using MediatR;
-
 using Sample.Core.Operations.Rockets;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Worker;
 

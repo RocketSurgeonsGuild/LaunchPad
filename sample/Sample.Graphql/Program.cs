@@ -28,6 +28,8 @@ builder
    .AddSpatialFiltering()
    .AddSpatialProjections()
    .AddExecutableTypes()
+   .AddErrorFilter<ValidationErrorFilter>()
+   .BindRuntimeType<ZeroAlloc.Mediator.Unit, Rocket.Surgery.LaunchPad.HotChocolate.Types.VoidType>()
    .AddQueryType()
    .AddMutationType()
    .ModifyOptions(

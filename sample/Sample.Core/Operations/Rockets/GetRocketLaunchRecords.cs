@@ -1,9 +1,5 @@
 using System.Runtime.CompilerServices;
 
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
 
 using Riok.Mapperly.Abstractions;
@@ -13,6 +9,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
+
 namespace Sample.Core.Operations.Rockets;
 
 [PublicAPI]
@@ -20,22 +19,19 @@ namespace Sample.Core.Operations.Rockets;
 [UseStaticMapper(typeof(NodaTimeMapper))]
 public static partial class GetRocketLaunchRecords
 {
+    [Validate]
     public record Request : IStreamRequest<LaunchRecordModel>
     {
         /// <summary>
         ///     The rocket id
         /// </summary>
+        [Must(nameof(IsAssigned))]
         public RocketId Id { get; init; }
+
+        internal bool IsAssigned(RocketId id) => id != default;
     }
 
-    private class Validator : AbstractValidator<Request>
-    {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
-    }
-
-    private class Handler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
+    internal class GetRocketLaunchRecordsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
         public async IAsyncEnumerable<LaunchRecordModel> Handle(Request request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {

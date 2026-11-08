@@ -1,21 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Restful.Controllers;
 
 [Route("[controller]")]
-public partial class RocketController : RestfulApiController
+public class RocketController : RestfulApiController
 {
+    private IMediator Mediator => HttpContext.RequestServices.GetRequiredService<IMediator>();
+
     /// <summary>
     ///     Search for rockets
     /// </summary>
     /// <param name="request">The search context</param>
     /// <returns></returns>
     [HttpGet]
-    public partial IAsyncEnumerable<RocketModel> ListRockets(ListRockets.Request request);
+    public IAsyncEnumerable<RocketModel> ListRockets([FromQuery] ListRockets.Request request) => Mediator.CreateStream(request, HttpContext.RequestAborted);
 
     /// <summary>
     ///     Load details of a specific rocket
@@ -23,7 +26,11 @@ public partial class RocketController : RestfulApiController
     /// <param name="request">The request context</param>
     /// <returns></returns>
     [HttpGet("{id:guid}")]
-    public partial Task<ActionResult<RocketModel>> GetRocket(GetRocket.Request request);
+    public async Task<ActionResult<RocketModel>> GetRocket([BindRequired][FromRoute] GetRocket.Request request)
+    {
+        var result = await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+        return result;
+    }
 
     /// <summary>
     ///     Create a new rocket
@@ -31,8 +38,11 @@ public partial class RocketController : RestfulApiController
     /// <param name="request">The rocket details</param>
     /// <returns></returns>
     [HttpPost]
-    [Created(nameof(GetRocket))]
-    public partial Task<ActionResult<CreateRocket.Response>> CreateRocket(CreateRocket.Request request);
+    public async Task<ActionResult<CreateRocket.Response>> CreateRocket([BindRequired][FromBody] CreateRocket.Request request)
+    {
+        var result = await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+        return CreatedAtAction(nameof(GetRocket), new { id = result.Id }, result);
+    }
 
     /// <summary>
     ///     Update a given rocket
@@ -42,7 +52,11 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpPut("{id:guid}")]
     // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
-    public partial Task<ActionResult<RocketModel>> EditRocket([BindRequired] [FromRoute] RocketId id, [BindRequired] [FromBody] EditRocket.Request model);
+    public async Task<ActionResult<RocketModel>> EditRocket(RocketId id, [Bind("SerialNumber", "Type")] EditRocket.Request model)
+    {
+        var result = await Mediator.Send(model with { Id = id }, HttpContext.RequestAborted).ConfigureAwait(false);
+        return result;
+    }
 
     /// <summary>
     ///     Update a given rocket
@@ -52,7 +66,11 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpPatch("{id:guid}")]
     // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
-    public partial Task<ActionResult<RocketModel>> PatchRocket([BindRequired] [FromRoute] RocketId id, [BindRequired] [FromBody] EditRocket.PatchRequest model);
+    public async Task<ActionResult<RocketModel>> PatchRocket(RocketId id, [Bind("SerialNumber", "Type")] EditRocket.PatchRequest model)
+    {
+        var result = await Mediator.Send(model with { Id = id }, HttpContext.RequestAborted).ConfigureAwait(false);
+        return result;
+    }
 
     /// <summary>
     ///     Remove a rocket
@@ -60,7 +78,11 @@ public partial class RocketController : RestfulApiController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpDelete("{id:guid}")]
-    public partial Task<ActionResult> RemoveRocket([BindRequired] [FromRoute] DeleteRocket.Request request);
+    public async Task<ActionResult> RemoveRocket(DeleteRocket.Request request)
+    {
+        await Mediator.Send(request, HttpContext.RequestAborted).ConfigureAwait(false);
+        return NoContent();
+    }
 
     /// <summary>
     ///     Get the launch records for a given rocket
@@ -68,18 +90,16 @@ public partial class RocketController : RestfulApiController
     /// <returns></returns>
     [HttpGet("{id:guid}/launch-records")]
     // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
-    public partial IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(RocketId id, GetRocketLaunchRecords.Request request);
+    public IAsyncEnumerable<LaunchRecordModel> GetRocketLaunchRecords(RocketId id, [Bind()][BindRequired][FromRoute] GetRocketLaunchRecords.Request request) => Mediator.CreateStream(request with { Id = id }, HttpContext.RequestAborted);
 
     /// <summary>
     ///     Get a specific launch record for a given rocket
     /// </summary>
     /// <returns></returns>
     [HttpGet("{id:guid}/launch-records/{launchRecordId:guid}")]
-    public partial Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord(
-        // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
-        RocketId id,
-        // ReSharper disable once RouteTemplates.ParameterTypeAndConstraintsMismatch
-        LaunchRecordId launchRecordId,
-        GetRocketLaunchRecord.Request request
-    );
+    public async Task<ActionResult<LaunchRecordModel>> GetRocketLaunchRecord(RocketId id, LaunchRecordId launchRecordId, [Bind()][BindRequired][FromRoute] GetRocketLaunchRecord.Request request)
+    {
+        var result = await Mediator.Send(request with { Id = id, LaunchRecordId = launchRecordId }, HttpContext.RequestAborted).ConfigureAwait(false);
+        return result;
+    }
 }

@@ -1,14 +1,13 @@
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 using Sample.BlazorWasm;
 
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.RootComponents.Add<Sample.BlazorWasm.App>("app");
+builder.RootComponents.Add<App>("app");
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress) });
 
 await ( await builder.ConfigureDovetail() ).RunAsync();
@@ -17,40 +16,25 @@ namespace Sample.BlazorWasm
 {
     public static class TestHandler
     {
+        [Validate]
         public record Request : IRequest<Response>
         {
+            [NotEmpty]
+            [MaxLength(20)]
             public string FirstName { get; set; } = null!;
+
+            [NotEmpty]
+            [MaxLength(50)]
             public string LastName { get; set; } = null!;
         }
 
-        public record Response(string FullName);
+        [Validate]
+        public record Response([property: NotEmpty] string FullName);
 
         [UsedImplicitly]
-        private class RequestValidator : AbstractValidator<Request>
+        internal class Handler : IRequestHandler<Request, Response>
         {
-            public RequestValidator()
-            {
-                RuleFor(x => x.FirstName)
-                   .NotEmpty()
-                   .MinimumLength(1)
-                   .MaximumLength(20);
-                RuleFor(x => x.LastName)
-                   .NotEmpty()
-                   .MinimumLength(1)
-                   .MaximumLength(50);
-            }
-        }
-
-        [UsedImplicitly]
-        private class ResponseValidator : AbstractValidator<Response>
-        {
-            public ResponseValidator() => RuleFor(z => z.FullName).NotEmpty();
-        }
-
-        [UsedImplicitly]
-        private class Handler : IRequestHandler<Request, Response>
-        {
-            public Task<Response> Handle(Request request, CancellationToken cancellationToken) => Task.FromResult(
+            public ValueTask<Response> Handle(Request request, CancellationToken cancellationToken) => ValueTask.FromResult(
                 new Response(request.FirstName + " " + request.LastName)
             );
         }

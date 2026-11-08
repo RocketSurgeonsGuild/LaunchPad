@@ -1,16 +1,11 @@
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using NodaTime;
-
 using Rocket.Surgery.LaunchPad.Primitives;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
-
 using Serilog.Events;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Core.Tests.LaunchRecords;
 
@@ -63,7 +58,7 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        Func<Task> action = () => mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()), TestContext.CancellationToken);
+        Func<Task> action = async () => await mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()), TestContext.CancellationToken);
 
         await action.ShouldThrowAsync<NotFoundException>();
     }

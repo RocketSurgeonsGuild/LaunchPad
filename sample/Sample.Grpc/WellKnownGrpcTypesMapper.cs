@@ -38,6 +38,11 @@ public partial class WellKnownGrpcTypesMapper
 
     public static WktDuration ConvertToWktDuration(TimeSpan ts) => WktDuration.FromTimeSpan(ts);
 
+    // An id that is missing or malformed maps to the empty id, which the validators of the operations reject as invalid.
+    public static Core.Models.RocketId MapRocketId(string id) => Guid.TryParse(id, out var value) ? new(value) : default;
+
+    public static Core.Models.LaunchRecordId MapLaunchRecordId(string id) => Guid.TryParse(id, out var value) ? new(value) : default;
+
     public static partial RocketType MapRocketType(Core.Domain.RocketType request);
     public static partial Core.Domain.RocketType MapRocketType(RocketType request);
 

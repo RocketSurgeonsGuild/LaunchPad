@@ -12,6 +12,18 @@
         <!-- with LaunchPad.Hosting below, these turn on its browser templates: browser console logging and the host environment enrichment -->
         <PackageReference Include="Joinery.Dovetail.Serilog" />
         <PackageReference Include="Serilog.Sinks.BrowserConsole" />
+        <!-- ZeroAlloc.Mediator generates the mediator from the handlers in this project -->
+        <PackageReference Include="ZeroAlloc.Mediator" />
+        <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />
+        <PackageReference Include="ZeroAlloc.Mediator.Validation" />
+        <PackageReference Include="ZeroAlloc.Validation" />
+        <PackageReference Include="ZeroAlloc.Validation.Inject" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- validates the forms with the ZeroAlloc validators -->
+        <Compile Include="../Shared/Blazor/*.cs" LinkBase="Shared" />
+        <InternalsVisibleTo Include="Sample.BlazorWasm.Tests" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,7 +38,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
-        <ProjectReference Include="..\..\src\FluentValidation.Blazor\Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Sample.Restful.Client\Sample.Restful.Client.csproj" />
     </ItemGroup>

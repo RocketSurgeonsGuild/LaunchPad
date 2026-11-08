@@ -7,8 +7,6 @@
   References: [
     HotChocolate.Abstractions.dll,
     HotChocolate.Types.Errors.dll,
-    MediatR.Contracts.dll,
-    MediatR.dll,
     Microsoft.Extensions.DependencyInjection.Abstractions.dll,
     mscorlib.dll,
     netstandard.dll,
@@ -19,6 +17,7 @@
     System.Core.dll,
     System.dll,
     System.Private.CoreLib.dll,
-    System.Runtime.dll
+    System.Runtime.dll,
+    ZeroAlloc.Mediator.dll
   ]
 }

@@ -1,7 +1,7 @@
-using MediatR;
 using Microsoft.AspNetCore.Components;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using ZeroAlloc.Mediator;
 
 namespace Sample.BlazorServer.Pages.Rockets;
 
@@ -18,10 +18,7 @@ public partial class Edit : ComponentBase
     [Inject]
     private IMediator Mediator { get; set; } = null!;
 
-    protected override async Task OnInitializedAsync()
-    {
-        Model = EditRocket.MapRequest(await Mediator.Send(new GetRocket.Request(Id)));
-    }
+    protected override async Task OnInitializedAsync() => Model = EditRocket.MapRequest(await Mediator.Send(new GetRocket.Request(Id)));
 
     public async Task Save()
     {

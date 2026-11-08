@@ -1,19 +1,13 @@
 using System.Linq.Expressions;
-
 using DryIoc.ImTools;
-
 using FluentValidation;
-
 using HotChocolate;
-
-using MediatR;
-
 using NodaTime;
-
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
+using ZeroAlloc.Mediator;
 
 namespace Analyzers.Tests;
 
@@ -1302,13 +1296,12 @@ partial class Validator : AbstractValidator<PatchRequest>
                       typeof(Optional<>),
                       typeof(Instant),
                       typeof(IPropertyTracking<>),
-                      typeof(IMediator),
-                      typeof(IBaseRequest)
+                      typeof(IRequest<>)
                   )
                  .AddSources(
                       @"
 global using System;
-global using MediatR;
+global using ZeroAlloc.Mediator;
 global using NodaTime;
 global using Rocket.Surgery.LaunchPad.Foundation;
 global using Rocket.Surgery.LaunchPad.HotChocolate;

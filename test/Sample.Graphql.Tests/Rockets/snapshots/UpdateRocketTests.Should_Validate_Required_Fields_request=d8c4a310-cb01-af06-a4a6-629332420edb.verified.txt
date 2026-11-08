@@ -1,7 +1,7 @@
 ﻿[
   {
-    Message: The length of 'Serial Number' must be at least 10 characters. You entered 2 characters.,
-    Code: FairyBread_ValidationError,
+    Message: SerialNumber must be at least 10 characters.,
+    Code: VALIDATION,
     Path: [
       editRocket
     ],
@@ -12,22 +12,9 @@
       }
     ],
     Extensions: {
-      argumentName: request,
-      attemptedValue: jb,
-      code: FairyBread_ValidationError,
-      errorCode: MinimumLengthValidator,
-      errorMessage: The length of 'Serial Number' must be at least 10 characters. You entered 2 characters.,
-      formattedMessagePlaceholderValues: {
-        MaxLength: -1,
-        MinLength: 10,
-        PropertyName: Serial Number,
-        PropertyPath: SerialNumber,
-        PropertyValue: jb,
-        TotalLength: 2
-      },
-      propertyName: SerialNumber,
-      severity: Error,
-      validatorName: RequestValidator
+      code: VALIDATION,
+      errorCode: null,
+      propertyName: SerialNumber
     }
   }
 ]

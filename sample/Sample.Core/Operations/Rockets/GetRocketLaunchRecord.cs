@@ -1,13 +1,12 @@
-using FluentValidation;
-
-using MediatR;
-
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.Rockets;
 
@@ -16,35 +15,29 @@ namespace Sample.Core.Operations.Rockets;
 [UseStaticMapper(typeof(NodaTimeMapper))]
 public static partial class GetRocketLaunchRecord
 {
+    [Validate]
     public record Request : IRequest<LaunchRecordModel>
     {
         /// <summary>
         ///     The rocket id
         /// </summary>
+        [Must(nameof(IsAssigned))]
         public RocketId Id { get; init; }
 
         /// <summary>
         ///     The launch record id
         /// </summary>
+        [Must(nameof(IsAssigned))]
         public LaunchRecordId LaunchRecordId { get; init; }
+
+        internal bool IsAssigned(RocketId id) => id != default;
+
+        internal bool IsAssigned(LaunchRecordId id) => id != default;
     }
 
-    private class Validator : AbstractValidator<Request>
+    internal class GetRocketLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
     {
-        public Validator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-            RuleFor(x => x.LaunchRecordId)
-               .NotEmpty()
-               .NotNull();
-        }
-    }
-
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
-    {
-        public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken) =>
+        public async ValueTask<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken) =>
             ModelMapper.Map(await dbContext.LaunchRecords.FindAsync([request.LaunchRecordId], cancellationToken) ?? throw new NotFoundException());
     }
 }

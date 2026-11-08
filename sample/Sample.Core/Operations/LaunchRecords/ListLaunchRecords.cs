@@ -1,13 +1,8 @@
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
-
 using Riok.Mapperly.Abstractions;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using ZeroAlloc.Mediator;
 using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
 namespace Sample.Core.Operations.LaunchRecords;
@@ -26,9 +21,7 @@ public static partial class ListLaunchRecords
     // TODO: Paging model!
     public record Request(RocketType? RocketType) : IStreamRequest<LaunchRecordModel>;
 
-    private class Validator : AbstractValidator<Request>;
-
-    private class Handler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
+    internal class ListLaunchRecordsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
     {
         public IAsyncEnumerable<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {

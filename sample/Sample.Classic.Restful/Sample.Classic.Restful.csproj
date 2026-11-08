@@ -7,7 +7,8 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
-        <ProjectReference Include="..\..\src\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
+        <!-- turns the ZeroAlloc validation failures into 422 problem details -->
+        <Compile Include="../Shared/AspNetCore/*.cs" LinkBase="Shared" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />

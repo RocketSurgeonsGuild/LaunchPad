@@ -111,6 +111,9 @@
           actualLaunchDate: {
             $ref: #/components/schemas/AssignedOfInstant
           },
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
           partner: {
             $ref: #/components/schemas/AssignedOfstring
           },
@@ -169,10 +172,6 @@
             ]
           }
         },
-        required: [
-          type,
-          title
-        ],
         type: object
       },
       Request: {
@@ -201,7 +200,6 @@
           },
           payloadWeightKg: {
             format: double,
-            minimum: 0,
             pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
             type: [
               number,
@@ -215,12 +213,6 @@
             $ref: #/components/schemas/Instant
           }
         },
-        required: [
-          partner,
-          rocketId,
-          payload,
-          scheduledLaunchDate
-        ],
         type: object,
         x-schema-id: CreateLaunchRecordRequest
       },
@@ -253,6 +245,75 @@
           falconHeavy,
           atlasV
         ]
+      },
+      ValidationFailureDetail: {
+        properties: {
+          errorCode: {
+            type: [
+              null,
+              string
+            ]
+          },
+          errorMessage: {
+            type: string
+          },
+          propertyName: {
+            type: string
+          }
+        },
+        required: [
+          propertyName,
+          errorMessage,
+          errorCode
+        ],
+        type: object
+      },
+      ValidationFailureProblemDetails: {
+        properties: {
+          detail: {
+            type: [
+              null,
+              string
+            ]
+          },
+          errors: {
+            additionalProperties: {
+              items: {
+                $ref: #/components/schemas/ValidationFailureDetail
+              },
+              type: array
+            },
+            type: object
+          },
+          instance: {
+            type: [
+              null,
+              string
+            ]
+          },
+          status: {
+            format: int32,
+            pattern: ^-?(?:0|[1-9]\d*)$,
+            type: [
+              null,
+              integer,
+              string
+            ]
+          },
+          title: {
+            type: [
+              null,
+              string
+            ]
+          },
+          type: {
+            type: [
+              null,
+              string
+            ]
+          }
+        },
+        type: object
       }
     }
   },
@@ -315,12 +376,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -426,12 +487,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -510,12 +571,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -604,12 +665,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -706,12 +767,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -808,12 +869,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -893,12 +954,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -1004,12 +1065,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -1050,6 +1111,26 @@
             }
           }
         ],
+        requestBody: {
+          content: {
+            application/*+json: {
+              schema: {
+                $ref: #/components/schemas/Request
+              }
+            },
+            application/json: {
+              schema: {
+                $ref: #/components/schemas/Request
+              }
+            },
+            text/json: {
+              schema: {
+                $ref: #/components/schemas/Request
+              }
+            }
+          },
+          required: true
+        },
         responses: {
           204: {
             description: No Content
@@ -1088,12 +1169,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -1182,12 +1263,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -1296,12 +1377,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -1410,12 +1491,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -1512,12 +1593,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
@@ -1617,12 +1698,12 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               },
               text/json: {
                 schema: {
-                  $ref: #/components/schemas/FluentValidationProblemDetails
+                  $ref: #/components/schemas/ValidationFailureProblemDetails
                 }
               }
             },
