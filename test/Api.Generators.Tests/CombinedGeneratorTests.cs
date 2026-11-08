@@ -1,4 +1,3 @@
-extern alias httpclient;
 using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +11,7 @@ public class CombinedGeneratorTests() : GeneratorTest()
     {
         var contracts = await CompileContracts(Mediator.MediatR, Contracts.For(Mediator.MediatR));
         var result = await Server(Mediator.MediatR, contracts)
-                          .WithGenerator<httpclient::Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator>()
+                          .WithGenerator<Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator>()
                           .AddReferences(typeof(IHttpClientFactory).Assembly, typeof(HttpClientFactoryServiceCollectionExtensions).Assembly, typeof(JsonContent).Assembly)
                           .AddSources(Contracts.ServerHost, Contracts.ClientHost)
                           .Build()

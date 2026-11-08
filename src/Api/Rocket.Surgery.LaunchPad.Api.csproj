@@ -1,19 +1,43 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="../Api.Core/ApiGenerator.props" />
+    <!-- The attributes, the analyzer and one generator per transport, in one analyzer assembly built on the .NET 10 SDK's Roslyn. -->
     <PropertyGroup>
-        <PackageDescription>Attributes and analyzers for LaunchPad's mediator-agnostic API generators: mark request types with [ApiOperation] and list operations on operation hosts with [Operation&lt;TRequest&gt;]. Add a transport package to generate servers or clients.</PackageDescription>
-        <PackageTags>$(PackageTags);source-generator;minimal-api;mediator</PackageTags>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <DevelopmentDependency>true</DevelopmentDependency>
+        <!-- Nothing in lib/ to carry symbols for: an empty .snupkg fails the pack (NU5017). -->
+        <IncludeSymbols>false</IncludeSymbols>
+        <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Api.Generators</RootNamespace>
+        <!-- Generators are not public API; the generated code is documented instead. -->
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <PackageDescription>LaunchPad's mediator-agnostic API generators: mark request types with [ApiOperation], list operations on operation hosts with [Operation&lt;TRequest&gt;], and get Minimal API endpoints, MVC controllers, gRPC services, GraphQL mutations and HTTP, gRPC and GraphQL clients whose mediator handlers make mediator.Send work on both sides.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;minimal-api;mvc;grpc;graphql;mediator</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <!-- build/ for direct references, buildTransitive/ for the transport packages that depend on this one. -->
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
+        <!-- The oldest Roslyn the generators support: the compiler of the .NET 10 SDK, so an application on either SDK can load them. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
+    </ItemGroup>
+    <ItemGroup>
         <None Include="build/Rocket.Surgery.LaunchPad.Api.targets" Pack="true" PackagePath="build;buildTransitive" />
         <ProjectReference Include="../Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" ReferenceOutputAssembly="false" Private="false" />
     </ItemGroup>
-    <Target Name="_LaunchPadApiPackCodeFixes" BeforeTargets="_GetPackageFiles">
+    <!-- Packed from wherever the build wrote them: an artifacts path moves them out of bin. -->
+    <Target Name="_LaunchPadApiPackAnalyzer" BeforeTargets="_GetPackageFiles">
         <MSBuild Projects="../Api.CodeFixes/Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" Targets="GetTargetPath" Properties="Configuration=$(Configuration)">
             <Output TaskParameter="TargetOutputs" ItemName="_LaunchPadApiCodeFixesPath" />
         </MSBuild>
         <ItemGroup>
+            <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
             <None Include="@(_LaunchPadApiCodeFixesPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
         </ItemGroup>
     </Target>

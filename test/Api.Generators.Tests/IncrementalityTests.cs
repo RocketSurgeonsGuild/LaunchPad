@@ -1,4 +1,3 @@
-extern alias minimalapi;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -69,7 +68,7 @@ public class IncrementalityTests() : GeneratorTest()
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
         GeneratorDriver driver = CSharpGeneratorDriver.Create(
-            [new AttributesGenerator().AsSourceGenerator(), new minimalapi::Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator().AsSourceGenerator()],
+            [new AttributesGenerator().AsSourceGenerator(), new MinimalApiGenerator().AsSourceGenerator()],
             parseOptions: (CSharpParseOptions)compilation.SyntaxTrees[0].Options,
             driverOptions: new GeneratorDriverOptions(IncrementalGeneratorOutputKind.None, trackIncrementalGeneratorSteps: true)
         );

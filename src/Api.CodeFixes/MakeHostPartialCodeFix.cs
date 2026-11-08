@@ -14,7 +14,8 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 public sealed class MakeHostPartialCodeFix : CodeFixProvider
 {
     /// <inheritdoc />
-    public override ImmutableArray<string> FixableDiagnosticIds { get; } = [ApiDiagnostics.HostMustBePartial.Id];
+    // LPAD1010, ApiDiagnostics.HostMustBePartial: the code fix assembly doesn't compile the generators' core.
+    public override ImmutableArray<string> FixableDiagnosticIds { get; } = ["LPAD1010"];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;

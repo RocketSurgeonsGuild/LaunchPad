@@ -13,7 +13,8 @@ internal static class Contracts
         Mediator.ZeroAlloc => Shared("using ZeroAlloc.Mediator;", "IRequest<RocketModel?>", "IStreamRequest<RocketModel>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest", "readonly record struct"),
         Mediator.Foundatio => Markerless("using Foundatio.Mediator;", "IRequest<RocketModel?>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest<bool>"),
         Mediator.ImmediateHandlers => Markerless("", "", "", "", ""),
-        Mediator.Custom => throw new NotImplementedException(),
+        // A custom profile has no shared contracts: the test that uses one declares its own request interfaces.
+        Mediator.Custom => throw new ArgumentOutOfRangeException(nameof(mediator), mediator, "Write the contracts of a custom profile in the test."),
         _ => throw new ArgumentOutOfRangeException(nameof(mediator)),
     };
 

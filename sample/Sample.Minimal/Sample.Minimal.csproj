@@ -13,7 +13,6 @@
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <!-- The endpoints are generated from the operation hosts (RocketsEndpoints, LaunchRecordsEndpoints). -->
         <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-        <ProjectReference Include="..\..\src\Api.MinimalApi\Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="Humanizer.Core" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />

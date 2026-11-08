@@ -18,27 +18,20 @@
     <ItemGroup Condition="'$(ApiFunctionalRole)' == 'Server'">
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.TestHost" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.MinimalApi/Rocket.Surgery.LaunchPad.Api.MinimalApi.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.Controllers/Rocket.Surgery.LaunchPad.Api.Controllers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="protobuf-net.Grpc.AspNetCore" />
         <PackageReference Include="HotChocolate.AspNetCore" />
         <PackageReference Include="Asp.Versioning.Http" />
         <PackageReference Include="Asp.Versioning.Mvc" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.GraphQL/Rocket.Surgery.LaunchPad.Api.GraphQL.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.Grpc/Rocket.Surgery.LaunchPad.Api.Grpc.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <Compile Include="$(MSBuildThisFileDirectory)Shared/RocketStore.cs" Link="RocketStore.cs" />
     </ItemGroup>
     <ItemGroup Condition="'$(ApiFunctionalRole)' == 'ClientHost'">
         <PackageReference Include="Microsoft.Extensions.Http" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.Client.Http/Rocket.Surgery.LaunchPad.Api.Client.Http.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
     <ItemGroup Condition="'$(ApiFunctionalRole)' == 'GraphQLClientHost'">
         <PackageReference Include="Microsoft.Extensions.Http" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.Client.GraphQL/Rocket.Surgery.LaunchPad.Api.Client.GraphQL.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
     <ItemGroup Condition="'$(ApiFunctionalRole)' == 'GrpcClientHost'">
         <PackageReference Include="protobuf-net.Grpc.ClientFactory" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)../../src/Api.Client.Grpc/Rocket.Surgery.LaunchPad.Api.Client.Grpc.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
     <ItemGroup Condition="'$(ApiFunctionalRole)' == 'Client' or '$(ApiFunctionalRole)' == 'ClientHost' or '$(ApiFunctionalRole)' == 'GrpcClientHost' or '$(ApiFunctionalRole)' == 'GraphQLClientHost'">
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />

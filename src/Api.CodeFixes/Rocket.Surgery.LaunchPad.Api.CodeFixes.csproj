@@ -1,10 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="../Api.Core/ApiGenerator.props" />
+    <!-- Packed inside Rocket.Surgery.LaunchPad.Api; code fixes live apart from generators because generators must not reference Workspaces (RS1038). -->
     <PropertyGroup>
-        <!-- Packed inside Rocket.Surgery.LaunchPad.Api; code fixes live apart from generators because generators must not reference Workspaces (RS1038). -->
+        <TargetFramework>netstandard2.0</TargetFramework>
         <IsPackable>false</IsPackable>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Api.Generators</RootNamespace>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
     </ItemGroup>
 </Project>

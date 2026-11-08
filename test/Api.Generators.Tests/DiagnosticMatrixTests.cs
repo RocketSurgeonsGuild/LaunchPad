@@ -1,4 +1,3 @@
-extern alias codefixes;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 
 namespace Api.Generators.Tests;
@@ -51,7 +50,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         ("LPAD1014", Grpc, BuiltIn),
         ("LPAD1015", GraphQL, BuiltIn),
         ("LPAD1016", [HostCase.GraphQLClient], BuiltIn),
-        ("LPAD1017", AllHosts, BuiltIn),
+        ("LPAD1017", [HostCase.GrpcService, HostCase.GrpcClient, HostCase.GraphQLMutation], BuiltIn),
         ("LPAD1018", Clients, BuiltIn),
         ("LPAD1019", [HostCase.GraphQLMutation], BuiltIn),
         ("LPAD1020", AllHosts, BuiltIn),
@@ -110,7 +109,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
             // With the code fix, so the snapshot shows the host it makes partial (and static, for Minimal API).
             "LPAD1010" => new(
                 $"[Operation<{op}.Request>] {Declare(host, partial: false)}",
-                Configure: builder => builder.WithCodeFix<codefixes::Rocket.Surgery.LaunchPad.Api.Generators.MakeHostPartialCodeFix>()
+                Configure: builder => builder.WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.MakeHostPartialCodeFix>()
             ),
             // A custom profile without a handler interface: every built-in profile has one for each request kind.
             "LPAD1011" => new($"[Operation<{op}.Request>] {Declare(host)}"),
@@ -123,7 +122,8 @@ public class DiagnosticMatrixTests() : GeneratorTest()
             "LPAD1015" => new($"[Operation<ListRockets.Request>(Name = \"CreateRockets\")] {Declare(host)}"),
             // A query on a GraphQL client: every built-in profile dispatches every request kind on the other transports.
             "LPAD1016" => new($"[Operation<GetRocket.Request>] {Declare(host)}"),
-            // The host's transport generator and library aren't in the compilation: a server host in a client project, and the reverse.
+            // The host's transport library isn't referenced: a gRPC or GraphQL host in a project without protobuf-net.Grpc or HotChocolate. The
+            // ASP.NET Core and Microsoft.Extensions.Http libraries of the other transports are part of every test compilation.
             "LPAD1017" => new($"[Operation<{op}.Request>] {Declare(host)}", Builder: IsClient(host) ? HostCase.MinimalApi : HostCase.HttpClient),
             "LPAD1018" => new($"[Operation<{op}.Request>] {Declare(host)} [Operation<{op}.Request>] {Declare(host, "Fleet")}"),
             "LPAD1019" => new($"[Operation<GetRocket.Request>] {Declare(host)}"),

@@ -1,10 +1,3 @@
-extern alias controllers;
-extern alias graphql;
-extern alias graphqlclient;
-extern alias grpc;
-extern alias grpcclient;
-extern alias httpclient;
-extern alias minimalapi;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -130,7 +123,7 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
 
 
     protected GeneratorTestContextBuilder Server(Mediator mediator, GeneratorTestResults contracts, bool withMinimalApi = true) =>
-        ( withMinimalApi ? ServerBase().WithGenerator<minimalapi::Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator>() : ServerBase() )
+        ( withMinimalApi ? ServerBase().WithGenerator<MinimalApiGenerator>() : ServerBase() )
        .AddCompilationReferences(contracts)
        .AddReferences(MediatorAssemblies(mediator));
 
@@ -164,27 +157,27 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
     /// <summary>A server compilation running the controller generator instead of the Minimal API one.</summary>
     protected GeneratorTestContextBuilder Controllers(Mediator mediator, GeneratorTestResults contracts) =>
         Server(mediator, contracts, withMinimalApi: false)
-           .WithGenerator<controllers::Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator>()
+           .WithGenerator<ControllerGenerator>()
            .AddReferences(typeof(Microsoft.AspNetCore.Mvc.ControllerBase).Assembly, typeof(Microsoft.AspNetCore.Mvc.JsonOptions).Assembly);
 
     /// <summary>A server compilation running the gRPC service generator.</summary>
     protected GeneratorTestContextBuilder GrpcServer(Mediator mediator, GeneratorTestResults contracts) =>
         Server(mediator, contracts, withMinimalApi: false)
-           .WithGenerator<grpc::Rocket.Surgery.LaunchPad.Api.Generators.GrpcServiceGenerator>()
+           .WithGenerator<GrpcServiceGenerator>()
            .AddReferences(GrpcAssemblies)
            .AddReferences(typeof(Grpc.AspNetCore.Server.GrpcServiceOptions).Assembly);
 
     /// <summary>A client compilation running the gRPC client generator.</summary>
     protected GeneratorTestContextBuilder GrpcClient(Mediator mediator, GeneratorTestResults contracts) =>
         Client(mediator, contracts, withHttp: false)
-           .WithGenerator<grpcclient::Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator>()
+           .WithGenerator<GrpcClientGenerator>()
            .AddReferences(GrpcAssemblies)
            .AddReferences(typeof(ProtoBuf.Grpc.ClientFactory.ServicesExtensions).Assembly, typeof(Grpc.Net.ClientFactory.GrpcClientFactoryOptions).Assembly);
 
     /// <summary>A server compilation running the GraphQL mutation generator.</summary>
     protected GeneratorTestContextBuilder GraphQLServer(Mediator mediator, GeneratorTestResults contracts) =>
         Server(mediator, contracts, withMinimalApi: false)
-           .WithGenerator<graphql::Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator>()
+           .WithGenerator<GraphQLMutationGenerator>()
            .AddReferences(
                 typeof(HotChocolate.Types.ExtendObjectTypeAttribute).Assembly,
                 typeof(HotChocolate.GraphQLNameAttribute).Assembly,
@@ -198,13 +191,13 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
 
     /// <summary>A client compilation running the GraphQL client generator.</summary>
     protected GeneratorTestContextBuilder GraphQLClient(Mediator mediator, GeneratorTestResults contracts) =>
-        Client(mediator, contracts, withHttp: false).WithGenerator<graphqlclient::Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator>();
+        Client(mediator, contracts, withHttp: false).WithGenerator<GraphQLClientGenerator>();
 
     private static readonly Assembly[] GrpcAssemblies =
         [typeof(ProtoBuf.Grpc.CallContext).Assembly, typeof(Grpc.Core.CallOptions).Assembly, typeof(ProtoBuf.Serializer).Assembly];
 
     protected GeneratorTestContextBuilder Client(Mediator mediator, GeneratorTestResults contracts, bool withHttp = true) =>
-        ( withHttp ? ClientBase().WithGenerator<httpclient::Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator>() : ClientBase() )
+        ( withHttp ? ClientBase().WithGenerator<HttpClientGenerator>() : ClientBase() )
        .AddCompilationReferences(contracts)
        .AddReferences(MediatorAssemblies(mediator));
 
