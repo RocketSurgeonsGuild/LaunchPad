@@ -36,7 +36,7 @@ public class RoundTripTests
 {
     private static readonly Dictionary<string, (Func<bool, bool, bool, Task<WebApplication>> Server, Func<HttpMessageHandler, ServiceProvider> Client, Func<HttpMessageHandler, ServiceProvider> GrpcClient, Func<HttpMessageHandler, ServiceProvider> GraphQLClient)> Applications = new()
     {
-        ["MediatR"] = (mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync, mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create, mediatrgrpcclient::Api.Functional.MediatR.GrpcClient.ClientApp.Create, mediatrgraphqlclient::Api.Functional.MediatR.GraphQLClient.ClientApp.Create),
+        ["MediatR"] = ((controllers, grpc, graphql) => mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(controllers, grpc, graphql), mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create, mediatrgrpcclient::Api.Functional.MediatR.GrpcClient.ClientApp.Create, mediatrgraphqlclient::Api.Functional.MediatR.GraphQLClient.ClientApp.Create),
         ["Mediator"] = (mediatorserver::Api.Functional.Mediator.Server.ServerApp.StartAsync, mediatorclient::Api.Functional.Mediator.Client.ClientApp.Create, mediatorgrpcclient::Api.Functional.Mediator.GrpcClient.ClientApp.Create, mediatorgraphqlclient::Api.Functional.Mediator.GraphQLClient.ClientApp.Create),
         ["ChannelMediator"] = (channelmediatorserver::Api.Functional.ChannelMediator.Server.ServerApp.StartAsync, channelmediatorclient::Api.Functional.ChannelMediator.Client.ClientApp.Create, channelmediatorgrpcclient::Api.Functional.ChannelMediator.GrpcClient.ClientApp.Create, channelmediatorgraphqlclient::Api.Functional.ChannelMediator.GraphQLClient.ClientApp.Create),
         ["ImmediateHandlers"] = (immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.ServerApp.StartAsync, immediatehandlersclient::Api.Functional.ImmediateHandlers.Client.ClientApp.Create, immediatehandlersgrpcclient::Api.Functional.ImmediateHandlers.GrpcClient.ClientApp.Create, immediatehandlersgraphqlclient::Api.Functional.ImmediateHandlers.GraphQLClient.ClientApp.Create),
@@ -160,5 +160,24 @@ public class RoundTripTests
 
         await rockets.DeleteRocket(id, cancellationToken);
         ( await http.GetAsync($"api/rockets/{id}", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Test]
+    public async Task Should_Map_Api_Versions(CancellationToken cancellationToken)
+    {
+        await using var server = await mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(versioned: true);
+        await using var client = mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create(server.GetTestServer().CreateHandler());
+        var versioned = client.GetRequiredService<mediatrclient::Api.Functional.MediatR.Client.VersionedRocketsClient>();
+        using var http = server.GetTestClient();
+
+        // The client sends api-version=1.0 for CreateRocket and 2.0 for GetRocket.
+        var created = await versioned.CreateRocket(new("Falcon"), cancellationToken);
+        ( await versioned.GetRocket(new(created.Id), cancellationToken) ).ShouldNotBeNull().Name.ShouldBe("Falcon");
+
+        // GetRocket isn't in 1.0, 3.0 isn't a version at all, and a request without a version names none: Asp.Versioning answers 400 to each.
+        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket?api-version=1.0", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket?api-version=3.0", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket?api-version=2.0", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
     }
 }

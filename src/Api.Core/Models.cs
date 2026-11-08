@@ -183,6 +183,7 @@ internal sealed record HostModel(
     string? DeclaredRoute,
     bool DeclaresApiController,
     bool DeclaresGraphQLType,
+    bool HasApiVersioning,
     ProfileModel? Profile,
     EquatableArray<OperationModel> Operations,
     EquatableArray<DiagnosticInfo> Diagnostics,

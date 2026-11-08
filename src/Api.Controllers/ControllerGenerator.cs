@@ -49,6 +49,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         {
             foreach (var diagnostic in host.Diagnostics) output.ReportDiagnostic(diagnostic.ToDiagnostic());
             if (host.Profile is null) continue;
+            ServerEmit.ReportUnmappedVersions(output, host);
             output.AddSource(host.FullyQualifiedName.Replace("global::", "") + ".Controller.g.cs", Write(host, host.Profile, duplicateNames, output));
         }
 
@@ -86,6 +87,8 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         if (!host.DeclaresApiController) attributes.Add(Attribute($"{Mvc}.ApiController"));
         if (host.DeclaredRoute is null) attributes.Add(Attribute($"{Mvc}.Route", Arg(Literal(host.BaseRoute))));
         attributes.Add(Attribute("global::Microsoft.AspNetCore.Http.Tags", Arg(Literal(Naming.HostNoun(host.Name)))));
+        // Every version the actions are served under; an action with one of its own maps to it (Asp.Versioning.Mvc).
+        if (host.HasApiVersioning) attributes.AddRange(ServerEmit.Versions(host).Select(v => Attribute("global::Asp.Versioning.ApiVersion", Arg(Literal(v)))));
         attributes.Add(GeneratedCode("Rocket.Surgery.LaunchPad.Api.Controllers", typeof(ControllerGenerator).Assembly.GetName().Version));
         var controller = Class(host.Name, Modifiers(Accessibility(host.Accessibility), SyntaxKind.PartialKeyword), actions, host.DeclaresBaseType ? [] : [Type($"{Mvc}.ControllerBase")])
            .WithAttributeLists(SyntaxFactory.List(attributes));
@@ -105,11 +108,11 @@ public sealed class ControllerGenerator : IIncrementalGenerator
                              .Concat(DispatchAndResult(profile, operation, send));
         var name = prefixName ? Naming.HostNoun(host.Name) + operation.EndpointName : operation.EndpointName;
         return Method(modifiers, isAsync ? Task(result) : result, operation.Name, Parameters(ServerEmit.Parameters(operation, null, Ct).Select(p => p.Parameter)), body)
-              .WithAttributeLists(SyntaxFactory.List(ActionAttributes(operation, name)))
+              .WithAttributeLists(SyntaxFactory.List(ActionAttributes(host, operation, name)))
               .Summary($"Handles <c>{ServerEmit.Verb(operation.Verb)} /{Xml(RouteText.Join(host.BaseRoute, operation.Route))}</c> by sending <see cref=\"{Cref(operation.RequestType)}\" />.");
     }
 
-    private static IEnumerable<AttributeListSyntax> ActionAttributes(OperationModel operation, string name)
+    private static IEnumerable<AttributeListSyntax> ActionAttributes(HostModel host, OperationModel operation, string name)
     {
         yield return Attribute($"{Mvc}.Http{operation.Verb}", Arg(Literal(operation.Route.Trim('/'))));
         yield return Attribute("global::Microsoft.AspNetCore.Routing.EndpointName", Arg(Literal(name)));
@@ -126,6 +129,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         }
 
         if (operation.AllowAnonymous) yield return Attribute("global::Microsoft.AspNetCore.Authorization.AllowAnonymous");
+        if (host.HasApiVersioning && ServerEmit.Version(host, operation) is { } version) yield return Attribute("global::Asp.Versioning.MapToApiVersion", Arg(Literal(version)));
         foreach (var produces in Produces(operation)) yield return produces;
     }
 

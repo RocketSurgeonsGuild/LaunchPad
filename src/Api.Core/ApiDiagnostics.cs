@@ -147,12 +147,18 @@ internal static class ApiDiagnostics
         "{0} answers 201 Created without a Location: {1}"
     );
 
+    public static DiagnosticDescriptor VersionNotMapped { get; } = Warning(
+        "LPAD1024",
+        "API version is not mapped",
+        "{0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers"
+    );
+
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, NoHandlerInterface, ClientHostInWrongProject,
         HandWrittenHandlerVisible, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, DuplicateClientHandler,
-        WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, ClientHostConstructor, CreatedLocationInvalid,
+        WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, ClientHostConstructor, CreatedLocationInvalid, VersionNotMapped,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);

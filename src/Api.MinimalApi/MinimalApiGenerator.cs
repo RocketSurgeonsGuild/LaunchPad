@@ -53,6 +53,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         {
             foreach (var diagnostic in host.Diagnostics) output.ReportDiagnostic(diagnostic.ToDiagnostic());
             if (host.Profile is null) continue;
+            ServerEmit.ReportUnmappedVersions(output, host);
             output.AddSource(host.FullyQualifiedName.Replace("global::", "") + ".MinimalApi.g.cs", Write(host, host.Profile, duplicateNames, output));
         }
 
@@ -100,6 +101,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
                                        Var("group", Invoke(Member(Id("endpoints"), "MapGroup"), Literal("/" + host.BaseRoute))),
                                        Statement(Invoke(Member(OpenApi, "WithTags"), Id("group"), Literal(Naming.HostNoun(host.Name)))),
                                    }
+                                  .Concat(VersionSet(host))
                                   .Concat(mapped.Select(m => Mapping(host, profile, m.Operation, m.Service, duplicateNames.Contains(m.Operation.EndpointName))))
                                   .Append(Return(Id("group")))
                            )
@@ -121,6 +123,15 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
            .AddAttributeLists(GeneratedCode("Rocket.Surgery.LaunchPad.Api.MinimalApi", typeof(MinimalApiGenerator).Assembly.GetName().Version));
         // MapGroup and MapMethods are called as extensions: HotChocolate.AspNetCore declares a class with the same full name as theirs.
         return Render(host.Namespace, [endpoints], ["Microsoft.AspNetCore.Builder"]);
+    }
+
+    // var __versionSet = endpoints.NewApiVersionSet().HasApiVersion(…)….Build(); for a host with versions, when Asp.Versioning is referenced.
+    private static IEnumerable<StatementSyntax> VersionSet(HostModel host)
+    {
+        var versions = ServerEmit.Versions(host);
+        if (!host.HasApiVersioning || versions.Count == 0) yield break;
+        var set = versions.Aggregate((ExpressionSyntax)Invoke(Member(Id("endpoints"), "NewApiVersionSet")), (builder, v) => Invoke(Member(builder, "HasApiVersion"), ServerEmit.ApiVersion(v)));
+        yield return Var("__versionSet", Invoke(Member(set, "Build")));
     }
 
     // One endpoint: MapMethods over the generated request delegate, plus the metadata ApiExplorer and OpenAPI read from a typed handler.
@@ -208,6 +219,13 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         }
 
         if (operation.AllowAnonymous) statements.Add(Statement(Invoke(Member(Authorization, "AllowAnonymous"), endpoint)));
+        if (host.HasApiVersioning && ServerEmit.Versions(host).Count > 0)
+        {
+            // Every endpoint of the host belongs to its version set; one without a version of its own serves all of them.
+            statements.Add(Statement(Invoke(Member(endpoint, "WithApiVersionSet"), Id("__versionSet"))));
+            if (ServerEmit.Version(host, operation) is { } version) statements.Add(Statement(Invoke(Member(endpoint, "MapToApiVersion"), ServerEmit.ApiVersion(version))));
+        }
+
         statements.Add(Statement(Invoke(Id($"Configure{operation.Name}"), endpoint)));
         return Block(statements);
     }

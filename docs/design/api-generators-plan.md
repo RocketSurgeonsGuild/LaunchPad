@@ -1,6 +1,6 @@
 # Mediator-agnostic API generators: orientation, design and plan
 
-Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC server and client hosts built and round-tripping for all six mediators. Phase 2 is complete pending review. Phase 3 built: GraphQL mutation hosts and clients (queries left out, decided 2026-11-08), the old mutation generator removed, Sample.Graphql migrated. Open: server-side API versioning (6).
+Status: **phase 1 built 2026-11-08** (base package, Minimal API, HTTP client, all six profiles, functional and AOT tests, guide); phase 2 in progress: controller hosts built and round-tripping for all six mediators, the old controller generator and `RestfulApiController` removed, the Restful samples migrated; gRPC server and client hosts built and round-tripping for all six mediators. Phase 2 is complete pending review. Phase 3 built: GraphQL mutation hosts and clients (queries left out, decided 2026-11-08), the old mutation generator removed, Sample.Graphql migrated. Server-side API versioning built for Minimal API and controller hosts (6).
 
 Related: [ADR-0002 one package per integration](../adr/0002-package-per-integration.md), [ADR-0003 explicit operation hosts](../adr/0003-explicit-operation-hosts.md), and the terms _operation_, _operation host_, _group_, _transport_, _contracts project_ and _mediator profile_ in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -415,6 +415,7 @@ public static class RocketsClientServiceCollectionExtensions
 | LPAD1021 | Warning  | `[OperationHost]` setting doesn't apply to the inferred transport.                                                                                    |
 | LPAD1022 | Error    | Client host declares constructors but none takes the transport's client factory.                                                                      |
 | LPAD1023 | Warning  | A `[Creates]` response has no location target on this transport, or a route token has no matching response member; it answers 201 without a Location. |
+| LPAD1024 | Warning  | An operation has an API version, but the server project doesn't reference Asp.Versioning, so it isn't mapped.                                         |
 
 ### 4.9 Testing
 
@@ -511,8 +512,10 @@ Before each phase I restate its plan and wait for a go-ahead.
 - **Summaries from XML documentation** (2026-11-08): the operation's `Summary`/`Description`, then `[ApiOperation]`, then the `<summary>`/`<remarks>` of the request type or its containing type. The compiler gives generators documentation only for source symbols, so the base package's targets add the referenced projects' XML documentation files (beside the reference, or one folder up for a reference assembly) as additional files with `LaunchPadApiDocumentation="true"`; packages opt in the same way. The files are parsed once per change into an index of type summaries and remarks.
 - **Generated code is built with SyntaxFactory** (2026-11-08), through the `ApiSyntax` helpers in the core (names, invocations, awaits, locals, attributes, doc comments, partial hooks, the compilation unit and its header), and normalized. Doc comments are written in after normalizing, which would otherwise reformat them. The fixed helper sources (JSON and NDJSON helpers, the attribute declarations) are constant text, since nothing in them comes from the model.
 
+- **Server-side API versioning** (2026-11-08). An operation's version is its `[Operation<T>(Version)]`, else its host's. Minimal API hosts build one `ApiVersionSet` from their operations' versions (`NewApiVersionSet().HasApiVersion(…).Build()`) and call `WithApiVersionSet` and `MapToApiVersion` on each endpoint; controller hosts get `[ApiVersion]` per version on the class and `[MapToApiVersion]` per action. Versioning is emitted only when the server compilation references Asp.Versioning (`Asp.Versioning.Builder.ApiVersionSet` for Minimal API, `Asp.Versioning.ApiVersionAttribute` for controllers); otherwise LPAD1024 warns per versioned operation. `Version` on gRPC and GraphQL hosts is LPAD1021. Controllers are checked against `Asp.Versioning.Abstractions`, which `Asp.Versioning.Http` also brings in, so a controller project with only that package gets the attributes but no MVC versioning until it adds `Asp.Versioning.Mvc`. The functional test covers Minimal API with MediatR; a controller functional test needs `Asp.Versioning.Mvc`, which isn't approved yet.
+
 **Open:**
 
-- **Server-side API versioning.** `[OperationHost(Version)]` and `[Operation<T>(Version)]` are read and the HTTP client sends `api-version`, but the Minimal API generator doesn't map versions with Asp.Versioning yet.
+- **A controller versioning functional test**, pending approval of `Asp.Versioning.Mvc` as a test dependency.
 
 - **AOT for Minimal API — decided 2026-11-08:** generate the request delegates ourselves (parameter binding with `TryParse`, body reading and result writing through `JsonTypeInfo`, explicit OpenAPI metadata), since RDG can't see generated endpoints (4.6).

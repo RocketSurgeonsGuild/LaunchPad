@@ -107,4 +107,23 @@ internal static class ServerEmit
         if (position < path.Length) parts.Add(Literal(path[position..]));
         return Concat(parts);
     }
+
+    /// <summary>The version an operation is served under: its own, or its host's.</summary>
+    public static string? Version(HostModel host, OperationModel operation) => operation.Version ?? host.Version;
+
+    /// <summary>Every version a host's operations are served under, in order of appearance.</summary>
+    public static IReadOnlyList<string> Versions(HostModel host) => host.Operations.Select(o => Version(host, o)).OfType<string>().Distinct().ToArray();
+
+    /// <summary>LPAD1024 for a host whose operations have versions that nothing maps.</summary>
+    public static void ReportUnmappedVersions(Microsoft.CodeAnalysis.SourceProductionContext output, HostModel host)
+    {
+        if (host.HasApiVersioning) return;
+        foreach (var operation in host.Operations.Where(o => Version(host, o) is { }))
+        {
+            output.ReportDiagnostic(DiagnosticInfo.Create(ApiDiagnostics.VersionNotMapped, operation.Location, operation.Name, Version(host, operation)!).ToDiagnostic());
+        }
+    }
+
+    /// <summary><c>global::Asp.Versioning.ApiVersionParser.Default.Parse("1.0")</c>.</summary>
+    public static ExpressionSyntax ApiVersion(string version) => Invoke(Member(Member("global::Asp.Versioning.ApiVersionParser", "Default"), "Parse"), Literal(version));
 }

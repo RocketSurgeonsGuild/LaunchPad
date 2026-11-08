@@ -99,7 +99,7 @@ public sealed class OperationHostAnalyzer : DiagnosticAnalyzer
             var applies = setting switch
             {
                 "ClientName" or "Handlers" or "JsonOptions" => kind.IsClient(),
-                "RoutePrefix" => kind is HostKind.MinimalApi or HostKind.Controller or HostKind.HttpClient,
+                "RoutePrefix" or "Version" => kind is HostKind.MinimalApi or HostKind.Controller or HostKind.HttpClient,
                 _ => true,
             };
             if (!applies)

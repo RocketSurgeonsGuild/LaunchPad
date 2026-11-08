@@ -165,6 +165,7 @@ public static partial class FleetEndpoints
 | `Summary`, `Description`, `Tags`                             | OpenAPI metadata.                                                                   |
 | `Policy`, `Roles`, `AuthenticationSchemes`, `AllowAnonymous` | Authorization on the endpoint (server only).                                        |
 | `Input`                                                      | Bind a transport-specific input type and convert it with its `Create()` (LPAD1020). |
+| `Version`                                                    | The API version of the operation, overriding the host's (see below).                |
 | `Handlers`                                                   | `false` to generate no mediator handler (client only).                              |
 
 `[Creates(typeof(TRequest))]` (or `[Creates<TRequest>]` where generic attributes are available) on a response type makes every operation that
@@ -179,6 +180,32 @@ contracts package can be added with `<AdditionalFiles Include="path/to/Contracts
 
 The client has the same kind of hook, `partial void Configure{Operation}(HttpRequestMessage request)`, plus
 `static partial void ConfigureJsonOptions(JsonSerializerOptions options)` for its serializer settings.
+
+### API versions
+
+`[OperationHost(Version = "1.0")]` gives every operation of the host an API version, and `[Operation<T>(Version = "2.0")]` overrides it for
+one operation. The server maps them with [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning), and the HTTP client sends each
+operation's version in the `api-version` query string, Asp.Versioning's default reader.
+
+```csharp
+[OperationHost(Version = "1.0")]
+[Operation<GetRocket.Request>(Version = "2.0")]
+[Operation<CreateRocket.Request>]
+public static partial class RocketsEndpoints;
+
+builder.Services.AddApiVersioning();
+app.MapRocketsEndpoints();
+```
+
+- **Minimal API** hosts build one version set from the versions of their operations and map each endpoint to its own version
+  (`WithApiVersionSet`, `MapToApiVersion`). Reference `Asp.Versioning.Http` and call `AddApiVersioning()`.
+- **Controller** hosts get an `[ApiVersion]` per version on the class and `[MapToApiVersion]` on each action. Reference `Asp.Versioning.Mvc`
+  and call `AddApiVersioning().AddMvc()`.
+
+A request for a version the endpoint isn't mapped to, or with no version, answers 400 with Asp.Versioning's problem details. To accept
+unversioned requests, set `AssumeDefaultVersionWhenUnspecified` and `DefaultApiVersion` in `AddApiVersioning(options => ...)`. With no
+Asp.Versioning in the server project, versions aren't mapped and LPAD1024 warns. gRPC and GraphQL hosts have no API versions; `Version` on
+them is LPAD1021.
 
 ### MVC controllers
 
@@ -393,10 +420,12 @@ filters don't apply.
 | LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                           |
 | LPAD1022 | Error    | A client host declares its own constructor.                                                   |
 | LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`. |
+| LPAD1024 | Warning  | An operation has an API version, but the server doesn't reference Asp.Versioning.             |
 
 ## Limitations
 
-- `Version` on hosts and operations is sent by the client as `api-version`, but the server doesn't map API versions yet.
+- API versions are read from the `api-version` query string only. Clients don't send them in a header or media type, and the server's
+  reader isn't configured by the generators.
 - With Foundatio, give each request its own handler class: Foundatio's generator names its wrappers after the message's simple name, which
   nested `X.Request` types share.
 - Server and client agree on routes only through their names and settings. A route changed on the server must be repeated on the client.

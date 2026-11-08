@@ -14,6 +14,9 @@ public static class ClientApp
                 .ConfigureHttpClient(client => client.BaseAddress = new Uri("http://localhost/"))
                 .ConfigurePrimaryHttpMessageHandler(() => handler)
                 .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+        services.AddVersionedRocketsClient()
+                .ConfigureHttpClient(client => client.BaseAddress = new Uri("http://localhost/"))
+                .ConfigurePrimaryHttpMessageHandler(() => handler);
         services.AddTransient<IRocketsDriver, Driver>();
         return services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
     }

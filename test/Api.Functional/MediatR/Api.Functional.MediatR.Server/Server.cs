@@ -9,7 +9,7 @@ namespace Api.Functional.MediatR.Server;
 public static class ServerApp
 {
     /// <summary>Starts the server with the generated Minimal API endpoints, the generated controllers on the same routes, or the generated gRPC service.</summary>
-    public static async Task<WebApplication> StartAsync(bool controllers = false, bool grpc = false, bool graphql = false)
+    public static async Task<WebApplication> StartAsync(bool controllers = false, bool grpc = false, bool graphql = false, bool versioned = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -20,7 +20,9 @@ public static class ServerApp
         if (grpc) ProtoBuf.Grpc.Server.ServicesExtensions.AddCodeFirstGrpc(builder.Services);
         // HotChocolate needs a query type; the generated mutations extend the Mutation type.
         if (graphql) builder.Services.AddGraphQLServer().AddQueryType(d => d.Name("Query").Field("ping").Resolve("pong")).AddMutationType().AddRocketsMutations();
+        if (versioned) builder.Services.AddApiVersioning();
         var app = builder.Build();
+        if (versioned) app.MapVersionedRocketsEndpoints();
         if (graphql)
         {
             app.MapGraphQL();
@@ -96,3 +98,9 @@ public sealed class Handlers(RocketStore store)
         return Task.CompletedTask;
     }
 }
+
+// Versions mapped with Asp.Versioning: GetRocket is only in 2.0, CreateRocket in the host's 1.0.
+[OperationHost(Group = "versioned-rockets", Version = "1.0")]
+[Operation<GetRocket.Request>(Version = "2.0")]
+[Operation<CreateRocket.Request>]
+public static partial class VersionedRocketsEndpoints;
