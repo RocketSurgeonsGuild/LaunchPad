@@ -9,7 +9,13 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 /// </summary>
 internal static class HostReader
 {
-    public static HostModel Read(INamedTypeSymbol host, Compilation compilation, (ProfileModel? Profile, string? Problem) profile, CancellationToken cancellationToken)
+    public static HostModel Read(
+        INamedTypeSymbol host,
+        Compilation compilation,
+        (ProfileModel? Profile, string? Problem) profile,
+        IReadOnlyDictionary<string, DocumentationEntry> documentation,
+        CancellationToken cancellationToken
+    )
     {
         var diagnostics = new List<DiagnosticInfo>();
         var (kind, _) = HostInference.Infer(host, compilation);
@@ -34,7 +40,7 @@ internal static class HostReader
             foreach (var entry in entries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (ReadOperation(entry, host, hostNoun, kind, mediator, hostHandlers, compilation, diagnostics) is { } operation) operations.Add(operation);
+                if (ReadOperation(entry, host, hostNoun, kind, mediator, hostHandlers, compilation, documentation, diagnostics) is { } operation) operations.Add(operation);
             }
 
             foreach (var duplicate in operations.Where(_ => HostInference.IsHttp(kind)).GroupBy(o => (o.Verb, Route: NormalizeRoute(o.Route))).Where(g => g.Count() > 1))
@@ -79,6 +85,7 @@ internal static class HostReader
         ProfileModel profile,
         bool hostHandlers,
         Compilation compilation,
+        IReadOnlyDictionary<string, DocumentationEntry> documentation,
         List<DiagnosticInfo> diagnostics
     )
     {
@@ -215,8 +222,8 @@ internal static class HostReader
             tokens.ToEquatableArray(),
             boundMembers.ToEquatableArray(),
             canConstruct,
-            String(args, "Summary") ?? String(apiOperation, "Summary"),
-            String(args, "Description") ?? String(apiOperation, "Description"),
+            String(args, "Summary") ?? String(apiOperation, "Summary") ?? Documentation.Read(request, "summary", documentation),
+            String(args, "Description") ?? String(apiOperation, "Description") ?? Documentation.Read(request, "remarks", documentation),
             String(args, "Name") ?? String(apiOperation, "Name") ?? name,
             ( Strings(args, "Tags") ?? Strings(apiOperation, "Tags") ?? [] ).ToEquatableArray(),
             ( Strings(args, "Policy") ?? [] ).ToEquatableArray(),

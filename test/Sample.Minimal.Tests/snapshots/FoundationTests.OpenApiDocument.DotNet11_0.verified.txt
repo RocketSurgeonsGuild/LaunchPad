@@ -15,6 +15,7 @@
         tags: [
           LaunchRecords
         ],
+        summary: The launch record search,
         operationId: ListLaunchRecords,
         parameters: [
           {
@@ -59,6 +60,7 @@
         tags: [
           LaunchRecords
         ],
+        summary: Create a launch record,
         operationId: CreateLaunchRecord,
         requestBody: {
           content: {
@@ -107,6 +109,7 @@
         tags: [
           LaunchRecords
         ],
+        summary: The request to get a launch record,
         operationId: GetLaunchRecord,
         parameters: [
           {
@@ -145,6 +148,7 @@
         tags: [
           LaunchRecords
         ],
+        summary: The launch record update request,
         operationId: EditLaunchRecord,
         parameters: [
           {
@@ -193,6 +197,7 @@
         tags: [
           LaunchRecords
         ],
+        summary: The patch request,
         operationId: PatchLaunchRecord,
         parameters: [
           {
@@ -241,6 +246,7 @@
         tags: [
           LaunchRecords
         ],
+        summary: The request to delete a launch record,
         operationId: DeleteLaunchRecord,
         parameters: [
           {
@@ -274,6 +280,7 @@
         tags: [
           Rockets
         ],
+        summary: The request to search for different rockets,
         operationId: ListRockets,
         parameters: [
           {
@@ -318,6 +325,7 @@
         tags: [
           Rockets
         ],
+        summary: The operation to create a new rocket record,
         operationId: CreateRocket,
         requestBody: {
           content: {
@@ -366,6 +374,7 @@
         tags: [
           Rockets
         ],
+        summary: Request to fetch information about a rocket,
         operationId: GetRocket,
         parameters: [
           {
@@ -404,6 +413,7 @@
         tags: [
           Rockets
         ],
+        summary: The edit operation to update a rocket,
         operationId: EditRocket,
         parameters: [
           {
@@ -500,6 +510,7 @@
         tags: [
           Rockets
         ],
+        summary: The request to remove a rocket from the system,
         operationId: DeleteRocket,
         parameters: [
           {

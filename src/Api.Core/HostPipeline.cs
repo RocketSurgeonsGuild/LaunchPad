@@ -27,17 +27,19 @@ internal static class HostPipeline
                            .WithTrackingName("HostNames");
 
         return names.Combine(context.CompilationProvider)
+                    .Combine(Documentation.Provider(context))
                     .Select(
                          (pair, cancellationToken) =>
                          {
-                             var (hostNames, compilation) = pair;
+                             var ((hostNames, compilation), documentation) = pair;
                              if (hostNames.IsEmpty) return EquatableArray<HostModel>.Empty;
                              var profile = ProfileResolver.Resolve(compilation);
+                             var referenced = documentation.GroupBy(e => e.Id, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
                              return hostNames
                                    .Select(name => compilation.GetTypeByMetadataName(name))
                                    .OfType<INamedTypeSymbol>()
                                    .Where(host => kinds.Contains(HostInference.Infer(host, compilation).Kind))
-                                   .Select(host => HostReader.Read(host, compilation, profile, cancellationToken))
+                                   .Select(host => HostReader.Read(host, compilation, profile, referenced, cancellationToken))
                                    .ToArray()
                                    .ResolveCreatedLocations()
                                    .ToEquatableArray();

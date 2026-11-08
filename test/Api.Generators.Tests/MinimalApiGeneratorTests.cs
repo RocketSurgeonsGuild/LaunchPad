@@ -174,4 +174,71 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
         DiagnosticIds(result).ShouldContain("LPAD1001");
         await Verify(result);
     }
+
+    [Test]
+    public async Task Should_Read_Summaries_From_Xml_Documentation()
+    {
+        var contracts = await CompileContracts(
+            Mediator.MediatR,
+            """
+            #nullable enable
+            using MediatR;
+
+            namespace Sample.Contracts
+            {
+                public sealed record RocketModel(System.Guid Id, string Name);
+
+                /// <summary>Rocket lookups.</summary>
+                /// <remarks>Answers 404 when the <paramref name="id" /> is unknown; see <see cref="T:Sample.Contracts.RocketModel" />.</remarks>
+                public static class GetRocket
+                {
+                    /// <summary>
+                    ///     Load a <see cref="RocketModel" />
+                    ///     by its id.
+                    /// </summary>
+                    public sealed record Request(System.Guid Id) : IRequest<RocketModel?>;
+                }
+
+                /// <summary>Not used: the request's own summary wins.</summary>
+                public static class ListRockets
+                {
+                    /// <summary>Search for rockets.</summary>
+                    public sealed record Request(string? Name) : IStreamRequest<RocketModel>;
+                }
+            }
+            """
+        );
+        // What the compiler writes for the contracts project; the base package's targets hand it over as an additional file.
+        const string documentation = """
+            <?xml version="1.0"?>
+            <doc>
+                <assembly><name>Contracts</name></assembly>
+                <members>
+                    <member name="T:Sample.Contracts.GetRocket">
+                        <summary>Rocket lookups.</summary>
+                        <remarks>Answers 404 when the <paramref name="id" /> is unknown; see <see cref="T:Sample.Contracts.RocketModel" />.</remarks>
+                    </member>
+                    <member name="T:Sample.Contracts.GetRocket.Request">
+                        <summary>
+                            Load a <see cref="T:Sample.Contracts.RocketModel" />
+                            by its id.
+                        </summary>
+                    </member>
+                    <member name="T:Sample.Contracts.ListRockets.Request"><summary>Search for rockets.</summary></member>
+                </members>
+            </doc>
+            """;
+        var result = await Server(Mediator.MediatR, contracts)
+                          .AddAdditionalText("Contracts.xml", documentation)
+                          .AddOption("Contracts.xml", "build_metadata.AdditionalFiles.LaunchPadApiDocumentation", "true")
+                          .AddSources("using Rocket.Surgery.LaunchPad.Api;\nusing Sample.Contracts;\n[Operation<GetRocket.Request>]\n[Operation<ListRockets.Request>(Summary = \"Explicit wins\")]\npublic static partial class RocketsEndpoints;")
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        AssertCompiles(result);
+        var source = string.Join("\n", result.Results.Values.SelectMany(r => r.SyntaxTrees).Select(t => t.ToString()));
+        source.ShouldContain("WithSummary(endpoint, \"Load a RocketModel by its id.\")");
+        source.ShouldContain("WithDescription(endpoint, \"Answers 404 when the id is unknown; see RocketModel.\")");
+        source.ShouldContain("WithSummary(endpoint, \"Explicit wins\")");
+    }
 }

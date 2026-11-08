@@ -6,7 +6,26 @@
     -->
     <ItemGroup>
         <CompilerVisibleProperty Include="LaunchPadApiMediatorGenerators" />
+        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="LaunchPadApiDocumentation" />
     </ItemGroup>
+    <!--
+        Operation summaries and descriptions come from the requests' XML documentation, and the compiler only gives generators the
+        documentation of source symbols. So the XML documentation files of the referenced projects are handed over as additional files.
+        A contracts package can be added the same way: <AdditionalFiles Include="path/to/Contracts.xml" LaunchPadApiDocumentation="true" />.
+    -->
+    <Target Name="_LaunchPadApiReferenceDocumentation" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun" DependsOnTargets="ResolveAssemblyReferences">
+        <ItemGroup>
+            <_LaunchPadApiProjectReference Include="@(ReferencePath)" Condition="'%(ReferencePath.ReferenceSourceTarget)' == 'ProjectReference'" />
+            <_LaunchPadApiDocumentationCandidate Include="@(_LaunchPadApiProjectReference->'%(RootDir)%(Directory)%(Filename).xml')" />
+            <!-- A reference assembly (obj/ref/X.dll) has its documentation one folder up. -->
+            <_LaunchPadApiDocumentationCandidate Include="@(_LaunchPadApiProjectReference->'%(RootDir)%(Directory)../%(Filename).xml')" />
+            <AdditionalFiles
+                Include="@(_LaunchPadApiDocumentationCandidate->'%(FullPath)')"
+                Condition="Exists('%(_LaunchPadApiDocumentationCandidate.FullPath)')"
+                LaunchPadApiDocumentation="true"
+            />
+        </ItemGroup>
+    </Target>
     <Target Name="_LaunchPadApiMediatorGenerators" BeforeTargets="GenerateMSBuildEditorConfigFileCore">
         <ItemGroup>
             <_LaunchPadApiMediatorGenerator
