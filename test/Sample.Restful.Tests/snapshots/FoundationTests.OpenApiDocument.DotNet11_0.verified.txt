@@ -156,12 +156,14 @@
             ]
           },
           partner: {
+            minLength: 1,
             type: [
               null,
               string
             ]
           },
           payload: {
+            minLength: 1,
             type: [
               null,
               string
@@ -169,6 +171,7 @@
           },
           payloadWeightKg: {
             format: double,
+            minimum: 0,
             pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
             type: [
               number,
@@ -182,6 +185,10 @@
             $ref: #/components/schemas/Instant
           }
         },
+        required: [
+          partner,
+          payload
+        ],
         type: object,
         x-schema-id: CreateLaunchRecordRequest
       },

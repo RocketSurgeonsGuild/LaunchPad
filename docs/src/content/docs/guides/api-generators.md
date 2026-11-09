@@ -350,6 +350,34 @@ Another mediator can be described with two assembly attributes:
 A profile without a `SenderType` dispatches through each request kind's `HandlerInterface`. An operation the profile can't dispatch is
 skipped (LPAD1016).
 
+## Patch operations
+
+A patch operation's request carries only the changes to another operation's request: it implements `IPropertyTracking<TRequest>`, and
+the property tracking generator gives it an `Assigned<T>` member for each property of `TRequest` and an `ApplyChanges` method. Its handler
+is generated too. Declare the handler class `partial`, with the mediator's handler interface and the services it needs, including the
+mediator's sender, and implement `GetRequest`, which loads the current request:
+
+```csharp
+public partial record PatchRequest : IRequest<RocketModel>, IPropertyTracking<Request>
+{
+    public RocketId Id { get; init; }
+}
+
+internal partial class EditRocketHandler(RocketDbContext dbContext, IMediator mediator)
+    : IRequestHandler<Request, RocketModel>, IRequestHandler<PatchRequest, RocketModel>
+{
+    public async ValueTask<RocketModel> Handle(Request request, CancellationToken cancellationToken) => /* ... */;
+
+    private partial async ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+        MapRequest(await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException());
+}
+```
+
+The generated handle method applies the patch to that request and sends the result through the mediator, so the full request is validated
+like any other. The handle method's shape (`Task<T>` or `ValueTask<T>`, the cancellation token) comes from the mediator's handler
+interface, and the handler interface is written in your source, so a mediator's own source generator (Mediator, ZeroAlloc.Mediator) still
+finds the handler. A profile without a sender (Immediate.Handlers) can't send the patched request (LPAD1025).
+
 ## Native AOT
 
 Generated Minimal API endpoints don't rely on the Request Delegate Generator (which can't see generated code): they parse route, query and
@@ -387,6 +415,9 @@ filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` an
 | LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                                 |
 | LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`.       |
 | LPAD1024 | Warning  | An operation has an API version, but the server lacks the Asp.Versioning package for its transport. |
+| LPAD1025 | Error    | A patch handler has no constructor parameter, field or property of the mediator's sender type.      |
+| LPAD1026 | Error    | A patch handler is nested in a type that isn't `partial`.                                           |
+| LPAD1027 | Error    | A patch handler's interface doesn't return `Task<T>` or `ValueTask<T>`.                             |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 belonged to the generated clients, which were removed; the IDs aren't reused.
 
