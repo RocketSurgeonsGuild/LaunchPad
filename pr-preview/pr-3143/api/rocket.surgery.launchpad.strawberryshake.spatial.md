@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.StrawberryShake.Spatial
 
 - Package: `Rocket.Surgery.LaunchPad.StrawberryShake.Spatial`
-- Version: `2.0.1-pr.1158`
+- Version: `2.0.1-pr.1161`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.StrawberryShake.Spatial](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial)
 
