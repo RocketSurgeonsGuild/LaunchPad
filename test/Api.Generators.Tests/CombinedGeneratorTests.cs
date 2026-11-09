@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Api.Generators.Tests;
