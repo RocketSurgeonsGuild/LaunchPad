@@ -4,6 +4,11 @@
         <DefineConstants>$(DefineConstants);ROSLYN_CURRENT</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
+        <!-- net11.0's SDK imports it implicitly and net10.0's doesn't: importing it for both keeps the formatter, which sees one target, from
+             removing a using the other target needs. -->
+        <Using Include="System.Net.Http.Json" />
+    </ItemGroup>
+    <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
