@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `9`
 
-The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHORIZED`.
+The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 
 <a id="clone"></a>
 

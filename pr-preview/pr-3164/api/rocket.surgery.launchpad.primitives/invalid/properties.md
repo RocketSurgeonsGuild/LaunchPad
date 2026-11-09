@@ -5,7 +5,7 @@
 - Kind: `Properties`
 - Members: `1`
 
-The request is invalid. HTTP 400, gRPC `InvalidArgument`, GraphQL `INVALID`.
+The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 <a id="errors"></a>
 
@@ -15,7 +15,7 @@ The request is invalid. HTTP 400, gRPC `InvalidArgument`, GraphQL `INVALID`.
 - Modifiers: `get; init`
 - Returns: `IReadOnlyDictionary<string, string[]>`
 
-The validation errors, by property name.
+The errors, by property name.
 
 ```csharp
 public IReadOnlyDictionary<string, string[]> Errors { get; init; }

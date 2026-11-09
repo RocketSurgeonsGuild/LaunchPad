@@ -2,7 +2,7 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1169`
+- Version: `2.0.1-pr.1170`
 - Namespace: `Rocket.Surgery.LaunchPad.Primitives`
 - Target framework: `net10.0`
 - Implements: [IProblemDetailsData](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/iproblemdetailsdata.md), `IEquatable<Problem>`

@@ -5,7 +5,7 @@
 - Kind: `Constructors`
 - Members: `1`
 
-The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHORIZED`.
+The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 
 <a id="constructor"></a>
 <a id="constructor-string"></a>
@@ -14,7 +14,7 @@ The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUT
 
 - Name: `Constructor(string?)`
 
-The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHORIZED`.
+The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 
 ```csharp
 public record Unauthorized

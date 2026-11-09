@@ -289,7 +289,7 @@ or the same shape written by hand. The generators know it by `System.Runtime.Com
 are the parameter types of its public one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is
 the first case that is neither, and a union has exactly one.
 
-LaunchPad's standard problem cases in `Rocket.Surgery.LaunchPad.Primitives` (`NotFound`, `Invalid`, `Unauthorized`, `Forbidden`,
+LaunchPad's standard problem cases in `Rocket.Surgery.LaunchPad.Primitives` (`NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`,
 `Conflict`) match the name rules below. A union may list `Problem` itself as a case: it answers each standard case by its runtime type, and
 any other problem as 500. A problem's detail, title, link, instance and properties fill the transport's error shape (below).
 
@@ -305,13 +305,14 @@ The value case answers like a plain response: 200, 201 with `[Creates]`, 204 for
 (`LaunchRocketResult?`) is nullable and null. An error case's status comes from `[ApiError]` on its type, or else from its name, ignoring an `Error`, `Exception`, `Problem`,
 `Failure` or `Result` ending:
 
-| Name starts or ends with          | HTTP | gRPC                 | GraphQL code      |
-| --------------------------------- | ---- | -------------------- | ----------------- |
-| `NotFound`                        | 404  | `NotFound`           | `NOT_FOUND`       |
-| `Unauthorized`, `Unauthenticated` | 401  | `Unauthenticated`    | `UNAUTHENTICATED` |
-| `Forbidden`                       | 403  | `PermissionDenied`   | `FORBIDDEN`       |
-| `Conflict`                        | 409  | `FailedPrecondition` | `CONFLICT`        |
-| `Validation`, `Invalid`           | 400  | `InvalidArgument`    | `BAD_USER_INPUT`  |
+| Name starts or ends with            | HTTP | gRPC                 | GraphQL code      |
+| ----------------------------------- | ---- | -------------------- | ----------------- |
+| `NotFound`                          | 404  | `NotFound`           | `NOT_FOUND`       |
+| `Unauthorized`, `Unauthenticated`   | 401  | `Unauthenticated`    | `UNAUTHENTICATED` |
+| `Forbidden`                         | 403  | `PermissionDenied`   | `FORBIDDEN`       |
+| `Conflict`                          | 409  | `FailedPrecondition` | `CONFLICT`        |
+| `Validation`, `UnprocessableEntity` | 422  | `InvalidArgument`    | `BAD_USER_INPUT`  |
+| `Invalid`                           | 400  | `InvalidArgument`    | `BAD_USER_INPUT`  |
 
 `[ApiError(statusCode)]` sets the HTTP status; its gRPC status and GraphQL code default to the ones for that status. A second case that
 matches no name and has no `[ApiError]` is LPAD1025. Each transport carries the case name, so cases that share a status stay distinct:

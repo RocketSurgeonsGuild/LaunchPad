@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `9`
 
-The request is invalid. HTTP 400, gRPC `InvalidArgument`, GraphQL `INVALID`.
+The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 <a id="clone"></a>
 

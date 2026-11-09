@@ -2,13 +2,13 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1169`
+- Version: `2.0.1-pr.1170`
 - Namespace: `Rocket.Surgery.LaunchPad.Primitives`
 - Target framework: `net10.0`
 - Inherits: [Problem](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/problem.md)
 - Implements: `IEquatable<Invalid>`
 
-The request is invalid. HTTP 400, gRPC `InvalidArgument`, GraphQL `INVALID`.
+The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 ## Definition
 
@@ -25,11 +25,11 @@ public sealed record Invalid
 
 ## Constructors
 
-- [Invalid(string?)](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/invalid/constructors.md#constructor-string) -- The request is invalid. HTTP 400, gRPC `InvalidArgument`, GraphQL `INVALID`.
+- [Invalid(string?)](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/invalid/constructors.md#constructor-string) -- The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 ## Properties
 
-- [Errors](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/invalid/properties.md#errors) : `IReadOnlyDictionary<string, string[]>` `get; init` -- The validation errors, by property name.
+- [Errors](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/invalid/properties.md#errors) : `IReadOnlyDictionary<string, string[]>` `get; init` -- The errors, by property name.
 
 ## Methods
 

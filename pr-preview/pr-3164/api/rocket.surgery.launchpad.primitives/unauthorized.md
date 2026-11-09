@@ -2,13 +2,13 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1169`
+- Version: `2.0.1-pr.1170`
 - Namespace: `Rocket.Surgery.LaunchPad.Primitives`
 - Target framework: `net10.0`
 - Inherits: [Problem](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/problem.md)
 - Implements: `IEquatable<Unauthorized>`
 
-The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHORIZED`.
+The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 
 ## Definition
 
@@ -25,7 +25,7 @@ public sealed record Unauthorized
 
 ## Constructors
 
-- [Unauthorized(string?)](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/unauthorized/constructors.md#constructor-string) -- The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHORIZED`.
+- [Unauthorized(string?)](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/unauthorized/constructors.md#constructor-string) -- The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 
 ## Methods
 
