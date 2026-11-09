@@ -22,4 +22,8 @@
         <ProjectReference Include="../Api/Functional/Clients/Api.Functional.GrpcClient/Api.Functional.GrpcClient.csproj" />
         <ProjectReference Include="../Api/Functional/Clients/Api.Functional.GraphQLClient/Api.Functional.GraphQLClient.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <!-- The .NET 11 SDK's implicit usings have it and the .NET 10 SDK's don't: one set of usings for both target frameworks. -->
+        <Using Include="System.Net.Http.Json" />
+    </ItemGroup>
 </Project>
