@@ -233,5 +233,7 @@ internal static class GeneratorTestContextBuilderExtensions
     public static GeneratorTestContextBuilder IgnoreHelperSources(this GeneratorTestContextBuilder builder) =>
         builder
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ServerHelpers.g.cs")
-           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs");
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GrpcHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GraphQLHelpers.g.cs");
 }

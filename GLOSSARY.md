@@ -44,6 +44,18 @@ _Avoid_: Marker, mapper, endpoint group, API surface
 The name an operation host gives its operations: the middle of their routes, the gRPC package and service.
 _Avoid_: Area, module, route prefix
 
+**Union response**:
+An operation's response that is one of a fixed set of cases, one value case and any number of error cases, so the handler reports an error by returning it instead of throwing.
+_Avoid_: Result type, OneOf, discriminated result
+
+**Value case**:
+The case of a union response that answers as the operation's successful response.
+_Avoid_: Success case, ok case
+
+**Error case**:
+A case of a union response that answers as an error on every transport, carrying its case name and its own status.
+_Avoid_: Failure, error result, fault
+
 **Mediator profile**:
 The description of how one mediator library shapes its requests, dispatches them and declares handlers, which lets operations work with any mediator.
 _Avoid_: Mediator adapter, mediator configuration

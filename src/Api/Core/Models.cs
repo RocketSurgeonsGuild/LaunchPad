@@ -122,6 +122,7 @@ internal sealed record OperationModel(
     bool ResponseIsMessage,
     bool RequestIsStruct,
     bool ResponseIsStruct,
+    UnionModel? Union,
     LocationInfo? Location
 )
 {
@@ -129,6 +130,12 @@ internal sealed record OperationModel(
 
     /// <summary>The type the transport carries: the input type when one is declared, otherwise the request.</summary>
     public string WireType => InputType ?? RequestType;
+
+    /// <summary>The type the handler returns: the union for a union response, otherwise the response.</summary>
+    public string? DispatchResponseType => Union?.Type ?? ResponseType;
+
+    /// <summary>The item type a stream operation's handler produces: the union for a stream of unions, otherwise the response.</summary>
+    public string? StreamItemType => Union is { } union ? union.Nullable ? union.Type + "?" : union.Type : ResponseTypeNotNull;
 }
 
 internal sealed record HostModel(

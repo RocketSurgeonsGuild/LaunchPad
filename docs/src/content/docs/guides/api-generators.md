@@ -279,9 +279,55 @@ builder.Services.AddGraphQLServer().AddQueryType().AddMutationType().AddRocketMu
 | `T?`                  | the value, or 404 for `null`                                                         |
 | none / `Unit`         | 204                                                                                  |
 | `IAsyncEnumerable<T>` | newline-delimited JSON (`application/x-ndjson`), one item per line, flushed per item |
+| a union               | its value case as above, each error case as a problem (see below)                    |
 
 A binding failure answers 400, with a ProblemDetails body when the application calls `AddProblemDetails()`. Generated endpoints describe
 their parameters, bodies and responses to ApiExplorer, so OpenAPI documents them like hand-written ones.
+
+### Union results
+
+A handler can return a union of its value and its error cases instead of throwing (ADR-0004). A union is a type marked with
+`System.Runtime.CompilerServices.UnionAttribute`: what a C# 15 `union` declaration lowers to on .NET 11, the same shape written by hand, or
+LaunchPad's portable `[Union] partial struct` (#3147). Its case types are the parameter types of its public
+one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is the first case that is neither.
+
+```csharp
+public sealed record RocketNotFound(Guid Id);
+[ApiError(422, GrpcStatus = 9, GraphQLCode = "UNPROCESSABLE")] public sealed record NotReady(string Reason);
+
+public union LaunchRocketResult(RocketModel, RocketNotFound, NotReady);
+public static class LaunchRocket { public sealed record Request(Guid Id) : IRequest<LaunchRocketResult>; }
+```
+
+The value case answers like a plain response: 200, 201 with `[Creates]`, 204 for a unit (`Unit`, `ValueTuple`), 404 when it or the union
+(`LaunchRocketResult?`) is nullable and null. An error case's status comes from `[ApiError]` on its type, or else from its name, ignoring an `Error`, `Exception`, `Problem`,
+`Failure` or `Result` ending:
+
+| Name starts or ends with          | HTTP | gRPC                 | GraphQL code   |
+| --------------------------------- | ---- | -------------------- | -------------- |
+| `NotFound`                        | 404  | `NotFound`           | `NOT_FOUND`    |
+| `Unauthorized`, `Unauthenticated` | 401  | `Unauthenticated`    | `UNAUTHORIZED` |
+| `Forbidden`                       | 403  | `PermissionDenied`   | `FORBIDDEN`    |
+| `Conflict`                        | 409  | `FailedPrecondition` | `CONFLICT`     |
+| `Validation`, `Invalid`           | 400  | `InvalidArgument`    | `INVALID`      |
+
+`[ApiError(statusCode)]` sets the HTTP status; its gRPC status and GraphQL code default to the ones for that status. A second case that
+matches no name and has no `[ApiError]` is LPAD1025. Each transport carries the case name, so cases that share a status stay distinct:
+
+- **HTTP**: ProblemDetails (`application/problem+json`) with the status, the case name in a `case` extension and the case's members as
+  camel-cased extensions. Each status is described in OpenAPI as a ProblemDetails response; a schema per case is planned with the OpenAPI
+  transformers (#3149).
+- **gRPC**: an `RpcException` with the status, the case name in the `case` trailer and the case, serialized by protobuf-net, in the
+  `case-bin` trailer (left out for a case without members). A case with members needs `[DataContract]` or `[ProtoContract]` (LPAD1014), and
+  `GetProto()` declares its message.
+- **GraphQL**: an error whose `extensions.code` is the code from the table (or `[ApiError(GraphQLCode)]`), with the case name in
+  `extensions.case` and the case's members as extensions.
+
+A stream of unions (`IAsyncEnumerable<LaunchRocketResult>`) streams its value cases and ends with the first error case: over HTTP, as the
+response's ProblemDetails when nothing was written yet, otherwise as a last NDJSON line holding the problem; over gRPC, as the `RpcException`
+above. GraphQL hosts skip streams (LPAD1015).
+
+`NotFoundException` and a `null` response keep answering 404 for handlers that don't return a union.
 
 ## Generating clients
 
@@ -385,6 +431,7 @@ filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` an
 | LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                                 |
 | LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`.       |
 | LPAD1024 | Warning  | An operation has an API version, but the server lacks the Asp.Versioning package for its transport. |
+| LPAD1025 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.     |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 belonged to the generated clients, which were removed; the IDs aren't reused.
 

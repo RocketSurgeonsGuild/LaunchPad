@@ -87,8 +87,8 @@ internal static class ServerEmit
         yield return Var("__request", operation.InputType is { } ? Invoke(Member(Id("__wire"), "Create")) : Id("__wire"));
     }
 
-    /// <summary>The Location of a created resource: the target operation's full route, filled from <c>__response</c>'s members.</summary>
-    public static ExpressionSyntax LocationSyntax(string route, OperationModel operation, string generatedNamespace)
+    /// <summary>The Location of a created resource: the target operation's full route, filled from the response's members.</summary>
+    public static ExpressionSyntax LocationSyntax(string route, OperationModel operation, string generatedNamespace, ExpressionSyntax response)
     {
         var path = "/" + route.Trim('/');
         var tokens = RouteText.Tokens(route).ToArray();
@@ -99,7 +99,7 @@ internal static class ServerEmit
             var start = path.IndexOf('{', position);
             var end = path.IndexOf('}', start);
             if (start > position) parts.Add(Literal(path[position..start]));
-            var value = Invoke(Member(generatedNamespace + ".ApiFormat", "Value"), Member(Id("__response"), operation.CreatedLocationTokens[index]));
+            var value = Invoke(Member(generatedNamespace + ".ApiFormat", "Value"), Member(response, operation.CreatedLocationTokens[index]));
             parts.Add(Invoke(Member("global::System.Uri", "EscapeDataString"), value));
             position = end + 1;
         }
@@ -107,6 +107,52 @@ internal static class ServerEmit
         if (position < path.Length) parts.Add(Literal(path[position..]));
         return Concat(parts);
     }
+
+    /// <summary>
+    ///     What a server does with a union response in <c>__response</c> (or a stream item in <paramref name="response" />): its value case (<c>__value</c>, null for a void value case), then each
+    ///     error case (<c>__error0</c>, …), then a null value (a nullable value case, or a default union) through <paramref name="onNull" />. A
+    ///     union holding none of its cases is a bug in the handler, so it throws.
+    /// </summary>
+    public static IEnumerable<StatementSyntax> UnionResult(
+        OperationModel operation,
+        Func<ExpressionSyntax?, IEnumerable<StatementSyntax>> onValue,
+        Func<UnionCaseModel, ExpressionSyntax, IEnumerable<StatementSyntax>> onError,
+        Func<IEnumerable<StatementSyntax>>? onNull,
+        string response = "__response"
+    )
+    {
+        var union = operation.Union!;
+        // A nullable union reads its case with ?. (on a Nullable<U>, that reaches U's own Value), so null falls through to onNull.
+        var target = union.ValueInterface is { } contract ? Parenthesized(Cast(Type(union.Nullable ? contract + "?" : contract), Id(response))) : Id(response);
+        var value = union.Nullable ? ConditionalMember(target, "Value") : Member(target, "Value");
+        yield return Var("__case", value);
+        yield return If(
+            IsType(Id("__case"), Type(operation.ResponseTypeNotNull!), "__value"),
+            Block(onValue(operation.Kind == RequestKind.Void ? null : Id("__value")))
+        );
+        // Pattern variables of an if's condition live in the enclosing block, so each case gets its own.
+        for (var index = 0; index < union.Errors.Length; index++)
+        {
+            var error = union.Errors[index];
+            var name = $"__error{index}";
+            yield return If(IsType(Id("__case"), Type(error.Type), name), Block(onError(error, Id(name))));
+        }
+
+        if (onNull is { }) yield return If(IsNull(Id("__case")), Block(onNull()));
+        yield return Throw(
+            New(
+                Type("global::System.InvalidOperationException"),
+                Literal($"{operation.RequestDisplayName} returned a {union.Type.Replace("global::", "")} that holds none of its cases.")
+            )
+        );
+    }
+
+    /// <summary>
+    ///     An error case's members, as the arguments of the generated problem helpers: <c>"id", __error.Id, …</c> after the status, case name
+    ///     and transport code.
+    /// </summary>
+    public static IEnumerable<ExpressionSyntax> ErrorMembers(UnionCaseModel error, ExpressionSyntax value) =>
+        error.Members.SelectMany(m => new[] { Literal(m.WireName), Member(value, m.Name) });
 
     /// <summary>The version an operation is served under: its own, or its host's.</summary>
     public static string? Version(HostModel host, OperationModel operation) => operation.Version ?? host.Version;

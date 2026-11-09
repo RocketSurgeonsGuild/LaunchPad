@@ -25,8 +25,12 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(hosts, static (output, models) => Emit(output, models));
     }
 
+    private const string Generated = "global::Rocket.Surgery.LaunchPad.Api.Generated.Grpc";
+
     private static void Emit(SourceProductionContext output, EquatableArray<HostModel> hosts)
     {
+        // The helpers use the transport's library, so only a project with a host of this kind gets them.
+        if (!hosts.IsEmpty) output.AddSource("Rocket.Surgery.LaunchPad.Api.Generated.GrpcHelpers.g.cs", GrpcHelpers);
         foreach (var host in hosts)
         {
             foreach (var diagnostic in host.Diagnostics) output.ReportDiagnostic(diagnostic.ToDiagnostic());
@@ -79,19 +83,25 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
         return Render(host.Namespace, [contract, implementation, extensions]);
     }
 
-    // The service's .proto, for generating clients in any language: protobuf-net's schema of the generated contract.
-    private static MemberDeclarationSyntax GetProto(HostModel host) =>
-        Method(
-                Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword),
-                Type("string"),
-                "GetProto",
-                Parameters(),
-                [
-                    Statement(Invoke(Id("ConfigureGrpcModel"))),
-                    Return(Invoke(GenericMember(New(Type("global::ProtoBuf.Grpc.Reflection.SchemaGenerator")), "GetSchema", SyntaxFactory.IdentifierName(GrpcEmit.ContractName(host))))),
-                ]
-            )
+    // The service's .proto, for generating clients in any language: protobuf-net's schema of the generated contract, plus the messages of the
+    // union error cases its operations send in the case-bin trailer, so clients can decode them.
+    private static MemberDeclarationSyntax GetProto(HostModel host)
+    {
+        var generator = Type("global::ProtoBuf.Grpc.Reflection.SchemaGenerator");
+        var contract = SyntaxFactory.IdentifierName(GrpcEmit.ContractName(host));
+        var cases = GrpcEmit.ErrorCaseMessages(host.Operations).ToArray();
+        IEnumerable<StatementSyntax> body = cases.Length == 0
+            ? [Statement(Invoke(Id("ConfigureGrpcModel"))), Return(Invoke(GenericMember(New(generator), "GetSchema", contract)))]
+            :
+            [
+                Statement(Invoke(Id("ConfigureGrpcModel"))),
+                Var("__generator", New(generator)),
+                .. cases.Select(c => Statement(Invoke(Member(Member(Member(Id("__generator"), "Options"), "Types"), "Add"), TypeOf(Type(c.Type))))),
+                Return(Invoke(GenericMember(Id("__generator"), "GetSchema", contract))),
+            ];
+        return Method(Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword), Type("string"), "GetProto", Parameters(), body)
            .Summary($"The <c>.proto</c> of service <c>{GrpcEmit.PackageName(host)}.{GrpcEmit.ServiceName(host)}</c>, to generate clients from (protobuf-net.Grpc.Reflection).");
+    }
 
     private static MethodDeclarationSyntax Operation(HostModel host, ProfileModel profile, OperationModel operation, string service)
     {
@@ -113,6 +123,56 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
             Var(Ct, Member(Id("context"), "CancellationToken")),
             Var("__request", operation.InputType is { } ? Invoke(Member(wire, "Create")) : wire),
         };
+        var notFound = Throw(
+            New(
+                Type("global::Grpc.Core.RpcException"),
+                New(Type("global::Grpc.Core.Status"), Member("global::Grpc.Core.StatusCode", "NotFound"), Literal(operation.Name + " found nothing"))
+            )
+        );
+        if (operation.Union is { })
+        {
+            // A union: the value case answers as usual, each error case is the case's status with its name and members in the trailers. A
+            // stream of unions relays its value cases and ends with the first error case.
+            StatementSyntax[] Error(UnionCaseModel error, ExpressionSyntax value) =>
+            [
+                Throw(
+                    Invoke(
+                        Member($"{Generated}.ApiGrpcErrors", "Error"),
+                        Member("global::Grpc.Core.StatusCode", error.GrpcStatus),
+                        Literal(error.Name),
+                        error.Members.IsEmpty ? Null : value
+                    )
+                ),
+            ];
+            ExpressionSyntax Wire(ExpressionSyntax value) => operation.ResponseIsMessage ? value : New(GrpcEmit.WireResponse(host, operation), value);
+            if (operation.Kind == RequestKind.Stream)
+            {
+                body.Add(
+                    AwaitForEach(
+                        "__item",
+                        ServerDispatch.Stream(send),
+                        Id(Ct),
+                        Block(ServerEmit.UnionResult(operation, value => [YieldReturn(Wire(value!)), Continue], Error, null, "__item"))
+                    )
+                );
+            }
+            else
+            {
+                body.Add(Var("__response", Await(send.Call)));
+                body.AddRange(
+                    ServerEmit.UnionResult(
+                        operation,
+                        value => [value is null ? Return() : Return(Wire(value))],
+                        Error,
+                        operation.ResponseNullable ? () => [notFound] : null
+                    )
+                );
+            }
+
+            return Method(Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword), returnType, operation.Name, parameters, body)
+               .Summary($"Sends <see cref=\"{Cref(operation.RequestType)}\" /> through the mediator.");
+        }
+
         switch (operation.Kind)
         {
             case RequestKind.Stream:
@@ -129,14 +189,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
             case RequestKind.Infer:
             default:
                 body.Add(Var("__response", Await(send.Call)));
-                if (operation.ResponseNullable)
-                {
-                    var notFound = New(
-                        Type("global::Grpc.Core.RpcException"),
-                        New(Type("global::Grpc.Core.Status"), Member("global::Grpc.Core.StatusCode", "NotFound"), Literal(operation.Name + " found nothing"))
-                    );
-                    body.Add(If(IsNull(Id("__response")), Throw(notFound)));
-                }
+                if (operation.ResponseNullable) body.Add(If(IsNull(Id("__response")), notFound));
 
                 var value = operation.ResponseIsNullableValueType ? Member(Id("__response"), "Value") : Id("__response");
                 body.Add(Return(operation.ResponseIsMessage ? value : New(GrpcEmit.WireResponse(host, operation), value)));
@@ -146,4 +199,33 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
         return Method(isAsync ? Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword) : Modifiers(SyntaxKind.PublicKeyword), returnType, operation.Name, parameters, body)
                         .Summary($"Sends <see cref=\"{Cref(operation.RequestType)}\" /> through the mediator.");
     }
+
+    private const string GrpcHelpers = """
+// <auto-generated/>
+#nullable enable
+#pragma warning disable
+namespace Rocket.Surgery.LaunchPad.Api.Generated.Grpc
+{
+    /// <summary>
+    ///     Answers an error case of a union response: an RpcException with the case's status, its name in the <c>case</c> trailer and the case
+    ///     itself, serialized by protobuf-net, in the <c>case-bin</c> trailer (left out for a case without members).
+    /// </summary>
+    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
+    internal static class ApiGrpcErrors
+    {
+        public static global::Grpc.Core.RpcException Error(global::Grpc.Core.StatusCode status, string caseName, object? value)
+        {
+            var trailers = new global::Grpc.Core.Metadata { { "case", caseName } };
+            if (value is not null)
+            {
+                using var stream = new global::System.IO.MemoryStream();
+                global::ProtoBuf.Meta.RuntimeTypeModel.Default.Serialize(stream, value);
+                trailers.Add("case-bin", stream.ToArray());
+            }
+
+            return new global::Grpc.Core.RpcException(new global::Grpc.Core.Status(status, caseName), trailers, caseName);
+        }
+    }
+}
+""";
 }

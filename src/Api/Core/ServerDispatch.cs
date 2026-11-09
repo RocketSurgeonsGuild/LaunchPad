@@ -33,12 +33,13 @@ internal static class ServerDispatch
         {
             return profile.StreamMethod is { } stream
                 ? (Invoke(Member(sender, stream), request, cancellationToken), false)
-                : (Invoke(GenericMember(sender, profile.SendMethod, AsyncEnumerable(Type(operation.ResponseTypeNotNull!))), request, cancellationToken), true);
+                : (Invoke(GenericMember(sender, profile.SendMethod, AsyncEnumerable(Type(operation.StreamItemType!))), request, cancellationToken), true);
         }
 
         // A request with no marker interface can't let the sender infer its response, so the call names it (Foundatio's InvokeAsync<T>).
-        var method = ( profile.SendNeedsResponseTypeArgument || operation.Markerless ) && operation.Kind == RequestKind.Unary
-            ? GenericMember(sender, profile.SendMethod, Type(operation.ResponseType!))
+        // A union response is sent as the union, even when its value case is void.
+        var method = ( profile.SendNeedsResponseTypeArgument || operation.Markerless ) && ( operation.Kind == RequestKind.Unary || operation.Union is { } )
+            ? GenericMember(sender, profile.SendMethod, Type(operation.DispatchResponseType!))
             : Member(sender, profile.SendMethod);
         return (Invoke(method, request, cancellationToken), false);
     }

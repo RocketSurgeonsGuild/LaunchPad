@@ -28,6 +28,7 @@ internal static class KnownNames
     public const string ApiBodyAttribute = Namespace + ".ApiBodyAttribute";
     public const string ApiServiceAttribute = Namespace + ".ApiServiceAttribute";
     public const string ApiIgnoreAttribute = Namespace + ".ApiIgnoreAttribute";
+    public const string ApiErrorAttribute = Namespace + ".ApiErrorAttribute";
 
     public const string ControllerBase = "Microsoft.AspNetCore.Mvc.ControllerBase";
     public const string EndpointRouteBuilder = "Microsoft.AspNetCore.Routing.IEndpointRouteBuilder";

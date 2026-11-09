@@ -129,10 +129,16 @@ internal static class ApiDiagnostics
         "{0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers"
     );
 
+    public static DiagnosticDescriptor UnionCaseWithoutStatus { get; } = Error(
+        "LPAD1025",
+        "Union error case has no status",
+        "{1}, which {2} returns, has {0} besides its value case, but {0} has no status: its name starts or ends with none of {3}, and it has no [ApiError(statusCode)]"
+    );
+
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
-        MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
+        MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped, UnionCaseWithoutStatus,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);
