@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3151/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1185`
+- Version: `2.0.1-pr.1191`
 - Namespace: `Rocket.Surgery.LaunchPad.Primitives`
 - Target framework: `net10.0`
 - Inherits: `Exception`

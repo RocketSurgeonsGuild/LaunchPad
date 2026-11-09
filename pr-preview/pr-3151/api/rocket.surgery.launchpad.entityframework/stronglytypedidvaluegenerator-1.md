@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.EntityFramework](/LaunchPad/pr-preview/pr-3151/api/rocket.surgery.launchpad.entityframework.md)
-- Version: `2.0.1-pr.1185`
+- Version: `2.0.1-pr.1191`
 - Namespace: `Rocket.Surgery.LaunchPad.EntityFramework`
 - Target framework: `net10.0`
 - Inherits: `ValueGenerator<T>`
