@@ -21,10 +21,18 @@
     <Import Project="$(MSBuildThisFileDirectory)src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets" />
     <!--
         The same for LaunchPad.Primitives, whose targets write an executable's JSON context with the task of src/Primitives.Tasks. Here the task
-        comes from that project's output instead of the package's tasks folder; the samples build it first (sample/Directory.Build.targets).
+        comes from that project's output instead of the package's tasks folder; every project that writes a context builds it first.
     -->
     <PropertyGroup>
         <LaunchPadPrimitivesTasksAssembly>$(MSBuildThisFileDirectory)src/Primitives.Tasks/bin/$(Configuration)/netstandard2.0/Rocket.Surgery.LaunchPad.Primitives.Tasks.dll</LaunchPadPrimitivesTasksAssembly>
     </PropertyGroup>
     <Import Project="$(MSBuildThisFileDirectory)src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.JsonContext.targets" />
+    <!-- Every project that writes a JSON context builds the task first, whatever order the solution builds in. -->
+    <ItemGroup Condition="'$(LaunchPadGenerateJsonContext)' == 'true'">
+        <ProjectReference
+            Include="$(MSBuildThisFileDirectory)src/Primitives.Tasks/Rocket.Surgery.LaunchPad.Primitives.Tasks.csproj"
+            PrivateAssets="all"
+            ReferenceOutputAssembly="false"
+        />
+    </ItemGroup>
 </Project>
