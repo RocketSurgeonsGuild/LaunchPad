@@ -88,11 +88,16 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
     };
 
     /// <summary>Compiles a contracts project with the base package's attributes and returns it as a reference.</summary>
-    protected async Task<GeneratorTestResults> CompileContracts(Mediator mediator, string source, params Assembly[] references)
+    protected Task<GeneratorTestResults> CompileContracts(Mediator mediator, string source, params Assembly[] references) =>
+        CompileContracts(mediator, source, LanguageVersion.Preview, references);
+
+    /// <summary>Compiles a contracts project with the given language version (a native <c>union</c> declaration needs C# 15).</summary>
+    protected async Task<GeneratorTestResults> CompileContracts(Mediator mediator, string source, LanguageVersion languageVersion, params Assembly[] references)
     {
         var result = await GeneratorTestContextBuilder
                           .Create()
                           .WithLogger(Logger)
+                          .WithLanguageVersion(languageVersion)
                           .WithAssemblyLoadContext(AssemblyLoadContext)
                           .WithProjectName("Contracts")
                           .WithGenerator<AttributesGenerator>()
@@ -233,5 +238,7 @@ internal static class GeneratorTestContextBuilderExtensions
     public static GeneratorTestContextBuilder IgnoreHelperSources(this GeneratorTestContextBuilder builder) =>
         builder
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ServerHelpers.g.cs")
-           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs");
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GrpcHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GraphQLHelpers.g.cs");
 }

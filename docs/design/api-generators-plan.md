@@ -376,6 +376,7 @@ The generated `RocketsClient` (HTTP client host, its mediator handlers and `AddR
 | LPAD1021 | Warning  | `[OperationHost]` setting doesn't apply to the inferred transport.                                                                                    |
 | LPAD1023 | Warning  | A `[Creates]` response has no location target on this transport, or a route token has no matching response member; it answers 201 without a Location. |
 | LPAD1024 | Warning  | An operation has an API version, but the server project doesn't reference Asp.Versioning, so it isn't mapped.                                         |
+| LPAD1025 | Error    | A union response has a case besides its value case that matches no case name and has no `[ApiError]`.                                                 |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 were retired with the client generators (2026-11-08); their IDs are not reused.
 
@@ -437,7 +438,7 @@ The extra ZeroAlloc `Send` overloads (2) and the Foundatio module registration (
 - GraphQL query and mutation hosts with explicit input names and `Add{Host}(this IRequestExecutorBuilder)`. This removes `GraphqlMutationActionBodyGenerator` and migrates `Sample.Graphql` (`Input` + `Create()`).
 - ~~GraphQL client hosts (document + variables over `HttpClient`, reading `data.{field}`).~~ Built, then removed 2026-11-08.
 
-**Phase 4, decided 2026-11-08, not built.** Three items. Subscriptions were dropped: stream operations on GraphQL hosts stay LPAD1015.
+**Phase 4, decided 2026-11-08.** Three items; union results are built (below). Subscriptions were dropped: stream operations on GraphQL hosts stay LPAD1015.
 
 _Union results_ ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148); depends on [#3147](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3147), which standardizes LaunchPad's union types: native unions on .NET 11+, a generated equivalent on .NET 10 until .NET 12):
 
@@ -445,6 +446,13 @@ _Union results_ ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues
 - The value case answers 200 (201 with `[Creates]`). An error case's status comes from its type name: `NotFound` → 404, `Invalid`/`Validation` → 400, `Unauthorized` → 401, `Forbidden` → 403, `Conflict` → 409, with the matching gRPC status and GraphQL code.
 - An attribute on the case type overrides the status (HTTP status, gRPC status, GraphQL code). An error case that matches no name and has no attribute is an **error** diagnostic.
 - On the wire each transport carries the case name and the case's members in its own error shape: HTTP ProblemDetails with a `case` extension and the members as extensions; gRPC the status plus a `case` trailer with the serialized case; GraphQL an error with `extensions.code` set to the case name and the members in `extensions`. The case name keeps cases that share a status distinct for any client.
+- **Built** ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148)), ahead of #3147, against C# 15's union contract:
+    - A union is a type with `System.Runtime.CompilerServices.UnionAttribute` or `IUnion` (by full name: Roslyn doesn't surface `[Union]` on a native `union` declaration or a union from metadata); its cases are its public one-parameter constructors' parameter types, its current case `object? Value` (through `IUnion` when not public). This is #3147's detection contract (`docs/design/union-types.md`, section 4); `UnionResults.TryRead` is the one seam that knows it.
+    - An error case is known by its name or `[ApiError]`; the value case is the first case that is neither (#3147, rule 4), and another case that is neither is LPAD1025: a union has one value case (decided 2026-11-09). A `Problem` case answers each standard problem case of Primitives by its runtime type, then any other problem as 500, and a case implementing `IProblemDetailsData` fills the error shape's detail, title, type, instance and extensions from it. The value case becomes the operation's response, so everything else (201 and Location, nullable → 404, gRPC messages, GraphQL names) works on it unchanged; a mediator's `Unit` or `ValueTuple` as the value case is void. The handler is still dispatched with the union (`OperationModel.DispatchResponseType`).
+    - `[ApiError(statusCode, GrpcStatus = n, GraphQLCode = "…")]` overrides; names match at the start or end, after dropping an `Error`/`Exception`/`Problem`/`Failure`/`Result` ending. Unlisted statuses map to gRPC and GraphQL the way gRPC's HTTP gateway does.
+    - gRPC serializes the case with protobuf-net into a `case-bin` trailer (cases with members need a contract, LPAD1014, are added to `ConfigureGrpcModel()` and declared by `GetProto()`). GraphQL keeps the standard code in `extensions.code` and puts the case name in `extensions.case`, the key HTTP and gRPC use (decided 2026-11-09, ADR-0006).
+    - A nullable union (`U?`) answers null like a nullable value case. A stream of unions streams its value cases and ends with the first error case: HTTP answers the problem when nothing was written yet, else writes it as the last NDJSON line; gRPC throws as for unary.
+    - Clients: the generated client hosts are gone (2026-11-08), so a client sees the cases through the specs: OpenAPI gets a ProblemDetails response per error status, `GetProto()` declares the case messages, and the case name is on every error. A schema per case (a `oneOf` per status keyed on `case`) waits for #3149's transformers, registered automatically from the `Map{Host}()` endpoint metadata (decided 2026-11-09).
 
 _OpenAPI transformers_ ([#3149](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3149)):
 

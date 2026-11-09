@@ -1,8 +1,8 @@
 # Union types: one standard for .NET 10 and .NET 11+
 
-Status: **designed and built 2026-11-09** under [#3147](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3147). [#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148) (union results on every API transport) builds on the detection contract in [section 4](#4-the-detection-contract-for-other-generators).
+Status: **designed and built 2026-11-09** under [#3147](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3147). [#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148) (union responses on every API transport) builds on the detection contract in [section 4](#4-the-detection-contract-for-other-generators).
 
-Related: [api-generators-plan.md](api-generators-plan.md) (phase 4, union results), the C# 15 [unions tutorial](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/unions) and [feature specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-15.0/unions), and [UnionTypes.Toolkit](https://github.com/mattwar/UnionTypes.Toolkit), whose generator writes custom unions against the same specification.
+Related: [api-generators-plan.md](api-generators-plan.md) (phase 4, union responses), the C# 15 [unions tutorial](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/unions) and [feature specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-15.0/unions), and [UnionTypes.Toolkit](https://github.com/mattwar/UnionTypes.Toolkit), whose generator writes custom unions against the same specification.
 
 Contents:
 
@@ -180,14 +180,15 @@ This is what the API generators (#3148) and any other LaunchPad generator rely o
 1. **A type is a union** when it has an attribute whose class is named `System.Runtime.CompilerServices.UnionAttribute`, or implements an interface named `System.Runtime.CompilerServices.IUnion`. Match by full name, never by symbol identity: before .NET 11 every assembly carries its own embedded copy. Both checks are needed: Roslyn doesn't surface `[Union]` through `GetAttributes()` on a native `union` declaration or on a union read from metadata, and a portable union has no `IUnion` until the union generator runs.
 2. **Its cases** are the parameter types of its public instance constructors that take exactly one parameter, in declaration order. For a portable union the `partial` constructor declarations are in source, so another generator in the same compilation sees the cases before the implementation exists.
 3. **Generated code reads a union through `Value`** with type tests in case order (`value.Value switch { Case1 c => …, Case2 c => …, _ => … }`). That compiles on every language version; a type pattern over the union itself does not compile on C# 14 (CS9327). Generated code builds a union with `new TUnion(caseValue)`, never with a conversion, for the same reason.
-4. **A case's meaning comes from its type**: the standard cases of section 3.5 by full name (`Rocket.Surgery.LaunchPad.Primitives.NotFound`, …), other error cases by the naming convention and attribute of api-generators-plan phase 4. Every case that is not an error case is a success value: a union may have several (`union GetRocketResult(RocketModel, RocketSummary, NotFound)`), each answered with 200 (201 with `[Creates]`) and described as a `oneOf` response.
+4. **A case's meaning comes from its type**: an error case by the naming convention or `[ApiError]` of api-generators-plan phase 4, which the standard cases of section 3.5 match by name. The value case is the first case that is not an error case, and a union response has exactly one; another case that is neither is LPAD1025. A `Problem` case stands for each standard case, tested by runtime type, then any other problem (500). A case implementing `IProblemDetailsData` fills the error shape's detail, title, type, instance and extensions from it.
 5. **Unwrapping**: a handler response of `Task<TUnion>`, `ValueTask<TUnion>` or `TUnion` is a union response. A union is never nested in another union's case for this purpose.
 
-`src/Api/Core/UnionShape.cs` implements rules 1, 2, 4 and 5 as `UnionShape.TryCreate` and `UnionShape.TryCreateFromResponse`, returning equatable case models (with `UnionCaseKind` for the standard cases) so it can sit in an incremental pipeline. #3148 uses it; nothing else in `src/Api` does yet.
+`src/Api/Core/UnionResults.cs` (`UnionResults.TryRead`) is the one place in the API generators that knows rules 1 and 2; `HostReader` applies rules 4 and 5 through it. The union generator's analyzer has its own copy of rule 1 (`UnionNames.IsUnion`), since it is a different assembly.
 
 ## 5. Migration
 
-- **Exceptions stay for now.** `NotFoundException`, `NotAuthorizedException`, `RequestFailedException` and their filters and interceptors keep working until #3148 makes every transport answer union results. #3148 then moves the samples' handlers to unions and removes the exceptions, filters and interceptors in the same change, so no build sits between with handlers that can't report errors.
+- **The samples move to unions** with #3148, in the same pull request: Sample.Core's handlers return union responses with the standard problem cases instead of throwing.
+- **The exceptions stay.** `NotFoundException`, `NotAuthorizedException`, `RequestFailedException` and their filters and interceptors keep working for hand-written code and handlers that don't return unions; removing them is a follow-up (decision 10).
 - **No union type in `src/` to migrate**: none existed (section 2).
 - **Applications** that hand-wrote OneOf-style or `Result<T>` types can turn them into portable unions: a `partial struct` with `[Union]` and the case constructors. Their consumers move from `IsSuccess`/`Match` to `Value` patterns (C# 14) or plain patterns (C# 15).
 
@@ -203,15 +204,17 @@ Nothing in the detection contract changes, so the API generators need no change.
 
 ## 7. Decisions
 
-Decided 2026-11-09 with the user (AskUserQuestion, then a grilling session); the lasting choice is recorded in [ADR-0004](../adr/0004-portable-unions-shaped-like-csharp-unions.md).
+Decided 2026-11-09 with the user (AskUserQuestion, then a grilling session); the lasting choice is recorded in [ADR-0005](../adr/0005-portable-unions-shaped-like-csharp-unions.md); the transport side in [ADR-0006](../adr/0006-union-responses-over-every-transport.md).
 
 1. **Declaration on .NET 10**: the portable form, `[Union] partial struct` with `partial` case constructors, implemented by a generator. Native `union` is accepted wherever C# 15 is.
 2. **Storage**: one `object?` field, as in a native union.
 3. **Polyfill**: from the Polyfill package with `PolyUseEmbeddedAttribute`, added by the LaunchPad SDK to `net10.0` projects that get Primitives (opt out with `LaunchPadEnablePolyfill=false`). Replaced the generator's own embedded copy, which was built first.
 4. **Packaging**: the union generator and analyzers are their own analyzer assembly (`src/Primitives/Analyzers`), packed in Primitives.
 5. **Standard cases**: `Problem` plus `NotFound`, `Invalid`, `Unauthorized`, `Forbidden`, `Conflict`, short names kept despite the `HttpResults` clash. `Invalid.Errors` is a `string[]` dictionary. No generic `Result<T>`.
-6. **Success cases**: a union may have several.
+6. **Value cases**: a union response has exactly one value case; any other non-error case is LPAD1025. (First decided as "several", revised once #3148 showed each transport has one response type: gRPC would need a generated `oneof` message and GraphQL a union output type.)
 7. **GraphQL codes**: the common convention (`NOT_FOUND`, `BAD_USER_INPUT`, `UNAUTHENTICATED`, `FORBIDDEN`, `CONFLICT`).
 8. **Analyzers in this change**: the CS9327 code fix (C# 14), LPAD0013 as a warning and LPAD0014 as info (C# 15).
 9. **Missing polyfill**: LPAD0012, an error.
-10. **Migration**: the standard cases ship here and the exceptions stay; #3148 moves handlers to unions and removes the exceptions, filters and interceptors.
+10. **Migration**: the samples' handlers move to unions in the combined #3147/#3148 change; the exceptions, filters and interceptors stay until a follow-up.
+11. **Problem data**: the transports use `IProblemDetailsData` when an error case implements it (HTTP ProblemDetails fields and extensions; the gRPC status message; the GraphQL message and extensions).
+12. **Terms**: union response, union case, value case, error case, portable union, native union, problem (GLOSSARY.md).

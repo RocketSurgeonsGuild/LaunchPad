@@ -145,6 +145,12 @@ internal static class ApiSyntax
     public static ArgumentSyntax OutVar(string name) =>
         Argument(DeclarationExpression(IdentifierName("var"), SingleVariableDesignation(Identifier(name)))).WithRefKindKeyword(Token(SyntaxKind.OutKeyword));
 
+    /// <summary><c>target?.name</c>.</summary>
+    public static ExpressionSyntax ConditionalMember(ExpressionSyntax target, string name) => ConditionalAccessExpression(target, MemberBindingExpression(IdentifierName(name)));
+
+    /// <summary><c>value is T name</c>.</summary>
+    public static ExpressionSyntax IsType(ExpressionSyntax value, TypeSyntax type, string name) => IsPatternExpression(value, DeclarationPattern(type, SingleVariableDesignation(Identifier(name))));
+
     /// <summary><c>value is var name</c>.</summary>
     public static ExpressionSyntax IsVar(ExpressionSyntax value, string name) => IsPatternExpression(value, VarPattern(SingleVariableDesignation(Identifier(name))));
 

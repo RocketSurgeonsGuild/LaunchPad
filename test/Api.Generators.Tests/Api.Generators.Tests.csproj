@@ -26,10 +26,4 @@
         <!-- Each generator assembly carries its own copy of the shared core; only the base one is visible unaliased. -->
         <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <!-- The shared union detection contract is tested directly: compiled in from the generator's source, since InternalsVisibleTo would also
-             expose the generator's Polyfill types (CS0433). -->
-        <Compile Include="..\..\src\Api\Core\UnionShape.cs" Link="Core\UnionShape.cs" />
-        <Compile Include="..\..\src\Api\Core\EquatableArray.cs" Link="Core\EquatableArray.cs" />
-    </ItemGroup>
 </Project>

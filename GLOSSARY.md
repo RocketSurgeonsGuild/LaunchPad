@@ -44,6 +44,18 @@ _Avoid_: Marker, mapper, endpoint group, API surface
 The name an operation host gives its operations: the middle of their routes, the gRPC package and service.
 _Avoid_: Area, module, route prefix
 
+**Union response**:
+An operation's response that is one of a fixed set of cases, one value case and any number of error cases, so the handler reports an error by returning it instead of throwing.
+_Avoid_: Union result, result type, OneOf, discriminated result
+
+**Value case**:
+The case of a union response that answers as the operation's successful response.
+_Avoid_: Success case, ok case
+
+**Error case**:
+A case of a union response that answers as an error on every transport, carrying its case name and its own status.
+_Avoid_: Failure, error result, fault
+
 **Mediator profile**:
 The description of how one mediator library shapes its requests, dispatches them and declares handlers, which lets operations work with any mediator.
 _Avoid_: Mediator adapter, mediator configuration
@@ -52,22 +64,18 @@ _Avoid_: Mediator adapter, mediator configuration
 The MSBuild SDK an application opts into so that the right LaunchPad packages are chosen from what the project references. It builds on Dovetail's SDK.
 _Avoid_: Meta-package, bundle
 
-**Union result**:
-What an operation responds with when it can fail: exactly one of a fixed set of cases, the success value or a problem, instead of a thrown exception.
-_Avoid_: Result type, OneOf, Either
-
 **Union case**:
-One of the types a union result can hold.
+One of the types a union response can hold: its value case or one of its error cases.
 _Avoid_: Variant, arm, branch
 
 **Portable union**:
-A union result declared so that it compiles on every supported .NET and C# version, and becomes a native union by changing only its declaration.
+A union declared so that it compiles on every supported .NET and C# version, and becomes a native union by changing only its declaration.
 _Avoid_: Generated union, polyfilled union
 
 **Native union**:
-A union result declared with the C# language's own union syntax.
+A union declared with the C# language's own union syntax.
 _Avoid_: Built-in union
 
 **Problem**:
-A union case that reports why an operation failed (not found, invalid, unauthorized, forbidden or conflict), which every transport turns into its own error shape.
+One of LaunchPad's standard error cases (not found, invalid, unauthorized, forbidden, conflict), which carries the details every transport writes into its error shape.
 _Avoid_: Error result, failure, problem details (that is the HTTP shape of a problem)

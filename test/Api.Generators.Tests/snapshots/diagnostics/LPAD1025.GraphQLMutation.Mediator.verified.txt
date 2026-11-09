@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1025,
+      Title: Union error case has no status,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {1}, which {2} returns, has {0} besides its value case, but {0} has no status: its name starts or ends with none of {3}, and it has no [ApiError(statusCode)],
+      Message: Sample.Contracts.Rockets.LaunchResult, which LaunchRocket returns, has Sample.Contracts.Rockets.Exploded besides its value case, but Sample.Contracts.Rockets.Exploded has no status: its name starts or ends with none of NotFound, Invalid, Validation, Unauthorized, Forbidden or Conflict, and it has no [ApiError(statusCode)],
+      Category: LaunchPad.Api
+    }
+  ]
+}

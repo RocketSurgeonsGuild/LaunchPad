@@ -1,6 +1,6 @@
-# Union results are C# 15 unions, with a portable form until .NET 10 is dropped
+# Union responses are C# 15 unions, with a portable form until .NET 10 is dropped
 
-An operation that can fail responds with a union result instead of throwing, and every LaunchPad union is a C# 15 union: a type with `[System.Runtime.CompilerServices.Union]` that implements `IUnion`. Applications that must still compile on C# 14 (the .NET 10 SDK) declare a portable union (`[Union] partial struct` with one `partial` constructor per case), which LaunchPad's union generator implements in exactly the shape the compiler gives a native `union` declaration. Before .NET 11 the two attribute types come from the Polyfill package, which the LaunchPad SDK adds. When .NET 12 ships and `net10.0` is dropped, a portable union becomes a native one by rewriting its declaration, and nothing that consumes it changes.
+An operation that can fail responds with a union response instead of throwing, and every LaunchPad union is a C# 15 union: a type with `[System.Runtime.CompilerServices.Union]` that implements `IUnion`. Applications that must still compile on C# 14 (the .NET 10 SDK) declare a portable union (`[Union] partial struct` with one `partial` constructor per case), which LaunchPad's union generator implements in exactly the shape the compiler gives a native `union` declaration. Before .NET 11 the attribute and `IUnion` come from the Polyfill package, which the LaunchPad SDK adds. When .NET 12 ships and `net10.0` is dropped, a portable union becomes a native one by rewriting its declaration, and nothing that consumes it changes.
 
 ## Considered Options
 
@@ -13,4 +13,4 @@ An operation that can fail responds with a union result instead of throwing, and
 
 - Generators detect a union by name (`UnionAttribute` or `IUnion`), never by symbol: before .NET 11 every assembly carries its own embedded copy, and Roslyn does not surface `[Union]` through `GetAttributes()` on native or metadata unions.
 - Generated code reads a union through `Value` and builds one with its constructor, because a pattern over a union does not compile on C# 14 (CS9327).
-- Handlers stop throwing `NotFoundException` and its siblings once every transport answers union results ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148)), which removes the exceptions and their filters and interceptors.
+- Every transport answers union responses ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148), ADR-0006), so handlers return error cases instead of throwing `NotFoundException` and its siblings; the exceptions keep working until a follow-up removes them.

@@ -182,20 +182,13 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         if (operation.HasBody) statements.Add(Statement(WithMetadata(New(Type($"{Generated}.ApiAcceptsMetadata"), TypeOf(Type(operation.WireType))))));
 
         // The request delegate answers 400 when a body, route, query or header value can't be bound.
-        if (operation.HasBody || operation.Members.Any(m => m.Source is BindingSource.Route or BindingSource.Query or BindingSource.Header))
+        var binds = operation.HasBody || operation.Members.Any(m => m.Source is BindingSource.Route or BindingSource.Query or BindingSource.Header);
+        if (binds) statements.Add(Statement(WithMetadata(ProblemMetadata(400))));
+
+        // A union's error cases answer ProblemDetails; ProblemHttpResult describes no status of its own.
+        foreach (var status in operation.Union?.Errors.Select(e => e.StatusCode).Distinct().Where(s => s != 400 || !binds) ?? [])
         {
-            statements.Add(
-                Statement(
-                    WithMetadata(
-                        New(
-                            Type("global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata"),
-                            Literal(400),
-                            TypeOf(Type("global::Microsoft.AspNetCore.Mvc.ProblemDetails")),
-                            NewArray(Type("string"), [Literal("application/problem+json")])
-                        )
-                    )
-                )
-            );
+            statements.Add(Statement(WithMetadata(ProblemMetadata(status))));
         }
 
         var name = prefixName ? Naming.HostNoun(host.Name) + operation.EndpointName : operation.EndpointName;
@@ -223,6 +216,14 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         statements.Add(Statement(Invoke(Id($"Configure{operation.Name}"), endpoint)));
         return Block(statements);
     }
+
+    private static ExpressionSyntax ProblemMetadata(int status) =>
+        New(
+            Type("global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata"),
+            Literal(status),
+            TypeOf(Type("global::Microsoft.AspNetCore.Mvc.ProblemDetails")),
+            NewArray(Type("string"), [Literal("application/problem+json")])
+        );
 
     // The typed handler: bound values in, the mediator call, a typed result out. Its signature is what OpenAPI describes.
     private static MethodDeclarationSyntax Handler(HostModel host, ProfileModel profile, OperationModel operation, string service)
@@ -353,6 +354,51 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     {
         var send = ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct));
         var typedResults = Name($"{Http}.TypedResults");
+        if (operation is { Union: { }, Kind: RequestKind.Stream })
+        {
+            // Each item is mapped to its value or its problem; the result streams values and ends with the first problem.
+            var item = Generic($"{Generated}.ApiStreamItem", Type(operation.ResponseTypeNotNull!));
+            var map = SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier("__item")))
+                                   .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)))
+                                   .WithBlock(
+                                        Block(
+                                            ServerEmit.UnionResult(
+                                                operation,
+                                                value => [Return(Invoke(Member(item, "Of"), value ?? NullForgiving(Default)))],
+                                                (error, value) =>
+                                                [
+                                                    Return(
+                                                        Invoke(
+                                                            Member(item, "Error"),
+                                                            Invoke(Member($"{Generated}.ApiProblems", "Details"), new ExpressionSyntax[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value)))
+                                                        )
+                                                    ),
+                                                ],
+                                                operation.ResponseNullable ? () => [Return(Invoke(Member(item, "Of"), NullForgiving(Default)))] : null,
+                                                "__item"
+                                            )
+                                        )
+                                    );
+            yield return Return(New(StreamUnionResult(operation), ServerDispatch.Stream(send), map));
+            yield break;
+        }
+
+        if (operation.Union is { })
+        {
+            yield return Var("__response", Await(send.Call));
+            foreach (var statement in ServerEmit.UnionResult(
+                         operation,
+                         value => [Return(value is null ? Invoke(Member(typedResults, "NoContent")) : Success(operation, typedResults, value))],
+                         (error, value) => [Return(Invoke(Member($"{Generated}.ApiProblems", "Problem"), new ExpressionSyntax[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value))))],
+                         operation.ResponseNullable ? () => [Return(Invoke(Member(typedResults, "NotFound")))] : null
+                     ))
+            {
+                yield return statement;
+            }
+
+            yield break;
+        }
+
         switch (operation.Kind)
         {
             case RequestKind.Stream:
@@ -370,19 +416,35 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
 
         yield return Var("__response", Await(send.Call));
         var value = operation.ResponseIsNullableValueType ? Member(Id("__response"), "Value") : Id("__response");
-        var success = operation.SuccessStatusCode switch
+        var success = Success(operation, typedResults, value, Id("__response"));
+        yield return Return(operation.ResponseNullable ? Conditional(IsNull(Id("__response")), Invoke(Member(typedResults, "NotFound")), success) : success);
+    }
+
+    // The success result: 200, 201 (with a Location when the created resource's GET is known) or 202, carrying the value.
+    private static ExpressionSyntax Success(OperationModel operation, NameSyntax typedResults, ExpressionSyntax value, ExpressionSyntax? response = null) =>
+        operation.SuccessStatusCode switch
         {
-            201 when operation.CreatedLocationRoute is { } route => Invoke(Member(typedResults, "Created"), ServerEmit.LocationSyntax(route, operation, Generated), value),
+            201 when operation.CreatedLocationRoute is { } route => Invoke(Member(typedResults, "Created"), ServerEmit.LocationSyntax(route, operation, Generated, response ?? value), value),
             201 => Invoke(Member(typedResults, "Created"), Cast(Type("string?"), Null), value),
             202 => Invoke(Member(typedResults, "Accepted"), Cast(Type("string?"), Null), value),
             _ => Invoke(Member(typedResults, "Ok"), value),
         };
-        yield return Return(operation.ResponseNullable ? Conditional(IsNull(Id("__response")), Invoke(Member(typedResults, "NotFound")), success) : success);
-    }
 
     /// <summary>The handler's result type (an <c>IResult</c>) and whether the handler is async (then it returns a Task of it).</summary>
     private static (TypeSyntax Result, bool IsAsync) ReturnType(ProfileModel profile, OperationModel operation)
     {
+        // A stream of unions: values as NDJSON, ended by the first error case's problem.
+        if (operation is { Union: { }, Kind: RequestKind.Stream }) return (StreamUnionResult(operation), ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct)).Awaited);
+
+        // A union: its value case's result, 404 for a nullable value case, and ProblemDetails for its error cases.
+        if (operation.Union is { })
+        {
+            var results = new List<TypeSyntax> { operation.Kind == RequestKind.Void ? Type($"{Results}.NoContent") : SuccessType(operation) };
+            if (operation.ResponseNullable) results.Add(Type($"{Results}.NotFound"));
+            results.Add(Type($"{Results}.ProblemHttpResult"));
+            return (Generic($"{Results}.Results", results), true);
+        }
+
         switch (operation.Kind)
         {
             case RequestKind.Stream:
@@ -396,7 +458,15 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
                 break;
         }
 
-        var success = Generic(
+        var success = SuccessType(operation);
+        return (operation.ResponseNullable ? Generic($"{Results}.Results", success, Type($"{Results}.NotFound")) : success, true);
+    }
+
+    private static TypeSyntax StreamUnionResult(OperationModel operation) =>
+        Generic($"{Generated}.NdjsonUnionResult", Type(operation.StreamItemType!), Type(operation.ResponseTypeNotNull!));
+
+    private static TypeSyntax SuccessType(OperationModel operation) =>
+        Generic(
             operation.SuccessStatusCode switch
             {
                 201 => $"{Results}.Created",
@@ -405,8 +475,6 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             },
             Type(operation.ResponseTypeNotNull!)
         );
-        return (operation.ResponseNullable ? Generic($"{Results}.Results", success, Type($"{Results}.NotFound")) : success, true);
-    }
 
     private const string ServerHelpers = """
 // <auto-generated/>
@@ -488,6 +556,123 @@ namespace Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi
                 ).ConfigureAwait(false);
             }
         }
+    }
+
+    /// <summary>
+    ///     Answers an error case of a union response: ProblemDetails with the case's status, its name in the <c>case</c> extension and its members
+    ///     as extensions (<c>name, value</c> pairs); a case with problem data fills detail, title, type and instance from it, written by ASP.NET Core like any other problem.
+    /// </summary>
+    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
+    internal static class ApiProblems
+    {
+        public static global::Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult Problem(int status, string caseName, params object?[] members) =>
+            global::Microsoft.AspNetCore.Http.TypedResults.Problem(Details(status, caseName, members));
+
+        public static global::Microsoft.AspNetCore.Mvc.ProblemDetails Details(int status, string caseName, params object?[] members)
+        {
+            var problem = new global::Microsoft.AspNetCore.Mvc.ProblemDetails { Status = status };
+            problem.Extensions["case"] = caseName;
+            for (var i = 0; i + 1 < members.Length; i += 2)
+            {
+                // A case with problem data (Rocket.Surgery.LaunchPad.Primitives.IProblemDetailsData) passes it under reserved keys.
+                switch ((string)members[i]!)
+                {
+                    case "$detail": problem.Detail = members[i + 1] as string; break;
+                    case "$title": problem.Title = members[i + 1] as string ?? problem.Title; break;
+                    case "$type": problem.Type = members[i + 1] as string; break;
+                    case "$instance": problem.Instance = members[i + 1] as string; break;
+                    case "$properties":
+                        foreach (var property in members[i + 1] as global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, object?>> ?? [])
+                        {
+                            problem.Extensions[property.Key] = property.Value;
+                        }
+
+                        break;
+                    default: problem.Extensions[(string)members[i]!] = members[i + 1]; break;
+                }
+            }
+
+            return problem;
+        }
+    }
+
+    /// <summary>One item of a stream of unions: its value case, or its error case as a problem.</summary>
+    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
+    internal readonly struct ApiStreamItem<T>
+    {
+        private ApiStreamItem(T value, global::Microsoft.AspNetCore.Mvc.ProblemDetails? problem)
+        {
+            Value = value;
+            Problem = problem;
+        }
+
+        public T Value { get; }
+
+        public global::Microsoft.AspNetCore.Mvc.ProblemDetails? Problem { get; }
+
+        public static ApiStreamItem<T> Of(T value) => new(value, null);
+
+        public static ApiStreamItem<T> Error(global::Microsoft.AspNetCore.Mvc.ProblemDetails problem) => new(default!, problem);
+    }
+
+    /// <summary>
+    ///     Writes a stream of unions as newline-delimited JSON: each value case as a line, flushed per item. The first error case ends the
+    ///     stream: before anything was written it answers its status as ProblemDetails; afterwards it is the last line, a problem object.
+    /// </summary>
+    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
+    internal sealed class NdjsonUnionResult<TItem, T> : global::Microsoft.AspNetCore.Http.IResult, global::Microsoft.AspNetCore.Http.Metadata.IEndpointMetadataProvider
+    {
+        private static readonly byte[] NewLine = { (byte)'\n' };
+        private readonly global::System.Collections.Generic.IAsyncEnumerable<TItem> _items;
+        private readonly global::System.Func<TItem, ApiStreamItem<T>> _map;
+
+        public NdjsonUnionResult(global::System.Collections.Generic.IAsyncEnumerable<TItem> items, global::System.Func<TItem, ApiStreamItem<T>> map)
+        {
+            _items = items;
+            _map = map;
+        }
+
+        public async global::System.Threading.Tasks.Task ExecuteAsync(global::Microsoft.AspNetCore.Http.HttpContext httpContext)
+        {
+            var options = ApiBinding.JsonOptions(httpContext);
+            var typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>)options.GetTypeInfo(typeof(T));
+            var cancellationToken = httpContext.RequestAborted;
+            var body = httpContext.Response.Body;
+            var started = false;
+            await foreach (var item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation(_items, cancellationToken).ConfigureAwait(false))
+            {
+                var mapped = _map(item);
+                if (mapped.Problem is { } problem)
+                {
+                    if (!started)
+                    {
+                        await global::Microsoft.AspNetCore.Http.TypedResults.Problem(problem).ExecuteAsync(httpContext).ConfigureAwait(false);
+                        return;
+                    }
+
+                    var problemInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Microsoft.AspNetCore.Mvc.ProblemDetails>)options.GetTypeInfo(typeof(global::Microsoft.AspNetCore.Mvc.ProblemDetails));
+                    await global::System.Text.Json.JsonSerializer.SerializeAsync(body, problem, problemInfo, cancellationToken).ConfigureAwait(false);
+                    await body.WriteAsync(NewLine, cancellationToken).ConfigureAwait(false);
+                    await body.FlushAsync(cancellationToken).ConfigureAwait(false);
+                    return;
+                }
+
+                if (!started)
+                {
+                    httpContext.Response.ContentType = "application/x-ndjson";
+                    started = true;
+                }
+
+                await global::System.Text.Json.JsonSerializer.SerializeAsync(body, mapped.Value, typeInfo, cancellationToken).ConfigureAwait(false);
+                await body.WriteAsync(NewLine, cancellationToken).ConfigureAwait(false);
+                await body.FlushAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            if (!started) httpContext.Response.ContentType = "application/x-ndjson";
+        }
+
+        public static void PopulateMetadata(global::System.Reflection.MethodInfo method, global::Microsoft.AspNetCore.Builder.EndpointBuilder builder) =>
+            builder.Metadata.Add(new global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata(200, typeof(global::System.Collections.Generic.IAsyncEnumerable<T>), new[] { "application/x-ndjson" }));
     }
 
     /// <summary>Adds what a result type knows about itself (status codes, content types) to an endpoint, as typed lambdas would.</summary>
