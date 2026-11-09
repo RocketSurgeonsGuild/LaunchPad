@@ -140,18 +140,20 @@ public class RoundTripTests
                      builder => builder.ConfigurePrimaryHttpMessageHandler(() => server.GetTestServer().CreateHandler())
                  );
         await using var provider = services.BuildServiceProvider();
-        var rockets = provider.GetRequiredService<IRocketsGraphQLClient>();
+        // StrawberryShake's types are written into obj by a build target, so `dotnet format` (which loads the solution without building) can't
+        // see them and removes a using of their namespace; qualified names don't depend on one.
+        var rockets = provider.GetRequiredService<GraphQLClient.IRocketsGraphQLClient>();
         using var http = server.GetTestClient();
 
-        var created = await rockets.CreateRocket.ExecuteAsync(new CreateRocketRequest { Name = "Falcon" }, cancellationToken);
+        var created = await rockets.CreateRocket.ExecuteAsync(new GraphQLClient.CreateRocketRequest { Name = "Falcon" }, cancellationToken);
         created.EnsureNoErrors();
         var id = created.Data!.CreateRocket.Id;
-        var edited = await rockets.EditRocket.ExecuteAsync(new EditRocketRequest { Id = id, Name = "Falcon 9" }, cancellationToken);
+        var edited = await rockets.EditRocket.ExecuteAsync(new GraphQLClient.EditRocketRequest { Id = id, Name = "Falcon 9" }, cancellationToken);
         edited.EnsureNoErrors();
         (edited.Data!.EditRocket.Id, edited.Data.EditRocket.Name).ShouldBe((id, "Falcon 9"));
         ( await http.GetStringAsync($"api/rockets/{id}", cancellationToken) ).ShouldContain("Falcon 9");
 
-        var deleted = await rockets.DeleteRocket.ExecuteAsync(new DeleteRocketRequest { Id = id }, cancellationToken);
+        var deleted = await rockets.DeleteRocket.ExecuteAsync(new GraphQLClient.DeleteRocketRequest { Id = id }, cancellationToken);
         deleted.EnsureNoErrors();
         ( await http.GetAsync($"api/rockets/{id}", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
