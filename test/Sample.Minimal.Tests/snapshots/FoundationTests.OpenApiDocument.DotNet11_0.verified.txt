@@ -613,9 +613,6 @@
           }
         }
       },
-      LaunchRecordId: {
-        type: object
-      },
       LaunchRecordModel: {
         type: object,
         properties: {
@@ -786,9 +783,6 @@
           }
         },
         x-schema-id: CreateLaunchRecordResponse
-      },
-      RocketId: {
-        type: object
       },
       RocketModel: {
         type: object,

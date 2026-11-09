@@ -55,3 +55,7 @@ _Avoid_: Meta-package, bundle
 **JSON context**:
 The JSON metadata an application or package hands to LaunchPad, prepared at build time, so its types are read and written without reflection. LaunchPad uses only the JSON contexts it is given.
 _Avoid_: Serializer context, type resolver, JSON options
+
+**JSON context manifest**:
+The list of its types an assembly declares as crossing the wire as JSON, from which the applications that reference it get their JSON context.
+_Avoid_: JSON registry, type list

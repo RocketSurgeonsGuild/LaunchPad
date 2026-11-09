@@ -19,4 +19,12 @@
         template's other gates, and into no other (src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets).
     -->
     <Import Project="$(MSBuildThisFileDirectory)src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets" />
+    <!--
+        The same for LaunchPad.Primitives, whose targets write an executable's JSON context with the task of src/Primitives.Tasks. Here the task
+        comes from that project's output instead of the package's tasks folder; the samples build it first (sample/Directory.Build.targets).
+    -->
+    <PropertyGroup>
+        <LaunchPadPrimitivesTasksAssembly>$(MSBuildThisFileDirectory)src/Primitives.Tasks/bin/$(Configuration)/netstandard2.0/Rocket.Surgery.LaunchPad.Primitives.Tasks.dll</LaunchPadPrimitivesTasksAssembly>
+    </PropertyGroup>
+    <Import Project="$(MSBuildThisFileDirectory)src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.JsonContext.targets" />
 </Project>

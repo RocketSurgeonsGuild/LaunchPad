@@ -32,6 +32,10 @@
         <Using Remove="Joinery.Dovetail.Joints" />
     </ItemGroup>
     <ItemGroup>
+        <!-- The mediator request table, shared with the JSON context manifest of Rocket.Surgery.LaunchPad.Primitives.Analyzers. -->
+        <Compile Include="../Shared/MediatorLibraries.cs" Link="Core/MediatorLibraries.cs" />
+    </ItemGroup>
+    <ItemGroup>
         <None Include="build/Rocket.Surgery.LaunchPad.Api.targets" Pack="true" PackagePath="build;buildTransitive" />
     </ItemGroup>
     <!-- Packed from wherever the build wrote it: an artifacts path moves it out of bin. -->

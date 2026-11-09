@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Rocket.Surgery.LaunchPad.Mediators;
 
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
@@ -10,123 +11,41 @@ internal static class ProfileResolver
 {
     private sealed record BuiltIn(string Name, string[] DetectedBy, ProfileModel Profile);
 
+    // The request kinds come from the table the JSON context manifest shares (src/Shared/MediatorLibraries.cs); what is only about dispatch
+    // (the sender, its methods, the unit type) lives here.
     private static readonly BuiltIn[] BuiltIns =
     [
-        new(
-            "MediatR",
-            ["MediatR.ISender", "MediatR.IRequest`1"],
-            new(
-                "MediatR",
-                DispatchKind.Sender,
-                "global::MediatR.ISender",
-                "Send",
-                "CreateStream",
-                false,
-                null,
-                new RequestKindModel[]
-                {
-                    new("MediatR.IRequest`1", RequestKind.Unary, 0, "MediatR.IRequestHandler`2", "Handle"),
-                    new("MediatR.IRequest", RequestKind.Void, 0, "MediatR.IRequestHandler`1", "Handle"),
-                    new("MediatR.IStreamRequest`1", RequestKind.Stream, 0, "MediatR.IStreamRequestHandler`2", "Handle"),
-                }.ToEquatableArray()
-            )
-        ),
-        new(
-            "Mediator",
-            ["Mediator.ISender", "Mediator.IMessage"],
-            new(
-                "Mediator",
-                DispatchKind.Sender,
-                "global::Mediator.ISender",
-                "Send",
-                "CreateStream",
-                false,
-                "Mediator.Unit",
-                new RequestKindModel[]
-                {
-                    new("Mediator.IRequest`1", RequestKind.Unary, 0, "Mediator.IRequestHandler`2", "Handle"),
-                    new("Mediator.ICommand`1", RequestKind.Unary, 0, "Mediator.ICommandHandler`2", "Handle"),
-                    new("Mediator.IQuery`1", RequestKind.Unary, 0, "Mediator.IQueryHandler`2", "Handle"),
-                    new("Mediator.IStreamRequest`1", RequestKind.Stream, 0, "Mediator.IStreamRequestHandler`2", "Handle"),
-                    new("Mediator.IStreamCommand`1", RequestKind.Stream, 0, "Mediator.IStreamCommandHandler`2", "Handle"),
-                    new("Mediator.IStreamQuery`1", RequestKind.Stream, 0, "Mediator.IStreamQueryHandler`2", "Handle"),
-                }.ToEquatableArray()
-            )
-        ),
-        new(
-            "ChannelMediator",
-            ["ChannelMediator.IMediator", "ChannelMediator.IRequest`1"],
-            new(
-                "ChannelMediator",
-                DispatchKind.Sender,
-                "global::ChannelMediator.IMediator",
-                "Send",
-                "CreateStream",
-                false,
-                "ChannelMediator.Unit",
-                new RequestKindModel[]
-                {
-                    new("ChannelMediator.IRequest`1", RequestKind.Unary, 0, "ChannelMediator.IRequestHandler`2", "Handle"),
-                    new("ChannelMediator.IStreamRequest`1", RequestKind.Stream, 0, "ChannelMediator.IStreamRequestHandler`2", "Handle"),
-                }.ToEquatableArray()
-            )
-        ),
-        new(
-            "Immediate.Handlers",
-            ["Immediate.Handlers.Shared.IHandler`2"],
-            new(
-                "Immediate.Handlers",
-                DispatchKind.HandlerInterface,
-                null,
-                "HandleAsync",
-                null,
-                false,
-                // A [Handler] returning a bare ValueTask is an IHandler<TRequest, ValueTuple>.
-                "System.ValueTuple",
-                new RequestKindModel[] { new(null, RequestKind.Unary, 0, "Immediate.Handlers.Shared.IHandler`2", "HandleAsync") }.ToEquatableArray()
-            )
-        ),
-        new(
-            "Foundatio.Mediator",
-            ["Foundatio.Mediator.IMediator"],
-            new(
-                "Foundatio.Mediator",
-                DispatchKind.Sender,
-                "global::Foundatio.Mediator.IMediator",
-                "InvokeAsync",
-                null,
-                true,
-                null,
-                new RequestKindModel[]
-                {
-                    new("Foundatio.Mediator.IRequest`1", RequestKind.Unary, 0, null, "HandleAsync"),
-                    new("Foundatio.Mediator.ICommand`1", RequestKind.Unary, 0, null, "HandleAsync"),
-                    new("Foundatio.Mediator.IQuery`1", RequestKind.Unary, 0, null, "HandleAsync"),
-                    // After the generic kinds: a void command, sent with the non-generic InvokeAsync.
-                    new("Foundatio.Mediator.ICommand", RequestKind.Void, 0, null, "HandleAsync"),
-                    new(null, RequestKind.Unary, 0, null, "HandleAsync"),
-                }.ToEquatableArray()
-            )
-        ),
-        new(
-            "ZeroAlloc.Mediator",
-            ["ZeroAlloc.Mediator.IRequest`1"],
-            new(
-                "ZeroAlloc.Mediator",
-                DispatchKind.Sender,
-                "global::ZeroAlloc.Mediator.IMediator",
-                "Send",
-                "CreateStream",
-                false,
-                "ZeroAlloc.Mediator.Unit",
-                new RequestKindModel[]
-                {
-                    new("ZeroAlloc.Mediator.IRequest`1", RequestKind.Unary, 0, null, "Handle"),
-                    new("ZeroAlloc.Mediator.IStreamRequest`1", RequestKind.Stream, 0, null, "Handle"),
-                }.ToEquatableArray()
-            )
-        ),
+        From(MediatorLibraries.MediatR, DispatchKind.Sender, "global::MediatR.ISender", "Send", "CreateStream", false, null),
+        From(MediatorLibraries.Mediator, DispatchKind.Sender, "global::Mediator.ISender", "Send", "CreateStream", false, "Mediator.Unit"),
+        From(MediatorLibraries.ChannelMediator, DispatchKind.Sender, "global::ChannelMediator.IMediator", "Send", "CreateStream", false, "ChannelMediator.Unit"),
+        // A [Handler] returning a bare ValueTask is an IHandler<TRequest, ValueTuple>.
+        From(MediatorLibraries.ImmediateHandlers, DispatchKind.HandlerInterface, null, "HandleAsync", null, false, "System.ValueTuple"),
+        From(MediatorLibraries.Foundatio, DispatchKind.Sender, "global::Foundatio.Mediator.IMediator", "InvokeAsync", null, true, null),
+        From(MediatorLibraries.ZeroAlloc, DispatchKind.Sender, "global::ZeroAlloc.Mediator.IMediator", "Send", "CreateStream", false, "ZeroAlloc.Mediator.Unit"),
     ];
+
+    private static BuiltIn From(
+        MediatorLibrary library,
+        DispatchKind dispatch,
+        string? senderType,
+        string sendMethod,
+        string? streamMethod,
+        bool sendNeedsResponseTypeArgument,
+        string? unitType
+    ) => new(
+        library.Name,
+        library.DetectedBy,
+        new(
+            library.Name,
+            dispatch,
+            senderType,
+            sendMethod,
+            streamMethod,
+            sendNeedsResponseTypeArgument,
+            unitType,
+            library.Requests.Select(r => new RequestKindModel(r.MetadataName, (RequestKind)(int)r.Shape, r.ResponseTypeArgumentIndex, r.HandlerInterface, r.HandleMethod)).ToEquatableArray()
+        )
+    );
 
     public static IReadOnlyList<string> BuiltInNames { get; } = BuiltIns.Select(b => b.Name).ToArray();
 
