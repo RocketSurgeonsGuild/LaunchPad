@@ -234,8 +234,8 @@ public class UnionGeneratorTests() : GeneratorTest()
             HostCase.MinimalApi => "public static partial class RocketsEndpoints;",
             HostCase.Controller => "public partial class RocketsController;",
             HostCase.GrpcService => "public partial class RocketsService;",
-            HostCase.GraphQLMutation => throw new NotImplementedException(),
-            _ => "public partial class RocketsMutations;",
+            HostCase.GraphQLMutation => "public partial class RocketsMutations;",
+            _ => throw new ArgumentOutOfRangeException(nameof(host)),
         };
         var result = await builder
                           .AddSources($"using Rocket.Surgery.LaunchPad.Api;\nusing Sample.Contracts;\nnamespace Sample.Server\n{{\n    [Operation<UpdateRocket.Request>]\n    {declaration}\n}}")
