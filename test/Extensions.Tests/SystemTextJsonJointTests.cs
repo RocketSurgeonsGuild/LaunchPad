@@ -94,7 +94,9 @@ public class SystemTextJsonJointTests
     {
         var options = await Options(services => services.AddJsonTypeInfoResolver(TestJsonContext.Default));
 
-        options.GetTypeInfo<TestRocket>().OriginatingResolver.ShouldBeSameAs(TestJsonContext.Default);
+        // TryGetTypeInfo rather than GetTypeInfo<T>(), which System.Text.Json has only from .NET 11.
+        options.TryGetTypeInfo(typeof(TestRocket), out var typeInfo).ShouldBeTrue();
+        typeInfo!.OriginatingResolver.ShouldBeSameAs(TestJsonContext.Default);
     }
 
     // Native AOT turns reflection off: then only the chained resolvers are left, and what LaunchPad writes as an object must still serialize.
