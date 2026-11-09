@@ -1,7 +1,11 @@
 using System.Globalization;
 
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
+
+using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
 using ZeroAlloc.Validation;
 
@@ -9,7 +13,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
 /// <summary>
 ///     Describes the ZeroAlloc.Validation attributes of a type's properties in its OpenAPI schema: required properties, lengths, ranges,
-///     patterns and e-mail addresses.
+///     patterns and e-mail addresses. It also marks the members of the problem details LaunchPad writes as required: the type and title, and
+///     the errors of a validation problem.
 /// </summary>
 /// <remarks>
 ///     The attributes are read from the members System.Text.Json serializes, through each property's attribute provider, so the schema
@@ -25,6 +30,8 @@ public sealed class ZeroAllocOpenApiSchemaTransformer : IOpenApiSchemaTransforme
         ArgumentNullException.ThrowIfNull(context);
         // Microsoft.OpenApi leaves the properties of a schema that has none (a scalar, an array) null.
         if (schema.Properties is not { Count: > 0 } properties) return Task.CompletedTask;
+
+        RequireProblemDetailsMembers(schema, context.JsonTypeInfo.Type);
 
         foreach (var jsonProperty in context.JsonTypeInfo.Properties)
         {
@@ -91,6 +98,21 @@ public sealed class ZeroAllocOpenApiSchemaTransformer : IOpenApiSchemaTransforme
             default:
                 break;
         }
+    }
+
+    // The problem details LaunchPad writes always have a type and a title, and the validation ones their errors.
+    private static void RequireProblemDetailsMembers(OpenApiSchema schema, Type type)
+    {
+        if (!typeof(ProblemDetails).IsAssignableFrom(type)) return;
+        RequireIfPresent(schema, "type");
+        RequireIfPresent(schema, "title");
+        if (typeof(HttpValidationProblemDetails).IsAssignableFrom(type) || typeof(ValidationFailureProblemDetails).IsAssignableFrom(type))
+            RequireIfPresent(schema, "errors");
+    }
+
+    private static void RequireIfPresent(OpenApiSchema schema, string name)
+    {
+        if (schema.Properties?.ContainsKey(name) == true) Require(schema, name);
     }
 
     private static void Require(OpenApiSchema schema, string name)

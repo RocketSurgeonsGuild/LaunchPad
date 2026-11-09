@@ -179,6 +179,8 @@
           }
         },
         required: [
+          rocketId,
+          scheduledLaunchDate,
           partner,
           payload
         ],
@@ -260,6 +262,11 @@
             ]
           }
         },
+        required: [
+          type,
+          title,
+          errors
+        ],
         type: object
       }
     }

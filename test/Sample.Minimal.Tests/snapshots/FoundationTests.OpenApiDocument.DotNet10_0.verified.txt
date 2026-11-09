@@ -671,6 +671,10 @@
         x-schema-id: EditLaunchRecordPatchRequest
       },
       ProblemDetails: {
+        required: [
+          type,
+          title
+        ],
         type: object,
         properties: {
           type: {
@@ -710,6 +714,8 @@
       },
       Request: {
         required: [
+          rocketId,
+          scheduledLaunchDate,
           partner,
           payload
         ],

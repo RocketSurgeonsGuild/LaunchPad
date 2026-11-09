@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 using NodaTime;
 
 using Riok.Mapperly.Abstractions;
@@ -29,6 +31,8 @@ public static partial class CreateLaunchRecord
         /// <summary>
         ///     The rocket to use
         /// </summary>
+        // Required for the OpenAPI document; the ZeroAlloc rule checks that it is assigned.
+        [Required]
         [Must(nameof(IsAssigned))]
         public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
 
@@ -58,6 +62,7 @@ public static partial class CreateLaunchRecord
         /// <summary>
         ///     The intended launch date
         /// </summary>
+        [Required]
         public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         internal bool IsAssigned(RocketId id) => id != default;
