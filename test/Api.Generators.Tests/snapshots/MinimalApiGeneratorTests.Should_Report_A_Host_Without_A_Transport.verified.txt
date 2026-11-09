@@ -7,8 +7,8 @@
         Severity: Error,
         WarningLevel: 0,
         Location: Input1.cs: (4,28)-(4,35),
-        MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
-        Message: The transport of operation host Rockets cannot be inferred: neither its base type, its attributes nor its name match a transport. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
+        MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service or *Queries/*Mutations.,
+        Message: The transport of operation host Rockets cannot be inferred: neither its base type, its attributes nor its name match a transport. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service or *Queries/*Mutations.,
         Category: LaunchPad.Api
       }
     ]
@@ -20,8 +20,8 @@
       Severity: Error,
       WarningLevel: 0,
       Location: Input1.cs: (4,28)-(4,35),
-      MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
-      Message: The transport of operation host Rockets cannot be inferred: neither its base type, its attributes nor its name match a transport. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
+      MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service or *Queries/*Mutations.,
+      Message: The transport of operation host Rockets cannot be inferred: neither its base type, its attributes nor its name match a transport. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service or *Queries/*Mutations.,
       Category: LaunchPad.Api
     }
   ],

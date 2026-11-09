@@ -6,8 +6,8 @@
       Severity: Error,
       WarningLevel: 0,
       Location: Input1.cs: (8,59)-(8,75),
-      MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
-      Message: The transport of operation host RocketsMutations cannot be inferred: it looks like a GraphQL mutation host, but HotChocolate is not referenced. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client.,
+      MessageFormat: The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service or *Queries/*Mutations.,
+      Message: The transport of operation host RocketsMutations cannot be inferred: it looks like a GraphQL mutation host, but HotChocolate is not referenced. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service or *Queries/*Mutations.,
       Category: LaunchPad.Api
     }
   ]

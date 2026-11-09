@@ -29,6 +29,7 @@ using HttpContext = global::Microsoft.AspNetCore.Http.HttpContext;
 using IEndpointConventionBuilder = global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder;
 using IEndpointRouteBuilder = global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder;
 using IMediator = global::Foundatio.Mediator.IMediator;
+using NoContent = global::Microsoft.AspNetCore.Http.HttpResults.NoContent;
 using NotFound = global::Microsoft.AspNetCore.Http.HttpResults.NotFound;
 using ProblemDetails = global::Microsoft.AspNetCore.Mvc.ProblemDetails;
 using ProducesResponseTypeMetadata = global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata;
@@ -116,7 +117,7 @@ namespace Sample.Server
                 var endpoint = group.MapMethods("/{id:guid}", new string[] { "DELETE" }, new RequestDelegate(__DeleteRocketRequestDelegate));
                 var method = typeof(RocketsEndpoints).GetMethod(nameof(__DeleteRocket), BindingFlags.NonPublic | BindingFlags.Static)!;
                 endpoint.WithMetadata(method);
-                endpoint.Add(builder => ApiEndpointMetadata.Populate<Ok<bool>>(method, builder));
+                endpoint.Add(builder => ApiEndpointMetadata.Populate<NoContent>(method, builder));
                 var parameters = method.GetParameters();
                 endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[0], true, false));
                 endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[1], false, false));
@@ -253,12 +254,12 @@ namespace Sample.Server
         /// <summary>Customises the generated <c>EditRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
         static partial void ConfigureEditRocket(IEndpointConventionBuilder endpoint);
         /// <summary>Handles <c>DELETE /api/rockets/{id:guid}</c>.</summary>
-        private static async Task<Ok<bool>> __DeleteRocket([FromRoute(Name = "id")] Guid @id, [FromServices] IMediator __sender, CancellationToken __cancellationToken)
+        private static async Task<NoContent> __DeleteRocket([FromRoute(Name = "id")] Guid @id, [FromServices] IMediator __sender, CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.Rockets.DeleteRocket.Request(@id);
             var __request = __wire;
-            var __response = await __sender.InvokeAsync(__request, __cancellationToken).ConfigureAwait(false);
-            return TypedResults.Ok(__response);
+            await __sender.InvokeAsync(__request, __cancellationToken).ConfigureAwait(false);
+            return TypedResults.NoContent();
         }
 
         private static async Task __DeleteRocketRequestDelegate(HttpContext httpContext)

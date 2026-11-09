@@ -10,8 +10,8 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 ///     with one method per operation, the host's implementation of it through the mediator, and <c>Map{Host}()</c>.
 /// </summary>
 /// <remarks>
-///     The gRPC client generator writes the same contract from a client host, so client and server agree on the wire through the service name
-///     (the group) and the operation names alone; the contracts project needs no gRPC reference.
+///     The contract is generated in the server, so the contracts project needs no gRPC reference. Clients are generated from the service's
+///     <c>.proto</c>, which protobuf-net can write for the contract.
 /// </remarks>
 [Generator]
 public sealed class GrpcServiceGenerator : IIncrementalGenerator
@@ -57,7 +57,9 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
         var implementation = Class(
                           host.Name,
                           Modifiers(Accessibility(host.Accessibility), SyntaxKind.PartialKeyword),
-                          GrpcEmit.ModelConfiguration(operations.Select(o => o.Operation)).Concat(operations.Select(o => Operation(host, profile, o.Operation, o.Service))),
+                          GrpcEmit.ModelConfiguration(host, operations.Select(o => o.Operation).ToArray())
+                                  .Concat(host.CanExportProto ? [GetProto(host)] : [])
+                                  .Concat(operations.Select(o => Operation(host, profile, o.Operation, o.Service))),
                           SyntaxFactory.IdentifierName(GrpcEmit.ContractName(host))
                       )
                      .AddAttributeLists(GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", version));
@@ -76,6 +78,20 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
            .AddAttributeLists(GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", version));
         return Render(host.Namespace, [contract, implementation, extensions]);
     }
+
+    // The service's .proto, for generating clients in any language: protobuf-net's schema of the generated contract.
+    private static MemberDeclarationSyntax GetProto(HostModel host) =>
+        Method(
+                Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword),
+                Type("string"),
+                "GetProto",
+                Parameters(),
+                [
+                    Statement(Invoke(Id("ConfigureGrpcModel"))),
+                    Return(Invoke(GenericMember(New(Type("global::ProtoBuf.Grpc.Reflection.SchemaGenerator")), "GetSchema", SyntaxFactory.IdentifierName(GrpcEmit.ContractName(host))))),
+                ]
+            )
+           .Summary($"The <c>.proto</c> of service <c>{GrpcEmit.PackageName(host)}.{GrpcEmit.ServiceName(host)}</c>, to generate clients from (protobuf-net.Grpc.Reflection).");
 
     private static MethodDeclarationSyntax Operation(HostModel host, ProfileModel profile, OperationModel operation, string service)
     {

@@ -44,7 +44,8 @@ namespace Sample.Server
             ArgumentNullException.ThrowIfNull(request);
             var __sender = context.Services.GetRequiredService<IMediator>();
             var __request = request;
-            return await __sender.InvokeAsync(__request, cancellationToken).ConfigureAwait(false);
+            await __sender.InvokeAsync(__request, cancellationToken).ConfigureAwait(false);
+            return true;
         }
     }
 

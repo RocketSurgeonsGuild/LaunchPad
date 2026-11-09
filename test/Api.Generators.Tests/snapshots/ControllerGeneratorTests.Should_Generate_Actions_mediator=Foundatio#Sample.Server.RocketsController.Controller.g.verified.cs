@@ -26,6 +26,7 @@ using HttpPostAttribute = global::Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using HttpPutAttribute = global::Microsoft.AspNetCore.Mvc.HttpPutAttribute;
 using IActionResult = global::Microsoft.AspNetCore.Mvc.IActionResult;
 using IMediator = global::Foundatio.Mediator.IMediator;
+using NoContentResult = global::Microsoft.AspNetCore.Mvc.NoContentResult;
 using NotFoundResult = global::Microsoft.AspNetCore.Mvc.NotFoundResult;
 using OkObjectResult = global::Microsoft.AspNetCore.Mvc.OkObjectResult;
 using ProducesResponseTypeAttribute = global::Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute;
@@ -106,15 +107,15 @@ namespace Sample.Server
         /// <summary>Handles <c>DELETE /api/rockets/{id:guid}</c> by sending <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" />.</summary>
         [HttpDelete("{id:guid}")]
         [EndpointName("DeleteRocket")]
-        [ProducesResponseType(typeof(bool), 200, "application/json")]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
-        public async Task<ActionResult<bool>> DeleteRocket([FromRoute(Name = "id")] Guid @id, CancellationToken __cancellationToken)
+        public async Task<IActionResult> DeleteRocket([FromRoute(Name = "id")] Guid @id, CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.Rockets.DeleteRocket.Request(@id);
             var __request = __wire;
             var __sender = HttpContext.RequestServices.GetRequiredService<IMediator>();
-            var __response = await __sender.InvokeAsync(__request, __cancellationToken).ConfigureAwait(false);
-            return new OkObjectResult(__response);
+            await __sender.InvokeAsync(__request, __cancellationToken).ConfigureAwait(false);
+            return new NoContentResult();
         }
     }
 }

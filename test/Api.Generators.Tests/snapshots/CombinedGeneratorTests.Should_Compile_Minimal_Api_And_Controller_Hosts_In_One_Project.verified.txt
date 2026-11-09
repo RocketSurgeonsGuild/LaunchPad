@@ -1,0 +1,10 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.ControllerGenerator: [],
+    Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator: []
+  }
+}

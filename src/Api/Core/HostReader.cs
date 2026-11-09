@@ -23,7 +23,6 @@ internal static class HostReader
         var hostArgs = Named(settings);
         var hostNoun = Naming.HostNoun(host.Name);
         var group = String(hostArgs, "Group") ?? Naming.KebabCase(hostNoun);
-        var hostHandlers = Bool(hostArgs, "Handlers") ?? true;
 
         if (profile.Profile is null && kind != HostKind.Unknown)
         {
@@ -40,7 +39,7 @@ internal static class HostReader
             foreach (var entry in entries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (ReadOperation(entry, host, hostNoun, kind, mediator, hostHandlers, compilation, documentation, diagnostics) is { } operation) operations.Add(operation);
+                if (ReadOperation(entry, host, hostNoun, kind, mediator, compilation, documentation, diagnostics) is { } operation) operations.Add(operation);
             }
 
             foreach (var duplicate in operations.Where(_ => HostInference.IsHttp(kind)).GroupBy(o => (o.Verb, Route: NormalizeRoute(o.Route))).Where(g => g.Count() > 1))
@@ -63,10 +62,7 @@ internal static class HostReader
             kind,
             group,
             String(hostArgs, "RoutePrefix") ?? "api",
-            String(hostArgs, "ClientName") ?? host.Name,
             String(hostArgs, "Version"),
-            // JsonOptionsPreset: Web = 0, Default = 1.
-            Int(hostArgs, "JsonOptions") is not 1,
             host.BaseType is { SpecialType: not SpecialType.System_Object },
             host.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.RouteAttribute"))?.ConstructorArguments.FirstOrDefault().Value as string,
             host.GetAttributes().Any(a => a.AttributeClass.Is("Microsoft.AspNetCore.Mvc.ApiControllerAttribute")),
@@ -77,9 +73,11 @@ internal static class HostReader
             {
                 HostKind.MinimalApi => compilation.GetTypeByMetadataName("Asp.Versioning.Builder.ApiVersionSet") is { },
                 HostKind.Controller => compilation.GetTypeByMetadataName("Asp.Versioning.ApiVersioningApplicationModelProvider") is { },
-                HostKind.Unknown or HostKind.GrpcService or HostKind.GraphQLQuery or HostKind.GraphQLMutation or HostKind.HttpClient or HostKind.GrpcClient or HostKind.GraphQLClient => false,
+                HostKind.Unknown or HostKind.GrpcService or HostKind.GraphQLQuery or HostKind.GraphQLMutation => false,
                 _ => false,
             },
+            // A gRPC service host's GetProto() needs protobuf-net.Grpc.Reflection's schema generator.
+            kind == HostKind.GrpcService && compilation.GetTypeByMetadataName("ProtoBuf.Grpc.Reflection.SchemaGenerator") is { },
             profile.Profile,
             operations.ToEquatableArray(),
             diagnostics.ToEquatableArray(),
@@ -93,7 +91,6 @@ internal static class HostReader
         string hostNoun,
         HostKind hostKind,
         ProfileModel profile,
-        bool hostHandlers,
         Compilation compilation,
         IReadOnlyDictionary<string, DocumentationEntry> documentation,
         List<DiagnosticInfo> diagnostics
@@ -175,9 +172,8 @@ internal static class HostReader
                 ? 204
                 : creates && verb == HttpVerb.Post ? 201 : 200;
 
-        // The handler interface a client handler implements, closed over this request and response.
-        string? handlerInterface = null, handlerReturnType = null;
-        INamedTypeSymbol? closedHandler = null;
+        // The handler interface a profile without a sender dispatches through, closed over this request and response.
+        string? handlerInterface = null;
         if (kindModel?.HandlerInterface is { } handlerName && compilation.GetTypeByMetadataName(handlerName) is { } openHandler)
         {
             // A markerless stream (Immediate.Handlers) is a handler whose response is the IAsyncEnumerable<T> itself.
@@ -186,12 +182,7 @@ internal static class HostReader
                 : response;
             var closed = openHandler.Arity == 1 ? openHandler.Construct(request) : handlerResponse is { } ? openHandler.Construct(request, handlerResponse) : null;
             var method = closed?.GetMembers(kindModel.HandleMethod).OfType<IMethodSymbol>().FirstOrDefault();
-            if (closed is { } && method is { })
-            {
-                closedHandler = closed;
-                handlerInterface = closed.FullyQualifiedNullable();
-                handlerReturnType = method.ReturnType.FullyQualifiedNullable();
-            }
+            if (closed is { } && method is { }) handlerInterface = closed.FullyQualifiedNullable();
         }
 
         // [Creates(typeof(GetRocket.Request))] on the response: 201 Created, with a Location once the target's operation is found.
@@ -200,7 +191,7 @@ internal static class HostReader
         var createdTarget = createsAttribute?.AttributeClass is { IsGenericType: true } generic ? generic.TypeArguments[0] : createsAttribute?.ConstructorArguments.FirstOrDefault().Value as ITypeSymbol;
         if (createdTarget is { } && Int(apiOperation, "SuccessStatusCode") is not > 0) successStatus = 201;
 
-        if (hostKind is HostKind.GrpcService or HostKind.GrpcClient)
+        if (hostKind == HostKind.GrpcService)
         {
             // protobuf-net needs a contract with ordered members for every user type it carries; primitives are wrapped by the generator.
             // A void operation (Unit included) answers Empty.
@@ -251,14 +242,10 @@ internal static class HostReader
             ( Strings(args, "AuthenticationSchemes") ?? [] ).ToEquatableArray(),
             Bool(args, "AllowAnonymous") ?? false,
             String(args, "Version"),
-            Bool(args, "Handlers") ?? hostHandlers,
             handlerInterface,
-            handlerReturnType,
-            kindModel?.HandleMethod,
             createdTarget?.FullyQualified(),
             null,
             EquatableArray<string>.Empty,
-            hostKind.IsClient() ? FindHandWrittenHandler(request, closedHandler, compilation)?.ToDisplayString() : null,
             Naming.CamelCase(String(apiOperation, "GraphQLName") ?? String(args, "Name") ?? name),
             graphQLIsQuery,
             // A nested response (CreateRocket.Response) gets its container in front, or every nested Response would be one GraphQL type.
@@ -267,45 +254,13 @@ internal static class HostReader
             // HotChocolate's rule of adding Input.
             wireType.ContainingType is { } wireOuter ? wireOuter.Name + wireType.Name : wireType.Name.EndsWith("Input", StringComparison.Ordinal) ? wireType.Name : wireType.Name + "Input",
             wireType.ContainingType is { },
-            hostKind == HostKind.GraphQLClient && responseNotNull is { } ? Selection(responseNotNull, 0, []) : EquatableArray<SelectionModel>.Empty,
             IsMessage(wireType),
             responseNotNull is { } && IsMessage(responseNotNull),
+            IsStructMessage(wireType),
+            // A void operation (Unit included) answers Empty: its response isn't carried.
+            responseNotNull is { } && requestKind != RequestKind.Void && IsStructMessage(responseNotNull),
             location
         );
-    }
-
-    // A handler someone wrote for the request, declared next to it: in its containing type or its namespace, in any assembly (LPAD1013).
-    // Only those places are searched, so the check stays cheap; a handler elsewhere still makes a second handler, but isn't reported.
-    private static INamedTypeSymbol? FindHandWrittenHandler(INamedTypeSymbol request, INamedTypeSymbol? closedHandler, Compilation compilation)
-    {
-        var candidates = new List<INamedTypeSymbol>();
-        if (request.ContainingType is { } containing) candidates.AddRange(containing.GetTypeMembers());
-        if (compilation.GetCompilationNamespace(request.ContainingNamespace) is { } ns)
-        {
-            foreach (var type in ns.GetTypeMembers())
-            {
-                candidates.Add(type);
-                candidates.AddRange(type.GetTypeMembers());
-            }
-        }
-
-        return candidates.Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default).FirstOrDefault(c => IsHandlerOf(c, request, closedHandler));
-    }
-
-    private static bool IsHandlerOf(INamedTypeSymbol candidate, INamedTypeSymbol request, INamedTypeSymbol? closedHandler)
-    {
-        if (candidate.TypeKind != TypeKind.Class || SymbolEqualityComparer.Default.Equals(candidate, request)) return false;
-        // The profile's handler interface, or any *Handler interface over the request (ZeroAlloc's IRequestHandler<,>).
-        if (candidate.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, closedHandler)
-             || i.Name.EndsWith("Handler", StringComparison.Ordinal) && i.TypeArguments.FirstOrDefault() is { } first && SymbolEqualityComparer.Default.Equals(first, request)))
-        {
-            return true;
-        }
-
-        // Convention handlers: Immediate.Handlers' [Handler] classes and Foundatio's *Handler/*Consumer classes.
-        return candidate.GetMembers()
-                        .OfType<IMethodSymbol>()
-                        .Any(m => m.Name is "Handle" or "HandleAsync" or "Consume" or "ConsumeAsync" && m.Parameters.FirstOrDefault() is { } p && SymbolEqualityComparer.Default.Equals(p.Type, request));
     }
 
     private static (RequestKind Kind, ITypeSymbol? Response, RequestKindModel? Model) MatchKind(
@@ -352,7 +307,9 @@ internal static class HostReader
             var handle = candidate.GetMembers()
                                   .OfType<IMethodSymbol>()
                                   .FirstOrDefault(m => m.Name is "Handle" or "HandleAsync" && m.Parameters.Length > 0 && SymbolEqualityComparer.Default.Equals(m.Parameters[0].Type, request));
-            if (handle?.ReturnType is INamedTypeSymbol { Arity: 1 } awaitable && awaitable.Name is "ValueTask" or "Task") return awaitable.TypeArguments[0];
+            if (handle?.ReturnType is not INamedTypeSymbol { Name: "ValueTask" or "Task" } awaitable) continue;
+            // A bare ValueTask: Immediate.Handlers implements IHandler<TRequest, ValueTuple>, which the profile's unit type makes void.
+            return awaitable.Arity == 1 ? awaitable.TypeArguments[0] : compilation.GetTypeByMetadataName("System.ValueTuple");
         }
 
         return null;
@@ -504,6 +461,11 @@ internal static class HostReader
     // A class protobuf-net.Grpc can use as a message as it is; anything else (structs, primitives, strings) is wrapped by the generator.
     private static bool IsMessage(ITypeSymbol type) => type is INamedTypeSymbol { TypeKind: TypeKind.Class, SpecialType: SpecialType.None, IsAbstract: false };
 
+    // A user struct (ZeroAlloc's requests): wrapped in Message<T> for protobuf-net.Grpc, but on the wire as the struct itself (a surrogate).
+    private static bool IsStructMessage(ITypeSymbol type) =>
+        type is INamedTypeSymbol { TypeKind: TypeKind.Struct, SpecialType: SpecialType.None, IsGenericType: false } named
+     && named.ContainingNamespace?.ToDisplayString() is not "System" && !named.ContainingNamespace!.ToDisplayString().StartsWith("System.", StringComparison.Ordinal);
+
     private static bool NeedsContract(ITypeSymbol type) =>
         type is INamedTypeSymbol { SpecialType: SpecialType.None, TypeKind: TypeKind.Class or TypeKind.Struct } named
      && named.ContainingNamespace?.ToDisplayString() is not ( "System" or "System.Collections.Generic" )
@@ -554,55 +516,6 @@ internal static class HostReader
          || TryParseMethods(type).Any(m => m.Parameters.Length is 2 or 3 && m.Parameters[^1].RefKind == RefKind.Out),
     };
 
-    // The selection a GraphQL client asks for: every readable public property, recursively, with scalars as leaves. Collections select their
-    // elements; a type already on the path (a cycle) or deeper than four levels is left out.
-    private static EquatableArray<SelectionModel> Selection(ITypeSymbol type, int depth, ImmutableHashSet<string> path)
-    {
-        type = Element(type) is var element && IsCollection(type, out var item) ? item : element;
-        if (IsLeaf(type) || depth > 4 || path.Contains(type.ToDisplayString())) return EquatableArray<SelectionModel>.Empty;
-        var inner = path.Add(type.ToDisplayString());
-        var properties = new List<IPropertySymbol>();
-        for (var current = type as INamedTypeSymbol; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType)
-        {
-            properties.AddRange(
-                current.GetMembers()
-                       .OfType<IPropertySymbol>()
-                       .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
-                       .Where(p => properties.All(existing => existing.Name != p.Name))
-            );
-        }
-
-        return properties.Select(p => (Property: p, Children: Selection(p.Type, depth + 1, inner)))
-                         .Where(p => IsLeaf(Leaf(p.Property.Type)) || !p.Children.IsEmpty)
-                         .Select(p => new SelectionModel(Naming.CamelCase(p.Property.Name), p.Children))
-                         .ToEquatableArray();
-    }
-
-    private static ITypeSymbol Leaf(ITypeSymbol type) => IsCollection(Element(type), out var item) ? Element(item) : Element(type);
-
-    private static bool IsCollection(ITypeSymbol type, out ITypeSymbol item)
-    {
-        item = type;
-        if (type is IArrayTypeSymbol array)
-        {
-            item = array.ElementType;
-            return true;
-        }
-
-        if (type.SpecialType == SpecialType.System_String) return false;
-        var enumerable = type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Collections_Generic_IEnumerable_T } self
-            ? self
-            : type.AllInterfaces.FirstOrDefault(i => i.OriginalDefinition.SpecialType == SpecialType.System_Collections_Generic_IEnumerable_T);
-        if (enumerable is null) return false;
-        item = enumerable.TypeArguments[0];
-        return true;
-    }
-
-    // A scalar on a GraphQL server: what binds from a route or query value, NodaTime's types, and strongly typed ids (a type with one Value).
-    private static bool IsLeaf(ITypeSymbol type) =>
-        IsSimple(type)
-     || type.ContainingNamespace?.ToDisplayString() is { } ns && ( ns == "System" || ns.StartsWith("NodaTime", StringComparison.Ordinal) )
-     || type.GetMembers("Value").OfType<IPropertySymbol>().Any(p => !p.IsStatic) && type.GetMembers().OfType<IPropertySymbol>().Count(p => !p.IsStatic) == 1;
 
     private static string NormalizeRoute(string route) => string.Join("/", route.Trim('/').Split('/').Select(s => s.StartsWith("{", StringComparison.Ordinal) ? "{}" : s.ToLowerInvariant()));
 

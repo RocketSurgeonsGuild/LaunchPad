@@ -1,11 +1,5 @@
 <Project>
-    <!--
-        Tells the API generators which mediator source generators run in this project. martinothamar/Mediator and Foundatio only dispatch to
-        handlers their own generator sees, and ZeroAlloc's handlers extend what its generator writes, so a generated client host has to sit on
-        the right side of that generator (LPAD1012). Generators can't see each other, so the build hands the list over.
-    -->
     <ItemGroup>
-        <CompilerVisibleProperty Include="LaunchPadApiMediatorGenerators" />
         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="LaunchPadApiDocumentation" />
     </ItemGroup>
     <!--
@@ -25,20 +19,5 @@
                 LaunchPadApiDocumentation="true"
             />
         </ItemGroup>
-    </Target>
-    <Target Name="_LaunchPadApiMediatorGenerators" BeforeTargets="GenerateMSBuildEditorConfigFileCore">
-        <ItemGroup>
-            <_LaunchPadApiMediatorGenerator
-                Include="@(Analyzer->'%(Filename)')"
-                Condition="'%(Filename)' == 'Mediator.SourceGenerator' or '%(Filename)' == 'Foundatio.Mediator' or '%(Filename)' == 'ZeroAlloc.Mediator.Generator'"
-            />
-        </ItemGroup>
-        <PropertyGroup>
-            <!--
-                Never empty, so the generators can tell "none run here" from "the build didn't say". Separated by | because the generated
-                .editorconfig treats ; and # as the start of a comment.
-            -->
-            <LaunchPadApiMediatorGenerators>|@(_LaunchPadApiMediatorGenerator->Distinct(), '|')|</LaunchPadApiMediatorGenerators>
-        </PropertyGroup>
     </Target>
 </Project>

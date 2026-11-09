@@ -414,7 +414,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
 #pragma warning disable
 namespace Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi
 {
-    /// <summary>Formats a value for a URL the same way generated clients do: invariant culture, enums by name, booleans in lowercase.</summary>
+    /// <summary>Formats a route, query or header value: invariant culture, enums by name, booleans in lowercase.</summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     internal static class ApiFormat
     {

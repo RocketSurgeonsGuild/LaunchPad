@@ -29,7 +29,7 @@ A mediator request, with its response, that is exposed over one or more transpor
 _Avoid_: Endpoint, contract, action
 
 **Contracts project**:
-The project that holds operations and their response types and is shared by the servers that expose them and the clients that call them.
+The project that holds operations and their response types, shared by the servers that expose them.
 _Avoid_: Shared project, API project
 
 **Transport**:
@@ -37,11 +37,11 @@ A way of carrying an operation between a client and a server: Minimal API, MVC c
 _Avoid_: Protocol, channel
 
 **Operation host**:
-A type that declares, one by one, the operations it exposes (on a server) or calls (on a client) over one transport. An operation is only reachable where a host declares it.
+A server type that declares, one by one, the operations it exposes over one transport. An operation is only reachable where a host declares it.
 _Avoid_: Marker, mapper, endpoint group, API surface
 
 **Group**:
-The name an operation host gives its operations, which a server and a client must share to agree on where an operation lives.
+The name an operation host gives its operations: the middle of their routes, the gRPC package and service.
 _Avoid_: Area, module, route prefix
 
 **Mediator profile**:

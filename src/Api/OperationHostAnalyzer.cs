@@ -8,7 +8,7 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
 /// <summary>
 ///     Reports the host-level rules once per host, whatever its transport: the host must be partial (static for Minimal API), its transport must
-///     be inferable (with the transport's library referenced), client hosts must not declare constructors, and host settings must apply.
+///     be inferable (with the transport's library referenced), and host settings must apply.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class OperationHostAnalyzer : DiagnosticAnalyzer
@@ -16,7 +16,7 @@ public sealed class OperationHostAnalyzer : DiagnosticAnalyzer
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
     [
-        ApiDiagnostics.HostMustBePartial, ApiDiagnostics.HostTransportUnknown, ApiDiagnostics.ClientHostConstructor, ApiDiagnostics.HostSettingNotApplicable,
+        ApiDiagnostics.HostMustBePartial, ApiDiagnostics.HostTransportUnknown, ApiDiagnostics.HostSettingNotApplicable,
     ];
 
     /// <inheritdoc />
@@ -69,20 +69,13 @@ public sealed class OperationHostAnalyzer : DiagnosticAnalyzer
             context.ReportDiagnostic(Diagnostic.Create(ApiDiagnostics.HostMustBePartial, location, ImmutableDictionary<string, string?>.Empty.Add("static", needsStatic ? "true" : "false"), host.Name, requirement));
         }
 
-        // The client's own constructor is generated; only constructors the user wrote count.
-        if (kind.IsClient() && host.InstanceConstructors.Any(c => !c.IsImplicitlyDeclared && c.DeclaringSyntaxReferences.Any(r => !IsGenerated(r.SyntaxTree, context.CancellationToken))))
-        {
-            context.ReportDiagnostic(Diagnostic.Create(ApiDiagnostics.ClientHostConstructor, location, host.Name));
-        }
-
         var settings = host.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is(KnownNames.OperationHostAttribute));
         if (settings is null) return;
         foreach (var setting in settings.NamedArguments.Select(n => n.Key))
         {
             var applies = setting switch
             {
-                "ClientName" or "Handlers" or "JsonOptions" => kind.IsClient(),
-                "RoutePrefix" or "Version" => kind is HostKind.MinimalApi or HostKind.Controller or HostKind.HttpClient,
+                "RoutePrefix" or "Version" => kind is HostKind.MinimalApi or HostKind.Controller,
                 _ => true,
             };
             if (!applies)

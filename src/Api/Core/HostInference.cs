@@ -10,9 +10,6 @@ internal enum HostKind
     GrpcService,
     GraphQLQuery,
     GraphQLMutation,
-    HttpClient,
-    GrpcClient,
-    GraphQLClient,
 }
 
 internal static class KnownNames
@@ -34,7 +31,6 @@ internal static class KnownNames
 
     public const string ControllerBase = "Microsoft.AspNetCore.Mvc.ControllerBase";
     public const string EndpointRouteBuilder = "Microsoft.AspNetCore.Routing.IEndpointRouteBuilder";
-    public const string HttpClientFactory = "System.Net.Http.IHttpClientFactory";
     public const string ExtendObjectTypeAttribute = "HotChocolate.Types.ExtendObjectTypeAttribute";
     public const string ServiceContractAttribute = "System.ServiceModel.ServiceContractAttribute";
     public const string GrpcCallContext = "ProtoBuf.Grpc.CallContext";
@@ -73,7 +69,7 @@ internal static class KnownNames
 /// </summary>
 internal static class HostInference
 {
-    // Checked in order, so GrpcClient and GraphQLClient win over Client. A non-static *Endpoints class is still a Minimal API host;
+    // A non-static *Endpoints class is still a Minimal API host;
     // LPAD1010 (with a code fix) asks for `static partial`.
     private static readonly (string Suffix, HostKind Kind, string Requires, string Library)[] NameRules =
     [
@@ -83,9 +79,6 @@ internal static class HostInference
         ("Service", HostKind.GrpcService, KnownNames.GrpcCallContext, "protobuf-net.Grpc"),
         ("Queries", HostKind.GraphQLQuery, KnownNames.ExtendObjectTypeAttribute, "HotChocolate"),
         ("Mutations", HostKind.GraphQLMutation, KnownNames.ExtendObjectTypeAttribute, "HotChocolate"),
-        ("GrpcClient", HostKind.GrpcClient, KnownNames.GrpcCallContext, "protobuf-net.Grpc"),
-        ("GraphQLClient", HostKind.GraphQLClient, KnownNames.HttpClientFactory, "Microsoft.Extensions.Http"),
-        ("Client", HostKind.HttpClient, KnownNames.HttpClientFactory, "Microsoft.Extensions.Http"),
     ];
 
     public static (HostKind Kind, string? Problem) Infer(INamedTypeSymbol host, Compilation compilation)
@@ -120,17 +113,12 @@ internal static class HostInference
         HostKind.GrpcService => "gRPC service",
         HostKind.GraphQLQuery => "GraphQL query",
         HostKind.GraphQLMutation => "GraphQL mutation",
-        HostKind.HttpClient => "HTTP client",
-        HostKind.GrpcClient => "gRPC client",
-        HostKind.GraphQLClient => "GraphQL client",
         HostKind.Unknown => "unknown",
         _ => throw new ArgumentOutOfRangeException(nameof(kind)),
     };
 
-    /// <summary>Whether the transport is HTTP with routes and verbs (Minimal API, MVC, the HTTP client).</summary>
-    public static bool IsHttp(this HostKind kind) => kind is HostKind.MinimalApi or HostKind.Controller or HostKind.HttpClient;
-
-    public static bool IsClient(this HostKind kind) => kind is HostKind.HttpClient or HostKind.GrpcClient or HostKind.GraphQLClient;
+    /// <summary>Whether the transport is HTTP with routes and verbs (Minimal API, MVC).</summary>
+    public static bool IsHttp(this HostKind kind) => kind is HostKind.MinimalApi or HostKind.Controller;
 
     private static (HostKind, string?) Require(HostKind kind, Compilation compilation, string metadataName, string library) =>
         compilation.GetTypeByMetadataName(metadataName) is { }

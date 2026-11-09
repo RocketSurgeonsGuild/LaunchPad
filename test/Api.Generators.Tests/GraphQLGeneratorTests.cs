@@ -17,20 +17,6 @@ public class GraphQLGeneratorTests() : GeneratorTest()
         await Verify(result).UseParameters(mediator);
     }
 
-    [Test]
-    [Arguments(Mediator.MediatR)]
-    [Arguments(Mediator.Mediator)]
-    [Arguments(Mediator.ChannelMediator)]
-    [Arguments(Mediator.ImmediateHandlers)]
-    [Arguments(Mediator.Foundatio)]
-    [Arguments(Mediator.ZeroAlloc)]
-    public async Task Should_Generate_A_Client(Mediator mediator)
-    {
-        var contracts = await CompileContracts(mediator, Contracts.For(mediator));
-        var result = await GraphQLClient(mediator, contracts).AddSources(Contracts.GraphQLClientHost).Build().GenerateAsync(TestContext.CancellationToken);
-
-        await Verify(result).UseParameters(mediator);
-    }
 
     // Queries aren't generated: they usually return IQueryable for paging and filtering (LPAD1017).
     [Test]

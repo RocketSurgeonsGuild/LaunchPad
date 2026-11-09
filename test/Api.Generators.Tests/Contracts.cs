@@ -11,7 +11,7 @@ internal static class Contracts
         Mediator.Mediator => Shared("using Mediator;", "IQuery<RocketModel?>", "IStreamQuery<RocketModel>", "ICommand<Response>", "ICommand<RocketModel>", "ICommand", "record"),
         Mediator.ChannelMediator => Shared("using ChannelMediator;", "IRequest<RocketModel?>", "IStreamRequest<RocketModel>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest", "record"),
         Mediator.ZeroAlloc => Shared("using ZeroAlloc.Mediator;", "IRequest<RocketModel?>", "IStreamRequest<RocketModel>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest", "readonly record struct"),
-        Mediator.Foundatio => Markerless("using Foundatio.Mediator;", "IRequest<RocketModel?>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest<bool>"),
+        Mediator.Foundatio => Markerless("using Foundatio.Mediator;", "IRequest<RocketModel?>", "IRequest<Response>", "IRequest<RocketModel>", "ICommand"),
         Mediator.ImmediateHandlers => Markerless("", "", "", "", ""),
         // A custom profile has no shared contracts: the test that uses one declares its own request interfaces.
         Mediator.Custom => throw new ArgumentOutOfRangeException(nameof(mediator), mediator, "Write the contracts of a custom profile in the test."),
@@ -111,21 +111,6 @@ internal static class Contracts
         }
         """;
 
-    public const string ClientHost = """
-        #nullable enable
-        using Rocket.Surgery.LaunchPad.Api;
-        using Sample.Contracts.Rockets;
-
-        namespace Sample.Client
-        {
-            [Operation<GetRocket.Request>]
-            [Operation<ListRockets.Request>]
-            [Operation<CreateRocket.Request>]
-            [Operation<EditRocket.Request>]
-            [Operation<DeleteRocket.Request>]
-            public partial class RocketsClient;
-        }
-        """;
 
     public const string ControllerHost = """
         #nullable enable
@@ -159,21 +144,6 @@ internal static class Contracts
         }
         """;
 
-    public const string GrpcClientHost = """
-        #nullable enable
-        using Rocket.Surgery.LaunchPad.Api;
-        using Sample.Contracts.Rockets;
-
-        namespace Sample.Client
-        {
-            [Operation<GetRocket.Request>]
-            [Operation<ListRockets.Request>]
-            [Operation<CreateRocket.Request>]
-            [Operation<EditRocket.Request>]
-            [Operation<DeleteRocket.Request>]
-            public partial class RocketsGrpcClient;
-        }
-        """;
 
     public const string MutationHost = """
         #nullable enable
@@ -189,17 +159,4 @@ internal static class Contracts
         }
         """;
 
-    public const string GraphQLClientHost = """
-        #nullable enable
-        using Rocket.Surgery.LaunchPad.Api;
-        using Sample.Contracts.Rockets;
-
-        namespace Sample.Client
-        {
-            [Operation<CreateRocket.Request>]
-            [Operation<EditRocket.Request>]
-            [Operation<DeleteRocket.Request>]
-            public partial class RocketsGraphQLClient;
-        }
-        """;
 }

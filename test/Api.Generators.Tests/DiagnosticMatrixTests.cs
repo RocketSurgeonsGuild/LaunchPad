@@ -2,16 +2,13 @@ using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 
 namespace Api.Generators.Tests;
 
-/// <summary>The kinds of operation host, one per transport and side.</summary>
+/// <summary>The kinds of operation host, one per transport.</summary>
 public enum HostCase
 {
     MinimalApi,
     Controller,
     GrpcService,
     GraphQLMutation,
-    HttpClient,
-    GrpcClient,
-    GraphQLClient,
 }
 
 /// <summary>
@@ -25,11 +22,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         [Mediator.MediatR, Mediator.Mediator, Mediator.ChannelMediator, Mediator.ImmediateHandlers, Mediator.Foundatio, Mediator.ZeroAlloc];
 
     private static readonly HostCase[] AllHosts = Enum.GetValues<HostCase>();
-    private static readonly HostCase[] Http = [HostCase.MinimalApi, HostCase.Controller, HostCase.HttpClient];
-    private static readonly HostCase[] HttpServers = [HostCase.MinimalApi, HostCase.Controller];
-    private static readonly HostCase[] Clients = [HostCase.HttpClient, HostCase.GrpcClient, HostCase.GraphQLClient];
-    private static readonly HostCase[] Grpc = [HostCase.GrpcService, HostCase.GrpcClient];
-    private static readonly HostCase[] GraphQL = [HostCase.GraphQLMutation, HostCase.GraphQLClient];
+    private static readonly HostCase[] Http = [HostCase.MinimalApi, HostCase.Controller];
 
     /// <summary>The hosts and profiles each diagnostic can be reported for.</summary>
     private static readonly (string Id, HostCase[] Hosts, Mediator[] Mediators)[] Applicability =
@@ -44,20 +37,15 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         ("LPAD1008", Http, BuiltIn),
         ("LPAD1009", [HostCase.GraphQLMutation], BuiltIn),
         ("LPAD1010", AllHosts, BuiltIn),
-        ("LPAD1011", Clients, [Mediator.Custom]),
-        ("LPAD1012", Clients, [Mediator.Mediator, Mediator.Foundatio, Mediator.ZeroAlloc]),
-        ("LPAD1013", Clients, BuiltIn),
-        ("LPAD1014", Grpc, BuiltIn),
-        ("LPAD1015", GraphQL, BuiltIn),
-        ("LPAD1016", [HostCase.GraphQLClient], BuiltIn),
-        ("LPAD1017", [HostCase.GrpcService, HostCase.GrpcClient, HostCase.GraphQLMutation], BuiltIn),
-        ("LPAD1018", Clients, BuiltIn),
+        ("LPAD1014", [HostCase.GrpcService], BuiltIn),
+        ("LPAD1015", [HostCase.GraphQLMutation], BuiltIn),
+        ("LPAD1016", AllHosts, [Mediator.Custom]),
+        ("LPAD1017", [HostCase.GrpcService, HostCase.GraphQLMutation], BuiltIn),
         ("LPAD1019", [HostCase.GraphQLMutation], BuiltIn),
         ("LPAD1020", AllHosts, BuiltIn),
-        ("LPAD1021", [.. Grpc, .. GraphQL], BuiltIn),
-        ("LPAD1022", Clients, BuiltIn),
-        ("LPAD1023", HttpServers, BuiltIn),
-        ("LPAD1024", HttpServers, BuiltIn),
+        ("LPAD1021", [HostCase.GrpcService, HostCase.GraphQLMutation], BuiltIn),
+        ("LPAD1023", Http, BuiltIn),
+        ("LPAD1024", Http, BuiltIn),
     ];
 
     public static IEnumerable<(string Id, HostCase Host, Mediator Mediator)> Cases() =>
@@ -70,10 +58,10 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         var fixture = Fixture(id, host, mediator);
         // The code fix case needs a single document (see AttributesInHostSource).
         AttributesInHostSource = id == "LPAD1010";
-        var contracts = await CompileContracts(mediator, MatrixContracts.For(mediator, fixture.DataContracts, fixture.HandlerFor), typeof(System.Runtime.Serialization.DataContractAttribute).Assembly);
+        var contracts = await CompileContracts(mediator, MatrixContracts.For(mediator, fixture.DataContracts), typeof(System.Runtime.Serialization.DataContractAttribute).Assembly);
         var builder = Builder(fixture.Builder ?? host, mediator, contracts);
         if (fixture.Configure is { } configure) builder = configure(builder);
-        var result = await builder.AddSources(Source(fixture.Host, mediator) + ( AttributesInHostSource ? "\n" + AttributeSources : "" )).Build().GenerateAsync(TestContext.CancellationToken);
+        var result = await builder.AddSources(Source(fixture.Host, mediator, dispatchable: id != "LPAD1016") + ( AttributesInHostSource ? "\n" + AttributeSources : "" )).Build().GenerateAsync(TestContext.CancellationToken);
 
         await VerifyDiagnostics(result, settings => settings.UseDirectory(Path.Combine("snapshots", "diagnostics")).UseFileName($"{id}.{host}.{mediator}"));
     }
@@ -82,7 +70,6 @@ public class DiagnosticMatrixTests() : GeneratorTest()
     private sealed record Case(
         string Host,
         bool DataContracts = true,
-        string? HandlerFor = null,
         Func<GeneratorTestContextBuilder, GeneratorTestContextBuilder>? Configure = null,
         HostCase? Builder = null
     );
@@ -111,25 +98,17 @@ public class DiagnosticMatrixTests() : GeneratorTest()
                 $"[Operation<{op}.Request>] {Declare(host, partial: false)}",
                 Configure: builder => builder.WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.MakeHostPartialCodeFix>()
             ),
-            // A custom profile without a handler interface: every built-in profile has one for each request kind.
-            "LPAD1011" => new($"[Operation<{op}.Request>] {Declare(host)}"),
-            "LPAD1012" => new(
-                $"[Operation<{op}.Request>] {Declare(host)}",
-                Configure: builder => builder.AddGlobalOption("build_property.LaunchPadApiMediatorGenerators", WrongProjectGenerators(mediator))
-            ),
-            "LPAD1013" => new($"[Operation<{op}.Request>] {Declare(host)}", HandlerFor: op),
             "LPAD1014" => new($"[Operation<{op}.Request>] {Declare(host)}", DataContracts: false),
             "LPAD1015" => new($"[Operation<ListRockets.Request>(Name = \"CreateRockets\")] {Declare(host)}"),
-            // A query on a GraphQL client: every built-in profile dispatches every request kind on the other transports.
-            "LPAD1016" => new($"[Operation<GetRocket.Request>] {Declare(host)}"),
+            // A custom profile with neither a sender nor a handler interface can't dispatch anything; every built-in profile dispatches every
+            // request kind.
+            "LPAD1016" => new($"[Operation<{op}.Request>] {Declare(host)}"),
             // The host's transport library isn't referenced: a gRPC or GraphQL host in a project without protobuf-net.Grpc or HotChocolate. The
-            // ASP.NET Core and Microsoft.Extensions.Http libraries of the other transports are part of every test compilation.
-            "LPAD1017" => new($"[Operation<{op}.Request>] {Declare(host)}", Builder: IsClient(host) ? HostCase.MinimalApi : HostCase.HttpClient),
-            "LPAD1018" => new($"[Operation<{op}.Request>] {Declare(host)} [Operation<{op}.Request>] {Declare(host, "Fleet")}"),
+            // ASP.NET Core libraries of the other transports are part of every test compilation.
+            "LPAD1017" => new($"[Operation<{op}.Request>] {Declare(host)}", Builder: HostCase.MinimalApi),
             "LPAD1019" => new($"[Operation<GetRocket.Request>] {Declare(host)}"),
             "LPAD1020" => new($"[Operation<{op}.Request>(Input = typeof(RocketModel))] {Declare(host)}"),
             "LPAD1021" => new($"[OperationHost(RoutePrefix = \"fleet\")] [Operation<{op}.Request>] {Declare(host)}"),
-            "LPAD1022" => new($"[Operation<{op}.Request>] {Declare(host, body: $"public {Name(host)}() {{ }}")}"),
             "LPAD1023" => new($"[Operation<CreateRocket.Request>] {Declare(host)}"),
             "LPAD1024" => new($"[OperationHost(Version = \"1.0\")] [Operation<GetRocket.Request>] {Declare(host)}"),
             _ => throw new ArgumentOutOfRangeException(nameof(id), id, null),
@@ -137,9 +116,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
     }
 
     // GraphQL hosts only carry mutations.
-    private static string Operation(HostCase host) => host is HostCase.GraphQLMutation or HostCase.GraphQLClient ? "CreateRocket" : "GetRocket";
-
-    private static bool IsClient(HostCase host) => host is HostCase.HttpClient or HostCase.GrpcClient or HostCase.GraphQLClient;
+    private static string Operation(HostCase host) => host == HostCase.GraphQLMutation ? "CreateRocket" : "GetRocket";
 
     private static string Name(HostCase host, string noun = "Rockets") => noun + host switch
     {
@@ -147,9 +124,6 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         HostCase.Controller => "Controller",
         HostCase.GrpcService => "Service",
         HostCase.GraphQLMutation => "Mutations",
-        HostCase.HttpClient => "Client",
-        HostCase.GrpcClient => "GrpcClient",
-        HostCase.GraphQLClient => "GraphQLClient",
         _ => throw new ArgumentOutOfRangeException(nameof(host)),
     };
 
@@ -165,29 +139,19 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         return $"{modifiers} {Name(host, noun)}{( body is null ? ";" : $" {{ {body} }}" )}";
     }
 
-    // The build property for a project that runs the wrong mediator generators for the profile's client placement. Only the source-generated
-    // mediators constrain where a client host lives; MediatR, ChannelMediator and Immediate.Handlers clients can live anywhere.
-    private static string WrongProjectGenerators(Mediator mediator) => mediator switch
-    {
-        Mediator.Mediator => "|Mediator.SourceGenerator|",
-        Mediator.Foundatio => "|Foundatio.Mediator|",
-        Mediator.ZeroAlloc => "|",
-        Mediator.MediatR or Mediator.ChannelMediator or Mediator.ImmediateHandlers or Mediator.Custom => throw new ArgumentOutOfRangeException(nameof(mediator)),
-        _ => throw new ArgumentOutOfRangeException(nameof(mediator)),
-    };
 
-    private const string CustomProfile = """
-        [assembly: MediatorProfile(SenderType = typeof(IMyDispatcher), SendMethod = "Dispatch", StreamMethod = "Stream", Name = "MyMediator")]
+    private static string CustomProfile(bool dispatchable) => $$"""
+        [assembly: MediatorProfile({{( dispatchable ? "SenderType = typeof(IMyDispatcher), SendMethod = \"Dispatch\", StreamMethod = \"Stream\", " : "" )}}Name = "MyMediator")]
         [assembly: MediatorRequest(typeof(IMyRequest<>))]
         [assembly: MediatorRequest(typeof(IMyStream<>), Kind = RequestKind.Stream)]
         """;
 
-    private static string Source(string body, Mediator mediator) => $$"""
+    private static string Source(string body, Mediator mediator, bool dispatchable = true) => $$"""
         #nullable enable
         using Rocket.Surgery.LaunchPad.Api;
         using Sample.Contracts.Rockets;
 
-        {{( mediator == Mediator.Custom ? CustomProfile : "" )}}
+        {{( mediator == Mediator.Custom ? CustomProfile(dispatchable) : "" )}}
 
         namespace Sample.Host
         {
@@ -201,9 +165,6 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         HostCase.Controller => Controllers(mediator, contracts),
         HostCase.GrpcService => GrpcServer(mediator, contracts),
         HostCase.GraphQLMutation => GraphQLServer(mediator, contracts),
-        HostCase.HttpClient => Client(mediator, contracts),
-        HostCase.GrpcClient => GrpcClient(mediator, contracts),
-        HostCase.GraphQLClient => GraphQLClient(mediator, contracts),
         _ => throw new ArgumentOutOfRangeException(nameof(host)),
     };
 }
@@ -238,7 +199,7 @@ internal static class MatrixContracts
         None,
     }
 
-    public static string For(Mediator mediator, bool dataContracts, string? handlerFor)
+    public static string For(Mediator mediator, bool dataContracts)
     {
         var shapes = For(mediator);
         string DataContract() => dataContracts ? "[global::System.Runtime.Serialization.DataContract] " : "";
@@ -268,13 +229,11 @@ internal static class MatrixContracts
             };
             var apiOperation = marker is null && shape != Shape.None ? $"[ApiOperation(Response = typeof({markerless}))] " : "";
             var kind = shapes.Struct ? "readonly record struct" : "sealed record";
-            var handler = handlerFor == container ? Handler(mediator, shape, response) : "";
             return $$"""
                 public static class {{container}}
                 {
                     {{apiOperation}}{{DataContract()}}public {{kind}} Request({{Parameters(parameters)}}){{( marker is null ? "" : " : " + marker )}};
                     {{extra}}
-                    {{handler}}
                 }
                 """;
         }
@@ -320,7 +279,6 @@ internal static class MatrixContracts
     private const string CustomInterfaces = """
         public interface IMyRequest<T> { }
         public interface IMyStream<T> { }
-        public interface IMyHandler<TRequest, TResponse> { }
         public interface IMyDispatcher
         {
             System.Threading.Tasks.Task<T> Dispatch<T>(IMyRequest<T> request, System.Threading.CancellationToken cancellationToken = default);
@@ -328,22 +286,4 @@ internal static class MatrixContracts
         }
         """;
 
-    // The server's own handler, declared next to the request the way LaunchPad's samples do it (LPAD1013). The Immediate.Handlers one has a
-    // public HandleAsync: a private one in a referenced assembly isn't imported, so the check can't see it.
-    private static string Handler(Mediator mediator, Shape shape, string response) => mediator switch
-    {
-        Mediator.MediatR =>
-            $"public sealed class Handler : MediatR.IRequestHandler<Request, {response}> {{ public System.Threading.Tasks.Task<{response}> Handle(Request request, System.Threading.CancellationToken cancellationToken) => throw null!; }}",
-        Mediator.Mediator =>
-            $"public sealed class Handler : Mediator.{( shape == Shape.Query ? "IQueryHandler" : "ICommandHandler" )}<Request, {response}> {{ public System.Threading.Tasks.ValueTask<{response}> Handle(Request request, System.Threading.CancellationToken cancellationToken) => default; }}",
-        Mediator.ChannelMediator =>
-            $"public sealed class Handler : ChannelMediator.IRequestHandler<Request, {response}> {{ public System.Threading.Tasks.Task<{response}> Handle(Request request, System.Threading.CancellationToken cancellationToken) => throw null!; }}",
-        Mediator.ZeroAlloc =>
-            $"public sealed class Handler : ZeroAlloc.Mediator.IRequestHandler<Request, {response}> {{ public System.Threading.Tasks.ValueTask<{response}> Handle(Request request, System.Threading.CancellationToken ct) => default; }}",
-        Mediator.Foundatio => $"public sealed class Handler {{ public {response} Handle(Request request) => default!; }}",
-        Mediator.ImmediateHandlers =>
-            $"[Immediate.Handlers.Shared.Handler] public static partial class Handler {{ public static System.Threading.Tasks.ValueTask<{response}> HandleAsync(Request request, System.Threading.CancellationToken token) => default; }}",
-        Mediator.Custom => $"public sealed class Handler : IMyHandler<Request, {response}> {{ }}",
-        _ => throw new ArgumentOutOfRangeException(nameof(mediator)),
-    };
 }

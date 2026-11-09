@@ -18,9 +18,11 @@ using GrpcServiceEndpointConventionBuilder = global::Microsoft.AspNetCore.Builde
 using IEndpointRouteBuilder = global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder;
 using IMediator = global::ZeroAlloc.Mediator.IMediator;
 using Interlocked = global::System.Threading.Interlocked;
+using MetaType = global::ProtoBuf.Meta.MetaType;
 using OperationAttribute = global::ProtoBuf.Grpc.Configuration.OperationAttribute;
 using RpcException = global::Grpc.Core.RpcException;
 using RuntimeTypeModel = global::ProtoBuf.Meta.RuntimeTypeModel;
+using SchemaGenerator = global::ProtoBuf.Grpc.Reflection.SchemaGenerator;
 using ServiceAttribute = global::ProtoBuf.Grpc.Configuration.ServiceAttribute;
 using Status = global::Grpc.Core.Status;
 using StatusCode = global::Grpc.Core.StatusCode;
@@ -29,8 +31,8 @@ using ValueTask = global::System.Threading.Tasks.ValueTask;
 
 namespace Sample.Server
 {
-    /// <summary>The gRPC contract of <see cref="RocketsService" />: service <c>Rockets</c>, one operation per listed request.</summary>
-    [Service("Rockets")]
+    /// <summary>The gRPC contract of <see cref="RocketsService" />: service <c>rockets.Rockets</c>, one operation per listed request.</summary>
+    [Service("rockets.Rockets")]
     [GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
     public interface IRocketsServiceContract
     {
@@ -59,6 +61,9 @@ namespace Sample.Server
 
             [DataMember(Order = 1)]
             public T Value { get; set; } = default!;
+
+            public static implicit operator Message<T>(T value) => new Message<T>(value);
+            public static implicit operator T(Message<T> value) => value is null ? default! : value.Value;
         }
     }
 
@@ -66,19 +71,50 @@ namespace Sample.Server
     public partial class RocketsService : IRocketsServiceContract
     {
         private static int __grpcModelConfigured;
-        /// <summary>Lets protobuf-net create the carried messages that have no parameterless constructor (positional records).</summary>
+        /// <summary>Adds the carried messages to protobuf-net's model: standard types, no constructor for positional records, nested types named with their container, structs on the wire as themselves.</summary>
         internal static void ConfigureGrpcModel()
         {
             if (Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
                 return;
-            __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.RocketModel));
-            __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response));
+            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.GetRocket.Request), "GetRocketRequest");
+            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.RocketModel), null);
+            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.ListRockets.Request), "ListRocketsRequest");
+            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request), "CreateRocketRequest");
+            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response), "CreateRocketResponse");
+            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.EditRocket.Request), "EditRocketRequest");
+            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request), "DeleteRocketRequest");
+            __ConfigureGrpcSurrogate(typeof(IRocketsServiceContract.Message<global::Sample.Contracts.Rockets.GetRocket.Request>), typeof(global::Sample.Contracts.Rockets.GetRocket.Request));
+            __ConfigureGrpcSurrogate(typeof(IRocketsServiceContract.Message<global::Sample.Contracts.Rockets.ListRockets.Request>), typeof(global::Sample.Contracts.Rockets.ListRockets.Request));
+            __ConfigureGrpcSurrogate(typeof(IRocketsServiceContract.Message<global::Sample.Contracts.Rockets.CreateRocket.Request>), typeof(global::Sample.Contracts.Rockets.CreateRocket.Request));
+            __ConfigureGrpcSurrogate(typeof(IRocketsServiceContract.Message<global::Sample.Contracts.Rockets.EditRocket.Request>), typeof(global::Sample.Contracts.Rockets.EditRocket.Request));
+            __ConfigureGrpcSurrogate(typeof(IRocketsServiceContract.Message<global::Sample.Contracts.Rockets.DeleteRocket.Request>), typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request));
         }
 
-        private static void __CreateWithoutConstructor([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type)
+        private static void __ConfigureGrpcType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type, string? name)
         {
+            foreach (MetaType existing in RuntimeTypeModel.Default.GetTypes())
+                if (existing.Type == type)
+                    return;
+            var meta = RuntimeTypeModel.Default.Add(type, true, global::ProtoBuf.CompatibilityLevel.Level300);
             if (type.GetConstructor(Type.EmptyTypes) == null)
-                RuntimeTypeModel.Default[type].UseConstructor = false;
+                meta.UseConstructor = false;
+            if (name != null)
+                meta.Name = name!;
+        }
+
+        private static void __ConfigureGrpcSurrogate(Type wrapper, Type type)
+        {
+            foreach (MetaType existing in RuntimeTypeModel.Default.GetTypes())
+                if (existing.Type == wrapper)
+                    return;
+            RuntimeTypeModel.Default.Add(wrapper, false).SetSurrogate(type);
+        }
+
+        /// <summary>The <c>.proto</c> of service <c>rockets.Rockets</c>, to generate clients from (protobuf-net.Grpc.Reflection).</summary>
+        public static string GetProto()
+        {
+            ConfigureGrpcModel();
+            return new SchemaGenerator().GetSchema<IRocketsServiceContract>();
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> through the mediator.</summary>

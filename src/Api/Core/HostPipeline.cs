@@ -47,34 +47,6 @@ internal static class HostPipeline
                     .WithTrackingName("Hosts");
     }
 
-    /// <summary>The build property the base package's targets file sets to the mediator generators that run in this project.</summary>
-    public const string MediatorGeneratorsProperty = "build_property.LaunchPadApiMediatorGenerators";
-
-    /// <summary>
-    ///     The analyzer file names of the mediator generators that run in this project, or <see langword="null" /> when the build didn't say
-    ///     (no MSBuild, or the base package's targets weren't imported), in which case placement isn't checked.
-    /// </summary>
-    public static EquatableArray<string>? MediatorGenerators(Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions options) =>
-        options.TryGetValue(MediatorGeneratorsProperty, out var value)
-            ? value.Split(['|'], StringSplitOptions.RemoveEmptyEntries).Select(v => v.Trim()).Where(v => v.Length > 0).ToEquatableArray()
-            : null;
-
-    /// <summary>Why a client host can't live in this project with its mediator (LPAD1012), or <see langword="null" /> when it can.</summary>
-    public static string? PlacementProblem(ProfileModel profile, EquatableArray<string>? mediatorGenerators)
-    {
-        if (mediatorGenerators is not { } running || profile.MediatorGeneratorMarker is not { } marker) return null;
-        var runsHere = running.Contains(marker);
-        return profile.ClientPlacement switch
-        {
-            ClientPlacement.NotWithMediatorGenerator when runsHere =>
-                $"this project runs {marker}, which can't see the generated handlers; move the host to a library that references the contracts but not {marker}, and reference that library from the application",
-            ClientPlacement.WithMediatorGenerator when !runsHere =>
-                $"the generated handlers extend the mediator that {marker} generates, so the host must be in a project that runs {marker}",
-            ClientPlacement.Anywhere or ClientPlacement.NotWithMediatorGenerator or ClientPlacement.WithMediatorGenerator => null,
-            _ => throw new ArgumentOutOfRangeException(nameof(profile)),
-        };
-    }
-
 
     private static bool IsClass(SyntaxNode node, CancellationToken _) => node is ClassDeclarationSyntax;
 

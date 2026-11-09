@@ -33,7 +33,6 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
         "ChannelMediator",
         "Foundatio.Mediator",
         "Grpc.Core",
-        "Grpc.Net.ClientFactory",
         "HotChocolate",
         "HotChocolate.Authorization",
         "HotChocolate.Execution.Configuration",
@@ -54,11 +53,9 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
         "Microsoft.Extensions.DependencyInjection.Extensions",
         "Microsoft.Extensions.Primitives",
         "ProtoBuf.Grpc",
-        "ProtoBuf.Grpc.ClientFactory",
         "ProtoBuf.Grpc.Configuration",
+        "ProtoBuf.Grpc.Reflection",
         "ProtoBuf.Meta",
-        "Rocket.Surgery.LaunchPad.Api.Generated.GraphQL",
-        "Rocket.Surgery.LaunchPad.Api.Generated.Http",
         "Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi",
         "Rocket.Surgery.LaunchPad.Api.Generated.Mvc",
         "System",
@@ -118,6 +115,9 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
                 _generics[key] = ns;
                 _imports.Add(ns);
                 return Visit(generic)!.WithTriviaFrom(node);
+            // A known namespace, or the start of one (ProtoBuf.Grpc.Reflection under ProtoBuf.Grpc), isn't a type to alias.
+            case IdentifierNameSyntax identifier when IsNamespace(ns + "." + identifier.Identifier.ValueText):
+                return base.VisitQualifiedName(node);
             case IdentifierNameSyntax identifier:
                 var name = identifier.Identifier.ValueText;
                 var isAttribute = node.Parent is AttributeSyntax attribute && attribute.Name == node;
@@ -161,6 +161,8 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
 
     // Leaves directives and namespace declarations as they are.
     public override SyntaxNode? VisitUsingDirective(UsingDirectiveSyntax node) => node;
+
+    private static bool IsNamespace(string name) => Namespaces.Contains(name) || Namespaces.Any(n => n.StartsWith(name + ".", StringComparison.Ordinal));
 
     // The dotted namespace a name stands for, without global::; null for anything else.
     private static string? Namespace(NameSyntax name) => name switch

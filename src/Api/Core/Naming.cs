@@ -12,16 +12,15 @@ internal enum HttpVerb
 }
 
 /// <summary>
-///     The naming rules shared by servers and clients, so both sides arrive at the same operation name, group, verb and route.
+///     The naming rules for operations: the operation name, group, verb and route a host gives each request.
 /// </summary>
 internal static class Naming
 {
     // A request type with one of these names takes its operation name from its containing type: GetRocket.Request → GetRocket.
     private static readonly string[] RoleWords = ["Request", "Command", "Query", "Message"];
 
-    // Longest first, so GrpcClient wins over Client.
-    private static readonly string[] HostRoleSuffixes =
-        ["GraphQLClient", "GrpcClient", "Controller", "Endpoints", "Mutations", "Mutation", "Queries", "Query", "Service", "Client", "Api"];
+    // Longest first, so Mutations wins over Mutation.
+    private static readonly string[] HostRoleSuffixes = ["Controller", "Endpoints", "Mutations", "Mutation", "Queries", "Query", "Service", "Api"];
 
     // LaunchPad's MatcherDefaults vocabulary, plus Patch.
     private static readonly (HttpVerb Verb, bool Creates, string[] Prefixes)[] VerbPrefixes =

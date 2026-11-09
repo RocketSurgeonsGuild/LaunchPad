@@ -22,10 +22,6 @@ internal static class ProfileResolver
                 "Send",
                 "CreateStream",
                 false,
-                "Transient",
-                null,
-                ClientEmitter.HandlerInterface,
-                ClientPlacement.Anywhere,
                 null,
                 new RequestKindModel[]
                 {
@@ -45,11 +41,7 @@ internal static class ProfileResolver
                 "Send",
                 "CreateStream",
                 false,
-                "Transient",
                 "Mediator.Unit",
-                ClientEmitter.HandlerInterfaceDiscovered,
-                ClientPlacement.NotWithMediatorGenerator,
-                "Mediator.SourceGenerator",
                 new RequestKindModel[]
                 {
                     new("Mediator.IRequest`1", RequestKind.Unary, 0, "Mediator.IRequestHandler`2", "Handle"),
@@ -71,11 +63,7 @@ internal static class ProfileResolver
                 "Send",
                 "CreateStream",
                 false,
-                "Transient",
                 "ChannelMediator.Unit",
-                ClientEmitter.HandlerInterface,
-                ClientPlacement.Anywhere,
-                null,
                 new RequestKindModel[]
                 {
                     new("ChannelMediator.IRequest`1", RequestKind.Unary, 0, "ChannelMediator.IRequestHandler`2", "Handle"),
@@ -93,11 +81,8 @@ internal static class ProfileResolver
                 "HandleAsync",
                 null,
                 false,
-                "Scoped",
-                null,
-                ClientEmitter.HandlerInterface,
-                ClientPlacement.Anywhere,
-                null,
+                // A [Handler] returning a bare ValueTask is an IHandler<TRequest, ValueTuple>.
+                "System.ValueTuple",
                 new RequestKindModel[] { new(null, RequestKind.Unary, 0, "Immediate.Handlers.Shared.IHandler`2", "HandleAsync") }.ToEquatableArray()
             )
         ),
@@ -111,16 +96,14 @@ internal static class ProfileResolver
                 "InvokeAsync",
                 null,
                 true,
-                "Transient",
                 null,
-                ClientEmitter.Foundatio,
-                ClientPlacement.NotWithMediatorGenerator,
-                "Foundatio.Mediator",
                 new RequestKindModel[]
                 {
                     new("Foundatio.Mediator.IRequest`1", RequestKind.Unary, 0, null, "HandleAsync"),
                     new("Foundatio.Mediator.ICommand`1", RequestKind.Unary, 0, null, "HandleAsync"),
                     new("Foundatio.Mediator.IQuery`1", RequestKind.Unary, 0, null, "HandleAsync"),
+                    // After the generic kinds: a void command, sent with the non-generic InvokeAsync.
+                    new("Foundatio.Mediator.ICommand", RequestKind.Void, 0, null, "HandleAsync"),
                     new(null, RequestKind.Unary, 0, null, "HandleAsync"),
                 }.ToEquatableArray()
             )
@@ -135,11 +118,7 @@ internal static class ProfileResolver
                 "Send",
                 "CreateStream",
                 false,
-                "Transient",
                 "ZeroAlloc.Mediator.Unit",
-                ClientEmitter.ZeroAlloc,
-                ClientPlacement.WithMediatorGenerator,
-                "ZeroAlloc.Mediator.Generator",
                 new RequestKindModel[]
                 {
                     new("ZeroAlloc.Mediator.IRequest`1", RequestKind.Unary, 0, null, "Handle"),
@@ -214,10 +193,6 @@ internal static class ProfileResolver
             named.TryGetValue("SendMethod", out var sm) && sm.Value is string send ? send : "Send",
             named.TryGetValue("StreamMethod", out var st) && st.Value is string stream ? stream : null,
             false,
-            named.TryGetValue("HandlerLifetime", out var l) && l.Value is int lifetime ? ( (string[])["Singleton", "Scoped", "Transient"] )[lifetime] : "Transient",
-            null,
-            kinds.Any(k => k.HandlerInterface is { }) ? ClientEmitter.HandlerInterface : ClientEmitter.None,
-            ClientPlacement.Anywhere,
             null,
             kinds
         );

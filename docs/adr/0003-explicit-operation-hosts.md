@@ -1,6 +1,6 @@
 # Operations are exposed and called only through explicit operation hosts
 
-An operation (a mediator request with its response) is reachable over a transport only where an operation host lists it with `[Operation<TRequest>]`: a controller, Minimal API class, gRPC service, GraphQL query or mutation type, or client. The generator writes the complete method for each entry, adds whatever the transport needs on the host that the user did not declare, and works with any mediator through a mediator profile. The transport is inferred from the host's base type, transport attribute or name, and the host owns the group the operations live under.
+An operation (a mediator request with its response) is reachable over a transport only where an operation host lists it with `[Operation<TRequest>]`: a controller, Minimal API class, gRPC service, or GraphQL query or mutation type. The generator writes the complete method for each entry, adds whatever the transport needs on the host that the user did not declare, and works with any mediator through a mediator profile. The transport is inferred from the host's base type, transport attribute or name, and the host owns the group the operations live under.
 
 ## Considered Options
 
@@ -9,4 +9,6 @@ An operation (a mediator request with its response) is reachable over a transpor
 
 ## Consequences
 
-The two earlier generators are removed, one transport per phase, together with `RestfulApiController`'s MediatR plumbing. `GraphqlOptionalPropertyTrackingGenerator` stays, because transport-specific inputs (`[Operation<T>(Input = …)]`) are built with its `Create()`. A server can override an operation's route, and a client then has to mirror the override, because the client never sees the server.
+The two earlier generators are removed, one transport per phase, together with `RestfulApiController`'s MediatR plumbing. `GraphqlOptionalPropertyTrackingGenerator` stays, because transport-specific inputs (`[Operation<T>(Input = …)]`) are built with its `Create()`. Clients are generated from what each server describes (its OpenAPI document, GraphQL schema or `.proto`), so a route a server overrides reaches its clients with the next generated client.
+
+Amended 2026-11-08: client operation hosts (`*Client`, `*GrpcClient`, `*GraphQLClient`), which generated typed clients plus one mediator handler per request, were removed before release. Mapping a client's mediator requests onto a remote server's tied the client to the server's contracts and mediator, and needed per-mediator placement rules; clients generated from the servers' specs need neither.

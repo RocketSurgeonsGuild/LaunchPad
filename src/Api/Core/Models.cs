@@ -28,36 +28,6 @@ internal enum DispatchKind
     HandlerInterface,
 }
 
-/// <summary>Where a generated client handler is reached from.</summary>
-internal enum ClientEmitter
-{
-    /// <summary>Implement the profile's handler interface and register it in DI.</summary>
-    HandlerInterface,
-
-    /// <summary>Implement the handler interface, but leave registration to the mediator's own generator in the app (martinothamar/Mediator).</summary>
-    HandlerInterfaceDiscovered,
-
-    /// <summary>Emit Foundatio's [FoundatioModule] registration.</summary>
-    Foundatio,
-
-    /// <summary>Extend ZeroAlloc's generated partial IMediator and MediatorService.</summary>
-    ZeroAlloc,
-
-    /// <summary>No handler interface: no mediator handler, the typed client only.</summary>
-    None,
-}
-
-internal enum ClientPlacement
-{
-    Anywhere,
-
-    /// <summary>The client host must not be in a project that runs the mediator's own generator.</summary>
-    NotWithMediatorGenerator,
-
-    /// <summary>The client host must be in the project that runs the mediator's own generator.</summary>
-    WithMediatorGenerator,
-}
-
 internal sealed record RequestKindModel(
     string? RequestInterface,
     RequestKind Kind,
@@ -73,11 +43,7 @@ internal sealed record ProfileModel(
     string SendMethod,
     string? StreamMethod,
     bool SendNeedsResponseTypeArgument,
-    string HandlerLifetime,
     string? UnitType,
-    ClientEmitter ClientEmitter,
-    ClientPlacement ClientPlacement,
-    string? MediatorGeneratorMarker,
     EquatableArray<RequestKindModel> Kinds
 );
 
@@ -143,22 +109,19 @@ internal sealed record OperationModel(
     EquatableArray<string> AuthenticationSchemes,
     bool AllowAnonymous,
     string? Version,
-    bool Handlers,
     string? HandlerInterface,
-    string? HandlerMethodReturnType,
-    string? HandlerMethodName,
     string? CreatedLocationRequest,
     string? CreatedLocationRoute,
     EquatableArray<string> CreatedLocationTokens,
-    string? VisibleHandler,
     string GraphQLField,
     bool GraphQLIsQuery,
     string? ResponseGraphQLName,
     string WireGraphQLName,
     bool WireNeedsGraphQLName,
-    EquatableArray<SelectionModel> Selection,
     bool RequestIsMessage,
     bool ResponseIsMessage,
+    bool RequestIsStruct,
+    bool ResponseIsStruct,
     LocationInfo? Location
 )
 {
@@ -176,14 +139,13 @@ internal sealed record HostModel(
     HostKind Kind,
     string Group,
     string RoutePrefix,
-    string ClientName,
     string? Version,
-    bool JsonWebDefaults,
     bool DeclaresBaseType,
     string? DeclaredRoute,
     bool DeclaresApiController,
     bool DeclaresGraphQLType,
     bool HasApiVersioning,
+    bool CanExportProto,
     ProfileModel? Profile,
     EquatableArray<OperationModel> Operations,
     EquatableArray<DiagnosticInfo> Diagnostics,
@@ -225,5 +187,3 @@ internal static class RouteText
     }
 }
 
-/// <summary>A field of a GraphQL selection set; a leaf (scalar) has no children.</summary>
-internal sealed record SelectionModel(string Field, EquatableArray<SelectionModel> Children);

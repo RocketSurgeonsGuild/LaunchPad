@@ -201,12 +201,6 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .AddReferences(GrpcAssemblies)
            .AddReferences(typeof(Grpc.AspNetCore.Server.GrpcServiceOptions).Assembly);
 
-    /// <summary>A client compilation running the gRPC client generator.</summary>
-    protected GeneratorTestContextBuilder GrpcClient(Mediator mediator, GeneratorTestResults contracts) =>
-        Client(mediator, contracts, withHttp: false)
-           .WithGenerator<GrpcClientGenerator>()
-           .AddReferences(GrpcAssemblies)
-           .AddReferences(typeof(ProtoBuf.Grpc.ClientFactory.ServicesExtensions).Assembly, typeof(Grpc.Net.ClientFactory.GrpcClientFactoryOptions).Assembly);
 
     /// <summary>A server compilation running the GraphQL mutation generator.</summary>
     protected GeneratorTestContextBuilder GraphQLServer(Mediator mediator, GeneratorTestResults contracts) =>
@@ -223,37 +217,14 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                 typeof(HotChocolate.Language.OperationType).Assembly
             );
 
-    /// <summary>A client compilation running the GraphQL client generator.</summary>
-    protected GeneratorTestContextBuilder GraphQLClient(Mediator mediator, GeneratorTestResults contracts) =>
-        Client(mediator, contracts, withHttp: false).WithGenerator<GraphQLClientGenerator>();
 
     private static readonly Assembly[] GrpcAssemblies =
-        [typeof(ProtoBuf.Grpc.CallContext).Assembly, typeof(Grpc.Core.CallOptions).Assembly, typeof(ProtoBuf.Serializer).Assembly];
+        [
+            typeof(ProtoBuf.Grpc.CallContext).Assembly, typeof(Grpc.Core.CallOptions).Assembly, typeof(ProtoBuf.Serializer).Assembly, typeof(ProtoBuf.Meta.TypeModel).Assembly,
+            // GetProto(): the service's .proto through protobuf-net.Grpc.Reflection.
+            typeof(ProtoBuf.Grpc.Reflection.SchemaGenerator).Assembly,
+        ];
 
-    protected GeneratorTestContextBuilder Client(Mediator mediator, GeneratorTestResults contracts, bool withHttp = true) =>
-        ( withHttp ? ClientBase().WithGenerator<HttpClientGenerator>() : ClientBase() )
-       .AddCompilationReferences(contracts)
-       .AddReferences(MediatorAssemblies(mediator));
-
-    private GeneratorTestContextBuilder ClientBase() =>
-        GeneratorTestContextBuilder
-           .Create()
-           .WithLogger(Logger)
-           .WithAssemblyLoadContext(AssemblyLoadContext)
-           .WithProjectName("Client")
-           .AddPreprocessorSymbol("NET7_0_OR_GREATER")
-           .AddSources(AttributesInHostSource ? [] : [AttributeSources])
-           .IgnoreHelperSources()
-           .WithAnalyzer<OperationHostAnalyzer>()
-           .AddReferences(FrameworkReferences)
-           .AddReferences(
-                typeof(IHttpClientFactory).Assembly,
-                typeof(HttpClientFactoryServiceCollectionExtensions).Assembly,
-                typeof(IServiceCollection).Assembly,
-                typeof(Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions).Assembly,
-                typeof(JsonContent).Assembly,
-                typeof(System.Text.Json.JsonSerializer).Assembly
-            );
 }
 
 internal static class GeneratorTestContextBuilderExtensions
@@ -262,7 +233,5 @@ internal static class GeneratorTestContextBuilderExtensions
     public static GeneratorTestContextBuilder IgnoreHelperSources(this GeneratorTestContextBuilder builder) =>
         builder
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ServerHelpers.g.cs")
-           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs")
-           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ClientHelpers.g.cs")
-           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GraphQLClientHelpers.g.cs");
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs");
 }

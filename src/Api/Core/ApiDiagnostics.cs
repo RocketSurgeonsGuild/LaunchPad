@@ -69,23 +69,8 @@ internal static class ApiDiagnostics
         "Operation host {0} must be {1}"
     );
 
-    public static DiagnosticDescriptor NoHandlerInterface { get; } = Warning(
-        "LPAD1011",
-        "Mediator profile has no handler interface",
-        "The {0} mediator profile has no handler interface for {1}, so no mediator handler is generated; call {2} directly"
-    );
 
-    public static DiagnosticDescriptor ClientHostInWrongProject { get; } = Error(
-        "LPAD1012",
-        "Client host is in the wrong project for its mediator",
-        "Client host {0} uses the {1} mediator profile: {2}"
-    );
 
-    public static DiagnosticDescriptor HandWrittenHandlerVisible { get; } = Warning(
-        "LPAD1013",
-        "A hand-written handler is visible next to the generated one",
-        "{0} already has a handler, {1}, and {2} generates another, so the request has two handlers; set Handlers = false on the operation, or keep the handler out of the client's references"
-    );
 
     public static DiagnosticDescriptor GrpcSerialization { get; } = Warning(
         "LPAD1014",
@@ -99,6 +84,7 @@ internal static class ApiDiagnostics
         "{0} is a stream operation and is skipped on GraphQL host {1}"
     );
 
+
     public static DiagnosticDescriptor FeatureSkipped { get; } = Info(
         "LPAD1016",
         "Feature skipped",
@@ -108,14 +94,9 @@ internal static class ApiDiagnostics
     public static DiagnosticDescriptor HostTransportUnknown { get; } = Error(
         "LPAD1017",
         "Operation host transport cannot be inferred",
-        "The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service, *Queries/*Mutations, *GrpcClient, *GraphQLClient or *Client."
+        "The transport of operation host {0} cannot be inferred: {1}. A host is a ControllerBase subclass or [ExtendObjectType] type, or is named *Controller, *Endpoints/*Api (static), *Service or *Queries/*Mutations."
     );
 
-    public static DiagnosticDescriptor DuplicateClientHandler { get; } = Error(
-        "LPAD1018",
-        "Two client hosts generate a handler for the same operation",
-        "{0} is declared with handlers on both {1} and {2}; set Handlers = false on one of them"
-    );
 
     public static DiagnosticDescriptor WrongGraphQLHostKind { get; } = Error(
         "LPAD1019",
@@ -135,11 +116,6 @@ internal static class ApiDiagnostics
         "[OperationHost({0})] has no effect on {1}, which is a {2} host"
     );
 
-    public static DiagnosticDescriptor ClientHostConstructor { get; } = Error(
-        "LPAD1022",
-        "Client host declares a constructor",
-        "Client host {0} gets a generated constructor taking the transport's client factory; remove the constructors it declares"
-    );
 
     public static DiagnosticDescriptor CreatedLocationInvalid { get; } = Warning(
         "LPAD1023",
@@ -156,9 +132,7 @@ internal static class ApiDiagnostics
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
-        MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, NoHandlerInterface, ClientHostInWrongProject,
-        HandWrittenHandlerVisible, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, DuplicateClientHandler,
-        WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, ClientHostConstructor, CreatedLocationInvalid, VersionNotMapped,
+        MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);

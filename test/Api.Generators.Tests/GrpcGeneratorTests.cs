@@ -17,19 +17,6 @@ public class GrpcGeneratorTests() : GeneratorTest()
         await Verify(result).UseParameters(mediator);
     }
 
-    [Test]
-    [Arguments(Mediator.MediatR)]
-    [Arguments(Mediator.Mediator)]
-    [Arguments(Mediator.ChannelMediator)]
-    [Arguments(Mediator.ImmediateHandlers)]
-    [Arguments(Mediator.Foundatio)]
-    [Arguments(Mediator.ZeroAlloc)]
-    public async Task Should_Generate_A_Client(Mediator mediator)
-    {
-        var contracts = await CompileContracts(mediator, Contracts.For(mediator));
-        var result = await GrpcClient(mediator, contracts).AddSources(Contracts.GrpcClientHost).Build().GenerateAsync(TestContext.CancellationToken);
 
-        await Verify(result).UseParameters(mediator);
-    }
 
 }

@@ -16,20 +16,12 @@ namespace Rocket.Surgery.LaunchPad.Api
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     internal enum RequestKind { Infer = 0, Unary = 1, Void = 2, Stream = 3 }
 
-    /// <summary>The lifetime generated mediator handlers are registered with.</summary>
-    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
-    internal enum HandlerLifetime { Singleton = 0, Scoped = 1, Transient = 2 }
-
-    /// <summary>The JSON serializer options a client host starts from.</summary>
-    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
-    internal enum JsonOptionsPreset { Web = 0, Default = 1 }
-
     /// <summary>Whether a GraphQL field is a query or a mutation; Infer decides from the operation name.</summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     internal enum GraphQLOperation { Infer = 0, Query = 1, Mutation = 2 }
 
     /// <summary>
-    ///     Optional settings on a request type that servers and clients must agree on. Without it the operation uses the name-based defaults.
+    ///     Optional settings on a request type, used by every host that lists it. Without it the operation uses the name-based defaults.
     /// </summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     [global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Struct, Inherited = false)]
@@ -74,12 +66,7 @@ namespace Rocket.Surgery.LaunchPad.Api
         public string Group { get; set; }
         /// <summary>The route prefix in front of the group. Defaults to "api".</summary>
         public string RoutePrefix { get; set; }
-        /// <summary>The named HttpClient a client host uses. Defaults to the host name.</summary>
-        public string ClientName { get; set; }
         public string Version { get; set; }
-        /// <summary>Whether a client host registers a mediator handler per operation. Defaults to true.</summary>
-        public bool Handlers { get; set; }
-        public JsonOptionsPreset JsonOptions { get; set; }
     }
 
     /// <summary>Binds a request member from the route.</summary>
@@ -102,7 +89,7 @@ namespace Rocket.Surgery.LaunchPad.Api
     [global::System.AttributeUsage(global::System.AttributeTargets.Property, Inherited = false)]
     internal sealed class ApiBodyAttribute : global::System.Attribute { }
 
-    /// <summary>Fills a request member from the server's services; clients never send it.</summary>
+    /// <summary>Fills a request member from the server's services; it's never read from the request.</summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     [global::System.AttributeUsage(global::System.AttributeTargets.Property, Inherited = false)]
     internal sealed class ApiServiceAttribute : global::System.Attribute { }
@@ -123,7 +110,6 @@ namespace Rocket.Surgery.LaunchPad.Api
         public string SenderTypeName { get; set; }
         public string SendMethod { get; set; }
         public string StreamMethod { get; set; }
-        public HandlerLifetime HandlerLifetime { get; set; }
         public string Name { get; set; }
     }
 
@@ -150,7 +136,7 @@ namespace Rocket.Surgery.LaunchPad.Api
     [global::System.AttributeUsage(global::System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
     internal class OperationAttribute<TRequest> : global::System.Attribute
     {
-        /// <summary>Replaces the operation's route inside the group. A client must mirror a server-side override.</summary>
+        /// <summary>Replaces the operation's route inside the group.</summary>
         public string Route { get; set; }
         public string Verb { get; set; }
         public string Name { get; set; }
@@ -164,8 +150,6 @@ namespace Rocket.Surgery.LaunchPad.Api
         public string Version { get; set; }
         /// <summary>A transport-specific input with a parameterless Create() method that returns the request.</summary>
         public global::System.Type Input { get; set; }
-        /// <summary>On a client host, whether to register a mediator handler for this operation. Defaults to the host's setting.</summary>
-        public bool Handlers { get; set; }
     }
 
     /// <summary>

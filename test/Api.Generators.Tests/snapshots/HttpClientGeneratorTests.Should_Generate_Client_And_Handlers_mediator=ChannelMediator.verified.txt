@@ -1,9 +1,0 @@
-﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
-  },
-  FinalDiagnostics: [],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.HttpClientGenerator: []
-  }
-}
