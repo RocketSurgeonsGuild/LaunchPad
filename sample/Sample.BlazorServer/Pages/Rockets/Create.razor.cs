@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Components;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.BlazorServer.Pages.Rockets;
@@ -14,7 +15,7 @@ public partial class Create : ComponentBase
 
     public async Task Save()
     {
-        await Mediator.Send(Model);
+        ( await Mediator.Send(Model) ).Value.Expect<CreateRocket.Response>();
         NavigationManager.NavigateTo("/rockets");
     }
 }

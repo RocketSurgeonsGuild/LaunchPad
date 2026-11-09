@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Sample.Core.Models;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.BlazorServer.Pages.Rockets;
@@ -15,14 +16,11 @@ public partial class Delete : ComponentBase
 
     [Inject] private IMediator Mediator { get; set; } = null!;
 
-    protected override async Task OnInitializedAsync()
-    {
-        Model = await Mediator.Send(new GetRocket.Request(Id));
-    }
+    protected override async Task OnInitializedAsync() => Model = ( await Mediator.Send(new GetRocket.Request(Id)) ).Value.Expect<RocketModel>();
 
     public async Task Save()
     {
-        await Mediator.Send(new DeleteRocket.Request(Id));
+        ( await Mediator.Send(new DeleteRocket.Request(Id)) ).Value.Expect<Unit>();
         NavigationManager.NavigateTo("/rockets");
     }
 }

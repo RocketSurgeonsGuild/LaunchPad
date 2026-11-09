@@ -141,6 +141,16 @@
                 }
               }
             }
+          },
+          404: {
+            description: Not Found,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
@@ -183,6 +193,16 @@
           },
           400: {
             description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found,
             content: {
               application/problem+json: {
                 schema: {
@@ -239,6 +259,16 @@
                 }
               }
             }
+          },
+          404: {
+            description: Not Found,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
@@ -264,6 +294,34 @@
           },
           400: {
             description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            headers: {
+              www-authenticate: {
+                description: The error details,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found,
             content: {
               application/problem+json: {
                 schema: {
@@ -365,6 +423,16 @@
                 }
               }
             }
+          },
+          409: {
+            description: Conflict,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       }
@@ -399,6 +467,16 @@
           },
           400: {
             description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found,
             content: {
               application/problem+json: {
                 schema: {
@@ -455,6 +533,16 @@
                 }
               }
             }
+          },
+          404: {
+            description: Not Found,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
@@ -503,6 +591,16 @@
                 }
               }
             }
+          },
+          404: {
+            description: Not Found,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
           }
         }
       },
@@ -528,6 +626,16 @@
           },
           400: {
             description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found,
             content: {
               application/problem+json: {
                 schema: {

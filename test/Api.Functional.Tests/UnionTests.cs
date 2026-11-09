@@ -1,5 +1,6 @@
 extern alias mediatrserver;
 using System.Net;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Api.Functional.MediatR.Contracts;

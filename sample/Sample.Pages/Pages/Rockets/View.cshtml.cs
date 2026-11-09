@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Sample.Core.Models;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Pages.Pages.Rockets;
@@ -13,8 +14,5 @@ public class RocketViewModel : MediatorPageModel
 
     public RocketModel Rocket { get; set; } = null!;
 
-    public virtual async Task OnGet()
-    {
-        Rocket = await Send(new GetRocket.Request(Id));
-    }
+    public virtual async Task OnGet() => Rocket = ( await Send(new GetRocket.Request(Id)) ).Value.Expect<RocketModel>();
 }

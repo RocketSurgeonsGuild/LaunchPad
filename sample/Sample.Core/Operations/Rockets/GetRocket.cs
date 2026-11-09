@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using FluentValidation;
 
 using MediatR;
@@ -20,7 +22,15 @@ public static partial class GetRocket
     ///     Request to fetch information about a rocket
     /// </summary>
     /// <param name="Id">The id of the rocket</param>
-    public record Request(RocketId Id) : IRequest<RocketModel>;
+    public record Request(RocketId Id) : IRequest<Result>;
+
+    /// <summary>What the operation answers: the rocket, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
+    {
+        public partial Result(RocketModel value);
+        public partial Result(NotFound value);
+    }
 
     private class Validator : AbstractValidator<Request>
     {
@@ -29,9 +39,11 @@ public static partial class GetRocket
                              .NotNull();
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
-        public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken) =>
-            ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
+        public async Task<Result> Handle(Request request, CancellationToken cancellationToken) =>
+            await dbContext.Rockets.FindAsync([request.Id], cancellationToken).ConfigureAwait(false) is { } rocket
+                ? ModelMapper.Map(rocket)
+                : new NotFound($"Rocket {request.Id} was not found");
     }
 }

@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using FluentValidation;
 
 using MediatR;
@@ -24,7 +26,7 @@ public static partial class CreateRocket
     /// <summary>
     ///     The operation to create a new rocket record
     /// </summary>
-    public record Request : IRequest<Response>
+    public record Request : IRequest<Result>
     {
         /// <summary>
         ///     The serial number of the rocket
@@ -63,16 +65,25 @@ public static partial class CreateRocket
         }
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
+
+    /// <summary>What the operation answers: the new rocket's id, or a conflict with an existing rocket.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+        public partial Result(Response value);
+        public partial Result(Conflict value);
+    }
+
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             var existingRocket = await dbContext
                                       .Rockets.AsQueryable()
                                       .FirstOrDefaultAsync(z => z.SerialNumber == request.SerialNumber, cancellationToken);
             if (existingRocket is { })
             {
-                throw new RequestFailedException("A Rocket already exists with that serial number!")
+                return new Conflict("A Rocket already exists with that serial number!")
                 {
                     Title = "Rocket Creation Failed",
                     Properties = new Dictionary<string, object?>
@@ -91,7 +102,7 @@ public static partial class CreateRocket
             await dbContext.AddAsync(rocket, cancellationToken).ConfigureAwait(false);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return new()
+            return new Response
             {
                 Id = rocket.Id,
             };

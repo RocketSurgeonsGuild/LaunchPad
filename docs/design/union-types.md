@@ -187,7 +187,7 @@ This is what the API generators (#3148) and any other LaunchPad generator rely o
 
 ## 5. Migration
 
-- **The samples move to unions** with #3148, in the same pull request: Sample.Core's handlers return union responses with the standard problem cases instead of throwing.
+- **The samples move to unions** with #3148, in the same pull request. Sample.Core's unary handlers return portable unions (`GetRocket.Result`: `RocketModel` or `NotFound`; `CreateRocket.Result`: `Response` or `Conflict`; `DeleteRocket.Result`: `Unit` or `NotFound`; …) instead of throwing, and the generated Minimal API, controller and GraphQL hosts answer them. The hand-written callers (the Blazor and Razor Pages UIs, the proto-first gRPC services) read the value case with Sample.Core's `Expect<T>()`, which throws the exception LaunchPad's filters and interceptors already answer for a problem. `GetRocketLaunchRecords`, a stream, still throws `NotFoundException` before its first item: a stream of unions answers an error case per item, not for the stream as a whole.
 - **The exceptions stay.** `NotFoundException`, `NotAuthorizedException`, `RequestFailedException` and their filters and interceptors keep working for hand-written code and handlers that don't return unions; removing them is a follow-up (decision 10).
 - **No union type in `src/` to migrate**: none existed (section 2).
 - **Applications** that hand-wrote OneOf-style or `Result<T>` types can turn them into portable unions: a `partial struct` with `[Union]` and the case constructors. Their consumers move from `IsSuccess`/`Match` to `Value` patterns (C# 14) or plain patterns (C# 15).

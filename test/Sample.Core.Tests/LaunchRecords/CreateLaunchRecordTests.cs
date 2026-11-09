@@ -34,7 +34,7 @@ public class CreateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
         var clock = scope.ServiceProvider.GetRequiredService<IClock>();
 
-        var response = await mediator.Send(
+        var response = ( await mediator.Send(
             new CreateLaunchRecord.Request
             {
                 Partner = "partner",
@@ -44,7 +44,7 @@ public class CreateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
                 PayloadWeightKg = 100,
             },
             TestContext.CancellationToken
-        );
+        ) ).Value.ShouldBeOfType<CreateLaunchRecord.Response>();
 
         response.Id.Value.ShouldNotBe(Guid.Empty);
     }

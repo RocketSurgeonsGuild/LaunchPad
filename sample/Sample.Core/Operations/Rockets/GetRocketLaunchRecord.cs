@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using FluentValidation;
 
 using MediatR;
@@ -16,7 +18,7 @@ namespace Sample.Core.Operations.Rockets;
 [UseStaticMapper(typeof(NodaTimeMapper))]
 public static partial class GetRocketLaunchRecord
 {
-    public record Request : IRequest<LaunchRecordModel>
+    public record Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket id
@@ -42,9 +44,20 @@ public static partial class GetRocketLaunchRecord
         }
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
+
+    /// <summary>What the operation answers: the launch record, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken) =>
-            ModelMapper.Map(await dbContext.LaunchRecords.FindAsync([request.LaunchRecordId], cancellationToken) ?? throw new NotFoundException());
+        public partial Result(LaunchRecordModel value);
+        public partial Result(NotFound value);
+    }
+
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async Task<Result> Handle(Request request, CancellationToken cancellationToken) =>
+            await dbContext.LaunchRecords.FindAsync([request.LaunchRecordId], cancellationToken) is { } record
+                ? ModelMapper.Map(record)
+                : new NotFound($"Launch record {request.LaunchRecordId} was not found");
     }
 }

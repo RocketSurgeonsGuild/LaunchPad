@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using FluentValidation;
 
 using MediatR;
@@ -24,7 +26,7 @@ public static partial class CreateLaunchRecord
     /// <summary>
     ///     Create a launch record
     /// </summary>
-    public record Request : IRequest<Response>
+    public record Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket to use
@@ -90,19 +92,34 @@ public static partial class CreateLaunchRecord
         }
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
+    /// <summary>What the operation answers: the new launch record's id, or invalid when its rocket doesn't exist.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+        public partial Result(Response value);
+        public partial Result(Invalid value);
+    }
+
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             var record = Map(request);
 
-            var rocket = await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken) ?? throw new RequestFailedException("Rocket not found!");
+            if (await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken) is not { } rocket)
+            {
+                return new Invalid("Rocket not found!")
+                {
+                    Errors = new Dictionary<string, string[]> { [nameof(Request.RocketId)] = [$"Rocket {request.RocketId} was not found"] },
+                };
+            }
+
             record.Rocket = rocket;
 
             await dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return new()
+            return new Response
             {
                 Id = record.Id,
             };

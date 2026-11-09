@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.AspNetCore;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Pages.Pages.Rockets;
@@ -17,7 +18,7 @@ public class RocketCreateModel : MediatorPageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        await Send(Model);
+        ( await Send(Model) ).Value.Expect<CreateRocket.Response>();
         return RedirectToPage("Index");
     }
 }

@@ -22,7 +22,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(
+        var response = ( await mediator.Send(
             new EditRocket.Request
             {
                 Id = rocket.Id,
@@ -30,7 +30,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
             },
             TestContext.CancellationToken
-        );
+        ) ).Value.ShouldBeOfType<RocketModel>();
 
         response.Type.ShouldBe(RocketType.FalconHeavy);
         response.Sn.ShouldBe("43210987654321");
@@ -53,7 +53,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(request, TestContext.CancellationToken);
+        var response = ( await mediator.Send(request, TestContext.CancellationToken) ).Value.ShouldBeOfType<RocketModel>();
 
         response.Type.ShouldBe(RocketType.FalconHeavy);
         response.Sn.ShouldBe("12345678901234");

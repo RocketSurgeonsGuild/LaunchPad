@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using FluentValidation;
 
 using MediatR;
@@ -20,7 +22,15 @@ public static partial class DeleteRocket
     ///     The request to remove a rocket from the system
     /// </summary>
     /// <param name="Id">The id of the rocket to remove</param>
-    public record Request(RocketId Id) : IRequest;
+    public record Request(RocketId Id) : IRequest<Result>;
+
+    /// <summary>What the operation answers: nothing, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
+    {
+        public partial Result(Unit value);
+        public partial Result(NotFound value);
+    }
 
     private class Validator : AbstractValidator<Request>
     {
@@ -29,13 +39,14 @@ public static partial class DeleteRocket
                              .NotNull();
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
-        public async Task Handle(Request request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
+            if (await dbContext.Rockets.FindAsync([request.Id], cancellationToken) is not { } rocket) return new NotFound($"Rocket {request.Id} was not found");
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return Unit.Value;
         }
     }
 }

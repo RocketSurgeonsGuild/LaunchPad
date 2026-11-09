@@ -1,8 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <ApiFunctionalRole>Contracts</ApiFunctionalRole>
+        <!-- C# 15's union types come from Polyfill before .NET 11, embedded as the LaunchPad SDK sets it up (docs/design/union-types.md 3.3). -->
+        <PolyUseEmbeddedAttribute>true</PolyUseEmbeddedAttribute>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="MediatR" />
+        <PackageReference Include="Polyfill" PrivateAssets="all" />
     </ItemGroup>
 </Project>

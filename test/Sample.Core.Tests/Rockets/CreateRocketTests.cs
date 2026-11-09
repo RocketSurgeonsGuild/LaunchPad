@@ -21,20 +21,20 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(
+        var response = ( await mediator.Send(
             new CreateRocket.Request
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234",
             },
             TestContext.CancellationToken
-        );
+        ) ).Value.ShouldBeOfType<CreateRocket.Response>();
 
         response.Id.Value.ShouldNotBe(Guid.Empty);
     }
 
     [Test]
-    public async Task Should_Throw_If_Rocket_Exists()
+    public async Task Should_Answer_Conflict_If_Rocket_Exists()
     {
         await using (var seedScope = ServiceProvider.CreateAsyncScope())
         {
@@ -53,7 +53,7 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        Func<Task> action = () => mediator.Send(
+        var result = await mediator.Send(
             new CreateRocket.Request
             {
                 Type = RocketType.Falcon9,
@@ -61,8 +61,7 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
             },
             TestContext.CancellationToken
         );
-        ( await action.ShouldThrowAsync<RequestFailedException>() )
-           .Title.ShouldBe("Rocket Creation Failed");
+        result.Value.ShouldBeOfType<Conflict>().Title.ShouldBe("Rocket Creation Failed");
     }
 
     [Test]

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Sample.Core.Models;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.BlazorServer.Pages.Rockets;
@@ -18,14 +19,11 @@ public partial class Edit : ComponentBase
     [Inject]
     private IMediator Mediator { get; set; } = null!;
 
-    protected override async Task OnInitializedAsync()
-    {
-        Model = EditRocket.MapRequest(await Mediator.Send(new GetRocket.Request(Id)));
-    }
+    protected override async Task OnInitializedAsync() => Model = EditRocket.MapRequest(( await Mediator.Send(new GetRocket.Request(Id)) ).Value.Expect<RocketModel>());
 
     public async Task Save()
     {
-        await Mediator.Send(Model with { Id = Id, });
+        ( await Mediator.Send(Model with { Id = Id, }) ).Value.Expect<RocketModel>();
         NavigationManager.NavigateTo("/rockets");
     }
 }

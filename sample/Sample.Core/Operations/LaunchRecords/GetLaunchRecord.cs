@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using FluentValidation;
 
 using MediatR;
@@ -22,7 +24,15 @@ public static partial class GetLaunchRecord
     ///     The request to get a launch record
     /// </summary>
     /// <param name="Id">The id of the launch record</param>
-    public record Request(LaunchRecordId Id) : IRequest<LaunchRecordModel>;
+    public record Request(LaunchRecordId Id) : IRequest<Result>;
+
+    /// <summary>What the operation answers: the launch record, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
+    {
+        public partial Result(LaunchRecordModel value);
+        public partial Result(NotFound value);
+    }
 
     private class Validator : AbstractValidator<Request>
     {
@@ -31,15 +41,15 @@ public static partial class GetLaunchRecord
                              .NotNull();
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
+    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
-        public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await dbContext
                               .LaunchRecords
                               .Include(x => x.Rocket)
                               .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-            return rocket is null ? throw new NotFoundException() : ModelMapper.Map(rocket);
+            return rocket is null ? new NotFound($"Launch record {request.Id} was not found") : ModelMapper.Map(rocket);
         }
     }
 }
