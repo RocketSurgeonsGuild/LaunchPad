@@ -33,6 +33,7 @@
         <LaunchPadEnableGrpc Condition="'$(LaunchPadEnableGrpc)' == ''">true</LaunchPadEnableGrpc>
         <LaunchPadEnableHotChocolate Condition="'$(LaunchPadEnableHotChocolate)' == ''">true</LaunchPadEnableHotChocolate>
         <LaunchPadEnableStrawberryShake Condition="'$(LaunchPadEnableStrawberryShake)' == ''">true</LaunchPadEnableStrawberryShake>
+        <LaunchPadEnablePolyfill Condition="'$(LaunchPadEnablePolyfill)' == ''">true</LaunchPadEnablePolyfill>
     </PropertyGroup>
 
     <!-- The technologies the project references itself and has not opted out of. -->
@@ -104,4 +105,5 @@
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.FluentValidation.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.GraphQL.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.Grpc.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.Polyfill.targets" />
 </Project>

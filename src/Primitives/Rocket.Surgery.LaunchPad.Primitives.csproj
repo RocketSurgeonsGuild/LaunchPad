@@ -3,6 +3,8 @@
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
+        <!-- The union analyzer project lives in Analyzers/ and builds on its own. -->
+        <DefaultItemExcludes>$(DefaultItemExcludes);Analyzers/**</DefaultItemExcludes>
     </PropertyGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
@@ -19,5 +21,15 @@
         <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
         <PackageReference Include="Specular" />
         <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- The union generator, analyzers and code fixes flow to every project that references Primitives. -->
+        <ProjectReference
+            Include="Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
+            IncludeAssets="analyzers"
+            ExcludeAssets="compile;runtime;native"
+            PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"
+            OutputItemType="Analyzer"
+        />
     </ItemGroup>
 </Project>

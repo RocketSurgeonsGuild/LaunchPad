@@ -1,0 +1,44 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionAnalyzer: []
+  },
+  CodeFixes: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.RedundantValueSwitchCodeFix: [
+      {
+        CodeActions: [
+          {
+            Title: Match the union,
+            Tags: null,
+            TextChanges: {
+              Input0.cs: [
+                {
+                  Length: 6,
+                  NewText: 
+                },
+                {
+                  Length: 66,
+                  NewText: 
+                }
+              ]
+            }
+          }
+        ],
+        Diagnostic: {
+          Id: LPAD0013,
+          Title: Match the union, not its Value,
+          Severity: Warning,
+          WarningLevel: 1,
+          Location: Input0.cs: (14,61)-(14,73),
+          MessageFormat: {0} is a union and C# 15 matches its cases directly: match {0} instead of its Value, without the discard arm, so the compiler checks the match is exhaustive,
+          Message: result is a union and C# 15 matches its cases directly: match result instead of its Value, without the discard arm, so the compiler checks the match is exhaustive,
+          Category: LaunchPad.Unions
+        },
+        Document: Input0.cs
+      }
+    ]
+  },
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionGenerator: []
+  }
+}

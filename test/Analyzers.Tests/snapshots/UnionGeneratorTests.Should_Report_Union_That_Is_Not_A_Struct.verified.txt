@@ -1,0 +1,3 @@
+﻿[
+  Input0.cs(4,22): error LPAD0010: Union Shape declares partial case constructors, so LaunchPad implements it, and it must be a partial struct, as a C# union is
+]

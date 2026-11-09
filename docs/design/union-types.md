@@ -82,7 +82,7 @@ Both produce the same shape: `[Union]`, `IUnion`, one constructor per case, `Val
 
 ### 3.2 What the generator writes
 
-For each `partial struct` with `[Union]` (matched by full name with `ForAttributeWithMetadataName`) that declares at least one `partial` constructor:
+The union generator is its own analyzer assembly, `Rocket.Surgery.LaunchPad.Primitives.Analyzers` (`src/Primitives/Analyzers`), packed into the Primitives package beside the standard cases it pairs with. For each `partial struct` with `[Union]` (matched by full name with `ForAttributeWithMetadataName`) that declares at least one `partial` constructor:
 
 ```csharp
 partial struct GetRocketResult : global::System.Runtime.CompilerServices.IUnion
@@ -102,15 +102,13 @@ partial struct GetRocketResult : global::System.Runtime.CompilerServices.IUnion
 
     public static implicit operator GetRocketResult(RocketModel value) => new(value);
     public static implicit operator GetRocketResult(NotFound value) => new(value);
-
-    public override string ToString() => _value?.ToString() ?? string.Empty;
 }
 ```
 
 - **Storage is one `object?` field**, as in a native `union`: value-type cases box. A non-boxing layout (UnionTypes.Toolkit's overlap/decompose) is out of scope; an application that needs one writes a custom union by hand or uses that generator, and LaunchPad still detects it (section 4).
-- **The implicit conversions** give C# 14 code the conversion C# 15 gets from the language. They are emitted on every language version, so a multi-targeted library has the same public API on both target frameworks. They are left out for a case the language doesn't allow a user-defined conversion from (an interface or `object`); C# 15 still converts those.
-- Generic unions (`partial struct Result<T>`), nested types and any accessibility are supported. Nullable case types (`partial Maybe(string? value)`) are passed through as written.
-- No `Match`/`Switch` methods: native unions have none, and a call to one would have to be rewritten when switching to the native form. C# 14 code reads a union with `Value`:
+- **The implicit conversions** give C# 14 code the conversion C# 15 gets from the language. They are emitted on every language version, so a multi-targeted library has the same public API on both target frameworks. They are left out for a case the language doesn't allow a user-defined conversion from (an interface or `object`), and for a non-public case constructor; C# 15 still converts those.
+- Generic unions (`partial struct Result<T>`), record structs, nested types and any accessibility are supported. Nullable case types (`partial Reading(string? text)`) are passed through as written.
+- No `Match`/`Switch` methods and no `ToString` override: native unions have none, and a call to one would have to be rewritten when switching to the native form. C# 14 code reads a union with `Value`:
 
 ```csharp
 // C# 14 and C# 15
@@ -131,45 +129,61 @@ return result switch
 
 ### 3.3 The polyfill
 
-When the compilation has no `System.Runtime.CompilerServices.UnionAttribute` it can use (on `net10.0`), the generator adds `UnionAttribute` and `IUnion` as **internal** types in the project, behind `#if !NET11_0_OR_GREATER`, the way PolySharp does. On `net11.0` it adds nothing. Because the compiler matches them by name (section 1), a project on C# 15 targeting `net10.0` gets full native union support too — LaunchPad's own projects build with `LangVersion` preview and do.
+Before .NET 11, `UnionAttribute` and `IUnion` come from the [Polyfill](https://github.com/SimonCropp/Polyfill) package (11.4.5 and later), with `PolyUseEmbeddedAttribute` so its copies are embedded and no other assembly sees them, even through `InternalsVisibleTo`. On .NET 11 Polyfill type-forwards them to the BCL. Because the compiler matches the types by name (section 1), a project on C# 15 targeting `net10.0` gets full native union support too.
 
-### 3.4 Diagnostics
+- **The LaunchPad SDK adds it**: a `net10.0` project the SDK gives `Rocket.Surgery.LaunchPad.Primitives` also gets Polyfill, unless it already references Polyfill or PolySharp. Before .NET 11 the SDK also turns on `PolyUseEmbeddedAttribute`, unless the project asks for `PolyPublic`. `LaunchPadEnablePolyfill=false` opts out. Polyfill has no per-feature include, so the project also gets Polyfill's other polyfills for its target framework, all internal.
+- **Without the SDK** an application references Polyfill (or PolySharp) itself.
+- The union generator doesn't emit the types. A first version did; it was replaced by Polyfill (decision 3).
 
-All are errors on the declaration and stop generation for that type:
+### 3.4 Diagnostics and code fixes
 
-| Id       | When                                                                            |
-| -------- | ------------------------------------------------------------------------------- |
-| LPAD0010 | A `[Union]` type with `partial` case constructors isn't a `struct`.             |
-| LPAD0011 | A `partial` constructor of a `[Union]` type doesn't take exactly one parameter. |
-| LPAD0012 | Two case constructors take the same type (ignoring nullability).                |
+The union generator reports LPAD0010 and LPAD0011 on the declaration, and each stops generation for that type; the union analyzer reports LPAD0012 on the attribute:
 
-A `[Union]` struct with no `partial` constructors is left alone: it is a native or hand-written custom union.
+| Id       | Severity | When                                                                                                                                                    |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LPAD0010 | Error    | A `[Union]` type with `partial` case constructors isn't a `struct`.                                                                                     |
+| LPAD0011 | Error    | A `partial` constructor of a `[Union]` type doesn't take exactly one parameter.                                                                         |
+| LPAD0012 | Error    | `[Union]` doesn't bind: the project targets a framework before .NET 11 and has no polyfill (reference Polyfill or PolySharp, or use the LaunchPad SDK). |
+
+A containing type that isn't `partial` is the existing LPAD0001. A `[Union]` struct with no `partial` constructors is left alone: it is a native or hand-written custom union.
+
+The analyzer in the same assembly also covers reading unions and the move to native unions. LPAD0013 and LPAD0014 apply only on C# 15; LPAD0013 is reported only when its fix is safe: every arm tests a type a case converts to or from, and the only discard arm is a last one that throws.
+
+| Id                | Severity | When                                                                                             | Code fix                                           |
+| ----------------- | -------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| CS9327 (compiler) | Error    | C# 14: a pattern or `switch` over a union.                                                       | Switch over `Value` instead, adding a discard arm. |
+| LPAD0013          | Warning  | C# 15: a `switch` or `is` over a union's `Value`, which the union's own patterns now cover.      | Switch over the union, dropping the discard arm.   |
+| LPAD0014          | Info     | C# 15: a portable union whose declaration is only `[Union]` and its `partial` case constructors. | Rewrite it as `union X(A, B);`.                    |
 
 ### 3.5 Standard error cases
 
-`Rocket.Surgery.LaunchPad.Primitives` ships the error cases a handler returns instead of throwing, one `sealed record` each, all implementing `IProblemDetailsData` so every transport can write title, detail and extensions the same way:
+`Rocket.Surgery.LaunchPad.Primitives` ships the error cases a handler returns instead of throwing. Each is a `sealed record` deriving from the abstract record `Problem`, which implements `IProblemDetailsData`, so every transport writes detail, title, link, instance and extensions the same way. A union may list the cases it returns, or `Problem` to return any of them.
 
-| Case           | Replaces                 | HTTP | gRPC                 | GraphQL code   |
-| -------------- | ------------------------ | ---- | -------------------- | -------------- |
-| `NotFound`     | `NotFoundException`      | 404  | `NotFound`           | `NOT_FOUND`    |
-| `Invalid`      | validation exceptions    | 400  | `InvalidArgument`    | `INVALID`      |
-| `Unauthorized` | —                        | 401  | `Unauthenticated`    | `UNAUTHORIZED` |
-| `Forbidden`    | `NotAuthorizedException` | 403  | `PermissionDenied`   | `FORBIDDEN`    |
-| `Conflict`     | `RequestFailedException` | 409  | `FailedPrecondition` | `CONFLICT`     |
+| Case           | Replaces                 | HTTP | gRPC                 | GraphQL code      |
+| -------------- | ------------------------ | ---- | -------------------- | ----------------- |
+| `NotFound`     | `NotFoundException`      | 404  | `NotFound`           | `NOT_FOUND`       |
+| `Invalid`      | validation exceptions    | 400  | `InvalidArgument`    | `BAD_USER_INPUT`  |
+| `Unauthorized` | —                        | 401  | `Unauthenticated`    | `UNAUTHENTICATED` |
+| `Forbidden`    | `NotAuthorizedException` | 403  | `PermissionDenied`   | `FORBIDDEN`       |
+| `Conflict`     | `RequestFailedException` | 409  | `FailedPrecondition` | `CONFLICT`        |
 
-The names are the ones phase 4 of the API generators maps by convention (api-generators-plan, section 5). The mapping columns are #3148's to implement; they are listed here so both tickets use the same table.
+- The names are the ones phase 4 of the API generators maps by convention (api-generators-plan, section 5). `NotFound` and `Conflict` share their names with `Microsoft.AspNetCore.Http.HttpResults` types; hand-written code that imports both namespaces uses an alias. Generated code always writes `global::` names.
+- The GraphQL codes follow the convention most GraphQL servers and clients use (Apollo's `UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, plus `NOT_FOUND` and `CONFLICT`). They replace `GraphqlErrorFilter`'s `NOTFOUND`, `NOTAUTHORIZED` and `FAILED`, a break #3148 lists.
+- `Invalid.Errors` is `IReadOnlyDictionary<string, string[]>`, the shape of ASP.NET's `ValidationProblemDetails`. FluentValidation failures map into it with a `ToInvalid()` helper (#3148), which puts error codes and attempted values in `Properties`.
+- There is no generic `Result<T>`: each operation declares its own union, so its specs show exactly which errors it returns.
+- The mapping columns are #3148's to implement; they are listed here so both tickets use the same table.
 
 ## 4. The detection contract for other generators
 
 This is what the API generators (#3148) and any other LaunchPad generator rely on. It holds for native unions, unions from LaunchPad's generator, and hand-written custom unions, in source or in a referenced assembly.
 
-1. **A type is a union** when it has an attribute whose class is named `System.Runtime.CompilerServices.UnionAttribute`. Match by full metadata name, never by symbol identity: on `net10.0` every assembly carries its own internal polyfill.
-2. **Its cases** are the parameter types of its public instance constructors that take exactly one parameter, in declaration order. For a union from LaunchPad's generator the `partial` constructor declarations are in source, so another generator in the same compilation sees the cases before the implementation exists.
-3. **Generated code reads a union through `Value`** with type tests in case order (`value.Value switch { Case1 c => …, Case2 c => …, _ => … }`). That compiles on every language version; a type pattern over the union itself does not compile on C# 14. Generated code builds a union with `new TUnion(caseValue)`, never with a conversion, for the same reason.
-4. **A case's meaning comes from its type**: the standard cases of section 3.5 by full name (`Rocket.Surgery.LaunchPad.Primitives.NotFound`, …), other cases by the naming convention and attribute of api-generators-plan phase 4. Any case that is not an error case is the success value.
+1. **A type is a union** when it has an attribute whose class is named `System.Runtime.CompilerServices.UnionAttribute`, or implements an interface named `System.Runtime.CompilerServices.IUnion`. Match by full name, never by symbol identity: before .NET 11 every assembly carries its own embedded copy. Both checks are needed: Roslyn doesn't surface `[Union]` through `GetAttributes()` on a native `union` declaration or on a union read from metadata, and a portable union has no `IUnion` until the union generator runs.
+2. **Its cases** are the parameter types of its public instance constructors that take exactly one parameter, in declaration order. For a portable union the `partial` constructor declarations are in source, so another generator in the same compilation sees the cases before the implementation exists.
+3. **Generated code reads a union through `Value`** with type tests in case order (`value.Value switch { Case1 c => …, Case2 c => …, _ => … }`). That compiles on every language version; a type pattern over the union itself does not compile on C# 14 (CS9327). Generated code builds a union with `new TUnion(caseValue)`, never with a conversion, for the same reason.
+4. **A case's meaning comes from its type**: the standard cases of section 3.5 by full name (`Rocket.Surgery.LaunchPad.Primitives.NotFound`, …), other error cases by the naming convention and attribute of api-generators-plan phase 4. Every case that is not an error case is a success value: a union may have several (`union GetRocketResult(RocketModel, RocketSummary, NotFound)`), each answered with 200 (201 with `[Creates]`) and described as a `oneOf` response.
 5. **Unwrapping**: a handler response of `Task<TUnion>`, `ValueTask<TUnion>` or `TUnion` is a union response. A union is never nested in another union's case for this purpose.
 
-`src/Api/Core/UnionShape.cs` implements rules 1, 2 and 4 as `UnionShape.TryCreate(ITypeSymbol, out UnionShape)`, returning equatable case models so it can sit in an incremental pipeline. #3148 uses it; nothing else in `src/Api` does yet.
+`src/Api/Core/UnionShape.cs` implements rules 1, 2, 4 and 5 as `UnionShape.TryCreate` and `UnionShape.TryCreateFromResponse`, returning equatable case models (with `UnionCaseKind` for the standard cases) so it can sit in an incremental pipeline. #3148 uses it; nothing else in `src/Api` does yet.
 
 ## 5. Migration
 
@@ -181,14 +195,23 @@ This is what the API generators (#3148) and any other LaunchPad generator rely o
 
 When .NET 12 ships and LaunchPad drops `net10.0`:
 
-1. Rewrite each portable union `[Union] partial struct X { public partial X(A value); public partial X(B value); }` as `union X(A, B);` — or keep it; the generator still works on C# 15.
-2. Delete the polyfill emission (section 3.3).
-3. Optionally rewrite `x.Value switch { …, _ => … }` as `x switch { … }` to get exhaustiveness. The analyzer for that is a later nicety, not part of this design.
+1. Apply LPAD0014's fix to each portable union (`[Union] partial struct X { public partial X(A value); public partial X(B value); }` becomes `union X(A, B);`), or keep it; the generator still works on C# 15.
+2. Apply LPAD0013's fix to each `x.Value switch { …, _ => … }`, which becomes an exhaustive `x switch { … }`.
+3. Stop adding Polyfill in the LaunchPad SDK for unions (section 3.3).
 
 Nothing in the detection contract changes, so the API generators need no change.
 
 ## 7. Decisions
 
-Decided 2026-11-09 (put to the user with AskUserQuestion; recommendation first in each):
+Decided 2026-11-09 with the user (AskUserQuestion, then a grilling session); the lasting choice is recorded in [ADR-0004](../adr/0004-portable-unions-shaped-like-csharp-unions.md).
 
-- _see the PR for the answers; this list is updated when they are recorded_
+1. **Declaration on .NET 10**: the portable form, `[Union] partial struct` with `partial` case constructors, implemented by a generator. Native `union` is accepted wherever C# 15 is.
+2. **Storage**: one `object?` field, as in a native union.
+3. **Polyfill**: from the Polyfill package with `PolyUseEmbeddedAttribute`, added by the LaunchPad SDK to `net10.0` projects that get Primitives (opt out with `LaunchPadEnablePolyfill=false`). Replaced the generator's own embedded copy, which was built first.
+4. **Packaging**: the union generator and analyzers are their own analyzer assembly (`src/Primitives/Analyzers`), packed in Primitives.
+5. **Standard cases**: `Problem` plus `NotFound`, `Invalid`, `Unauthorized`, `Forbidden`, `Conflict`, short names kept despite the `HttpResults` clash. `Invalid.Errors` is a `string[]` dictionary. No generic `Result<T>`.
+6. **Success cases**: a union may have several.
+7. **GraphQL codes**: the common convention (`NOT_FOUND`, `BAD_USER_INPUT`, `UNAUTHENTICATED`, `FORBIDDEN`, `CONFLICT`).
+8. **Analyzers in this change**: the CS9327 code fix (C# 14), LPAD0013 as a warning and LPAD0014 as info (C# 15).
+9. **Missing polyfill**: LPAD0012, an error.
+10. **Migration**: the standard cases ship here and the exceptions stay; #3148 moves handlers to unions and removes the exceptions, filters and interceptors.

@@ -1,0 +1,24 @@
+﻿{
+  TypeName: global::GetRocketResult,
+  Cases: [
+    {
+      TypeName: global::RocketModel,
+      TestedTypeName: global::RocketModel,
+      Name: RocketModel,
+      IsNullable: false
+    },
+    {
+      TypeName: global::Rocket.Surgery.LaunchPad.Primitives.Problem,
+      TestedTypeName: global::Rocket.Surgery.LaunchPad.Primitives.Problem,
+      Name: Problem,
+      Kind: Problem,
+      IsNullable: false
+    },
+    {
+      TypeName: int?,
+      TestedTypeName: int,
+      Name: Int32,
+      IsNullable: true
+    }
+  ]
+}

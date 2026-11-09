@@ -1,0 +1,18 @@
+﻿[
+  {
+    Item1: A,
+    Item2: true
+  },
+  {
+    Item1: B,
+    Item2: true
+  },
+  {
+    Item1: C,
+    Item2: true
+  },
+  {
+    Item1: D,
+    Item2: false
+  }
+]
