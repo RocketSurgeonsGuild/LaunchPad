@@ -66,7 +66,8 @@ public static partial class EditRocket
         public RocketId Id { get; init; }
     }
 
-    internal class EditRocketHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, RocketModel>, IRequestHandler<PatchRequest, RocketModel>
+    // The patch's handle method is generated: it applies the patch to the request GetRequest loads and sends the result through the mediator.
+    internal partial class EditRocketHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, RocketModel>, IRequestHandler<PatchRequest, RocketModel>
     {
         public async ValueTask<RocketModel> Handle(Request request, CancellationToken cancellationToken)
         {
@@ -78,8 +79,8 @@ public static partial class EditRocket
             return ModelMapper.Map(rocket);
         }
 
-        public async ValueTask<RocketModel> Handle(PatchRequest request, CancellationToken cancellationToken) =>
-            await mediator.Send(Map(request, await GetRocket(request.Id, cancellationToken)), cancellationToken).ConfigureAwait(false);
+        private async partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+            MapRequest(await GetRocket(request.Id, cancellationToken).ConfigureAwait(false));
 
         private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken) => await dbContext
                                                                                                             .Rockets.FindAsync([id], cancellationToken)
@@ -89,7 +90,4 @@ public static partial class EditRocket
 
     [MapperRequiredMapping(RequiredMappingStrategy.Source)]
     private static partial void Map(Request request, ReadyRocket record);
-
-    [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    private static Request Map(PatchRequest request, ReadyRocket rocket) => request.ApplyChanges(MapRequest(rocket));
 }

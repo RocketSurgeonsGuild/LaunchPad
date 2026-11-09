@@ -79,7 +79,8 @@ public static partial class EditLaunchRecord
     /// <param name="Id">The rocket id</param>
     public partial record PatchRequest(LaunchRecordId Id) : IRequest<LaunchRecordModel>, IPropertyTracking<Request>;
 
-    internal class EditLaunchRecordHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, LaunchRecordModel>, IRequestHandler<PatchRequest, LaunchRecordModel>
+    // The patch's handle method is generated: it applies the patch to the request GetRequest loads and sends the result through the mediator.
+    internal partial class EditLaunchRecordHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, LaunchRecordModel>, IRequestHandler<PatchRequest, LaunchRecordModel>
     {
         public async ValueTask<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
@@ -92,8 +93,8 @@ public static partial class EditLaunchRecord
             return ModelMapper.Map(rocket);
         }
 
-        public async ValueTask<LaunchRecordModel> Handle(PatchRequest request, CancellationToken cancellationToken) =>
-            await mediator.Send(Map(request, await GetLaunchRecord(request.Id, cancellationToken)), cancellationToken).ConfigureAwait(false);
+        private async partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+            Map(await GetLaunchRecord(request.Id, cancellationToken).ConfigureAwait(false));
 
         private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) => await dbContext
                                                                                                                          .LaunchRecords
@@ -108,6 +109,4 @@ public static partial class EditLaunchRecord
 
     [MapperIgnoreTarget(nameof(LaunchRecord.Rocket))]
     private static partial void Map(Request request, LaunchRecord record);
-
-    private static Request Map(PatchRequest request, LaunchRecord record) => request.ApplyChanges(Map(record));
 }
