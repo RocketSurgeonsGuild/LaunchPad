@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Analyzers
 
 - Package: `Rocket.Surgery.LaunchPad.Analyzers`
-- Version: `2.0.1-beta.322`
+- Version: `2.0.1-beta.324`
 - Target framework: `netstandard2.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Analyzers](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Analyzers)
 
