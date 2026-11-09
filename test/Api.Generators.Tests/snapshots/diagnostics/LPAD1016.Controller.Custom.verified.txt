@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1016,
+      Title: Feature skipped,
+      Severity: Info,
+      WarningLevel: 1,
+      Location: Input1.cs: (10,5)-(10,33),
+      MessageFormat: {0} is skipped on {1}: {2},
+      Message: GetRocket is skipped on RocketsController: the MyMediator profile cannot dispatch unary operations,
+      Category: LaunchPad.Api
+    }
+  ]
+}

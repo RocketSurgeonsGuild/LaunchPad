@@ -7,6 +7,7 @@ using NetTopologySuite.Geometries;
 
 using NodaTime;
 
+using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 
 using Sample.Core.Domain;
@@ -14,7 +15,6 @@ using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
 using Sample.Core.Operations.Rockets;
 
-using ZeroAlloc.Mediator;
 using ZeroAlloc.Mediator.Validation;
 
 namespace Sample.Graphql;
@@ -29,91 +29,20 @@ public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunc
     public LaunchRecordId Id { get; init; }
 }
 
+// The mutations are generated from the operations listed here; the patch requests bind the IOptionalTracking inputs above.
 [ExtendObjectType(OperationTypeNames.Mutation)]
-internal class RocketMutation
-{
-    [UseRequestScope]
-    public async Task<CreateRocket.Response> CreateRocket(
-        [Service]
-        IMediator mediator,
-        CreateRocket.Request request,
-        CancellationToken cancellationToken
-    )
-        => await mediator.Send(request, cancellationToken).ConfigureAwait(false);
-
-    [UseRequestScope]
-    public async Task<RocketModel> EditRocket(
-        [Service]
-        IMediator mediator,
-        EditRocket.Request request,
-        CancellationToken cancellationToken
-    )
-        => await mediator.Send(request, cancellationToken).ConfigureAwait(false);
-
-    [UseRequestScope]
-    public async Task<RocketModel> PatchRocket(
-        [Service]
-        IMediator mediator,
-        EditRocketPatchRequest request,
-        CancellationToken cancellationToken
-    )
-        => await mediator.Send(request.Create(), cancellationToken).ConfigureAwait(false);
-
-    [UseRequestScope]
-    public async Task<Unit> DeleteRocket(
-        [Service]
-        IMediator mediator,
-        DeleteRocket.Request request,
-        CancellationToken cancellationToken
-    )
-    {
-        await mediator.Send(request, cancellationToken).ConfigureAwait(false);
-        return Unit.Value;
-    }
-}
+[Operation<CreateRocket.Request>]
+[Operation<EditRocket.Request>]
+[Operation<EditRocket.PatchRequest>(Input = typeof(EditRocketPatchRequest))]
+[Operation<DeleteRocket.Request>]
+public partial class RocketMutation;
 
 [ExtendObjectType(OperationTypeNames.Mutation)]
-internal class LaunchRecordMutation
-{
-    [UseRequestScope]
-    public async Task<CreateLaunchRecord.Response> CreateLaunchRecord(
-        [Service]
-        IMediator mediator,
-        CreateLaunchRecord.Request request,
-        CancellationToken cancellationToken
-    )
-        => await mediator.Send(request, cancellationToken).ConfigureAwait(false);
-
-    [UseRequestScope]
-    public async Task<LaunchRecordModel> EditLaunchRecord(
-        [Service]
-        IMediator mediator,
-        EditLaunchRecord.Request request,
-        CancellationToken cancellationToken
-    )
-        => await mediator.Send(request, cancellationToken).ConfigureAwait(false);
-
-    [UseRequestScope]
-    public async Task<LaunchRecordModel> PatchLaunchRecord(
-        [Service]
-        IMediator mediator,
-        EditLaunchRecordPatchRequest request,
-        CancellationToken cancellationToken
-    )
-        => await mediator.Send(request.Create(), cancellationToken).ConfigureAwait(false);
-
-    [UseRequestScope]
-    public async Task<Unit> DeleteLaunchRecord(
-        [Service]
-        IMediator mediator,
-        DeleteLaunchRecord.Request request,
-        CancellationToken cancellationToken
-    )
-    {
-        await mediator.Send(request, cancellationToken).ConfigureAwait(false);
-        return Unit.Value;
-    }
-}
+[Operation<CreateLaunchRecord.Request>]
+[Operation<EditLaunchRecord.Request>]
+[Operation<EditLaunchRecord.PatchRequest>(Input = typeof(EditLaunchRecordPatchRequest))]
+[Operation<DeleteLaunchRecord.Request>]
+public partial class LaunchRecordMutation;
 
 /// <summary>
 ///     Reports each failure of a request the ZeroAlloc validators rejected as a validation error naming the property that failed.

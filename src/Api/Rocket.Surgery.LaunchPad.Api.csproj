@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The attributes, the analyzer, the code fix and one generator per transport, in one analyzer assembly built on the .NET 10 SDK's Roslyn. -->
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <DevelopmentDependency>true</DevelopmentDependency>
+        <!-- Nothing in lib/ to carry symbols for: an empty .snupkg fails the pack (NU5017). -->
+        <IncludeSymbols>false</IncludeSymbols>
+        <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Api.Generators</RootNamespace>
+        <!-- Generators are not public API; the generated code is documented instead. -->
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <!-- RS1038: the code fix needs Workspaces, which the command-line compiler doesn't carry. The compiler finds generators and analyzers by their
+             attributes in metadata and never creates the code fix, so the assembly loads without Workspaces; only the IDE, which has it, uses the fix. -->
+        <NoWarn>$(NoWarn);RS1038</NoWarn>
+        <PackageDescription>LaunchPad's mediator-agnostic API generators: mark request types with [ApiOperation], list operations on operation hosts with [Operation&lt;TRequest&gt;], and get Minimal API endpoints, MVC controllers, gRPC services and GraphQL mutations that send each request through your mediator. Generate clients from their OpenAPI document, GraphQL schema or .proto.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;minimal-api;mvc;grpc;graphql;mediator</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
+        <!-- The oldest Roslyn the generators support: the compiler of the .NET 10 SDK, so an application on either SDK can load them. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="build/Rocket.Surgery.LaunchPad.Api.targets" Pack="true" PackagePath="build;buildTransitive" />
+    </ItemGroup>
+    <!-- Packed from wherever the build wrote it: an artifacts path moves it out of bin. -->
+    <Target Name="_LaunchPadApiPackAnalyzer" BeforeTargets="_GetPackageFiles">
+        <ItemGroup>
+            <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        </ItemGroup>
+    </Target>
+</Project>

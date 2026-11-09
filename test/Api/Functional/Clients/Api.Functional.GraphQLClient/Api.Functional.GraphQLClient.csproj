@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The GraphQL client StrawberryShake generates from the server's schema and the operations in Rockets.graphql. -->
+    <PropertyGroup>
+        <ExportApiSpecsBeforeTargets>_GenerateGraphQLCode</ExportApiSpecsBeforeTargets>
+        <!-- StrawberryShake reads the schema from the project folder (.graphqlrc.json); it's git-ignored. -->
+        <ApiSpecDirectory>$(MSBuildProjectDirectory)/obj/specs/</ApiSpecDirectory>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="StrawberryShake.Transport.Http" />
+        <PackageReference Include="StrawberryShake.Server" />
+    </ItemGroup>
+    <Target Name="CopyGraphQLSchema" AfterTargets="ExportApiSpecs">
+        <Copy SourceFiles="$(ApiSpecDirectory)schema.graphql" DestinationFolder="$(MSBuildProjectDirectory)" SkipUnchangedFiles="true" />
+    </Target>
+</Project>

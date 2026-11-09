@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1006,
+      Title: Request cannot be constructed,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,41),
+      MessageFormat: {0} cannot be built for {1}: member {2} is neither a constructor parameter nor settable,
+      Message: Sample.Contracts.Rockets.GetRocketSnapshot.Request cannot be built for GetRocketSnapshot: member Id is neither a constructor parameter nor settable,
+      Category: LaunchPad.Api
+    }
+  ]
+}

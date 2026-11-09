@@ -236,6 +236,12 @@ dist/
 .astro/
 *.local.toml
 
+# Docs build output: Astro's cache and site, and the generated API reference sources.
+docs/.astro/
+docs/.docfx-metadata/
+docs/.generated/
+docs/dist/
+
 # Docs: C# API reference JSON generated from the build output by `mise run docs:api`.
 docs/src/data/api/
 .playwright-mcp/

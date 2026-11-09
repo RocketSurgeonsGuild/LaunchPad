@@ -29,9 +29,11 @@ builder
    .AddSpatialProjections()
    .AddExecutableTypes()
    .AddErrorFilter<ValidationErrorFilter>()
-   .BindRuntimeType<ZeroAlloc.Mediator.Unit, Rocket.Surgery.LaunchPad.HotChocolate.Types.VoidType>()
    .AddQueryType()
    .AddMutationType()
+   // The generated mutations, with their input and response types named.
+   .AddRocketMutation()
+   .AddLaunchRecordMutation()
    .ModifyOptions(
         options =>
         {

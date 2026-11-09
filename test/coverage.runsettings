@@ -96,7 +96,6 @@
                 <ModulePath>.*[\\/]Microsoft\.Extensions\.ServiceDiscovery\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.Extensions\.TimeProvider\.Testing\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.NET\.Test\.Sdk\.dll</ModulePath>
-                <ModulePath>.*[\\/]Microsoft\.Reactive\.Testing\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.SourceLink\.GitHub\.dll</ModulePath>
                 <ModulePath>.*[\\/]NETStandard\.Library\.dll</ModulePath>
                 <ModulePath>.*[\\/]NetTopologySuite\.dll</ModulePath>
@@ -162,8 +161,6 @@
                 <ModulePath>.*[\\/]Swashbuckle\.AspNetCore\.ReDoc\.dll</ModulePath>
                 <ModulePath>.*[\\/]Swashbuckle\.AspNetCore\.SwaggerUI\.dll</ModulePath>
                 <ModulePath>.*[\\/]System\.Net\.Http\.Json\.dll</ModulePath>
-                <ModulePath>.*[\\/]System\.Reactive\.dll</ModulePath>
-                <ModulePath>.*[\\/]System\.Reactive\.Observable\.Aliases\.dll</ModulePath>
                 <ModulePath>.*[\\/]System\.Text\.Json\.dll</ModulePath>
                 <ModulePath>.*[\\/]Verify\.DiffPlex\.dll</ModulePath>
                 <ModulePath>.*[\\/]Verify\.NewtonsoftJson\.dll</ModulePath>

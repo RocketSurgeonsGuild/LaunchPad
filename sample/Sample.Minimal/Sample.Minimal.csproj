@@ -12,6 +12,8 @@
         <Compile Include="../Shared/AspNetCore/*.cs" LinkBase="Shared" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+        <!-- The endpoints are generated from the operation hosts (RocketsEndpoints, LaunchRecordsEndpoints). -->
+        <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="Humanizer.Core" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />

@@ -4,8 +4,6 @@ using Joinery.Dovetail.Joints;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 using ZeroAlloc.Mediator.Validation;
@@ -70,8 +68,7 @@ public class ValidationProblemDetailsJoint : IServiceJoint
         );
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, ValidationFailureProblemDetailsWriter>());
         services
-           .Configure<MvcOptions>(options => options.Filters.Insert(0, new ValidationFailureExceptionFilter()))
-           .Configure<RestfulApiOptions>(options => options.ValidationProblemDetailsType = typeof(ValidationFailureProblemDetails));
+           .Configure<MvcOptions>(options => options.Filters.Insert(0, new ValidationFailureExceptionFilter()));
     }
 
     private sealed class ValidationFailureExceptionFilter : IExceptionFilter

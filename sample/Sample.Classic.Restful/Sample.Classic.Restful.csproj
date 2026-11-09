@@ -6,6 +6,8 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
+        <!-- The controllers' actions are generated from their operation hosts. -->
+        <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <!-- turns the ZeroAlloc validation failures into 422 problem details -->
         <Compile Include="../Shared/AspNetCore/*.cs" LinkBase="Shared" />

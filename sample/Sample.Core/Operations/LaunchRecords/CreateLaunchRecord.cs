@@ -2,6 +2,7 @@ using NodaTime;
 
 using Riok.Mapperly.Abstractions;
 
+using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
@@ -65,6 +66,7 @@ public static partial class CreateLaunchRecord
     /// <summary>
     ///     The launch record creation response
     /// </summary>
+    [Creates(typeof(GetLaunchRecord.Request))]
     public record Response
     {
         /// <summary>

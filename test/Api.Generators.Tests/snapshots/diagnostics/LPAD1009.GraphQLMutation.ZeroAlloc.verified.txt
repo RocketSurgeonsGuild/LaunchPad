@@ -1,0 +1,30 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1009,
+      Title: Duplicate GraphQL field,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: The GraphQL field '{0}' is declared twice on {1},
+      Message: The GraphQL field 'createRocket' is declared twice on FleetMutations and RocketsMutations,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS0234,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator/Sample.Host.FleetMutations.GraphQL.g.cs: (11,45)-(11,54),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
+      MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
+      Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ]
+}

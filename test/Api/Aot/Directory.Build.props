@@ -1,0 +1,18 @@
+<Project>
+    <!--
+        The native AOT check for the API generators: a server published with PublishAot, which must publish without a trimming or AOT warning
+        and answer a round trip over HTTP (verify.sh). It's an application, not a test project, so it imports the repository's props directly
+        instead of test/Directory.Build.props, which would add the test framework.
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)../../../Directory.Build.props" />
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <!-- Sample code: the analyzers that matter here are the trimming and AOT ones. -->
+        <AnalysisMode>Default</AnalysisMode>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)../../../src/Api/Rocket.Surgery.LaunchPad.Api.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+</Project>

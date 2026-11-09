@@ -43,6 +43,8 @@
       Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    <!-- [Creates] on the create responses, read by the generated hosts in the web samples. -->
+    <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
