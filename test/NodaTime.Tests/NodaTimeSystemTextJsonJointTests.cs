@@ -28,6 +28,33 @@ public class NodaTimeSystemTextJsonJointTests
         JsonSerializer.Serialize(new LocalDate(2020, 1, 1), options).ShouldBe("\"2020-01-01\"");
     }
 
+    // Native AOT turns reflection off: the NodaTime types then resolve from the converters alone, also as an object or a nullable.
+    [Test]
+    public async Task Writes_NodaTime_Values_Without_Reflection()
+    {
+        var options = await Options(DateTimeZoneProviders.Tzdb);
+        options = new(options)
+        {
+            TypeInfoResolver = System.Text.Json.Serialization.Metadata.JsonTypeInfoResolver.Combine(
+                options.TypeInfoResolverChain.Where(x => x is not System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver).ToArray()
+            ),
+        };
+
+        JsonSerializer.Serialize<object>(Instant.FromUtc(2020, 1, 1, 12, 12, 12), options).ShouldBe("\"2020-01-01T12:12:12Z\"");
+        JsonSerializer.Serialize<LocalDate?>(new LocalDate(2020, 1, 1), options).ShouldBe("\"2020-01-01\"");
+        JsonSerializer.Deserialize<Duration?>("null", options).ShouldBeNull();
+        JsonSerializer.Deserialize<DateTimeZone>("\"Europe/London\"", options)!.Id.ShouldBe("Europe/London");
+    }
+
+    [Test]
+    public void Chains_Only_Its_Own_Resolver_When_Configured_Standalone()
+    {
+        var options = new JsonSerializerOptions().ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);
+
+        options.TypeInfoResolverChain.ShouldBe([NodaTimeSystemTextJsonSerializationExtensions.TypeInfoResolver]);
+        JsonSerializer.Serialize(new LocalDate(2020, 1, 1), options).ShouldBe("\"2020-01-01\"");
+    }
+
     [Test]
     public async Task Reads_The_Extra_Formats_That_The_LaunchPad_Converters_Accept()
     {

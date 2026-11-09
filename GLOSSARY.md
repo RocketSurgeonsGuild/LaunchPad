@@ -51,3 +51,7 @@ _Avoid_: Mediator adapter, mediator configuration
 **LaunchPad SDK**:
 The MSBuild SDK an application opts into so that the right LaunchPad packages are chosen from what the project references. It builds on Dovetail's SDK.
 _Avoid_: Meta-package, bundle
+
+**JSON context**:
+The JSON metadata an application or package hands to LaunchPad, prepared at build time, so its types are read and written without reflection. LaunchPad uses only the JSON contexts it is given.
+_Avoid_: Serializer context, type resolver, JSON options

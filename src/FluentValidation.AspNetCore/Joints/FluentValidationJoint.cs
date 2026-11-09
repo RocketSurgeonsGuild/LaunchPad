@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
+using Rocket.Surgery.LaunchPad.Primitives;
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
@@ -10,7 +11,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
 ///     Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter, the
-///     problem details converter, and the <see cref="FluentValidationProblemDetails" /> as the documented validation response of the restful api
+///     problem details converter and the source generated metadata it writes with, and the <see cref="FluentValidationProblemDetails" /> as the documented validation response of the restful api
 ///     controllers.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
@@ -29,6 +30,7 @@ public class FluentValidationJoint : IServiceJoint
     public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.AddFluentValidationClientsideAdapters();
+        services.AddJsonTypeInfoResolver(FluentValidationJsonSerializerContext.Default, JsonTypeInfoResolverRegistration.LibraryOrder);
         services
            .Configure<MvcOptions>(mvcOptions => mvcOptions.Filters.Insert(0, new ValidationExceptionFilter()))
            .Configure<MvcJsonOptions>(options => options.JsonSerializerOptions.Converters.Add(new ValidationProblemDetailsConverter()))

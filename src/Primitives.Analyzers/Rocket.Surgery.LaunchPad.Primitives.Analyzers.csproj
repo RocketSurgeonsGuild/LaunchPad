@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The generators that ship with Rocket.Surgery.LaunchPad.Primitives: the camel case enum converters of an application's JSON contexts. -->
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Primitives.Analyzers</RootNamespace>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
+        <!-- The oldest Roslyn the generator supports: the compiler of the .NET 10 SDK, so an application on either SDK can load it. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+    <!-- The generator is packed from wherever the build wrote it: an artifacts path (pack's artifacts-path option) moves it out of bin. -->
+    <Target Name="_LaunchPadPackAnalyzer" BeforeTargets="_GetPackageFiles">
+        <ItemGroup>
+            <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        </ItemGroup>
+    </Target>
+    <ItemGroup>
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
+    </ItemGroup>
+</Project>

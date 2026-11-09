@@ -33,6 +33,14 @@
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true'">
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Specular" />
+        <!-- The camel case enum converters of a test's JSON contexts, which Rocket.Surgery.LaunchPad.Primitives brings through NuGet. -->
+        <ProjectReference
+            Include="$(MSBuildThisFileDirectory)../src/Primitives.Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
+            Condition="'$(MSBuildProjectName)' != 'Analyzers.Tests'"
+            PrivateAssets="all"
+            OutputItemType="Analyzer"
+            ReferenceOutputAssembly="false"
+        />
     </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 </Project>

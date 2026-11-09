@@ -129,10 +129,18 @@ internal static class ApiDiagnostics
         "{0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers"
     );
 
+    // LPAD1030 and up: JSON metadata. The ids between are left to the union work (#3147, #3148).
+    public static DiagnosticDescriptor JsonMetadataMissing { get; } = Warning(
+        "LPAD1030",
+        "JSON type has no source generated metadata",
+        "{0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions"
+    );
+
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
+        JsonMetadataMissing,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);

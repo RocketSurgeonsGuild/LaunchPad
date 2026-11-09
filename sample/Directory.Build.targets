@@ -1,6 +1,8 @@
 <Project>
     <ItemGroup>
         <ProjectReference Include="../../src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <!-- The camel case enum converters of the samples' JSON contexts; Rocket.Surgery.LaunchPad.Primitives brings it through NuGet. -->
+        <ProjectReference Include="../../src/Primitives.Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" PrivateAssets="all" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
     <!--

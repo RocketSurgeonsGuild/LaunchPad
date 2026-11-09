@@ -65,6 +65,9 @@
         ],
         type: object
       },
+      LaunchRecordId: {
+        type: object
+      },
       LaunchRecordModel: {
         properties: {
           actualLaunchDate: {
@@ -193,6 +196,9 @@
         },
         type: object,
         x-schema-id: CreateLaunchRecordResponse
+      },
+      RocketId: {
+        type: object
       },
       RocketModel: {
         properties: {

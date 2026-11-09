@@ -12,6 +12,17 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 public class FluentValidationProblemDetail
 {
     /// <summary>
+    ///     An empty validation error problem, for deserialization.
+    /// </summary>
+    [JsonConstructor]
+    public FluentValidationProblemDetail()
+    {
+        PropertyName = "";
+        ErrorMessage = "";
+        ErrorCode = "";
+    }
+
+    /// <summary>
     ///     A validation error problem
     /// </summary>
     public FluentValidationProblemDetail(ValidationFailure validationFailure)

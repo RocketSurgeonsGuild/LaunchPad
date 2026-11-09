@@ -355,36 +355,41 @@ header values, read the body and write the result through the application's `Jso
 `JsonSerializerContext`:
 
 ```csharp
+builder.Services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
+// or, without LaunchPad's SystemTextJsonJoint:
 builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.TypeInfoResolverChain.Insert(0, RocketsJsonContext.Default));
 ```
 
 LaunchPad's nested `X.Request` types share a simple name, so each `[JsonSerializable]` entry needs its own `TypeInfoPropertyName`; without it,
-SYSLIB1031 silently skips the type. In an AOT application, `Configure{Operation}` receives an `IEndpointConventionBuilder`, and endpoint
+SYSLIB1031 silently skips the type. In a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable` (or
+`LaunchPadApiRequireJsonContext`), LPAD1030 names each body and response type no context in the project or its references declares, or
+reaches through its properties and collections. See [JSON and native AOT](../json-and-native-aot/). In an AOT application, `Configure{Operation}` receives an `IEndpointConventionBuilder`, and endpoint
 filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` and checks it with a round trip over HTTP.
 
 ## Diagnostics
 
-| ID       | Severity | Meaning                                                                                             |
-| -------- | -------- | --------------------------------------------------------------------------------------------------- |
-| LPAD1001 | Error    | The request matches no request kind of the profile and has no `Response`.                           |
-| LPAD1002 | Error    | No mediator profile, or several built-in ones match.                                                |
-| LPAD1003 | Error    | A route token has no matching member.                                                               |
-| LPAD1004 | Error    | An `[ApiRoute]` member isn't in the route.                                                          |
-| LPAD1005 | Error    | A complex member is bound from the route or query string.                                           |
-| LPAD1006 | Error    | The request can't be built from the bound values.                                                   |
-| LPAD1007 | Error    | A route, query or header member isn't parsable.                                                     |
-| LPAD1008 | Error    | Two operations share a verb and route.                                                              |
-| LPAD1009 | Error    | A GraphQL field is declared on two mutation hosts.                                                  |
-| LPAD1010 | Error    | The host isn't `partial` (Minimal API: `static partial`). Has a code fix.                           |
-| LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.                            |
-| LPAD1015 | Warning  | A stream operation on a GraphQL host is skipped.                                                    |
-| LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.                                      |
-| LPAD1017 | Error    | The host's transport can't be inferred, or its library isn't referenced.                            |
-| LPAD1019 | Error    | A query operation is listed on a mutation host.                                                     |
-| LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.                              |
-| LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                                 |
-| LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`.       |
-| LPAD1024 | Warning  | An operation has an API version, but the server lacks the Asp.Versioning package for its transport. |
+| ID       | Severity | Meaning                                                                                               |
+| -------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| LPAD1001 | Error    | The request matches no request kind of the profile and has no `Response`.                             |
+| LPAD1002 | Error    | No mediator profile, or several built-in ones match.                                                  |
+| LPAD1003 | Error    | A route token has no matching member.                                                                 |
+| LPAD1004 | Error    | An `[ApiRoute]` member isn't in the route.                                                            |
+| LPAD1005 | Error    | A complex member is bound from the route or query string.                                             |
+| LPAD1006 | Error    | The request can't be built from the bound values.                                                     |
+| LPAD1007 | Error    | A route, query or header member isn't parsable.                                                       |
+| LPAD1008 | Error    | Two operations share a verb and route.                                                                |
+| LPAD1009 | Error    | A GraphQL field is declared on two mutation hosts.                                                    |
+| LPAD1010 | Error    | The host isn't `partial` (Minimal API: `static partial`). Has a code fix.                             |
+| LPAD1014 | Warning  | A gRPC request or response has no `[DataContract]` or `[ProtoContract]`.                              |
+| LPAD1015 | Warning  | A stream operation on a GraphQL host is skipped.                                                      |
+| LPAD1016 | Info     | An operation is skipped because the profile can't dispatch it.                                        |
+| LPAD1017 | Error    | The host's transport can't be inferred, or its library isn't referenced.                              |
+| LPAD1019 | Error    | A query operation is listed on a mutation host.                                                       |
+| LPAD1020 | Error    | An `Input` type has no parameterless `Create()` returning the request.                                |
+| LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                                   |
+| LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`.         |
+| LPAD1024 | Warning  | An operation has an API version, but the server lacks the Asp.Versioning package for its transport.   |
+| LPAD1030 | Warning  | A trimmed or AOT project has a Minimal API body or response type no `JsonSerializerContext` declares. |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 belonged to the generated clients, which were removed; the IDs aren't reused.
 

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO.Converters;
@@ -6,11 +7,22 @@ using NetTopologySuite.IO.Converters;
 namespace Rocket.Surgery.LaunchPad.Spatial;
 
 /// <summary>
-///     Extensions for noda time
+///     Extensions for NetTopologySuite
 /// </summary>
+/// <remarks>
+///     Both methods also chain <see cref="TypeInfoResolver" /> into the options' <see cref="JsonSerializerOptions.TypeInfoResolverChain" />, so the
+///     geometry and feature types resolve in a trimmed or native AOT application. No reflection based resolver is added: options
+///     that should reflect over other types need one of their own.
+/// </remarks>
 [PublicAPI]
 public static class NetTopologySuiteSystemTextJsonSerializationExtensions
 {
+    /// <summary>
+    ///     Resolves the metadata of the geometry and feature types from the converter factory in the options, without reflection, for when they are
+    ///     serialized at the root or as an <see cref="object" />.
+    /// </summary>
+    public static IJsonTypeInfoResolver TypeInfoResolver => SpatialJsonTypeInfoResolver.Instance;
+
     /// <summary>
     ///     Configure System.Text.Json with defaults for launchpad
     /// </summary>
@@ -27,6 +39,7 @@ public static class NetTopologySuiteSystemTextJsonSerializationExtensions
         }
 
         options.Converters.Add(new GeoJsonConverterFactory(factory));
+        SpatialJsonTypeInfoResolver.AddTo(options);
         return options;
     }
 
@@ -46,6 +59,7 @@ public static class NetTopologySuiteSystemTextJsonSerializationExtensions
         }
 
         options.Converters.Add(new WktConverterFactory(factory));
+        SpatialJsonTypeInfoResolver.AddTo(options);
         return options;
     }
 }

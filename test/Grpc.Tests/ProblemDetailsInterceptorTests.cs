@@ -85,6 +85,22 @@ public class ProblemDetailsInterceptorTests
         rpc.Trailers.GetValue("missing").ShouldBe("");
     }
 
+    // With reflection off (native AOT) only the resolver chain is used: a value it doesn't know goes as its ToString() instead of failing the call.
+    [Test]
+    public async Task Should_Write_Values_No_Resolver_Knows_As_Text()
+    {
+        var options = new JsonOptions();
+        options.SerializerOptions.TypeInfoResolver = System.Text.Json.Serialization.Metadata.JsonTypeInfoResolver.Combine();
+        var interceptor = new NotFoundInterceptor(Options.Create(options));
+        var exception = new NotFoundException("no rocket") { Properties = { ["attempts"] = 3, ["rocketId"] = "1" } };
+
+        var rpc = await Should.ThrowAsync<RpcException>(() => interceptor.UnaryServerHandler<string, string>("request", A.Fake<ServerCallContext>(), (_, _) => throw exception));
+
+        rpc.StatusCode.ShouldBe(StatusCode.NotFound);
+        rpc.Trailers.GetValue("attempts").ShouldBe("3");
+        rpc.Trailers.GetValue("rocketid").ShouldBe("1");
+    }
+
     [Test]
     public async Task Should_Leave_Out_The_Problem_Details_That_Are_Not_Set()
     {

@@ -22,6 +22,7 @@
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />

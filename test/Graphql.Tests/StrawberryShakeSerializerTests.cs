@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using Microsoft.Extensions.Options;
 
@@ -18,7 +19,7 @@ public class StrawberryShakeSerializerTests
     [Test]
     public void Should_Format_A_Value_As_Its_Json_Element()
     {
-        var serializer = new LaunchSerializer(Options.Create(new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+        var serializer = new LaunchSerializer(Options.Create(new JsonSerializerOptions(JsonSerializerDefaults.Web) { TypeInfoResolver = LaunchJsonContext.Default }));
 
         var element = (JsonElement)serializer.Format(new Launch("Artemis", 2))!;
 
@@ -30,7 +31,7 @@ public class StrawberryShakeSerializerTests
     [Test]
     public void Should_Parse_A_Json_Element_With_The_Configured_Options()
     {
-        var serializer = new LaunchSerializer(Options.Create(new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+        var serializer = new LaunchSerializer(Options.Create(new JsonSerializerOptions(JsonSerializerDefaults.Web) { TypeInfoResolver = LaunchJsonContext.Default }));
 
         serializer.Parse(JsonSerializer.SerializeToElement(new { name = "Artemis", crew = 4, })).ShouldBe(new Launch("Artemis", 4));
     }
@@ -64,8 +65,6 @@ public class StrawberryShakeSerializerTests
     private static IOptions<JsonSerializerOptions> SpatialOptions() =>
         Options.Create(new JsonSerializerOptions(JsonSerializerDefaults.Web).ConfigureGeoJsonForLaunchPad(NtsGeometryServices.Instance.CreateGeometryFactory(4326)));
 
-    private sealed record Launch(string Name, int Crew);
-
     private sealed class LaunchSerializer(IOptions<JsonSerializerOptions> options) : JsonElementScalarSerializer<Launch>("Launch", options);
 
     private enum Stage
@@ -77,3 +76,9 @@ public class StrawberryShakeSerializerTests
 
     private sealed class StageSerializer() : EnumScalarSerializer<Stage>("Stage");
 }
+
+// The serializer reads and writes only with the metadata of the options' JSON context: LaunchPad doesn't reflect.
+internal sealed record Launch(string Name, int Crew);
+
+[JsonSerializable(typeof(Launch))]
+internal sealed partial class LaunchJsonContext : JsonSerializerContext;
