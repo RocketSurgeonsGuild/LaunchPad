@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>Server</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Functional.MediatR.Contracts/Api.Functional.MediatR.Contracts.csproj" />
+    </ItemGroup>
+</Project>

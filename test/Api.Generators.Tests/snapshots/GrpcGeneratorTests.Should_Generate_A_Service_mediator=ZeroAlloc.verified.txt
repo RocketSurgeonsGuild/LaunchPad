@@ -1,0 +1,207 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (10,5)-(10,36),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.DeleteRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,33),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.GetRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,33),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.RocketModel? is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (7,5)-(7,35),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.ListRockets.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (7,5)-(7,35),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.RocketModel is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.CreateRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.CreateRocket.Response is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (9,5)-(9,34),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.EditRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1014,
+      Title: gRPC type lacks serialization attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (9,5)-(9,34),
+      MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Message: Sample.Contracts.Rockets.RocketModel is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS0234,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GrpcServiceGenerator/Sample.Server.RocketsService.Grpc.g.cs: (17,45)-(17,54),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
+      MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
+      Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.GrpcServiceGenerator: [
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (10,5)-(10,36),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.DeleteRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,33),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.GetRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,33),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.RocketModel? is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (7,5)-(7,35),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.ListRockets.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (7,5)-(7,35),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.RocketModel is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,36),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.CreateRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (8,5)-(8,36),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.CreateRocket.Response is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (9,5)-(9,34),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.EditRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      },
+      {
+        Id: LPAD1014,
+        Title: gRPC type lacks serialization attributes,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (9,5)-(9,34),
+        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Message: Sample.Contracts.Rockets.RocketModel is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
+        Category: LaunchPad.Api
+      }
+    ]
+  }
+}

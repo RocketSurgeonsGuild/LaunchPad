@@ -191,11 +191,11 @@ type Mutation {
   createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse! @cost(weight: "10")
   editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel! @cost(weight: "10")
   patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel! @cost(weight: "10")
-  deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Void! @cost(weight: "10")
+  deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Boolean! @cost(weight: "10")
   createRocket(request: CreateRocketRequest!): CreateRocketResponse! @cost(weight: "10")
   editRocket(request: EditRocketRequest!): RocketModel! @cost(weight: "10")
   patchRocket(request: EditRocketPatchRequestInput!): RocketModel! @cost(weight: "10")
-  deleteRocket(request: DeleteRocketRequest!): Void! @cost(weight: "10")
+  deleteRocket(request: DeleteRocketRequest!): Boolean! @cost(weight: "10")
 }
 
 type NodaTimeOutputs {

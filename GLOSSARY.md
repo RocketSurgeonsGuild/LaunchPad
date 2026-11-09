@@ -24,6 +24,30 @@ _Avoid_: Direct dependency
 Source shipped inside a package and written into a consuming project only when its host model and referenced libraries match, so unused wiring never compiles in.
 _Avoid_: Snippet, scaffold
 
+**Operation**:
+A mediator request, with its response, that is exposed over one or more transports. It is the same thing whether it is reached as an HTTP endpoint, a gRPC method or a GraphQL field.
+_Avoid_: Endpoint, contract, action
+
+**Contracts project**:
+The project that holds operations and their response types, shared by the servers that expose them.
+_Avoid_: Shared project, API project
+
+**Transport**:
+A way of carrying an operation between a client and a server: Minimal API, MVC controllers, gRPC or GraphQL.
+_Avoid_: Protocol, channel
+
+**Operation host**:
+A server type that declares, one by one, the operations it exposes over one transport. An operation is only reachable where a host declares it.
+_Avoid_: Marker, mapper, endpoint group, API surface
+
+**Group**:
+The name an operation host gives its operations: the middle of their routes, the gRPC package and service.
+_Avoid_: Area, module, route prefix
+
+**Mediator profile**:
+The description of how one mediator library shapes its requests, dispatches them and declares handlers, which lets operations work with any mediator.
+_Avoid_: Mediator adapter, mediator configuration
+
 **LaunchPad SDK**:
 The MSBuild SDK an application opts into so that the right LaunchPad packages are chosen from what the project references. It builds on Dovetail's SDK.
 _Avoid_: Meta-package, bundle

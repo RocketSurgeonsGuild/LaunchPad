@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- Writes the specs the test clients are generated from, as the MediatR fixture server exposes them. Run by the client projects' builds. -->
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+        <ProjectReference Include="../../MediatR/Api.Functional.MediatR.Server/Api.Functional.MediatR.Server.csproj" />
+    </ItemGroup>
+</Project>

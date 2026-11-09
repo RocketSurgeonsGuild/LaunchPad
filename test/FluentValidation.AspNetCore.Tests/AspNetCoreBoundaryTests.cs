@@ -1,5 +1,3 @@
-using Rocket.Surgery.LaunchPad.AspNetCore;
-
 namespace FluentValidation.AspNetCore.Tests;
 
 public class AspNetCoreBoundaryTests
@@ -7,7 +5,7 @@ public class AspNetCoreBoundaryTests
     [Test]
     public void AspNetCore_Does_Not_Reference_FluentValidation()
     {
-        var references = typeof(RestfulApiOptions).Assembly.GetReferencedAssemblies().Select(x => x.Name).ToList();
+        var references = typeof(Rocket.Surgery.LaunchPad.AspNetCore.Joints.AspNetCoreJoint).Assembly.GetReferencedAssemblies().Select(x => x.Name).ToList();
 
         references.ShouldNotContain("FluentValidation");
         references.ShouldNotContain("FluentValidation.AspNetCore");

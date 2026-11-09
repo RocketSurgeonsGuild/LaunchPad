@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1019,
+      Title: Operation is on the wrong GraphQL host kind,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,33),
+      MessageFormat: {0} is a GraphQL {1} but {2} is a {3} host,
+      Message: GetRocket is a GraphQL query but RocketsMutations is a mutation host,
+      Category: LaunchPad.Api
+    }
+  ]
+}

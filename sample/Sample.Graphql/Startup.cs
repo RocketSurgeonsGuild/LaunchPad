@@ -5,12 +5,11 @@ using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 
-using MediatR;
-
 using NetTopologySuite.Geometries;
 
 using NodaTime;
 
+using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 
 using Sample.Core.Domain;
@@ -83,76 +82,20 @@ public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunc
     }
 }
 
+// The mutations are generated from the operations listed here; the patch requests bind the IOptionalTracking inputs above.
 [ExtendObjectType(OperationTypeNames.Mutation)]
-public partial class RocketMutation
-{
-    [UseRequestScope]
-    public partial Task<CreateRocket.Response> CreateRocket(
-        IMediator mediator,
-        CreateRocket.Request request,
-        CancellationToken cancellationToken
-    );
-
-    [UseRequestScope]
-    public partial Task<RocketModel> EditRocket(
-        [Service]
-        IMediator mediator,
-        EditRocket.Request request,
-        CancellationToken cancellationToken
-    );
-
-    [UseRequestScope]
-    public partial Task<RocketModel> PatchRocket(
-        [Service]
-        IMediator mediator,
-        EditRocketPatchRequest request,
-        CancellationToken cancellationToken
-    );
-
-    [UseRequestScope]
-    public partial Task<Unit> DeleteRocket(
-        [Service]
-        IMediator mediator,
-        DeleteRocket.Request request,
-        CancellationToken cancellationToken
-    );
-}
+[Operation<CreateRocket.Request>]
+[Operation<EditRocket.Request>]
+[Operation<EditRocket.PatchRequest>(Input = typeof(EditRocketPatchRequest))]
+[Operation<DeleteRocket.Request>]
+public partial class RocketMutation;
 
 [ExtendObjectType(OperationTypeNames.Mutation)]
-public partial class LaunchRecordMutation
-{
-    [UseRequestScope]
-    public partial Task<CreateLaunchRecord.Response> CreateLaunchRecord(
-        [Service]
-        IMediator mediator,
-        CreateLaunchRecord.Request request,
-        CancellationToken cancellationToken
-    );
-
-    [UseRequestScope]
-    public partial Task<LaunchRecordModel> EditLaunchRecord(
-        [Service]
-        IMediator mediator,
-        EditLaunchRecord.Request request,
-        CancellationToken cancellationToken
-    );
-
-    [UseRequestScope]
-    public partial Task<LaunchRecordModel> PatchLaunchRecord(
-        [Service]
-        IMediator mediator,
-        EditLaunchRecordPatchRequest request,
-        CancellationToken cancellationToken
-    );
-
-    [UseRequestScope]
-    public partial Task<Unit> DeleteLaunchRecord(
-        [Service]
-        IMediator mediator,
-        DeleteLaunchRecord.Request request,
-        CancellationToken cancellationToken
-    );
-}
+[Operation<CreateLaunchRecord.Request>]
+[Operation<EditLaunchRecord.Request>]
+[Operation<EditLaunchRecord.PatchRequest>(Input = typeof(EditLaunchRecordPatchRequest))]
+[Operation<DeleteLaunchRecord.Request>]
+public partial class LaunchRecordMutation;
 
 [ExtendObjectType(OperationTypeNames.Query)]
 public class QueryType

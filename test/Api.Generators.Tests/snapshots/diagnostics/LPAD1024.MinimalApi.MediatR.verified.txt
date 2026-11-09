@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1024,
+      Title: API version is not mapped,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,38)-(8,66),
+      MessageFormat: {0} has API version {1}, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Message: GetRocket has API version 1.0, but Asp.Versioning isn't referenced, so the server doesn't map it; reference Asp.Versioning.Http for Minimal API hosts or Asp.Versioning.Mvc for controllers,
+      Category: LaunchPad.Api
+    }
+  ]
+}

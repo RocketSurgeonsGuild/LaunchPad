@@ -1,0 +1,21 @@
+{
+  "schema": "schema.graphql",
+  "documents": "Rockets.graphql",
+  "extensions": {
+    "strawberryShake": {
+      "name": "RocketsGraphQLClient",
+      "namespace": "Api.Functional.GraphQLClient",
+      "url": "http://localhost/graphql/",
+      "dependencyInjection": true,
+      "strictSchemaValidation": true,
+      "hashAlgorithm": "md5",
+      "useSingleFile": true,
+      "requestStrategy": "Default",
+      "outputDirectoryName": "Generated",
+      "noStore": true,
+      "emitGeneratedCode": false,
+      "records": { "inputs": true, "entities": true },
+      "transportProfiles": [{ "default": "Http", "subscription": "WebSocket" }]
+    }
+  }
+}

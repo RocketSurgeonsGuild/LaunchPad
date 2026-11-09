@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1002,
+      Title: No mediator profile,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,63)-(8,79),
+      MessageFormat: Operation host {0} needs a mediator profile: {1},
+      Message: Operation host RocketsEndpoints needs a mediator profile: several mediators are referenced (MediatR, Mediator); add [assembly: MediatorProfile] to choose one,
+      Category: LaunchPad.Api
+    }
+  ]
+}

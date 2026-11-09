@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ApiFunctionalRole>Server</ApiFunctionalRole>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Api.Functional.Foundatio.Contracts/Api.Functional.Foundatio.Contracts.csproj" />
+        <PackageReference Include="Foundatio.Mediator" />
+    </ItemGroup>
+</Project>

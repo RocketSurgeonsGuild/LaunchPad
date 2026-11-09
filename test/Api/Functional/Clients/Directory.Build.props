@@ -1,0 +1,14 @@
+<Project>
+    <!--
+        The test clients, generated the way an application would generate them: from the servers' OpenAPI document, GraphQL schema and .proto,
+        exported at build by Api.Functional.SpecExport from the MediatR fixture server. Every mediator's server exposes the same specs
+        (Api.Functional.Tests checks it), so one client per transport reaches all six.
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)../Directory.Build.props" />
+    <PropertyGroup>
+        <ApiFunctionalSpecs>$(MSBuildProjectDirectory)/obj/specs/</ApiFunctionalSpecs>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(MSBuildProjectName)' != 'Api.Functional.SpecExport'">
+        <ProjectReference Include="$(MSBuildThisFileDirectory)Api.Functional.SpecExport/Api.Functional.SpecExport.csproj" ReferenceOutputAssembly="false" Private="false" />
+    </ItemGroup>
+</Project>

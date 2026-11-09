@@ -1,4 +1,4 @@
-﻿using HotChocolate.Configuration;
+using HotChocolate.Configuration;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Types.Descriptors.Definitions;
@@ -18,23 +18,28 @@ public class NestedTypeNameTypeInterceptor : TypeInterceptor
     {
         if (definition is IFilterInputTypeDefinition { EntityType: { IsNested: true, DeclaringType: { }, }, } ft)
         {
-            definition.Name = $"{ft.EntityType.DeclaringType.Name}{definition.Name}";
+            definition.Name = Prefixed(ft.EntityType.DeclaringType, definition.Name);
         }
         else if (definition is ISortInputTypeDefinition { EntityType: { IsNested: true, DeclaringType: { }, }, } st)
         {
-            definition.Name = $"{st.EntityType.DeclaringType.Name}{definition.Name}";
+            definition.Name = Prefixed(st.EntityType.DeclaringType, definition.Name);
         }
         else if (definition is IComplexOutputTypeDefinition { RuntimeType: { IsNested: true, DeclaringType: { }, }, } cot)
         {
-            definition.Name = $"{cot.RuntimeType.DeclaringType.Name}{cot.Name}";
+            definition.Name = Prefixed(cot.RuntimeType.DeclaringType, cot.Name);
             if (definition.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && cot.RuntimeType.Name == "Request")
                 definition.Name = $"{cot.RuntimeType.DeclaringType.Name}{cot.RuntimeType.Name}";
         }
         else if (definition is ITypeDefinition { RuntimeType: { IsNested: true, DeclaringType: { }, }, } ot)
         {
-            definition.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.Name}";
+            definition.Name = Prefixed(ot.RuntimeType.DeclaringType, ot.Name);
             if (definition.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && ot.RuntimeType.Name == "Request")
                 definition.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.RuntimeType.Name}";
         }
     }
+
+    // A name that already starts with the declaring type was chosen explicitly (the API generators name CreateRocket.Request
+    // CreateRocketRequest themselves), so it is left as it is.
+    private static string Prefixed(Type declaringType, string name) =>
+        name.StartsWith(declaringType.Name, StringComparison.Ordinal) ? name : $"{declaringType.Name}{name}";
 }

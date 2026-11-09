@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1004,
+      Title: Route member is not in the route,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,54),
+      MessageFormat: {0}.{1} is marked [ApiRoute] but the route '{2}' has no '{{{3}}}' token,
+      Message: Request.Id is marked [ApiRoute] but the route 'locate' has no '{id}' token,
+      Category: LaunchPad.Api
+    }
+  ]
+}

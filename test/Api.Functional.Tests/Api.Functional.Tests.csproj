@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    </ItemGroup>
+    <ItemGroup>
+        <!--
+            One server per mediator, built by the generators. Each is aliased: several of them carry the same generated types (Mediator's and
+            ZeroAlloc's mediators, the generated helpers), and the tests only reach them through ServerApp and RocketsService.GetProto().
+        -->
+        <ProjectReference Include="../Api/Functional/MediatR/Api.Functional.MediatR.Server/Api.Functional.MediatR.Server.csproj" Aliases="mediatrserver" />
+        <ProjectReference Include="../Api/Functional/Mediator/Api.Functional.Mediator.Server/Api.Functional.Mediator.Server.csproj" Aliases="mediatorserver" />
+        <ProjectReference Include="../Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.Server/Api.Functional.ChannelMediator.Server.csproj" Aliases="channelmediatorserver" />
+        <ProjectReference Include="../Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Server/Api.Functional.ImmediateHandlers.Server.csproj" Aliases="immediatehandlersserver" />
+        <ProjectReference Include="../Api/Functional/Foundatio/Api.Functional.Foundatio.Server/Api.Functional.Foundatio.Server.csproj" Aliases="foundatioserver" />
+        <ProjectReference Include="../Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Server/Api.Functional.ZeroAlloc.Server.csproj" Aliases="zeroallocserver" />
+        <!-- The clients an application would generate from those servers' OpenAPI document, .proto and GraphQL schema. -->
+        <ProjectReference Include="../Api/Functional/Clients/Api.Functional.HttpClient/Api.Functional.HttpClient.csproj" />
+        <ProjectReference Include="../Api/Functional/Clients/Api.Functional.GrpcClient/Api.Functional.GrpcClient.csproj" />
+        <ProjectReference Include="../Api/Functional/Clients/Api.Functional.GraphQLClient/Api.Functional.GraphQLClient.csproj" />
+    </ItemGroup>
+</Project>

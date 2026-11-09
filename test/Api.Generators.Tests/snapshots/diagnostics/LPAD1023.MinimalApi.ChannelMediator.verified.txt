@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1023,
+      Title: A created resource has no Location,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {0} answers 201 Created without a Location: {1},
+      Message: CreateRocket answers 201 Created without a Location: no Minimal API host exposes Sample.Contracts.Rockets.GetRocket.Request as a GET,
+      Category: LaunchPad.Api
+    }
+  ]
+}

@@ -17,6 +17,8 @@
     <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+    <!-- The mutations are generated from RocketMutation and LaunchRecordMutation. -->
+    <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <PackageReference Include="HotChocolate.AspNetCore" />
     <PackageReference Include="Joinery.Dovetail.Hosting" />
     <PackageReference Include="HotChocolate.Types.CursorPagination" />

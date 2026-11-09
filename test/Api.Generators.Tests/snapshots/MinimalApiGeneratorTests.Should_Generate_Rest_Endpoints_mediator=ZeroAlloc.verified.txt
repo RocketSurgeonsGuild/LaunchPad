@@ -1,0 +1,26 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+  },
+  FinalDiagnostics: [
+    {
+      Id: CS0234,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator/Sample.Server.RocketsEndpoints.MinimalApi.g.cs: (28,45)-(28,54),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
+      MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
+      Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator: []
+  }
+}

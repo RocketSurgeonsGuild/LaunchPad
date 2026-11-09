@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1009,
+      Title: Duplicate GraphQL field,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: The GraphQL field '{0}' is declared twice on {1},
+      Message: The GraphQL field 'createRocket' is declared twice on FleetMutations and RocketsMutations,
+      Category: LaunchPad.Api
+    }
+  ]
+}
