@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore`
-- Version: `2.0.1-pr.1168`
+- Version: `2.0.1-pr.1171`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore)
 
@@ -14,7 +14,7 @@
 
 ### Rocket.Surgery.LaunchPad.AspNetCore.OpenApi
 
-- [ZeroAllocOpenApiSchemaTransformer](/LaunchPad/pr-preview/pr-3155/api/rocket.surgery.launchpad.zeroalloc.aspnetcore/zeroallocopenapischematransformer.md) -- `class` `sealed` -- Describes the ZeroAlloc.Validation attributes of a type's properties in its OpenAPI schema: required properties, lengths, ranges, patterns and e-mail addresses.
+- [ZeroAllocOpenApiSchemaTransformer](/LaunchPad/pr-preview/pr-3155/api/rocket.surgery.launchpad.zeroalloc.aspnetcore/zeroallocopenapischematransformer.md) -- `class` `sealed` -- Describes the ZeroAlloc.Validation attributes of a type's properties in its OpenAPI schema: required properties, lengths, ranges, patterns and e-mail addresses. It also marks the members of the problem details LaunchPad writes as required: the type and title, and the errors of a validation problem.
 
 ### Rocket.Surgery.LaunchPad.AspNetCore.Validation
 
