@@ -1,5 +1,7 @@
-﻿<Project>
+<Project>
     <ItemGroup Condition="'$(ImplicitUsings)' == 'enable'">
         <Using Include="Rocket.Surgery.LaunchPad.Foundation" />
     </ItemGroup>
+    <!-- What the operation host generators in Foundation's analyzer need from the build (docs/adr/0004-one-generator-assembly.md). -->
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Operations.targets" />
 </Project>

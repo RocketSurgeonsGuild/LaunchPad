@@ -25,13 +25,15 @@ This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) s
 
 ## Packages
 
-| Package                        | Reference it from                 | What it does                                                                                                                                                                                        |
-| ------------------------------ | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.Api` | contracts that customise, servers | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes, and the generators: Minimal API (`*Endpoints`), MVC (`*Controller`), gRPC (`*Service`) and GraphQL (`*Mutations`). |
+The generators ship in `Rocket.Surgery.LaunchPad.Foundation`, next to LaunchPad's other source generators, so a project that references
+Foundation has them: the attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes, and the generators for Minimal API
+(`*Endpoints`), MVC (`*Controller`), gRPC (`*Service`) and GraphQL (`*Mutations`). Reference Foundation from the servers and from contracts
+that customise their operations.
 
-It's an analyzer-only development dependency. The attributes are generated into each project that uses them, as `internal` types, so
-nothing reaches your runtime dependencies. One generator per transport runs in every project that references the package, and each writes
-code only for the hosts of its kind, using that transport's library (ASP.NET Core, protobuf-net.Grpc or HotChocolate).
+The attributes are generated into each project that uses them, as `internal` types, so nothing reaches your runtime dependencies. One
+generator per transport runs in every project that references Foundation, and each writes code only for the hosts of its kind, using that
+transport's library (ASP.NET Core, protobuf-net.Grpc or HotChocolate). Why they share Foundation's analyzer is recorded in
+[ADR 0004](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0004-one-generator-assembly.md).
 
 ## Quick start
 

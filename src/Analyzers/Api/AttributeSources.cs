@@ -1,7 +1,7 @@
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
 /// <summary>
-///     The attribute source emitted into every project that references Rocket.Surgery.LaunchPad.Api. It must compile as C# 7.3 (netstandard2.0
+///     The attribute source emitted into every project that references Rocket.Surgery.LaunchPad.Foundation (which carries the generators). It must compile as C# 7.3 (netstandard2.0
 ///     contracts projects default to it): no nullable annotations, no file-scoped namespaces. Generic attributes need C# 11 and .NET 7, so they are
 ///     behind NET7_0_OR_GREATER. Every type is internal and [Embedded], so each compilation has its own copy and none of them clash.
 /// </summary>

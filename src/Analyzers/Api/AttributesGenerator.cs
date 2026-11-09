@@ -3,8 +3,7 @@ using Microsoft.CodeAnalysis;
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
 /// <summary>
-///     Emits the API attributes into the compilation. Only this package emits them; every transport package depends on it, so each compilation
-///     gets exactly one copy. They are emitted in post-initialization so the transport generators can bind them with ForAttributeWithMetadataName.
+///     Emits the API attributes into the compilation, once per compilation. They are emitted in post-initialization so the transport generators can bind them with ForAttributeWithMetadataName.
 /// </summary>
 [Generator]
 public sealed class AttributesGenerator : IIncrementalGenerator

@@ -62,7 +62,8 @@ jobs:
                           - 'NuGet.config'
                           - '.github/workflows/samples.yml'
                       api-aot:
-                          - 'src/Api*/**'
+                          - 'src/Analyzers/**'
+                          - 'src/Foundation/build/**'
                           - 'test/Api/Aot/**'
                           - 'Directory.*.props'
                           - 'Directory.*.targets'
