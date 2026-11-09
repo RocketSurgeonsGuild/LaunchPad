@@ -15,7 +15,6 @@ using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
 using Sample.Core.Operations.Rockets;
 
-using ZeroAlloc.Mediator.Validation;
 
 namespace Sample.Graphql;
 
@@ -43,32 +42,6 @@ public partial class RocketMutation;
 [Operation<EditLaunchRecord.PatchRequest>(Input = typeof(EditLaunchRecordPatchRequest))]
 [Operation<DeleteLaunchRecord.Request>]
 public partial class LaunchRecordMutation;
-
-/// <summary>
-///     Reports each failure of a request the ZeroAlloc validators rejected as a validation error naming the property that failed.
-/// </summary>
-internal class ValidationErrorFilter : IErrorFilter
-{
-    public IError OnError(IError error)
-    {
-        if (error.Exception is not ValidationFailedException exception) return error;
-
-        var errors = exception
-                    .Error.Failures
-                    .Select(
-                         failure => error
-                                   .WithException(null)
-                                   .RemoveExtension("message")
-                                   .RemoveExtension("stackTrace")
-                                   .WithMessage(failure.ErrorMessage)
-                                   .WithCode("VALIDATION")
-                                   .SetExtension("propertyName", failure.PropertyName)
-                                   .SetExtension("errorCode", failure.ErrorCode)
-                     )
-                    .ToArray();
-        return errors.Length == 1 ? errors[0] : new AggregateError(errors);
-    }
-}
 
 [ExtendObjectType(OperationTypeNames.Query)]
 public class QueryType

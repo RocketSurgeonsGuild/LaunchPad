@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Joinery.Dovetail.Hosting" />
     <!-- validates the forms with the ZeroAlloc validators of the operations -->
-    <Compile Include="../Shared/Blazor/*.cs" LinkBase="Shared" />
+    <ProjectReference Include="..\..\src\ZeroAlloc.Blazor\Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />

@@ -21,8 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- validates the forms with the ZeroAlloc validators -->
-        <Compile Include="../Shared/Blazor/*.cs" LinkBase="Shared" />
         <InternalsVisibleTo Include="Sample.BlazorWasm.Tests" />
     </ItemGroup>
 
@@ -39,6 +37,8 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+        <!-- validates the forms with the ZeroAlloc validators -->
+        <ProjectReference Include="..\..\src\ZeroAlloc.Blazor\Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
         <ProjectReference Include="..\Sample.Restful.Client\Sample.Restful.Client.csproj" />
     </ItemGroup>
 

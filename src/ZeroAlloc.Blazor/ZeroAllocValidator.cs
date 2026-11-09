@@ -3,14 +3,21 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using ZeroAlloc.Validation;
 
-namespace Sample.Shared;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
 
 /// <summary>
 ///     Validates the model of the surrounding <see cref="EditForm" /> with the ZeroAlloc validator registered for it, and reports the failures
 ///     through the form's <see cref="EditContext" /> so the validation summary and messages show them.
 /// </summary>
+/// <remarks>
+///     The validator is resolved as <see cref="ValidatorFor{T}" /> of the model's runtime type, which needs that closed generic type at run time.
+///     ZeroAlloc.Validation registers a validator for each <c>[Validate]</c> type, so a trimmed application keeps the types it validates.
+/// </remarks>
+[PublicAPI]
 public sealed class ZeroAllocValidator : ComponentBase, IDisposable
 {
     private static readonly MethodInfo ValidateMethod = typeof(ZeroAllocValidator).GetMethod(nameof(Validate), BindingFlags.NonPublic | BindingFlags.Static)!;
@@ -49,6 +56,8 @@ public sealed class ZeroAllocValidator : ComponentBase, IDisposable
         _editContext = null;
     }
 
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "ValidatorFor<T> is registered for each validated model type, so its instantiation exists.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "Validate<TModel> has no trimming requirements on TModel.")]
     private ValidationFailure[] ValidateModel(object model) =>
         (ValidationFailure[])ValidateMethod.MakeGenericMethod(model.GetType()).Invoke(null, [Services, model])!;
 

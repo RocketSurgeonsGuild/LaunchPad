@@ -8,7 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <!-- turns the ZeroAlloc validation failures into 422 problem details -->
-        <Compile Include="../Shared/AspNetCore/*.cs" LinkBase="Shared" />
+        <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
         <PackageReference Include="Humanizer.Core" />

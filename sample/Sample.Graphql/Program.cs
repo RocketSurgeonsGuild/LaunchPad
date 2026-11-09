@@ -28,7 +28,6 @@ builder
    .AddSpatialFiltering()
    .AddSpatialProjections()
    .AddExecutableTypes()
-   .AddErrorFilter<ValidationErrorFilter>()
    .AddQueryType()
    .AddMutationType()
    // The generated mutations, with their input and response types named.
