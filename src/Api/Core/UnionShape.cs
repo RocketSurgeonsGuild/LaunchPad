@@ -146,46 +146,16 @@ internal sealed record UnionShape(string TypeName, EquatableArray<UnionCase> Cas
         );
     }
 
-    private static UnionCaseKind KindOf(ITypeSymbol type)
-    {
-
-<<<<<<< TODO: Unmerged change from project 'Api.Generators.Tests(net10.0)', Before:
-        if (type.ContainingNamespace?.ToDisplayString() != PrimitivesNamespace) return UnionCaseKind.Other;
-        return type.Name switch
-               {
-                   "Problem" => UnionCaseKind.Problem,
-                   "NotFound" => UnionCaseKind.NotFound,
-                   "Invalid" => UnionCaseKind.Invalid,
-                   "Unauthorized" => UnionCaseKind.Unauthorized,
-                   "Forbidden" => UnionCaseKind.Forbidden,
-                   "Conflict" => UnionCaseKind.Conflict,
-                   _ => UnionCaseKind.Other,
-               };
-=======
-        return type.ContainingNamespace?.ToDisplayString() != PrimitivesNamespace
-            ? UnionCaseKind.Other
-            : type.Name switch
-            {
-                "Problem" => UnionCaseKind.Problem,
-                "NotFound" => UnionCaseKind.NotFound,
-                "Invalid" => UnionCaseKind.Invalid,
-                "Unauthorized" => UnionCaseKind.Unauthorized,
-                "Forbidden" => UnionCaseKind.Forbidden,
-                "Conflict" => UnionCaseKind.Conflict,
-                _ => UnionCaseKind.Other,
-            };
->>>>>>> After
-        return  type.ContainingNamespace?.ToDisplayString() != PrimitivesNamespace 
-            ?  UnionCaseKind.Other 
-            :  type.Name switch
+    // One switch, so the formatter's conditional folds (IDE0045/IDE0046) find nothing to rewrite: this file is compiled into two projects.
+    private static UnionCaseKind KindOf(ITypeSymbol type) =>
+        (type.ContainingNamespace?.ToDisplayString(), type.Name) switch
         {
-            "Problem" => UnionCaseKind.Problem,
-            "NotFound" => UnionCaseKind.NotFound,
-            "Invalid" => UnionCaseKind.Invalid,
-            "Unauthorized" => UnionCaseKind.Unauthorized,
-            "Forbidden" => UnionCaseKind.Forbidden,
-            "Conflict" => UnionCaseKind.Conflict,
+            (PrimitivesNamespace, "Problem") => UnionCaseKind.Problem,
+            (PrimitivesNamespace, "NotFound") => UnionCaseKind.NotFound,
+            (PrimitivesNamespace, "Invalid") => UnionCaseKind.Invalid,
+            (PrimitivesNamespace, "Unauthorized") => UnionCaseKind.Unauthorized,
+            (PrimitivesNamespace, "Forbidden") => UnionCaseKind.Forbidden,
+            (PrimitivesNamespace, "Conflict") => UnionCaseKind.Conflict,
             _ => UnionCaseKind.Other,
         };
-    }
 }
