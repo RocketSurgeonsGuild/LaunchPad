@@ -2,7 +2,7 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/pr-preview/pr-3151/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-pr.1182`
+- Version: `2.0.1-pr.1185`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate`
 - Target framework: `net10.0`
 
