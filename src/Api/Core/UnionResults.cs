@@ -72,7 +72,7 @@ internal static class UnionResults
     public const string Problem = "Rocket.Surgery.LaunchPad.Primitives.Problem";
 
     /// <summary>The standard problem cases a <c>Problem</c> case stands for, tested before <c>Problem</c> itself (docs/design/union-types.md 3.5).</summary>
-    private static readonly string[] StandardProblems = ["NotFound", "Invalid", "Unauthorized", "Forbidden", "Conflict"];
+    private static readonly string[] StandardProblems = ["NotFound", "Invalid", "UnprocessableEntity", "Unauthorized", "Forbidden", "Conflict"];
 
     /// <summary>The problem data of an <c>IProblemDetailsData</c> case, by property name, and the reserved keys the helpers map them to.</summary>
     private static readonly (string Property, string Key)[] ProblemData =
@@ -90,7 +90,9 @@ internal static class UnionResults
         ("Unauthenticated", 401, "Unauthenticated", "UNAUTHENTICATED"),
         ("Forbidden", 403, "PermissionDenied", "FORBIDDEN"),
         ("Conflict", 409, "FailedPrecondition", "CONFLICT"),
-        ("Validation", 400, "InvalidArgument", "BAD_USER_INPUT"),
+        // Validation failures answer 422 (decided 2026-11-09); a request that is malformed or can never succeed is Invalid, 400.
+        ("UnprocessableEntity", 422, "InvalidArgument", "BAD_USER_INPUT"),
+        ("Validation", 422, "InvalidArgument", "BAD_USER_INPUT"),
         ("Invalid", 400, "InvalidArgument", "BAD_USER_INPUT"),
     ];
 
@@ -103,7 +105,7 @@ internal static class UnionResults
     public static bool IsUnit(ITypeSymbol type) => UnitTypes.Any(type.Is);
 
     /// <summary>The words a case name can match, for the diagnostic.</summary>
-    public static string Words => "NotFound, Invalid, Validation, Unauthorized, Forbidden or Conflict";
+    public static string Words => "NotFound, Invalid, Validation, UnprocessableEntity, Unauthorized, Forbidden or Conflict";
 
     /// <summary>
     ///     Reads <paramref name="type" /> as a union: its case types in declaration order, and the <c>IUnion</c> to read <c>Value</c> through

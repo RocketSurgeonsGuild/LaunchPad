@@ -175,6 +175,10 @@ public class UnionGeneratorTests() : GeneratorTest()
             {
                 public System.Collections.Generic.IReadOnlyDictionary<string, string[]> Errors { get; init; } = new System.Collections.Generic.Dictionary<string, string[]>();
             }
+            public sealed record UnprocessableEntity(string? Detail = null) : Problem(Detail)
+            {
+                public System.Collections.Generic.IReadOnlyDictionary<string, string[]> Errors { get; init; } = new System.Collections.Generic.Dictionary<string, string[]>();
+            }
             public sealed record Unauthorized(string? Detail = null) : Problem(Detail);
             public sealed record Forbidden(string? Detail = null) : Problem(Detail);
             public sealed record Conflict(string? Detail = null) : Problem(Detail);

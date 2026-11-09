@@ -98,6 +98,7 @@ namespace Sample.Server
                 endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[2], false, false));
                 endpoint.WithMetadata(new ApiAcceptsMetadata(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request)));
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(400, typeof(ProblemDetails), new string[] { "application/problem+json" }));
+                endpoint.WithMetadata(new ProducesResponseTypeMetadata(422, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(409, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithName("CreateRocket");
                 ConfigureCreateRocket(endpoint);
@@ -244,7 +245,7 @@ namespace Sample.Server
 
             if (__case is global::Sample.Contracts.Rockets.ValidationFailed __error0)
             {
-                return ApiProblems.Problem(400, "ValidationFailed", "errors", __error0.Errors);
+                return ApiProblems.Problem(422, "ValidationFailed", "errors", __error0.Errors);
             }
 
             if (__case is global::Sample.Contracts.Rockets.NameConflict __error1)

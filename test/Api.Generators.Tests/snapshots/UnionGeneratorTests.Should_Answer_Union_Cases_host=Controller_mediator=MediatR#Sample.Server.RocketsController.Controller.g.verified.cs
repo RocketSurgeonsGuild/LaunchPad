@@ -115,6 +115,7 @@ namespace Sample.Server
         [EndpointName("CreateRocket")]
         [ProducesResponseType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response), 201, "application/json")]
         [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+        [ProducesResponseType(typeof(ProblemDetails), 422, "application/problem+json")]
         [ProducesResponseType(typeof(ProblemDetails), 409, "application/problem+json")]
         public async Task<ActionResult<global::Sample.Contracts.Rockets.CreateRocket.Response>> CreateRocket([FromBody] global::Sample.Contracts.Rockets.CreateRocket.Request __body, CancellationToken __cancellationToken)
         {
@@ -130,7 +131,7 @@ namespace Sample.Server
 
             if (__case is global::Sample.Contracts.Rockets.ValidationFailed __error0)
             {
-                return ApiProblems.Problem(400, "ValidationFailed", "errors", __error0.Errors);
+                return ApiProblems.Problem(422, "ValidationFailed", "errors", __error0.Errors);
             }
 
             if (__case is global::Sample.Contracts.Rockets.NameConflict __error1)

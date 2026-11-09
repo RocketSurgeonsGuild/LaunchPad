@@ -418,6 +418,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Create a new launch record,

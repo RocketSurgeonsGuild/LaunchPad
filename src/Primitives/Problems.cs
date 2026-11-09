@@ -36,16 +36,28 @@ public abstract record Problem : IProblemDetailsData
 [PublicAPI]
 public sealed record NotFound(string? Detail = null) : Problem(Detail);
 
-/// <summary>The request is invalid. HTTP 400, gRPC <c>InvalidArgument</c>, GraphQL <c>INVALID</c>.</summary>
+/// <summary>The request is malformed or can never succeed as sent. HTTP 400, gRPC <c>InvalidArgument</c>, GraphQL <c>BAD_USER_INPUT</c>.</summary>
 /// <param name="Detail">A human-readable explanation specific to this occurrence of the problem.</param>
 [PublicAPI]
 public sealed record Invalid(string? Detail = null) : Problem(Detail)
 {
-    /// <summary>The validation errors, by property name.</summary>
+    /// <summary>The errors, by property name.</summary>
     public IReadOnlyDictionary<string, string[]> Errors { get; init; } = new Dictionary<string, string[]>(StringComparer.Ordinal);
 }
 
-/// <summary>The caller isn't authenticated. HTTP 401, gRPC <c>Unauthenticated</c>, GraphQL <c>UNAUTHORIZED</c>.</summary>
+/// <summary>
+///     The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC <c>InvalidArgument</c>, GraphQL
+///     <c>BAD_USER_INPUT</c>.
+/// </summary>
+/// <param name="Detail">A human-readable explanation specific to this occurrence of the problem.</param>
+[PublicAPI]
+public sealed record UnprocessableEntity(string? Detail = null) : Problem(Detail)
+{
+    /// <summary>The errors, by property name.</summary>
+    public IReadOnlyDictionary<string, string[]> Errors { get; init; } = new Dictionary<string, string[]>(StringComparer.Ordinal);
+}
+
+/// <summary>The caller isn't authenticated. HTTP 401, gRPC <c>Unauthenticated</c>, GraphQL <c>UNAUTHENTICATED</c>.</summary>
 /// <param name="Detail">A human-readable explanation specific to this occurrence of the problem.</param>
 [PublicAPI]
 public sealed record Unauthorized(string? Detail = null) : Problem(Detail);

@@ -56,6 +56,7 @@ public static partial class RocketsEndpoints
             endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[2], false, false));
             endpoint.WithMetadata(new ProducesResponseTypeMetadata(400, typeof(ProblemDetails), new string[] { "application/problem+json" }));
             endpoint.WithMetadata(new ProducesResponseTypeMetadata(404, typeof(ProblemDetails), new string[] { "application/problem+json" }));
+            endpoint.WithMetadata(new ProducesResponseTypeMetadata(422, typeof(ProblemDetails), new string[] { "application/problem+json" }));
             endpoint.WithMetadata(new ProducesResponseTypeMetadata(401, typeof(ProblemDetails), new string[] { "application/problem+json" }));
             endpoint.WithMetadata(new ProducesResponseTypeMetadata(403, typeof(ProblemDetails), new string[] { "application/problem+json" }));
             endpoint.WithMetadata(new ProducesResponseTypeMetadata(409, typeof(ProblemDetails), new string[] { "application/problem+json" }));
@@ -95,7 +96,7 @@ public static partial class RocketsEndpoints
 
         if (__case is global::Sample.Contracts.ValidationProblem __error3)
         {
-            return ApiProblems.Problem(400, "ValidationProblem", "errors", __error3.Errors);
+            return ApiProblems.Problem(422, "ValidationProblem", "errors", __error3.Errors);
         }
 
         if (__case is global::Sample.Contracts.Unauthorized __error4)

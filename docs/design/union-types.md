@@ -159,17 +159,19 @@ The analyzer in the same assembly also covers reading unions and the move to nat
 
 `Rocket.Surgery.LaunchPad.Primitives` ships the error cases a handler returns instead of throwing. Each is a `sealed record` deriving from the abstract record `Problem`, which implements `IProblemDetailsData`, so every transport writes detail, title, link, instance and extensions the same way. A union may list the cases it returns, or `Problem` to return any of them.
 
-| Case           | Replaces                 | HTTP | gRPC                 | GraphQL code      |
-| -------------- | ------------------------ | ---- | -------------------- | ----------------- |
-| `NotFound`     | `NotFoundException`      | 404  | `NotFound`           | `NOT_FOUND`       |
-| `Invalid`      | validation exceptions    | 400  | `InvalidArgument`    | `BAD_USER_INPUT`  |
-| `Unauthorized` | —                        | 401  | `Unauthenticated`    | `UNAUTHENTICATED` |
-| `Forbidden`    | `NotAuthorizedException` | 403  | `PermissionDenied`   | `FORBIDDEN`       |
-| `Conflict`     | `RequestFailedException` | 409  | `FailedPrecondition` | `CONFLICT`        |
+| Case                  | Replaces                 | HTTP | gRPC                 | GraphQL code      |
+| --------------------- | ------------------------ | ---- | -------------------- | ----------------- |
+| `NotFound`            | `NotFoundException`      | 404  | `NotFound`           | `NOT_FOUND`       |
+| `Invalid`             | `RequestFailedException` | 400  | `InvalidArgument`    | `BAD_USER_INPUT`  |
+| `UnprocessableEntity` | validation failures      | 422  | `InvalidArgument`    | `BAD_USER_INPUT`  |
+| `Unauthorized`        | —                        | 401  | `Unauthenticated`    | `UNAUTHENTICATED` |
+| `Forbidden`           | `NotAuthorizedException` | 403  | `PermissionDenied`   | `FORBIDDEN`       |
+| `Conflict`            | `RequestFailedException` | 409  | `FailedPrecondition` | `CONFLICT`        |
 
 - The names are the ones phase 4 of the API generators maps by convention (api-generators-plan, section 5). `NotFound` and `Conflict` share their names with `Microsoft.AspNetCore.Http.HttpResults` types; hand-written code that imports both namespaces uses an alias. Generated code always writes `global::` names.
 - The GraphQL codes follow the convention most GraphQL servers and clients use (Apollo's `UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, plus `NOT_FOUND` and `CONFLICT`). They replace `GraphqlErrorFilter`'s `NOTFOUND`, `NOTAUTHORIZED` and `FAILED`, a break #3148 lists.
-- `Invalid.Errors` is `IReadOnlyDictionary<string, string[]>`, the shape of ASP.NET's `ValidationProblemDetails`. FluentValidation failures map into it with a `ToInvalid()` helper (#3148), which puts error codes and attempted values in `Properties`.
+- Validation failures answer **422**, as FluentValidation's do over HTTP already: `UnprocessableEntity` is the validation case, and a case named `Validation…` maps to it. `Invalid` stays 400 for a request that is malformed or can never succeed as sent (decided 2026-11-09, in review).
+- `Invalid.Errors` and `UnprocessableEntity.Errors` are `IReadOnlyDictionary<string, string[]>`, the shape of ASP.NET's `ValidationProblemDetails`. FluentValidation failures map into it with a `ToInvalid()` helper (#3148), which puts error codes and attempted values in `Properties`.
 - There is no generic `Result<T>`: each operation declares its own union, so its specs show exactly which errors it returns.
 - The mapping columns are #3148's to implement; they are listed here so both tickets use the same table.
 
@@ -210,11 +212,12 @@ Decided 2026-11-09 with the user (AskUserQuestion, then a grilling session); the
 2. **Storage**: one `object?` field, as in a native union.
 3. **Polyfill**: from the Polyfill package with `PolyUseEmbeddedAttribute`, added by the LaunchPad SDK to `net10.0` projects that get Primitives (opt out with `LaunchPadEnablePolyfill=false`). Replaced the generator's own embedded copy, which was built first.
 4. **Packaging**: the union generator and analyzers are their own analyzer assembly (`src/Primitives/Analyzers`), packed in Primitives.
-5. **Standard cases**: `Problem` plus `NotFound`, `Invalid`, `Unauthorized`, `Forbidden`, `Conflict`, short names kept despite the `HttpResults` clash. `Invalid.Errors` is a `string[]` dictionary. No generic `Result<T>`.
+5. **Standard cases**: `Problem` plus `NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`, `Conflict`, short names kept despite the `HttpResults` clash. `Invalid.Errors` is a `string[]` dictionary. No generic `Result<T>`.
 6. **Value cases**: a union response has exactly one value case; any other non-error case is LPAD1025. (First decided as "several", revised once #3148 showed each transport has one response type: gRPC would need a generated `oneof` message and GraphQL a union output type.)
 7. **GraphQL codes**: the common convention (`NOT_FOUND`, `BAD_USER_INPUT`, `UNAUTHENTICATED`, `FORBIDDEN`, `CONFLICT`).
 8. **Analyzers in this change**: the CS9327 code fix (C# 14), LPAD0013 as a warning and LPAD0014 as info (C# 15).
 9. **Missing polyfill**: LPAD0012, an error.
 10. **Migration**: the samples' handlers move to unions in the combined #3147/#3148 change; the exceptions, filters and interceptors stay until a follow-up.
 11. **Problem data**: the transports use `IProblemDetailsData` when an error case implements it (HTTP ProblemDetails fields and extensions; the gRPC status message; the GraphQL message and extensions).
-12. **Terms**: union response, union case, value case, error case, portable union, native union, problem (GLOSSARY.md).
+12. **Validation is 422**: a new `UnprocessableEntity` problem and the `Validation` name rule answer 422; `Invalid` stays 400.
+13. **Terms**: union response, union case, value case, error case, portable union, native union, problem (GLOSSARY.md).

@@ -112,24 +112,29 @@ namespace Sample.Server
                 throw ApiGrpcErrors.Error(StatusCode.NotFound, "NotFound", null, __error1.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Unauthorized __error2)
+            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.UnprocessableEntity __error2)
             {
-                throw ApiGrpcErrors.Error(StatusCode.Unauthenticated, "Unauthorized", null, __error2.Detail);
+                throw ApiGrpcErrors.Error(StatusCode.InvalidArgument, "UnprocessableEntity", null, __error2.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Forbidden __error3)
+            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Unauthorized __error3)
             {
-                throw ApiGrpcErrors.Error(StatusCode.PermissionDenied, "Forbidden", null, __error3.Detail);
+                throw ApiGrpcErrors.Error(StatusCode.Unauthenticated, "Unauthorized", null, __error3.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Conflict __error4)
+            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Forbidden __error4)
             {
-                throw ApiGrpcErrors.Error(StatusCode.FailedPrecondition, "Conflict", null, __error4.Detail);
+                throw ApiGrpcErrors.Error(StatusCode.PermissionDenied, "Forbidden", null, __error4.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Problem __error5)
+            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Conflict __error5)
             {
-                throw ApiGrpcErrors.Error(StatusCode.Internal, "Problem", null, __error5.Detail);
+                throw ApiGrpcErrors.Error(StatusCode.FailedPrecondition, "Conflict", null, __error5.Detail);
+            }
+
+            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Problem __error6)
+            {
+                throw ApiGrpcErrors.Error(StatusCode.Internal, "Problem", null, __error6.Detail);
             }
 
             throw new InvalidOperationException("Sample.Contracts.UpdateRocket.Request returned a Sample.Contracts.GetRocketResult that holds none of its cases.");

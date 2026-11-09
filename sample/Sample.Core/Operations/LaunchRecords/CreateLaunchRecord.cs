@@ -92,12 +92,12 @@ public static partial class CreateLaunchRecord
         }
     }
 
-    /// <summary>What the operation answers: the new launch record's id, or invalid when its rocket doesn't exist.</summary>
+    /// <summary>What the operation answers: the new launch record's id, or not found when its rocket doesn't exist.</summary>
     [Union]
     public readonly partial struct Result
     {
         public partial Result(Response value);
-        public partial Result(Invalid value);
+        public partial Result(NotFound value);
     }
 
     private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
@@ -108,10 +108,7 @@ public static partial class CreateLaunchRecord
 
             if (await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken) is not { } rocket)
             {
-                return new Invalid("Rocket not found!")
-                {
-                    Errors = new Dictionary<string, string[]> { [nameof(Request.RocketId)] = [$"Rocket {request.RocketId} was not found"] },
-                };
+                return new NotFound($"Rocket {request.RocketId} was not found");
             }
 
             record.Rocket = rocket;

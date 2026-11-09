@@ -77,5 +77,5 @@ A union declared with the C# language's own union syntax.
 _Avoid_: Built-in union
 
 **Problem**:
-One of LaunchPad's standard error cases (not found, invalid, unauthorized, forbidden, conflict), which carries the details every transport writes into its error shape.
+One of LaunchPad's standard error cases (not found, invalid, unprocessable, unauthorized, forbidden, conflict), which carries the details every transport writes into its error shape.
 _Avoid_: Error result, failure, problem details (that is the HTTP shape of a problem)
