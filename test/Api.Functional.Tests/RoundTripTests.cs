@@ -7,7 +7,6 @@ extern alias zeroallocserver;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using Api.Functional.GraphQLClient;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
