@@ -54,9 +54,9 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                                if (names.IsEmpty) return EquatableArray<PatchHandlerModel>.Empty;
                                if (ProfileResolver.Resolve(compilation).Profile is not { } profile) return EquatableArray<PatchHandlerModel>.Empty;
                                var propertyTracking = compilation.GetTypeByMetadataName(PropertyTracking);
-                               return  propertyTracking is null 
-                                   ?  EquatableArray<PatchHandlerModel>.Empty 
-                                   :  names
+                               return propertyTracking is null
+                                   ? EquatableArray<PatchHandlerModel>.Empty
+                                   : names
                                      .Select(name => compilation.GetTypeByMetadataName(name))
                                      .OfType<INamedTypeSymbol>()
                                      .SelectMany(type => Read(type, profile, propertyTracking, compilation, cancellationToken))
