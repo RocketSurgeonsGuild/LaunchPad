@@ -1,9 +1,0 @@
-using Api.Functional.ZeroAlloc.Contracts;
-using Rocket.Surgery.LaunchPad.Api;
-
-namespace Api.Functional.ZeroAlloc.GraphQLClient;
-
-[Operation<CreateRocket.Request>]
-[Operation<EditRocket.Request>]
-[Operation<DeleteRocket.Request>]
-public partial class RocketsGraphQLClient;

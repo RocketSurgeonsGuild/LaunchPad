@@ -135,63 +135,45 @@
     <File Path="test/Api/Aot/Directory.Build.props" />
     <File Path="test/Api/Aot/Directory.Build.targets" />
     <File Path="test/Api/Aot/verify.sh" />
-    <Project Path="test/Api/Aot/Api.Aot.Client/Api.Aot.Client.csproj" />
-    <Project Path="test/Api/Aot/Api.Aot.ClientLib/Api.Aot.ClientLib.csproj" />
     <Project Path="test/Api/Aot/Api.Aot.Contracts/Api.Aot.Contracts.csproj" />
     <Project Path="test/Api/Aot/Api.Aot.Server/Api.Aot.Server.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/">
     <File Path="test/Api/Functional/Directory.Build.props" />
     <File Path="test/Api/Functional/Directory.Build.targets" />
+    <File Path="test/Api/Functional/Shared/FixtureOpenApi.cs" />
     <File Path="test/Api/Functional/Shared/RocketStore.cs" />
-    <Project Path="test/Api/Functional/Abstractions/Api.Functional.Abstractions.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/ChannelMediator/">
-    <Project Path="test/Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.Client/Api.Functional.ChannelMediator.Client.csproj" />
     <Project Path="test/Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.Contracts/Api.Functional.ChannelMediator.Contracts.csproj" />
-    <Project Path="test/Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.GraphQLClient/Api.Functional.ChannelMediator.GraphQLClient.csproj" />
-    <Project Path="test/Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.GrpcClient/Api.Functional.ChannelMediator.GrpcClient.csproj" />
     <Project Path="test/Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.Server/Api.Functional.ChannelMediator.Server.csproj" />
   </Folder>
+  <Folder Name="/test/Api/Functional/Clients/">
+    <File Path="test/Api/Functional/Clients/Directory.Build.props" />
+    <File Path="test/Api/Functional/Clients/Directory.Build.targets" />
+    <Project Path="test/Api/Functional/Clients/Api.Functional.GraphQLClient/Api.Functional.GraphQLClient.csproj" />
+    <Project Path="test/Api/Functional/Clients/Api.Functional.GrpcClient/Api.Functional.GrpcClient.csproj" />
+    <Project Path="test/Api/Functional/Clients/Api.Functional.HttpClient/Api.Functional.HttpClient.csproj" />
+    <Project Path="test/Api/Functional/Clients/Api.Functional.SpecExport/Api.Functional.SpecExport.csproj" />
+  </Folder>
   <Folder Name="/test/Api/Functional/Foundatio/">
-    <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.Client/Api.Functional.Foundatio.Client.csproj" />
-    <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.ClientHost/Api.Functional.Foundatio.ClientHost.csproj" />
     <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.Contracts/Api.Functional.Foundatio.Contracts.csproj" />
-    <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.GraphQLClient/Api.Functional.Foundatio.GraphQLClient.csproj" />
-    <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.GraphQLClientHost/Api.Functional.Foundatio.GraphQLClientHost.csproj" />
-    <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.GrpcClient/Api.Functional.Foundatio.GrpcClient.csproj" />
-    <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.GrpcClientHost/Api.Functional.Foundatio.GrpcClientHost.csproj" />
     <Project Path="test/Api/Functional/Foundatio/Api.Functional.Foundatio.Server/Api.Functional.Foundatio.Server.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/ImmediateHandlers/">
-    <Project Path="test/Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Client/Api.Functional.ImmediateHandlers.Client.csproj" />
     <Project Path="test/Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Contracts/Api.Functional.ImmediateHandlers.Contracts.csproj" />
-    <Project Path="test/Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GraphQLClient/Api.Functional.ImmediateHandlers.GraphQLClient.csproj" />
-    <Project Path="test/Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GrpcClient/Api.Functional.ImmediateHandlers.GrpcClient.csproj" />
     <Project Path="test/Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Server/Api.Functional.ImmediateHandlers.Server.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/MediatR/">
-    <Project Path="test/Api/Functional/MediatR/Api.Functional.MediatR.Client/Api.Functional.MediatR.Client.csproj" />
     <Project Path="test/Api/Functional/MediatR/Api.Functional.MediatR.Contracts/Api.Functional.MediatR.Contracts.csproj" />
-    <Project Path="test/Api/Functional/MediatR/Api.Functional.MediatR.GraphQLClient/Api.Functional.MediatR.GraphQLClient.csproj" />
-    <Project Path="test/Api/Functional/MediatR/Api.Functional.MediatR.GrpcClient/Api.Functional.MediatR.GrpcClient.csproj" />
     <Project Path="test/Api/Functional/MediatR/Api.Functional.MediatR.Server/Api.Functional.MediatR.Server.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/Mediator/">
-    <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.Client/Api.Functional.Mediator.Client.csproj" />
-    <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.ClientHost/Api.Functional.Mediator.ClientHost.csproj" />
     <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.Contracts/Api.Functional.Mediator.Contracts.csproj" />
-    <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.GraphQLClient/Api.Functional.Mediator.GraphQLClient.csproj" />
-    <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.GraphQLClientHost/Api.Functional.Mediator.GraphQLClientHost.csproj" />
-    <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.GrpcClient/Api.Functional.Mediator.GrpcClient.csproj" />
-    <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.GrpcClientHost/Api.Functional.Mediator.GrpcClientHost.csproj" />
     <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.Server/Api.Functional.Mediator.Server.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/ZeroAlloc/">
-    <Project Path="test/Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Client/Api.Functional.ZeroAlloc.Client.csproj" />
     <Project Path="test/Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Contracts/Api.Functional.ZeroAlloc.Contracts.csproj" />
-    <Project Path="test/Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GraphQLClient/Api.Functional.ZeroAlloc.GraphQLClient.csproj" />
-    <Project Path="test/Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GrpcClient/Api.Functional.ZeroAlloc.GrpcClient.csproj" />
     <Project Path="test/Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Server/Api.Functional.ZeroAlloc.Server.csproj" />
   </Folder>
 </Solution>

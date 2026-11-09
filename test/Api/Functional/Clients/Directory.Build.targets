@@ -1,0 +1,14 @@
+<Project>
+    <Import Project="$(MSBuildThisFileDirectory)../Directory.Build.targets" />
+    <!-- Writes the specs before the client's code generator reads them (the exporter only rewrites a file that changed). -->
+    <Target Name="ExportApiSpecs" BeforeTargets="$(ExportApiSpecsBeforeTargets)" Condition="'$(ExportApiSpecsBeforeTargets)' != ''">
+        <MSBuild Projects="$(MSBuildThisFileDirectory)Api.Functional.SpecExport/Api.Functional.SpecExport.csproj" Targets="GetTargetPath" Properties="Configuration=$(Configuration)">
+            <Output TaskParameter="TargetOutputs" PropertyName="_ApiSpecExporter" />
+        </MSBuild>
+        <PropertyGroup>
+            <_ApiSpecDotnet>$(DOTNET_HOST_PATH)</_ApiSpecDotnet>
+            <_ApiSpecDotnet Condition="'$(_ApiSpecDotnet)' == ''">dotnet</_ApiSpecDotnet>
+        </PropertyGroup>
+        <Exec Command="&quot;$(_ApiSpecDotnet)&quot; &quot;$(_ApiSpecExporter)&quot; &quot;$(ApiSpecDirectory)&quot;" StandardOutputImportance="low" />
+    </Target>
+</Project>

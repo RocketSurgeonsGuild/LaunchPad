@@ -15,12 +15,14 @@ public static class ServerApp
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton<RocketStore>();
         builder.Services.AddProblemDetails();
+        builder.Services.AddFixtureOpenApi();
         builder.Services.AddChannelMediator(_ => { }, typeof(Handlers).Assembly);
         if (controllers) builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
         if (grpc) ProtoBuf.Grpc.Server.ServicesExtensions.AddCodeFirstGrpc(builder.Services);
         // HotChocolate needs a query type; the generated mutations extend the Mutation type.
         if (graphql) builder.Services.AddGraphQLServer().AddQueryType(d => d.Name("Query").Field("ping").Resolve("pong")).AddMutationType().AddRocketsMutations();
         var app = builder.Build();
+        app.MapOpenApi();
         if (graphql)
         {
             app.MapGraphQL();

@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <ApiFunctionalRole>Client</ApiFunctionalRole>
-    </PropertyGroup>
-    <ItemGroup>
-        <ProjectReference Include="../Api.Functional.Mediator.GraphQLClientHost/Api.Functional.Mediator.GraphQLClientHost.csproj" />
-        <PackageReference Include="Mediator.SourceGenerator" PrivateAssets="all" />
-    </ItemGroup>
-</Project>

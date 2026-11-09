@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <ApiFunctionalRole>GrpcClientHost</ApiFunctionalRole>
-    </PropertyGroup>
-    <ItemGroup>
-        <ProjectReference Include="../Api.Functional.Mediator.Contracts/Api.Functional.Mediator.Contracts.csproj" />
-    </ItemGroup>
-</Project>

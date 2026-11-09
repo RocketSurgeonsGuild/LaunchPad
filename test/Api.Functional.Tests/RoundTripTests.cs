@@ -1,47 +1,43 @@
-extern alias channelmediatorclient;
-extern alias channelmediatorgraphqlclient;
-extern alias channelmediatorgrpcclient;
 extern alias channelmediatorserver;
-extern alias foundatioclient;
-extern alias foundatiographqlclient;
-extern alias foundatiogrpcclient;
 extern alias foundatioserver;
-extern alias immediatehandlersclient;
-extern alias immediatehandlersgraphqlclient;
-extern alias immediatehandlersgrpcclient;
 extern alias immediatehandlersserver;
-extern alias mediatorclient;
-extern alias mediatorgraphqlclient;
-extern alias mediatorgrpcclient;
 extern alias mediatorserver;
-extern alias mediatrclient;
-extern alias mediatrgraphqlclient;
-extern alias mediatrgrpcclient;
 extern alias mediatrserver;
-extern alias zeroallocclient;
-extern alias zeroallocgraphqlclient;
-extern alias zeroallocgrpcclient;
 extern alias zeroallocserver;
+using System.Net;
+using System.Text;
+using System.Text.Json;
+using Api.Functional.GraphQLClient;
+using Grpc.Core;
+using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using StrawberryShake;
+using Http = Api.Functional.HttpClient;
+using Proto = Rockets;
 
 namespace Api.Functional.Tests;
 
 /// <summary>
-///     For each mediator: a Minimal API server built by the generator, and a client application whose mediator reaches that server through the
-///     generated HTTP client and handlers. Every call below is the client's own <c>mediator.Send(...)</c>.
+///     For each mediator, a server built by the generators, reached through the clients an application would generate from its specs: NSwag
+///     from the OpenAPI document, Grpc.Tools from the <c>.proto</c> (<c>RocketsService.GetProto()</c>) and StrawberryShake from the GraphQL
+///     schema. The clients are generated once, from the MediatR server's specs; <see cref="Should_Expose_The_Same_Specs" /> checks that every
+///     other server exposes the same ones.
 /// </summary>
 public class RoundTripTests
 {
-    private static readonly Dictionary<string, (Func<bool, bool, bool, Task<WebApplication>> Server, Func<HttpMessageHandler, ServiceProvider> Client, Func<HttpMessageHandler, ServiceProvider> GrpcClient, Func<HttpMessageHandler, ServiceProvider> GraphQLClient)> Applications = new()
+    private const string Reference = "MediatR";
+
+    // Only the MediatR server maps the versioned hosts.
+    private static readonly Dictionary<string, (Func<bool, bool, bool, bool, Task<WebApplication>> Start, Func<string> Proto)> Servers = new()
     {
-        ["MediatR"] = ((controllers, grpc, graphql) => mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(controllers, grpc, graphql), mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create, mediatrgrpcclient::Api.Functional.MediatR.GrpcClient.ClientApp.Create, mediatrgraphqlclient::Api.Functional.MediatR.GraphQLClient.ClientApp.Create),
-        ["Mediator"] = (mediatorserver::Api.Functional.Mediator.Server.ServerApp.StartAsync, mediatorclient::Api.Functional.Mediator.Client.ClientApp.Create, mediatorgrpcclient::Api.Functional.Mediator.GrpcClient.ClientApp.Create, mediatorgraphqlclient::Api.Functional.Mediator.GraphQLClient.ClientApp.Create),
-        ["ChannelMediator"] = (channelmediatorserver::Api.Functional.ChannelMediator.Server.ServerApp.StartAsync, channelmediatorclient::Api.Functional.ChannelMediator.Client.ClientApp.Create, channelmediatorgrpcclient::Api.Functional.ChannelMediator.GrpcClient.ClientApp.Create, channelmediatorgraphqlclient::Api.Functional.ChannelMediator.GraphQLClient.ClientApp.Create),
-        ["ImmediateHandlers"] = (immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.ServerApp.StartAsync, immediatehandlersclient::Api.Functional.ImmediateHandlers.Client.ClientApp.Create, immediatehandlersgrpcclient::Api.Functional.ImmediateHandlers.GrpcClient.ClientApp.Create, immediatehandlersgraphqlclient::Api.Functional.ImmediateHandlers.GraphQLClient.ClientApp.Create),
-        ["Foundatio"] = (foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync, foundatioclient::Api.Functional.Foundatio.Client.ClientApp.Create, foundatiogrpcclient::Api.Functional.Foundatio.GrpcClient.ClientApp.Create, foundatiographqlclient::Api.Functional.Foundatio.GraphQLClient.ClientApp.Create),
-        ["ZeroAlloc"] = (zeroallocserver::Api.Functional.ZeroAlloc.Server.ServerApp.StartAsync, zeroallocclient::Api.Functional.ZeroAlloc.Client.ClientApp.Create, zeroallocgrpcclient::Api.Functional.ZeroAlloc.GrpcClient.ClientApp.Create, zeroallocgraphqlclient::Api.Functional.ZeroAlloc.GraphQLClient.ClientApp.Create),
+        ["MediatR"] = (mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync, mediatrserver::Api.Functional.MediatR.Server.RocketsService.GetProto),
+        ["Mediator"] = ((controllers, grpc, graphql, _) => mediatorserver::Api.Functional.Mediator.Server.ServerApp.StartAsync(controllers, grpc, graphql), mediatorserver::Api.Functional.Mediator.Server.RocketsService.GetProto),
+        ["ChannelMediator"] = ((controllers, grpc, graphql, _) => channelmediatorserver::Api.Functional.ChannelMediator.Server.ServerApp.StartAsync(controllers, grpc, graphql), channelmediatorserver::Api.Functional.ChannelMediator.Server.RocketsService.GetProto),
+        ["ImmediateHandlers"] = ((controllers, grpc, graphql, _) => immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.ServerApp.StartAsync(controllers, grpc, graphql), immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.RocketsService.GetProto),
+        ["Foundatio"] = ((controllers, grpc, graphql, _) => foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync(controllers, grpc, graphql), foundatioserver::Api.Functional.Foundatio.Server.RocketsService.GetProto),
+        ["ZeroAlloc"] = ((controllers, grpc, graphql, _) => zeroallocserver::Api.Functional.ZeroAlloc.Server.ServerApp.StartAsync(controllers, grpc, graphql), zeroallocserver::Api.Functional.ZeroAlloc.Server.RocketsService.GetProto),
     };
 
     [Test]
@@ -57,25 +53,26 @@ public class RoundTripTests
     [Arguments("Foundatio", true)]
     [Arguments("ZeroAlloc", false)]
     [Arguments("ZeroAlloc", true)]
-    public async Task Should_Round_Trip_Through_The_Client_Mediator(string mediator, bool controllers, CancellationToken cancellationToken)
+    public async Task Should_Round_Trip_Over_Http(string mediator, bool controllers, CancellationToken cancellationToken)
     {
-        var (startServer, createClient, _, _) = Applications[mediator];
-        await using var server = await startServer(controllers, false, false);
-        await using var client = createClient(server.GetTestServer().CreateHandler());
-        var rockets = client.GetRequiredService<IRocketsDriver>();
+        await using var server = await Servers[mediator].Start(controllers, false, false, false);
+        using var http = server.GetTestClient();
+        var rockets = new Http.RocketsClient(http);
 
-        var id = await rockets.CreateRocket("Falcon", cancellationToken);
-        ( await rockets.GetRocket(id, cancellationToken) ).ShouldBe(new Rocket(id, "Falcon"));
+        var id = ( await rockets.CreateRocketAsync(new() { Name = "Falcon" }, cancellationToken) ).Id;
+        Rocket(await rockets.GetRocketAsync(id, cancellationToken)).ShouldBe((id, "Falcon"));
 
-        ( await rockets.EditRocket(id, "Falcon 9", cancellationToken) ).ShouldBe(new Rocket(id, "Falcon 9"));
-        var other = await rockets.CreateRocket("Starship", cancellationToken);
-        var listed = new List<Rocket>();
-        await foreach (var rocket in rockets.ListRockets("Falcon 9", cancellationToken)) listed.Add(rocket);
-        listed.ShouldBe([new Rocket(id, "Falcon 9")]);
+        Rocket(await rockets.EditRocketAsync(id, new() { Name = "Falcon 9" }, cancellationToken)).ShouldBe((id, "Falcon 9"));
+        var other = ( await rockets.CreateRocketAsync(new() { Name = "Starship" }, cancellationToken) ).Id;
+        // ListRockets streams application/x-ndjson, which NSwag's client doesn't read: one JSON rocket per line.
+        var listed = ( await http.GetStringAsync("api/rockets?name=Falcon%209", cancellationToken) )
+                    .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(line => Rocket(JsonSerializer.Deserialize<Http.RocketModel>(line, JsonSerializerOptions.Web)!));
+        listed.ShouldBe([(id, "Falcon 9")]);
 
-        await rockets.DeleteRocket(id, cancellationToken);
-        ( await rockets.GetRocket(id, cancellationToken) ).ShouldBeNull();
-        ( await rockets.GetRocket(other, cancellationToken) ).ShouldBe(new Rocket(other, "Starship"));
+        await rockets.DeleteRocketAsync(id, cancellationToken);
+        ( await Should.ThrowAsync<Http.ApiException>(() => rockets.GetRocketAsync(id, cancellationToken)) ).StatusCode.ShouldBe(404);
+        Rocket(await rockets.GetRocketAsync(other, cancellationToken)).ShouldBe((other, "Starship"));
     }
 
     [Test]
@@ -93,26 +90,15 @@ public class RoundTripTests
     [Arguments("ZeroAlloc", true)]
     public async Task Should_Answer_Created_With_A_Location(string mediator, bool controllers, CancellationToken cancellationToken)
     {
-        var (startServer, _, _, _) = Applications[mediator];
-        await using var server = await startServer(controllers, false, false);
+        await using var server = await Servers[mediator].Start(controllers, false, false, false);
         using var http = server.GetTestClient();
 
-        using var response = await http.PostAsync("api/rockets", new StringContent("""{"name":"Falcon"}""", System.Text.Encoding.UTF8, "application/json"), cancellationToken);
+        using var response = await http.PostAsync("api/rockets", new StringContent("""{"name":"Falcon"}""", Encoding.UTF8, "application/json"), cancellationToken);
 
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Created);
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
         response.Headers.Location.ShouldNotBeNull().ToString().ShouldStartWith("/api/rockets/");
         using var location = await http.GetAsync(response.Headers.Location, cancellationToken);
-        location.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
-    }
-
-    [Test]
-    public async Task Should_Explain_A_Foundatio_Registry_Built_Without_The_Client_Handlers()
-    {
-        await using var server = await foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync(false, false, false);
-
-        var exception = Should.Throw<InvalidOperationException>(() => foundatioclient::Api.Functional.Foundatio.Client.LateRegistration.Create(server.GetTestServer().CreateHandler()));
-
-        exception.Message.ShouldStartWith("Foundatio's handler registry was built without RocketsClient's handlers. Call services.AddRocketsClient() before services.AddMediator()");
+        location.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Test]
@@ -124,19 +110,18 @@ public class RoundTripTests
     [Arguments("ZeroAlloc")]
     public async Task Should_Round_Trip_Over_Grpc(string mediator, CancellationToken cancellationToken)
     {
-        var (startServer, _, createClient, _) = Applications[mediator];
-        await using var server = await startServer(false, true, false);
-        await using var client = createClient(server.GetTestServer().CreateHandler());
-        var rockets = client.GetRequiredService<IRocketsDriver>();
+        await using var server = await Servers[mediator].Start(false, true, false, false);
+        using var channel = GrpcChannel.ForAddress(server.GetTestServer().BaseAddress, new() { HttpHandler = server.GetTestServer().CreateHandler() });
+        var rockets = new Proto.Rockets.RocketsClient(channel);
 
-        var id = await rockets.CreateRocket("Falcon", cancellationToken);
-        ( await rockets.GetRocket(id, cancellationToken) ).ShouldBe(new Rocket(id, "Falcon"));
-        ( await rockets.EditRocket(id, "Falcon 9", cancellationToken) ).ShouldBe(new Rocket(id, "Falcon 9"));
-        var listed = new List<Rocket>();
-        await foreach (var rocket in rockets.ListRockets("Falcon 9", cancellationToken)) listed.Add(rocket);
-        listed.ShouldBe([new Rocket(id, "Falcon 9")]);
-        await rockets.DeleteRocket(id, cancellationToken);
-        ( await rockets.GetRocket(id, cancellationToken) ).ShouldBeNull();
+        var id = ( await rockets.CreateRocketAsync(new() { Name = "Falcon" }, cancellationToken: cancellationToken) ).Id;
+        Rocket(await rockets.GetRocketAsync(new() { Id = id }, cancellationToken: cancellationToken)).ShouldBe((Guid.Parse(id), "Falcon"));
+        Rocket(await rockets.EditRocketAsync(new() { Id = id, Name = "Falcon 9" }, cancellationToken: cancellationToken)).ShouldBe((Guid.Parse(id), "Falcon 9"));
+        using var list = rockets.ListRockets(new() { Name = "Falcon 9" }, cancellationToken: cancellationToken);
+        ( await list.ResponseStream.ReadAllAsync(cancellationToken).Select(Rocket).ToListAsync(cancellationToken) ).ShouldBe([(Guid.Parse(id), "Falcon 9")]);
+
+        await rockets.DeleteRocketAsync(new() { Id = id }, cancellationToken: cancellationToken);
+        ( await Should.ThrowAsync<RpcException>(async () => await rockets.GetRocketAsync(new() { Id = id }, cancellationToken: cancellationToken)) ).StatusCode.ShouldBe(StatusCode.NotFound);
     }
 
     [Test]
@@ -148,18 +133,28 @@ public class RoundTripTests
     [Arguments("ZeroAlloc")]
     public async Task Should_Send_Mutations_Over_GraphQL(string mediator, CancellationToken cancellationToken)
     {
-        var (startServer, _, _, createClient) = Applications[mediator];
-        await using var server = await startServer(false, false, true);
-        await using var client = createClient(server.GetTestServer().CreateHandler());
-        var rockets = client.GetRequiredService<IRocketsDriver>();
+        await using var server = await Servers[mediator].Start(false, false, true, false);
+        var services = new ServiceCollection();
+        services.AddRocketsGraphQLClient()
+                .ConfigureHttpClient(
+                     client => client.BaseAddress = new(server.GetTestServer().BaseAddress, "graphql"),
+                     builder => builder.ConfigurePrimaryHttpMessageHandler(() => server.GetTestServer().CreateHandler())
+                 );
+        await using var provider = services.BuildServiceProvider();
+        var rockets = provider.GetRequiredService<IRocketsGraphQLClient>();
         using var http = server.GetTestClient();
 
-        var id = await rockets.CreateRocket("Falcon", cancellationToken);
-        ( await rockets.EditRocket(id, "Falcon 9", cancellationToken) ).ShouldBe(new Rocket(id, "Falcon 9"));
+        var created = await rockets.CreateRocket.ExecuteAsync(new CreateRocketRequest { Name = "Falcon" }, cancellationToken);
+        created.EnsureNoErrors();
+        var id = created.Data!.CreateRocket.Id;
+        var edited = await rockets.EditRocket.ExecuteAsync(new EditRocketRequest { Id = id, Name = "Falcon 9" }, cancellationToken);
+        edited.EnsureNoErrors();
+        (edited.Data!.EditRocket.Id, edited.Data.EditRocket.Name).ShouldBe((id, "Falcon 9"));
         ( await http.GetStringAsync($"api/rockets/{id}", cancellationToken) ).ShouldContain("Falcon 9");
 
-        await rockets.DeleteRocket(id, cancellationToken);
-        ( await http.GetAsync($"api/rockets/{id}", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+        var deleted = await rockets.DeleteRocket.ExecuteAsync(new DeleteRocketRequest { Id = id }, cancellationToken);
+        deleted.EnsureNoErrors();
+        ( await http.GetAsync($"api/rockets/{id}", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Test]
@@ -167,19 +162,50 @@ public class RoundTripTests
     [Arguments(true)]
     public async Task Should_Map_Api_Versions(bool controllers, CancellationToken cancellationToken)
     {
-        await using var server = await mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(controllers, versioned: true);
-        await using var client = mediatrclient::Api.Functional.MediatR.Client.ClientApp.Create(server.GetTestServer().CreateHandler());
-        var versioned = client.GetRequiredService<mediatrclient::Api.Functional.MediatR.Client.VersionedRocketsClient>();
+        await using var server = await Servers[Reference].Start(controllers, false, false, true);
         using var http = server.GetTestClient();
 
-        // The client sends api-version=1.0 for CreateRocket and 2.0 for GetRocket.
-        var created = await versioned.CreateRocket(new("Falcon"), cancellationToken);
-        ( await versioned.GetRocket(new(created.Id), cancellationToken) ).ShouldNotBeNull().Name.ShouldBe("Falcon");
+        // CreateVersionedRocket is in 1.0 and GetVersionedRocket in 2.0.
+        using var created = await http.PostAsync("api/versioned-rockets/rocket?api-version=1.0", new StringContent("""{"name":"Falcon"}""", Encoding.UTF8, "application/json"), cancellationToken);
+        created.EnsureSuccessStatusCode();
+        var id = JsonDocument.Parse(await created.Content.ReadAsStringAsync(cancellationToken)).RootElement.GetProperty("id").GetGuid();
+        ( await http.GetStringAsync($"api/versioned-rockets/{id}/rocket?api-version=2.0", cancellationToken) ).ShouldContain("Falcon");
 
-        // GetRocket isn't in 1.0, 3.0 isn't a version at all, and a request without a version names none: Asp.Versioning answers 400 to each.
-        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket?api-version=1.0", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket?api-version=3.0", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-        ( await http.GetAsync($"api/versioned-rockets/{created.Id}/rocket?api-version=2.0", cancellationToken) ).StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+        // GetVersionedRocket isn't in 1.0, 3.0 isn't a version at all, and a request without a version names none: Asp.Versioning answers 400 to each.
+        ( await http.GetAsync($"api/versioned-rockets/{id}/rocket?api-version=1.0", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        ( await http.GetAsync($"api/versioned-rockets/{id}/rocket?api-version=3.0", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        ( await http.GetAsync($"api/versioned-rockets/{id}/rocket", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
+
+    /// <summary>The clients above were generated from the MediatR server's specs; each mediator's server must expose the same ones.</summary>
+    [Test]
+    [Arguments("Mediator")]
+    [Arguments("ChannelMediator")]
+    [Arguments("ImmediateHandlers")]
+    [Arguments("Foundatio")]
+    [Arguments("ZeroAlloc")]
+    public async Task Should_Expose_The_Same_Specs(string mediator, CancellationToken cancellationToken)
+    {
+        ( await OpenApi(mediator, false, cancellationToken) ).ShouldBe(await OpenApi(Reference, false, cancellationToken));
+        ( await OpenApi(mediator, true, cancellationToken) ).ShouldBe(await OpenApi(Reference, true, cancellationToken));
+        ( await GraphQLSchema(mediator, cancellationToken) ).ShouldBe(await GraphQLSchema(Reference, cancellationToken));
+        Servers[mediator].Proto().ShouldBe(Servers[Reference].Proto());
+    }
+
+    private static async Task<string> OpenApi(string mediator, bool controllers, CancellationToken cancellationToken)
+    {
+        await using var server = await Servers[mediator].Start(controllers, false, false, false);
+        using var http = server.GetTestClient();
+        return await http.GetStringAsync("openapi/v1.json", cancellationToken);
+    }
+
+    private static async Task<string> GraphQLSchema(string mediator, CancellationToken cancellationToken)
+    {
+        await using var server = await Servers[mediator].Start(false, false, true, false);
+        using var http = server.GetTestClient();
+        return await http.GetStringAsync("graphql?sdl", cancellationToken);
+    }
+
+    private static (Guid Id, string Name) Rocket(Http.RocketModel rocket) => (rocket.Id, rocket.Name);
+    private static (Guid Id, string Name) Rocket(Proto.RocketModel rocket) => (Guid.Parse(rocket.Id), rocket.Name);
 }

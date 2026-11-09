@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <ApiFunctionalRole>ClientHost</ApiFunctionalRole>
-    </PropertyGroup>
-    <ItemGroup>
-        <ProjectReference Include="../Api.Functional.Foundatio.Contracts/Api.Functional.Foundatio.Contracts.csproj" />
-        <PackageReference Include="Foundatio.Mediator.Abstractions" />
-    </ItemGroup>
-</Project>

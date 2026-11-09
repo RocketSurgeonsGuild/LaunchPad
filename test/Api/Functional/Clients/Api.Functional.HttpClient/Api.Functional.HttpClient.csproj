@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The HTTP client NSwag generates from the servers' OpenAPI document. -->
+    <PropertyGroup>
+        <ExportApiSpecsBeforeTargets>_GetMetadataForOpenApiReferences</ExportApiSpecsBeforeTargets>
+        <ApiSpecDirectory>$(ApiFunctionalSpecs)</ApiSpecDirectory>
+        <!-- NSwag.ApiDescription.Client builds on Microsoft.Extensions.ApiDescription.Client, which is deprecated; it still generates. -->
+        <NoWarn>$(NoWarn);ASPDEPR001</NoWarn>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" PrivateAssets="all" />
+        <PackageReference Include="NSwag.ApiDescription.Client" PrivateAssets="all" />
+        <OpenApiReference
+            Include="$(ApiFunctionalSpecs)openapi.json"
+            CodeGenerator="NSwagCSharp"
+            Namespace="Api.Functional.HttpClient"
+            ClassName="RocketsClient"
+            Options="/JsonLibrary:SystemTextJson /UseBaseUrl:false /GenerateClientInterfaces:false /GenerateNullableReferenceTypes:true"
+        />
+    </ItemGroup>
+</Project>

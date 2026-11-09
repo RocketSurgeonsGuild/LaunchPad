@@ -1,0 +1,18 @@
+# The variables aren't named $request: StrawberryShake 15 declares a local of that name in the generated operation, and the two collide (CS0136).
+
+mutation CreateRocket($rocket: CreateRocketRequest!) {
+    createRocket(request: $rocket) {
+        id
+    }
+}
+
+mutation EditRocket($rocket: EditRocketRequest!) {
+    editRocket(request: $rocket) {
+        id
+        name
+    }
+}
+
+mutation DeleteRocket($rocket: DeleteRocketRequest!) {
+    deleteRocket(request: $rocket)
+}

@@ -4,8 +4,8 @@ name: samples
 # build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
 # The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
 # clock), which this checks; the web app only builds.
-# It also publishes the API generators' native AOT check (test/Api/Aot): a server and a client that must publish without a trimming or AOT
-# warning and complete a round trip.
+# It also publishes the API generators' native AOT check (test/Api/Aot): a server that must publish without a trimming or AOT warning and
+# answer a round trip over HTTP.
 
 on:
     push:

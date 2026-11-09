@@ -8,33 +8,18 @@
     </ItemGroup>
     <ItemGroup>
         <!--
-            One server and one client application per mediator. Each is aliased: several of them carry the same generated types (Mediator's
-            and ZeroAlloc's mediators, the generated helpers), and the tests only reach them through ServerApp and ClientApp.
+            One server per mediator, built by the generators. Each is aliased: several of them carry the same generated types (Mediator's and
+            ZeroAlloc's mediators, the generated helpers), and the tests only reach them through ServerApp and RocketsService.GetProto().
         -->
-        <ProjectReference Include="../Api/Functional/Abstractions/Api.Functional.Abstractions.csproj" />
         <ProjectReference Include="../Api/Functional/MediatR/Api.Functional.MediatR.Server/Api.Functional.MediatR.Server.csproj" Aliases="mediatrserver" />
-        <ProjectReference Include="../Api/Functional/MediatR/Api.Functional.MediatR.Client/Api.Functional.MediatR.Client.csproj" Aliases="mediatrclient" />
         <ProjectReference Include="../Api/Functional/Mediator/Api.Functional.Mediator.Server/Api.Functional.Mediator.Server.csproj" Aliases="mediatorserver" />
-        <ProjectReference Include="../Api/Functional/Mediator/Api.Functional.Mediator.Client/Api.Functional.Mediator.Client.csproj" Aliases="mediatorclient" />
         <ProjectReference Include="../Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.Server/Api.Functional.ChannelMediator.Server.csproj" Aliases="channelmediatorserver" />
-        <ProjectReference Include="../Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.Client/Api.Functional.ChannelMediator.Client.csproj" Aliases="channelmediatorclient" />
         <ProjectReference Include="../Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Server/Api.Functional.ImmediateHandlers.Server.csproj" Aliases="immediatehandlersserver" />
-        <ProjectReference Include="../Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Client/Api.Functional.ImmediateHandlers.Client.csproj" Aliases="immediatehandlersclient" />
         <ProjectReference Include="../Api/Functional/Foundatio/Api.Functional.Foundatio.Server/Api.Functional.Foundatio.Server.csproj" Aliases="foundatioserver" />
-        <ProjectReference Include="../Api/Functional/Foundatio/Api.Functional.Foundatio.Client/Api.Functional.Foundatio.Client.csproj" Aliases="foundatioclient" />
         <ProjectReference Include="../Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Server/Api.Functional.ZeroAlloc.Server.csproj" Aliases="zeroallocserver" />
-        <ProjectReference Include="../Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.Client/Api.Functional.ZeroAlloc.Client.csproj" Aliases="zeroallocclient" />
-        <ProjectReference Include="../Api/Functional/MediatR/Api.Functional.MediatR.GrpcClient/Api.Functional.MediatR.GrpcClient.csproj" Aliases="mediatrgrpcclient" />
-        <ProjectReference Include="../Api/Functional/Mediator/Api.Functional.Mediator.GrpcClient/Api.Functional.Mediator.GrpcClient.csproj" Aliases="mediatorgrpcclient" />
-        <ProjectReference Include="../Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.GrpcClient/Api.Functional.ChannelMediator.GrpcClient.csproj" Aliases="channelmediatorgrpcclient" />
-        <ProjectReference Include="../Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GrpcClient/Api.Functional.ImmediateHandlers.GrpcClient.csproj" Aliases="immediatehandlersgrpcclient" />
-        <ProjectReference Include="../Api/Functional/Foundatio/Api.Functional.Foundatio.GrpcClient/Api.Functional.Foundatio.GrpcClient.csproj" Aliases="foundatiogrpcclient" />
-        <ProjectReference Include="../Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GrpcClient/Api.Functional.ZeroAlloc.GrpcClient.csproj" Aliases="zeroallocgrpcclient" />
-        <ProjectReference Include="../Api/Functional/MediatR/Api.Functional.MediatR.GraphQLClient/Api.Functional.MediatR.GraphQLClient.csproj" Aliases="mediatrgraphqlclient" />
-        <ProjectReference Include="../Api/Functional/Mediator/Api.Functional.Mediator.GraphQLClient/Api.Functional.Mediator.GraphQLClient.csproj" Aliases="mediatorgraphqlclient" />
-        <ProjectReference Include="../Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.GraphQLClient/Api.Functional.ChannelMediator.GraphQLClient.csproj" Aliases="channelmediatorgraphqlclient" />
-        <ProjectReference Include="../Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.GraphQLClient/Api.Functional.ImmediateHandlers.GraphQLClient.csproj" Aliases="immediatehandlersgraphqlclient" />
-        <ProjectReference Include="../Api/Functional/Foundatio/Api.Functional.Foundatio.GraphQLClient/Api.Functional.Foundatio.GraphQLClient.csproj" Aliases="foundatiographqlclient" />
-        <ProjectReference Include="../Api/Functional/ZeroAlloc/Api.Functional.ZeroAlloc.GraphQLClient/Api.Functional.ZeroAlloc.GraphQLClient.csproj" Aliases="zeroallocgraphqlclient" />
+        <!-- The clients an application would generate from those servers' OpenAPI document, .proto and GraphQL schema. -->
+        <ProjectReference Include="../Api/Functional/Clients/Api.Functional.HttpClient/Api.Functional.HttpClient.csproj" />
+        <ProjectReference Include="../Api/Functional/Clients/Api.Functional.GrpcClient/Api.Functional.GrpcClient.csproj" />
+        <ProjectReference Include="../Api/Functional/Clients/Api.Functional.GraphQLClient/Api.Functional.GraphQLClient.csproj" />
     </ItemGroup>
 </Project>

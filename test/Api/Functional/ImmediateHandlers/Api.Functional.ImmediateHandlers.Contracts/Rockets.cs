@@ -33,6 +33,5 @@ public static class EditRocket
 
 public static class DeleteRocket
 {
-    [ApiOperation(Response = typeof(bool))]
     [DataContract] public sealed record Request([property: DataMember(Order = 1)] Guid Id);
 }

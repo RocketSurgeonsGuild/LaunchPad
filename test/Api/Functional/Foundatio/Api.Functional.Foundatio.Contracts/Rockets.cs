@@ -23,4 +23,4 @@ public static class CreateRocket
 
 public static class EditRocket { [DataContract] public sealed record Request([property: DataMember(Order = 1)] Guid Id, [property: DataMember(Order = 2)] string Name) : IRequest<RocketModel>; }
 
-public static class DeleteRocket { [DataContract] public sealed record Request([property: DataMember(Order = 1)] Guid Id) : IRequest<bool>; }
+public static class DeleteRocket { [DataContract] public sealed record Request([property: DataMember(Order = 1)] Guid Id) : ICommand; }

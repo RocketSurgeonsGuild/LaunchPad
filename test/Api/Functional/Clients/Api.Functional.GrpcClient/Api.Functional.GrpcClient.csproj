@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The gRPC client Grpc.Tools generates from the service's .proto (GetProto() on the generated service). -->
+    <PropertyGroup>
+        <ExportApiSpecsBeforeTargets>Protobuf_BeforeCompile</ExportApiSpecsBeforeTargets>
+        <ApiSpecDirectory>$(ApiFunctionalSpecs)</ApiSpecDirectory>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- Grpc.Tools, Google.Protobuf and the gRPC client. -->
+        <PackageReference Include="Grpc.AspNetCore" />
+        <Protobuf Include="$(ApiFunctionalSpecs)rockets.proto" GrpcServices="Client" ProtoRoot="$(ApiFunctionalSpecs)" Link="rockets.proto" />
+    </ItemGroup>
+</Project>

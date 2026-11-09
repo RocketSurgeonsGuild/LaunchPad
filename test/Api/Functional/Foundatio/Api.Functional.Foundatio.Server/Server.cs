@@ -15,6 +15,7 @@ public static class ServerApp
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton<RocketStore>();
         builder.Services.AddProblemDetails();
+        builder.Services.AddFixtureOpenApi();
         // Scoped to this assembly: the test process also loads the client's handler module.
         builder.Services.AddMediator(b => b.AddAssembly(typeof(GetRocketHandler).Assembly));
         if (controllers) builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
@@ -22,6 +23,7 @@ public static class ServerApp
         // HotChocolate needs a query type; the generated mutations extend the Mutation type.
         if (graphql) builder.Services.AddGraphQLServer().AddQueryType(d => d.Name("Query").Field("ping").Resolve("pong")).AddMutationType().AddRocketsMutations();
         var app = builder.Build();
+        app.MapOpenApi();
         if (graphql)
         {
             app.MapGraphQL();
@@ -101,5 +103,5 @@ public sealed class EditRocketHandler(RocketStore store)
 
 public sealed class DeleteRocketHandler(RocketStore store)
 {
-    public bool Handle(DeleteRocket.Request request) => store.Remove(request.Id);
+    public void Handle(DeleteRocket.Request request) => store.Remove(request.Id);
 }

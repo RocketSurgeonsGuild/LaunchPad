@@ -1,3 +1,4 @@
+using System.Reflection;
 using Api.Functional.MediatR.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -15,8 +16,14 @@ public static class ServerApp
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton<RocketStore>();
         builder.Services.AddProblemDetails();
+        builder.Services.AddFixtureOpenApi();
         builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Handlers>());
-        if (controllers) builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
+        if (controllers)
+        {
+            var mvc = builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
+            // VersionedRocketsController answers only with versioning on, so the other servers' documents (no versioned hosts) match this one's.
+            if (!versioned) mvc.ConfigureApplicationPartManager(parts => parts.FeatureProviders.Add(new WithoutVersionedRockets()));
+        }
         if (grpc) ProtoBuf.Grpc.Server.ServicesExtensions.AddCodeFirstGrpc(builder.Services);
         // HotChocolate needs a query type; the generated mutations extend the Mutation type.
         if (graphql) builder.Services.AddGraphQLServer().AddQueryType(d => d.Name("Query").Field("ping").Resolve("pong")).AddMutationType().AddRocketsMutations();
@@ -27,6 +34,7 @@ public static class ServerApp
         }
 
         var app = builder.Build();
+        app.MapOpenApi();
         // With controllers, VersionedRocketsController answers the same routes instead.
         if (versioned && !controllers) app.MapVersionedRocketsEndpoints();
         if (graphql)
@@ -50,6 +58,12 @@ public static class ServerApp
         await app.StartAsync();
         return app;
     }
+}
+
+internal sealed class WithoutVersionedRockets : Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider<Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature>
+{
+    public void PopulateFeature(IEnumerable<Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart> parts, Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature feature) =>
+        feature.Controllers.Remove(typeof(VersionedRocketsController).GetTypeInfo());
 }
 
 [Operation<GetRocket.Request>]
@@ -105,14 +119,15 @@ public sealed class Handlers(RocketStore store)
     }
 }
 
-// Versions mapped with Asp.Versioning: GetRocket is only in 2.0, CreateRocket in the host's 1.0.
+// Versions mapped with Asp.Versioning: GetRocket is only in 2.0, CreateRocket in the host's 1.0. Their own names keep the main hosts' endpoint
+// names (and so the OpenAPI operation ids every mediator's server shares) free of a host prefix.
 [OperationHost(Group = "versioned-rockets", Version = "1.0")]
-[Operation<GetRocket.Request>(Version = "2.0")]
-[Operation<CreateRocket.Request>]
+[Operation<GetRocket.Request>(Version = "2.0", Name = "GetVersionedRocket", Route = "{id}/rocket")]
+[Operation<CreateRocket.Request>(Name = "CreateVersionedRocket", Route = "rocket")]
 public static partial class VersionedRocketsEndpoints;
 
 // The same versions on a controller host, mapped with Asp.Versioning.Mvc.
 [OperationHost(Group = "versioned-rockets", Version = "1.0")]
-[Operation<GetRocket.Request>(Version = "2.0")]
-[Operation<CreateRocket.Request>]
+[Operation<GetRocket.Request>(Version = "2.0", Name = "GetVersionedRocket", Route = "{id}/rocket")]
+[Operation<CreateRocket.Request>(Name = "CreateVersionedRocket", Route = "rocket")]
 public partial class VersionedRocketsController;

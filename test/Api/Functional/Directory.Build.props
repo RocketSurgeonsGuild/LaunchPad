@@ -1,7 +1,7 @@
 <Project>
     <!--
-        Fixtures for test/Api.Functional.Tests: for each supported mediator a contracts project, a Minimal API server and an HTTP client, laid out
-        the way an application would be. They are libraries, not test projects, so they import the repository's props directly instead of
+        Fixtures for test/Api.Functional.Tests: for each supported mediator a contracts project and a server built by the generators, and in
+        Clients/ the HTTP, gRPC and GraphQL clients generated from the servers' OpenAPI document, .proto and GraphQL schema. They are libraries, not test projects, so they import the repository's props directly instead of
         test/Directory.Build.props, which would add the test framework.
     -->
     <Import Project="$(MSBuildThisFileDirectory)../../../Directory.Build.props" />
@@ -19,22 +19,13 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.TestHost" />
         <PackageReference Include="protobuf-net.Grpc.AspNetCore" />
+        <!-- GetProto() on the gRPC services: the .proto the gRPC client is generated from. -->
+        <PackageReference Include="protobuf-net.Grpc.Reflection" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="HotChocolate.AspNetCore" />
         <PackageReference Include="Asp.Versioning.Http" />
         <PackageReference Include="Asp.Versioning.Mvc" />
         <Compile Include="$(MSBuildThisFileDirectory)Shared/RocketStore.cs" Link="RocketStore.cs" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(ApiFunctionalRole)' == 'ClientHost'">
-        <PackageReference Include="Microsoft.Extensions.Http" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(ApiFunctionalRole)' == 'GraphQLClientHost'">
-        <PackageReference Include="Microsoft.Extensions.Http" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(ApiFunctionalRole)' == 'GrpcClientHost'">
-        <PackageReference Include="protobuf-net.Grpc.ClientFactory" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(ApiFunctionalRole)' == 'Client' or '$(ApiFunctionalRole)' == 'ClientHost' or '$(ApiFunctionalRole)' == 'GrpcClientHost' or '$(ApiFunctionalRole)' == 'GraphQLClientHost'">
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-        <ProjectReference Include="$(MSBuildThisFileDirectory)Abstractions/Api.Functional.Abstractions.csproj" />
+        <Compile Include="$(MSBuildThisFileDirectory)Shared/FixtureOpenApi.cs" Link="FixtureOpenApi.cs" />
     </ItemGroup>
 </Project>
