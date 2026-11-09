@@ -3,36 +3,43 @@
 #nullable enable
 #pragma warning disable CS1591
 
-[assembly: global::Foundatio.Mediator.FoundatioModule]
+using FoundatioModuleAttribute = global::Foundatio.Mediator.FoundatioModuleAttribute;
+using HandlerRegistration = global::Foundatio.Mediator.HandlerRegistration;
+using HandlerRegistry = global::Foundatio.Mediator.HandlerRegistry;
+using IServiceCollection = global::Microsoft.Extensions.DependencyInjection.IServiceCollection;
+using IServiceProvider = global::System.IServiceProvider;
+using MessageTypeKey = global::Foundatio.Mediator.MessageTypeKey;
+
+[assembly: FoundatioModule]
 namespace Rocket.Surgery.LaunchPad.Api.Generated
 {
     public static class Client_MediatorHandlers
     {
-        public static void AddHandlers(global::Microsoft.Extensions.DependencyInjection.IServiceCollection services, global::Foundatio.Mediator.HandlerRegistry registry)
+        public static void AddHandlers(IServiceCollection services, HandlerRegistry registry)
         {
-            registry.AddHandler(new global::Foundatio.Mediator.HandlerRegistration(global::Foundatio.Mediator.MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.GetRocket.Request)), "RocketsClient_GetRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
+            registry.AddHandler(new HandlerRegistration(MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.GetRocket.Request)), "RocketsClient_GetRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
             {
-                var client = (global::Sample.Client.RocketsClient)((global::System.IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
+                var client = (global::Sample.Client.RocketsClient)((IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
                 return await client.GetRocket((global::Sample.Contracts.Rockets.GetRocket.Request)message, cancellationToken).ConfigureAwait(false);
             }, null, true, sourceHandlerName: "RocketsClient", methodName: "GetRocket"));
-            registry.AddHandler(new global::Foundatio.Mediator.HandlerRegistration(global::Foundatio.Mediator.MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.ListRockets.Request)), "RocketsClient_ListRockets_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
+            registry.AddHandler(new HandlerRegistration(MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.ListRockets.Request)), "RocketsClient_ListRockets_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
             {
-                var client = (global::Sample.Client.RocketsClient)((global::System.IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
+                var client = (global::Sample.Client.RocketsClient)((IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
                 return client.ListRockets((global::Sample.Contracts.Rockets.ListRockets.Request)message, cancellationToken);
             }, null, true, sourceHandlerName: "RocketsClient", methodName: "ListRockets"));
-            registry.AddHandler(new global::Foundatio.Mediator.HandlerRegistration(global::Foundatio.Mediator.MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request)), "RocketsClient_CreateRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
+            registry.AddHandler(new HandlerRegistration(MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request)), "RocketsClient_CreateRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
             {
-                var client = (global::Sample.Client.RocketsClient)((global::System.IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
+                var client = (global::Sample.Client.RocketsClient)((IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
                 return await client.CreateRocket((global::Sample.Contracts.Rockets.CreateRocket.Request)message, cancellationToken).ConfigureAwait(false);
             }, null, true, sourceHandlerName: "RocketsClient", methodName: "CreateRocket"));
-            registry.AddHandler(new global::Foundatio.Mediator.HandlerRegistration(global::Foundatio.Mediator.MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.EditRocket.Request)), "RocketsClient_EditRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
+            registry.AddHandler(new HandlerRegistration(MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.EditRocket.Request)), "RocketsClient_EditRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
             {
-                var client = (global::Sample.Client.RocketsClient)((global::System.IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
+                var client = (global::Sample.Client.RocketsClient)((IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
                 return await client.EditRocket((global::Sample.Contracts.Rockets.EditRocket.Request)message, cancellationToken).ConfigureAwait(false);
             }, null, true, sourceHandlerName: "RocketsClient", methodName: "EditRocket"));
-            registry.AddHandler(new global::Foundatio.Mediator.HandlerRegistration(global::Foundatio.Mediator.MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request)), "RocketsClient_DeleteRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
+            registry.AddHandler(new HandlerRegistration(MessageTypeKey.Get(typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request)), "RocketsClient_DeleteRocket_Handler", static async (mediator, message, callContext, cancellationToken, responseType, skipAuthorization) =>
             {
-                var client = (global::Sample.Client.RocketsClient)((global::System.IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
+                var client = (global::Sample.Client.RocketsClient)((IServiceProvider)mediator).GetService(typeof(global::Sample.Client.RocketsClient))!;
                 return await client.DeleteRocket((global::Sample.Contracts.Rockets.DeleteRocket.Request)message, cancellationToken).ConfigureAwait(false);
             }, null, true, sourceHandlerName: "RocketsClient", methodName: "DeleteRocket"));
         }

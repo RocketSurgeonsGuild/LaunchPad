@@ -3,63 +3,95 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Api.Generated.Mvc;
+using ApiControllerAttribute = global::Microsoft.AspNetCore.Mvc.ApiControllerAttribute;
+using ApiFormat = global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiFormat;
+using CancellationToken = global::System.Threading.CancellationToken;
+using ControllerBase = global::Microsoft.AspNetCore.Mvc.ControllerBase;
+using CreatedResult = global::Microsoft.AspNetCore.Mvc.CreatedResult;
+using EndpointNameAttribute = global::Microsoft.AspNetCore.Routing.EndpointNameAttribute;
+using EndpointSummaryAttribute = global::Microsoft.AspNetCore.Http.EndpointSummaryAttribute;
+using FromBodyAttribute = global::Microsoft.AspNetCore.Mvc.FromBodyAttribute;
+using FromQueryAttribute = global::Microsoft.AspNetCore.Mvc.FromQueryAttribute;
+using FromRouteAttribute = global::Microsoft.AspNetCore.Mvc.FromRouteAttribute;
+using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
+using Guid = global::System.Guid;
+using HttpDeleteAttribute = global::Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
+using HttpGetAttribute = global::Microsoft.AspNetCore.Mvc.HttpGetAttribute;
+using HttpPostAttribute = global::Microsoft.AspNetCore.Mvc.HttpPostAttribute;
+using HttpPutAttribute = global::Microsoft.AspNetCore.Mvc.HttpPutAttribute;
+using IActionResult = global::Microsoft.AspNetCore.Mvc.IActionResult;
+using ISender = global::MediatR.ISender;
+using NoContentResult = global::Microsoft.AspNetCore.Mvc.NoContentResult;
+using NotFoundResult = global::Microsoft.AspNetCore.Mvc.NotFoundResult;
+using OkObjectResult = global::Microsoft.AspNetCore.Mvc.OkObjectResult;
+using ProducesResponseTypeAttribute = global::Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute;
+using RouteAttribute = global::Microsoft.AspNetCore.Mvc.RouteAttribute;
+using TagsAttribute = global::Microsoft.AspNetCore.Http.TagsAttribute;
+using Uri = global::System.Uri;
+using ValidationProblemDetails = global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails;
+
 namespace Sample.Server
 {
-    [global::Microsoft.AspNetCore.Mvc.ApiController]
-    [global::Microsoft.AspNetCore.Mvc.Route("api/rockets")]
-    [global::Microsoft.AspNetCore.Http.Tags("Rockets")]
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Controllers", "version")]
-    public partial class RocketsController : global::Microsoft.AspNetCore.Mvc.ControllerBase
+    [ApiController]
+    [Route("api/rockets")]
+    [Tags("Rockets")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Controllers", "version")]
+    public partial class RocketsController : ControllerBase
     {
         /// <summary>Handles <c>GET /api/rockets/{id:guid}</c> by sending <see cref="Sample.Contracts.Rockets.GetRocket.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpGet("{id:guid}")]
-        [global::Microsoft.AspNetCore.Routing.EndpointName("GetRocket")]
-        [global::Microsoft.AspNetCore.Http.EndpointSummary("Load a rocket")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Sample.Contracts.Rockets.RocketModel), 200, "application/json")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(404)]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails), 400, "application/problem+json")]
-        public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.ActionResult<global::Sample.Contracts.Rockets.RocketModel>> GetRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, global::System.Threading.CancellationToken __cancellationToken)
+        [HttpGet("{id:guid}")]
+        [EndpointName("GetRocket")]
+        [EndpointSummary("Load a rocket")]
+        [ProducesResponseType(typeof(global::Sample.Contracts.Rockets.RocketModel), 200, "application/json")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+        public async Task<ActionResult<global::Sample.Contracts.Rockets.RocketModel>> GetRocket([FromRoute(Name = "id")] Guid @id, CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.Rockets.GetRocket.Request(@id);
             var __request = __wire;
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::MediatR.ISender>(HttpContext.RequestServices);
+            var __sender = HttpContext.RequestServices.GetRequiredService<ISender>();
             var __response = await __sender.Send(__request, __cancellationToken).ConfigureAwait(false);
-            return __response is null ? new global::Microsoft.AspNetCore.Mvc.NotFoundResult() : new global::Microsoft.AspNetCore.Mvc.OkObjectResult(__response);
+            return __response is null ? new NotFoundResult() : new OkObjectResult(__response);
         }
 
         /// <summary>Handles <c>GET /api/rockets</c> by sending <see cref="Sample.Contracts.Rockets.ListRockets.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpGet("")]
-        [global::Microsoft.AspNetCore.Routing.EndpointName("ListRockets")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>), 200, "application/x-ndjson")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails), 400, "application/problem+json")]
-        public global::Microsoft.AspNetCore.Mvc.IActionResult ListRockets([global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "name")] string? @name, global::System.Threading.CancellationToken __cancellationToken)
+        [HttpGet("")]
+        [EndpointName("ListRockets")]
+        [ProducesResponseType(typeof(IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>), 200, "application/x-ndjson")]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+        public IActionResult ListRockets([FromQuery(Name = "name")] string? @name, CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.Rockets.ListRockets.Request(@name);
             var __request = __wire;
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::MediatR.ISender>(HttpContext.RequestServices);
-            return new global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.NdjsonResult<global::Sample.Contracts.Rockets.RocketModel>(__sender.CreateStream(__request, __cancellationToken));
+            var __sender = HttpContext.RequestServices.GetRequiredService<ISender>();
+            return new NdjsonResult<global::Sample.Contracts.Rockets.RocketModel>(__sender.CreateStream(__request, __cancellationToken));
         }
 
         /// <summary>Handles <c>POST /api/rockets</c> by sending <see cref="Sample.Contracts.Rockets.CreateRocket.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpPost("")]
-        [global::Microsoft.AspNetCore.Routing.EndpointName("CreateRocket")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response), 201, "application/json")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails), 400, "application/problem+json")]
-        public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.ActionResult<global::Sample.Contracts.Rockets.CreateRocket.Response>> CreateRocket([global::Microsoft.AspNetCore.Mvc.FromBody] global::Sample.Contracts.Rockets.CreateRocket.Request __body, global::System.Threading.CancellationToken __cancellationToken)
+        [HttpPost("")]
+        [EndpointName("CreateRocket")]
+        [ProducesResponseType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response), 201, "application/json")]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+        public async Task<ActionResult<global::Sample.Contracts.Rockets.CreateRocket.Response>> CreateRocket([FromBody] global::Sample.Contracts.Rockets.CreateRocket.Request __body, CancellationToken __cancellationToken)
         {
             var __wire = __body;
             var __request = __wire;
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::MediatR.ISender>(HttpContext.RequestServices);
+            var __sender = HttpContext.RequestServices.GetRequiredService<ISender>();
             var __response = await __sender.Send(__request, __cancellationToken).ConfigureAwait(false);
-            return new global::Microsoft.AspNetCore.Mvc.CreatedResult("/api/rockets/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiFormat.Value(__response.Id)), __response);
+            return new CreatedResult("/api/rockets/" + Uri.EscapeDataString(ApiFormat.Value(__response.Id)), __response);
         }
 
         /// <summary>Handles <c>PUT /api/rockets/{id:guid}</c> by sending <see cref="Sample.Contracts.Rockets.EditRocket.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpPut("{id:guid}")]
-        [global::Microsoft.AspNetCore.Routing.EndpointName("EditRocket")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Sample.Contracts.Rockets.RocketModel), 200, "application/json")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails), 400, "application/problem+json")]
-        public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.ActionResult<global::Sample.Contracts.Rockets.RocketModel>> EditRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, [global::Microsoft.AspNetCore.Mvc.FromBody] global::Sample.Contracts.Rockets.EditRocket.Request __body, global::System.Threading.CancellationToken __cancellationToken)
+        [HttpPut("{id:guid}")]
+        [EndpointName("EditRocket")]
+        [ProducesResponseType(typeof(global::Sample.Contracts.Rockets.RocketModel), 200, "application/json")]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+        public async Task<ActionResult<global::Sample.Contracts.Rockets.RocketModel>> EditRocket([FromRoute(Name = "id")] Guid @id, [FromBody] global::Sample.Contracts.Rockets.EditRocket.Request __body, CancellationToken __cancellationToken)
         {
             var __wire = __body;
             __wire = __wire with
@@ -67,23 +99,23 @@ namespace Sample.Server
                 Id = @id
             };
             var __request = __wire;
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::MediatR.ISender>(HttpContext.RequestServices);
+            var __sender = HttpContext.RequestServices.GetRequiredService<ISender>();
             var __response = await __sender.Send(__request, __cancellationToken).ConfigureAwait(false);
-            return new global::Microsoft.AspNetCore.Mvc.OkObjectResult(__response);
+            return new OkObjectResult(__response);
         }
 
         /// <summary>Handles <c>DELETE /api/rockets/{id:guid}</c> by sending <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" />.</summary>
-        [global::Microsoft.AspNetCore.Mvc.HttpDelete("{id:guid}")]
-        [global::Microsoft.AspNetCore.Routing.EndpointName("DeleteRocket")]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(204)]
-        [global::Microsoft.AspNetCore.Mvc.ProducesResponseType(typeof(global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails), 400, "application/problem+json")]
-        public async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Mvc.IActionResult> DeleteRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, global::System.Threading.CancellationToken __cancellationToken)
+        [HttpDelete("{id:guid}")]
+        [EndpointName("DeleteRocket")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+        public async Task<IActionResult> DeleteRocket([FromRoute(Name = "id")] Guid @id, CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.Rockets.DeleteRocket.Request(@id);
             var __request = __wire;
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::MediatR.ISender>(HttpContext.RequestServices);
+            var __sender = HttpContext.RequestServices.GetRequiredService<ISender>();
             await __sender.Send(__request, __cancellationToken).ConfigureAwait(false);
-            return new global::Microsoft.AspNetCore.Mvc.NoContentResult();
+            return new NoContentResult();
         }
     }
 }

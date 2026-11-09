@@ -1,8 +1,5 @@
 ﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
-  },
-  FinalDiagnostics: [
+  Diagnostics: [
     {
       Id: LPAD1012,
       Title: Client host is in the wrong project for its mediator,
@@ -18,7 +15,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (13,377)-(13,386),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (17,178)-(17,187),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
       MessageFormat: The name '{0}' does not exist in the current context,
       Message: The name '_services' does not exist in the current context,
@@ -29,19 +26,5 @@
         NotConfigurable
       ]
     }
-  ],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator: [
-      {
-        Id: LPAD1012,
-        Title: Client host is in the wrong project for its mediator,
-        Severity: Error,
-        WarningLevel: 0,
-        Location: Input1.cs: (8,59)-(8,79),
-        MessageFormat: Client host {0} uses the {1} mediator profile: {2},
-        Message: Client host RocketsGraphQLClient uses the ZeroAlloc.Mediator mediator profile: the generated handlers extend the mediator that ZeroAlloc.Mediator.Generator generates, so the host must be in a project that runs ZeroAlloc.Mediator.Generator,
-        Category: LaunchPad.Api
-      }
-    ]
-  }
+  ]
 }

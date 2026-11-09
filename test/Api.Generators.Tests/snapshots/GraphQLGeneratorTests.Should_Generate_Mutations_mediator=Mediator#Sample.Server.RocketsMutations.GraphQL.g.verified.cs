@@ -3,53 +3,64 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using ArgumentNullException = global::System.ArgumentNullException;
+using CancellationToken = global::System.Threading.CancellationToken;
+using ExtendObjectTypeAttribute = global::HotChocolate.Types.ExtendObjectTypeAttribute;
+using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
+using GraphQLNameAttribute = global::HotChocolate.GraphQLNameAttribute;
+using IRequestExecutorBuilder = global::HotChocolate.Execution.Configuration.IRequestExecutorBuilder;
+using IResolverContext = global::HotChocolate.Resolvers.IResolverContext;
+using ISender = global::Mediator.ISender;
+
 namespace Sample.Server
 {
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.GraphQL", "version")]
-    [global::HotChocolate.Types.ExtendObjectType("Mutation")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.GraphQL", "version")]
+    [ExtendObjectType("Mutation")]
     public partial class RocketsMutations
     {
-        [global::HotChocolate.GraphQLName("createRocket")]
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::HotChocolate.Resolvers.IResolverContext context, global::System.Threading.CancellationToken cancellationToken)
+        [GraphQLName("createRocket")]
+        public async Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, IResolverContext context, CancellationToken cancellationToken)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.ISender>(context.Services);
+            ArgumentNullException.ThrowIfNull(request);
+            var __sender = context.Services.GetRequiredService<ISender>();
             var __request = request;
             return await __sender.Send(__request, cancellationToken).ConfigureAwait(false);
         }
 
-        [global::HotChocolate.GraphQLName("editRocket")]
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::HotChocolate.Resolvers.IResolverContext context, global::System.Threading.CancellationToken cancellationToken)
+        [GraphQLName("editRocket")]
+        public async Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, IResolverContext context, CancellationToken cancellationToken)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.ISender>(context.Services);
+            ArgumentNullException.ThrowIfNull(request);
+            var __sender = context.Services.GetRequiredService<ISender>();
             var __request = request;
             return await __sender.Send(__request, cancellationToken).ConfigureAwait(false);
         }
 
-        [global::HotChocolate.GraphQLName("deleteRocket")]
-        public async global::System.Threading.Tasks.Task<bool> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::HotChocolate.Resolvers.IResolverContext context, global::System.Threading.CancellationToken cancellationToken)
+        [GraphQLName("deleteRocket")]
+        public async Task<bool> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, IResolverContext context, CancellationToken cancellationToken)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.ISender>(context.Services);
+            ArgumentNullException.ThrowIfNull(request);
+            var __sender = context.Services.GetRequiredService<ISender>();
             var __request = request;
             await __sender.Send(__request, cancellationToken).ConfigureAwait(false);
             return true;
         }
     }
 
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.GraphQL", "version")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.GraphQL", "version")]
     public static class RocketsMutationsRequestExecutorBuilderExtensions
     {
         /// <summary>Adds the mutations of <see cref="RocketsMutations" /> and names their input and response types.</summary>
-        public static global::HotChocolate.Execution.Configuration.IRequestExecutorBuilder AddRocketsMutations(this global::HotChocolate.Execution.Configuration.IRequestExecutorBuilder builder)
+        public static IRequestExecutorBuilder AddRocketsMutations(this IRequestExecutorBuilder builder)
         {
-            global::System.ArgumentNullException.ThrowIfNull(builder);
-            global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions.AddTypeExtension<RocketsMutations>(builder);
-            global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions.AddInputObjectType<global::Sample.Contracts.Rockets.CreateRocket.Request>(builder, descriptor => descriptor.Name("CreateRocketRequest"));
-            global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions.AddInputObjectType<global::Sample.Contracts.Rockets.EditRocket.Request>(builder, descriptor => descriptor.Name("EditRocketRequest"));
-            global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions.AddInputObjectType<global::Sample.Contracts.Rockets.DeleteRocket.Request>(builder, descriptor => descriptor.Name("DeleteRocketRequest"));
-            global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions.AddObjectType<global::Sample.Contracts.Rockets.CreateRocket.Response>(builder, descriptor => descriptor.Name("CreateRocketResponse"));
+            ArgumentNullException.ThrowIfNull(builder);
+            builder.AddTypeExtension<RocketsMutations>();
+            builder.AddInputObjectType<global::Sample.Contracts.Rockets.CreateRocket.Request>(descriptor => descriptor.Name("CreateRocketRequest"));
+            builder.AddInputObjectType<global::Sample.Contracts.Rockets.EditRocket.Request>(descriptor => descriptor.Name("EditRocketRequest"));
+            builder.AddInputObjectType<global::Sample.Contracts.Rockets.DeleteRocket.Request>(descriptor => descriptor.Name("DeleteRocketRequest"));
+            builder.AddObjectType<global::Sample.Contracts.Rockets.CreateRocket.Response>(descriptor => descriptor.Name("CreateRocketResponse"));
             return builder;
         }
     }

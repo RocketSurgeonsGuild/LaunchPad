@@ -75,7 +75,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         if (fixture.Configure is { } configure) builder = configure(builder);
         var result = await builder.AddSources(Source(fixture.Host, mediator) + ( AttributesInHostSource ? "\n" + AttributeSources : "" )).Build().GenerateAsync(TestContext.CancellationToken);
 
-        await Verify(result).UseDirectory(Path.Combine("snapshots", "diagnostics")).UseFileName($"{id}.{host}.{mediator}");
+        await VerifyDiagnostics(result, settings => settings.UseDirectory(Path.Combine("snapshots", "diagnostics")).UseFileName($"{id}.{host}.{mediator}"));
     }
 
     /// <summary>What a case declares: the host source, how the contracts are written, and how the compilation is set up.</summary>

@@ -355,16 +355,18 @@ internal static class ApiSyntax
         Render(@namespace, members, [], assemblyAttributes);
 
     /// <summary>
-    ///     As <see cref="Render(string?, IEnumerable{MemberDeclarationSyntax}, AttributeListSyntax[])" />, with <c>using</c> directives. Generated
-    ///     code names types fully, so a using only brings extension methods into reach: needed where two assemblies declare a static class of
-    ///     the same full name (HotChocolate.AspNetCore's and ASP.NET Core's Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions).
+    ///     As <see cref="Render(string?, IEnumerable{MemberDeclarationSyntax}, AttributeListSyntax[])" />, with <c>using</c> directives. The
+    ///     emitters name types fully; <see cref="ApiImports" /> then shortens the names it knows and adds the directives they need. A using passed
+    ///     here only brings extension methods into reach: needed where two assemblies declare a static class of the same full name
+    ///     (HotChocolate.AspNetCore's and ASP.NET Core's Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions).
     /// </summary>
     public static string Render(string? @namespace, IEnumerable<MemberDeclarationSyntax> members, IEnumerable<string> usings, params AttributeListSyntax[] assemblyAttributes)
     {
-        var body = List(members);
+        var (shortened, attributes, directives) = ApiImports.Apply(members, assemblyAttributes, usings);
+        var body = List(shortened);
         var unit = CompilationUnit()
-                  .WithUsings(List(usings.Select(u => UsingDirective(Name(u)))))
-                  .WithAttributeLists(List(assemblyAttributes.Select(a => a.WithTarget(AttributeTargetSpecifier(Token(SyntaxKind.AssemblyKeyword))))))
+                  .WithUsings(List(directives))
+                  .WithAttributeLists(List(attributes.Select(a => a.WithTarget(AttributeTargetSpecifier(Token(SyntaxKind.AssemblyKeyword))))))
                   .WithMembers(@namespace is { } ns ? SingletonList<MemberDeclarationSyntax>(NamespaceDeclaration(Name(ns)).WithMembers(body)) : body)
                   .NormalizeWhitespace(eol: "\n");
         unit = unit.ReplaceNodes(

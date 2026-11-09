@@ -1,8 +1,5 @@
 ﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
-  },
-  FinalDiagnostics: [
+  Diagnostics: [
     {
       Id: LPAD1023,
       Title: A created resource has no Location,
@@ -18,23 +15,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator/Sample.Host.RocketsEndpoints.MinimalApi.g.cs: (39,372)-(39,381),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
-      MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
-      Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
-      Category: Compiler,
-      CustomTags: [
-        Compiler,
-        Telemetry,
-        NotConfigurable
-      ]
-    },
-    {
-      Id: CS0234,
-      Title: ,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator/Sample.Host.RocketsEndpoints.MinimalApi.g.cs: (53,155)-(53,164),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator/Sample.Host.RocketsEndpoints.MinimalApi.g.cs: (22,45)-(22,54),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
       MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
       Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
@@ -45,19 +26,5 @@
         NotConfigurable
       ]
     }
-  ],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.MinimalApiGenerator: [
-      {
-        Id: LPAD1023,
-        Title: A created resource has no Location,
-        Severity: Warning,
-        WarningLevel: 1,
-        Location: Input1.cs: (8,5)-(8,36),
-        MessageFormat: {0} answers 201 Created without a Location: {1},
-        Message: CreateRocket answers 201 Created without a Location: no Minimal API host exposes Sample.Contracts.Rockets.GetRocket.Request as a GET,
-        Category: LaunchPad.Api
-      }
-    ]
-  }
+  ]
 }

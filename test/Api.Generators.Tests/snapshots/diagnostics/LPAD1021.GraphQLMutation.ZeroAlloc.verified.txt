@@ -1,19 +1,5 @@
 ﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
-      {
-        Id: LPAD1021,
-        Title: Operation host setting does not apply,
-        Severity: Warning,
-        WarningLevel: 1,
-        Location: Input1.cs: (8,5)-(8,41),
-        MessageFormat: [OperationHost({0})] has no effect on {1}, which is a {2} host,
-        Message: [OperationHost(RoutePrefix)] has no effect on RocketsMutations, which is a GraphQL mutation host,
-        Category: LaunchPad.Api
-      }
-    ]
-  },
-  FinalDiagnostics: [
+  Diagnostics: [
     {
       Id: LPAD1021,
       Title: Operation host setting does not apply,
@@ -29,7 +15,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator/Sample.Host.RocketsMutations.GraphQL.g.cs: (14,155)-(14,164),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator/Sample.Host.RocketsMutations.GraphQL.g.cs: (11,45)-(11,54),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0234),
       MessageFormat: The type or namespace name '{0}' does not exist in the namespace '{1}' (are you missing an assembly reference?),
       Message: The type or namespace name 'IMediator' does not exist in the namespace 'ZeroAlloc.Mediator' (are you missing an assembly reference?),
@@ -40,8 +26,5 @@
         NotConfigurable
       ]
     }
-  ],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator: []
-  }
+  ]
 }

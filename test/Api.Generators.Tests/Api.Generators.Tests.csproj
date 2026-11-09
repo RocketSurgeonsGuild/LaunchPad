@@ -25,6 +25,5 @@
         <PackageReference Include="Immediate.Handlers" IncludeAssets="compile;runtime" />
         <!-- Each generator assembly carries its own copy of the shared core; only the base one is visible unaliased. -->
         <ProjectReference Include="..\..\src\Api\Rocket.Surgery.LaunchPad.Api.csproj" />
-        <ProjectReference Include="..\..\src\Api.CodeFixes\Rocket.Surgery.LaunchPad.Api.CodeFixes.csproj" />
     </ItemGroup>
 </Project>

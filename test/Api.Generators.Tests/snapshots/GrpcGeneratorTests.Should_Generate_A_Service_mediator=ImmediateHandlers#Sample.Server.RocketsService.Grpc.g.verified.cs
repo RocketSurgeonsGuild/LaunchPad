@@ -3,25 +3,45 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Grpc.Core;
+using Immediate.Handlers.Shared;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using CallContext = global::ProtoBuf.Grpc.CallContext;
+using DataContractAttribute = global::System.Runtime.Serialization.DataContractAttribute;
+using DataMemberAttribute = global::System.Runtime.Serialization.DataMemberAttribute;
+using DynamicallyAccessedMemberTypes = global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+using DynamicallyAccessedMembersAttribute = global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute;
+using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
+using GrpcServiceEndpointConventionBuilder = global::Microsoft.AspNetCore.Builder.GrpcServiceEndpointConventionBuilder;
+using IEndpointRouteBuilder = global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder;
+using Interlocked = global::System.Threading.Interlocked;
+using OperationAttribute = global::ProtoBuf.Grpc.Configuration.OperationAttribute;
+using RuntimeTypeModel = global::ProtoBuf.Meta.RuntimeTypeModel;
+using ServiceAttribute = global::ProtoBuf.Grpc.Configuration.ServiceAttribute;
+using Type = global::System.Type;
+
 namespace Sample.Server
 {
     /// <summary>The gRPC contract of <see cref="RocketsService" />: service <c>Rockets</c>, one operation per listed request.</summary>
-    [global::ProtoBuf.Grpc.Configuration.Service("Rockets")]
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
+    [Service("Rockets")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
     public interface IRocketsServiceContract
     {
-        [global::ProtoBuf.Grpc.Configuration.Operation("GetRocket")]
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("ListRockets")]
-        global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("CreateRocket")]
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("EditRocket")]
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("DeleteRocket")]
-        global::System.Threading.Tasks.ValueTask<IRocketsServiceContract.Message<bool>> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
+        [Operation("GetRocket")]
+        ValueTask<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, CallContext context = default);
+        [Operation("ListRockets")]
+        IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, CallContext context = default);
+        [Operation("CreateRocket")]
+        ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, CallContext context = default);
+        [Operation("EditRocket")]
+        ValueTask<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, CallContext context = default);
+        [Operation("DeleteRocket")]
+        ValueTask<IRocketsServiceContract.Message<bool>> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CallContext context = default);
         /// <summary>Carries a request, response or stream item that isn't a class, which protobuf-net.Grpc requires.</summary>
-        [global::System.Runtime.Serialization.DataContract]
+        [DataContract]
         public sealed class Message<T>
         {
             public Message()
@@ -33,19 +53,19 @@ namespace Sample.Server
                 Value = value;
             }
 
-            [global::System.Runtime.Serialization.DataMember(Order = 1)]
+            [DataMember(Order = 1)]
             public T Value { get; set; } = default!;
         }
     }
 
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", "version")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", "version")]
     public partial class RocketsService : IRocketsServiceContract
     {
         private static int __grpcModelConfigured;
         /// <summary>Lets protobuf-net create the carried messages that have no parameterless constructor (positional records).</summary>
         internal static void ConfigureGrpcModel()
         {
-            if (global::System.Threading.Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
+            if (Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
                 return;
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.GetRocket.Request));
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.RocketModel));
@@ -56,16 +76,16 @@ namespace Sample.Server
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request));
         }
 
-        private static void __CreateWithoutConstructor([global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] global::System.Type type)
+        private static void __CreateWithoutConstructor([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type)
         {
-            if (type.GetConstructor(global::System.Type.EmptyTypes) == null)
-                global::ProtoBuf.Meta.RuntimeTypeModel.Default[type].UseConstructor = false;
+            if (type.GetConstructor(Type.EmptyTypes) == null)
+                RuntimeTypeModel.Default[type].UseConstructor = false;
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> through the mediator.</summary>
-        public async global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::ProtoBuf.Grpc.CallContext context)
+        public async ValueTask<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, CallContext context)
         {
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.GetRocket.Request, global::Sample.Contracts.Rockets.RocketModel>>(global::Grpc.Core.ServerCallContextExtensions.GetHttpContext(context.ServerCallContext!).RequestServices);
+            var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IHandler<global::Sample.Contracts.Rockets.GetRocket.Request, global::Sample.Contracts.Rockets.RocketModel>>();
             var __cancellationToken = context.CancellationToken;
             var __request = request;
             var __response = await __sender.HandleAsync(__request, __cancellationToken).ConfigureAwait(false);
@@ -73,19 +93,19 @@ namespace Sample.Server
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.ListRockets.Request" /> through the mediator.</summary>
-        public async global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, global::ProtoBuf.Grpc.CallContext context)
+        public async IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, CallContext context)
         {
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.ListRockets.Request, global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>>>(global::Grpc.Core.ServerCallContextExtensions.GetHttpContext(context.ServerCallContext!).RequestServices);
+            var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IHandler<global::Sample.Contracts.Rockets.ListRockets.Request, IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel>>>();
             var __cancellationToken = context.CancellationToken;
             var __request = request;
-            await foreach (var __item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation(await __sender.HandleAsync(__request, __cancellationToken).ConfigureAwait(false), __cancellationToken).ConfigureAwait(false))
+            await foreach (var __item in (await __sender.HandleAsync(__request, __cancellationToken).ConfigureAwait(false)).WithCancellation(__cancellationToken).ConfigureAwait(false))
                 yield return __item;
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.CreateRocket.Request" /> through the mediator.</summary>
-        public async global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::ProtoBuf.Grpc.CallContext context)
+        public async ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, CallContext context)
         {
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.CreateRocket.Request, global::Sample.Contracts.Rockets.CreateRocket.Response>>(global::Grpc.Core.ServerCallContextExtensions.GetHttpContext(context.ServerCallContext!).RequestServices);
+            var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IHandler<global::Sample.Contracts.Rockets.CreateRocket.Request, global::Sample.Contracts.Rockets.CreateRocket.Response>>();
             var __cancellationToken = context.CancellationToken;
             var __request = request;
             var __response = await __sender.HandleAsync(__request, __cancellationToken).ConfigureAwait(false);
@@ -93,9 +113,9 @@ namespace Sample.Server
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> through the mediator.</summary>
-        public async global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::ProtoBuf.Grpc.CallContext context)
+        public async ValueTask<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, CallContext context)
         {
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>>(global::Grpc.Core.ServerCallContextExtensions.GetHttpContext(context.ServerCallContext!).RequestServices);
+            var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>>();
             var __cancellationToken = context.CancellationToken;
             var __request = request;
             var __response = await __sender.HandleAsync(__request, __cancellationToken).ConfigureAwait(false);
@@ -103,9 +123,9 @@ namespace Sample.Server
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> through the mediator.</summary>
-        public async global::System.Threading.Tasks.ValueTask<IRocketsServiceContract.Message<bool>> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::ProtoBuf.Grpc.CallContext context)
+        public async ValueTask<IRocketsServiceContract.Message<bool>> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CallContext context)
         {
-            var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Immediate.Handlers.Shared.IHandler<global::Sample.Contracts.Rockets.DeleteRocket.Request, bool>>(global::Grpc.Core.ServerCallContextExtensions.GetHttpContext(context.ServerCallContext!).RequestServices);
+            var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IHandler<global::Sample.Contracts.Rockets.DeleteRocket.Request, bool>>();
             var __cancellationToken = context.CancellationToken;
             var __request = request;
             var __response = await __sender.HandleAsync(__request, __cancellationToken).ConfigureAwait(false);
@@ -113,14 +133,14 @@ namespace Sample.Server
         }
     }
 
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", "version")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", "version")]
     public static class RocketsServiceEndpointRouteBuilderExtensions
     {
         /// <summary>Maps <see cref="RocketsService" />. Register code-first gRPC with <c>services.AddCodeFirstGrpc()</c>.</summary>
-        public static global::Microsoft.AspNetCore.Builder.GrpcServiceEndpointConventionBuilder MapRocketsService(this global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints)
+        public static GrpcServiceEndpointConventionBuilder MapRocketsService(this IEndpointRouteBuilder endpoints)
         {
             RocketsService.ConfigureGrpcModel();
-            return global::Microsoft.AspNetCore.Builder.GrpcEndpointRouteBuilderExtensions.MapGrpcService<RocketsService>(endpoints);
+            return endpoints.MapGrpcService<RocketsService>();
         }
     }
 }

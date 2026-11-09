@@ -3,25 +3,57 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ChannelMediator;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using ProtoBuf.Grpc.ClientFactory;
+using ArgumentNullException = global::System.ArgumentNullException;
+using CallContext = global::ProtoBuf.Grpc.CallContext;
+using CallOptions = global::Grpc.Core.CallOptions;
+using CancellationToken = global::System.Threading.CancellationToken;
+using DataContractAttribute = global::System.Runtime.Serialization.DataContractAttribute;
+using DataMemberAttribute = global::System.Runtime.Serialization.DataMemberAttribute;
+using DynamicallyAccessedMemberTypes = global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+using DynamicallyAccessedMembersAttribute = global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute;
+using EnumeratorCancellationAttribute = global::System.Runtime.CompilerServices.EnumeratorCancellationAttribute;
+using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
+using GrpcClientFactoryOptions = global::Grpc.Net.ClientFactory.GrpcClientFactoryOptions;
+using IHttpClientBuilder = global::Microsoft.Extensions.DependencyInjection.IHttpClientBuilder;
+using IServiceCollection = global::Microsoft.Extensions.DependencyInjection.IServiceCollection;
+using Interlocked = global::System.Threading.Interlocked;
+using OperationAttribute = global::ProtoBuf.Grpc.Configuration.OperationAttribute;
+using RpcException = global::Grpc.Core.RpcException;
+using RuntimeTypeModel = global::ProtoBuf.Meta.RuntimeTypeModel;
+using ServiceAttribute = global::ProtoBuf.Grpc.Configuration.ServiceAttribute;
+using ServiceDescriptor = global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor;
+using ServiceLifetime = global::Microsoft.Extensions.DependencyInjection.ServiceLifetime;
+using StatusCode = global::Grpc.Core.StatusCode;
+using Task = global::System.Threading.Tasks.Task;
+using Type = global::System.Type;
+using Unit = global::ChannelMediator.Unit;
+using ValueTask = global::System.Threading.Tasks.ValueTask;
+
 namespace Sample.Client
 {
     /// <summary>The gRPC contract of <see cref="RocketsGrpcClient" />: service <c>Rockets</c>, one operation per listed request.</summary>
-    [global::ProtoBuf.Grpc.Configuration.Service("Rockets")]
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
+    [Service("Rockets")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
     public interface IRocketsGrpcClientContract
     {
-        [global::ProtoBuf.Grpc.Configuration.Operation("GetRocket")]
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("ListRockets")]
-        global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("CreateRocket")]
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("EditRocket")]
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
-        [global::ProtoBuf.Grpc.Configuration.Operation("DeleteRocket")]
-        global::System.Threading.Tasks.ValueTask DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::ProtoBuf.Grpc.CallContext context = default);
+        [Operation("GetRocket")]
+        ValueTask<global::Sample.Contracts.Rockets.RocketModel> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, CallContext context = default);
+        [Operation("ListRockets")]
+        IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, CallContext context = default);
+        [Operation("CreateRocket")]
+        ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, CallContext context = default);
+        [Operation("EditRocket")]
+        ValueTask<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, CallContext context = default);
+        [Operation("DeleteRocket")]
+        ValueTask DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CallContext context = default);
         /// <summary>Carries a request, response or stream item that isn't a class, which protobuf-net.Grpc requires.</summary>
-        [global::System.Runtime.Serialization.DataContract]
+        [DataContract]
         public sealed class Message<T>
         {
             public Message()
@@ -33,19 +65,19 @@ namespace Sample.Client
                 Value = value;
             }
 
-            [global::System.Runtime.Serialization.DataMember(Order = 1)]
+            [DataMember(Order = 1)]
             public T Value { get; set; } = default!;
         }
     }
 
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Grpc", "version")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Grpc", "version")]
     public partial class RocketsGrpcClient
     {
         private readonly IRocketsGrpcClientContract __contract;
         /// <summary>Creates the client. Register it with <c>services.AddRocketsGrpcClient()</c>.</summary>
         public RocketsGrpcClient(IRocketsGrpcClientContract contract)
         {
-            global::System.ArgumentNullException.ThrowIfNull(contract);
+            ArgumentNullException.ThrowIfNull(contract);
             __contract = contract;
         }
 
@@ -53,7 +85,7 @@ namespace Sample.Client
         /// <summary>Lets protobuf-net create the carried messages that have no parameterless constructor (positional records).</summary>
         internal static void ConfigureGrpcModel()
         {
-            if (global::System.Threading.Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
+            if (Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
                 return;
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.GetRocket.Request));
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.RocketModel));
@@ -64,77 +96,77 @@ namespace Sample.Client
             __CreateWithoutConstructor(typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request));
         }
 
-        private static void __CreateWithoutConstructor([global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] global::System.Type type)
+        private static void __CreateWithoutConstructor([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type)
         {
-            if (type.GetConstructor(global::System.Type.EmptyTypes) == null)
-                global::ProtoBuf.Meta.RuntimeTypeModel.Default[type].UseConstructor = false;
+            if (type.GetConstructor(Type.EmptyTypes) == null)
+                RuntimeTypeModel.Default[type].UseConstructor = false;
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to the <c>GetRocket</c> operation.</summary>
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __options = new global::Grpc.Core.CallOptions(cancellationToken: cancellationToken);
+            ArgumentNullException.ThrowIfNull(request);
+            var __options = new CallOptions(cancellationToken: cancellationToken);
             ConfigureGetRocket(ref __options);
             try
             {
                 return (await __contract.GetRocket(request, __options).ConfigureAwait(false));
             }
-            catch (global::Grpc.Core.RpcException __exception)when (__exception.StatusCode == global::Grpc.Core.StatusCode.NotFound)
+            catch (RpcException __exception)when (__exception.StatusCode == StatusCode.NotFound)
             {
                 return default;
             }
         }
 
         /// <summary>Adjusts the call options (headers, deadline, credentials) for <c>GetRocket</c>. Implement it in your part of the host.</summary>
-        partial void ConfigureGetRocket(ref global::Grpc.Core.CallOptions options);
+        partial void ConfigureGetRocket(ref CallOptions options);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.ListRockets.Request" /> to the <c>ListRockets</c> operation.</summary>
-        public async global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __options = new global::Grpc.Core.CallOptions(cancellationToken: cancellationToken);
+            ArgumentNullException.ThrowIfNull(request);
+            var __options = new CallOptions(cancellationToken: cancellationToken);
             ConfigureListRockets(ref __options);
-            await foreach (var __item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.WithCancellation(__contract.ListRockets(request, __options), cancellationToken).ConfigureAwait(false))
+            await foreach (var __item in __contract.ListRockets(request, __options).WithCancellation(cancellationToken).ConfigureAwait(false))
                 yield return __item;
         }
 
         /// <summary>Adjusts the call options (headers, deadline, credentials) for <c>ListRockets</c>. Implement it in your part of the host.</summary>
-        partial void ConfigureListRockets(ref global::Grpc.Core.CallOptions options);
+        partial void ConfigureListRockets(ref CallOptions options);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.CreateRocket.Request" /> to the <c>CreateRocket</c> operation.</summary>
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __options = new global::Grpc.Core.CallOptions(cancellationToken: cancellationToken);
+            ArgumentNullException.ThrowIfNull(request);
+            var __options = new CallOptions(cancellationToken: cancellationToken);
             ConfigureCreateRocket(ref __options);
             return (await __contract.CreateRocket(request, __options).ConfigureAwait(false));
         }
 
         /// <summary>Adjusts the call options (headers, deadline, credentials) for <c>CreateRocket</c>. Implement it in your part of the host.</summary>
-        partial void ConfigureCreateRocket(ref global::Grpc.Core.CallOptions options);
+        partial void ConfigureCreateRocket(ref CallOptions options);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> to the <c>EditRocket</c> operation.</summary>
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __options = new global::Grpc.Core.CallOptions(cancellationToken: cancellationToken);
+            ArgumentNullException.ThrowIfNull(request);
+            var __options = new CallOptions(cancellationToken: cancellationToken);
             ConfigureEditRocket(ref __options);
             return (await __contract.EditRocket(request, __options).ConfigureAwait(false));
         }
 
         /// <summary>Adjusts the call options (headers, deadline, credentials) for <c>EditRocket</c>. Implement it in your part of the host.</summary>
-        partial void ConfigureEditRocket(ref global::Grpc.Core.CallOptions options);
+        partial void ConfigureEditRocket(ref CallOptions options);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> to the <c>DeleteRocket</c> operation.</summary>
-        public async global::System.Threading.Tasks.Task DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __options = new global::Grpc.Core.CallOptions(cancellationToken: cancellationToken);
+            ArgumentNullException.ThrowIfNull(request);
+            var __options = new CallOptions(cancellationToken: cancellationToken);
             ConfigureDeleteRocket(ref __options);
             await __contract.DeleteRocket(request, __options).ConfigureAwait(false);
         }
 
         /// <summary>Adjusts the call options (headers, deadline, credentials) for <c>DeleteRocket</c>. Implement it in your part of the host.</summary>
-        partial void ConfigureDeleteRocket(ref global::Grpc.Core.CallOptions options);
+        partial void ConfigureDeleteRocket(ref CallOptions options);
         /// <summary>Handles <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> by sending it through <see cref="RocketsGrpcClient.GetRocket" />.</summary>
-        public sealed class GetRocketHandler : global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.GetRocket.Request, global::Sample.Contracts.Rockets.RocketModel?>
+        public sealed class GetRocketHandler : IRequestHandler<global::Sample.Contracts.Rockets.GetRocket.Request, global::Sample.Contracts.Rockets.RocketModel?>
         {
             private readonly RocketsGrpcClient __client;
             public GetRocketHandler(RocketsGrpcClient client)
@@ -142,11 +174,11 @@ namespace Sample.Client
                 __client = client;
             }
 
-            public global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel?> Handle(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => __client.GetRocket(request, cancellationToken);
+            public Task<global::Sample.Contracts.Rockets.RocketModel?> Handle(global::Sample.Contracts.Rockets.GetRocket.Request request, CancellationToken cancellationToken) => __client.GetRocket(request, cancellationToken);
         }
 
         /// <summary>Handles <see cref="Sample.Contracts.Rockets.ListRockets.Request" /> by sending it through <see cref="RocketsGrpcClient.ListRockets" />.</summary>
-        public sealed class ListRocketsHandler : global::ChannelMediator.IStreamRequestHandler<global::Sample.Contracts.Rockets.ListRockets.Request, global::Sample.Contracts.Rockets.RocketModel>
+        public sealed class ListRocketsHandler : IStreamRequestHandler<global::Sample.Contracts.Rockets.ListRockets.Request, global::Sample.Contracts.Rockets.RocketModel>
         {
             private readonly RocketsGrpcClient __client;
             public ListRocketsHandler(RocketsGrpcClient client)
@@ -154,11 +186,11 @@ namespace Sample.Client
                 __client = client;
             }
 
-            public global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> Handle(global::Sample.Contracts.Rockets.ListRockets.Request request, global::System.Threading.CancellationToken cancellationToken) => __client.ListRockets(request, cancellationToken);
+            public IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> Handle(global::Sample.Contracts.Rockets.ListRockets.Request request, CancellationToken cancellationToken) => __client.ListRockets(request, cancellationToken);
         }
 
         /// <summary>Handles <see cref="Sample.Contracts.Rockets.CreateRocket.Request" /> by sending it through <see cref="RocketsGrpcClient.CreateRocket" />.</summary>
-        public sealed class CreateRocketHandler : global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.CreateRocket.Request, global::Sample.Contracts.Rockets.CreateRocket.Response>
+        public sealed class CreateRocketHandler : IRequestHandler<global::Sample.Contracts.Rockets.CreateRocket.Request, global::Sample.Contracts.Rockets.CreateRocket.Response>
         {
             private readonly RocketsGrpcClient __client;
             public CreateRocketHandler(RocketsGrpcClient client)
@@ -166,11 +198,11 @@ namespace Sample.Client
                 __client = client;
             }
 
-            public global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.CreateRocket.Response> Handle(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => __client.CreateRocket(request, cancellationToken);
+            public Task<global::Sample.Contracts.Rockets.CreateRocket.Response> Handle(global::Sample.Contracts.Rockets.CreateRocket.Request request, CancellationToken cancellationToken) => __client.CreateRocket(request, cancellationToken);
         }
 
         /// <summary>Handles <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> by sending it through <see cref="RocketsGrpcClient.EditRocket" />.</summary>
-        public sealed class EditRocketHandler : global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>
+        public sealed class EditRocketHandler : IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>
         {
             private readonly RocketsGrpcClient __client;
             public EditRocketHandler(RocketsGrpcClient client)
@@ -178,11 +210,11 @@ namespace Sample.Client
                 __client = client;
             }
 
-            public global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> Handle(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => __client.EditRocket(request, cancellationToken);
+            public Task<global::Sample.Contracts.Rockets.RocketModel> Handle(global::Sample.Contracts.Rockets.EditRocket.Request request, CancellationToken cancellationToken) => __client.EditRocket(request, cancellationToken);
         }
 
         /// <summary>Handles <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> by sending it through <see cref="RocketsGrpcClient.DeleteRocket" />.</summary>
-        public sealed class DeleteRocketHandler : global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.DeleteRocket.Request, global::ChannelMediator.Unit>
+        public sealed class DeleteRocketHandler : IRequestHandler<global::Sample.Contracts.Rockets.DeleteRocket.Request, Unit>
         {
             private readonly RocketsGrpcClient __client;
             public DeleteRocketHandler(RocketsGrpcClient client)
@@ -190,7 +222,7 @@ namespace Sample.Client
                 __client = client;
             }
 
-            public async global::System.Threading.Tasks.Task<global::ChannelMediator.Unit> Handle(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken cancellationToken)
+            public async Task<Unit> Handle(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CancellationToken cancellationToken)
             {
                 await __client.DeleteRocket(request, cancellationToken).ConfigureAwait(false);
                 return default;
@@ -199,24 +231,24 @@ namespace Sample.Client
     }
 
     /// <summary>Registers <see cref="RocketsGrpcClient" /> and its mediator handlers.</summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Grpc", "version")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Grpc", "version")]
     public static class RocketsGrpcClientServiceCollectionExtensions
     {
         /// <summary>Registers <see cref="RocketsGrpcClient" />, its gRPC client and one mediator handler per operation.</summary>
         /// <param name="services">The services.</param>
         /// <param name="configure">Sets the address and other client factory options.</param>
         /// <returns>The HttpClient builder behind the gRPC channel, for handlers and resilience.</returns>
-        public static global::Microsoft.Extensions.DependencyInjection.IHttpClientBuilder AddRocketsGrpcClient(this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services, global::System.Action<global::Grpc.Net.ClientFactory.GrpcClientFactoryOptions>? configure = null)
+        public static IHttpClientBuilder AddRocketsGrpcClient(this IServiceCollection services, Action<GrpcClientFactoryOptions>? configure = null)
         {
-            global::System.ArgumentNullException.ThrowIfNull(services);
-            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient<RocketsGrpcClient>(services);
-            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Describe(typeof(global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.GetRocket.Request, global::Sample.Contracts.Rockets.RocketModel?>), typeof(RocketsGrpcClient.GetRocketHandler), global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient));
-            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Describe(typeof(global::ChannelMediator.IStreamRequestHandler<global::Sample.Contracts.Rockets.ListRockets.Request, global::Sample.Contracts.Rockets.RocketModel>), typeof(RocketsGrpcClient.ListRocketsHandler), global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient));
-            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Describe(typeof(global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.CreateRocket.Request, global::Sample.Contracts.Rockets.CreateRocket.Response>), typeof(RocketsGrpcClient.CreateRocketHandler), global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient));
-            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Describe(typeof(global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>), typeof(RocketsGrpcClient.EditRocketHandler), global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient));
-            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Describe(typeof(global::ChannelMediator.IRequestHandler<global::Sample.Contracts.Rockets.DeleteRocket.Request, global::ChannelMediator.Unit>), typeof(RocketsGrpcClient.DeleteRocketHandler), global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient));
+            ArgumentNullException.ThrowIfNull(services);
+            services.TryAddTransient<RocketsGrpcClient>();
+            services.TryAdd(ServiceDescriptor.Describe(typeof(IRequestHandler<global::Sample.Contracts.Rockets.GetRocket.Request, global::Sample.Contracts.Rockets.RocketModel?>), typeof(RocketsGrpcClient.GetRocketHandler), ServiceLifetime.Transient));
+            services.TryAdd(ServiceDescriptor.Describe(typeof(IStreamRequestHandler<global::Sample.Contracts.Rockets.ListRockets.Request, global::Sample.Contracts.Rockets.RocketModel>), typeof(RocketsGrpcClient.ListRocketsHandler), ServiceLifetime.Transient));
+            services.TryAdd(ServiceDescriptor.Describe(typeof(IRequestHandler<global::Sample.Contracts.Rockets.CreateRocket.Request, global::Sample.Contracts.Rockets.CreateRocket.Response>), typeof(RocketsGrpcClient.CreateRocketHandler), ServiceLifetime.Transient));
+            services.TryAdd(ServiceDescriptor.Describe(typeof(IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>), typeof(RocketsGrpcClient.EditRocketHandler), ServiceLifetime.Transient));
+            services.TryAdd(ServiceDescriptor.Describe(typeof(IRequestHandler<global::Sample.Contracts.Rockets.DeleteRocket.Request, Unit>), typeof(RocketsGrpcClient.DeleteRocketHandler), ServiceLifetime.Transient));
             RocketsGrpcClient.ConfigureGrpcModel();
-            return configure is null ? global::ProtoBuf.Grpc.ClientFactory.ServicesExtensions.AddCodeFirstGrpcClient<IRocketsGrpcClientContract>(services) : global::ProtoBuf.Grpc.ClientFactory.ServicesExtensions.AddCodeFirstGrpcClient<IRocketsGrpcClientContract>(services, configure);
+            return configure is null ? services.AddCodeFirstGrpcClient<IRocketsGrpcClientContract>() : services.AddCodeFirstGrpcClient<IRocketsGrpcClientContract>(configure);
         }
     }
 }

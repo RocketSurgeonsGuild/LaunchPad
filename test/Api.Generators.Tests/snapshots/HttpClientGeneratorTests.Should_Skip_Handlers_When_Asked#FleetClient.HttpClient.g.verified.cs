@@ -3,76 +3,105 @@
 #nullable enable
 #pragma warning disable CS1591
 
-[global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
+using System.Net.Http.Json;
+using System.Text.Json.Serialization.Metadata;
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using ApiClientResponse = global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse;
+using ApiFormat = global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiFormat;
+using ApiQuery = global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiQuery;
+using ArgumentNullException = global::System.ArgumentNullException;
+using CancellationToken = global::System.Threading.CancellationToken;
+using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
+using HttpCompletionOption = global::System.Net.Http.HttpCompletionOption;
+using HttpMethod = global::System.Net.Http.HttpMethod;
+using HttpRequestMessage = global::System.Net.Http.HttpRequestMessage;
+using HttpStatusCode = global::System.Net.HttpStatusCode;
+using IHttpClientBuilder = global::Microsoft.Extensions.DependencyInjection.IHttpClientBuilder;
+using IHttpClientFactory = global::System.Net.Http.IHttpClientFactory;
+using IJsonTypeInfoResolver = global::System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver;
+using IServiceCollection = global::Microsoft.Extensions.DependencyInjection.IServiceCollection;
+using JsonContent = global::System.Net.Http.Json.JsonContent;
+using JsonSerializer = global::System.Text.Json.JsonSerializer;
+using JsonSerializerDefaults = global::System.Text.Json.JsonSerializerDefaults;
+using JsonSerializerOptions = global::System.Text.Json.JsonSerializerOptions;
+using ServiceDescriptor = global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor;
+using ServiceLifetime = global::Microsoft.Extensions.DependencyInjection.ServiceLifetime;
+using UnconditionalSuppressMessageAttribute = global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute;
+using Uri = global::System.Uri;
+
+[GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
 public partial class FleetClient
 {
     /// <summary>The name of the <see cref="global::System.Net.Http.HttpClient" /> this client sends through.</summary>
     public const string HttpClientName = "Fleet";
-    private static readonly global::System.Text.Json.JsonSerializerOptions __jsonOptions = CreateJsonOptions();
-    private readonly global::System.Net.Http.IHttpClientFactory __httpClientFactory;
+    private static readonly JsonSerializerOptions __jsonOptions = CreateJsonOptions();
+    private readonly IHttpClientFactory __httpClientFactory;
     /// <summary>Creates the client. Register it with <c>services.AddFleetClient()</c>.</summary>
-    public FleetClient(global::System.Net.Http.IHttpClientFactory httpClientFactory)
+    public FleetClient(IHttpClientFactory httpClientFactory)
     {
-        global::System.ArgumentNullException.ThrowIfNull(httpClientFactory);
+        ArgumentNullException.ThrowIfNull(httpClientFactory);
         __httpClientFactory = httpClientFactory;
     }
 
-    private static global::System.Text.Json.JsonSerializerOptions CreateJsonOptions()
+    private static JsonSerializerOptions CreateJsonOptions()
     {
-        var options = new global::System.Text.Json.JsonSerializerOptions(global::System.Text.Json.JsonSerializerDefaults.General);
+        var options = new JsonSerializerOptions(JsonSerializerDefaults.General);
         ConfigureJsonOptions(options);
-        if (global::System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault)
+        if (JsonSerializer.IsReflectionEnabledByDefault)
             options.TypeInfoResolver ??= ReflectionTypeInfoResolver();
         options.MakeReadOnly();
         return options;
     }
 
-    [global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
-    [global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
-    private static global::System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver? ReflectionTypeInfoResolver() => global::System.Text.Json.JsonSerializerOptions.Default.TypeInfoResolver;
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
+    private static IJsonTypeInfoResolver? ReflectionTypeInfoResolver() => JsonSerializerOptions.Default.TypeInfoResolver;
     /// <summary>Adjusts the JSON options, e.g. to insert a <c>JsonSerializerContext</c> for trimming and native AOT.</summary>
-    static partial void ConfigureJsonOptions(global::System.Text.Json.JsonSerializerOptions options);
+    static partial void ConfigureJsonOptions(JsonSerializerOptions options);
     /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to <c>GET /api/fleet/{id:guid}/rocket</c>.</summary>
-    public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+    public async Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, CancellationToken cancellationToken = default)
     {
-        global::System.ArgumentNullException.ThrowIfNull(request);
-        var __url = "api/fleet/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiFormat.Value(request.Id)) + "/rocket";
-        var __query = new global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiQuery();
+        ArgumentNullException.ThrowIfNull(request);
+        var __url = "api/fleet/" + Uri.EscapeDataString(ApiFormat.Value(request.Id)) + "/rocket";
+        var __query = new ApiQuery();
         __query.Add("api-version", "2.0");
         __url += __query.ToString();
-        using var __message = new global::System.Net.Http.HttpRequestMessage(new global::System.Net.Http.HttpMethod("GET"), __url);
+        using var __message = new HttpRequestMessage(new HttpMethod("GET"), __url);
         ConfigureGetRocket(__message);
-        using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-        if (__response.StatusCode == global::System.Net.HttpStatusCode.NotFound)
+        using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+        if (__response.StatusCode == HttpStatusCode.NotFound)
             return default;
-        await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
-        var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
-        return (await global::System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync(__response.Content, __typeInfo, cancellationToken).ConfigureAwait(false))!;
+        await ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
+        var __typeInfo = (JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
+        return (await __response.Content.ReadFromJsonAsync(__typeInfo, cancellationToken).ConfigureAwait(false))!;
     }
 
     /// <summary>Adjusts the request for <c>GetRocket</c> before it is sent. Implement it in your part of <see cref="FleetClient" />.</summary>
-    partial void ConfigureGetRocket(global::System.Net.Http.HttpRequestMessage request);
+    partial void ConfigureGetRocket(HttpRequestMessage request);
     /// <summary>Sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> to <c>PUT /api/fleet/{id:guid}/rocket</c>.</summary>
-    public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+    public async Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, CancellationToken cancellationToken = default)
     {
-        global::System.ArgumentNullException.ThrowIfNull(request);
-        var __url = "api/fleet/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiFormat.Value(request.Id)) + "/rocket";
-        var __query = new global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiQuery();
+        ArgumentNullException.ThrowIfNull(request);
+        var __url = "api/fleet/" + Uri.EscapeDataString(ApiFormat.Value(request.Id)) + "/rocket";
+        var __query = new ApiQuery();
         __query.Add("api-version", "2.0");
         __url += __query.ToString();
-        using var __message = new global::System.Net.Http.HttpRequestMessage(new global::System.Net.Http.HttpMethod("PUT"), __url);
-        __message.Content = global::System.Net.Http.Json.JsonContent.Create(request, (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.EditRocket.Request>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.EditRocket.Request)));
+        using var __message = new HttpRequestMessage(new HttpMethod("PUT"), __url);
+        __message.Content = JsonContent.Create(request, (JsonTypeInfo<global::Sample.Contracts.Rockets.EditRocket.Request>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.EditRocket.Request)));
         ConfigureEditRocket(__message);
-        using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-        await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
-        var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
-        return (await global::System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync(__response.Content, __typeInfo, cancellationToken).ConfigureAwait(false))!;
+        using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+        await ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
+        var __typeInfo = (JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
+        return (await __response.Content.ReadFromJsonAsync(__typeInfo, cancellationToken).ConfigureAwait(false))!;
     }
 
     /// <summary>Adjusts the request for <c>EditRocket</c> before it is sent. Implement it in your part of <see cref="FleetClient" />.</summary>
-    partial void ConfigureEditRocket(global::System.Net.Http.HttpRequestMessage request);
+    partial void ConfigureEditRocket(HttpRequestMessage request);
     /// <summary>Handles <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> by sending it through <see cref="FleetClient.EditRocket" />.</summary>
-    public sealed class EditRocketHandler : global::MediatR.IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>
+    public sealed class EditRocketHandler : IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>
     {
         private readonly FleetClient __client;
         public EditRocketHandler(FleetClient client)
@@ -80,21 +109,21 @@ public partial class FleetClient
             __client = client;
         }
 
-        public global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> Handle(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken) => __client.EditRocket(request, cancellationToken);
+        public Task<global::Sample.Contracts.Rockets.RocketModel> Handle(global::Sample.Contracts.Rockets.EditRocket.Request request, CancellationToken cancellationToken) => __client.EditRocket(request, cancellationToken);
     }
 }
 
 /// <summary>Registers <see cref="FleetClient" /> and its mediator handlers.</summary>
-[global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
+[GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
 public static class FleetClientServiceCollectionExtensions
 {
     /// <summary>Registers <see cref="FleetClient" />, its named HttpClient and one mediator handler per operation.</summary>
     /// <returns>The HttpClient builder, to set the base address, handlers and resilience.</returns>
-    public static global::Microsoft.Extensions.DependencyInjection.IHttpClientBuilder AddFleetClient(this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+    public static IHttpClientBuilder AddFleetClient(this IServiceCollection services)
     {
-        global::System.ArgumentNullException.ThrowIfNull(services);
-        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient<FleetClient>(services);
-        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Describe(typeof(global::MediatR.IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>), typeof(FleetClient.EditRocketHandler), global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient));
-        return global::Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient(services, FleetClient.HttpClientName);
+        ArgumentNullException.ThrowIfNull(services);
+        services.TryAddTransient<FleetClient>();
+        services.TryAdd(ServiceDescriptor.Describe(typeof(IRequestHandler<global::Sample.Contracts.Rockets.EditRocket.Request, global::Sample.Contracts.Rockets.RocketModel>), typeof(FleetClient.EditRocketHandler), ServiceLifetime.Transient));
+        return services.AddHttpClient(FleetClient.HttpClientName);
     }
 }

@@ -107,12 +107,46 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
     }
 
     /// <summary>
-    ///     Snapshots the whole generator result: every added source, the generator, analyzer and compilation diagnostics. Only the .NET SDK's
-    ///     default <c>NoWarn</c> (CS1701 and CS1702, assembly-version unification) is left out: a real build never shows it, and which references
-    ///     raise it differs between target frameworks.
+    ///     Snapshots the whole generator result: every added source, the generator, analyzer and compilation diagnostics. Left out: the .NET
+    ///     SDK's default <c>NoWarn</c> (CS1701 and CS1702, assembly-version unification), which a real build never shows and which references
+    ///     raise differs between target frameworks, and the constant helper sources, identical in every snapshot.
     /// </summary>
     protected static SettingsTask Verify(GeneratorTestResults result, [System.Runtime.CompilerServices.CallerFilePath] string sourceFile = "") =>
-        Verifier.Verify(result with { FinalDiagnostics = result.FinalDiagnostics.RemoveAll(d => d.Id is "CS1701" or "CS1702") }, sourceFile: sourceFile);
+        Verifier
+           .Verify(result with { FinalDiagnostics = result.FinalDiagnostics.RemoveAll(d => d.Id is "CS1701" or "CS1702") }, sourceFile: sourceFile);
+
+
+    /// <summary>
+    ///     Snapshots only the diagnostics, for tests about a diagnostic: everything the generators, the analyzer and the final compilation
+    ///     reported, Info and up, as one list without repeats, plus each code fix the test ran: its title and the fixed document.
+    /// </summary>
+    protected async Task VerifyDiagnostics(GeneratorTestResults result, Func<SettingsTask, SettingsTask>? settings = null, [System.Runtime.CompilerServices.CallerFilePath] string sourceFile = "")
+    {
+        var diagnostics = result.Results.Values.SelectMany(r => r.Diagnostics)
+                                .Concat(result.AnalyzerResults.Values.SelectMany(r => r.Diagnostics))
+                                .Concat(result.FinalDiagnostics)
+                                .Where(d => d.Severity >= DiagnosticSeverity.Info && d.Id is not ( "CS1701" or "CS1702" ))
+                                .GroupBy(d => (d.Id, Location: d.Location.ToString(), Message: d.GetMessage(System.Globalization.CultureInfo.InvariantCulture)))
+                                .Select(g => g.First())
+                                .OrderBy(d => d.Location.SourceTree?.FilePath, StringComparer.Ordinal)
+                                .ThenBy(d => d.Location.SourceSpan.Start)
+                                .ThenBy(d => d.Id, StringComparer.Ordinal)
+                                .ToArray();
+        var fixes = new List<object>();
+        foreach (var action in result.CodeFixResults.Values.SelectMany(r => r.ResolvedFixes).SelectMany(f => f.CodeActions))
+        {
+            // The document as the fix leaves it: TargetDocument is the one it started from.
+            var fixedDocument = action.Changes.NewProject.GetDocument(action.TargetDocument.Id) ?? action.TargetDocument;
+            var text = ( await fixedDocument.GetTextAsync(TestContext.CancellationToken) ).ToString();
+            // The attribute declarations appended to the host source (AttributesInHostSource) aren't part of the fix.
+            if (AttributesInHostSource && text.IndexOf(AttributeSources, StringComparison.Ordinal) is >= 0 and var start) text = text[..start].TrimEnd();
+            fixes.Add(new { action.CodeAction.Title, Document = text });
+        }
+
+        object target = fixes.Count == 0 ? new { Diagnostics = diagnostics } : new { Diagnostics = diagnostics, CodeFixes = fixes };
+        var task = Verifier.Verify(target, sourceFile: sourceFile);
+        await ( settings?.Invoke(task) ?? task );
+    }
 
     /// <summary>Fails with the final compilation's errors listed, so a broken emitter shows what it broke.</summary>
     protected static void AssertCompiles(GeneratorTestResults result)
@@ -135,6 +169,7 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithProjectName("Server")
            .AddPreprocessorSymbol("NET7_0_OR_GREATER")
            .AddSources(AttributesInHostSource ? [] : [AttributeSources])
+           .IgnoreHelperSources()
            .WithAnalyzer<OperationHostAnalyzer>()
            .AddReferences(FrameworkReferences)
            .AddReferences(
@@ -209,6 +244,7 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .WithProjectName("Client")
            .AddPreprocessorSymbol("NET7_0_OR_GREATER")
            .AddSources(AttributesInHostSource ? [] : [AttributeSources])
+           .IgnoreHelperSources()
            .WithAnalyzer<OperationHostAnalyzer>()
            .AddReferences(FrameworkReferences)
            .AddReferences(
@@ -219,4 +255,15 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                 typeof(JsonContent).Assembly,
                 typeof(System.Text.Json.JsonSerializer).Assembly
             );
+}
+
+internal static class GeneratorTestContextBuilderExtensions
+{
+    /// <summary>Leaves the constant helper sources out of the snapshots: they are the same text in every test with a host of their transport.</summary>
+    public static GeneratorTestContextBuilder IgnoreHelperSources(this GeneratorTestContextBuilder builder) =>
+        builder
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ServerHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ClientHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GraphQLClientHelpers.g.cs");
 }

@@ -1,42 +1,5 @@
 ﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
-      {
-        Id: LPAD1010,
-        Title: Operation host must be partial,
-        Severity: Error,
-        WarningLevel: 0,
-        Location: Input0.cs: (8,51)-(8,71),
-        MessageFormat: Operation host {0} must be {1},
-        Message: Operation host RocketsGraphQLClient must be partial,
-        Category: LaunchPad.Api
-      }
-    ]
-  },
-  CodeFixes: {
-    Rocket.Surgery.LaunchPad.Api.Generators.MakeHostPartialCodeFix: [
-      {
-        CodeActions: [
-          {
-            Title: Make the operation host partial,
-            Tags: null
-          }
-        ],
-        Diagnostic: {
-          Id: LPAD1010,
-          Title: Operation host must be partial,
-          Severity: Error,
-          WarningLevel: 0,
-          Location: Input0.cs: (8,51)-(8,71),
-          MessageFormat: Operation host {0} must be {1},
-          Message: Operation host RocketsGraphQLClient must be partial,
-          Category: LaunchPad.Api
-        },
-        Document: Input0.cs
-      }
-    ]
-  },
-  FinalDiagnostics: [
+  Diagnostics: [
     {
       Id: CS0260,
       Title: ,
@@ -68,7 +31,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (13,377)-(13,386),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (17,178)-(17,187),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
       MessageFormat: The name '{0}' does not exist in the current context,
       Message: The name '_services' does not exist in the current context,
@@ -80,7 +43,20 @@
       ]
     }
   ],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator: []
-  }
+  CodeFixes: [
+    {
+      Title: Make the operation host partial,
+      Document:
+#nullable enable
+using Rocket.Surgery.LaunchPad.Api;
+using Sample.Contracts.Rockets;
+
+
+
+namespace Sample.Host
+{
+    [Operation<CreateRocket.Request>] public partial class RocketsGraphQLClient;
+}
+    }
+  ]
 }

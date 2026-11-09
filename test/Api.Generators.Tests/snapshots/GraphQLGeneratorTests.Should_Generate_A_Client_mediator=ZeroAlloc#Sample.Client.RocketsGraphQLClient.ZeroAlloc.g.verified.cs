@@ -3,22 +3,27 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using CancellationToken = global::System.Threading.CancellationToken;
+using Unit = global::ZeroAlloc.Mediator.Unit;
+
 namespace ZeroAlloc.Mediator
 {
     internal partial interface IMediator
     {
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> Send(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::System.Threading.CancellationToken ct = default);
-        global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> Send(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken ct = default);
-        global::System.Threading.Tasks.ValueTask<global::ZeroAlloc.Mediator.Unit> Send(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken ct = default);
+        ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> Send(global::Sample.Contracts.Rockets.CreateRocket.Request request, CancellationToken ct = default);
+        ValueTask<global::Sample.Contracts.Rockets.RocketModel> Send(global::Sample.Contracts.Rockets.EditRocket.Request request, CancellationToken ct = default);
+        ValueTask<Unit> Send(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CancellationToken ct = default);
     }
 
     internal partial class MediatorService
     {
-        public global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> Send(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::System.Threading.CancellationToken ct) => new(global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Sample.Client.RocketsGraphQLClient>(_services).CreateRocket(request, ct));
-        public global::System.Threading.Tasks.ValueTask<global::Sample.Contracts.Rockets.RocketModel> Send(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken ct) => new(global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Sample.Client.RocketsGraphQLClient>(_services).EditRocket(request, ct));
-        public async global::System.Threading.Tasks.ValueTask<global::ZeroAlloc.Mediator.Unit> Send(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken ct)
+        public ValueTask<global::Sample.Contracts.Rockets.CreateRocket.Response> Send(global::Sample.Contracts.Rockets.CreateRocket.Request request, CancellationToken ct) => new(_services.GetRequiredService<global::Sample.Client.RocketsGraphQLClient>().CreateRocket(request, ct));
+        public ValueTask<global::Sample.Contracts.Rockets.RocketModel> Send(global::Sample.Contracts.Rockets.EditRocket.Request request, CancellationToken ct) => new(_services.GetRequiredService<global::Sample.Client.RocketsGraphQLClient>().EditRocket(request, ct));
+        public async ValueTask<Unit> Send(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CancellationToken ct)
         {
-            await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Sample.Client.RocketsGraphQLClient>(_services).DeleteRocket(request, ct).ConfigureAwait(false);
+            await _services.GetRequiredService<global::Sample.Client.RocketsGraphQLClient>().DeleteRocket(request, ct).ConfigureAwait(false);
             return default;
         }
     }

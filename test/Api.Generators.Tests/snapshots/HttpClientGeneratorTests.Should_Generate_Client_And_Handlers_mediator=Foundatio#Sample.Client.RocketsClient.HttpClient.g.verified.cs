@@ -3,142 +3,173 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using System.Collections.Generic;
+using System.Net.Http.Json;
+using System.Text.Json.Serialization.Metadata;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using ApiClientResponse = global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse;
+using ApiFormat = global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiFormat;
+using ApiQuery = global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiQuery;
+using ArgumentNullException = global::System.ArgumentNullException;
+using CancellationToken = global::System.Threading.CancellationToken;
+using Enumerable = global::System.Linq.Enumerable;
+using EnumeratorCancellationAttribute = global::System.Runtime.CompilerServices.EnumeratorCancellationAttribute;
+using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
+using HandlerRegistry = global::Foundatio.Mediator.HandlerRegistry;
+using HttpCompletionOption = global::System.Net.Http.HttpCompletionOption;
+using HttpMethod = global::System.Net.Http.HttpMethod;
+using HttpRequestMessage = global::System.Net.Http.HttpRequestMessage;
+using HttpStatusCode = global::System.Net.HttpStatusCode;
+using IHttpClientBuilder = global::Microsoft.Extensions.DependencyInjection.IHttpClientBuilder;
+using IHttpClientFactory = global::System.Net.Http.IHttpClientFactory;
+using IJsonTypeInfoResolver = global::System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver;
+using IServiceCollection = global::Microsoft.Extensions.DependencyInjection.IServiceCollection;
+using InvalidOperationException = global::System.InvalidOperationException;
+using JsonContent = global::System.Net.Http.Json.JsonContent;
+using JsonSerializer = global::System.Text.Json.JsonSerializer;
+using JsonSerializerDefaults = global::System.Text.Json.JsonSerializerDefaults;
+using JsonSerializerOptions = global::System.Text.Json.JsonSerializerOptions;
+using UnconditionalSuppressMessageAttribute = global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute;
+using Uri = global::System.Uri;
+
 namespace Sample.Client
 {
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
     public partial class RocketsClient
     {
         /// <summary>The name of the <see cref="global::System.Net.Http.HttpClient" /> this client sends through.</summary>
         public const string HttpClientName = "RocketsClient";
-        private static readonly global::System.Text.Json.JsonSerializerOptions __jsonOptions = CreateJsonOptions();
-        private readonly global::System.Net.Http.IHttpClientFactory __httpClientFactory;
+        private static readonly JsonSerializerOptions __jsonOptions = CreateJsonOptions();
+        private readonly IHttpClientFactory __httpClientFactory;
         /// <summary>Creates the client. Register it with <c>services.AddRocketsClient()</c>.</summary>
-        public RocketsClient(global::System.Net.Http.IHttpClientFactory httpClientFactory)
+        public RocketsClient(IHttpClientFactory httpClientFactory)
         {
-            global::System.ArgumentNullException.ThrowIfNull(httpClientFactory);
+            ArgumentNullException.ThrowIfNull(httpClientFactory);
             __httpClientFactory = httpClientFactory;
         }
 
-        private static global::System.Text.Json.JsonSerializerOptions CreateJsonOptions()
+        private static JsonSerializerOptions CreateJsonOptions()
         {
-            var options = new global::System.Text.Json.JsonSerializerOptions(global::System.Text.Json.JsonSerializerDefaults.Web);
+            var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             ConfigureJsonOptions(options);
-            if (global::System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault)
+            if (JsonSerializer.IsReflectionEnabledByDefault)
                 options.TypeInfoResolver ??= ReflectionTypeInfoResolver();
             options.MakeReadOnly();
             return options;
         }
 
-        [global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
-        [global::System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
-        private static global::System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver? ReflectionTypeInfoResolver() => global::System.Text.Json.JsonSerializerOptions.Default.TypeInfoResolver;
+        [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only called when JsonSerializer.IsReflectionEnabledByDefault is true.")]
+        private static IJsonTypeInfoResolver? ReflectionTypeInfoResolver() => JsonSerializerOptions.Default.TypeInfoResolver;
         /// <summary>Adjusts the JSON options, e.g. to insert a <c>JsonSerializerContext</c> for trimming and native AOT.</summary>
-        static partial void ConfigureJsonOptions(global::System.Text.Json.JsonSerializerOptions options);
+        static partial void ConfigureJsonOptions(JsonSerializerOptions options);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.GetRocket.Request" /> to <c>GET /api/rockets/{id:guid}</c>.</summary>
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task<global::Sample.Contracts.Rockets.RocketModel?> GetRocket(global::Sample.Contracts.Rockets.GetRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __url = "api/rockets/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiFormat.Value(request.Id));
-            using var __message = new global::System.Net.Http.HttpRequestMessage(new global::System.Net.Http.HttpMethod("GET"), __url);
+            ArgumentNullException.ThrowIfNull(request);
+            var __url = "api/rockets/" + Uri.EscapeDataString(ApiFormat.Value(request.Id));
+            using var __message = new HttpRequestMessage(new HttpMethod("GET"), __url);
             ConfigureGetRocket(__message);
-            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-            if (__response.StatusCode == global::System.Net.HttpStatusCode.NotFound)
+            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+            if (__response.StatusCode == HttpStatusCode.NotFound)
                 return default;
-            await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
-            var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
-            return (await global::System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync(__response.Content, __typeInfo, cancellationToken).ConfigureAwait(false))!;
+            await ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
+            var __typeInfo = (JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
+            return (await __response.Content.ReadFromJsonAsync(__typeInfo, cancellationToken).ConfigureAwait(false))!;
         }
 
         /// <summary>Adjusts the request for <c>GetRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
-        partial void ConfigureGetRocket(global::System.Net.Http.HttpRequestMessage request);
+        partial void ConfigureGetRocket(HttpRequestMessage request);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.ListRockets.Request" /> to <c>GET /api/rockets</c>.</summary>
-        public async global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<global::Sample.Contracts.Rockets.RocketModel> ListRockets(global::Sample.Contracts.Rockets.ListRockets.Request request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request);
             var __url = "api/rockets";
-            var __query = new global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiQuery();
+            var __query = new ApiQuery();
             __query.Add("name", request.Name);
             __url += __query.ToString();
-            using var __message = new global::System.Net.Http.HttpRequestMessage(new global::System.Net.Http.HttpMethod("GET"), __url);
+            using var __message = new HttpRequestMessage(new HttpMethod("GET"), __url);
             ConfigureListRockets(__message);
-            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-            await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
-            var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
-            await foreach (var __item in global::System.Threading.Tasks.TaskAsyncEnumerableExtensions.ConfigureAwait(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.ReadNdjsonAsync(__response, __typeInfo, cancellationToken), false))
+            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+            await ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
+            var __typeInfo = (JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
+            await foreach (var __item in ApiClientResponse.ReadNdjsonAsync(__response, __typeInfo, cancellationToken).ConfigureAwait(false))
                 yield return __item;
         }
 
         /// <summary>Adjusts the request for <c>ListRockets</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
-        partial void ConfigureListRockets(global::System.Net.Http.HttpRequestMessage request);
+        partial void ConfigureListRockets(HttpRequestMessage request);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.CreateRocket.Request" /> to <c>POST /api/rockets</c>.</summary>
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task<global::Sample.Contracts.Rockets.CreateRocket.Response> CreateRocket(global::Sample.Contracts.Rockets.CreateRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request);
             var __url = "api/rockets";
-            using var __message = new global::System.Net.Http.HttpRequestMessage(new global::System.Net.Http.HttpMethod("POST"), __url);
-            __message.Content = global::System.Net.Http.Json.JsonContent.Create(request, (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.CreateRocket.Request>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request)));
+            using var __message = new HttpRequestMessage(new HttpMethod("POST"), __url);
+            __message.Content = JsonContent.Create(request, (JsonTypeInfo<global::Sample.Contracts.Rockets.CreateRocket.Request>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request)));
             ConfigureCreateRocket(__message);
-            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-            await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
-            var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.CreateRocket.Response>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response));
-            return (await global::System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync(__response.Content, __typeInfo, cancellationToken).ConfigureAwait(false))!;
+            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+            await ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
+            var __typeInfo = (JsonTypeInfo<global::Sample.Contracts.Rockets.CreateRocket.Response>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response));
+            return (await __response.Content.ReadFromJsonAsync(__typeInfo, cancellationToken).ConfigureAwait(false))!;
         }
 
         /// <summary>Adjusts the request for <c>CreateRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
-        partial void ConfigureCreateRocket(global::System.Net.Http.HttpRequestMessage request);
+        partial void ConfigureCreateRocket(HttpRequestMessage request);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.EditRocket.Request" /> to <c>PUT /api/rockets/{id:guid}</c>.</summary>
-        public async global::System.Threading.Tasks.Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task<global::Sample.Contracts.Rockets.RocketModel> EditRocket(global::Sample.Contracts.Rockets.EditRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __url = "api/rockets/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiFormat.Value(request.Id));
-            using var __message = new global::System.Net.Http.HttpRequestMessage(new global::System.Net.Http.HttpMethod("PUT"), __url);
-            __message.Content = global::System.Net.Http.Json.JsonContent.Create(request, (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.EditRocket.Request>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.EditRocket.Request)));
+            ArgumentNullException.ThrowIfNull(request);
+            var __url = "api/rockets/" + Uri.EscapeDataString(ApiFormat.Value(request.Id));
+            using var __message = new HttpRequestMessage(new HttpMethod("PUT"), __url);
+            __message.Content = JsonContent.Create(request, (JsonTypeInfo<global::Sample.Contracts.Rockets.EditRocket.Request>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.EditRocket.Request)));
             ConfigureEditRocket(__message);
-            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-            await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
-            var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
-            return (await global::System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync(__response.Content, __typeInfo, cancellationToken).ConfigureAwait(false))!;
+            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+            await ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
+            var __typeInfo = (JsonTypeInfo<global::Sample.Contracts.Rockets.RocketModel>)__jsonOptions.GetTypeInfo(typeof(global::Sample.Contracts.Rockets.RocketModel));
+            return (await __response.Content.ReadFromJsonAsync(__typeInfo, cancellationToken).ConfigureAwait(false))!;
         }
 
         /// <summary>Adjusts the request for <c>EditRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
-        partial void ConfigureEditRocket(global::System.Net.Http.HttpRequestMessage request);
+        partial void ConfigureEditRocket(HttpRequestMessage request);
         /// <summary>Sends <see cref="Sample.Contracts.Rockets.DeleteRocket.Request" /> to <c>DELETE /api/rockets/{id:guid}</c>.</summary>
-        public async global::System.Threading.Tasks.Task<bool> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, global::System.Threading.CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteRocket(global::Sample.Contracts.Rockets.DeleteRocket.Request request, CancellationToken cancellationToken = default)
         {
-            global::System.ArgumentNullException.ThrowIfNull(request);
-            var __url = "api/rockets/" + global::System.Uri.EscapeDataString(global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiFormat.Value(request.Id));
-            using var __message = new global::System.Net.Http.HttpRequestMessage(new global::System.Net.Http.HttpMethod("DELETE"), __url);
+            ArgumentNullException.ThrowIfNull(request);
+            var __url = "api/rockets/" + Uri.EscapeDataString(ApiFormat.Value(request.Id));
+            using var __message = new HttpRequestMessage(new HttpMethod("DELETE"), __url);
             ConfigureDeleteRocket(__message);
-            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, global::System.Net.Http.HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-            await global::Rocket.Surgery.LaunchPad.Api.Generated.Http.ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
-            var __typeInfo = (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<bool>)__jsonOptions.GetTypeInfo(typeof(bool));
-            return (await global::System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync(__response.Content, __typeInfo, cancellationToken).ConfigureAwait(false))!;
+            using var __response = await __httpClientFactory.CreateClient(HttpClientName).SendAsync(__message, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+            await ApiClientResponse.EnsureSuccessAsync(__response, cancellationToken).ConfigureAwait(false);
+            var __typeInfo = (JsonTypeInfo<bool>)__jsonOptions.GetTypeInfo(typeof(bool));
+            return (await __response.Content.ReadFromJsonAsync(__typeInfo, cancellationToken).ConfigureAwait(false))!;
         }
 
         /// <summary>Adjusts the request for <c>DeleteRocket</c> before it is sent. Implement it in your part of <see cref="RocketsClient" />.</summary>
-        partial void ConfigureDeleteRocket(global::System.Net.Http.HttpRequestMessage request);
+        partial void ConfigureDeleteRocket(HttpRequestMessage request);
     }
 
     /// <summary>Registers <see cref="RocketsClient" /> and its mediator handlers.</summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
+    [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Client.Http", "version")]
     public static class RocketsClientServiceCollectionExtensions
     {
         /// <summary>Registers <see cref="RocketsClient" />, its named HttpClient and one mediator handler per operation.</summary>
         /// <returns>The HttpClient builder, to set the base address, handlers and resilience.</returns>
-        public static global::Microsoft.Extensions.DependencyInjection.IHttpClientBuilder AddRocketsClient(this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+        public static IHttpClientBuilder AddRocketsClient(this IServiceCollection services)
         {
-            global::System.ArgumentNullException.ThrowIfNull(services);
-            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient<RocketsClient>(services);
+            ArgumentNullException.ThrowIfNull(services);
+            services.TryAddTransient<RocketsClient>();
             foreach (var __descriptor in services)
             {
-                if (__descriptor.IsKeyedService || __descriptor.ServiceType != typeof(global::Foundatio.Mediator.HandlerRegistry) || __descriptor.ImplementationInstance is not global::Foundatio.Mediator.HandlerRegistry __registry)
+                if (__descriptor.IsKeyedService || __descriptor.ServiceType != typeof(HandlerRegistry) || __descriptor.ImplementationInstance is not HandlerRegistry __registry)
                     continue;
-                if (!global::System.Linq.Enumerable.Any(__registry.Registrations, r => r.HandlerClassName == "RocketsClient_GetRocket_Handler"))
-                    throw new global::System.InvalidOperationException("Foundatio's handler registry was built without RocketsClient's handlers. Call services.AddRocketsClient() before services.AddMediator(), and if AddMediator is given assemblies, include the one that declares RocketsClient.");
+                if (!Enumerable.Any(__registry.Registrations, r => r.HandlerClassName == "RocketsClient_GetRocket_Handler"))
+                    throw new InvalidOperationException("Foundatio's handler registry was built without RocketsClient's handlers. Call services.AddRocketsClient() before services.AddMediator(), and if AddMediator is given assemblies, include the one that declares RocketsClient.");
                 break;
             }
 
-            return global::Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient(services, RocketsClient.HttpClientName);
+            return services.AddHttpClient(RocketsClient.HttpClientName);
         }
     }
 }

@@ -3,48 +3,76 @@
 #nullable enable
 #pragma warning disable CS1591
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi;
+using ApiBinding = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiBinding;
+using ApiEndpointMetadata = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata;
+using ApiParameterBindingMetadata = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata;
+using ArgumentNullException = global::System.ArgumentNullException;
+using BindingFlags = global::System.Reflection.BindingFlags;
+using CancellationToken = global::System.Threading.CancellationToken;
+using CultureInfo = global::System.Globalization.CultureInfo;
+using FromQueryAttribute = global::Microsoft.AspNetCore.Mvc.FromQueryAttribute;
+using FromRouteAttribute = global::Microsoft.AspNetCore.Mvc.FromRouteAttribute;
+using FromServicesAttribute = global::Microsoft.AspNetCore.Mvc.FromServicesAttribute;
+using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
+using Guid = global::System.Guid;
+using HttpContext = global::Microsoft.AspNetCore.Http.HttpContext;
+using IEndpointConventionBuilder = global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder;
+using IEndpointRouteBuilder = global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder;
+using ISender = global::MediatR.ISender;
+using NotFound = global::Microsoft.AspNetCore.Http.HttpResults.NotFound;
+using ProblemDetails = global::Microsoft.AspNetCore.Mvc.ProblemDetails;
+using ProducesResponseTypeMetadata = global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata;
+using RequestDelegate = global::Microsoft.AspNetCore.Http.RequestDelegate;
+using RouteGroupBuilder = global::Microsoft.AspNetCore.Routing.RouteGroupBuilder;
+using Task = global::System.Threading.Tasks.Task;
+using TypedResults = global::Microsoft.AspNetCore.Http.TypedResults;
 
-[global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Api.MinimalApi", "version")]
+[GeneratedCode("Rocket.Surgery.LaunchPad.Api.MinimalApi", "version")]
 public static partial class RocketsEndpoints
 {
     /// <summary>
     ///     Maps the operations of <see cref="RocketsEndpoints" /> under <c>/api/rockets</c>.
     /// </summary>
     /// <returns>The route group, to add metadata or conventions to every operation.</returns>
-    public static global::Microsoft.AspNetCore.Routing.RouteGroupBuilder MapRocketsEndpoints(this global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints)
+    public static RouteGroupBuilder MapRocketsEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        global::System.ArgumentNullException.ThrowIfNull(endpoints);
+        ArgumentNullException.ThrowIfNull(endpoints);
         var group = endpoints.MapGroup("/api/rockets");
-        global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithTags(group, "Rockets");
+        group.WithTags("Rockets");
         {
-            var endpoint = group.MapMethods("/{id:guid}", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__GetRocketRequestDelegate));
-            var method = typeof(RocketsEndpoints).GetMethod(nameof(__GetRocket), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
-            endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Microsoft.AspNetCore.Http.HttpResults.Results<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.RocketModel>, global::Microsoft.AspNetCore.Http.HttpResults.NotFound>>(method, builder));
+            var endpoint = group.MapMethods("/{id:guid}", new string[] { "GET" }, new RequestDelegate(__GetRocketRequestDelegate));
+            var method = typeof(RocketsEndpoints).GetMethod(nameof(__GetRocket), BindingFlags.NonPublic | BindingFlags.Static)!;
+            endpoint.WithMetadata(method);
+            endpoint.Add(builder => ApiEndpointMetadata.Populate<Results<Ok<global::Sample.Contracts.RocketModel>, NotFound>>(method, builder));
             var parameters = method.GetParameters();
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata(parameters[0], true, false));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata(parameters[1], false, false));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata(parameters[2], false, false));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata(400, typeof(global::Microsoft.AspNetCore.Mvc.ProblemDetails), new string[] { "application/problem+json" }));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithName(endpoint, "GetRocket");
-            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithSummary(endpoint, "Load a RocketModel by its id.");
-            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithDescription(endpoint, "Answers 404 when the id is unknown; see RocketModel.");
+            endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[0], true, false));
+            endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[1], false, false));
+            endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[2], false, false));
+            endpoint.WithMetadata(new ProducesResponseTypeMetadata(400, typeof(ProblemDetails), new string[] { "application/problem+json" }));
+            endpoint.WithName("GetRocket");
+            endpoint.WithSummary("Load a RocketModel by its id.");
+            endpoint.WithDescription("Answers 404 when the id is unknown; see RocketModel.");
             ConfigureGetRocket(endpoint);
         }
 
         {
-            var endpoint = group.MapMethods("", new string[] { "GET" }, new global::Microsoft.AspNetCore.Http.RequestDelegate(__ListRocketsRequestDelegate));
-            var method = typeof(RocketsEndpoints).GetMethod(nameof(__ListRockets), global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Static)!;
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, method);
-            endpoint.Add(builder => global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata.Populate<global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.NdjsonResult<global::Sample.Contracts.RocketModel>>(method, builder));
+            var endpoint = group.MapMethods("", new string[] { "GET" }, new RequestDelegate(__ListRocketsRequestDelegate));
+            var method = typeof(RocketsEndpoints).GetMethod(nameof(__ListRockets), BindingFlags.NonPublic | BindingFlags.Static)!;
+            endpoint.WithMetadata(method);
+            endpoint.Add(builder => ApiEndpointMetadata.Populate<NdjsonResult<global::Sample.Contracts.RocketModel>>(method, builder));
             var parameters = method.GetParameters();
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata(parameters[0], false, true));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata(parameters[1], false, false));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata(parameters[2], false, false));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithMetadata(endpoint, new global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata(400, typeof(global::Microsoft.AspNetCore.Mvc.ProblemDetails), new string[] { "application/problem+json" }));
-            global::Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithName(endpoint, "ListRockets");
-            global::Microsoft.AspNetCore.Http.OpenApiRouteHandlerBuilderExtensions.WithSummary(endpoint, "Explicit wins");
+            endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[0], false, true));
+            endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[1], false, false));
+            endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[2], false, false));
+            endpoint.WithMetadata(new ProducesResponseTypeMetadata(400, typeof(ProblemDetails), new string[] { "application/problem+json" }));
+            endpoint.WithName("ListRockets");
+            endpoint.WithSummary("Explicit wins");
             ConfigureListRockets(endpoint);
         }
 
@@ -52,24 +80,24 @@ public static partial class RocketsEndpoints
     }
 
     /// <summary>Handles <c>GET /api/rockets/{id:guid}</c>.</summary>
-    private static async global::System.Threading.Tasks.Task<global::Microsoft.AspNetCore.Http.HttpResults.Results<global::Microsoft.AspNetCore.Http.HttpResults.Ok<global::Sample.Contracts.RocketModel>, global::Microsoft.AspNetCore.Http.HttpResults.NotFound>> __GetRocket([global::Microsoft.AspNetCore.Mvc.FromRoute(Name = "id")] global::System.Guid @id, [global::Microsoft.AspNetCore.Mvc.FromServices] global::MediatR.ISender __sender, global::System.Threading.CancellationToken __cancellationToken)
+    private static async Task<Results<Ok<global::Sample.Contracts.RocketModel>, NotFound>> __GetRocket([FromRoute(Name = "id")] Guid @id, [FromServices] ISender __sender, CancellationToken __cancellationToken)
     {
         var __wire = new global::Sample.Contracts.GetRocket.Request(@id);
         var __request = __wire;
         var __response = await __sender.Send(__request, __cancellationToken).ConfigureAwait(false);
-        return __response is null ? global::Microsoft.AspNetCore.Http.TypedResults.NotFound() : global::Microsoft.AspNetCore.Http.TypedResults.Ok(__response);
+        return __response is null ? TypedResults.NotFound() : TypedResults.Ok(__response);
     }
 
-    private static async global::System.Threading.Tasks.Task __GetRocketRequestDelegate(global::Microsoft.AspNetCore.Http.HttpContext httpContext)
+    private static async Task __GetRocketRequestDelegate(HttpContext httpContext)
     {
         var __cancellationToken = httpContext.RequestAborted;
         string? __raw_Id = httpContext.Request.RouteValues["id"]?.ToString();
-        global::System.Guid @id = default;
+        Guid @id = default;
         if (!string.IsNullOrEmpty(__raw_Id))
         {
-            if (!global::System.Guid.TryParse(__raw_Id, global::System.Globalization.CultureInfo.InvariantCulture, out var __parsed_Id))
+            if (!Guid.TryParse(__raw_Id, CultureInfo.InvariantCulture, out var __parsed_Id))
             {
-                await global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiBinding.BadRequestAsync(httpContext, "id", "route value").ConfigureAwait(false);
+                await ApiBinding.BadRequestAsync(httpContext, "id", "route value").ConfigureAwait(false);
                 return;
             }
 
@@ -77,35 +105,35 @@ public static partial class RocketsEndpoints
         }
         else
         {
-            await global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiBinding.BadRequestAsync(httpContext, "id", "route value").ConfigureAwait(false);
+            await ApiBinding.BadRequestAsync(httpContext, "id", "route value").ConfigureAwait(false);
             return;
         }
 
-        var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::MediatR.ISender>(httpContext.RequestServices);
+        var __sender = httpContext.RequestServices.GetRequiredService<ISender>();
         var __result = await __GetRocket(@id, __sender, __cancellationToken).ConfigureAwait(false);
         await __result.ExecuteAsync(httpContext).ConfigureAwait(false);
     }
 
     /// <summary>Customises the generated <c>GetRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
-    static partial void ConfigureGetRocket(global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder endpoint);
+    static partial void ConfigureGetRocket(IEndpointConventionBuilder endpoint);
     /// <summary>Handles <c>GET /api/rockets</c>.</summary>
-    private static global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.NdjsonResult<global::Sample.Contracts.RocketModel> __ListRockets([global::Microsoft.AspNetCore.Mvc.FromQuery(Name = "name")] string? @name, [global::Microsoft.AspNetCore.Mvc.FromServices] global::MediatR.ISender __sender, global::System.Threading.CancellationToken __cancellationToken)
+    private static NdjsonResult<global::Sample.Contracts.RocketModel> __ListRockets([FromQuery(Name = "name")] string? @name, [FromServices] ISender __sender, CancellationToken __cancellationToken)
     {
         var __wire = new global::Sample.Contracts.ListRockets.Request(@name);
         var __request = __wire;
-        return new global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.NdjsonResult<global::Sample.Contracts.RocketModel>(__sender.CreateStream(__request, __cancellationToken));
+        return new NdjsonResult<global::Sample.Contracts.RocketModel>(__sender.CreateStream(__request, __cancellationToken));
     }
 
-    private static async global::System.Threading.Tasks.Task __ListRocketsRequestDelegate(global::Microsoft.AspNetCore.Http.HttpContext httpContext)
+    private static async Task __ListRocketsRequestDelegate(HttpContext httpContext)
     {
         var __cancellationToken = httpContext.RequestAborted;
         string? __raw_Name = httpContext.Request.Query["name"];
         var @name = string.IsNullOrEmpty(__raw_Name) ? null : __raw_Name;
-        var __sender = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::MediatR.ISender>(httpContext.RequestServices);
+        var __sender = httpContext.RequestServices.GetRequiredService<ISender>();
         var __result = __ListRockets(@name, __sender, __cancellationToken);
         await __result.ExecuteAsync(httpContext).ConfigureAwait(false);
     }
 
     /// <summary>Customises the generated <c>ListRockets</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
-    static partial void ConfigureListRockets(global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder endpoint);
+    static partial void ConfigureListRockets(IEndpointConventionBuilder endpoint);
 }

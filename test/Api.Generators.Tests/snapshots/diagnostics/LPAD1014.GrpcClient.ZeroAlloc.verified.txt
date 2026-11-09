@@ -1,8 +1,5 @@
 ﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
-  },
-  FinalDiagnostics: [
+  Diagnostics: [
     {
       Id: LPAD1014,
       Title: gRPC type lacks serialization attributes,
@@ -28,7 +25,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator/Sample.Host.RocketsGrpcClient.ZeroAlloc.g.cs: (13,362)-(13,371),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator/Sample.Host.RocketsGrpcClient.ZeroAlloc.g.cs: (17,166)-(17,175),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
       MessageFormat: The name '{0}' does not exist in the current context,
       Message: The name '_services' does not exist in the current context,
@@ -39,29 +36,5 @@
         NotConfigurable
       ]
     }
-  ],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.GrpcClientGenerator: [
-      {
-        Id: LPAD1014,
-        Title: gRPC type lacks serialization attributes,
-        Severity: Warning,
-        WarningLevel: 1,
-        Location: Input1.cs: (8,5)-(8,33),
-        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
-        Message: Sample.Contracts.Rockets.GetRocket.Request is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
-        Category: LaunchPad.Api
-      },
-      {
-        Id: LPAD1014,
-        Title: gRPC type lacks serialization attributes,
-        Severity: Warning,
-        WarningLevel: 1,
-        Location: Input1.cs: (8,5)-(8,33),
-        MessageFormat: {0} is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
-        Message: Sample.Contracts.Rockets.RocketModel? is sent over gRPC but has no [DataContract] or [ProtoContract] with ordered members,
-        Category: LaunchPad.Api
-      }
-    ]
-  }
+  ]
 }

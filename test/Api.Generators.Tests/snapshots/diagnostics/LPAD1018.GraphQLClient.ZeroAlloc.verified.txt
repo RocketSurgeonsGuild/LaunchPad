@@ -1,8 +1,5 @@
 ﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
-  },
-  FinalDiagnostics: [
+  Diagnostics: [
     {
       Id: LPAD1018,
       Title: Two client hosts generate a handler for the same operation,
@@ -18,7 +15,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.FleetGraphQLClient.ZeroAlloc.g.cs: (13,375)-(13,384),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.FleetGraphQLClient.ZeroAlloc.g.cs: (17,178)-(17,187),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
       MessageFormat: The name '{0}' does not exist in the current context,
       Message: The name '_services' does not exist in the current context,
@@ -34,7 +31,23 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (13,112)-(13,116),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (12,74)-(12,78),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0111),
+      MessageFormat: Type '{1}' already defines a member called '{0}' with the same parameter types,
+      Message: Type 'IMediator' already defines a member called 'Send' with the same parameter types,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0111,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (17,81)-(17,85),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0111),
       MessageFormat: Type '{1}' already defines a member called '{0}' with the same parameter types,
       Message: Type 'MediatorService' already defines a member called 'Send' with the same parameter types,
@@ -50,7 +63,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (13,377)-(13,386),
+      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (17,178)-(17,187),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0103),
       MessageFormat: The name '{0}' does not exist in the current context,
       Message: The name '_services' does not exist in the current context,
@@ -60,36 +73,6 @@
         Telemetry,
         NotConfigurable
       ]
-    },
-    {
-      Id: CS0111,
-      Title: ,
-      Severity: Error,
-      WarningLevel: 0,
-      Location: Rocket.Surgery.LaunchPad.Api/Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator/Sample.Host.RocketsGraphQLClient.ZeroAlloc.g.cs: (8,105)-(8,109),
-      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0111),
-      MessageFormat: Type '{1}' already defines a member called '{0}' with the same parameter types,
-      Message: Type 'IMediator' already defines a member called 'Send' with the same parameter types,
-      Category: Compiler,
-      CustomTags: [
-        Compiler,
-        Telemetry,
-        NotConfigurable
-      ]
     }
-  ],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLClientGenerator: [
-      {
-        Id: LPAD1018,
-        Title: Two client hosts generate a handler for the same operation,
-        Severity: Error,
-        WarningLevel: 0,
-        Location: Input1.cs: (8,5)-(8,36),
-        MessageFormat: {0} is declared with handlers on both {1} and {2}; set Handlers = false on one of them,
-        Message: Sample.Contracts.Rockets.CreateRocket.Request is declared with handlers on both FleetGraphQLClient and RocketsGraphQLClient; set Handlers = false on one of them,
-        Category: LaunchPad.Api
-      }
-    ]
-  }
+  ]
 }
