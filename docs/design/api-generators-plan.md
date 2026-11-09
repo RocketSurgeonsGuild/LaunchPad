@@ -115,7 +115,7 @@ Read: `GENERATORS.md`, `ChannelMediator.ApiGenerators.Abstraction/*`, and its fo
 
 ```
 src/Api/  (Core/, MinimalApi/, Controllers/, Grpc/, GraphQL/, Clients/, CodeFixes/)
-test/Api.Generators.Tests/  test/Api.Functional.Tests/  test/Api.Aot.Tests/  sample/Api.*  (functional fixtures)
+test/Api.Generators.Tests/  test/Api.Functional.Tests/  test/Api/Functional/ (fixtures)  test/Api/Aot/ (native AOT check)
 ```
 
 ### 4.2 Operations and operation hosts
@@ -336,7 +336,7 @@ flowchart LR
 - a `RequestDelegate` (`__GetRocketRequestDelegate`) that parses route, query and header values with `TryParse`/`Enum.TryParse` (invariant culture), reads the body through the app's `JsonTypeInfo` (415 when not JSON, 400 when malformed), resolves the sender, calls the handler and executes its result;
 - `MapMethods(…, RequestDelegate)` plus the handler's `MethodInfo`, its result type's `IEndpointMetadataProvider` metadata, `IParameterBindingMetadata` per parameter and accepts metadata, so ApiExplorer/OpenAPI describe it as they would a typed lambda.
 
-Binding failures answer 400, with a ProblemDetails body when the app registered `IProblemDetailsService`. `test/Api.Aot/verify.sh` publishes a server and a client with `PublishAot` (no trimming/AOT warnings allowed) and runs a native round trip on martinothamar/Mediator. Consequences:
+Binding failures answer 400, with a ProblemDetails body when the app registered `IProblemDetailsService`. `test/Api/Aot/verify.sh` publishes a server and a client with `PublishAot` (no trimming/AOT warnings allowed) and runs a native round trip on martinothamar/Mediator. Consequences:
 
 - `Configure{Operation}` hooks receive an `IEndpointConventionBuilder`, and endpoint filters (`AddEndpointFilter`) don't apply, because those exist only for route-handler (lambda) endpoints.
 - AOT apps add their `JsonSerializerContext` with `ConfigureHttpJsonOptions` (server) and `ConfigureJsonOptions` (client host). LaunchPad's nested `X.Request` types share a simple name, so each `[JsonSerializable]` entry needs its own `TypeInfoPropertyName` (otherwise SYSLIB1031 silently skips it).
@@ -420,7 +420,7 @@ public static class RocketsClientServiceCollectionExtensions
 - **Determinism:** only the attributes generator adds `EmbeddedAttribute`, so a project with several transports doesn't get two files of the same name that the harness numbers in run order.
 - **Incrementality:** drive `CSharpGeneratorDriver` with `trackIncrementalGeneratorSteps: true` and named steps. Editing an unrelated file leaves emission `Cached`/`Unchanged`; editing a listed request type or an `[Operation<T>]` argument re-runs it.
 - **Functional** (`WebApplicationFactory`): a contracts project, then a Minimal API server and an HTTP client library per mediator (all six). `mediator.Send(x)` on the client reaches the server's handler and round-trips. The MediatR and Mediator servers together prove the generators work with any mediator; the ZeroAlloc and Foundatio pairs pin their undocumented shapes.
-- **AOT** (`test/Api.Aot.Tests`, net10.0 only, its own CI step): a Minimal API server and HTTP client on martinothamar/Mediator with `PublishAot=true`. The test fails on any IL2xxx/IL3xxx warning from a generated file.
+- **AOT** (`test/Api/Aot`, net10.0 only, its own CI step): a Minimal API server and HTTP client on martinothamar/Mediator with `PublishAot=true`. The test fails on any IL2xxx/IL3xxx warning from a generated file.
 
 ### 4.10 Documentation
 

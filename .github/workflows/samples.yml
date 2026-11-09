@@ -4,7 +4,7 @@ name: samples
 # build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
 # The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
 # clock), which this checks; the web app only builds.
-# It also publishes the API generators' native AOT check (test/Api.Aot): a server and a client that must publish without a trimming or AOT
+# It also publishes the API generators' native AOT check (test/Api/Aot): a server and a client that must publish without a trimming or AOT
 # warning and complete a round trip.
 
 on:
@@ -63,7 +63,7 @@ jobs:
                           - '.github/workflows/samples.yml'
                       api-aot:
                           - 'src/Api*/**'
-                          - 'test/Api.Aot/**'
+                          - 'test/Api/Aot/**'
                           - 'Directory.*.props'
                           - 'Directory.*.targets'
                           - '.config/mise.toml'
@@ -152,7 +152,7 @@ jobs:
                   experimental: true
                   github_token: ${{ secrets.GITHUB_TOKEN }}
             - name: 🚀 Publish and run the native AOT round trip
-              run: test/Api.Aot/verify.sh
+              run: test/Api/Aot/verify.sh
 
     # The ruleset requires a check named `samples`. The jobs above report under their own names, so this job stands in for them and passes
     # when each one that had to run succeeded.
