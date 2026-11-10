@@ -1,13 +1,12 @@
-using FluentValidation;
-
-using MediatR;
-
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.Rockets;
 
@@ -20,22 +19,20 @@ public static partial class DeleteRocket
     ///     The request to remove a rocket from the system
     /// </summary>
     /// <param name="Id">The id of the rocket to remove</param>
-    public record Request(RocketId Id) : IRequest;
-
-    private class Validator : AbstractValidator<Request>
+    [Validate]
+    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest
     {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
+        internal bool IsAssigned(RocketId id) => id != default;
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request>
+    internal class DeleteRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Unit>
     {
-        public async Task Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Unit> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return Unit.Value;
         }
     }
 }

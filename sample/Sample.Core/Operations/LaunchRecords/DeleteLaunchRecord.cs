@@ -1,13 +1,12 @@
-using FluentValidation;
-
-using MediatR;
-
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -20,20 +19,16 @@ public static partial class DeleteLaunchRecord
     ///     The request to delete a launch record
     /// </summary>
     /// <param name="Id">The id of the record to delete</param>
-    public record Request(LaunchRecordId Id) : IRequest;
-
-    [UsedImplicitly]
-    private class Validator : AbstractValidator<Request>
+    [Validate]
+    public record Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest
     {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
+        internal bool IsAssigned(LaunchRecordId id) => id != default;
     }
 
     [UsedImplicitly]
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request>
+    internal class DeleteLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Unit>
     {
-        public async Task Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Unit> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await dbContext.LaunchRecords.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
 
@@ -43,6 +38,7 @@ public static partial class DeleteLaunchRecord
 
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return Unit.Value;
         }
     }
 }

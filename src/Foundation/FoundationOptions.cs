@@ -9,11 +9,6 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 public class FoundationOptions
 {
     /// <summary>
-    ///     The Mediator lifetime
-    /// </summary>
-    public ServiceLifetime MediatorLifetime { get; set; } = ServiceLifetime.Transient;
-
-    /// <summary>
     ///     The Validator lifetime
     /// </summary>
     public ServiceLifetime ValidatorLifetime { get; set; } = ServiceLifetime.Singleton;

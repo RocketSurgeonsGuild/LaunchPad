@@ -1,13 +1,12 @@
-using FluentValidation;
-
-using MediatR;
-
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.Rockets;
 
@@ -20,18 +19,15 @@ public static partial class GetRocket
     ///     Request to fetch information about a rocket
     /// </summary>
     /// <param name="Id">The id of the rocket</param>
-    public record Request(RocketId Id) : IRequest<RocketModel>;
-
-    private class Validator : AbstractValidator<Request>
+    [Validate]
+    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<RocketModel>
     {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
+        internal bool IsAssigned(RocketId id) => id != default;
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>
+    internal class GetRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>
     {
-        public async Task<RocketModel> Handle(Request request, CancellationToken cancellationToken) =>
+        public async ValueTask<RocketModel> Handle(Request request, CancellationToken cancellationToken) =>
             ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
     }
 }

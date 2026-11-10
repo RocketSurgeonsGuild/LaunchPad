@@ -1,5 +1,3 @@
-using FluentValidation;
-
 using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
@@ -17,69 +15,17 @@ using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
 using Sample.Core.Operations.Rockets;
 
+
 namespace Sample.Graphql;
 
 public partial record EditRocketPatchRequest : IOptionalTracking<EditRocket.PatchRequest>
 {
     public RocketId Id { get; init; }
-
-    [UsedImplicitly]
-    private class Validator : AbstractValidator<EditRocketPatchRequest>
-    {
-        public Validator()
-        {
-            RuleFor(x => x.Id).NotEmpty().NotNull();
-
-            RuleFor(x => x.Type.Value)
-               .NotNull()
-               .IsInEnum()
-               .When(x => x.Type.HasValue);
-
-            RuleFor(x => x.SerialNumber.Value)
-               .NotNull()
-               .MinimumLength(10)
-               .MaximumLength(30)
-               .When(x => x.SerialNumber.HasValue);
-        }
-    }
 }
 
 public partial record EditLaunchRecordPatchRequest : IOptionalTracking<EditLaunchRecord.PatchRequest>
 {
     public LaunchRecordId Id { get; init; }
-
-    private class Validator : AbstractValidator<EditLaunchRecordPatchRequest>
-    {
-        public Validator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-
-            RuleFor(x => x.Partner.Value)
-               .NotEmpty()
-               .NotNull()
-               .When(x => x.Partner.HasValue);
-
-            RuleFor(x => x.RocketId.Value)
-               .NotEmpty()
-               .NotNull()
-               .When(x => x.RocketId.HasValue);
-
-            RuleFor(x => x.Payload.Value)
-               .NotEmpty()
-               .NotNull()
-               .When(x => x.Payload.HasValue);
-
-            RuleFor(x => x.ScheduledLaunchDate.Value)
-               .NotNull()
-               .When(x => x.ScheduledLaunchDate.HasValue);
-
-            RuleFor(x => x.PayloadWeightKg.Value)
-               .GreaterThanOrEqualTo(0d)
-               .When(x => x.PayloadWeightKg.HasValue);
-        }
-    }
 }
 
 // The mutations are generated from the operations listed here; the patch requests bind the IOptionalTracking inputs above.

@@ -1,12 +1,9 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
-
 using FluentValidation;
-
-using MediatR;
-
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
+using ZeroAlloc.Mediator;
 
 namespace Analyzers.Tests;
 
@@ -19,7 +16,7 @@ public class InheritFromGeneratorTests() : GeneratorTest()
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -59,7 +56,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -99,7 +96,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -135,7 +132,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -174,7 +171,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -212,7 +209,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 using System.Collections.Immutable;
 
@@ -229,7 +226,7 @@ namespace Sample.Core.Operations.Rockets
 }",
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -267,7 +264,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -311,7 +308,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -347,7 +344,7 @@ namespace Sample.Core.Operations.Rockets
                           .AddSources(
                                @"
 using System;
-using MediatR;
+using ZeroAlloc.Mediator;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations.Rockets
@@ -866,13 +863,12 @@ partial class Validator : AbstractValidator<Request>
                  .WithGenerator<InheritFromGenerator>()
                  .AddReferences(
                       typeof(InheritFromAttribute),
-                      typeof(IMediator),
-                      typeof(IBaseRequest)
+                      typeof(IRequest<>)
                   )
                  .AddSources(
                       @"
 global using System;
-global using MediatR;
+global using ZeroAlloc.Mediator;
 global using Sample.Core.Operations.Rockets;
 namespace Sample.Core.Operations.Rockets
 {

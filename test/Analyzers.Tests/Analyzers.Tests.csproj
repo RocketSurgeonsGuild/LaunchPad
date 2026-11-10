@@ -14,6 +14,8 @@
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
         <PackageReference Include="Verify.SourceGenerators" />
+        <!-- the request interfaces the test sources implement -->
+        <PackageReference Include="ZeroAlloc.Mediator" />
         <ProjectReference
             Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     </ItemGroup>

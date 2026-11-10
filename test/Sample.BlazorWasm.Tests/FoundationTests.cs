@@ -1,8 +1,7 @@
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.BlazorWasm.Tests;
 
@@ -22,9 +21,9 @@ public class FoundationTests : HandleTestHostBase
     public async Task Should_Register_The_Validators_Of_The_Sample()
     {
         var result = await ServiceProvider
-                          .GetRequiredService<IValidator<TestHandler.Request>>()
+                          .GetRequiredService<ValidatorFor<TestHandler.Request>>()
                           .ValidateAsync(new TestHandler.Request(), TestContext.CancellationToken);
 
-        result.Errors.Select(z => z.PropertyName).Distinct().ShouldBe([nameof(TestHandler.Request.FirstName), nameof(TestHandler.Request.LastName)]);
+        result.Failures.ToArray().Select(z => z.PropertyName).Distinct().ShouldBe([nameof(TestHandler.Request.FirstName), nameof(TestHandler.Request.LastName)]);
     }
 }

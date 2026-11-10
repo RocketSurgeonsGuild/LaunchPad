@@ -1,6 +1,4 @@
-using FluentValidation;
-
-using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 using NodaTime;
 
@@ -11,6 +9,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -24,26 +25,33 @@ public static partial class CreateLaunchRecord
     /// <summary>
     ///     Create a launch record
     /// </summary>
+    [Validate]
     public record Request : IRequest<Response>
     {
         /// <summary>
         ///     The rocket to use
         /// </summary>
+        // Required for the OpenAPI document; the ZeroAlloc rule checks that it is assigned.
+        [Required]
+        [Must(nameof(IsAssigned))]
         public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The launch partner
         /// </summary>
+        [NotEmpty]
         public string? Partner { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The launch partners payload
         /// </summary>
+        [NotEmpty]
         public string? Payload { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The payload weight
         /// </summary>
+        [GreaterThanOrEqualTo(0d)]
         public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
@@ -54,7 +62,10 @@ public static partial class CreateLaunchRecord
         /// <summary>
         ///     The intended launch date
         /// </summary>
+        [Required]
         public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+
+        internal bool IsAssigned(RocketId id) => id != default;
     }
 
     /// <summary>
@@ -69,30 +80,9 @@ public static partial class CreateLaunchRecord
         public LaunchRecordId Id { get; init; }
     }
 
-    private class Validator : AbstractValidator<Request>
+    internal class CreateLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
     {
-        public Validator()
-        {
-            RuleFor(x => x.Partner)
-               .NotEmpty()
-               .NotNull();
-            RuleFor(x => x.RocketId)
-               .NotEmpty()
-               .NotNull();
-            RuleFor(x => x.Payload)
-               .NotEmpty()
-               .NotNull();
-            RuleFor(x => x.ActualLaunchDate);
-            RuleFor(x => x.ScheduledLaunchDate)
-               .NotNull();
-            RuleFor(x => x.PayloadWeightKg)
-               .GreaterThanOrEqualTo(0d);
-        }
-    }
-
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
-    {
-        public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Response> Handle(Request request, CancellationToken cancellationToken)
         {
             var record = Map(request);
 

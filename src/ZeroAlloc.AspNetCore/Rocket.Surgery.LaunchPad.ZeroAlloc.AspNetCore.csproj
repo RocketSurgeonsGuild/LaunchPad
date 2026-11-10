@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription>
+            ZeroAlloc.Mediator and ZeroAlloc.Validation for LaunchPad ASP.NET Core applications: a rejected request answers 422 with problem details
+            that list the failures by property, and the validation attributes show in the OpenAPI schemas.
+        </PackageDescription>
+        <PackageTags>$(PackageTags);zeroalloc;validation;openapi</PackageTags>
+        <!--
+            The types live in the Rocket.Surgery.LaunchPad.AspNetCore namespaces. A namespace of Rocket.Surgery.LaunchPad.ZeroAlloc would shadow
+            ZeroAlloc.* in LaunchPad code. The export class is named for the package so it does not collide with the host package's.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore</RootNamespace>
+        <DovetailExportClassName>ZeroAllocExports</DovetailExportClassName>
+        <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <PackageReference Include="ZeroAlloc.Mediator.Validation" />
+        <PackageReference Include="ZeroAlloc.Validation" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <InternalsVisibleTo Include="ZeroAlloc.AspNetCore.Tests" />
+    </ItemGroup>
+    <!-- As in FluentValidation.AspNetCore: this package has no API of its own to describe, and the XML comment generator fails on duplicate keys. -->
+    <Target Name="RemoveOpenApiXmlCommentGenerator" AfterTargets="ResolveLockFileAnalyzers">
+        <ItemGroup>
+            <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.AspNetCore.OpenApi.SourceGenerators'" />
+        </ItemGroup>
+    </Target>
+</Project>

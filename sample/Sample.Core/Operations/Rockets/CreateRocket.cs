@@ -1,7 +1,3 @@
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
 
 using Riok.Mapperly.Abstractions;
@@ -11,6 +7,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.Rockets;
 
@@ -24,16 +23,21 @@ public static partial class CreateRocket
     /// <summary>
     ///     The operation to create a new rocket record
     /// </summary>
+    [Validate]
     public record Request : IRequest<Response>
     {
         /// <summary>
         ///     The serial number of the rocket
         /// </summary>
+        [NotEmpty]
+        [MinLength(10)]
+        [MaxLength(30)]
         public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The type of rocket
         /// </summary>
+        [IsInEnum]
         public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
@@ -49,23 +53,9 @@ public static partial class CreateRocket
         public RocketId Id { get; init; }
     }
 
-    private class Validator : AbstractValidator<Request>
+    internal class CreateRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
     {
-        public Validator()
-        {
-            RuleFor(x => x.Type)
-               .IsInEnum();
-
-            RuleFor(x => x.SerialNumber)
-               .NotEmpty()
-               .MinimumLength(10)
-               .MaximumLength(30);
-        }
-    }
-
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
-    {
-        public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Response> Handle(Request request, CancellationToken cancellationToken)
         {
             var existingRocket = await dbContext
                                       .Rockets.AsQueryable()

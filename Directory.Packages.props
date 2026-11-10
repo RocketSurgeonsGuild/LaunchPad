@@ -58,9 +58,14 @@
         <PackageVersion Include="FluentValidation" Version="12.2.0" />
         <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.1" />
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
+        <PackageVersion Include="ZeroAlloc.Mediator" Version="6.6.5" />
+        <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="6.6.5" />
+        <PackageVersion Include="ZeroAlloc.Mediator.Validation" Version="6.6.5" />
+        <PackageVersion Include="ZeroAlloc.Validation" Version="2.5.0" />
+        <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="2.5.0" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
-        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.4.2" />
+        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.4.3" />
         <PackageVersion Include="HotChocolate" Version="15.1.20" />
 
         <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.20" />
@@ -88,8 +93,6 @@
         <PackageVersion Include="Immediate.Handlers" Version="4.2.0" />
         <PackageVersion Include="Mediator.Abstractions" Version="3.0.2" />
         <PackageVersion Include="Mediator.SourceGenerator" Version="3.0.2" />
-        <PackageVersion Include="ZeroAlloc.Mediator" Version="6.6.5" />
-        <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="6.6.5" />
         <!-- Code-first gRPC for the API generators' gRPC transport; used by their tests. -->
         <PackageVersion Include="protobuf-net.Grpc.AspNetCore" Version="1.3.14" />
         <PackageVersion Include="protobuf-net.Grpc.Reflection" Version="1.3.14" />
@@ -120,11 +123,11 @@
 
         <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
         <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-        <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.4.2" />
+        <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.4.3" />
         <PackageVersion Include="Specular" Version="0.4.0" />
-        <PackageVersion Include="Joinery.Dovetail" Version="0.4.2" />
-        <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.4.2" />
-        <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.4.2" />
+        <PackageVersion Include="Joinery.Dovetail" Version="0.4.3" />
+        <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.4.3" />
+        <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.4.3" />
         <!-- no project references it: Rocket.Surgery.LaunchPad.Sdk chains this version of Dovetail's SDK (src/Sdk) -->
         <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.4.3" />
         <PackageVersion Include="Spectre.Console.Cli" Version="0.57.2" />

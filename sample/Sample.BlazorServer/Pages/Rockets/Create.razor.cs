@@ -1,6 +1,6 @@
-using MediatR;
 using Microsoft.AspNetCore.Components;
 using Sample.Core.Operations.Rockets;
+using ZeroAlloc.Mediator;
 
 namespace Sample.BlazorServer.Pages.Rockets;
 

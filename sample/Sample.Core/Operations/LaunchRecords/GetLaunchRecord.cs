@@ -1,7 +1,3 @@
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
 
 using Riok.Mapperly.Abstractions;
@@ -10,6 +6,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -22,18 +21,15 @@ public static partial class GetLaunchRecord
     ///     The request to get a launch record
     /// </summary>
     /// <param name="Id">The id of the launch record</param>
-    public record Request(LaunchRecordId Id) : IRequest<LaunchRecordModel>;
-
-    private class Validator : AbstractValidator<Request>
+    [Validate]
+    public record Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<LaunchRecordModel>
     {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
+        internal bool IsAssigned(LaunchRecordId id) => id != default;
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
+    internal class GetLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
     {
-        public async Task<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await dbContext
                               .LaunchRecords
