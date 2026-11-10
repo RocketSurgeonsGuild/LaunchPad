@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.FluentValidation
 
 - Package: `Rocket.Surgery.LaunchPad.FluentValidation`
-- Version: `2.0.1-beta.327`
+- Version: `2.0.1-beta.328`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.FluentValidation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.FluentValidation)
 
