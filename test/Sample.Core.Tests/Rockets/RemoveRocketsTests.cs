@@ -27,7 +27,7 @@ public class RemoveRocketsTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            await mediator.Send(new DeleteRocket.Request(id), TestContext.CancellationToken);
+            ( await mediator.Send(new DeleteRocket.Request(id), TestContext.CancellationToken) ).Value.ShouldBeOfType<Unit>();
         }
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();

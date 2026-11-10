@@ -1,0 +1,40 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionAnalyzer: []
+  },
+  CodeFixes: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.NativeUnionCodeFix: [
+      {
+        CodeActions: [
+          {
+            Title: Declare as a C# union,
+            Tags: null,
+            TextChanges: {
+              Input0.cs: [
+                {
+                  Length: 147,
+                  NewText: internal union Result<T>(T, Problem) where T : notnull;
+                }
+              ]
+            }
+          }
+        ],
+        Diagnostic: {
+          Id: LPAD0014,
+          Title: Portable union can be a native union,
+          Severity: Info,
+          WarningLevel: 1,
+          Location: Input0.cs: (8,24)-(8,30),
+          MessageFormat: Union {0} can be declared as a C# union: union {0}({1});,
+          Message: Union Result<T> can be declared as a C# union: union Result<T>(T, Problem);,
+          Category: LaunchPad.Unions
+        },
+        Document: Input0.cs
+      }
+    ]
+  },
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionGenerator: []
+  }
+}

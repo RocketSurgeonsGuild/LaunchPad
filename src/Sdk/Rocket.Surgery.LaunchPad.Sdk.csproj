@@ -19,8 +19,8 @@
 
     <!--
         Writes Sdk/Packages.props into the package: LaunchPadVersion, the version of the SDK, which every LaunchPad package it adds to an
-        application shares, and the version of Joinery.Dovetail.Sdk that Sdk/Sdk.props chains, which is the one Directory.Packages.props
-        pins. An application can set either first to choose another. As in Joinery.Dovetail.Sdk, the versions are only known when the SDK
+        application shares, the version of Joinery.Dovetail.Sdk that Sdk/Sdk.props chains, which is the one Directory.Packages.props
+        pins, and the version of Polyfill the detection adds before .NET 11, also pinned there. An application can set any of them first to choose another. As in Joinery.Dovetail.Sdk, the versions are only known when the SDK
         is packed, so the file is generated then rather than kept in the repository.
 
         Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which packages an application gets. A package
@@ -30,12 +30,15 @@
     <Target Name="_LaunchPadGeneratePackagesProps" BeforeTargets="_GetPackageFiles;Pack">
         <ItemGroup>
             <_LaunchPadDovetailSdk Include="@(PackageVersion)" Condition="'%(Identity)' == 'Joinery.Dovetail.Sdk'" />
+            <_LaunchPadPolyfill Include="@(PackageVersion)" Condition="'%(Identity)' == 'Polyfill'" />
         </ItemGroup>
         <PropertyGroup>
             <_LaunchPadDovetailSdkVersion>@(_LaunchPadDovetailSdk->'%(Version)')</_LaunchPadDovetailSdkVersion>
+            <_LaunchPadPolyfillVersion>@(_LaunchPadPolyfill->'%(Version)')</_LaunchPadPolyfillVersion>
             <_LaunchPadPackagesProps>$(IntermediateOutputPath)Packages.props</_LaunchPadPackagesProps>
         </PropertyGroup>
         <Error Condition="'$(_LaunchPadDovetailSdkVersion)' == ''" Text="Directory.Packages.props pins no version of Joinery.Dovetail.Sdk, which Rocket.Surgery.LaunchPad.Sdk chains." />
+        <Error Condition="'$(_LaunchPadPolyfillVersion)' == ''" Text="Directory.Packages.props pins no version of Polyfill, which Rocket.Surgery.LaunchPad.Sdk adds before .NET 11." />
         <ItemGroup>
             <!-- %24 is $ and %27 is ': the file reads the consumer's properties, which must not be expanded here -->
             <_LaunchPadPackagesPropsLine Include="&lt;Project&gt;" />
@@ -46,6 +49,9 @@
             />
             <_LaunchPadPackagesPropsLine
                 Include="&lt;LaunchPadVersion Condition=&quot;%27%24(LaunchPadVersion)%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/LaunchPadVersion&gt;"
+            />
+            <_LaunchPadPackagesPropsLine
+                Include="&lt;LaunchPadPolyfillVersion Condition=&quot;%27%24(LaunchPadPolyfillVersion)%27 == %27%27&quot;&gt;$(_LaunchPadPolyfillVersion)&lt;/LaunchPadPolyfillVersion&gt;"
             />
             <_LaunchPadPackagesPropsLine Include="&lt;/PropertyGroup&gt;" />
             <_LaunchPadPackagesPropsLine Include="&lt;/Project&gt;" />

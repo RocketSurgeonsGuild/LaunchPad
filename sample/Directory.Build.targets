@@ -1,6 +1,8 @@
 <Project>
     <ItemGroup>
         <ProjectReference Include="../../src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <!-- The union generator, which the Primitives package brings through NuGet; project references don't. -->
+        <ProjectReference Include="../../src/Primitives/Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
     <!--
@@ -23,6 +25,14 @@
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.Trace" />
+    </ItemGroup>
+    <!-- C# 15's union types before .NET 11, embedded, as the LaunchPad SDK adds them (docs/design/union-types.md 3.3). -->
+    <PropertyGroup Condition="'$(TargetFramework)' != '' and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+        <PolyUseEmbeddedAttribute>true</PolyUseEmbeddedAttribute>
+        <DefineConstants>$(DefineConstants);PolyUseEmbeddedAttribute</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)' != '' and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+        <PackageReference Include="Polyfill" PrivateAssets="all" />
     </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
     <!-- What Foundation's package adds through NuGet for the operation host generators (referenced XML documentation); project references don't import it. -->

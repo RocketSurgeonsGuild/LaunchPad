@@ -1,0 +1,124 @@
+﻿{
+  AnalyzerDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionAnalyzer: []
+  },
+  CodeFixes: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionPatternCodeFix: [
+      {
+        CodeActions: [
+          {
+            Title: Match the union's Value,
+            Tags: null,
+            TextChanges: {
+              Input0.cs: [
+                {
+                  Length: 0,
+                  NewText: .Value
+                },
+                {
+                  Length: 0,
+                  NewText:
+        _ => throw new global::System.Diagnostics.UnreachableException()
+
+                }
+              ]
+            }
+          }
+        ],
+        Diagnostic: {
+          Id: CS8652,
+          Title: ,
+          Severity: Error,
+          WarningLevel: 0,
+          Location: Input0.cs: (16,8)-(16,26),
+          HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8652),
+          MessageFormat: The feature '{0}' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+          Message: The feature 'unions' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+          Category: Compiler,
+          CustomTags: [
+            Compiler,
+            Telemetry,
+            NotConfigurable
+          ]
+        },
+        Document: Input0.cs
+      },
+      {
+        CodeActions: [
+          {
+            Title: Match the union's Value,
+            Tags: null,
+            TextChanges: {
+              Input0.cs: [
+                {
+                  Length: 0,
+                  NewText: .Value
+                },
+                {
+                  Length: 0,
+                  NewText:
+        _ => throw new global::System.Diagnostics.UnreachableException()
+
+                }
+              ]
+            }
+          }
+        ],
+        Diagnostic: {
+          Id: CS8652,
+          Title: ,
+          Severity: Error,
+          WarningLevel: 0,
+          Location: Input0.cs: (17,8)-(17,25),
+          HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8652),
+          MessageFormat: The feature '{0}' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+          Message: The feature 'unions' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+          Category: Compiler,
+          CustomTags: [
+            Compiler,
+            Telemetry,
+            NotConfigurable
+          ]
+        },
+        Document: Input0.cs
+      }
+    ]
+  },
+  FinalDiagnostics: [
+    {
+      Id: CS8652,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (16,8)-(16,26),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8652),
+      MessageFormat: The feature '{0}' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+      Message: The feature 'unions' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS8652,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (17,8)-(17,25),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8652),
+      MessageFormat: The feature '{0}' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+      Message: The feature 'unions' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionGenerator: []
+  }
+}

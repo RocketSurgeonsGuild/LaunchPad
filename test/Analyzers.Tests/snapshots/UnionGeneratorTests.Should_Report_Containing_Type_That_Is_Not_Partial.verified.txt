@@ -1,0 +1,3 @@
+﻿[
+  Input0.cs(6,27): error LPAD0001: Type Shapes must be made partial.
+]

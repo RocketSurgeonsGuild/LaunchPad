@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -29,7 +31,7 @@ public static partial class EditRocket
     ///     The edit operation to update a rocket
     /// </summary>
     [Validate]
-    public record Request : IRequest<RocketModel>
+    public record Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket id
@@ -58,7 +60,7 @@ public static partial class EditRocket
     ///     The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting <see cref="Request" /> is validated and
     ///     sent through the mediator.
     /// </summary>
-    public partial record PatchRequest : IRequest<RocketModel>, IPropertyTracking<Request>
+    public partial record PatchRequest : IRequest<Result>, IPropertyTracking<Request>
     {
         /// <summary>
         ///     The rocket id
@@ -66,12 +68,20 @@ public static partial class EditRocket
         public RocketId Id { get; init; }
     }
 
-    // The patch's handle method is generated: it applies the patch to the request GetRequest loads and sends the result through the mediator.
-    internal partial class EditRocketHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, RocketModel>, IRequestHandler<PatchRequest, RocketModel>
+    /// <summary>What the operation answers: the updated rocket, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async ValueTask<RocketModel> Handle(Request request, CancellationToken cancellationToken)
+        public partial Result(RocketModel value);
+        public partial Result(NotFound value);
+    }
+
+    // The patch's handle method is generated: it applies the patch to the request GetRequest loads and sends the result through the mediator.
+    internal partial class EditRocketHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, Result>, IRequestHandler<PatchRequest, Result>
+    {
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await GetRocket(request.Id, cancellationToken) ?? throw new NotFoundException();
+            if (await FindRocket(request.Id, cancellationToken) is not { } rocket) return new NotFound($"Rocket {request.Id} was not found");
             Map(request, rocket);
             dbContext.Update(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -82,10 +92,12 @@ public static partial class EditRocket
         private async partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
             MapRequest(await GetRocket(request.Id, cancellationToken).ConfigureAwait(false));
 
-        private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken) => await dbContext
-                                                                                                            .Rockets.FindAsync([id], cancellationToken)
-                                                                                                            .ConfigureAwait(false)
-         ?? throw new NotFoundException();
+        // The generated patch handle method sends what GetRequest loads, so a patch of a missing rocket still throws NotFoundException here.
+        private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken) =>
+            await FindRocket(id, cancellationToken) ?? throw new NotFoundException();
+
+        private async Task<ReadyRocket?> FindRocket(RocketId id, CancellationToken cancellationToken) =>
+            await dbContext.Rockets.FindAsync([id], cancellationToken).ConfigureAwait(false);
     }
 
     [MapperRequiredMapping(RequiredMappingStrategy.Source)]

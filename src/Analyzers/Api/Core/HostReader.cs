@@ -111,7 +111,56 @@ internal static class HostReader
             return null;
         }
 
-        var isUnit = response is { } && profile.UnitType is { } unit && response.Is(unit);
+        // A union response: the handler returns the union, the transports carry its value case and answer each error case in their own error
+        // shape. Everything below (status, Created, gRPC messages, GraphQL names) is about the value case.
+        var dispatchResponse = response;
+        UnionModel? union = null;
+        IEnumerable<ITypeSymbol> errorCases = [];
+        // A stream of unions works per item: value cases are streamed, an error case ends the stream in the transport's error shape.
+        if (requestKind is RequestKind.Unary or RequestKind.Stream && UnionResults.TryRead(response, out var unionType, out var cases, out var valueInterface))
+        {
+            // The value case is the first case that isn't an error case (#3147's contract: an error case is known by its type, its name or
+            // [ApiError]); every other case is an error case, and one that isn't recognisable as such has no status (LPAD1028).
+            var valueCase = cases.FirstOrDefault(c => UnionResults.Status(c) is null) ?? cases[0];
+            var errors = new List<UnionCaseModel>();
+            // A Problem case stands for each standard problem case, then itself.
+            errorCases = cases.Where(c => !SymbolEqualityComparer.IncludeNullability.Equals(c, valueCase))
+                              .SelectMany(UnionResults.Expand)
+                              .Distinct<ITypeSymbol>(SymbolEqualityComparer.Default)
+                              .ToArray();
+            foreach (var errorCase in errorCases)
+            {
+                if (UnionResults.Status(errorCase) is not { } caseStatus)
+                {
+                    diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.UnionCaseWithoutStatus, location, errorCase.ToDisplayString(), unionType.ToDisplayString(), name, UnionResults.Words));
+                    continue;
+                }
+
+                errors.Add(
+                    new UnionCaseModel(
+                        errorCase.Name,
+                        errorCase.WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified(),
+                        caseStatus.Status,
+                        caseStatus.Grpc,
+                        caseStatus.GraphQL,
+                        UnionResults.Members(errorCase),
+                        errorCase.ContainingType is { } outerCase ? outerCase.Name + errorCase.Name : null,
+                        // A problem travels as the status, its detail and its case name, so it never needs a protobuf-net contract.
+                        IsMessage(errorCase) && !UnionResults.IsProblemData(errorCase),
+                        UnionResults.ProblemMembers(errorCase)
+                    )
+                );
+            }
+
+            if (errors.Count < errorCases.Count()) return null;
+            var unionNullable = dispatchResponse!.NullableAnnotation == NullableAnnotation.Annotated || dispatchResponse.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
+            union = new UnionModel(unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified(), valueInterface, unionNullable, errors.ToEquatableArray());
+            response = valueCase;
+        }
+
+        // A union's value case is void when it's the profile's unit type or any mediator's (MediatR's IRequest is void without one, but a
+        // handler can still put MediatR.Unit in a union).
+        var isUnit = response is { } && requestKind != RequestKind.Stream && ( profile.UnitType is { } unit && response.Is(unit) || union is { } && UnionResults.IsUnit(response) );
         if (isUnit) requestKind = RequestKind.Void;
 
         // An input type that the transport carries instead of the request, converted with Create().
@@ -178,8 +227,8 @@ internal static class HostReader
         {
             // A markerless stream (Immediate.Handlers) is a handler whose response is the IAsyncEnumerable<T> itself.
             var handlerResponse = kindModel.RequestInterface is null && requestKind == RequestKind.Stream && response is { }
-                ? compilation.GetTypeByMetadataName("System.Collections.Generic.IAsyncEnumerable`1")?.Construct(response)
-                : response;
+                ? compilation.GetTypeByMetadataName("System.Collections.Generic.IAsyncEnumerable`1")?.Construct(dispatchResponse!)
+                : dispatchResponse;
             var closed = openHandler.Arity == 1 ? openHandler.Construct(request) : handlerResponse is { } ? openHandler.Construct(request, handlerResponse) : null;
             var method = closed?.GetMembers(kindModel.HandleMethod).OfType<IMethodSymbol>().FirstOrDefault();
             if (closed is { } && method is { }) handlerInterface = closed.FullyQualifiedNullable();
@@ -196,7 +245,8 @@ internal static class HostReader
             // protobuf-net needs a contract with ordered members for every user type it carries; primitives are wrapped by the generator.
             // A void operation (Unit included) answers Empty.
             var carriedResponse = requestKind == RequestKind.Void ? null : response is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } n ? n.TypeArguments[0] : response;
-            var carried = new[] { wireType, carriedResponse };
+            // An error case travels in the case-bin trailer, so one with members needs a contract too.
+            var carried = new[] { wireType, carriedResponse }.Concat(errorCases.Where(c => !UnionResults.IsProblemData(c) && !UnionResults.Members(c).IsEmpty));
             foreach (var type in carried.OfType<ITypeSymbol>().Distinct<ITypeSymbol>(SymbolEqualityComparer.Default).Where(NeedsContract))
             {
                 diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.GrpcSerialization, location, type.ToDisplayString()));
@@ -204,7 +254,8 @@ internal static class HostReader
         }
 
         var responseIsNullableValueType = response is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T };
-        var responseNullable = response is { } && ( response.NullableAnnotation == NullableAnnotation.Annotated || responseIsNullableValueType );
+        // A nullable union (U?) answers 404 for null, as a nullable value case does.
+        var responseNullable = response is { } && ( response.NullableAnnotation == NullableAnnotation.Annotated || responseIsNullableValueType || union is { Nullable: true } );
         var responseNotNull = response is INamedTypeSymbol nullableValue && responseIsNullableValueType
             ? nullableValue.TypeArguments[0]
             : response?.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
@@ -259,6 +310,7 @@ internal static class HostReader
             IsStructMessage(wireType),
             // A void operation (Unit included) answers Empty: its response isn't carried.
             responseNotNull is { } && requestKind != RequestKind.Void && IsStructMessage(responseNotNull),
+            union,
             location
         );
     }

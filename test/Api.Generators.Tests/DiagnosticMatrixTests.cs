@@ -46,6 +46,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         ("LPAD1021", [HostCase.GrpcService, HostCase.GraphQLMutation], BuiltIn),
         ("LPAD1023", Http, BuiltIn),
         ("LPAD1024", Http, BuiltIn),
+        ("LPAD1028", AllHosts, BuiltIn),
     ];
 
     public static IEnumerable<(string Id, HostCase Host, Mediator Mediator)> Cases() =>
@@ -111,6 +112,8 @@ public class DiagnosticMatrixTests() : GeneratorTest()
             "LPAD1021" => new($"[OperationHost(RoutePrefix = \"fleet\")] [Operation<{op}.Request>] {Declare(host)}"),
             "LPAD1023" => new($"[Operation<CreateRocket.Request>] {Declare(host)}"),
             "LPAD1024" => new($"[OperationHost(Version = \"1.0\")] [Operation<GetRocket.Request>] {Declare(host)}"),
+            // A union error case whose name implies no status and that has no [ApiError].
+            "LPAD1028" => new($"[Operation<LaunchRocket.Request>] {Declare(host)}"),
             _ => throw new ArgumentOutOfRangeException(nameof(id), id, null),
         };
     }
@@ -247,6 +250,8 @@ internal static class MatrixContracts
             {{shapes.Usings}}
             using Rocket.Surgery.LaunchPad.Api;
 
+            {{UnionContracts.Polyfill}}
+
             namespace Sample.Contracts.Rockets
             {
                 {{( mediator == Mediator.Custom ? CustomInterfaces : "" )}}
@@ -254,6 +259,16 @@ internal static class MatrixContracts
                 {{DataContract()}}public sealed record RocketModel({{Parameters("System.Guid Id, string Name")}});
 
                 public readonly struct Unparsable { }
+
+                {{DataContract()}}public sealed record Exploded({{Parameters("string Reason")}});
+
+                [System.Runtime.CompilerServices.Union]
+                public readonly struct LaunchResult : System.Runtime.CompilerServices.IUnion
+                {
+                    public LaunchResult(RocketModel value) => Value = value;
+                    public LaunchResult(Exploded value) => Value = value;
+                    public object? Value { get; }
+                }
 
                 {{Request("GetRocket", "System.Guid Id", Shape.Query, "RocketModel?")}}
                 {{Request("ListRockets", "string? Name", Shape.Stream, "RocketModel")}}
@@ -265,6 +280,7 @@ internal static class MatrixContracts
                 {{Request("SearchRockets", "RocketModel Filter", Shape.Query, "RocketModel")}}
                 {{Request("GetRocketByCode", "Unparsable Code", Shape.Query, "RocketModel")}}
                 {{Request("OrphanRocket", "System.Guid Id", Shape.None, "")}}
+                {{Request("LaunchRocket", "System.Guid Id", Shape.Command, "LaunchResult")}}
 
                 public static class GetRocketSnapshot
                 {

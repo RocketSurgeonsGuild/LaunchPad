@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
@@ -20,21 +22,33 @@ public static partial class DeleteLaunchRecord
     /// </summary>
     /// <param name="Id">The id of the record to delete</param>
     [Validate]
-    public record Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest
+    public record Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
     {
         internal bool IsAssigned(LaunchRecordId id) => id != default;
     }
 
-    [UsedImplicitly]
-    internal class DeleteLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Unit>
+    /// <summary>What the operation answers: nothing, not found, or forbidden.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async ValueTask<Unit> Handle(Request request, CancellationToken cancellationToken)
+        public partial Result(Unit value);
+        public partial Result(NotFound value);
+        public partial Result(Forbidden value);
+    }
+
+    [UsedImplicitly]
+    internal class DeleteLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.LaunchRecords.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
+            if (await dbContext.LaunchRecords.FindAsync([request.Id], cancellationToken) is not { } rocket)
+            {
+                return new NotFound($"Launch record {request.Id} was not found");
+            }
 
             // contrived for testing
             if (rocket.Id == new LaunchRecordId(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6")))
-                throw new NotAuthorizedException("Unable to operate on given record");
+                return new Forbidden("Unable to operate on given record");
 
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

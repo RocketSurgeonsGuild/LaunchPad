@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
@@ -16,7 +18,7 @@ namespace Sample.Core.Operations.Rockets;
 public static partial class GetRocketLaunchRecord
 {
     [Validate]
-    public record Request : IRequest<LaunchRecordModel>
+    public record Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket id
@@ -35,9 +37,19 @@ public static partial class GetRocketLaunchRecord
         internal bool IsAssigned(LaunchRecordId id) => id != default;
     }
 
-    internal class GetRocketLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, LaunchRecordModel>
+    /// <summary>What the operation answers: the launch record, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async ValueTask<LaunchRecordModel> Handle(Request request, CancellationToken cancellationToken) =>
-            ModelMapper.Map(await dbContext.LaunchRecords.FindAsync([request.LaunchRecordId], cancellationToken) ?? throw new NotFoundException());
+        public partial Result(LaunchRecordModel value);
+        public partial Result(NotFound value);
+    }
+
+    internal class GetRocketLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken) =>
+            await dbContext.LaunchRecords.FindAsync([request.LaunchRecordId], cancellationToken) is { } record
+                ? ModelMapper.Map(record)
+                : new NotFound($"Launch record {request.LaunchRecordId} was not found");
     }
 }
