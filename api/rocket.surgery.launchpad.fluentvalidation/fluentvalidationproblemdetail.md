@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.md)
-- Version: `2.0.1-beta.328`
+- Version: `2.0.1-beta.329`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net10.0`
 
