@@ -1,7 +1,7 @@
 # JSON and native AOT
 
 LaunchPad reads and writes JSON only with the JSON contexts it is given, never through reflection, in a JIT
-application as much as in a trimmed or native AOT one ([ADR 0004](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0004-no-json-reflection.md)).
+application as much as in a trimmed or native AOT one ([ADR 0005](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0005-no-json-reflection.md)).
 Every type that crosses the wire needs metadata from a source generated `JsonSerializerContext`, and a missing one fails during development
 rather than after publishing.
 

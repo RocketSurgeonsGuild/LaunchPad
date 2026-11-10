@@ -2,12 +2,12 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.fluentvalidation.md)
-- Version: `2.0.1-pr.1163`
+- Version: `2.0.1-pr.1165`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
-A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation, the validators for options, and the MediatR validation pipeline behaviors. Implements the `Joints.IServiceJoint`
+A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation and the validators for options. Implements the `Joints.IServiceJoint`
 
 ## Definition
 
@@ -24,15 +24,11 @@ public class FluentValidationJoint
 
 ## Remarks
 
-Runs after the `Joints.MediatRJoint`, so the validation behaviors are added to the pipeline MediatR registers.
-
 The validators are found with the `ISpecularProvider` in the joint context. The generated `Imports` seed the application's Specular provider into the context.
-
-Dovetail resolves the `Foundation.FoundationOptions` from the joint context when it creates the joint, and they default when none were set.
 
 ## Constructors
 
-- [FluentValidationJoint(FoundationOptions?)](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.fluentvalidation/fluentvalidationjoint/constructors.md#constructor-foundationoptions) -- A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation, the validators for options, and the MediatR validation pipeline behaviors. Implements the `Joints.IServiceJoint`
+- [FluentValidationJoint](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.fluentvalidation/fluentvalidationjoint/constructors.md#constructor)
 
 ## Methods
 
@@ -41,4 +37,3 @@ Dovetail resolves the `Foundation.FoundationOptions` from the joint context when
 ## See Also
 
 - `Joints.IServiceJoint`
-- `Joints.MediatRJoint`
