@@ -20,6 +20,7 @@ small packages, which the [LaunchPad SDK](../launchpad-sdk/) chooses for you.
 | `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
 | `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
 | `FluentValidation`              | `.FluentValidation`, and its ASP.NET Core, gRPC, HotChocolate and Blazor packages with those |
+| `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                |
 | `HotChocolate`                  | `.HotChocolate`                                                                              |
 | `StrawberryShake`               | `.StrawberryShake`                                                                           |
 | `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
@@ -36,7 +37,7 @@ integration package it is part of:
 ```
 
 The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`,
-`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableFluentValidation`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and
+`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableFluentValidation`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and
 `LaunchPadEnableStrawberryShake`.
 
 ## Direct references
