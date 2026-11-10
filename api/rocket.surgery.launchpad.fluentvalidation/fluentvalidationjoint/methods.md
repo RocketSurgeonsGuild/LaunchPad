@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `1`
 
-A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation, the validators for options, and the MediatR validation pipeline behaviors. Implements the `Joints.IServiceJoint`
+A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation and the validators for options. Implements the `Joints.IServiceJoint`
 
 <a id="register"></a>
 <a id="register-idovetailcontext-iservicecollection"></a>

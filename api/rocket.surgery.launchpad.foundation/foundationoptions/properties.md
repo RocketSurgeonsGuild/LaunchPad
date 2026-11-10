@@ -3,23 +3,9 @@
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/api/rocket.surgery.launchpad.foundation.md)
 - Type: [FoundationOptions](/LaunchPad/api/rocket.surgery.launchpad.foundation/foundationoptions.md)
 - Kind: `Properties`
-- Members: `3`
+- Members: `2`
 
 Common foundation options
-
-<a id="mediatorlifetime"></a>
-
-## MediatorLifetime
-
-- Name: `MediatorLifetime`
-- Modifiers: `get; set`
-- Returns: `ServiceLifetime`
-
-The Mediator lifetime
-
-```csharp
-public ServiceLifetime MediatorLifetime { get; set; }
-```
 
 <a id="registervalidationoptionsashealthchecks"></a>
 

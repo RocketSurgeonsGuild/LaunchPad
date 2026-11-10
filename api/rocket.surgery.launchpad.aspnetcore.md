@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.AspNetCore`
-- Version: `2.0.1-beta.324`
+- Version: `2.0.1-beta.325`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore)
 
@@ -13,7 +13,6 @@
 - [LaunchPadHelpers](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/launchpadhelpers.md) -- `class` `static` -- Helpers for during application startup and in middleware
 - [LaunchPadRequestLogging](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/launchpadrequestlogging.md) -- `class` `static` -- The level and the properties LaunchPad gives the request log event that Serilog's request logging writes.
 - [LaunchPadRequestLoggingExtensions](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/launchpadrequestloggingextensions.md) -- `class` `static` -- Adds Serilog's request logging with LaunchPad's defaults.
-- [MediatorPageModel](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/mediatorpagemodel.md) -- `class` -- Default page model with Mediator made available
 - [RocketSurgeryMvcCoreExtensions](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/rocketsurgerymvccoreextensions.md) -- `class` `static` -- Helper methods for getting an mvc builder if you're not sure that mvc has been added to the application yet.
 
 ### Rocket.Surgery.LaunchPad.AspNetCore.Filters

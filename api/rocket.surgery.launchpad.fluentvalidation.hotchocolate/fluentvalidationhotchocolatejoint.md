@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.hotchocolate.md)
-- Version: `2.0.1-beta.324`
+- Version: `2.0.1-beta.325`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`

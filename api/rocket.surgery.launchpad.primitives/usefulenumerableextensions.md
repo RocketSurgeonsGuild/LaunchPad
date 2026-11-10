@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.324`
+- Version: `2.0.1-beta.325`
 - Namespace: `Rocket.Surgery.LaunchPad.Primitives.Extensions`
 - Target framework: `net10.0`
 
