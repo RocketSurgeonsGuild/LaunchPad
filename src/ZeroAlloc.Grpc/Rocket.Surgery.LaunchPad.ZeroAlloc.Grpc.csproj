@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription>
+            ZeroAlloc.Mediator validation for LaunchPad gRPC services: a rejected request answers InvalidArgument with the failures in the status
+            detail and the trailers.
+        </PackageDescription>
+        <PackageTags>$(PackageTags);zeroalloc;validation;grpc</PackageTags>
+        <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+        <!--
+            The types live in the Rocket.Surgery.LaunchPad.Grpc namespaces. A namespace of Rocket.Surgery.LaunchPad.ZeroAlloc would shadow
+            ZeroAlloc.* in LaunchPad code. The export class is named for the package so it does not collide with Grpc's.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.Grpc</RootNamespace>
+        <DovetailExportClassName>ZeroAllocExports</DovetailExportClassName>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
+        <PackageReference Include="Grpc.AspNetCore" />
+        <PackageReference Include="ZeroAlloc.Mediator.Validation" />
+        <InternalsVisibleTo Include="ZeroAlloc.Grpc.Tests" />
+    </ItemGroup>
+</Project>

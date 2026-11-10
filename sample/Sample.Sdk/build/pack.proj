@@ -37,6 +37,10 @@
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Blazor\Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Grpc\Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.HotChocolate\Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.Blazor\Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.Grpc\Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.HotChocolate\Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate.csproj" />
   </ItemGroup>
 
   <Target Name="Pack">

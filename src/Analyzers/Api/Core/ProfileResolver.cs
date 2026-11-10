@@ -121,8 +121,8 @@ internal static class ProfileResolver
                 "ZeroAlloc.Mediator.Unit",
                 new RequestKindModel[]
                 {
-                    new("ZeroAlloc.Mediator.IRequest`1", RequestKind.Unary, 0, null, "Handle"),
-                    new("ZeroAlloc.Mediator.IStreamRequest`1", RequestKind.Stream, 0, null, "Handle"),
+                    new("ZeroAlloc.Mediator.IRequest`1", RequestKind.Unary, 0, "ZeroAlloc.Mediator.IRequestHandler`2", "Handle"),
+                    new("ZeroAlloc.Mediator.IStreamRequest`1", RequestKind.Stream, 0, "ZeroAlloc.Mediator.IStreamRequestHandler`2", "Handle"),
                 }.ToEquatableArray()
             )
         ),

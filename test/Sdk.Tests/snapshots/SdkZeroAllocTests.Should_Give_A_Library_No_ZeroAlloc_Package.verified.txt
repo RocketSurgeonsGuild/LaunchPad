@@ -1,0 +1,7 @@
+﻿{
+  Hosts: [],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    ZeroAlloc.Validation
+  ]
+}

@@ -1,12 +1,11 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 using Sample.Restful.Tests.Helpers;
 
 namespace Sample.Restful.Tests;
 
-// The operations validate their requests in the mediator; the shared ValidationProblemDetailsJoint turns a rejected request into a 422.
+// The operations validate their requests in the mediator; ZeroAlloc.AspNetCore's ZeroAllocProblemDetailsJoint turns a rejected request into a 422.
 public class ValidationTests : WebAppFixtureTest
 {
     [Test]

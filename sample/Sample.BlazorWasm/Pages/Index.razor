@@ -7,7 +7,7 @@
 Welcome to your new app.
 
 <EditForm Model="request" OnValidSubmit="async () => response = await mediator.Send(request)">
-    <Sample.Shared.ZeroAllocValidator />
+    <Rocket.Surgery.LaunchPad.AspNetCore.Blazor.ZeroAllocValidator />
     <ValidationSummary Model="request"/>
 
     <label>FirstName: <InputText @bind-Value="request.FirstName"/> <ValidationMessage For="() => request.FirstName"/></label>

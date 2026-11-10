@@ -671,6 +671,10 @@
         x-schema-id: EditLaunchRecordPatchRequest
       },
       ProblemDetails: {
+        required: [
+          type,
+          title
+        ],
         type: object,
         properties: {
           type: {
@@ -709,24 +713,33 @@
         }
       },
       Request: {
+        required: [
+          rocketId,
+          scheduledLaunchDate,
+          partner,
+          payload
+        ],
         type: object,
         properties: {
           rocketId: {
             $ref: #/components/schemas/RocketId
           },
           partner: {
+            minLength: 1,
             type: [
               null,
               string
             ]
           },
           payload: {
+            minLength: 1,
             type: [
               null,
               string
             ]
           },
           payloadWeightKg: {
+            minimum: 0,
             pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
             type: [
               number,

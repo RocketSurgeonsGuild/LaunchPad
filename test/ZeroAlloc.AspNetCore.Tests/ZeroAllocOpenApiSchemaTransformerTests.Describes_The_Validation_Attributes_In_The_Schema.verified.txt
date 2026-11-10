@@ -1,0 +1,70 @@
+﻿{
+  "required": [
+    "serialNumber",
+    "name",
+    "tags"
+  ],
+  "type": "object",
+  "properties": {
+    "serialNumber": {
+      "maxLength": 30,
+      "minLength": 10,
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "stages": {
+      "maximum": 10,
+      "minimum": 1,
+      "pattern": "^-?(?:0|[1-9]\\d*)$",
+      "type": [
+        "integer",
+        "string"
+      ],
+      "format": "int32"
+    },
+    "thrust": {
+      "exclusiveMinimum": 0,
+      "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d\u002B)?(?:[eE][\u002B-]?\\d\u002B)?$",
+      "type": [
+        "number",
+        "string"
+      ],
+      "format": "double"
+    },
+    "crew": {
+      "maximum": 100,
+      "pattern": "^-?(?:0|[1-9]\\d*)$",
+      "type": [
+        "integer",
+        "string"
+      ],
+      "format": "int32"
+    },
+    "code": {
+      "pattern": "^[A-Z]\u002B$",
+      "type": "string"
+    },
+    "contact": {
+      "type": "string",
+      "format": "email"
+    },
+    "tags": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  }
+}
