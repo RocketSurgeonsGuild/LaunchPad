@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.AspNetCore`
-- Version: `2.0.1-beta.330`
+- Version: `2.0.1-beta.331`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore)
 
