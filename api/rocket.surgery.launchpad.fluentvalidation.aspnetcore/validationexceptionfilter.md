@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore.md)
-- Version: `2.0.1-beta.326`
+- Version: `2.0.1-beta.327`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Validation`
 - Target framework: `net10.0`
 - Implements: `IAsyncExceptionFilter`, `IExceptionFilter`, `IFilterMetadata`

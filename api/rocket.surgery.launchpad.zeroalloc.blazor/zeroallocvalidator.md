@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor](/LaunchPad/api/rocket.surgery.launchpad.zeroalloc.blazor.md)
-- Version: `2.0.1-beta.326`
+- Version: `2.0.1-beta.327`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Blazor`
 - Target framework: `net10.0`
 - Inherits: `ComponentBase`

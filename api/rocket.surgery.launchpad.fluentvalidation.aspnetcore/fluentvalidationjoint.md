@@ -2,12 +2,12 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore.md)
-- Version: `2.0.1-beta.326`
+- Version: `2.0.1-beta.327`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
-Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter, the problem details converter, and the [FluentValidationProblemDetails](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationproblemdetails.md) as the documented validation response of the restful api controllers. Implements the `Joints.IServiceJoint`
+Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter, the problem details converter and the source generated metadata it writes with, and the [FluentValidationProblemDetails](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationproblemdetails.md) as the documented validation response of the restful api controllers. Implements the `Joints.IServiceJoint`
 
 ## Definition
 

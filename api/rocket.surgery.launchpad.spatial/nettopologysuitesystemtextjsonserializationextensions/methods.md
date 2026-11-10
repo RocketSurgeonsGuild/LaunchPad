@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `2`
 
-Extensions for noda time
+Extensions for NetTopologySuite
 
 <a id="configuregeojsonforlaunchpad"></a>
 <a id="configuregeojsonforlaunchpad-jsonserializeroptions-geometryfactory"></a>

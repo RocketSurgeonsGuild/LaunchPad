@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore.md)
-- Version: `2.0.1-beta.326`
+- Version: `2.0.1-beta.327`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Validation`
 - Target framework: `net10.0`
 - Inherits: `JsonConverter<FluentValidationProblemDetails?>`
@@ -20,6 +20,10 @@ public sealed class ValidationProblemDetailsConverter
     // ...
 }
 ```
+
+## Remarks
+
+The problem details are written with the metadata the options' resolver chain has for them, which the `FluentValidationJoint` adds, so the converter does not need reflection. Options without it fall back to this package's own source generated metadata.
 
 ## Constructors
 

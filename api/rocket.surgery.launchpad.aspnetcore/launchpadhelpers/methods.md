@@ -34,3 +34,7 @@ public static class LaunchPadHelpers
 
 - `context` (`HttpContext`)
 - `report` (`HealthReport`)
+
+## Remarks
+
+Each health check data value is written with the metadata the application's HTTP JSON options resolve for it ( `ConfigureHttpJsonOptions`, or a resolver added with `AddJsonTypeInfoResolver`), so the writer stays trim and native AOT safe. A value no resolver knows is written as its `Object.ToString`.

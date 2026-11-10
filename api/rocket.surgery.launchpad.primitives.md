@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Primitives
 
 - Package: `Rocket.Surgery.LaunchPad.Primitives`
-- Version: `2.0.1-beta.326`
+- Version: `2.0.1-beta.327`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Primitives](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Primitives)
 
@@ -13,8 +13,15 @@
 - [ExistingValueOptions](/LaunchPad/api/rocket.surgery.launchpad.primitives/existingvalueoptions.md) -- `class` `static` -- Helper methods for creating `Primitives.ExistingValueOptionsFactory`1` instances.
 - [ExistingValueOptionsFactory<TOptions>](/LaunchPad/api/rocket.surgery.launchpad.primitives/existingvalueoptionsfactory-1.md) -- `class` -- Implementation of `Options.IOptionsFactory`1`.
 - [Forbidden](/LaunchPad/api/rocket.surgery.launchpad.primitives/forbidden.md) -- `record` `sealed` -- The caller may not do this. HTTP 403, gRPC `PermissionDenied`, GraphQL `FORBIDDEN`.
+- [IncludeInJsonContextAttribute](/LaunchPad/api/rocket.surgery.launchpad.primitives/includeinjsoncontextattribute.md) -- `class` `sealed` -- Puts a type in the JSON context LaunchPad generates in the applications that reference this assembly, for a type that crosses the wire as JSON but isn't a mediator request or response.
 - [Invalid](/LaunchPad/api/rocket.surgery.launchpad.primitives/invalid.md) -- `record` `sealed` -- The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 - [IProblemDetailsData](/LaunchPad/api/rocket.surgery.launchpad.primitives/iproblemdetailsdata.md) -- `interface` -- A common interface used for definiting problems
+- [JsonContextTypeAttribute](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsoncontexttypeattribute.md) -- `class` `sealed` -- Lists a type of this assembly that crosses the wire as JSON, for the JSON context LaunchPad generates in the applications that reference it.
+- [JsonConverterTypeInfoResolver](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsonconvertertypeinforesolver.md) -- `class` `sealed` -- Resolves the metadata of value types written by a converter in `JsonSerializerOptions.Converters`, such as the NodaTime or the spatial types, without reflection.
+- [JsonTypeInfoResolverRegistration](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsontypeinforesolverregistration.md) -- `record` `sealed` -- A JSON type info resolver, usually a source generated `Serialization.JsonSerializerContext`, that the `SystemTextJsonJoint` puts in the `JsonSerializerOptions.TypeInfoResolverChain` of every `Json.JsonSerializerOptions` built from the service provider, and through them of the ASP.NET Core HTTP and MVC JSON options.
+- [LaunchPadJsonEnumConverters](/LaunchPad/api/rocket.surgery.launchpad.primitives/launchpadjsonenumconverters.md) -- `class` `static` -- The enum converters the `SystemTextJsonJoint` adds to the `Json.JsonSerializerOptions` it configures.
+- [LaunchPadJsonSerializerOptionsExtensions](/LaunchPad/api/rocket.surgery.launchpad.primitives/launchpadjsonserializeroptionsextensions.md) -- `class` `static` -- Builds the `JsonSerializerOptions.TypeInfoResolverChain` of a `Json.JsonSerializerOptions` from registered resolvers.
+- [LaunchPadJsonServiceCollectionExtensions](/LaunchPad/api/rocket.surgery.launchpad.primitives/launchpadjsonservicecollectionextensions.md) -- `class` `static` -- Registers JSON type info resolvers for the `SystemTextJsonJoint` to chain into the application's `Json.JsonSerializerOptions`.
 - [NotAuthorizedException](/LaunchPad/api/rocket.surgery.launchpad.primitives/notauthorizedexception.md) -- `class` -- NotAuthorizedException.
 - [NotFound](/LaunchPad/api/rocket.surgery.launchpad.primitives/notfound.md) -- `record` `sealed` -- The requested entity doesn't exist. HTTP 404, gRPC `NotFound`, GraphQL `NOT_FOUND`.
 - [NotFoundException](/LaunchPad/api/rocket.surgery.launchpad.primitives/notfoundexception.md) -- `class` -- NotFoundException.
@@ -33,4 +40,4 @@
 - [DefaultJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/defaultjoint.md) -- `class` -- The joint every LaunchPad application starts from. Implements the `Joints.IServiceJoint`
 - [ServiceDiscoveryCoreJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/servicediscoverycorejoint.md) -- `class` -- A joint that registers service discovery and adds it to every `Http.HttpClient` the application creates.
 - [StandardResilienceJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/standardresiliencejoint.md) -- `class` -- A joint that adds the standard resilience handler to every `Http.HttpClient` the application creates.
-- [SystemTextJsonJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/systemtextjsonjoint.md) -- `class` -- A joint that configures `Json.JsonSerializerOptions` the LaunchPad way: camel case names and camel case enums. Implements the `Joints.IServiceJoint`
+- [SystemTextJsonJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/systemtextjsonjoint.md) -- `class` -- A joint that configures `Json.JsonSerializerOptions` the LaunchPad way: camel case names, camel case enums, and a `JsonSerializerOptions.TypeInfoResolverChain` built from every registered [JsonTypeInfoResolverRegistration](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsontypeinforesolverregistration.md). Implements the `Joints.IServiceJoint`
