@@ -22,7 +22,7 @@ public class RocketEditModel : RocketViewModel
             return Page();
         }
 
-        await Send(Model with { Id = Id, });
+        await Mediator.Send(Model with { Id = Id, }, HttpContext.RequestAborted);
         return RedirectToPage("Index");
     }
 }

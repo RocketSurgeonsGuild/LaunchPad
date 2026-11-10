@@ -1,4 +1,4 @@
-// Compiled into both Rocket.Surgery.LaunchPad.Api (the API generators' mediator profiles) and Rocket.Surgery.LaunchPad.Primitives.Analyzers
+// Compiled into both Rocket.Surgery.LaunchPad.Analyzers (the API generators' mediator profiles) and Rocket.Surgery.LaunchPad.Primitives.Analyzers
 // (the JSON context manifest), so both recognise the same mediator requests. Plain data: no Roslyn types.
 namespace Rocket.Surgery.LaunchPad.Mediators;
 
@@ -84,8 +84,8 @@ internal static class MediatorLibraries
         "ZeroAlloc.Mediator",
         ["ZeroAlloc.Mediator.IRequest`1"],
         [
-            new("ZeroAlloc.Mediator.IRequest`1", MediatorRequestShape.Unary, 0, null, "Handle"),
-            new("ZeroAlloc.Mediator.IStreamRequest`1", MediatorRequestShape.Stream, 0, null, "Handle"),
+            new("ZeroAlloc.Mediator.IRequest`1", MediatorRequestShape.Unary, 0, "ZeroAlloc.Mediator.IRequestHandler`2", "Handle"),
+            new("ZeroAlloc.Mediator.IStreamRequest`1", MediatorRequestShape.Stream, 0, "ZeroAlloc.Mediator.IStreamRequestHandler`2", "Handle"),
         ]
     );
 

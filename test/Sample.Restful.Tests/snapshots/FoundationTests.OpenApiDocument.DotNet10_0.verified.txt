@@ -149,12 +149,14 @@
             ]
           },
           partner: {
+            minLength: 1,
             type: [
               null,
               string
             ]
           },
           payload: {
+            minLength: 1,
             type: [
               null,
               string
@@ -177,10 +179,10 @@
           }
         },
         required: [
-          partner,
           rocketId,
-          payload,
-          scheduledLaunchDate
+          scheduledLaunchDate,
+          partner,
+          payload
         ],
         type: object,
         x-schema-id: CreateLaunchRecordRequest
@@ -261,6 +263,8 @@
           }
         },
         required: [
+          type,
+          title,
           errors
         ],
         type: object

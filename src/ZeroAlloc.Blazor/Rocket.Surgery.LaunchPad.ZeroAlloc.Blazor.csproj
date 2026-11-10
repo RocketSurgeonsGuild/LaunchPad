@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <PackageDescription>ZeroAlloc.Validation for LaunchPad Blazor forms: a ZeroAllocValidator component that reports the registered validator's failures to the form.</PackageDescription>
+        <PackageTags>$(PackageTags);zeroalloc;validation;blazor</PackageTags>
+        <!--
+            ZeroAllocValidator lives in the Rocket.Surgery.LaunchPad.AspNetCore.Blazor namespace, next to FluentValidator. A namespace of
+            Rocket.Surgery.LaunchPad.ZeroAlloc would shadow ZeroAlloc.* in LaunchPad code.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore.Blazor</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+        <PackageReference Include="ZeroAlloc.Validation" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- A component library: no joints, so none of Dovetail's namespaces. -->
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
+    </ItemGroup>
+</Project>

@@ -1,14 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        Every LaunchPad source generator, analyzer and code fix in one analyzer assembly, packed into Rocket.Surgery.LaunchPad.Foundation
+        (docs/adr/0004-one-generator-assembly.md): property tracking, InheritFrom and Mutable, and under Api/ the operation host generators,
+        their analyzer and code fix. They share one mediator detection (Api/Core/ProfileResolver.cs).
+    -->
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <DefineConstants>$(DefineConstants);ROSLYN4_0;ROSLYN4_4;ROSLYN4_6;ROSLYN4_8</DefineConstants>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <!-- Generators are not public API; the generated code is documented instead. -->
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <!-- RS1038: the code fix needs Workspaces, which the command-line compiler doesn't carry. The compiler finds generators and analyzers by their
+             attributes in metadata and never creates the code fix, so the assembly loads without Workspaces; only the IDE, which has it, uses the fix. -->
+        <NoWarn>$(NoWarn);RS1038</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
-        <!-- The oldest Roslyn the generator supports: the compiler of the .NET 10 SDK, so an application on either SDK can load it. -->
+        <!-- The oldest Roslyn the generators support: the compiler of the .NET 10 SDK, so an application on either SDK can load them. -->
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- The mediator request table, shared with the JSON context manifest of Rocket.Surgery.LaunchPad.Primitives.Analyzers. -->
+        <Compile Include="../Shared/MediatorLibraries.cs" Link="Api/Core/MediatorLibraries.cs" />
     </ItemGroup>
     <!-- The generator is packed from wherever the build wrote it: an artifacts path (pack's artifacts-path option) moves it out of bin. -->
     <Target Name="_LaunchPadPackAnalyzer" BeforeTargets="_GetPackageFiles">

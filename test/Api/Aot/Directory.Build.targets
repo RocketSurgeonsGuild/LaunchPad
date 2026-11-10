@@ -1,5 +1,5 @@
 <Project>
     <Import Project="$(MSBuildThisFileDirectory)../../../Directory.Build.targets" />
-    <!-- What the base package adds through NuGet; a project reference doesn't import it. -->
-    <Import Project="$(MSBuildThisFileDirectory)../../../src/Api/build/Rocket.Surgery.LaunchPad.Api.targets" />
+    <!-- What Foundation's package adds through NuGet for the operation host generators; a project reference doesn't import it. -->
+    <Import Project="$(MSBuildThisFileDirectory)../../../src/Foundation/build/Rocket.Surgery.LaunchPad.Operations.targets" />
 </Project>

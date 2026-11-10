@@ -27,6 +27,6 @@
         <PackageReference Include="Serilog.Sinks.Trace" />
     </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
-    <!-- What the API generators' base package adds through NuGet (mediator generators, referenced XML documentation); project references don't import it. -->
-    <Import Project="$(MSBuildThisFileDirectory)../src/Api/build/Rocket.Surgery.LaunchPad.Api.targets" />
+    <!-- What Foundation's package adds through NuGet for the operation host generators (referenced XML documentation); project references don't import it. -->
+    <Import Project="$(MSBuildThisFileDirectory)../src/Foundation/build/Rocket.Surgery.LaunchPad.Operations.targets" />
 </Project>
