@@ -1,0 +1,4 @@
+﻿[
+  Input0.cs(7,20): error LPAD0011: A partial constructor of union Shape declares a case and must take exactly one parameter, the case value; it takes 2,
+  Input0.cs(8,20): error LPAD0011: A partial constructor of union Shape declares a case and must take exactly one parameter, the case value; it takes 0
+]

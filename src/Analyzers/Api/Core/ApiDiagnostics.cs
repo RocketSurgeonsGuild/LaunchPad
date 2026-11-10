@@ -147,7 +147,13 @@ internal static class ApiDiagnostics
         "The handle method of {0} cannot be generated: the handler interface returns {1}, not a Task<T> or ValueTask<T>"
     );
 
-    // LPAD1030 and up: JSON metadata. The ids between are left to the union work (#3147, #3148).
+    public static DiagnosticDescriptor UnionCaseWithoutStatus { get; } = Error(
+        "LPAD1028",
+        "Union error case has no status",
+        "{1}, which {2} returns, has {0} besides its value case, but {0} has no status: its name starts or ends with none of {3}, and it has no [ApiError(statusCode)]"
+    );
+
+    // LPAD1030 and up: JSON metadata.
     public static DiagnosticDescriptor JsonMetadataMissing { get; } = Warning(
         "LPAD1030",
         "JSON type has no source generated metadata",
@@ -158,7 +164,7 @@ internal static class ApiDiagnostics
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
-        PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync,
+        PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus,
         JsonMetadataMissing,
     ];
 

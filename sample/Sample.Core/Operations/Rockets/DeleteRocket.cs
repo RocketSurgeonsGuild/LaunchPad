@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
@@ -20,16 +22,24 @@ public static partial class DeleteRocket
     /// </summary>
     /// <param name="Id">The id of the rocket to remove</param>
     [Validate]
-    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest
+    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
     {
         internal bool IsAssigned(RocketId id) => id != default;
     }
 
-    internal class DeleteRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Unit>
+    /// <summary>What the operation answers: nothing, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async ValueTask<Unit> Handle(Request request, CancellationToken cancellationToken)
+        public partial Result(Unit value);
+        public partial Result(NotFound value);
+    }
+
+    internal class DeleteRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
+            if (await dbContext.Rockets.FindAsync([request.Id], cancellationToken) is not { } rocket) return new NotFound($"Rocket {request.Id} was not found");
             dbContext.Remove(rocket);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return Unit.Value;

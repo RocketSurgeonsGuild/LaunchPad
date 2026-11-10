@@ -131,6 +131,34 @@ internal sealed class SdkTree : IDisposable
     }
 
     /// <summary>
+    ///     What a project gets for C# 15 unions before .NET 11: whether the SDK added Polyfill, and the <c>PolyUseEmbeddedAttribute</c> it sets.
+    ///     <see cref="Evaluate" /> leaves Polyfill out, since it depends on the target framework and the other tests share one snapshot across
+    ///     both.
+    /// </summary>
+    /// <param name="name">The name of the project.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    public async Task<(bool Polyfill, string? PolyUseEmbeddedAttribute)> EvaluatePolyfill(string name, CancellationToken cancellationToken = default)
+    {
+        var output = await DotnetCli.Run(
+            $"msbuild \"{ProjectPath(name)}\" -nologo -getItem:PackageReference -getProperty:PolyUseEmbeddedAttribute",
+            Directory,
+            null,
+            cancellationToken
+        );
+        using var json = JsonDocument.Parse(output[output.IndexOf('{', StringComparison.Ordinal)..]);
+        var polyfill = ItemsNamed(json.RootElement.GetProperty("Items"), "PackageReference")
+           .Any(
+                z => z.GetProperty("Identity").GetString() == "Polyfill"
+                 && z.TryGetProperty("IsImplicitlyDefined", out var isImplicit)
+                 && isImplicit.GetString() == "true"
+                 && z.TryGetProperty("PrivateAssets", out var privateAssets)
+                 && privateAssets.GetString() == "all"
+            );
+        var embedded = json.RootElement.GetProperty("Properties").GetProperty("PolyUseEmbeddedAttribute").GetString();
+        return (polyfill, string.IsNullOrEmpty(embedded) ? null : embedded);
+    }
+
+    /// <summary>
     ///     Builds a project.
     /// </summary>
     /// <param name="name">The name of the project.</param>

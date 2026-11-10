@@ -9,8 +9,12 @@ namespace Api.Functional.MediatR.Server;
 
 public static class ServerApp
 {
-    /// <summary>Starts the server with the generated Minimal API endpoints, the generated controllers on the same routes, or the generated gRPC service.</summary>
-    public static async Task<WebApplication> StartAsync(bool controllers = false, bool grpc = false, bool graphql = false, bool versioned = false)
+    /// <summary>
+    ///     Starts the server with the generated Minimal API endpoints, the generated controllers on the same routes, or the generated gRPC service.
+    ///     With <paramref name="unions" />, the Launches* hosts of the same transport answer too: their operation returns a union, and the other
+    ///     servers' specs (which have no such hosts) must match this one's without them.
+    /// </summary>
+    public static async Task<WebApplication> StartAsync(bool controllers = false, bool grpc = false, bool graphql = false, bool versioned = false, bool unions = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -22,11 +26,15 @@ public static class ServerApp
         {
             var mvc = builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
             // VersionedRocketsController answers only with versioning on, so the other servers' documents (no versioned hosts) match this one's.
-            if (!versioned) mvc.ConfigureApplicationPartManager(parts => parts.FeatureProviders.Add(new WithoutVersionedRockets()));
+            mvc.ConfigureApplicationPartManager(parts => parts.FeatureProviders.Add(new WithoutOptionalControllers(versioned, unions)));
         }
         if (grpc) ProtoBuf.Grpc.Server.ServicesExtensions.AddCodeFirstGrpc(builder.Services);
         // HotChocolate needs a query type; the generated mutations extend the Mutation type.
-        if (graphql) builder.Services.AddGraphQLServer().AddQueryType(d => d.Name("Query").Field("ping").Resolve("pong")).AddMutationType().AddRocketsMutations();
+        if (graphql)
+        {
+            var graph = builder.Services.AddGraphQLServer().AddQueryType(d => d.Name("Query").Field("ping").Resolve("pong")).AddMutationType().AddRocketsMutations();
+            if (unions) graph.AddLaunchesMutations();
+        }
         if (versioned)
         {
             var versioning = builder.Services.AddApiVersioning();
@@ -45,6 +53,7 @@ public static class ServerApp
         else if (grpc)
         {
             app.MapRocketsService();
+            if (unions) app.MapLaunchesService();
         }
         else if (controllers)
         {
@@ -53,6 +62,7 @@ public static class ServerApp
         else
         {
             app.MapRocketsEndpoints();
+            if (unions) app.MapLaunchesEndpoints();
         }
 
         await app.StartAsync();
@@ -60,10 +70,15 @@ public static class ServerApp
     }
 }
 
-internal sealed class WithoutVersionedRockets : Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider<Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature>
+// The controllers of the optional hosts answer only when asked for, so the other servers' documents match this one's.
+internal sealed class WithoutOptionalControllers(bool versioned, bool unions)
+    : Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider<Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature>
 {
-    public void PopulateFeature(IEnumerable<Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart> parts, Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature feature) =>
-        feature.Controllers.Remove(typeof(VersionedRocketsController).GetTypeInfo());
+    public void PopulateFeature(IEnumerable<Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart> parts, Microsoft.AspNetCore.Mvc.Controllers.ControllerFeature feature)
+    {
+        if (!versioned) feature.Controllers.Remove(typeof(VersionedRocketsController).GetTypeInfo());
+        if (!unions) feature.Controllers.Remove(typeof(LaunchesController).GetTypeInfo());
+    }
 }
 
 [Operation<GetRocket.Request>]
@@ -92,10 +107,48 @@ public partial class RocketsService;
 [Operation<DeleteRocket.Request>]
 public partial class RocketsMutations;
 
+// LaunchRocket returns a union on every transport, ListLaunches a stream of unions (not on GraphQL, which has no streams).
+[Operation<LaunchRocket.Request>(Route = "{id}")]
+[Operation<ListLaunches.Request>]
+public static partial class LaunchesEndpoints;
+
+[Operation<LaunchRocket.Request>(Route = "{id}")]
+[Operation<ListLaunches.Request>]
+public partial class LaunchesController;
+
+[Operation<LaunchRocket.Request>]
+[Operation<ListLaunches.Request>]
+public partial class LaunchesService;
+
+[Operation<LaunchRocket.Request>]
+public partial class LaunchesMutations;
+
 public sealed class Handlers(RocketStore store)
     : IRequestHandler<GetRocket.Request, RocketModel?>, IStreamRequestHandler<ListRockets.Request, RocketModel>, IRequestHandler<CreateRocket.Request, CreateRocket.Response>,
-      IRequestHandler<EditRocket.Request, RocketModel>, IRequestHandler<DeleteRocket.Request>
+      IRequestHandler<EditRocket.Request, RocketModel>, IRequestHandler<DeleteRocket.Request>, IRequestHandler<LaunchRocket.Request, LaunchRocketResult>,
+      IStreamRequestHandler<ListLaunches.Request, LaunchRocketResult>
 {
+    public async IAsyncEnumerable<LaunchRocketResult> Handle(ListLaunches.Request request, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        // By name, so the tests know the order: "Falcon" streams before "Grounded" ends the stream.
+        foreach (var (id, name) in store.All(request.Name).OrderBy(r => r.Name, StringComparer.Ordinal))
+        {
+            await Task.Yield();
+            yield return name == "Grounded" ? new NotReady("grounded") : new RocketModel(id, name);
+        }
+    }
+
+    // An unknown rocket isn't found, a rocket named "Grounded" isn't ready, any other one launches.
+    public Task<LaunchRocketResult> Handle(LaunchRocket.Request request, CancellationToken cancellationToken) =>
+        Task.FromResult<LaunchRocketResult>(
+            store.Find(request.Id) switch
+            {
+                null => new RocketNotFound(request.Id),
+                "Grounded" => new NotReady("grounded"),
+                var name => new RocketModel(request.Id, name),
+            }
+        );
+
     public Task<RocketModel?> Handle(GetRocket.Request request, CancellationToken cancellationToken) =>
         Task.FromResult(store.Find(request.Id) is { } name ? new RocketModel(request.Id, name) : null);
 

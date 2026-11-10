@@ -1,6 +1,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Riok.Mapperly.Abstractions;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
 using ZeroAlloc.Mediator;
 using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
@@ -22,17 +23,17 @@ public partial class RocketsService : Rockets.RocketsBase
     public static partial DeleteRocket.Request Map(DeleteRocketRequest request);
     public static partial RocketModel Map(Core.Models.RocketModel request);
 
-    public override async Task<CreateRocketResponse> CreateRocket(CreateRocketRequest request, ServerCallContext context) => Map(await Mediator(context).Send(Map(request), context.CancellationToken));
+    public override async Task<CreateRocketResponse> CreateRocket(CreateRocketRequest request, ServerCallContext context) => Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<CreateRocket.Response>());
 
-    public override async Task<RocketModel> EditRocket(UpdateRocketRequest request, ServerCallContext context) => Map(await Mediator(context).Send(Map(request), context.CancellationToken));
+    public override async Task<RocketModel> EditRocket(UpdateRocketRequest request, ServerCallContext context) => Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<Core.Models.RocketModel>());
 
     public override async Task<Empty> DeleteRocket(DeleteRocketRequest request, ServerCallContext context)
     {
-        await Mediator(context).Send(Map(request), context.CancellationToken);
+        ( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<Unit>();
         return new();
     }
 
-    public override async Task<RocketModel> GetRockets(GetRocketRequest request, ServerCallContext context) => Map(await Mediator(context).Send(Map(request), context.CancellationToken));
+    public override async Task<RocketModel> GetRockets(GetRocketRequest request, ServerCallContext context) => Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<Core.Models.RocketModel>());
 
     public override async Task ListRockets(ListRocketsRequest request, IServerStreamWriter<RocketModel> responseStream, ServerCallContext context)
     {

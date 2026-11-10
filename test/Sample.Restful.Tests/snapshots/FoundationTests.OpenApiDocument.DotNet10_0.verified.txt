@@ -136,6 +136,48 @@
         type: object,
         x-schema-id: EditLaunchRecordPatchRequest
       },
+      ProblemDetails: {
+        properties: {
+          detail: {
+            type: [
+              null,
+              string
+            ]
+          },
+          instance: {
+            type: [
+              null,
+              string
+            ]
+          },
+          status: {
+            format: int32,
+            pattern: ^-?(?:0|[1-9]\d*)$,
+            type: [
+              null,
+              integer,
+              string
+            ]
+          },
+          title: {
+            type: [
+              null,
+              string
+            ]
+          },
+          type: {
+            type: [
+              null,
+              string
+            ]
+          }
+        },
+        required: [
+          type,
+          title
+        ],
+        type: object
+      },
       Request: {
         properties: {
           actualLaunchDate: {
@@ -369,6 +411,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Create a new launch record,
@@ -404,6 +456,34 @@
               }
             },
             description: Bad Request
+          },
+          403: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Forbidden,
+            headers: {
+              www-authenticate: {
+                description: The error details,
+                schema: {
+                  type: string
+                }
+              }
+            }
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Remove a launch record,
@@ -444,6 +524,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Load details of a specific launch record,
@@ -504,6 +594,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Update a given launch record,
@@ -564,6 +664,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Update a given launch record,
@@ -664,6 +774,16 @@
               }
             },
             description: Bad Request
+          },
+          409: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Conflict
           }
         },
         summary: Create a new rocket,
@@ -699,6 +819,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Remove a rocket,
@@ -739,6 +869,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Load details of a specific rocket,
@@ -799,6 +939,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Update a given rocket,
@@ -859,6 +1009,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Update a given rocket,
@@ -953,6 +1113,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Get a specific launch record for a given rocket,

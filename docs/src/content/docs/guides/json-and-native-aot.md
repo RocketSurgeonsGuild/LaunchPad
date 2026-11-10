@@ -4,7 +4,7 @@ description: Give LaunchPad the System.Text.Json metadata of your types with a s
 ---
 
 LaunchPad reads and writes JSON only with the JSON contexts it is given, never through reflection, in a JIT
-application as much as in a trimmed or native AOT one ([ADR 0005](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0005-no-json-reflection.md)).
+application as much as in a trimmed or native AOT one ([ADR 0007](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0007-no-json-reflection.md)).
 Every type that crosses the wire needs metadata from a source generated `JsonSerializerContext`, and a missing one fails during development
 rather than after publishing.
 

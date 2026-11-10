@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sample.Core.Models;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
-
 using ZeroAlloc.Mediator;
 
 namespace Sample.Pages.Pages.Rockets;
@@ -17,5 +17,5 @@ public class RocketViewModel : PageModel
 
     public RocketModel Rocket { get; set; } = null!;
 
-    public virtual async Task OnGet() => Rocket = await Mediator.Send(new GetRocket.Request(Id), HttpContext.RequestAborted);
+    public virtual async Task OnGet() => Rocket = ( await Mediator.Send(new GetRocket.Request(Id), HttpContext.RequestAborted) ).Value.Expect<RocketModel>();
 }

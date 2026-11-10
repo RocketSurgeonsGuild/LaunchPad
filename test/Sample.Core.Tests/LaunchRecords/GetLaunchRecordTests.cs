@@ -43,7 +43,7 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(new GetLaunchRecord.Request(record.Id), TestContext.CancellationToken);
+        var response = ( await mediator.Send(new GetLaunchRecord.Request(record.Id), TestContext.CancellationToken) ).Value.ShouldBeOfType<LaunchRecordModel>();
 
         response.Partner.ShouldBe("partner");
         response.Payload.ShouldBe("geo-fence-ftl");
@@ -58,9 +58,9 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        Func<Task> action = async () => await mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()), TestContext.CancellationToken);
+        var result = await mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()), TestContext.CancellationToken);
 
-        await action.ShouldThrowAsync<NotFoundException>();
+        result.Value.ShouldBeOfType<NotFound>();
     }
 
     private static readonly Faker Faker = new();

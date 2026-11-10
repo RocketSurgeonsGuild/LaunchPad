@@ -1,15 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-
+using System.Runtime.CompilerServices;
 using NodaTime;
-
 using Riok.Mapperly.Abstractions;
-
 using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.Primitives;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
-
 using ZeroAlloc.Mediator;
 using ZeroAlloc.Validation;
 
@@ -26,7 +22,7 @@ public static partial class CreateLaunchRecord
     ///     Create a launch record
     /// </summary>
     [Validate]
-    public record Request : IRequest<Response>
+    public record Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket to use
@@ -80,19 +76,31 @@ public static partial class CreateLaunchRecord
         public LaunchRecordId Id { get; init; }
     }
 
-    internal class CreateLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Response>
+    /// <summary>What the operation answers: the new launch record's id, or not found when its rocket doesn't exist.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async ValueTask<Response> Handle(Request request, CancellationToken cancellationToken)
+        public partial Result(Response value);
+        public partial Result(NotFound value);
+    }
+
+    internal class CreateLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             var record = Map(request);
 
-            var rocket = await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken) ?? throw new RequestFailedException("Rocket not found!");
+            if (await dbContext.Rockets.FindAsync([request.RocketId], cancellationToken) is not { } rocket)
+            {
+                return new NotFound($"Rocket {request.RocketId} was not found");
+            }
+
             record.Rocket = rocket;
 
             await dbContext.AddAsync(record, cancellationToken).ConfigureAwait(false);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return new()
+            return new Response
             {
                 Id = record.Id,
             };

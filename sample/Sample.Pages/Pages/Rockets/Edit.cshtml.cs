@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
 
 namespace Sample.Pages.Pages.Rockets;
@@ -22,7 +23,7 @@ public class RocketEditModel : RocketViewModel
             return Page();
         }
 
-        await Mediator.Send(Model with { Id = Id, }, HttpContext.RequestAborted);
+        ( await Mediator.Send(Model with { Id = Id, }, HttpContext.RequestAborted) ).Value.Expect<Core.Models.RocketModel>();
         return RedirectToPage("Index");
     }
 }

@@ -97,6 +97,10 @@ internal static class GrpcEmit
                      .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(body))
                      .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
+    /// <summary>The union error cases the operations send as messages in the <c>case-bin</c> trailer: classes with members, once each.</summary>
+    public static IEnumerable<UnionCaseModel> ErrorCaseMessages(IEnumerable<OperationModel> operations) =>
+        operations.SelectMany(o => o.Union?.Errors.Where(e => e.IsMessage && !e.Members.IsEmpty) ?? []).GroupBy(e => e.Type, StringComparer.Ordinal).Select(g => g.First());
+
     /// <summary>
     ///     <c>ConfigureGrpcModel()</c> on the host, called by the generated <c>Map{Host}()</c> and <c>GetProto()</c> before protobuf-net builds its
     ///     serializers. Each carried class is added to protobuf-net's model once: at compatibility level 300, so Guids, decimals, DateTimes and
@@ -114,6 +118,8 @@ internal static class GrpcEmit
                                        (o.ResponseIsMessage || o.ResponseIsStruct ? o.ResponseTypeNotNull : null, o.ResponseGraphQLName),
                                    }
                                )
+                              // An error case of a union with members travels in the case-bin trailer.
+                              .Concat(ErrorCaseMessages(operations).Select(e => (Type: (string?)e.Type, Name: e.NestedName)))
                               .Where(t => t.Type is { })
                               .GroupBy(t => t.Type!, StringComparer.Ordinal)
                               .Select(g => (Type: g.Key, g.First().Name))

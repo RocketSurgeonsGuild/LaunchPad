@@ -58,6 +58,8 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
         "ProtoBuf.Meta",
         "Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi",
         "Rocket.Surgery.LaunchPad.Api.Generated.Mvc",
+        "Rocket.Surgery.LaunchPad.Api.Generated.Grpc",
+        "Rocket.Surgery.LaunchPad.Api.Generated.GraphQL",
         "System",
         "System.CodeDom.Compiler",
         "System.Collections.Generic",

@@ -57,6 +57,24 @@ namespace Rocket.Surgery.LaunchPad.Api
         public global::System.Type Request { get; }
     }
 
+    /// <summary>
+    ///     On an error case of a union response: the status every transport answers for it, overriding the one its name implies (NotFound,
+    ///     Invalid, Validation, Unauthorized, Forbidden, Conflict). Without either, the case is LPAD1028.
+    /// </summary>
+    [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
+    [global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Struct, Inherited = false)]
+    internal sealed class ApiErrorAttribute : global::System.Attribute
+    {
+        /// <param name="statusCode">The HTTP status, e.g. 422.</param>
+        public ApiErrorAttribute(int statusCode) { StatusCode = statusCode; }
+        /// <summary>The HTTP status.</summary>
+        public int StatusCode { get; }
+        /// <summary>The gRPC status as its number (Grpc.Core.StatusCode, e.g. 9 for FailedPrecondition); defaults to the one for the HTTP status.</summary>
+        public int GrpcStatus { get; set; }
+        /// <summary>The GraphQL error category, e.g. "UNPROCESSABLE"; defaults to the one for the HTTP status.</summary>
+        public string GraphQLCode { get; set; }
+    }
+
     /// <summary>Optional settings for an operation host. The transport itself is inferred from the host's base type, attributes or name.</summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     [global::System.AttributeUsage(global::System.AttributeTargets.Class, Inherited = false)]

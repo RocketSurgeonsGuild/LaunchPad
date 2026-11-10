@@ -9,6 +9,8 @@
 [assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::Sample.Core.GetRocket.Request))]
 [assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::Sample.Core.ListLaunches.Request))]
 [assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::Sample.Core.ListRockets.Request))]
+[assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::Sample.Core.RenameRocket.Request))]
+[assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::Sample.Core.RocketConflict))]
 [assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::Sample.Core.RocketModel))]
 [assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::Sample.Core.Telemetry))]
 [assembly: global::Rocket.Surgery.LaunchPad.Primitives.JsonContextTypeAttribute(typeof(global::System.Collections.Generic.IEnumerable<global::Sample.Core.LaunchModel>))]

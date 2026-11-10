@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
@@ -20,14 +22,24 @@ public static partial class GetRocket
     /// </summary>
     /// <param name="Id">The id of the rocket</param>
     [Validate]
-    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<RocketModel>
+    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
     {
         internal bool IsAssigned(RocketId id) => id != default;
     }
 
-    internal class GetRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, RocketModel>
+    /// <summary>What the operation answers: the rocket, or not found.</summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async ValueTask<RocketModel> Handle(Request request, CancellationToken cancellationToken) =>
-            ModelMapper.Map(await dbContext.Rockets.FindAsync([request.Id], cancellationToken).ConfigureAwait(false) ?? throw new NotFoundException());
+        public partial Result(RocketModel value);
+        public partial Result(NotFound value);
+    }
+
+    internal class GetRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    {
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken) =>
+            await dbContext.Rockets.FindAsync([request.Id], cancellationToken).ConfigureAwait(false) is { } rocket
+                ? ModelMapper.Map(rocket)
+                : new NotFound($"Rocket {request.Id} was not found");
     }
 }

@@ -4,6 +4,8 @@
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
+        <!-- The analyzer project (union, enum converter and JSON context manifest generators) lives in Analyzers/ and builds on its own. -->
+        <DefaultItemExcludes>$(DefaultItemExcludes);Analyzers/**</DefaultItemExcludes>
     </PropertyGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
@@ -22,9 +24,10 @@
         <PackageReference Include="System.Text.Json" />
     </ItemGroup>
     <ItemGroup>
-        <!-- The camel case enum converters of the JSON contexts in every project that references this package. -->
+        <!-- The union generator, analyzers and code fixes, and the JSON generators (enum converters, JSON context manifest), flow to every
+             project that references Primitives. -->
         <ProjectReference
-            Include="..\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
+            Include="Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
             IncludeAssets="analyzers"
             ExcludeAssets="compile;runtime;native"
             PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"

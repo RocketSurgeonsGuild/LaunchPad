@@ -44,7 +44,7 @@ public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(
+        var response = ( await mediator.Send(
             new EditLaunchRecord.Request
             {
                 Id = record.Id,
@@ -55,7 +55,7 @@ public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
                 PayloadWeightKg = 200,
             },
             TestContext.CancellationToken
-        );
+        ) ).Value.ShouldBeOfType<LaunchRecordModel>();
 
         response.ScheduledLaunchDate.ShouldBe(launchDate);
         response.PayloadWeightKg.ShouldBe(200);

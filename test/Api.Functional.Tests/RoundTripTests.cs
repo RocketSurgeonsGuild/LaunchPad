@@ -31,7 +31,7 @@ public class RoundTripTests
     // Only the MediatR server maps the versioned hosts.
     private static readonly Dictionary<string, (Func<bool, bool, bool, bool, Task<WebApplication>> Start, Func<string> Proto)> Servers = new()
     {
-        ["MediatR"] = (mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync, mediatrserver::Api.Functional.MediatR.Server.RocketsService.GetProto),
+        ["MediatR"] = ((controllers, grpc, graphql, versioned) => mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(controllers, grpc, graphql, versioned), mediatrserver::Api.Functional.MediatR.Server.RocketsService.GetProto),
         ["Mediator"] = ((controllers, grpc, graphql, _) => mediatorserver::Api.Functional.Mediator.Server.ServerApp.StartAsync(controllers, grpc, graphql), mediatorserver::Api.Functional.Mediator.Server.RocketsService.GetProto),
         ["ChannelMediator"] = ((controllers, grpc, graphql, _) => channelmediatorserver::Api.Functional.ChannelMediator.Server.ServerApp.StartAsync(controllers, grpc, graphql), channelmediatorserver::Api.Functional.ChannelMediator.Server.RocketsService.GetProto),
         ["ImmediateHandlers"] = ((controllers, grpc, graphql, _) => immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.ServerApp.StartAsync(controllers, grpc, graphql), immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.RocketsService.GetProto),

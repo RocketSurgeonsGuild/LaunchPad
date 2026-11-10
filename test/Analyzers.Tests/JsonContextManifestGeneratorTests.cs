@@ -9,9 +9,12 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
     [Test]
     public async Task Should_List_Requests_Responses_Patches_And_Opted_In_Types()
     {
-        var result = await Builder
-                          .WithGenerator<JsonContextManifestGenerator>()
-                          .AddReferences(typeof(JsonContextTypeAttribute), typeof(IPropertyTracking<>), typeof(ZeroAlloc.Mediator.IRequest<>))
+        var builder = Builder
+                     .WithGenerator<JsonContextManifestGenerator>()
+                     .AddReferences(typeof(JsonContextTypeAttribute), typeof(IPropertyTracking<>), typeof(ZeroAlloc.Mediator.IRequest<>));
+        // The union types: Polyfill's on .NET 10, the BCL's on .NET 11 (see UnionGeneratorTests).
+        if (UnionGeneratorTests.PolyfillReference is { } polyfill) builder = builder.AddReferences(polyfill);
+        var result = await builder
                           .AddSources(
                                """
                                #nullable enable
@@ -37,6 +40,22 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
                                        {
                                            public Request ApplyChanges(Request state) => state;
                                            void IPropertyTracking<Request>.ResetChanges() { }
+                                       }
+                                   }
+
+                                   // A union response: its cases are listed, not the union, and LaunchPad's standard problems aren't.
+                                   public record RocketConflict(System.Guid ExistingId);
+                                   public static class RenameRocket
+                                   {
+                                       public record Request(System.Guid Id, string Name) : IRequest<Result>;
+
+                                       [System.Runtime.CompilerServices.Union]
+                                       public readonly struct Result
+                                       {
+                                           public Result(RocketModel value) { }
+                                           public Result(NotFound value) { }
+                                           public Result(RocketConflict value) { }
+                                           public object? Value => null;
                                        }
                                    }
 

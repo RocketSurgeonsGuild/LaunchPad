@@ -12,7 +12,7 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 /// <remarks>
 ///     <para>
 ///         Listed: every mediator request (recognised with the mediator libraries LaunchPad supports, or <c>[assembly: MediatorRequest]</c>) and its
-///         response or stream item type, every <c>IPropertyTracking&lt;T&gt;</c> type with its target, and every type marked
+///         response or stream item type (the cases of a union response, without LaunchPad's standard problems), every <c>IPropertyTracking&lt;T&gt;</c> type with its target, and every type marked
 ///         <c>[IncludeInJsonContext]</c>. Only public types are listed, since the application's context names them.
 ///     </para>
 ///     <para>Nothing is written when the compilation doesn't reference Rocket.Surgery.LaunchPad.Primitives.</para>
@@ -24,6 +24,10 @@ public sealed class JsonContextManifestGenerator : IIncrementalGenerator
     private const string IncludeAttribute = "Rocket.Surgery.LaunchPad.Primitives.IncludeInJsonContextAttribute";
     private const string PropertyTracking = "Rocket.Surgery.LaunchPad.Foundation.IPropertyTracking`1";
     private const string CustomRequestAttribute = "MediatorRequestAttribute";
+    private const string UnionAttribute = "System.Runtime.CompilerServices.UnionAttribute";
+    private const string UnionInterface = "System.Runtime.CompilerServices.IUnion";
+    private const string Problem = "Rocket.Surgery.LaunchPad.Primitives.Problem";
+    private const string ProblemDetailsData = "Rocket.Surgery.LaunchPad.Primitives.IProblemDetailsData";
 
     private static readonly SymbolDisplayFormat FullyQualified = SymbolDisplayFormat.FullyQualifiedFormat;
 
@@ -87,7 +91,16 @@ public sealed class JsonContextManifestGenerator : IIncrementalGenerator
             Add(type);
             if (request.Shape is MediatorRequestShape.Void || implemented.TypeArguments.Length <= request.ResponseTypeArgumentIndex) continue;
             var response = implemented.TypeArguments[request.ResponseTypeArgumentIndex];
-            if (!IsUnit(response)) Add(response);
+            // A union response travels as its cases, never as the union: the transports write the value case, and an error case as its
+            // transport's error shape. LaunchPad's standard problems need no listing; a custom error case's members do.
+            if (UnionCases(response) is { } cases)
+            {
+                foreach (var unionCase in cases.Where(c => !IsUnit(c) && !IsProblem(c))) Add(unionCase);
+            }
+            else if (!IsUnit(response))
+            {
+                Add(response);
+            }
         }
 
         return string.Join("\n", listed);
@@ -115,6 +128,29 @@ public sealed class JsonContextManifestGenerator : IIncrementalGenerator
 
         return null;
     }
+
+    // The union contract the operation host generators read (src/Analyzers/Api/Core/UnionResults.cs): [Union] or IUnion by full name, with a
+    // public one-parameter constructor per case. Null when the type isn't a union.
+    private static IReadOnlyList<ITypeSymbol>? UnionCases(ITypeSymbol type)
+    {
+        if (Unwrap(type) is not INamedTypeSymbol named) return null;
+        if (!named.GetAttributes().Any(a => a.AttributeClass?.ToDisplayString() == UnionAttribute)
+         && !named.AllInterfaces.Any(i => i.ToDisplayString() == UnionInterface))
+        {
+            return null;
+        }
+
+        var cases = named.InstanceConstructors
+                         .Where(c => c is { DeclaredAccessibility: Accessibility.Public, IsImplicitlyDeclared: false, Parameters.Length: 1, IsGenericMethod: false })
+                         .Where(c => c.Parameters[0].RefKind is RefKind.None or RefKind.In)
+                         .Select(c => c.Parameters[0].Type)
+                         .ToArray();
+        return cases.Length < 2 ? null : cases;
+    }
+
+    // LaunchPad's standard problems (not found, invalid, …) are written as problem details by every transport.
+    private static bool IsProblem(ITypeSymbol type) =>
+        Unwrap(type).ToDisplayString() == Problem || Unwrap(type).AllInterfaces.Any(i => i.ToDisplayString() == ProblemDetailsData);
 
     private static ITypeSymbol Unwrap(ITypeSymbol type) =>
         type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T, TypeArguments: [var underlying] }
