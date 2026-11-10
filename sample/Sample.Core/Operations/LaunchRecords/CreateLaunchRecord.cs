@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using NodaTime;
 
 using Riok.Mapperly.Abstractions;
+
+using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;

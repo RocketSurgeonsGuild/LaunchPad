@@ -79,6 +79,9 @@ public static partial class EditRocket
             return ModelMapper.Map(rocket);
         }
 
+        private async partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+            MapRequest(await GetRocket(request.Id, cancellationToken).ConfigureAwait(false));
+
         private async Task<ReadyRocket> GetRocket(RocketId id, CancellationToken cancellationToken) => await dbContext
                                                                                                             .Rockets.FindAsync([id], cancellationToken)
                                                                                                             .ConfigureAwait(false)

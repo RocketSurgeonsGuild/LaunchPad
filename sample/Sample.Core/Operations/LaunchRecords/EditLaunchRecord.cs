@@ -93,6 +93,9 @@ public static partial class EditLaunchRecord
             return ModelMapper.Map(rocket);
         }
 
+        private async partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+            Map(await GetLaunchRecord(request.Id, cancellationToken).ConfigureAwait(false));
+
         private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) => await dbContext
                                                                                                                          .LaunchRecords
                                                                                                                          .Include(z => z.Rocket)
