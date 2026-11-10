@@ -1,7 +1,7 @@
 <Project>
     <ItemGroup>
         <ProjectReference Include="../../src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-        <!-- The union generator, which the Primitives package brings through NuGet; project references don't. -->
+        <!-- The union, enum converter and JSON context manifest generators, which the Primitives package brings through NuGet; project references don't. -->
         <ProjectReference Include="../../src/Primitives/Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" PrivateAssets="none" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>

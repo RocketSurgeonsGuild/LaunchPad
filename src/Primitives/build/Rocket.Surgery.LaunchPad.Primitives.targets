@@ -1,5 +1,6 @@
-﻿<Project>
+<Project>
     <ItemGroup Condition="'$(ImplicitUsings)' == 'enable'">
         <Using Include="Rocket.Surgery.LaunchPad.Primitives" />
     </ItemGroup>
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Primitives.JsonContext.targets" />
 </Project>

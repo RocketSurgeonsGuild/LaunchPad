@@ -10,6 +10,7 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
         <ProjectReference Include="..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
         <ProjectReference Include="..\..\src\Primitives\Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
+        <ProjectReference Include="..\..\src\Primitives.Tasks\Rocket.Surgery.LaunchPad.Primitives.Tasks.csproj" />
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />

@@ -1,6 +1,7 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 
@@ -8,6 +9,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 ///     Problem Details for Fluent Validation
 /// </summary>
 [PublicAPI]
+[IncludeInJsonContext]
 public class FluentValidationProblemDetails : ValidationProblemDetails
 {
     internal static FluentValidationProblemDetails From(ValidationProblemDetails validationProblemDetails, ValidationResult validationResult)

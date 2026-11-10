@@ -3,7 +3,8 @@
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
-        <!-- The union analyzer project lives in Analyzers/ and builds on its own. -->
+        <IsAotCompatible>true</IsAotCompatible>
+        <!-- The analyzer project (union, enum converter and JSON context manifest generators) lives in Analyzers/ and builds on its own. -->
         <DefaultItemExcludes>$(DefaultItemExcludes);Analyzers/**</DefaultItemExcludes>
     </PropertyGroup>
     <ItemGroup>
@@ -23,7 +24,8 @@
         <PackageReference Include="System.Text.Json" />
     </ItemGroup>
     <ItemGroup>
-        <!-- The union generator, analyzers and code fixes flow to every project that references Primitives. -->
+        <!-- The union generator, analyzers and code fixes, and the JSON generators (enum converters, JSON context manifest), flow to every
+             project that references Primitives. -->
         <ProjectReference
             Include="Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
             IncludeAssets="analyzers"
@@ -31,5 +33,15 @@
             PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"
             OutputItemType="Analyzer"
         />
+        <!-- The task that writes an application's JSON context (build/Rocket.Surgery.LaunchPad.Primitives.targets), packed under tasks/. -->
+        <ProjectReference Include="..\Primitives.Tasks\Rocket.Surgery.LaunchPad.Primitives.Tasks.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
     </ItemGroup>
+    <Target Name="_LaunchPadPackJsonContextTask" BeforeTargets="_GetPackageFiles">
+        <MSBuild Projects="..\Primitives.Tasks\Rocket.Surgery.LaunchPad.Primitives.Tasks.csproj" Targets="GetTargetPath">
+            <Output TaskParameter="TargetOutputs" ItemName="_LaunchPadJsonContextTask" />
+        </MSBuild>
+        <ItemGroup>
+            <None Include="@(_LaunchPadJsonContextTask)" Pack="true" PackagePath="tasks/netstandard2.0" Visible="false" />
+        </ItemGroup>
+    </Target>
 </Project>

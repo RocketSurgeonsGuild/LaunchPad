@@ -25,6 +25,8 @@
         <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <InternalsVisibleTo Include="FluentValidation.AspNetCore.Tests" />
+        <!-- The camel case converter of FluentValidation's Severity, which the problem details JSON context reaches; packages get it from Primitives. -->
+        <ProjectReference Include="..\Primitives\Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" PrivateAssets="all" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
     <!--
         The OpenAPI XML comment generator arrives with Microsoft.AspNetCore.OpenApi and intercepts the AddOpenApi call in AddFluentValidationOpenApi.

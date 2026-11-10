@@ -35,6 +35,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     {
         var hosts = HostPipeline.Hosts(context, HostKind.MinimalApi);
         context.RegisterSourceOutput(hosts, static (output, models) => Emit(output, models));
+        context.RegisterSourceOutput(hosts.Combine(JsonMetadataCoverage.Provider(context)), static (output, pair) => JsonMetadataCoverage.Report(output, pair.Left, pair.Right));
     }
 
     private static void Emit(SourceProductionContext output, EquatableArray<HostModel> hosts)

@@ -1,0 +1,34 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1030,
+      Title: JSON type has no source generated metadata,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Message: Sample.Contracts.Rockets.CreateRocket.Request is read or written as JSON by RocketsEndpoints.CreateRocket, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof(Sample.Contracts.Rockets.CreateRocket.Request))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1030,
+      Title: JSON type has no source generated metadata,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Message: Sample.Contracts.Rockets.CreateRocket.Response is read or written as JSON by RocketsEndpoints.CreateRocket, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof(Sample.Contracts.Rockets.CreateRocket.Response))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1030,
+      Title: JSON type has no source generated metadata,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (9,5)-(9,34),
+      MessageFormat: {0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Message: Sample.Contracts.Rockets.EditRocket.Request is read or written as JSON by RocketsEndpoints.EditRocket, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof(Sample.Contracts.Rockets.EditRocket.Request))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Category: LaunchPad.Api
+    }
+  ]
+}

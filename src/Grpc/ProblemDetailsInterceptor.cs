@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 using Grpc.Core;
 using Grpc.Core.Interceptors;
@@ -15,7 +16,10 @@ namespace Rocket.Surgery.LaunchPad.Grpc;
 ///     Create the interceptor with its status code
 /// </remarks>
 /// <param name="statusCode"></param>
-/// <param name="options"></param>
+/// <param name="options">
+///     The JSON options the problem details properties are written with. Their resolver chain must know the property types: the built in
+///     interceptors use the ASP.NET Core HTTP JSON options, which LaunchPad's <c>SystemTextJsonJoint</c> fills from the registered resolvers.
+/// </param>
 [PublicAPI]
 public abstract class ProblemDetailsInterceptor<T>(StatusCode statusCode, JsonSerializerOptions options) : Interceptor
     where T : Exception, IProblemDetailsData
@@ -78,11 +82,6 @@ public abstract class ProblemDetailsInterceptor<T>(StatusCode statusCode, JsonSe
     /// <returns></returns>
     protected virtual Metadata CustomizeMetadata(Metadata metadata) => metadata;
 
-    [UnconditionalSuppressMessage(
-        "Trimming",
-        "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
-        Justification = "options is assumed to have a proper resolver chain"
-    )]
     private static Metadata CreateMetadata(T exception, JsonSerializerOptions options)
     {
         var metadata = new Metadata();
@@ -97,11 +96,32 @@ public abstract class ProblemDetailsInterceptor<T>(StatusCode statusCode, JsonSe
         {
             metadata.Add(
                 item.Key,
-                item.Value switch { string s => s, { } o => JsonSerializer.Serialize(o, o.GetType(), options), _ => null } ?? ""
+                item.Value switch { string s => s, { } o => Serialize(o, options), _ => null } ?? ""
             );
         }
 
         return metadata;
+    }
+
+    // Written with the metadata the options' resolver chain has for the value's type, so no reflection is needed; a value no resolver knows is
+    // sent as its ToString().
+    private static string? Serialize(object value, JsonSerializerOptions options)
+    {
+        JsonTypeInfo? typeInfo;
+        try
+        {
+            typeInfo = options.TryGetTypeInfo(value.GetType(), out var resolved) ? resolved : null;
+        }
+        catch (NotSupportedException)
+        {
+            typeInfo = null;
+        }
+        catch (InvalidOperationException)
+        {
+            typeInfo = null;
+        }
+
+        return typeInfo is null ? value.ToString() : JsonSerializer.Serialize(value, typeInfo);
     }
 
     private RpcException CreateException(T exception, JsonSerializerOptions options) => new(

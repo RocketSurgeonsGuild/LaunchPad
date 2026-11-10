@@ -153,11 +153,19 @@ internal static class ApiDiagnostics
         "{1}, which {2} returns, has {0} besides its value case, but {0} has no status: its name starts or ends with none of {3}, and it has no [ApiError(statusCode)]"
     );
 
+    // LPAD1030 and up: JSON metadata.
+    public static DiagnosticDescriptor JsonMetadataMissing { get; } = Warning(
+        "LPAD1030",
+        "JSON type has no source generated metadata",
+        "{0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions"
+    );
+
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
         PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus,
+        JsonMetadataMissing,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);

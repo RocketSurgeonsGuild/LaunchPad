@@ -87,3 +87,11 @@ _Avoid_: Built-in union
 **Problem**:
 One of LaunchPad's standard error cases (not found, invalid, unprocessable, unauthorized, forbidden, conflict), which carries the details every transport writes into its error shape.
 _Avoid_: Error result, failure, problem details (that is the HTTP shape of a problem)
+
+**JSON context**:
+The JSON metadata an application or package hands to LaunchPad, prepared at build time, so its types are read and written without reflection. LaunchPad uses only the JSON contexts it is given.
+_Avoid_: Serializer context, type resolver, JSON options
+
+**JSON context manifest**:
+The list of its types an assembly declares as crossing the wire as JSON, from which the applications that reference it get their JSON context.
+_Avoid_: JSON registry, type list

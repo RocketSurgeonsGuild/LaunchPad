@@ -1,0 +1,48 @@
+<Project>
+    <!--
+        The application's JSON context. An executable project (a console or worker app, or an ASP.NET Core one) gets a JsonSerializerContext
+        written before it compiles, declaring every type its referenced assemblies list in their JSON context manifests
+        ([assembly: JsonContextType(typeof(X))], which the generator of this package writes), and a Joint that chains it into the application's
+        JSON options. Written as source rather than by a generator, the System.Text.Json source generator sees it; and the types come from
+        compiled assemblies, so the members other generators added to them are there too.
+
+        LaunchPadGenerateJsonContext=false turns it off; test projects get it only when they set it to true.
+    -->
+    <PropertyGroup>
+        <LaunchPadGenerateJsonContext
+            Condition="'$(LaunchPadGenerateJsonContext)' == '' and '$(IsTestProject)' != 'true' and ('$(OutputType)' == 'Exe' or '$(OutputType)' == 'WinExe' or '$(UsingMicrosoftNETSdkWeb)' == 'true')"
+        >true</LaunchPadGenerateJsonContext>
+        <LaunchPadJsonContextName Condition="'$(LaunchPadJsonContextName)' == ''">LaunchPadJsonContext</LaunchPadJsonContextName>
+        <LaunchPadJsonContextNamespace Condition="'$(LaunchPadJsonContextNamespace)' == ''">$(RootNamespace)</LaunchPadJsonContextNamespace>
+        <LaunchPadJsonContextFile>$(IntermediateOutputPath)$(LaunchPadJsonContextName).g.cs</LaunchPadJsonContextFile>
+        <LaunchPadPrimitivesTasksAssembly Condition="'$(LaunchPadPrimitivesTasksAssembly)' == ''">$(MSBuildThisFileDirectory)../tasks/netstandard2.0/Rocket.Surgery.LaunchPad.Primitives.Tasks.dll</LaunchPadPrimitivesTasksAssembly>
+    </PropertyGroup>
+    <!-- In its own task host, so a rebuild of the task (in this repository) never finds the assembly locked by a build node. -->
+    <UsingTask
+        TaskName="Rocket.Surgery.LaunchPad.Primitives.Tasks.GenerateLaunchPadJsonContext"
+        AssemblyFile="$(LaunchPadPrimitivesTasksAssembly)"
+        TaskFactory="TaskHostFactory"
+    />
+    <Target
+        Name="LaunchPadGenerateJsonContext"
+        BeforeTargets="CoreCompile"
+        DependsOnTargets="ResolveAssemblyReferences"
+        Condition="'$(LaunchPadGenerateJsonContext)' == 'true'"
+        Inputs="@(ReferencePath);$(MSBuildThisFileFullPath);$(LaunchPadPrimitivesTasksAssembly)"
+        Outputs="$(LaunchPadJsonContextFile)"
+    >
+        <GenerateLaunchPadJsonContext
+            References="@(ReferencePath)"
+            OutputFile="$(LaunchPadJsonContextFile)"
+            Namespace="$(LaunchPadJsonContextNamespace)"
+            ContextName="$(LaunchPadJsonContextName)"
+        />
+    </Target>
+    <!-- Separate from the generation, so the file is compiled when the generation is skipped as up to date. -->
+    <Target Name="LaunchPadIncludeJsonContext" AfterTargets="LaunchPadGenerateJsonContext" BeforeTargets="CoreCompile" Condition="'$(LaunchPadGenerateJsonContext)' == 'true'">
+        <ItemGroup Condition="Exists('$(LaunchPadJsonContextFile)')">
+            <Compile Include="$(LaunchPadJsonContextFile)" />
+            <FileWrites Include="$(LaunchPadJsonContextFile)" />
+        </ItemGroup>
+    </Target>
+</Project>

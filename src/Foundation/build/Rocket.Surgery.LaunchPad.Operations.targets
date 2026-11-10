@@ -1,6 +1,15 @@
 <Project>
     <ItemGroup>
         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="LaunchPadApiDocumentation" />
+        <!--
+            A trimmed or native AOT project gets LPAD1030 for each Minimal API body or response type no JsonSerializerContext declares.
+            LaunchPadApiRequireJsonContext=true turns the check on for any project, false turns it off.
+        -->
+        <CompilerVisibleProperty Include="PublishAot" />
+        <CompilerVisibleProperty Include="IsAotCompatible" />
+        <CompilerVisibleProperty Include="PublishTrimmed" />
+        <CompilerVisibleProperty Include="IsTrimmable" />
+        <CompilerVisibleProperty Include="LaunchPadApiRequireJsonContext" />
     </ItemGroup>
     <!--
         Operation summaries and descriptions come from the requests' XML documentation, and the compiler only gives generators the

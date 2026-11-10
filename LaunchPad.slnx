@@ -72,6 +72,7 @@
     <File Path="src/Directory.Build.props" />
     <File Path="src/Directory.Build.targets" />
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
+    <Project Path="src/Primitives.Tasks/Rocket.Surgery.LaunchPad.Primitives.Tasks.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
     <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <Project Path="src/FluentValidation.AspNetCore/Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />

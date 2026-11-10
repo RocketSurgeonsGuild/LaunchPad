@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 #pragma warning disable 8618
@@ -9,6 +10,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 /// <summary>
 ///     A RFC 7807 compliant <see cref="JsonConverter" /> for <see cref="FluentValidationProblemDetails" />.
 /// </summary>
+/// <remarks>
+///     The problem details are written with the metadata the options' resolver chain has for them, which the <c>FluentValidationJoint</c> adds,
+///     so the converter does not need reflection. Options without it fall back to this package's own source generated metadata.
+/// </remarks>
 [PublicAPI]
 public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentValidationProblemDetails?>
 {
@@ -19,7 +24,7 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
         JsonSerializerOptions options
     )
     {
-        var annotatedProblemDetails = JsonSerializer.Deserialize<AnnotatedProblemDetails>(ref reader, options);
+        var annotatedProblemDetails = JsonSerializer.Deserialize(ref reader, TypeInfo(options));
 
         var problemDetails = new FluentValidationProblemDetails();
         annotatedProblemDetails?.CopyTo(problemDetails);
@@ -42,8 +47,13 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
         }
 
         var annotatedProblemDetails = new AnnotatedProblemDetails(value);
-        JsonSerializer.Serialize(writer, annotatedProblemDetails, options);
+        JsonSerializer.Serialize(writer, annotatedProblemDetails, TypeInfo(options));
     }
+
+    private static JsonTypeInfo<AnnotatedProblemDetails> TypeInfo(JsonSerializerOptions options) =>
+        options.TryGetTypeInfo(typeof(AnnotatedProblemDetails), out var typeInfo) && typeInfo is JsonTypeInfo<AnnotatedProblemDetails> typed
+            ? typed
+            : FluentValidationJsonSerializerContext.Default.AnnotatedProblemDetails;
 
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [UsedImplicitly]
@@ -87,14 +97,16 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
         public string? Instance { get; set; }
 
         [JsonExtensionData]
-        public IDictionary<string, object?> Extensions { get; } =
+        public IDictionary<string, object?> Extensions { get; set; } =
             new Dictionary<string, object?>(StringComparer.Ordinal);
 
         [JsonPropertyName("errors")]
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public IDictionary<string, FluentValidationProblemDetail[]> Errors { get; } =
             new Dictionary<string, FluentValidationProblemDetail[]>(StringComparer.Ordinal);
 
         [JsonPropertyName("rules")]
+        [JsonInclude]
         public IEnumerable<string> Rules { get; internal set; } = Array.Empty<string>();
 
         public void CopyTo(FluentValidationProblemDetails problemDetails)
@@ -110,10 +122,10 @@ public sealed class ValidationProblemDetailsConverter : JsonConverter<FluentVali
                 problemDetails.Extensions[kvp.Key] = kvp.Value;
             }
 
-            Rules = problemDetails.Rules;
-            foreach (var kvp in problemDetails.ValidationErrors)
+            problemDetails.Rules = Rules;
+            foreach (var kvp in Errors)
             {
-                Errors[kvp.Key] = kvp.Value;
+                problemDetails.ValidationErrors[kvp.Key] = kvp.Value;
             }
         }
     }

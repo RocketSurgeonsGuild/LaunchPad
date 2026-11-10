@@ -10,3 +10,5 @@ The API generators (operation hosts) and the generators that used to ship with F
 ## Consequences
 
 Every project that references Foundation runs the operation host generators. They only write code for types that declare `[Operation<TRequest>]`, so a project without hosts pays only for the generators being loaded. This amends the 2026-11-08 amendment of ADR 0002: the API generators are still one assembly, but no longer a package of their own.
+
+Amended 2026-11-10 (#3152): the JSON generators, which write the camel case enum converters and the JSON context manifest ([ADR 0007](0007-no-json-reflection.md)), are not in this assembly but in `Rocket.Surgery.LaunchPad.Primitives.Analyzers`, the analyzer package of `Rocket.Surgery.LaunchPad.Primitives` that also holds the union generator. Every project that references Primitives needs them, including one without Foundation. The manifest recognises mediator requests with the same table as the operation host generators: `src/Shared/MediatorLibraries.cs` is one source file compiled into both assemblies, so there is still a single description of each mediator to keep in step.
