@@ -1,15 +1,14 @@
 using System.Runtime.CompilerServices;
 
-using FluentValidation;
-
-using MediatR;
-
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -22,7 +21,11 @@ public static partial class DeleteLaunchRecord
     ///     The request to delete a launch record
     /// </summary>
     /// <param name="Id">The id of the record to delete</param>
-    public record Request(LaunchRecordId Id) : IRequest<Result>;
+    [Validate]
+    public record Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
+    {
+        internal bool IsAssigned(LaunchRecordId id) => id != default;
+    }
 
     /// <summary>What the operation answers: nothing, not found, or forbidden.</summary>
     [Union]
@@ -34,17 +37,9 @@ public static partial class DeleteLaunchRecord
     }
 
     [UsedImplicitly]
-    private class Validator : AbstractValidator<Request>
+    internal class DeleteLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
-    }
-
-    [UsedImplicitly]
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
-    {
-        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             if (await dbContext.LaunchRecords.FindAsync([request.Id], cancellationToken) is not { } rocket)
             {

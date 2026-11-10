@@ -67,7 +67,7 @@
                 <ModulePath>.*[\\/]JetBrains\.dotCover\.CommandLineTools\.dll</ModulePath>
                 <ModulePath>.*[\\/]JetBrains\.ExternalAnnotations\.dll</ModulePath>
                 <ModulePath>.*[\\/]JetBrains\.ReSharper\.GlobalTools\.dll</ModulePath>
-                <ModulePath>.*[\\/]MediatR\.dll</ModulePath>
+                <ModulePath>.*[\\/]ZeroAlloc\..*\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.AspNetCore\.Components\.Web\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.AspNetCore\.Components\.WebAssembly\.DevServer\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.AspNetCore\.Components\.WebAssembly\.dll</ModulePath>

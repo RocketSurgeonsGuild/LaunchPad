@@ -25,13 +25,15 @@ This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) s
 
 ## Packages
 
-| Package                        | Reference it from                 | What it does                                                                                                                                                                                        |
-| ------------------------------ | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.Api` | contracts that customise, servers | The attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes, and the generators: Minimal API (`*Endpoints`), MVC (`*Controller`), gRPC (`*Service`) and GraphQL (`*Mutations`). |
+The generators ship in `Rocket.Surgery.LaunchPad.Foundation`, next to LaunchPad's other source generators, so a project that references
+Foundation has them: the attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes, and the generators for Minimal API
+(`*Endpoints`), MVC (`*Controller`), gRPC (`*Service`) and GraphQL (`*Mutations`). Reference Foundation from the servers and from contracts
+that customise their operations.
 
-It's an analyzer-only development dependency. The attributes are generated into each project that uses them, as `internal` types, so
-nothing reaches your runtime dependencies. One generator per transport runs in every project that references the package, and each writes
-code only for the hosts of its kind, using that transport's library (ASP.NET Core, protobuf-net.Grpc or HotChocolate).
+The attributes are generated into each project that uses them, as `internal` types, so nothing reaches your runtime dependencies. One
+generator per transport runs in every project that references Foundation, and each writes code only for the hosts of its kind, using that
+transport's library (ASP.NET Core, protobuf-net.Grpc or HotChocolate). Why they share Foundation's analyzer is recorded in
+[ADR 0004](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0004-one-generator-assembly.md).
 
 ## Quick start
 
@@ -318,7 +320,7 @@ The value case answers like a plain response: 200, 201 with `[Creates]`, 204 for
 | `Invalid`                           | 400  | `InvalidArgument`    | `BAD_USER_INPUT`  |
 
 `[ApiError(statusCode)]` sets the HTTP status; its gRPC status and GraphQL code default to the ones for that status. A second case that
-matches no name and has no `[ApiError]` is LPAD1025. Each transport carries the case name, so cases that share a status stay distinct:
+matches no name and has no `[ApiError]` is LPAD1028. Each transport carries the case name, so cases that share a status stay distinct:
 
 - **HTTP**: ProblemDetails (`application/problem+json`) with the status, the case name in a `case` extension and the case's members as
   camel-cased extensions; a problem's detail, title, link (as `type`) and instance fill those fields and its properties are extensions.
@@ -402,6 +404,34 @@ Another mediator can be described with two assembly attributes:
 A profile without a `SenderType` dispatches through each request kind's `HandlerInterface`. An operation the profile can't dispatch is
 skipped (LPAD1016).
 
+## Patch operations
+
+A patch operation's request carries only the changes to another operation's request: it implements `IPropertyTracking<TRequest>`, and
+the property tracking generator gives it an `Assigned<T>` member for each property of `TRequest` and an `ApplyChanges` method. Its handler
+is generated too. Declare the handler class `partial`, with the mediator's handler interface and the services it needs, including the
+mediator's sender, and implement `GetRequest`, which loads the current request:
+
+```csharp
+public partial record PatchRequest : IRequest<RocketModel>, IPropertyTracking<Request>
+{
+    public RocketId Id { get; init; }
+}
+
+internal partial class EditRocketHandler(RocketDbContext dbContext, IMediator mediator)
+    : IRequestHandler<Request, RocketModel>, IRequestHandler<PatchRequest, RocketModel>
+{
+    public async ValueTask<RocketModel> Handle(Request request, CancellationToken cancellationToken) => /* ... */;
+
+    private partial async ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+        MapRequest(await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException());
+}
+```
+
+The generated handle method applies the patch to that request and sends the result through the mediator, so the full request is validated
+like any other. The handle method's shape (`Task<T>` or `ValueTask<T>`, the cancellation token) comes from the mediator's handler
+interface, and the handler interface is written in your source, so a mediator's own source generator (Mediator, ZeroAlloc.Mediator) still
+finds the handler. A profile without a sender (Immediate.Handlers) can't send the patched request (LPAD1025).
+
 ## Native AOT
 
 Generated Minimal API endpoints don't rely on the Request Delegate Generator (which can't see generated code): they parse route, query and
@@ -439,7 +469,10 @@ filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` an
 | LPAD1021 | Warning  | An `[OperationHost]` setting doesn't apply to the host's transport.                                 |
 | LPAD1023 | Warning  | A `[Creates]` response has no reachable location target; it answers 201 without a `Location`.       |
 | LPAD1024 | Warning  | An operation has an API version, but the server lacks the Asp.Versioning package for its transport. |
-| LPAD1025 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.     |
+| LPAD1025 | Error    | A patch handler has no constructor parameter, field or property of the mediator's sender type.      |
+| LPAD1026 | Error    | A patch handler is nested in a type that isn't `partial`.                                           |
+| LPAD1027 | Error    | A patch handler's interface doesn't return `Task<T>` or `ValueTask<T>`.                             |
+| LPAD1028 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.     |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 belonged to the generated clients, which were removed; the IDs aren't reused.
 

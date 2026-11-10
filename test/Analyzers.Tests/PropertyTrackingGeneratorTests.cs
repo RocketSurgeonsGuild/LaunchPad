@@ -1,13 +1,9 @@
 using System.Linq.Expressions;
-
 using DryIoc.ImTools;
-
 using FluentValidation;
-
-using MediatR;
-
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
+using ZeroAlloc.Mediator;
 
 namespace Analyzers.Tests;
 
@@ -1097,13 +1093,12 @@ partial class Validator : AbstractValidator<PatchRequest>
                  .WithGenerator<PropertyTrackingGenerator>()
                  .AddReferences(
                       typeof(IPropertyTracking<>),
-                      typeof(IMediator),
-                      typeof(IBaseRequest)
+                      typeof(IRequest<>)
                   )
                  .AddSources(
                       @"
 global using System;
-global using MediatR;
+global using ZeroAlloc.Mediator;
 global using Rocket.Surgery.LaunchPad.Foundation;
 global using Sample.Core.Operations.Rockets;
 namespace Sample.Core.Operations.Rockets

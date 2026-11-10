@@ -30,6 +30,7 @@
         <LaunchPadEnableNodaTime Condition="'$(LaunchPadEnableNodaTime)' == ''">true</LaunchPadEnableNodaTime>
         <LaunchPadEnableNetTopologySuite Condition="'$(LaunchPadEnableNetTopologySuite)' == ''">true</LaunchPadEnableNetTopologySuite>
         <LaunchPadEnableFluentValidation Condition="'$(LaunchPadEnableFluentValidation)' == ''">true</LaunchPadEnableFluentValidation>
+        <LaunchPadEnableZeroAlloc Condition="'$(LaunchPadEnableZeroAlloc)' == ''">true</LaunchPadEnableZeroAlloc>
         <LaunchPadEnableGrpc Condition="'$(LaunchPadEnableGrpc)' == ''">true</LaunchPadEnableGrpc>
         <LaunchPadEnableHotChocolate Condition="'$(LaunchPadEnableHotChocolate)' == ''">true</LaunchPadEnableHotChocolate>
         <LaunchPadEnableStrawberryShake Condition="'$(LaunchPadEnableStrawberryShake)' == ''">true</LaunchPadEnableStrawberryShake>
@@ -56,6 +57,13 @@
             Condition="'$(LaunchPadEnableFluentValidation)' != 'false'
                    and (@(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation')) == 'true'
                      or @(PackageReference->AnyHaveMetadataValue('Identity', 'FluentValidation.DependencyInjectionExtensions')) == 'true')"
+        />
+        <!-- ZeroAlloc.Validation, or ZeroAlloc.Mediator.Validation, which validates the mediator's requests with it -->
+        <_LaunchPadTechnology
+            Include="ZeroAlloc"
+            Condition="'$(LaunchPadEnableZeroAlloc)' != 'false'
+                   and (@(PackageReference->AnyHaveMetadataValue('Identity', 'ZeroAlloc.Validation')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'ZeroAlloc.Mediator.Validation')) == 'true')"
         />
         <!-- a gRPC server: LaunchPad's package is the interceptors of an ASP.NET Core gRPC service -->
         <_LaunchPadTechnology
@@ -103,6 +111,7 @@
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NodaTime.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.NetTopologySuite.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.FluentValidation.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.ZeroAlloc.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.GraphQL.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.Grpc.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.Polyfill.targets" />

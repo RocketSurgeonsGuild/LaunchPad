@@ -1,0 +1,16 @@
+﻿{
+  Hosts: [
+    WebApplication
+  ],
+  PackageReferences: [
+    HotChocolate,
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Rocket.Surgery.LaunchPad.AspNetCore {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.HotChocolate {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate {LaunchPadVersion} (SDK),
+    ZeroAlloc.Validation
+  ]
+}

@@ -1,8 +1,6 @@
 using FluentValidation;
-using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.Foundation.Validation;
@@ -10,31 +8,21 @@ using Rocket.Surgery.LaunchPad.Foundation.Validation;
 namespace Rocket.Surgery.LaunchPad.Foundation.Joints;
 
 /// <summary>
-///     A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation,
-///     the validators for options, and the MediatR validation pipeline behaviors.
+///     A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation and
+///     the validators for options.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <remarks>
 ///     <para>
-///         Runs after the <see cref="MediatRJoint" />, so the validation behaviors are added to the pipeline MediatR registers.
-///     </para>
-///     <para>
 ///         The validators are found with the <see cref="ISpecularProvider" /> in the joint context.
 ///         The generated <c>Imports</c> seed the application's Specular provider into the context.
 ///     </para>
-///     <para>
-///         Dovetail resolves the <see cref="FoundationOptions" /> from the joint context when it creates the joint, and they default when none
-///         were set.
-///     </para>
 /// </remarks>
-/// <param name="options">The options, or <see langword="null" /> for the defaults.</param>
 /// <seealso cref="IServiceJoint" />
-/// <seealso cref="MediatRJoint" />
 [PublicAPI]
 [DovetailExport]
-[AfterJoint<MediatRJoint>]
 [DovetailCategory(DovetailCategory.Core)]
-public class FluentValidationJoint(FoundationOptions? options = null) : IServiceJoint
+public class FluentValidationJoint : IServiceJoint
 {
     /// <summary>
     ///     Registers the specified context.
@@ -60,9 +48,5 @@ public class FluentValidationJoint(FoundationOptions? options = null) : IService
             );
 
         services.AddSingleton(typeof(IValidateOptions<>), typeof(FluentValidationOptions<>));
-        services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>), _options.MediatorLifetime));
-        services.TryAddEnumerable(ServiceDescriptor.Describe(typeof(IStreamPipelineBehavior<,>), typeof(ValidationStreamPipelineBehavior<,>), _options.MediatorLifetime));
     }
-
-    private readonly FoundationOptions _options = options ?? new FoundationOptions();
 }

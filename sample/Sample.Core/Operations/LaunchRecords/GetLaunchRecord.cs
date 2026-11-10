@@ -1,9 +1,5 @@
 using System.Runtime.CompilerServices;
 
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
 
 using Riok.Mapperly.Abstractions;
@@ -12,6 +8,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -24,7 +23,11 @@ public static partial class GetLaunchRecord
     ///     The request to get a launch record
     /// </summary>
     /// <param name="Id">The id of the launch record</param>
-    public record Request(LaunchRecordId Id) : IRequest<Result>;
+    [Validate]
+    public record Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
+    {
+        internal bool IsAssigned(LaunchRecordId id) => id != default;
+    }
 
     /// <summary>What the operation answers: the launch record, or not found.</summary>
     [Union]
@@ -34,16 +37,9 @@ public static partial class GetLaunchRecord
         public partial Result(NotFound value);
     }
 
-    private class Validator : AbstractValidator<Request>
+    internal class GetLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
-    }
-
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
-    {
-        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             var rocket = await dbContext
                               .LaunchRecords

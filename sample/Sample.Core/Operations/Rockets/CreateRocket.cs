@@ -1,9 +1,5 @@
 using System.Runtime.CompilerServices;
 
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
 
 using Riok.Mapperly.Abstractions;
@@ -13,6 +9,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.Rockets;
 
@@ -26,16 +25,21 @@ public static partial class CreateRocket
     /// <summary>
     ///     The operation to create a new rocket record
     /// </summary>
+    [Validate]
     public record Request : IRequest<Result>
     {
         /// <summary>
         ///     The serial number of the rocket
         /// </summary>
+        [NotEmpty]
+        [MinLength(10)]
+        [MaxLength(30)]
         public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The type of rocket
         /// </summary>
+        [IsInEnum]
         public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
     }
 
@@ -51,21 +55,6 @@ public static partial class CreateRocket
         public RocketId Id { get; init; }
     }
 
-    private class Validator : AbstractValidator<Request>
-    {
-        public Validator()
-        {
-            RuleFor(x => x.Type)
-               .IsInEnum();
-
-            RuleFor(x => x.SerialNumber)
-               .NotEmpty()
-               .MinimumLength(10)
-               .MaximumLength(30);
-        }
-    }
-
-
     /// <summary>What the operation answers: the new rocket's id, or a conflict with an existing rocket.</summary>
     [Union]
     public readonly partial struct Result
@@ -74,9 +63,9 @@ public static partial class CreateRocket
         public partial Result(Conflict value);
     }
 
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
+    internal class CreateRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
-        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             var existingRocket = await dbContext
                                       .Rockets.AsQueryable()

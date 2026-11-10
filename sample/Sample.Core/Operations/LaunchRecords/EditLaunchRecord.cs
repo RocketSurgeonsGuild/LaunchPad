@@ -1,9 +1,5 @@
 using System.Runtime.CompilerServices;
 
-using FluentValidation;
-
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
 
 using NodaTime;
@@ -15,6 +11,9 @@ using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.LaunchRecords;
 
@@ -28,26 +27,31 @@ public static partial class EditLaunchRecord
     /// <summary>
     ///     The launch record update request
     /// </summary>
+    [Validate]
     public partial record Request : IRequest<Result>
     {
         /// <summary>
         ///     The launch record to update
         /// </summary>
+        [Must(nameof(IsAssigned))]
         public LaunchRecordId Id { get; init; }
 
         /// <summary>
         ///     The updated launch partner
         /// </summary>
+        [NotEmpty]
         public string Partner { get; init; } = null!; // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The updated launch payload
         /// </summary>
+        [NotEmpty]
         public string Payload { get; init; } = null!; // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The updated payload weight
         /// </summary>
+        [GreaterThanOrEqualTo(0d)]
         public double PayloadWeightKg { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
@@ -63,7 +67,12 @@ public static partial class EditLaunchRecord
         /// <summary>
         ///     The update rocket id
         /// </summary>
+        [Must(nameof(IsAssigned))]
         public RocketId RocketId { get; init; } // TODO: Make generator that can be used to create a writable view model
+
+        internal bool IsAssigned(LaunchRecordId id) => id != default;
+
+        internal bool IsAssigned(RocketId id) => id != default;
     }
 
     /// <summary>
@@ -80,75 +89,12 @@ public static partial class EditLaunchRecord
         public partial Result(NotFound value);
     }
 
-    private class Validator : AbstractValidator<Request>
+    // The patch's handle method is generated: it applies the patch to the request GetRequest loads and sends the result through the mediator.
+    internal partial class EditLaunchRecordHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, Result>, IRequestHandler<PatchRequest, Result>
     {
-        public Validator()
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
-            RuleFor(z => z.Id)
-               .NotEmpty()
-               .NotNull();
-
-            RuleFor(x => x.Partner)
-               .NotEmpty()
-               .NotNull();
-
-            RuleFor(x => x.RocketId)
-               .NotEmpty()
-               .NotNull();
-
-            RuleFor(x => x.Payload)
-               .NotEmpty()
-               .NotNull();
-
-            RuleFor(x => x.ActualLaunchDate);
-
-            RuleFor(x => x.ScheduledLaunchDate)
-               .NotNull();
-
-            RuleFor(x => x.PayloadWeightKg)
-               .GreaterThanOrEqualTo(0d);
-        }
-    }
-
-    private class PatchRequestValidator : AbstractValidator<PatchRequest>
-    {
-        public PatchRequestValidator()
-        {
-            RuleFor(x => x.Id)
-               .NotEmpty()
-               .NotNull();
-
-            RuleFor(x => x.Partner.Value)
-               .NotEmpty()
-               .NotNull()
-               .When(x => x.Partner.HasValue);
-
-            RuleFor(x => x.RocketId.Value)
-               .NotEmpty()
-               .NotNull()
-               .When(x => x.RocketId.HasValue);
-
-            RuleFor(x => x.Payload.Value)
-               .NotEmpty()
-               .NotNull()
-               .When(x => x.Payload.HasValue);
-
-            RuleFor(x => x.ScheduledLaunchDate.Value)
-               .NotNull()
-               .When(x => x.ScheduledLaunchDate.HasValue);
-
-            RuleFor(x => x.PayloadWeightKg.Value)
-               .GreaterThanOrEqualTo(0d)
-               .When(x => x.PayloadWeightKg.HasValue);
-        }
-    }
-
-    private class Handler(RocketDbContext dbContext, IMediator mediator)
-        : PatchRequestHandler<Request, PatchRequest, Result>(mediator), IRequestHandler<Request, Result>
-    {
-        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
-        {
-            if (await FindLaunchRecord(request.Id, cancellationToken) is not { } rocket) return NotFound(request.Id);
+            if (await FindLaunchRecord(request.Id, cancellationToken) is not { } rocket) return new NotFound($"Launch record {request.Id} was not found");
 
             Map(request, rocket);
             dbContext.Update(rocket);
@@ -157,14 +103,12 @@ public static partial class EditLaunchRecord
             return ModelMapper.Map(rocket);
         }
 
-        // A patch of a launch record that doesn't exist answers not found before it is applied.
-        public override async Task<Result> Handle(PatchRequest request, CancellationToken cancellationToken) =>
-            await FindLaunchRecord(request.Id, cancellationToken) is null ? NotFound(request.Id) : await base.Handle(request, cancellationToken);
+        private async partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+            Map(await GetLaunchRecord(request.Id, cancellationToken).ConfigureAwait(false));
 
-        protected override async Task<Request> GetRequest(PatchRequest patchRequest, CancellationToken cancellationToken) =>
-            Map(patchRequest, await FindLaunchRecord(patchRequest.Id, cancellationToken) ?? throw new NotFoundException());
-
-        private static NotFound NotFound(LaunchRecordId id) => new($"Launch record {id} was not found");
+        // The generated patch handle method sends what GetRequest loads, so a patch of a missing launch record still throws NotFoundException here.
+        private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) =>
+            await FindLaunchRecord(id, cancellationToken) ?? throw new NotFoundException();
 
         private async Task<LaunchRecord?> FindLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) =>
             await dbContext.LaunchRecords.Include(z => z.Rocket).FirstOrDefaultAsync(z => z.Id == id, cancellationToken).ConfigureAwait(false);
@@ -175,6 +119,4 @@ public static partial class EditLaunchRecord
 
     [MapperIgnoreTarget(nameof(LaunchRecord.Rocket))]
     private static partial void Map(Request request, LaunchRecord record);
-
-    private static Request Map(PatchRequest request, LaunchRecord record) => request.ApplyChanges(Map(record));
 }

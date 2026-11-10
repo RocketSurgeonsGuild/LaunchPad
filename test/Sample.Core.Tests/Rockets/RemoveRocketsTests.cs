@@ -1,12 +1,9 @@
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
-
 using Serilog.Events;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Core.Tests.Rockets;
 

@@ -28,6 +28,10 @@ _Avoid_: Snippet, scaffold
 A mediator request, with its response, that is exposed over one or more transports. It is the same thing whether it is reached as an HTTP endpoint, a gRPC method or a GraphQL field.
 _Avoid_: Endpoint, contract, action
 
+**Patch operation**:
+An operation whose request carries only the changes to another operation's request. It completes by applying those changes to the current request and sending that operation, which validates the result.
+_Avoid_: Partial update, patch request
+
 **Contracts project**:
 The project that holds operations and their response types, shared by the servers that expose them.
 _Avoid_: Shared project, API project
@@ -55,6 +59,10 @@ _Avoid_: Success case, ok case
 **Error case**:
 A case of a union response that answers as an error on every transport, carrying its case name and its own status.
 _Avoid_: Failure, error result, fault
+
+**Mediator**:
+The library an application chooses to dispatch its operations. LaunchPad depends on none.
+_Avoid_: MediatR (as a generic term), bus, dispatcher
 
 **Mediator profile**:
 The description of how one mediator library shapes its requests, dispatches them and declares handlers, which lets operations work with any mediator.

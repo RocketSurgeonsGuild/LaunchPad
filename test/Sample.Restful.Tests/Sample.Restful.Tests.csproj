@@ -5,6 +5,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="System.Net.Http.Json" />
+    <!-- .NET 11's implicit usings have it and .NET 10's don't, so a using in a file is unnecessary on one framework and missing on the other. -->
+    <Using Include="System.Net.Http.Json" />
   </ItemGroup>
   <ItemGroup>
     <!--    <ProjectReference Include="..\..\sample\Sample.Restful.Client\Sample.Restful.Client.csproj"

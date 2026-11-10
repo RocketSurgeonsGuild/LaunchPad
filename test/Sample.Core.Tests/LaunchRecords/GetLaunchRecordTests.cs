@@ -1,16 +1,11 @@
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using NodaTime;
-
 using Rocket.Surgery.LaunchPad.Primitives;
-
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
-
 using Serilog.Events;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Core.Tests.LaunchRecords;
 

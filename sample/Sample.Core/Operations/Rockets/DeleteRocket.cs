@@ -1,15 +1,14 @@
 using System.Runtime.CompilerServices;
 
-using FluentValidation;
-
-using MediatR;
-
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
+
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Validation;
 
 namespace Sample.Core.Operations.Rockets;
 
@@ -22,7 +21,11 @@ public static partial class DeleteRocket
     ///     The request to remove a rocket from the system
     /// </summary>
     /// <param name="Id">The id of the rocket to remove</param>
-    public record Request(RocketId Id) : IRequest<Result>;
+    [Validate]
+    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
+    {
+        internal bool IsAssigned(RocketId id) => id != default;
+    }
 
     /// <summary>What the operation answers: nothing, or not found.</summary>
     [Union]
@@ -32,16 +35,9 @@ public static partial class DeleteRocket
         public partial Result(NotFound value);
     }
 
-    private class Validator : AbstractValidator<Request>
+    internal class DeleteRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
-        public Validator() => RuleFor(x => x.Id)
-                             .NotEmpty()
-                             .NotNull();
-    }
-
-    private class Handler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
-    {
-        public async Task<Result> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
         {
             if (await dbContext.Rockets.FindAsync([request.Id], cancellationToken) is not { } rocket) return new NotFound($"Rocket {request.Id} was not found");
             dbContext.Remove(rocket);

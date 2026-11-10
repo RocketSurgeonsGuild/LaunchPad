@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Rocket.Surgery.LaunchPad.AspNetCore;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sample.Core.Operations;
 using Sample.Core.Operations.Rockets;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Pages.Pages.Rockets;
 
-public class RocketCreateModel : MediatorPageModel
+public class RocketCreateModel : PageModel
 {
+    private IMediator Mediator => HttpContext.RequestServices.GetRequiredService<IMediator>();
+
     [BindProperty]
     public CreateRocket.Request Model { get; set; } = new();
 
@@ -18,7 +21,7 @@ public class RocketCreateModel : MediatorPageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        ( await Send(Model) ).Value.Expect<CreateRocket.Response>();
+        ( await Mediator.Send(Model, HttpContext.RequestAborted) ).Value.Expect<CreateRocket.Response>();
         return RedirectToPage("Index");
     }
 }

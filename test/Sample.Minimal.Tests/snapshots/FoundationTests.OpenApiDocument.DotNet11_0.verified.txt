@@ -560,6 +560,7 @@
         tags: [
           Rockets
         ],
+        summary: The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting Request is validated and sent through the mediator.,
         operationId: PatchRocket,
         parameters: [
           {
@@ -846,10 +847,10 @@
       },
       Request: {
         required: [
-          partner,
           rocketId,
-          payload,
-          scheduledLaunchDate
+          scheduledLaunchDate,
+          partner,
+          payload
         ],
         type: object,
         properties: {
@@ -857,12 +858,14 @@
             $ref: #/components/schemas/RocketId
           },
           partner: {
+            minLength: 1,
             type: [
               null,
               string
             ]
           },
           payload: {
+            minLength: 1,
             type: [
               null,
               string

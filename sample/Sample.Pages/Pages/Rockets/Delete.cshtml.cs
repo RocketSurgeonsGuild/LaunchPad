@@ -8,7 +8,7 @@ public class RocketDeleteModel : RocketViewModel
 {
     public async Task<ActionResult> OnPost()
     {
-        ( await Send(new DeleteRocket.Request(Id)) ).Value.Expect<MediatR.Unit>();
+        ( await Mediator.Send(new DeleteRocket.Request(Id), HttpContext.RequestAborted) ).Value.Expect<ZeroAlloc.Mediator.Unit>();
         return RedirectToPage("Index");
     }
 }

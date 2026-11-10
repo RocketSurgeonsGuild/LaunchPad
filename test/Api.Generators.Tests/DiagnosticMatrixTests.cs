@@ -46,7 +46,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
         ("LPAD1021", [HostCase.GrpcService, HostCase.GraphQLMutation], BuiltIn),
         ("LPAD1023", Http, BuiltIn),
         ("LPAD1024", Http, BuiltIn),
-        ("LPAD1025", AllHosts, BuiltIn),
+        ("LPAD1028", AllHosts, BuiltIn),
     ];
 
     public static IEnumerable<(string Id, HostCase Host, Mediator Mediator)> Cases() =>
@@ -113,7 +113,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
             "LPAD1023" => new($"[Operation<CreateRocket.Request>] {Declare(host)}"),
             "LPAD1024" => new($"[OperationHost(Version = \"1.0\")] [Operation<GetRocket.Request>] {Declare(host)}"),
             // A union error case whose name implies no status and that has no [ApiError].
-            "LPAD1025" => new($"[Operation<LaunchRocket.Request>] {Declare(host)}"),
+            "LPAD1028" => new($"[Operation<LaunchRocket.Request>] {Declare(host)}"),
             _ => throw new ArgumentOutOfRangeException(nameof(id), id, null),
         };
     }

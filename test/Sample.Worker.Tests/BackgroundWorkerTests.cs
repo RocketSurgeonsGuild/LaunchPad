@@ -1,11 +1,8 @@
 using FakeItEasy;
-
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
+using ZeroAlloc.Mediator;
 
 namespace Sample.Worker.Tests;
 
@@ -16,7 +13,7 @@ public class BackgroundWorkerTests() : LoggerTest<TestRecord>(TestRecord.Create(
     {
         var mediator = A.Fake<IMediator>();
         A
-           .CallTo(() => mediator.CreateStream(A<IStreamRequest<RocketModel>>._, A<CancellationToken>._))
+           .CallTo(() => mediator.CreateStream(A<ListRockets.Request>._, A<CancellationToken>._))
            .Returns(AsyncEnumerable.Empty<RocketModel>());
         var scopes = 0;
         var services = new ServiceCollection();

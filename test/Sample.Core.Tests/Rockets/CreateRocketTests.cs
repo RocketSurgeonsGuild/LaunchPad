@@ -1,15 +1,10 @@
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using Rocket.Surgery.LaunchPad.Primitives;
-
 using Sample.Core.Domain;
 using Sample.Core.Operations.Rockets;
-
 using Serilog.Events;
-
-using ValidationException = FluentValidation.ValidationException;
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Mediator.Validation;
 
 namespace Sample.Core.Tests.Rockets;
 
@@ -72,8 +67,8 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
 
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var a = () => mediator.Send(request, TestContext.CancellationToken);
-        ( await a.ShouldThrowAsync<ValidationException>() ).Errors.Select(x => x.PropertyName).ShouldContain(propertyName);
+        Func<Task> a = async () => await mediator.Send(request, TestContext.CancellationToken);
+        ( await a.ShouldThrowAsync<ValidationFailedException>() ).Error.Failures.Select(x => x.PropertyName).ShouldContain(propertyName);
     }
 
     public static IEnumerable<Func<(CreateRocket.Request Request, string PropertyName)>> RequiredFieldData()
