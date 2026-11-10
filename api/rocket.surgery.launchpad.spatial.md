@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Spatial
 
 - Package: `Rocket.Surgery.LaunchPad.Spatial`
-- Version: `2.0.1-beta.329`
+- Version: `2.0.1-beta.330`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Spatial](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Spatial)
 
