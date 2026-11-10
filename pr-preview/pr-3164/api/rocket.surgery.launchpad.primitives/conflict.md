@@ -2,7 +2,7 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1170`
+- Version: `2.0.1-pr.1172`
 - Namespace: `Rocket.Surgery.LaunchPad.Primitives`
 - Target framework: `net10.0`
 - Inherits: [Problem](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.primitives/problem.md)

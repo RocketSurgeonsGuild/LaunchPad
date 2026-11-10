@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.StrawberryShake
 
 - Package: `Rocket.Surgery.LaunchPad.StrawberryShake`
-- Version: `2.0.1-pr.1170`
+- Version: `2.0.1-pr.1172`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.StrawberryShake](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.StrawberryShake)
 

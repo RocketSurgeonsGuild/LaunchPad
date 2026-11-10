@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.FluentValidation
 
 - Package: `Rocket.Surgery.LaunchPad.FluentValidation`
-- Version: `2.0.1-pr.1170`
+- Version: `2.0.1-pr.1172`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.FluentValidation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.FluentValidation)
 
@@ -17,7 +17,7 @@
 
 ### Rocket.Surgery.LaunchPad.Foundation.Joints
 
-- [FluentValidationJoint](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.fluentvalidation/fluentvalidationjoint.md) -- `class` -- A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation, the validators for options, and the MediatR validation pipeline behaviors. Implements the `Joints.IServiceJoint`
+- [FluentValidationJoint](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.fluentvalidation/fluentvalidationjoint.md) -- `class` -- A joint that registers every FluentValidation validator found in the assemblies that depend on FluentValidation and the validators for options. Implements the `Joints.IServiceJoint`
 
 ### Rocket.Surgery.LaunchPad.Foundation.Validation
 

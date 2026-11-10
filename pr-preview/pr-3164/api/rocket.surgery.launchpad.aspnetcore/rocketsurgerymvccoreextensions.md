@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3164/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1170`
+- Version: `2.0.1-pr.1172`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore`
 - Target framework: `net10.0`
 
