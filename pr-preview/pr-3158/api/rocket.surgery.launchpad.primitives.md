@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Primitives
 
 - Package: `Rocket.Surgery.LaunchPad.Primitives`
-- Version: `2.0.1-pr.1159`
+- Version: `2.0.1-pr.1163`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Primitives](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Primitives)
 
@@ -11,7 +11,9 @@
 
 - [ExistingValueOptions](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/existingvalueoptions.md) -- `class` `static` -- Helper methods for creating `Primitives.ExistingValueOptionsFactory`1` instances.
 - [ExistingValueOptionsFactory<TOptions>](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/existingvalueoptionsfactory-1.md) -- `class` -- Implementation of `Options.IOptionsFactory`1`.
+- [IncludeInJsonContextAttribute](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/includeinjsoncontextattribute.md) -- `class` `sealed` -- Puts a type in the JSON context LaunchPad generates in the applications that reference this assembly, for a type that crosses the wire as JSON but isn't a mediator request or response.
 - [IProblemDetailsData](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/iproblemdetailsdata.md) -- `interface` -- A common interface used for definiting problems
+- [JsonContextTypeAttribute](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/jsoncontexttypeattribute.md) -- `class` `sealed` -- Lists a type of this assembly that crosses the wire as JSON, for the JSON context LaunchPad generates in the applications that reference it.
 - [JsonConverterTypeInfoResolver](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/jsonconvertertypeinforesolver.md) -- `class` `sealed` -- Resolves the metadata of value types written by a converter in `JsonSerializerOptions.Converters`, such as the NodaTime or the spatial types, without reflection.
 - [JsonTypeInfoResolverRegistration](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/jsontypeinforesolverregistration.md) -- `record` `sealed` -- A JSON type info resolver, usually a source generated `Serialization.JsonSerializerContext`, that the `SystemTextJsonJoint` puts in the `JsonSerializerOptions.TypeInfoResolverChain` of every `Json.JsonSerializerOptions` built from the service provider, and through them of the ASP.NET Core HTTP and MVC JSON options.
 - [LaunchPadJsonEnumConverters](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.primitives/launchpadjsonenumconverters.md) -- `class` `static` -- The enum converters the `SystemTextJsonJoint` adds to the `Json.JsonSerializerOptions` it configures.

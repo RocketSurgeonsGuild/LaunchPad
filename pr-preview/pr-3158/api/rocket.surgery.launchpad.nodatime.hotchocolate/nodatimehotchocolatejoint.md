@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.HotChocolate](/LaunchPad/pr-preview/pr-3158/api/rocket.surgery.launchpad.nodatime.hotchocolate.md)
-- Version: `2.0.1-pr.1159`
+- Version: `2.0.1-pr.1163`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`

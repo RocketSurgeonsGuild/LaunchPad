@@ -882,11 +882,31 @@ gives an ASP.NET Core application `LaunchPadSerilogConsoleJoint` and `LaunchPadA
 
 LaunchPad reads and writes JSON only with the JSON contexts it is given, never through reflection, in a JIT application as much as in a trimmed or native AOT one ([ADR 0004](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0004-no-json-reflection.md)). Every type that crosses the wire needs metadata from a source generated `JsonSerializerContext`, and a missing one fails during development rather than after publishing.
 
-## Chaining a context
+## The generated JSON context
 
-[Section titled “Chaining a context”](#chaining-a-context)
+[Section titled “The generated JSON context”](#the-generated-json-context)
 
-Declare a context for your types and register it, in a [Joint](../../concepts/joints/) or in the host’s services:
+An executable project (a console or worker app, or an ASP.NET Core one) that references Rocket.Surgery.LaunchPad.Primitives gets a JSON context written for it before it compiles. Every library that references Primitives lists, in its assembly, the types of it that cross the wire as JSON:
+
+* every mediator request, with its response or stream item type,
+* every `IPropertyTracking<T>` patch type, with its target,
+* every type marked `[IncludeInJsonContext]`.
+
+The application’s build reads those lists from its referenced assemblies and writes `LaunchPadJsonContext` (in the project’s root namespace), with a `[JsonSerializable]` for each type, and a Joint that chains it into the application’s JSON options. Nothing needs wiring.
+
+The context is written as source, not by a generator, because generators can’t see each other’s output: the System.Text.Json source generator would never see a context another generator wrote. And it names types from referenced assemblies, because their metadata is complete. A type compiled in the same project as the context only has the members its source declares, not the ones other generators add to it (property tracking, `[InheritFrom]`). So keep operations in a contracts or core project. Requests declared in the application itself are still reported by LPAD1030.
+
+| Property                        | Default                                     | Meaning            |
+| ------------------------------- | ------------------------------------------- | ------------------ |
+| `LaunchPadGenerateJsonContext`  | `true` in executables, not in test projects | Write the context. |
+| `LaunchPadJsonContextName`      | `LaunchPadJsonContext`                      | The class name.    |
+| `LaunchPadJsonContextNamespace` | `$(RootNamespace)`                          | The namespace.     |
+
+## Chaining a context of your own
+
+[Section titled “Chaining a context of your own”](#chaining-a-context-of-your-own)
+
+For types the generated context doesn’t cover, declare a context and register it, in a [Joint](../../concepts/joints/) or in the host’s services:
 
 ```csharp
 [JsonSerializable(typeof(RocketModel))]
