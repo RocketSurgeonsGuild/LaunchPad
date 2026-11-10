@@ -699,8 +699,47 @@ builder.Services.AddGraphQLServer().AddQueryType().AddMutationType().AddRocketMu
 | `T?`                  | the value, or 404 for `null`                                                         |
 | none / `Unit`         | 204                                                                                  |
 | `IAsyncEnumerable<T>` | newline-delimited JSON (`application/x-ndjson`), one item per line, flushed per item |
+| a union               | its value case as above, each error case as a problem (see below)                    |
 
 A binding failure answers 400, with a ProblemDetails body when the application calls `AddProblemDetails()`. Generated endpoints describe their parameters, bodies and responses to ApiExplorer, so OpenAPI documents them like hand-written ones.
+
+### Union responses
+
+[Section titled “Union responses”](#union-responses)
+
+A handler can return a union response, its value case and its error cases, instead of throwing (ADR-0006). A union is a C# 15 union: a `union` declaration, LaunchPad’s portable `[Union] partial struct` (see the [union types design](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/design/union-types.md)), or the same shape written by hand. The generators know it by `System.Runtime.CompilerServices.UnionAttribute` or `IUnion`. Its case types are the parameter types of its public one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is the first case that is neither, and a union has exactly one.
+
+LaunchPad’s standard problem cases in `Rocket.Surgery.LaunchPad.Primitives` (`NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`, `Conflict`) match the name rules below. A union may list `Problem` itself as a case: it answers each standard case by its runtime type, and any other problem as 500. A problem’s detail, title, link, instance and properties fill the transport’s error shape (below).
+
+```csharp
+public sealed record RocketNotFound(Guid Id);
+[ApiError(422, GrpcStatus = 9, GraphQLCode = "UNPROCESSABLE")] public sealed record NotReady(string Reason);
+
+
+public union LaunchRocketResult(RocketModel, RocketNotFound, NotReady);
+public static class LaunchRocket { public sealed record Request(Guid Id) : IRequest<LaunchRocketResult>; }
+```
+
+The value case answers like a plain response: 200, 201 with `[Creates]`, 204 for a unit (`Unit`, `ValueTuple`), 404 when it or the union (`LaunchRocketResult?`) is nullable and null. An error case’s status comes from `[ApiError]` on its type, or else from its name, ignoring an `Error`, `Exception`, `Problem`, `Failure` or `Result` ending:
+
+| Name starts or ends with            | HTTP | gRPC                 | GraphQL code      |
+| ----------------------------------- | ---- | -------------------- | ----------------- |
+| `NotFound`                          | 404  | `NotFound`           | `NOT_FOUND`       |
+| `Unauthorized`, `Unauthenticated`   | 401  | `Unauthenticated`    | `UNAUTHENTICATED` |
+| `Forbidden`                         | 403  | `PermissionDenied`   | `FORBIDDEN`       |
+| `Conflict`                          | 409  | `FailedPrecondition` | `CONFLICT`        |
+| `Validation`, `UnprocessableEntity` | 422  | `InvalidArgument`    | `BAD_USER_INPUT`  |
+| `Invalid`                           | 400  | `InvalidArgument`    | `BAD_USER_INPUT`  |
+
+`[ApiError(statusCode)]` sets the HTTP status; its gRPC status and GraphQL code default to the ones for that status. A second case that matches no name and has no `[ApiError]` is LPAD1028. Each transport carries the case name, so cases that share a status stay distinct:
+
+* **HTTP**: ProblemDetails (`application/problem+json`) with the status, the case name in a `case` extension and the case’s members as camel-cased extensions; a problem’s detail, title, link (as `type`) and instance fill those fields and its properties are extensions. Each status is described in OpenAPI as a ProblemDetails response; a schema per case is planned with the OpenAPI transformers (#3149).
+* **gRPC**: an `RpcException` with the status, the case name in the `case` trailer and the case, serialized by protobuf-net, in the `case-bin` trailer (left out for a case without members). A problem’s detail is the status message and it has no `case-bin`. A case with members needs `[DataContract]` or `[ProtoContract]` (LPAD1014), and `GetProto()` declares its message.
+* **GraphQL**: an error whose `extensions.code` is the code from the table (or `[ApiError(GraphQLCode)]`), with the case name in `extensions.case` and the case’s members as extensions. A problem’s detail is the error message and its properties are extensions. The codes follow the convention most GraphQL servers and clients use.
+
+A stream of unions (`IAsyncEnumerable<LaunchRocketResult>`) streams its value cases and ends with the first error case: over HTTP, as the response’s ProblemDetails when nothing was written yet, otherwise as a last NDJSON line holding the problem; over gRPC, as the `RpcException` above. GraphQL hosts skip streams (LPAD1015).
+
+`NotFoundException` and a `null` response keep answering 404 for handlers that don’t return a union.
 
 ## Generating clients
 
@@ -831,6 +870,7 @@ LaunchPad’s nested `X.Request` types share a simple name, so each `[JsonSerial
 | LPAD1025 | Error    | A patch handler has no constructor parameter, field or property of the mediator’s sender type.      |
 | LPAD1026 | Error    | A patch handler is nested in a type that isn’t `partial`.                                           |
 | LPAD1027 | Error    | A patch handler’s interface doesn’t return `Task<T>` or `ValueTask<T>`.                             |
+| LPAD1028 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.     |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 belonged to the generated clients, which were removed; the IDs aren’t reused.
 
