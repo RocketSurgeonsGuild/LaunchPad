@@ -50,10 +50,10 @@ There is no union, result or OneOf-style type in `src/`. Error outcomes are **ex
 
 | Type                                 | Package    | HTTP (`src/AspNetCore/Filters`) | gRPC (`src/Grpc`)    | GraphQL (`GraphqlErrorFilter`) |
 | ------------------------------------ | ---------- | ------------------------------- | -------------------- | ------------------------------ |
-| `ProblemDetailsException` (abstract) | Primitives | ProblemDetails                  | ProblemDetails       | error with extensions          |
-| `NotFoundException`                  | Primitives | 404                             | `NotFound`           | `NOTFOUND`                     |
-| `NotAuthorizedException`             | Primitives | 403                             | `PermissionDenied`   | `NOTAUTHORIZED`                |
-| `RequestFailedException`             | Primitives | 400                             | `FailedPrecondition` | `FAILED`                       |
+| `ProblemDetailsException` (abstract) | Foundation | ProblemDetails                  | ProblemDetails       | error with extensions          |
+| `NotFoundException`                  | Foundation | 404                             | `NotFound`           | `NOTFOUND`                     |
+| `NotAuthorizedException`             | Foundation | 403                             | `PermissionDenied`   | `NOTAUTHORIZED`                |
+| `RequestFailedException`             | Foundation | 400                             | `FailedPrecondition` | `FAILED`                       |
 
 The Sample.Core handlers throw `NotFoundException` for missing entities and `RequestFailedException` for conflicts. The API generators add null → 404 for nullable responses (api-generators-plan, decision 6).
 
@@ -82,7 +82,7 @@ Both produce the same shape: `[Union]`, `IUnion`, one constructor per case, `Val
 
 ### 3.2 What the generator writes
 
-The union generator is its own analyzer assembly, `Rocket.Surgery.LaunchPad.Primitives.Analyzers` (`src/Primitives/Analyzers`), packed into the Primitives package beside the standard cases it pairs with. For each `partial struct` with `[Union]` (matched by full name with `ForAttributeWithMetadataName`) that declares at least one `partial` constructor:
+The union generator is part of LaunchPad's one analyzer assembly, `Rocket.Surgery.LaunchPad.Analyzers` (`src/Analyzers`), which Foundation carries beside the standard cases it pairs with. For each `partial struct` with `[Union]` (matched by full name with `ForAttributeWithMetadataName`) that declares at least one `partial` constructor:
 
 ```csharp
 partial struct GetRocketResult : global::System.Runtime.CompilerServices.IUnion
@@ -131,7 +131,7 @@ return result switch
 
 Before .NET 11, `UnionAttribute` and `IUnion` come from the [Polyfill](https://github.com/SimonCropp/Polyfill) package (11.4.5 and later), with `PolyUseEmbeddedAttribute` so its copies are embedded and no other assembly sees them, even through `InternalsVisibleTo`. On .NET 11 Polyfill type-forwards them to the BCL. Because the compiler matches the types by name (section 1), a project on C# 15 targeting `net10.0` gets full native union support too.
 
-- **The LaunchPad SDK adds it**: a `net10.0` project the SDK gives `Rocket.Surgery.LaunchPad.Primitives` also gets Polyfill, unless it already references Polyfill or PolySharp. Before .NET 11 the SDK also turns on `PolyUseEmbeddedAttribute`, unless the project asks for `PolyPublic`. `LaunchPadEnablePolyfill=false` opts out. Polyfill has no per-feature include, so the project also gets Polyfill's other polyfills for its target framework, all internal.
+- **The LaunchPad SDK adds it**: a `net10.0` project that gets `Rocket.Surgery.LaunchPad.Foundation` also gets Polyfill, unless it already references Polyfill or PolySharp. Before .NET 11 the SDK also turns on `PolyUseEmbeddedAttribute`, unless the project asks for `PolyPublic`. `LaunchPadEnablePolyfill=false` opts out. Polyfill has no per-feature include, so the project also gets Polyfill's other polyfills for its target framework, all internal.
 - **Without the SDK** an application references Polyfill (or PolySharp) itself.
 - The union generator doesn't emit the types. A first version did; it was replaced by Polyfill (decision 3).
 
@@ -157,7 +157,7 @@ The analyzer in the same assembly also covers reading unions and the move to nat
 
 ### 3.5 Standard error cases
 
-`Rocket.Surgery.LaunchPad.Primitives` ships the error cases a handler returns instead of throwing. Each is a `sealed record` deriving from the abstract record `Problem`, which implements `IProblemDetailsData`, so every transport writes detail, title, link, instance and extensions the same way. A union may list the cases it returns, or `Problem` to return any of them.
+`Rocket.Surgery.LaunchPad.Foundation` ships the error cases a handler returns instead of throwing. Each is a `sealed record` deriving from the abstract record `Problem`, which implements `IProblemDetailsData`, so every transport writes detail, title, link, instance and extensions the same way. A union may list the cases it returns, or `Problem` to return any of them.
 
 | Case                  | Replaces                 | HTTP | gRPC                 | GraphQL code      |
 | --------------------- | ------------------------ | ---- | -------------------- | ----------------- |
@@ -210,8 +210,8 @@ Decided 2026-11-09 with the user (AskUserQuestion, then a grilling session); the
 
 1. **Declaration on .NET 10**: the portable form, `[Union] partial struct` with `partial` case constructors, implemented by a generator. Native `union` is accepted wherever C# 15 is.
 2. **Storage**: one `object?` field, as in a native union.
-3. **Polyfill**: from the Polyfill package with `PolyUseEmbeddedAttribute`, added by the LaunchPad SDK to `net10.0` projects that get Primitives (opt out with `LaunchPadEnablePolyfill=false`). Replaced the generator's own embedded copy, which was built first.
-4. **Packaging**: the union generator and analyzers are their own analyzer assembly (`src/Primitives/Analyzers`), packed in Primitives.
+3. **Polyfill**: from the Polyfill package with `PolyUseEmbeddedAttribute`, added by the LaunchPad SDK to `net10.0` projects that get Foundation (opt out with `LaunchPadEnablePolyfill=false`). Replaced the generator's own embedded copy, which was built first.
+4. **Packaging**: the union generator and analyzers are in LaunchPad's one analyzer assembly (`src/Analyzers`), carried by Foundation. (First their own assembly packed in Primitives; moved when Primitives became the optional strong types package, #3166.)
 5. **Standard cases**: `Problem` plus `NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`, `Conflict`, short names kept despite the `HttpResults` clash. `Invalid.Errors` is a `string[]` dictionary. No generic `Result<T>`.
 6. **Value cases**: a union response has exactly one value case; any other non-error case is LPAD1028. (First decided as "several", revised once #3148 showed each transport has one response type: gRPC would need a generated `oneof` message and GraphQL a union output type.)
 7. **GraphQL codes**: the common convention (`NOT_FOUND`, `BAD_USER_INPUT`, `UNAUTHENTICATED`, `FORBIDDEN`, `CONFLICT`).

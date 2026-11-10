@@ -286,7 +286,7 @@ namespace Rocket.Surgery.LaunchPad.Api.Generated.Mvc
             problem.Extensions["case"] = caseName;
             for (var i = 0; i + 1 < members.Length; i += 2)
             {
-                // A case with problem data (Rocket.Surgery.LaunchPad.Primitives.IProblemDetailsData) passes it under reserved keys.
+                // A case with problem data (Rocket.Surgery.LaunchPad.Foundation.IProblemDetailsData) passes it under reserved keys.
                 switch ((string)members[i]!)
                 {
                     case "$detail": problem.Detail = members[i + 1] as string; break;

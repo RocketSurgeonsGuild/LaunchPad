@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.Foundation.Joints;
 
 namespace Extensions.Tests;
 

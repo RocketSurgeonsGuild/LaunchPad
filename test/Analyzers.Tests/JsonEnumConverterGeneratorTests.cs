@@ -1,5 +1,5 @@
-using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Analyzers;
+using Rocket.Surgery.LaunchPad.Analyzers;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
@@ -47,7 +47,7 @@ public class JsonEnumConverterGeneratorTests() : GeneratorTest()
     }
 
     [Test]
-    public async Task Should_Generate_Nothing_Without_LaunchPad_Primitives()
+    public async Task Should_Generate_Nothing_Without_LaunchPad_Foundation()
     {
         var result = await Builder
                           .WithGenerator<JsonEnumConverterGenerator>()
@@ -56,6 +56,6 @@ public class JsonEnumConverterGeneratorTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        await Verify(result).UseFileName($"{nameof(JsonEnumConverterGeneratorTests)}.Should_Generate_Nothing_Without_LaunchPad_Primitives");
+        await Verify(result).UseFileName($"{nameof(JsonEnumConverterGeneratorTests)}.Should_Generate_Nothing_Without_LaunchPad_Foundation");
     }
 }

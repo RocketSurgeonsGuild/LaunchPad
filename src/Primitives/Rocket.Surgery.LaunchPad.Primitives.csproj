@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        Strong types (docs/adr/0008-primitives-is-an-independent-strong-types-package.md): an optional package that depends on no other
+        LaunchPad package. An application or library opts in by referencing it.
+    -->
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
-        <!-- The analyzer project (union, enum converter and JSON context manifest generators) lives in Analyzers/ and builds on its own. -->
-        <DefaultItemExcludes>$(DefaultItemExcludes);Analyzers/**</DefaultItemExcludes>
     </PropertyGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
@@ -13,35 +15,9 @@
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Joinery.Dovetail" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-        <PackageReference Include="Microsoft.Extensions.Logging" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-        <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
-        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
-        <PackageReference Include="Specular" />
-        <PackageReference Include="System.Text.Json" />
+        <!-- Primitives uses nothing of Dovetail; the joints it ships are templates compiled in the application. -->
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
     </ItemGroup>
-    <ItemGroup>
-        <!-- The union generator, analyzers and code fixes, and the JSON generators (enum converters, JSON context manifest), flow to every
-             project that references Primitives. -->
-        <ProjectReference
-            Include="Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
-            IncludeAssets="analyzers"
-            ExcludeAssets="compile;runtime;native"
-            PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"
-            OutputItemType="Analyzer"
-        />
-        <!-- The task that writes an application's JSON context (build/Rocket.Surgery.LaunchPad.Primitives.targets), packed under tasks/. -->
-        <ProjectReference Include="..\Primitives.Tasks\Rocket.Surgery.LaunchPad.Primitives.Tasks.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
-    </ItemGroup>
-    <Target Name="_LaunchPadPackJsonContextTask" BeforeTargets="_GetPackageFiles">
-        <MSBuild Projects="..\Primitives.Tasks\Rocket.Surgery.LaunchPad.Primitives.Tasks.csproj" Targets="GetTargetPath">
-            <Output TaskParameter="TargetOutputs" ItemName="_LaunchPadJsonContextTask" />
-        </MSBuild>
-        <ItemGroup>
-            <None Include="@(_LaunchPadJsonContextTask)" Pack="true" PackagePath="tasks/netstandard2.0" Visible="false" />
-        </ItemGroup>
-    </Target>
 </Project>

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace AspNetCore.Tests.Joints;
 

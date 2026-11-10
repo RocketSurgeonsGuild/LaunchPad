@@ -217,7 +217,7 @@ namespace Rocket.Surgery.LaunchPad.Api.Generated.GraphQL
             var error = global::HotChocolate.ErrorBuilder.New().SetMessage(caseName).SetCode(code).SetExtension("case", caseName);
             for (var i = 0; i + 1 < members.Length; i += 2)
             {
-                // A case with problem data (Rocket.Surgery.LaunchPad.Primitives.IProblemDetailsData) passes it under reserved keys: its detail
+                // A case with problem data (Rocket.Surgery.LaunchPad.Foundation.IProblemDetailsData) passes it under reserved keys: its detail
                 // is the message and its properties are extensions.
                 switch ((string)members[i]!)
                 {

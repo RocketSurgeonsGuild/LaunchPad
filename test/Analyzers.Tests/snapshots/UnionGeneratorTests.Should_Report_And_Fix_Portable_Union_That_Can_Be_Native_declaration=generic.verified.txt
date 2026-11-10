@@ -1,9 +1,9 @@
 ﻿{
   AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionAnalyzer: []
+    Rocket.Surgery.LaunchPad.Analyzers.UnionAnalyzer: []
   },
   CodeFixes: {
-    Rocket.Surgery.LaunchPad.Primitives.Analyzers.NativeUnionCodeFix: [
+    Rocket.Surgery.LaunchPad.Analyzers.NativeUnionCodeFix: [
       {
         CodeActions: [
           {
@@ -35,6 +35,6 @@
   },
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.UnionGenerator: []
   }
 }

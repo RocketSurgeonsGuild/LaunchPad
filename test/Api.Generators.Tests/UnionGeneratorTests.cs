@@ -152,7 +152,7 @@ public class UnionGeneratorTests() : GeneratorTest()
     // LaunchPad's standard problem cases, stood in for by name: a Problem case answers each standard case by its runtime type, then any other
     // problem as 500, and every case carries its problem data (detail, title, type, instance, properties) in the transport's error shape.
     public const string Problems = """
-        namespace Rocket.Surgery.LaunchPad.Primitives
+        namespace Rocket.Surgery.LaunchPad.Foundation
         {
             public interface IProblemDetailsData
             {
@@ -196,7 +196,7 @@ public class UnionGeneratorTests() : GeneratorTest()
             $$"""
             #nullable enable
             using MediatR;
-            using Rocket.Surgery.LaunchPad.Primitives;
+            using Rocket.Surgery.LaunchPad.Foundation;
 
             {{UnionContracts.Polyfill}}
 

@@ -4,4 +4,6 @@
     </ItemGroup>
     <!-- What the operation host generators in Foundation's analyzer need from the build (docs/adr/0004-one-generator-assembly.md). -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Operations.targets" />
+    <!-- The application's JSON context (docs/adr/0007-no-json-reflection.md). -->
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Foundation.JsonContext.targets" />
 </Project>

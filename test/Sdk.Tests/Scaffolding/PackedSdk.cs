@@ -27,8 +27,6 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     [
         Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
-        Path.Combine("src", "Primitives", "Rocket.Surgery.LaunchPad.Primitives.csproj"),
-        Path.Combine("src", "Primitives", "Analyzers", "Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"),
         Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),
         Path.Combine("src", "Foundation", "Rocket.Surgery.LaunchPad.Foundation.csproj"),
         Path.Combine("src", "AspNetCore", "Rocket.Surgery.LaunchPad.AspNetCore.csproj"),

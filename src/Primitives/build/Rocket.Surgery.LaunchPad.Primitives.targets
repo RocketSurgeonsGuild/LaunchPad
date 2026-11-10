@@ -1,6 +1,3 @@
 <Project>
-    <ItemGroup Condition="'$(ImplicitUsings)' == 'enable'">
-        <Using Include="Rocket.Surgery.LaunchPad.Primitives" />
-    </ItemGroup>
-    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Primitives.JsonContext.targets" />
+    <!-- Primitives' templates and their targets are added with the strong types (docs/adr/0008-primitives-is-an-independent-strong-types-package.md). -->
 </Project>

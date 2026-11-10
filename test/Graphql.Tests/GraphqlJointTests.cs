@@ -8,7 +8,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 using Rocket.Surgery.LaunchPad.HotChocolate.Rivets;
-using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Graphql.Tests;
 

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;

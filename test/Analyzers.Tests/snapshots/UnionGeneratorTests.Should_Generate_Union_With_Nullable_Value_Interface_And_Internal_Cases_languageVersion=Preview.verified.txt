@@ -1,9 +1,9 @@
 ﻿{
   AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionAnalyzer: []
+    Rocket.Surgery.LaunchPad.Analyzers.UnionAnalyzer: []
   },
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Primitives.Analyzers.UnionGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.UnionGenerator: []
   }
 }

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization.Metadata;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.Grpc;
 

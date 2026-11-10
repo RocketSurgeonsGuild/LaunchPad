@@ -1,8 +1,8 @@
 using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
-using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Analyzers;
+using Rocket.Surgery.LaunchPad.Analyzers;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;
 
@@ -75,7 +75,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                """
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                namespace Sample.Core.Operations.Rockets;
 
@@ -104,7 +104,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                """
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                namespace Sample.Core;
 
@@ -258,7 +258,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                """
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                public record RocketModel(string Id);
 
@@ -316,7 +316,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                """
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                public record RocketModel(string Id);
 
@@ -389,7 +389,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                """
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                public record RocketModel(string Id);
 
@@ -425,7 +425,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                """
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                public record RocketModel(string Id);
 
@@ -472,7 +472,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                """
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                public record RocketModel(string Id);
 
@@ -527,7 +527,7 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .AddSources(
                                $$"""
                                using System.Runtime.CompilerServices;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                namespace Sample.Core;
 
