@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.Blazor](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.blazor.md)
-- Version: `2.0.1-beta.332`
+- Version: `2.0.1-beta.335`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Blazor`
 - Target framework: `net10.0`
 - Inherits: `ComponentBase`

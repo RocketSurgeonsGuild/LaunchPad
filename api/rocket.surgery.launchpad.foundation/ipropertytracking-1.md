@@ -2,7 +2,7 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-beta.332`
+- Version: `2.0.1-beta.335`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net10.0`
 - Implements: [IPropertyTracking](/LaunchPad/api/rocket.surgery.launchpad.foundation/ipropertytracking.md)
