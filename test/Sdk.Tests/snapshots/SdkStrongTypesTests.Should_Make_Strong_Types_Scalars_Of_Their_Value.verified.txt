@@ -17,7 +17,6 @@ type Customer {
 }
 
 type DateRange {
-  contains(date: LocalDate!): Boolean!
   start: LocalDate!
   end: LocalDate!
 }

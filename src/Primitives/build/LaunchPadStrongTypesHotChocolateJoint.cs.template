@@ -8,12 +8,15 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.Json;
+using HotChocolate.Configuration;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Features;
 using HotChocolate.Language;
 using HotChocolate.Text.Json;
 using HotChocolate.Types;
+using HotChocolate.Types.Descriptors.Configurations;
 using Joinery.Dovetail;
 using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +27,8 @@ namespace Rocket.Surgery.LaunchPad.StrongTypes.Generated;
 /// <summary>
 ///     Makes every strong type a scalar of the GraphQL schema. LaunchPadStrongTypeGraphQLRepresentation chooses the scalar of the value
 ///     (Value, the default: a CustomerId is a UUID) or a scalar named after the strong type (Named: scalar CustomerId), which is written as
-///     its value. A value that breaks the strong type's rules is an input error.
+///     its value. A value that breaks the strong type's rules is an input error. The records of Primitives (DateRange, TimeRange, Money)
+///     are object types of their properties only: their methods are not fields.
 /// </summary>
 [global::System.CodeDom.Compiler.GeneratedCode("LaunchPad", "generated"), global::Microsoft.CodeAnalysis.EmbeddedAttribute, global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 [global::Joinery.Dovetail.Attributes.DovetailExport, global::Joinery.Dovetail.Attributes.DovetailCategory(global::Joinery.Dovetail.DovetailCategory.Application)]
@@ -38,6 +42,28 @@ internal sealed class LaunchPadStrongTypesHotChocolateJoint : IServiceJoint
         foreach (var strongType in LaunchPadStrongTypes.All)
         {
             strongType.Accept(visitor);
+        }
+
+        builder.TryAddTypeInterceptor(static _ => new LaunchPadStrongTypesHotChocolateInterceptor());
+    }
+}
+
+/// <summary>
+///     Keeps the methods of Primitives' records (DateRange.Contains and the like) out of the schema: HotChocolate infers an object type's
+///     fields from its public methods as well as its properties, and Primitives cannot mark them with GraphQLIgnore.
+/// </summary>
+[global::System.CodeDom.Compiler.GeneratedCode("LaunchPad", "generated"), global::Microsoft.CodeAnalysis.EmbeddedAttribute, global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+internal sealed class LaunchPadStrongTypesHotChocolateInterceptor : TypeInterceptor
+{
+    private static readonly Assembly Primitives = typeof(DateRange).Assembly;
+
+    public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, TypeSystemConfiguration configuration)
+    {
+        if (configuration is not ObjectTypeConfiguration { RuntimeType: { } runtimeType } objectType || runtimeType.Assembly != Primitives) return;
+
+        foreach (var field in objectType.Fields)
+        {
+            if (field.Member is MethodInfo) field.Ignore = true;
         }
     }
 }
