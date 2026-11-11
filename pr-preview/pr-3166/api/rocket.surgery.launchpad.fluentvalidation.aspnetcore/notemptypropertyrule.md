@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore.md)
-- Version: `2.0.1-pr.1167`
+- Version: `2.0.1-pr.1184`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi`
 - Target framework: `net10.0`
 - Implements: [IPropertyRuleHandler](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/ipropertyrulehandler.md)

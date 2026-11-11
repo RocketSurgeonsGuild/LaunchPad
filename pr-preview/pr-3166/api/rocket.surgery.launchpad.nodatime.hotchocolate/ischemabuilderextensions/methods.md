@@ -7,23 +7,22 @@
 
 Schema builder extensions
 
-<a id="addnodatime"></a>
-<a id="addnodatime-ischemabuilder-idatetimezoneprovider"></a>
+<a id="addnodatimefilters"></a>
+<a id="addnodatimefilters-ischemabuilder"></a>
 
-## AddNodaTime(ISchemaBuilder, IDateTimeZoneProvider)
+## AddNodaTimeFilters(ISchemaBuilder)
 
-- Name: `AddNodaTime(ISchemaBuilder, IDateTimeZoneProvider)`
+- Name: `AddNodaTimeFilters(ISchemaBuilder)`
 - Modifiers: `extension`
 - Returns: `ISchemaBuilder`
 
-Add nodatime types to HotChocolate
+Binds the NodaTime types HotChocolate has scalars for ( `OffsetDateTime`, `Duration`, `LocalDate`, `LocalDateTime` and `LocalTime`), and `Instant`, which the Joint binds to the `DateTime` scalar, to comparable filters.
 
 ```csharp
 public static class ISchemaBuilderExtensions
 {
-    public static ISchemaBuilder AddNodaTime(
-        this ISchemaBuilder schemaBuilder,
-        IDateTimeZoneProvider dateTimeZoneProvider)
+    public static ISchemaBuilder AddNodaTimeFilters(
+        this ISchemaBuilder schemaBuilder)
     {
         // ...
     }
@@ -33,4 +32,7 @@ public static class ISchemaBuilderExtensions
 ## Parameters
 
 - `schemaBuilder` (`ISchemaBuilder`)
-- `dateTimeZoneProvider` (`IDateTimeZoneProvider`)
+
+## Remarks
+
+The scalars themselves come from HotChocolate's own `AddNodaTime()` on the request executor builder.

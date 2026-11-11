@@ -38,21 +38,21 @@ public static class GraphqlExtensions
 Adds converters, binding and filters.
 
 <a id="withproblemdetails"></a>
-<a id="withproblemdetails-ierrorbuilder-iproblemdetailsdata"></a>
+<a id="withproblemdetails-errorbuilder-iproblemdetailsdata"></a>
 
-## WithProblemDetails(IErrorBuilder, IProblemDetailsData)
+## WithProblemDetails(ErrorBuilder, IProblemDetailsData)
 
-- Name: `WithProblemDetails(IErrorBuilder, IProblemDetailsData)`
+- Name: `WithProblemDetails(ErrorBuilder, IProblemDetailsData)`
 - Modifiers: `extension`
-- Returns: `IErrorBuilder`
+- Returns: `ErrorBuilder`
 
 Add problem details to the error
 
 ```csharp
 public static class GraphqlExtensions
 {
-    public static IErrorBuilder WithProblemDetails(
-        this IErrorBuilder error,
+    public static ErrorBuilder WithProblemDetails(
+        this ErrorBuilder error,
         IProblemDetailsData data)
     {
         // ...
@@ -62,5 +62,5 @@ public static class GraphqlExtensions
 
 ## Parameters
 
-- `error` (`IErrorBuilder`)
+- `error` (`ErrorBuilder`)
 - `data` (`IProblemDetailsData`)
