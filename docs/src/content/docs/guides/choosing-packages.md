@@ -14,7 +14,7 @@ Reference the library directly from the project that uses it:
 ```xml
 <ItemGroup>
   <PackageReference Include="NodaTime" Version="3.3.7" />
-  <PackageReference Include="HotChocolate.AspNetCore" Version="15.1.20" />
+  <PackageReference Include="HotChocolate.AspNetCore" Version="16.7.5" />
 </ItemGroup>
 ```
 
