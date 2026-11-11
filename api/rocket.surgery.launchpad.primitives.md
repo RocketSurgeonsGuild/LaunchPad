@@ -1,43 +1,68 @@
 # Rocket.Surgery.LaunchPad.Primitives
 
 - Package: `Rocket.Surgery.LaunchPad.Primitives`
-- Version: `2.0.1-beta.331`
+- Version: `2.0.1-beta.332`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Primitives](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Primitives)
 
 ## Namespaces
 
-### Rocket.Surgery.LaunchPad.Primitives
+### Rocket.Surgery.LaunchPad.StrongTypes
 
-- [Conflict](/LaunchPad/api/rocket.surgery.launchpad.primitives/conflict.md) -- `record` `sealed` -- The request conflicts with the current state. HTTP 409, gRPC `FailedPrecondition`, GraphQL `CONFLICT`.
-- [ExistingValueOptions](/LaunchPad/api/rocket.surgery.launchpad.primitives/existingvalueoptions.md) -- `class` `static` -- Helper methods for creating `Primitives.ExistingValueOptionsFactory`1` instances.
-- [ExistingValueOptionsFactory<TOptions>](/LaunchPad/api/rocket.surgery.launchpad.primitives/existingvalueoptionsfactory-1.md) -- `class` -- Implementation of `Options.IOptionsFactory`1`.
-- [Forbidden](/LaunchPad/api/rocket.surgery.launchpad.primitives/forbidden.md) -- `record` `sealed` -- The caller may not do this. HTTP 403, gRPC `PermissionDenied`, GraphQL `FORBIDDEN`.
-- [IncludeInJsonContextAttribute](/LaunchPad/api/rocket.surgery.launchpad.primitives/includeinjsoncontextattribute.md) -- `class` `sealed` -- Puts a type in the JSON context LaunchPad generates in the applications that reference this assembly, for a type that crosses the wire as JSON but isn't a mediator request or response.
-- [Invalid](/LaunchPad/api/rocket.surgery.launchpad.primitives/invalid.md) -- `record` `sealed` -- The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
-- [IProblemDetailsData](/LaunchPad/api/rocket.surgery.launchpad.primitives/iproblemdetailsdata.md) -- `interface` -- A common interface used for definiting problems
-- [JsonContextTypeAttribute](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsoncontexttypeattribute.md) -- `class` `sealed` -- Lists a type of this assembly that crosses the wire as JSON, for the JSON context LaunchPad generates in the applications that reference it.
-- [JsonConverterTypeInfoResolver](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsonconvertertypeinforesolver.md) -- `class` `sealed` -- Resolves the metadata of value types written by a converter in `JsonSerializerOptions.Converters`, such as the NodaTime or the spatial types, without reflection.
-- [JsonTypeInfoResolverRegistration](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsontypeinforesolverregistration.md) -- `record` `sealed` -- A JSON type info resolver, usually a source generated `Serialization.JsonSerializerContext`, that the `SystemTextJsonJoint` puts in the `JsonSerializerOptions.TypeInfoResolverChain` of every `Json.JsonSerializerOptions` built from the service provider, and through them of the ASP.NET Core HTTP and MVC JSON options.
-- [LaunchPadJsonEnumConverters](/LaunchPad/api/rocket.surgery.launchpad.primitives/launchpadjsonenumconverters.md) -- `class` `static` -- The enum converters the `SystemTextJsonJoint` adds to the `Json.JsonSerializerOptions` it configures.
-- [LaunchPadJsonSerializerOptionsExtensions](/LaunchPad/api/rocket.surgery.launchpad.primitives/launchpadjsonserializeroptionsextensions.md) -- `class` `static` -- Builds the `JsonSerializerOptions.TypeInfoResolverChain` of a `Json.JsonSerializerOptions` from registered resolvers.
-- [LaunchPadJsonServiceCollectionExtensions](/LaunchPad/api/rocket.surgery.launchpad.primitives/launchpadjsonservicecollectionextensions.md) -- `class` `static` -- Registers JSON type info resolvers for the `SystemTextJsonJoint` to chain into the application's `Json.JsonSerializerOptions`.
-- [NotAuthorizedException](/LaunchPad/api/rocket.surgery.launchpad.primitives/notauthorizedexception.md) -- `class` -- NotAuthorizedException.
-- [NotFound](/LaunchPad/api/rocket.surgery.launchpad.primitives/notfound.md) -- `record` `sealed` -- The requested entity doesn't exist. HTTP 404, gRPC `NotFound`, GraphQL `NOT_FOUND`.
-- [NotFoundException](/LaunchPad/api/rocket.surgery.launchpad.primitives/notfoundexception.md) -- `class` -- NotFoundException.
-- [Problem](/LaunchPad/api/rocket.surgery.launchpad.primitives/problem.md) -- `record` `abstract` -- The base of LaunchPad's standard error cases: what a handler returns, as a case of its result union, instead of throwing. Each transport turns a case into its own error shape (HTTP ProblemDetails, a gRPC status, a GraphQL error) from [IProblemDetailsData](/LaunchPad/api/rocket.surgery.launchpad.primitives/iproblemdetailsdata.md).
-- [ProblemDetailsException](/LaunchPad/api/rocket.surgery.launchpad.primitives/problemdetailsexception.md) -- `class` `abstract` -- NotFoundException.
-- [RequestFailedException](/LaunchPad/api/rocket.surgery.launchpad.primitives/requestfailedexception.md) -- `class` -- An exception for failed requests, with overloads to take additional details
-- [Unauthorized](/LaunchPad/api/rocket.surgery.launchpad.primitives/unauthorized.md) -- `record` `sealed` -- The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
-- [UnprocessableEntity](/LaunchPad/api/rocket.surgery.launchpad.primitives/unprocessableentity.md) -- `record` `sealed` -- The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
-
-### Rocket.Surgery.LaunchPad.Primitives.Extensions
-
-- [UsefulEnumerableExtensions](/LaunchPad/api/rocket.surgery.launchpad.primitives/usefulenumerableextensions.md) -- `class` `static` -- Useful extensions for enumerations.
-
-### Rocket.Surgery.LaunchPad.Primitives.Joints
-
-- [DefaultJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/defaultjoint.md) -- `class` -- The joint every LaunchPad application starts from. Implements the `Joints.IServiceJoint`
-- [ServiceDiscoveryCoreJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/servicediscoverycorejoint.md) -- `class` -- A joint that registers service discovery and adds it to every `Http.HttpClient` the application creates.
-- [StandardResilienceJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/standardresiliencejoint.md) -- `class` -- A joint that adds the standard resilience handler to every `Http.HttpClient` the application creates.
-- [SystemTextJsonJoint](/LaunchPad/api/rocket.surgery.launchpad.primitives/systemtextjsonjoint.md) -- `class` -- A joint that configures `Json.JsonSerializerOptions` the LaunchPad way: camel case names, camel case enums, and a `JsonSerializerOptions.TypeInfoResolverChain` built from every registered [JsonTypeInfoResolverRegistration](/LaunchPad/api/rocket.surgery.launchpad.primitives/jsontypeinforesolverregistration.md). Implements the `Joints.IServiceJoint`
+- [BusinessDate](/LaunchPad/api/rocket.surgery.launchpad.primitives/businessdate.md) -- `class` `sealed` -- A weekday business is done on, valid under [BusinessDateRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/businessdaterules.md).
+- [BusinessDateRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/businessdaterules.md) -- `class` `sealed` -- The rules of a business date: a day business is done on, such as a value date or a trading day.
+- [CountryCode](/LaunchPad/api/rocket.surgery.launchpad.primitives/countrycode.md) -- `class` `sealed` -- An ISO 3166-1 alpha-2 country code, valid under [CountryCodeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/countrycoderules.md).
+- [CountryCodeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/countrycoderules.md) -- `class` `sealed` -- The rules of a country code: an officially assigned ISO 3166-1 alpha-2 code, such as `US` or `DE`.
+- [CurrencyCode](/LaunchPad/api/rocket.surgery.launchpad.primitives/currencycode.md) -- `class` `sealed` -- An ISO 4217 currency code, valid under [CurrencyCodeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/currencycoderules.md).
+- [CurrencyCodeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/currencycoderules.md) -- `class` `sealed` -- The rules of a currency code: an ISO 4217 alphabetic code in current use, such as `USD` or `EUR`.
+- [DateRange](/LaunchPad/api/rocket.surgery.launchpad.primitives/daterange.md) -- `record` `sealed` -- A range of dates from [DateRange.Start](/LaunchPad/api/rocket.surgery.launchpad.primitives/daterange/properties.md#start) to [DateRange.End](/LaunchPad/api/rocket.surgery.launchpad.primitives/daterange/properties.md#end), both included. [DateRange.Start](/LaunchPad/api/rocket.surgery.launchpad.primitives/daterange/properties.md#start) is never after [DateRange.End](/LaunchPad/api/rocket.surgery.launchpad.primitives/daterange/properties.md#end); a range of one day has them equal.
+- [EmailAddress](/LaunchPad/api/rocket.surgery.launchpad.primitives/emailaddress.md) -- `class` `sealed` -- An email address, valid under [EmailAddressRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/emailaddressrules.md).
+- [EmailAddressRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/emailaddressrules.md) -- `class` `sealed` -- The rules of an email address: an RFC 5322 `addr-spec` in the form RFC 5321 delivers mail to.
+- [ExpirationDate](/LaunchPad/api/rocket.surgery.launchpad.primitives/expirationdate.md) -- `class` `sealed` -- The last day something is valid, valid under [ExpirationDateRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/expirationdaterules.md).
+- [ExpirationDateRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/expirationdaterules.md) -- `class` `sealed` -- The rules of an expiration date: the last day something (a card, a document, a product) is valid.
+- [HexColor](/LaunchPad/api/rocket.surgery.launchpad.primitives/hexcolor.md) -- `class` `sealed` -- A hexadecimal color, valid under [HexColorRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/hexcolorrules.md).
+- [HexColorRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/hexcolorrules.md) -- `class` `sealed` -- The rules of a hexadecimal color: the CSS Color 4 §5.2 hex notation `#RGB` or `#RRGGBB`.
+- [Iban](/LaunchPad/api/rocket.surgery.launchpad.primitives/iban.md) -- `class` `sealed` -- An IBAN in electronic format, valid under [IbanRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ibanrules.md).
+- [IbanRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ibanrules.md) -- `class` `sealed` -- The rules of an IBAN, an international bank account number (ISO 13616-1), such as `GB82WEST12345698765432`.
+- [IpAddress](/LaunchPad/api/rocket.surgery.launchpad.primitives/ipaddress.md) -- `class` `sealed` -- An IPv4 or IPv6 address, valid under [IpAddressRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ipaddressrules.md).
+- [IpAddressRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ipaddressrules.md) -- `class` `sealed` -- The rules of an IP address in its canonical text form: IPv4 dotted decimal ( `192.0.2.1`) or IPv6 as RFC 5952 recommends ( `2001:db8::1`).
+- [Isbn](/LaunchPad/api/rocket.surgery.launchpad.primitives/isbn.md) -- `class` `sealed` -- An ISBN-10 or ISBN-13, valid under [IsbnRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/isbnrules.md).
+- [IsbnRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/isbnrules.md) -- `class` `sealed` -- The rules of an ISBN, an international standard book number (ISO 2108): an ISBN-13 such as `9780306406157` or an ISBN-10 such as `0306406152`.
+- [IStrongTypeVisitor<TResult>](/LaunchPad/api/rocket.surgery.launchpad.primitives/istrongtypevisitor-1.md) -- `interface` -- Does something with a strong type known by its generic arguments, such as building a converter for it.
+- [LanguageCode](/LaunchPad/api/rocket.surgery.launchpad.primitives/languagecode.md) -- `class` `sealed` -- A BCP 47 language tag, valid under [LanguageCodeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/languagecoderules.md).
+- [LanguageCodeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/languagecoderules.md) -- `class` `sealed` -- The rules of a language code: a BCP 47 language tag that .NET knows as a culture, such as `en`, `en-US` or `zh-Hans-CN`.
+- [Latitude](/LaunchPad/api/rocket.surgery.launchpad.primitives/latitude.md) -- `class` `sealed` -- A latitude in decimal degrees, valid under [LatitudeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/latituderules.md).
+- [LatitudeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/latituderules.md) -- `class` `sealed` -- The rules of a latitude in decimal degrees (WGS 84, ISO 6709).
+- [Longitude](/LaunchPad/api/rocket.surgery.launchpad.primitives/longitude.md) -- `class` `sealed` -- A longitude in decimal degrees, valid under [LongitudeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/longituderules.md).
+- [LongitudeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/longituderules.md) -- `class` `sealed` -- The rules of a longitude in decimal degrees (WGS 84, ISO 6709).
+- [MacAddress](/LaunchPad/api/rocket.surgery.launchpad.primitives/macaddress.md) -- `class` `sealed` -- An EUI-48 MAC address, valid under [MacAddressRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/macaddressrules.md).
+- [MacAddressRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/macaddressrules.md) -- `class` `sealed` -- The rules of a MAC address, an IEEE EUI-48, in the IEEE 802 hexadecimal representation: six groups of two upper-case hexadecimal digits separated by hyphens, such as `00-1A-2B-3C-4D-5E`.
+- [Money](/LaunchPad/api/rocket.surgery.launchpad.primitives/money.md) -- `record` `sealed` -- An amount of money in a currency.
+- [Month](/LaunchPad/api/rocket.surgery.launchpad.primitives/month.md) -- `class` `sealed` -- A month of the year, valid under [MonthRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/monthrules.md).
+- [MonthRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/monthrules.md) -- `class` `sealed` -- The rules of a month of the year.
+- [Percentage](/LaunchPad/api/rocket.surgery.launchpad.primitives/percentage.md) -- `class` `sealed` -- A percentage from 0 to 100, valid under [PercentageRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/percentagerules.md).
+- [PercentageRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/percentagerules.md) -- `class` `sealed` -- The rules of a percentage.
+- [PhoneNumber](/LaunchPad/api/rocket.surgery.launchpad.primitives/phonenumber.md) -- `class` `sealed` -- A phone number in E.164 form, valid under [PhoneNumberRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/phonenumberrules.md).
+- [PhoneNumberRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/phonenumberrules.md) -- `class` `sealed` -- The rules of a phone number: an ITU-T E.164 number in its international form, `+` followed by the country code and the subscriber number, such as `+14155552671`.
+- [Price](/LaunchPad/api/rocket.surgery.launchpad.primitives/price.md) -- `class` `sealed` -- A non-negative price, valid under [PriceRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/pricerules.md).
+- [PriceRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/pricerules.md) -- `class` `sealed` -- The rules of a price: an amount of money with no currency, such as a unit price.
+- [Quantity](/LaunchPad/api/rocket.surgery.launchpad.primitives/quantity.md) -- `class` `sealed` -- A non-negative count of items, valid under [QuantityRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/quantityrules.md).
+- [QuantityRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/quantityrules.md) -- `class` `sealed` -- The rules of a quantity: a count of items.
+- [Quarter](/LaunchPad/api/rocket.surgery.launchpad.primitives/quarter.md) -- `class` `sealed` -- A quarter of the year, valid under [QuarterRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/quarterrules.md).
+- [QuarterRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/quarterrules.md) -- `class` `sealed` -- The rules of a quarter of the year.
+- [Rating](/LaunchPad/api/rocket.surgery.launchpad.primitives/rating.md) -- `class` `sealed` -- A rating from 1 to 5, valid under [RatingRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ratingrules.md).
+- [RatingRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ratingrules.md) -- `class` `sealed` -- The rules of a rating, such as a number of stars in a review.
+- [Slug](/LaunchPad/api/rocket.surgery.launchpad.primitives/slug.md) -- `class` `sealed` -- A URL slug, valid under [SlugRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/slugrules.md).
+- [SlugRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/slugrules.md) -- `class` `sealed` -- The rules of a slug, the readable part of a URL path that names a resource, such as `hello-world-2`.
+- [StrongTypeDescription](/LaunchPad/api/rocket.surgery.launchpad.primitives/strongtypedescription.md) -- `class` `abstract` -- What an integration needs to know about one strong type: its value type, the format it is written in, and the constraints its rules set (lengths, patterns, bounds, allowed values), read from its SuperStrong validators. A rule written as a predicate ( `Satisfies`) is not described.
+- [StrongTypeDescription<TStrongType, TPrimitive>](/LaunchPad/api/rocket.surgery.launchpad.primitives/strongtypedescription-2.md) -- `class` `sealed` -- The description of one strong type, which knows the strong type and its value as generic arguments.
+- [StrongTypeFormatAttribute](/LaunchPad/api/rocket.surgery.launchpad.primitives/strongtypeformatattribute.md) -- `class` `sealed` -- The format a strong type's value is written in, as OpenAPI and JSON Schema name it ( `email`, `uri`, `ipv4`, ...), on the strong type or on its rules.
+- [TaxRate](/LaunchPad/api/rocket.surgery.launchpad.primitives/taxrate.md) -- `class` `sealed` -- A tax rate as a percentage, valid under [TaxRateRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/taxraterules.md).
+- [TaxRateRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/taxraterules.md) -- `class` `sealed` -- The rules of a tax rate, as a percentage of the taxed amount.
+- [Temperature](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperature.md) -- `class` `sealed` -- A temperature in degrees Celsius, valid under [TemperatureRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperaturerules.md).
+- [TemperatureRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperaturerules.md) -- `class` `sealed` -- The rules of a temperature, in degrees Celsius.
+- [TimeRange](/LaunchPad/api/rocket.surgery.launchpad.primitives/timerange.md) -- `record` `sealed` -- A range of times of day from [TimeRange.Start](/LaunchPad/api/rocket.surgery.launchpad.primitives/timerange/properties.md#start) to [TimeRange.End](/LaunchPad/api/rocket.surgery.launchpad.primitives/timerange/properties.md#end) within one day. [TimeRange.Start](/LaunchPad/api/rocket.surgery.launchpad.primitives/timerange/properties.md#start) is never after [TimeRange.End](/LaunchPad/api/rocket.surgery.launchpad.primitives/timerange/properties.md#end), so a range cannot run past midnight; an empty range has them equal.
+- [Url](/LaunchPad/api/rocket.surgery.launchpad.primitives/url.md) -- `class` `sealed` -- An absolute http or https URL, valid under [UrlRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/urlrules.md).
+- [UrlRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/urlrules.md) -- `class` `sealed` -- The rules of a URL: an absolute `http` or `https` URI (RFC 3986 §4.3) with a host.
+- [Vin](/LaunchPad/api/rocket.surgery.launchpad.primitives/vin.md) -- `class` `sealed` -- A vehicle identification number, valid under [VinRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/vinrules.md).
+- [VinRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/vinrules.md) -- `class` `sealed` -- The rules of a VIN, a vehicle identification number (ISO 3779), such as `1M8GDM9AXKP042788`.

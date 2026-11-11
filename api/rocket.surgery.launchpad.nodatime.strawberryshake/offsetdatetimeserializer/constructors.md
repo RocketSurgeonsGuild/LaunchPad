@@ -5,7 +5,7 @@
 - Kind: `Constructors`
 - Members: `1`
 
-Create a new OffsetDateTimeSerializer
+Serializes `OffsetDateTime` as the `DateTime` scalar of HotChocolate 16
 
 <a id="constructor"></a>
 

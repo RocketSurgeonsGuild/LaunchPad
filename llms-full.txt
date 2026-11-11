@@ -40,6 +40,7 @@ LaunchPad adds the Joints most applications want (health checks, logging, teleme
 | [Template](./templates/)                                      | Source written into a project only when its host model and references match.                   |
 | [LaunchPad SDK](./launchpad-sdk/)                             | The MSBuild SDK that chooses LaunchPad packages from what a project references.                |
 | [Operation](./operations/)                                    | A mediator request and its response, exposed over a transport through an operation host.       |
+| [Strong type](./strong-types/)                                | A type that wraps one value of a domain concept and is valid by construction.                  |
 
 # Host models
 
@@ -85,11 +86,34 @@ Each package exports the [Joints](../joints/) for its pair of technologies and d
 | the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`                                                        |
 | `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
 | `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
-| `FluentValidation`              | `.FluentValidation`, and its ASP.NET Core, gRPC, HotChocolate and Blazor packages with those |
+| `FluentValidation`              | `.FluentValidation`, and its ASP.NET Core, gRPC and Blazor packages with those               |
 | `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                |
 | `HotChocolate`                  | `.HotChocolate`                                                                              |
 | `StrawberryShake`               | `.StrawberryShake`                                                                           |
 | `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
+
+There is no FluentValidation package for HotChocolate: `Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate` was built on FairyBread, which has no release for HotChocolate 16, and was removed with the move to HotChocolate 16. Validate GraphQL requests in the mediator pipeline instead (the ZeroAlloc HotChocolate package reports its failures as GraphQL errors).
+
+### NodaTime with HotChocolate and StrawberryShake
+
+[Section titled “NodaTime with HotChocolate and StrawberryShake”](#nodatime-with-hotchocolate-and-strawberryshake)
+
+`Rocket.Surgery.LaunchPad.NodaTime.HotChocolate` adds HotChocolate 16’s own NodaTime scalars (`AddNodaTime()` from `HotChocolate.Types.NodaTime`), binds `Instant` to the `DateTime` scalar and binds all of these types to comparable filters:
+
+| NodaTime type    | GraphQL scalar  | Format                                                         |
+| ---------------- | --------------- | -------------------------------------------------------------- |
+| `OffsetDateTime` | `DateTime`      | `2020-01-02T03:04:05.5+01:00`, `Z` for UTC                     |
+| `Instant`        | `DateTime`      | written in UTC, `2020-01-02T02:04:05.5Z`; read with any offset |
+| `Duration`       | `Duration`      | ISO 8601, `P1DT2H3M4.5S`                                       |
+| `LocalDate`      | `LocalDate`     | `2020-01-02`                                                   |
+| `LocalDateTime`  | `LocalDateTime` | `2020-01-02T03:04:05.5`                                        |
+| `LocalTime`      | `LocalTime`     | `03:04:05.5`                                                   |
+
+An `Instant` is an `OffsetDateTime` at UTC, so it travels as the `DateTime` scalar without losing anything: the package converts it with `instant.WithOffset(Offset.Zero)` on the way out and `dateTime.ToInstant()` on the way in, so a `DateTime` sent with an offset arrives as the same instant.
+
+HotChocolate 16 renamed the `OffsetDateTime` scalar to `DateTime` and dropped the others; LaunchPad does not add them back. `ZonedDateTime`, `OffsetDate`, `OffsetTime`, `Offset`, `Period`, `DateTimeZone` and `IsoDayOfWeek` have no scalar: expose one of the types above, or bind the type to a scalar yourself with `BindRuntimeType` and a pair of `AddTypeConverter` calls.
+
+`Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake` registers a serializer for each of the five scalars, in the formats above. A client maps the scalars to the NodaTime types in its `schema.extensions.graphql`, for example `extend scalar DateTime @serializationType(name: "global::System.String") @runtimeType(name: "global::NodaTime.OffsetDateTime", valueType: true)`.
 
 A file-based app (`dotnet run app.cs`) also gets `Rocket.Surgery.LaunchPad.Foundation` and counts as referencing NodaTime.
 
@@ -285,17 +309,193 @@ Mediator libraries disagree on how a request declares its response and how it is
 
 The terms on this page are defined in the repository’s [glossary](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/GLOSSARY.md).
 
+# Strong types
+
+> A strong type wraps one value of a domain concept and is valid by construction. Rocket.Surgery.LaunchPad.Primitives ships ready-made strong types and the rules sets they are built on.
+
+A **strong type** wraps a single value of a domain concept (an email address, a currency code, an amount) and is valid by construction: there is no instance of it that breaks its rules. A **rules set** is a named, reusable set of the constraints a strong type is valid under, so several strong types can share them.
+
+`Rocket.Surgery.LaunchPad.Primitives` ships ready-made strong types built on [SuperStrong](https://superstrong.dev). It depends on no other LaunchPad package, and nothing else brings it: an application or library opts in by referencing it. Its types live in the `Rocket.Surgery.LaunchPad.StrongTypes` namespace.
+
+```xml
+<PackageReference Include="Rocket.Surgery.LaunchPad.Primitives" />
+```
+
+## In OpenAPI, GraphQL and EF Core
+
+[Section titled “In OpenAPI, GraphQL and EF Core”](#in-openapi-graphql-and-ef-core)
+
+An application that references Primitives itself gets [Joints](../joints/) that describe its strong types, and those of its references, to the libraries it uses. They are [templates](../templates/#the-primitives-templates): written into the application only when it references the library, so Primitives depends on none of them. A source generator in Primitives finds the strong types (any class implementing SuperStrong’s `IStrongType<TSelf, TPrimitive>`) at build time, so nothing reflects over them.
+
+| Library                      | What a strong type becomes                                                                                                                                                       |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Microsoft.AspNetCore.OpenApi | the schema of its value with the constraints of its rules (lengths, patterns, bounds, allowed values, format), in bodies and in Minimal API and MVC parameters                   |
+| HotChocolate                 | a scalar: the scalar of its value (a `Guid` strong type is `UUID`), or a scalar named after it                                                                                   |
+| Entity Framework Core        | a column of its value, with the maximum length of its rules, in every `DbContext` the application declares or references; `DateRange`, `TimeRange` and `Money` are complex types |
+
+Two MSBuild properties choose the representation:
+
+```xml
+<PropertyGroup>
+  <!-- Component (default): a schema named after the strong type; Inline: the value's schema in place -->
+  <LaunchPadStrongTypeOpenApiRepresentation>Inline</LaunchPadStrongTypeOpenApiRepresentation>
+  <!-- Value (default): the scalar of the value; Named: a scalar named after the strong type -->
+  <LaunchPadStrongTypeGraphQLRepresentation>Named</LaunchPadStrongTypeGraphQLRepresentation>
+</PropertyGroup>
+```
+
+A rule written as a predicate (`Satisfies`) has no OpenAPI form; put `[StrongTypeFormat("...")]` on a strong type or its rules to give its value a format (`EmailAddressRules` has `email`, `UrlRules` has `uri`). EF Core gets the converters through its `IValueConverterSelector`: a context that replaces that service itself configures its strong types in `ConfigureConventions`.
+
+## Using a strong type
+
+[Section titled “Using a strong type”](#using-a-strong-type)
+
+Every strong type has the surface SuperStrong generates:
+
+* `From(value)` returns the strong type, or throws `StrongTypeValidationException` with every rule the value breaks.
+* `TryFrom(value, out result)` returns `false` instead of throwing.
+* `AsPrimitive()` returns the wrapped value.
+* Value equality and comparison, `Parse` and `TryParse`, formatting, a `TypeConverter`, and a System.Text.Json converter that writes the wrapped value and checks the rules when it reads one.
+
+```csharp
+using Rocket.Surgery.LaunchPad.StrongTypes;
+
+
+var email = EmailAddress.From("someone@example.com");
+
+
+if (!CurrencyCode.TryFrom(input, out var currency))
+{
+    // not a current ISO 4217 code
+}
+```
+
+SuperStrong checks a value without changing it, so nothing is normalized. Where a standard says a value is case-insensitive (country, currency and language codes, hexadecimal digits), the rules accept only the standard’s canonical case and reject the other: `US`, not `us`.
+
+## The ready-made types
+
+[Section titled “The ready-made types”](#the-ready-made-types)
+
+Each type is a sealed class built on the rules set of the same name with `Rules` after it (`EmailAddress` on `EmailAddressRules`). The XML documentation of each rules set gives the full rules and the standard behind them.
+
+### Text
+
+[Section titled “Text”](#text)
+
+| Type           | Value    | Rules                                                                                                                                                                                                                                      |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `EmailAddress` | `string` | An RFC 5322 `addr-spec` RFC 5321 delivers to: at most 254 characters, a `dot-atom` local part of at most 64, and a domain of at least two host name labels. No quoted local parts, address literals or non-ASCII characters. Case is kept. |
+| `PhoneNumber`  | `string` | ITU-T E.164: `+`, then 7 to 15 digits, the first not 0. No spaces or punctuation.                                                                                                                                                          |
+| `Url`          | `string` | An absolute `http` or `https` URI (RFC 3986) with a host, the scheme in lower case, only characters RFC 3986 allows (others percent-encoded), at most 8000 characters.                                                                     |
+| `Slug`         | `string` | Lower-case ASCII letters and digits in groups separated by single hyphens, at most 100 characters.                                                                                                                                         |
+| `HexColor`     | `string` | CSS `#rgb` or `#rrggbb` in lower case. No alpha channel.                                                                                                                                                                                   |
+
+### Codes and identifiers
+
+[Section titled “Codes and identifiers”](#codes-and-identifiers)
+
+| Type           | Value    | Rules                                                                                                                                                                    |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CountryCode`  | `string` | One of the 249 officially assigned ISO 3166-1 alpha-2 codes, in upper case. User-assigned (`XK`), reserved (`UK`, `EU`) and withdrawn (`CS`) codes are rejected.         |
+| `CurrencyCode` | `string` | A code on ISO 4217 list one (published 2026-09-17), in upper case, including funds codes, precious metals, `XTS` and `XXX`. Withdrawn codes (`HRK`, `BGN`) are rejected. |
+| `LanguageCode` | `string` | A BCP 47 tag .NET knows as a predefined culture, written as .NET names it (`en-US`). Depends on the platform’s ICU data; rejects everything in invariant globalization.  |
+| `Iban`         | `string` | ISO 13616 electronic format (no spaces, upper case), 15 to 34 characters, check digits 02 to 98 and the MOD 97-10 check. The country’s IBAN length is not checked.       |
+| `Isbn`         | `string` | An ISBN-10 (check digit modulo 11, `X` for 10) or an ISBN-13 starting 978 or 979 (check digit modulo 10), without hyphens.                                               |
+| `Vin`          | `string` | ISO 3779: 17 upper-case letters and digits without `I`, `O` or `Q`, and the North American check digit in position 9.                                                    |
+| `IpAddress`    | `string` | IPv4 dotted decimal or IPv6 in the RFC 5952 canonical form (lower case, compressed). No zone identifiers or prefix lengths. `ToIPAddress()` returns an `IPAddress`.      |
+| `MacAddress`   | `string` | An EUI-48 in the IEEE 802 form: six pairs of upper-case hexadecimal digits separated by hyphens (`00-1A-2B-3C-4D-5E`).                                                   |
+
+### Numbers
+
+[Section titled “Numbers”](#numbers)
+
+| Type          | Value     | Rules                                         |
+| ------------- | --------- | --------------------------------------------- |
+| `Percentage`  | `decimal` | 0 to 100.                                     |
+| `Price`       | `decimal` | Zero or more; no currency, no rounding.       |
+| `TaxRate`     | `decimal` | A percentage, 0 to 100.                       |
+| `Quantity`    | `int`     | Zero or more.                                 |
+| `Rating`      | `int`     | 1 to 5 (schema.org’s default worst and best). |
+| `Latitude`    | `double`  | Finite, -90 to 90 degrees.                    |
+| `Longitude`   | `double`  | Finite, -180 to 180 degrees.                  |
+| `Temperature` | `double`  | Finite, at least absolute zero (-273.15 °C).  |
+| `Month`       | `int`     | 1 to 12.                                      |
+| `Quarter`     | `int`     | 1 to 4.                                       |
+
+### Dates
+
+[Section titled “Dates”](#dates)
+
+| Type             | Value      | Rules                                                                                                                                   |
+| ---------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `ExpirationDate` | `DateOnly` | Any date but `DateOnly.MinValue`; past dates are accepted so expired values still load. `IsExpiredOn(date)` is true from the day after. |
+| `BusinessDate`   | `DateOnly` | Monday to Friday. Public holidays are not checked.                                                                                      |
+
+## Ranges and money
+
+[Section titled “Ranges and money”](#ranges-and-money)
+
+Three records sit beside the strong types. They have the same surface: a static `From(...)` that throws for an invalid value, a `TryFrom(..., out result)` that returns `false`, and a constructor that checks the same way, so reading one from JSON checks it too. Each serializes as a JSON object.
+
+| Type        | Members                                   | Rules                                                                                                 | JSON                                        |
+| ----------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `DateRange` | `DateOnly Start`, `DateOnly End`          | `Start` is not after `End`; both days are in the range (`Contains(date)`).                            | `{"start":"2024-01-01","end":"2024-01-31"}` |
+| `TimeRange` | `TimeOnly Start`, `TimeOnly End`          | `Start` is not after `End`, so a range cannot run past midnight. `Duration` is `End - Start`.         | `{"start":"09:00:00","end":"17:30:00"}`     |
+| `Money`     | `decimal Amount`, `CurrencyCode Currency` | The currency is required. The amount can be negative and is not rounded to the currency’s minor unit. | `{"amount":12.5,"currency":"USD"}`          |
+
+## Declaring your own strong type
+
+[Section titled “Declaring your own strong type”](#declaring-your-own-strong-type)
+
+Referencing Primitives brings SuperStrong’s source generator and analyzers into the project, so an application declares its own strong types the same way Primitives does. To reuse a ready-made rules set under a name of your own, give the rules set as the second type argument:
+
+```csharp
+using Rocket.Surgery.LaunchPad.StrongTypes;
+using SuperStrong.Types;
+
+
+[StrongType<string, EmailAddressRules>]
+public sealed partial class BillingEmail;
+```
+
+`BillingEmail` follows the rules of `EmailAddress` and is a type of its own: a `BillingEmail` is not an `EmailAddress`, so the two cannot be mixed up.
+
+For rules of your own, write a rules set: a class that implements `IStrongTypeTemplate<T>` and builds its rules with `StrongType.Define<T>()`. A rules set can be shared by several strong types.
+
+```csharp
+public sealed class SkuRules : IStrongTypeTemplate<string>
+{
+    public static StrongTypeDefinition<string> Define() => StrongType
+        .Define<string>()
+        .HasLength(8)
+        .MatchesRegex("^[A-Z]{3}-[0-9]{4}$")
+        .Satisfies(value => !value.StartsWith("TST", StringComparison.Ordinal), "Test SKUs are not allowed.");
+}
+
+
+[StrongType<string, SkuRules>]
+public sealed partial class Sku;
+```
+
+A strong type with rules only it needs can define them itself instead; see SuperStrong’s [validation](https://superstrong.dev/tutorial/validation) guide.
+
+### JSON in the declaring project
+
+[Section titled “JSON in the declaring project”](#json-in-the-declaring-project)
+
+The System.Text.Json source generator does not see the `[JsonConverter]` that SuperStrong generates in the same project, so a `JsonSerializerContext` cannot list a strong type declared next to it: it would treat the type as an object. Declare strong types in a library the application references (a context in the application sees the converter in the library’s metadata, and so does the JSON context LaunchPad writes for an executable), or register the type’s `JsonStrongTypeConverter<TStrongType, TPrimitive>` yourself. The ready-made types are declared in Primitives, so every JSON context sees their converters.
+
 # Templates
 
 > A template is source shipped inside a package and written into a consuming project only when its host model and references match, so unused wiring never compiles in.
 
 A **template** is source shipped inside a package, as a `*.cs.template` file, and written into a consuming project only when that project’s [host model](../host-models/) and references match. Unused wiring never compiles in, and the package that ships the template depends on none of the libraries the template uses.
 
-`Rocket.Surgery.LaunchPad.Hosting` ships its [Joints](../joints/) this way. Each one is a template with three gates, and every gate has to pass:
+`Rocket.Surgery.LaunchPad.Hosting` ships its [Joints](../joints/) this way, and so does `Rocket.Surgery.LaunchPad.Primitives` for the libraries its [strong types](../strong-types/) are described to. Each one is a template with three gates, and every gate has to pass:
 
 * **Hosts**: the project declares one of the host models the template is for.
 * **References**: every assembly the template compiles against is among the project’s references.
-* **Direct reference**: the project references `Rocket.Surgery.LaunchPad.Hosting` itself (see [direct references](../integration-packages/#direct-references)). A project that only receives the package through a library gets nothing.
+* **Direct reference**: the project references the package that ships the template itself (see [direct references](../integration-packages/#direct-references)). A project that only receives the package through a library gets nothing.
 
 ## The Hosting templates
 
@@ -325,11 +525,24 @@ A **template** is source shipped inside a package, as a `*.cs.template` file, an
 
 The Serilog Joints need `Joinery.Dovetail.Serilog` and the OpenTelemetry Joints need `Joinery.Dovetail.OpenTelemetry`, which Dovetail’s SDK adds when the project references Serilog or OpenTelemetry. So choosing a sink or an instrumentation is a matter of referencing its package: the Joint that turns it on comes with it.
 
+## The Primitives templates
+
+[Section titled “The Primitives templates”](#the-primitives-templates)
+
+| Joint                                      | Written when the project references | Host models                                    |
+| ------------------------------------------ | ----------------------------------- | ---------------------------------------------- |
+| `LaunchPadStrongTypes` (the registry)      | `SuperStrong.Types`                 | generic host, ASP.NET Core, Blazor WebAssembly |
+| `LaunchPadStrongTypesOpenApiJoint`         | `Microsoft.AspNetCore.OpenApi`      | ASP.NET Core                                   |
+| `LaunchPadStrongTypesHotChocolateJoint`    | `HotChocolate.Types`                | generic host, ASP.NET Core                     |
+| `LaunchPadStrongTypesEntityFrameworkJoint` | `Microsoft.EntityFrameworkCore`     | generic host, ASP.NET Core                     |
+
+`LaunchPadStrongTypes` is the registry the other Joints read, which Primitives’ source generator fills in with every strong type the application declares or references.
+
 ## Templates or packages
 
 [Section titled “Templates or packages”](#templates-or-packages)
 
-Templates are reserved for gating by host model inside `LaunchPad.Hosting`, where there is no package boundary to draw. Support for a third-party technology ships as an [integration package](../integration-packages/) instead.
+Templates are for gating by host model inside `LaunchPad.Hosting`, where there is no package boundary to draw, and for the Joints of `LaunchPad.Primitives`, which describe its strong types to libraries it must not depend on ([ADR 0008](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0008-primitives-is-an-independent-strong-types-package.md)). Support for a third-party technology ships as an [integration package](../integration-packages/) instead.
 
 The template mechanism itself is Dovetail’s: [Shipping templates](https://rocketsurgeonsguild.github.io/Dovetail/guides/shipping-templates/).
 
@@ -709,7 +922,7 @@ A binding failure answers 400, with a ProblemDetails body when the application c
 
 A handler can return a union response, its value case and its error cases, instead of throwing (ADR-0006). A union is a C# 15 union: a `union` declaration, LaunchPad’s portable `[Union] partial struct` (see the [union types design](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/design/union-types.md)), or the same shape written by hand. The generators know it by `System.Runtime.CompilerServices.UnionAttribute` or `IUnion`. Its case types are the parameter types of its public one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is the first case that is neither, and a union has exactly one.
 
-LaunchPad’s standard problem cases in `Rocket.Surgery.LaunchPad.Primitives` (`NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`, `Conflict`) match the name rules below. A union may list `Problem` itself as a case: it answers each standard case by its runtime type, and any other problem as 500. A problem’s detail, title, link, instance and properties fill the transport’s error shape (below).
+LaunchPad’s standard problem cases in `Rocket.Surgery.LaunchPad.Foundation` (`NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`, `Conflict`) match the name rules below. A union may list `Problem` itself as a case: it answers each standard case by its runtime type, and any other problem as 500. A problem’s detail, title, link, instance and properties fill the transport’s error shape (below).
 
 ```csharp
 public sealed record RocketNotFound(Guid Id);
@@ -899,7 +1112,7 @@ Reference the library directly from the project that uses it:
 ```xml
 <ItemGroup>
   <PackageReference Include="NodaTime" Version="3.3.7" />
-  <PackageReference Include="HotChocolate.AspNetCore" Version="15.1.20" />
+  <PackageReference Include="HotChocolate.AspNetCore" Version="16.7.5" />
 </ItemGroup>
 ```
 
@@ -954,7 +1167,7 @@ LaunchPad reads and writes JSON only with the JSON contexts it is given, never t
 
 [Section titled “The generated JSON context”](#the-generated-json-context)
 
-An executable project (a console or worker app, or an ASP.NET Core one) that references Rocket.Surgery.LaunchPad.Primitives gets a JSON context written for it before it compiles. Every library that references Primitives lists, in its assembly, the types of it that cross the wire as JSON:
+An executable project (a console or worker app, or an ASP.NET Core one) that references Rocket.Surgery.LaunchPad.Foundation gets a JSON context written for it before it compiles. Every library that references Foundation lists, in its assembly, the types of it that cross the wire as JSON:
 
 * every mediator request, with its response or stream item type,
 * every `IPropertyTracking<T>` patch type, with its target,
@@ -986,7 +1199,7 @@ public partial class RocketsJsonContext : JsonSerializerContext;
 services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
 ```
 
-`SystemTextJsonJoint` (in `Rocket.Surgery.LaunchPad.Primitives`) builds the `TypeInfoResolverChain` of every `JsonSerializerOptions` the service provider creates from the registered resolvers. `SystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore`) copies those options into the ASP.NET Core HTTP and MVC JSON options, so a context registered once reaches Minimal APIs, controllers, problem details and the generated API endpoints.
+`SystemTextJsonJoint` (in `Rocket.Surgery.LaunchPad.Foundation`) builds the `TypeInfoResolverChain` of every `JsonSerializerOptions` the service provider creates from the registered resolvers. `SystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore`) copies those options into the ASP.NET Core HTTP and MVC JSON options, so a context registered once reaches Minimal APIs, controllers, problem details and the generated API endpoints.
 
 The chain, first to last:
 
@@ -1009,7 +1222,7 @@ services.AddJsonTypeInfoResolver(new JsonConverterTypeInfoResolver().AddNullable
 
 [Section titled “Enums”](#enums)
 
-Rocket.Surgery.LaunchPad.Primitives ships a generator that registers a camel case `JsonStringEnumConverter<TEnum>` for every enum a JSON context of the project declares or reaches (through properties, collections and base types), and `SystemTextJsonJoint` adds those converters to the options. Generic converters need no dynamic code, so enums are camel case strings in a native AOT application too. An enum no JSON context reaches has no converter, and where reflection is available it is written as a number. An enum with a `[JsonConverter]` of its own keeps it.
+Rocket.Surgery.LaunchPad.Foundation ships a generator that registers a camel case `JsonStringEnumConverter<TEnum>` for every enum a JSON context of the project declares or reaches (through properties, collections and base types), and `SystemTextJsonJoint` adds those converters to the options. Generic converters need no dynamic code, so enums are camel case strings in a native AOT application too. An enum no JSON context reaches has no converter, and where reflection is available it is written as a number. An enum with a `[JsonConverter]` of its own keeps it.
 
 ## The API generators
 

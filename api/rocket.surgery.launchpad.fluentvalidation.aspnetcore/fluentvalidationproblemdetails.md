@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore.md)
-- Version: `2.0.1-beta.331`
+- Version: `2.0.1-beta.332`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Validation`
 - Target framework: `net10.0`
 - Inherits: `ValidationProblemDetails`

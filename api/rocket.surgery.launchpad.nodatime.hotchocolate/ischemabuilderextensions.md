@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.nodatime.hotchocolate.md)
-- Version: `2.0.1-beta.331`
+- Version: `2.0.1-beta.332`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate`
 - Target framework: `net10.0`
 
@@ -21,4 +21,4 @@ public static class ISchemaBuilderExtensions
 
 ## Methods
 
-- [AddNodaTime(ISchemaBuilder, IDateTimeZoneProvider)](/LaunchPad/api/rocket.surgery.launchpad.nodatime.hotchocolate/ischemabuilderextensions/methods.md#addnodatime-ischemabuilder-idatetimezoneprovider) : `ISchemaBuilder` `extension` -- Add nodatime types to HotChocolate
+- [AddNodaTimeFilters(ISchemaBuilder)](/LaunchPad/api/rocket.surgery.launchpad.nodatime.hotchocolate/ischemabuilderextensions/methods.md#addnodatimefilters-ischemabuilder) : `ISchemaBuilder` `extension` -- Binds the NodaTime types HotChocolate has scalars for ( `OffsetDateTime`, `Duration`, `LocalDate`, `LocalDateTime` and `LocalTime`), and `Instant`, which the Joint binds to the `DateTime` scalar, to comparable filters.

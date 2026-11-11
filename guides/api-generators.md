@@ -291,7 +291,7 @@ or the same shape written by hand. The generators know it by `System.Runtime.Com
 are the parameter types of its public one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is
 the first case that is neither, and a union has exactly one.
 
-LaunchPad's standard problem cases in `Rocket.Surgery.LaunchPad.Primitives` (`NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`,
+LaunchPad's standard problem cases in `Rocket.Surgery.LaunchPad.Foundation` (`NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`,
 `Conflict`) match the name rules below. A union may list `Problem` itself as a case: it answers each standard case by its runtime type, and
 any other problem as 500. A problem's detail, title, link, instance and properties fill the transport's error shape (below).
 

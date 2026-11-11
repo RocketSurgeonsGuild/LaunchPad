@@ -19,3 +19,4 @@ that picks the right packages for a project. These pages explain the vocabulary 
 | [Template](./templates/)                                      | Source written into a project only when its host model and references match.                   |
 | [LaunchPad SDK](./launchpad-sdk/)                             | The MSBuild SDK that chooses LaunchPad packages from what a project references.                |
 | [Operation](./operations/)                                    | A mediator request and its response, exposed over a transport through an operation host.       |
+| [Strong type](./strong-types/)                                | A type that wraps one value of a domain concept and is valid by construction.                  |

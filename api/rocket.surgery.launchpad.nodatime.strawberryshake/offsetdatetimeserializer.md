@@ -2,12 +2,12 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](/LaunchPad/api/rocket.surgery.launchpad.nodatime.strawberryshake.md)
-- Version: `2.0.1-beta.331`
+- Version: `2.0.1-beta.332`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`
 - Target framework: `net10.0`
 - Inherits: `NodaTimeStringScalarSerializer<OffsetDateTime>`
 
-Create a new OffsetDateTimeSerializer
+Serializes `OffsetDateTime` as the `DateTime` scalar of HotChocolate 16
 
 ## Definition
 
@@ -20,6 +20,10 @@ public class OffsetDateTimeSerializer
     // ...
 }
 ```
+
+## Remarks
+
+HotChocolate 16 renamed the `OffsetDateTime` scalar to `DateTime`.
 
 ## Constructors
 

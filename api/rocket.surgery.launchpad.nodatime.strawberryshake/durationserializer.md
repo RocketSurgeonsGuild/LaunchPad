@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](/LaunchPad/api/rocket.surgery.launchpad.nodatime.strawberryshake.md)
-- Version: `2.0.1-beta.331`
+- Version: `2.0.1-beta.332`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`
 - Target framework: `net10.0`
-- Inherits: `NodaTimeStringScalarSerializer<Duration>`
+- Inherits: `ScalarSerializer<string, Duration>`
 
 General purpose Duration Serializer
 
@@ -15,12 +15,20 @@ General purpose Duration Serializer
 namespace Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake;
 
 public class DurationSerializer
-    : Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.NodaTimeStringScalarSerializer<NodaTime.Duration>
+    : StrawberryShake.Serialization.ScalarSerializer<string, NodaTime.Duration>
 {
     // ...
 }
 ```
 
+## Remarks
+
+Reads and writes the ISO 8601 durations of the `Duration` scalar of HotChocolate 16: `[-]P[nW][nD][T[nH][nM][n[.f]S]]`, with an optional sign on each component. Years and months have no fixed length, so a duration with them is rejected.
+
 ## Constructors
 
 - [DurationSerializer](/LaunchPad/api/rocket.surgery.launchpad.nodatime.strawberryshake/durationserializer/constructors.md#constructor) -- Create a new DurationSerializer
+
+## Methods
+
+- [Parse(string)](/LaunchPad/api/rocket.surgery.launchpad.nodatime.strawberryshake/durationserializer/methods.md#parse-string) : `Duration` -- Parses the serialized value to the runtime representation.

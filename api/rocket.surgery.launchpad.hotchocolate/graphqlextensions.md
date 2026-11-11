@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-beta.331`
+- Version: `2.0.1-beta.332`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate`
 - Target framework: `net10.0`
 
@@ -22,4 +22,4 @@ public static class GraphqlExtensions
 ## Methods
 
 - [ConfigureStronglyTypedId(IRequestExecutorBuilder)](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate/graphqlextensions/methods.md#configurestronglytypedid-irequestexecutorbuilder) : `IRequestExecutorBuilder` `extension` -- Configures a generated strongly typed id type with the given graphql schema type
-- [WithProblemDetails(IErrorBuilder, IProblemDetailsData)](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate/graphqlextensions/methods.md#withproblemdetails-ierrorbuilder-iproblemdetailsdata) : `IErrorBuilder` `extension` -- Add problem details to the error
+- [WithProblemDetails(ErrorBuilder, IProblemDetailsData)](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate/graphqlextensions/methods.md#withproblemdetails-errorbuilder-iproblemdetailsdata) : `ErrorBuilder` `extension` -- Add problem details to the error

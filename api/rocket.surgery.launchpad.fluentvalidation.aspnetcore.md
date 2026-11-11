@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore`
-- Version: `2.0.1-beta.331`
+- Version: `2.0.1-beta.332`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore)
 
