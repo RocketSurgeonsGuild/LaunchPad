@@ -1,4 +1,3 @@
-// The geometry fields are optional: an explicit nullable context keeps their annotations wherever this file is analysed.
 using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
