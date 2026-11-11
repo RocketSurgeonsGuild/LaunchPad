@@ -95,3 +95,11 @@ _Avoid_: Serializer context, type resolver, JSON options
 **JSON context manifest**:
 The list of its types an assembly declares as crossing the wire as JSON, from which the applications that reference it get their JSON context.
 _Avoid_: JSON registry, type list
+
+**Strong type**:
+A type that wraps a single value of a domain concept (an identifier, an email address, an amount) and is valid by construction.
+_Avoid_: Domain primitive, value object (that has several members), strongly typed ID (only one kind of strong type), primitive (that is LaunchPad's Primitives package)
+
+**Rules**:
+A named, reusable set of constraints a strong type declares it is valid under, so several strong types can share them.
+_Avoid_: Template (that is source written into a project), validator (one constraint of a rules set), profile

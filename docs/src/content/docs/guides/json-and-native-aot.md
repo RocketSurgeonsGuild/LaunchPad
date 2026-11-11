@@ -10,8 +10,8 @@ rather than after publishing.
 
 ## The generated JSON context
 
-An executable project (a console or worker app, or an ASP.NET Core one) that references Rocket.Surgery.LaunchPad.Primitives gets a JSON
-context written for it before it compiles. Every library that references Primitives lists, in its assembly, the types of it that cross the
+An executable project (a console or worker app, or an ASP.NET Core one) that references Rocket.Surgery.LaunchPad.Foundation gets a JSON
+context written for it before it compiles. Every library that references Foundation lists, in its assembly, the types of it that cross the
 wire as JSON:
 
 - every mediator request, with its response or stream item type,
@@ -47,7 +47,7 @@ public partial class RocketsJsonContext : JsonSerializerContext;
 services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
 ```
 
-`SystemTextJsonJoint` (in `Rocket.Surgery.LaunchPad.Primitives`) builds the `TypeInfoResolverChain` of every `JsonSerializerOptions` the
+`SystemTextJsonJoint` (in `Rocket.Surgery.LaunchPad.Foundation`) builds the `TypeInfoResolverChain` of every `JsonSerializerOptions` the
 service provider creates from the registered resolvers. `SystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore`) copies those
 options into the ASP.NET Core HTTP and MVC JSON options, so a context registered once reaches Minimal APIs, controllers, problem details and
 the generated API endpoints.
@@ -75,7 +75,7 @@ services.AddJsonTypeInfoResolver(new JsonConverterTypeInfoResolver().AddNullable
 
 ## Enums
 
-Rocket.Surgery.LaunchPad.Primitives ships a generator that registers a camel case `JsonStringEnumConverter<TEnum>` for every enum a JSON
+Rocket.Surgery.LaunchPad.Foundation ships a generator that registers a camel case `JsonStringEnumConverter<TEnum>` for every enum a JSON
 context of the project declares or reaches (through properties, collections and base types), and `SystemTextJsonJoint` adds those converters
 to the options. Generic converters need no dynamic code, so enums are camel case strings in a native AOT application too. An enum no JSON
 context reaches has no converter, and where reflection is available it is written as a number. An enum with a `[JsonConverter]` of its own

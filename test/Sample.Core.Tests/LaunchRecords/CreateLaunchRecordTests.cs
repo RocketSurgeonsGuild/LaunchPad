@@ -36,7 +36,7 @@ public class CreateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
                 RocketId = rocket.Id,
-                ScheduledLaunchDate = clock.GetCurrentInstant(),
+                ScheduledLaunchDate = clock.GetCurrentInstant().WithOffset(Offset.Zero),
                 PayloadWeightKg = 100,
             },
             TestContext.CancellationToken

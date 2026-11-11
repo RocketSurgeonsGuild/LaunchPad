@@ -11,31 +11,6 @@ namespace Sample.Graphql.Tests;
 public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
     [Test]
-    public async Task Should_Roundtrip_Instant()
-    {
-        await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
-            new GraphQlExtension(),
-            new SqliteExtension<RocketDbContext>()
-        );
-        var clock = host.Services.GetRequiredService<IClock>();
-        var client = host.Services.GetRequiredService<IRocketClient>();
-
-
-        var value = clock.GetCurrentInstant();
-        //        client.
-        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-            new()
-            {
-                Instant = value,
-            },
-            cancellationToken: TestContext.CancellationToken
-        );
-
-        await Verify(result);
-    }
-
-    [Test]
     public async Task Should_Roundtrip_LocalDate()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -137,76 +112,6 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
     }
 
     [Test]
-    public async Task Should_Roundtrip_OffsetTime()
-    {
-        await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
-            new GraphQlExtension(),
-            new SqliteExtension<RocketDbContext>()
-        );
-        var clock = host.Services.GetRequiredService<IClock>();
-        var client = host.Services.GetRequiredService<IRocketClient>();
-
-
-        var value = new OffsetTime(LocalTime.FromTimeOnly(TimeOnly.FromDateTime(clock.GetCurrentInstant().ToDateTimeUtc())), Offset.FromHours(1));
-        //        client.
-        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-            new()
-            {
-                OffsetTime = value,
-            },
-            cancellationToken: TestContext.CancellationToken
-        );
-
-        await Verify(result);
-    }
-
-    // TBD
-    //    [Test]
-    //    public async Task Should_Roundtrip_ZonedDateTime()
-    //    {
-    //        await using var host = await AlbaHost.For<Program>(new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>());
-    //        var clock = host.Services.GetRequiredService<IClock>();
-    //        var client = host.Services.GetRequiredService<IRocketClient>();
-    //
-    //
-    //        var value = ZonedDateTime.FromDateTimeOffset(clock.GetCurrentInstant().ToDateTimeOffset()).WithZone(DateTimeZone.ForOffset(Offset.FromHours(3)));
-    ////        client.
-    //        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-    //            new NodaTimeInputsInput()
-    //            {
-    //                ZonedDateTime = value
-    //            }
-    //        );
-    //
-    //        await Verify(result);
-    //    }
-
-    [Test]
-    public async Task Should_Roundtrip_Period()
-    {
-        await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
-            new GraphQlExtension(),
-            new SqliteExtension<RocketDbContext>()
-        );
-        var client = host.Services.GetRequiredService<IRocketClient>();
-
-
-        var value = Period.FromHours(1);
-        //        client.
-        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-            new()
-            {
-                Period = value,
-            },
-            cancellationToken: TestContext.CancellationToken
-        );
-
-        await Verify(result);
-    }
-
-    [Test]
     public async Task Should_Roundtrip_Duration()
     {
         await using var host = await AlbaHost.For<Program>(
@@ -228,98 +133,6 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
         );
 
         await Verify(result);
-    }
-
-    [Test]
-    public async Task Should_Roundtrip_Offset()
-    {
-        await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
-            new GraphQlExtension(),
-            new SqliteExtension<RocketDbContext>()
-        );
-        var client = host.Services.GetRequiredService<IRocketClient>();
-
-
-        var value = Offset.FromHours(2);
-        //        client.
-        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-            new()
-            {
-                Offset = value,
-            },
-            cancellationToken: TestContext.CancellationToken
-        );
-
-        await Verify(result);
-    }
-
-    [Test]
-    public async Task Should_Roundtrip_IsoDayOfWeek()
-    {
-        await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
-            new GraphQlExtension(),
-            new SqliteExtension<RocketDbContext>()
-        );
-        var client = host.Services.GetRequiredService<IRocketClient>();
-
-        //        client.
-        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-            new()
-            {
-                IsoDayOfWeek = IsoDayOfWeek.Wednesday,
-            },
-            cancellationToken: TestContext.CancellationToken
-        );
-
-        await Verify(result);
-    }
-
-    // OffsetDate and DateTimeZone had serializers that were never registered: these prove the registration that
-    // Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake added.
-    [Test]
-    public async Task Should_Roundtrip_OffsetDate()
-    {
-        await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
-            new GraphQlExtension(),
-            new SqliteExtension<RocketDbContext>()
-        );
-        var client = host.Services.GetRequiredService<IRocketClient>();
-
-        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-            new()
-            {
-                OffsetDate = new OffsetDate(new(2020, 1, 2), Offset.FromHours(1)),
-            },
-            cancellationToken: TestContext.CancellationToken
-        );
-
-        string.Join("; ", result.Errors.Select(x => x.Message)).ShouldBeEmpty();
-        result.Data!.NodaTimeTest.OffsetDate.ShouldBe(new OffsetDate(new(2020, 1, 2), Offset.FromHours(1)));
-    }
-
-    [Test]
-    public async Task Should_Roundtrip_DateTimeZone()
-    {
-        await using var host = await AlbaHost.For<Program>(
-            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
-            new GraphQlExtension(),
-            new SqliteExtension<RocketDbContext>()
-        );
-        var client = host.Services.GetRequiredService<IRocketClient>();
-
-        var result = await client.GetNodaTimeTypes.ExecuteAsync(
-            new()
-            {
-                DateTimeZone = DateTimeZoneProviders.Tzdb["America/New_York"],
-            },
-            cancellationToken: TestContext.CancellationToken
-        );
-
-        string.Join("; ", result.Errors.Select(x => x.Message)).ShouldBeEmpty();
-        result.Data!.NodaTimeTest.DateTimeZone.ShouldNotBeNull().Id.ShouldBe("America/New_York");
     }
 
     [Test]

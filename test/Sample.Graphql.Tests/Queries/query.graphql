@@ -90,19 +90,11 @@ query GetRocket($id: UUID) {
 
 query GetNodaTimeTypes($inputs: NodaTimeInputsInput!) {
     nodaTimeTest(inputs: $inputs) {
-        isoDayOfWeek
-        offset
-        period
-        zonedDateTime
-        offsetTime
         offsetDateTime
         localTime
         localDateTime
         localDate
-        instant
         duration
-        offsetDate
-        dateTimeZone
     }
 }
 

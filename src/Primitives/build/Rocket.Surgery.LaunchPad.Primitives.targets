@@ -1,6 +1,22 @@
 <Project>
-    <ItemGroup Condition="'$(ImplicitUsings)' == 'enable'">
-        <Using Include="Rocket.Surgery.LaunchPad.Primitives" />
+    <!--
+        The representation of strong types in an OpenAPI document and a GraphQL schema, read by the strong type registry generator and written
+        into LaunchPadStrongTypes as constants the templates use:
+          - LaunchPadStrongTypeOpenApiRepresentation: Component (default, a schema named after the strong type) or Inline (the value's schema
+            in place).
+          - LaunchPadStrongTypeGraphQLRepresentation: Value (default, the scalar of the value) or Named (a scalar named after the strong type).
+    -->
+    <PropertyGroup>
+        <LaunchPadStrongTypeOpenApiRepresentation Condition="'$(LaunchPadStrongTypeOpenApiRepresentation)' == ''">Component</LaunchPadStrongTypeOpenApiRepresentation>
+        <LaunchPadStrongTypeGraphQLRepresentation Condition="'$(LaunchPadStrongTypeGraphQLRepresentation)' == ''">Value</LaunchPadStrongTypeGraphQLRepresentation>
+    </PropertyGroup>
+    <ItemGroup>
+        <CompilerVisibleProperty Include="LaunchPadStrongTypeOpenApiRepresentation" />
+        <CompilerVisibleProperty Include="LaunchPadStrongTypeGraphQLRepresentation" />
     </ItemGroup>
-    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Primitives.JsonContext.targets" />
+    <!-- The Joints for the libraries an application references, as templates. -->
+    <Import
+        Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Primitives.Templates.targets"
+        Condition="'$(_LaunchPadPrimitivesTemplatesImported)' != 'true'"
+    />
 </Project>

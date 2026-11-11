@@ -35,37 +35,37 @@ namespace Sample.Server
                 return __value;
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Invalid __error0)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Invalid __error0)
             {
                 throw ApiGraphQLErrors.Error("Invalid", "BAD_USER_INPUT", "$detail", __error0.Detail, "$title", __error0.Title, "$type", __error0.Link, "$instance", __error0.Instance, "$properties", __error0.Properties, "errors", __error0.Errors);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.NotFound __error1)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.NotFound __error1)
             {
                 throw ApiGraphQLErrors.Error("NotFound", "NOT_FOUND", "$detail", __error1.Detail, "$title", __error1.Title, "$type", __error1.Link, "$instance", __error1.Instance, "$properties", __error1.Properties);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.UnprocessableEntity __error2)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.UnprocessableEntity __error2)
             {
                 throw ApiGraphQLErrors.Error("UnprocessableEntity", "BAD_USER_INPUT", "$detail", __error2.Detail, "$title", __error2.Title, "$type", __error2.Link, "$instance", __error2.Instance, "$properties", __error2.Properties, "errors", __error2.Errors);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Unauthorized __error3)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Unauthorized __error3)
             {
                 throw ApiGraphQLErrors.Error("Unauthorized", "UNAUTHENTICATED", "$detail", __error3.Detail, "$title", __error3.Title, "$type", __error3.Link, "$instance", __error3.Instance, "$properties", __error3.Properties);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Forbidden __error4)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Forbidden __error4)
             {
                 throw ApiGraphQLErrors.Error("Forbidden", "FORBIDDEN", "$detail", __error4.Detail, "$title", __error4.Title, "$type", __error4.Link, "$instance", __error4.Instance, "$properties", __error4.Properties);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Conflict __error5)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Conflict __error5)
             {
                 throw ApiGraphQLErrors.Error("Conflict", "CONFLICT", "$detail", __error5.Detail, "$title", __error5.Title, "$type", __error5.Link, "$instance", __error5.Instance, "$properties", __error5.Properties);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Problem __error6)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Problem __error6)
             {
                 throw ApiGraphQLErrors.Error("Problem", "INTERNAL_SERVER_ERROR", "$detail", __error6.Detail, "$title", __error6.Title, "$type", __error6.Link, "$instance", __error6.Instance, "$properties", __error6.Properties);
             }

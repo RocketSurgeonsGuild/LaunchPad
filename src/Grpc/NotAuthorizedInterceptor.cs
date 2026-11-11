@@ -3,7 +3,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.Grpc;
 

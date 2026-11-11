@@ -680,7 +680,7 @@
           }
         }
       },
-      AssignedOfInstant: {
+      AssignedOfOffsetDateTime: {
         required: [
           value
         ],
@@ -692,7 +692,7 @@
                 type: null
               },
               {
-                $ref: #/components/schemas/Instant
+                $ref: #/components/schemas/OffsetDateTime
               }
             ]
           },
@@ -758,12 +758,12 @@
                 type: null
               },
               {
-                $ref: #/components/schemas/Instant
+                $ref: #/components/schemas/OffsetDateTime
               }
             ]
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/Instant
+            $ref: #/components/schemas/OffsetDateTime
           },
           rocketSerialNumber: {
             type: string
@@ -792,10 +792,10 @@
             $ref: #/components/schemas/AssignedOfdouble
           },
           actualLaunchDate: {
-            $ref: #/components/schemas/AssignedOfInstant
+            $ref: #/components/schemas/AssignedOfOffsetDateTime
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/AssignedOfInstant
+            $ref: #/components/schemas/AssignedOfOffsetDateTime
           },
           rocketId: {
             $ref: #/components/schemas/AssignedOfRocketId
@@ -886,12 +886,12 @@
                 type: null
               },
               {
-                $ref: #/components/schemas/Instant
+                $ref: #/components/schemas/OffsetDateTime
               }
             ]
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/Instant
+            $ref: #/components/schemas/OffsetDateTime
           }
         },
         x-schema-id: CreateLaunchRecordRequest

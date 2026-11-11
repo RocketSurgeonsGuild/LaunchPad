@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.Foundation.Joints;
 
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
@@ -58,7 +58,7 @@ public class ValidationProblemDetailsJsonTests
     private static async Task<JsonSerializerOptions> HttpOptions()
     {
         var services = await JointTestContext.ApplyServicesAsync(
-            JointTestContext.CreateBuilder().AppendJoint<SystemTextJsonJoint>().AppendJoint<SystemJsonTextJoint>().AppendJoint<FluentValidationJoint>()
+            JointTestContext.CreateBuilder().AppendJoint<SystemTextJsonJoint>().AppendJoint<SystemJsonTextJoint>().AppendJoint<Rocket.Surgery.LaunchPad.AspNetCore.Joints.FluentValidationJoint>()
         );
         using var provider = JointTestContext.BuildServiceProvider(services.AddOptions());
         return provider.GetRequiredService<IOptions<HttpJsonOptions>>().Value.SerializerOptions;

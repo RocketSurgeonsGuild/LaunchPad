@@ -20,13 +20,13 @@
         ],
         type: object
       },
-      AssignedOfInstant: {
+      AssignedOfOffsetDateTime: {
         properties: {
           hasValue: {
             type: boolean
           },
           value: {
-            $ref: #/components/schemas/Instant
+            $ref: #/components/schemas/OffsetDateTime
           }
         },
         required: [
@@ -73,7 +73,7 @@
                 type: null
               },
               {
-                $ref: #/components/schemas/Instant
+                $ref: #/components/schemas/OffsetDateTime
               }
             ]
           },
@@ -101,7 +101,7 @@
             $ref: #/components/schemas/RocketType
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/Instant
+            $ref: #/components/schemas/OffsetDateTime
           }
         },
         type: object
@@ -109,7 +109,7 @@
       PatchRequest: {
         properties: {
           actualLaunchDate: {
-            $ref: #/components/schemas/AssignedOfInstant
+            $ref: #/components/schemas/AssignedOfOffsetDateTime
           },
           id: {
             $ref: #/components/schemas/LaunchRecordId
@@ -127,7 +127,7 @@
             $ref: #/components/schemas/AssignedOfRocketId
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/AssignedOfInstant
+            $ref: #/components/schemas/AssignedOfOffsetDateTime
           }
         },
         required: [
@@ -186,7 +186,7 @@
                 type: null
               },
               {
-                $ref: #/components/schemas/Instant
+                $ref: #/components/schemas/OffsetDateTime
               }
             ]
           },
@@ -217,7 +217,7 @@
             $ref: #/components/schemas/RocketId
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/Instant
+            $ref: #/components/schemas/OffsetDateTime
           }
         },
         required: [

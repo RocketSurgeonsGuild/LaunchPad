@@ -8,7 +8,6 @@ using Rocket.Surgery.LaunchPad.Foundation;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 using Rocket.Surgery.LaunchPad.HotChocolate.Joints;
 using Rocket.Surgery.LaunchPad.HotChocolate.Rivets;
-using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Graphql.Tests;
 
@@ -84,7 +83,7 @@ public class GraphqlJointTests
         var context = await JointContext.Create();
         context.GetOrAdd(() => services.AddGraphQL()).AddQueryType<Query>();
         new GraphqlJoint().Register(context, services);
-        return await services.BuildServiceProvider().GetRequiredService<IRequestExecutorResolver>().GetRequestExecutorAsync();
+        return await services.BuildServiceProvider().GetRequiredService<IRequestExecutorProvider>().GetExecutorAsync();
     }
 
     public class Query

@@ -28,7 +28,12 @@ internal class GraphQlExtension : IAlbaExtension
                 .AddW3CLogging(_ => { })
                 .AddHttpLogging(_ => { })
                 .AddGraphQL()
-                .AddDiagnosticEventListener<TestServerDiagnosticEventListener>()
+                // the listener is a schema service; the logger comes from the application services
+                .AddDiagnosticEventListener(
+                     sp => new TestServerDiagnosticEventListener(
+                         sp.GetRootServiceProvider().GetRequiredService<ILogger<TestServerDiagnosticEventListener>>()
+                     )
+                 )
                 .ModifyRequestOptions(
                      opt => opt.IncludeExceptionDetails = true
                  )

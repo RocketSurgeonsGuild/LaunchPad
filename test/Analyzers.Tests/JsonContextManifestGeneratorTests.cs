@@ -1,6 +1,5 @@
+using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 
 namespace Analyzers.Tests;
 
@@ -21,7 +20,7 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
                                using System.Collections.Generic;
                                using ZeroAlloc.Mediator;
                                using Rocket.Surgery.LaunchPad.Foundation;
-                               using Rocket.Surgery.LaunchPad.Primitives;
+                               using Rocket.Surgery.LaunchPad.Foundation;
 
                                namespace Sample.Core
                                {
@@ -75,7 +74,7 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
     }
 
     [Test]
-    public async Task Should_Write_Nothing_Without_LaunchPad_Primitives()
+    public async Task Should_Write_Nothing_Without_LaunchPad_Foundation()
     {
         var result = await Builder
                           .WithGenerator<JsonContextManifestGenerator>()
@@ -84,6 +83,6 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        await Verify(result).UseFileName($"{nameof(JsonContextManifestGeneratorTests)}.{nameof(Should_Write_Nothing_Without_LaunchPad_Primitives)}");
+        await Verify(result).UseFileName($"{nameof(JsonContextManifestGeneratorTests)}.{nameof(Should_Write_Nothing_Without_LaunchPad_Foundation)}");
     }
 }

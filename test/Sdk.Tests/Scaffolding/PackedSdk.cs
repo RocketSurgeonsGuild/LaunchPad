@@ -27,9 +27,9 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     [
         Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
+        Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),
         Path.Combine("src", "Primitives", "Rocket.Surgery.LaunchPad.Primitives.csproj"),
         Path.Combine("src", "Primitives", "Analyzers", "Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"),
-        Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),
         Path.Combine("src", "Foundation", "Rocket.Surgery.LaunchPad.Foundation.csproj"),
         Path.Combine("src", "AspNetCore", "Rocket.Surgery.LaunchPad.AspNetCore.csproj"),
         Path.Combine("src", "NodaTime", "Rocket.Surgery.LaunchPad.NodaTime.csproj"),
@@ -44,7 +44,6 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         Path.Combine("src", "FluentValidation.AspNetCore", "Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj"),
         Path.Combine("src", "FluentValidation.Blazor", "Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj"),
         Path.Combine("src", "FluentValidation.Grpc", "Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj"),
-        Path.Combine("src", "FluentValidation.HotChocolate", "Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj"),
         Path.Combine("src", "ZeroAlloc.AspNetCore", "Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj"),
         Path.Combine("src", "ZeroAlloc.Blazor", "Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj"),
         Path.Combine("src", "ZeroAlloc.Grpc", "Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj"),

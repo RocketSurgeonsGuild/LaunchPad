@@ -1,7 +1,6 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Rocket.Surgery.LaunchPad.Foundation;
-using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Validation;
 

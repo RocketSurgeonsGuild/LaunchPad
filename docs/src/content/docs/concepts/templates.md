@@ -7,12 +7,12 @@ A **template** is source shipped inside a package, as a `*.cs.template` file, an
 project's [host model](../host-models/) and references match. Unused wiring never compiles in, and the package that ships the
 template depends on none of the libraries the template uses.
 
-`Rocket.Surgery.LaunchPad.Hosting` ships its [Joints](../joints/) this way. Each one is a template with three gates, and every gate
-has to pass:
+`Rocket.Surgery.LaunchPad.Hosting` ships its [Joints](../joints/) this way, and so does `Rocket.Surgery.LaunchPad.Primitives` for the
+libraries its [strong types](../strong-types/) are described to. Each one is a template with three gates, and every gate has to pass:
 
 - **Hosts**: the project declares one of the host models the template is for.
 - **References**: every assembly the template compiles against is among the project's references.
-- **Direct reference**: the project references `Rocket.Surgery.LaunchPad.Hosting` itself (see
+- **Direct reference**: the project references the package that ships the template itself (see
   [direct references](../integration-packages/#direct-references)). A project that only receives the package through a library gets
   nothing.
 
@@ -44,10 +44,24 @@ The Serilog Joints need `Joinery.Dovetail.Serilog` and the OpenTelemetry Joints 
 Dovetail's SDK adds when the project references Serilog or OpenTelemetry. So choosing a sink or an instrumentation is a matter of
 referencing its package: the Joint that turns it on comes with it.
 
+## The Primitives templates
+
+| Joint                                      | Written when the project references | Host models                                    |
+| ------------------------------------------ | ----------------------------------- | ---------------------------------------------- |
+| `LaunchPadStrongTypes` (the registry)      | `SuperStrong.Types`                 | generic host, ASP.NET Core, Blazor WebAssembly |
+| `LaunchPadStrongTypesOpenApiJoint`         | `Microsoft.AspNetCore.OpenApi`      | ASP.NET Core                                   |
+| `LaunchPadStrongTypesHotChocolateJoint`    | `HotChocolate.Types`                | generic host, ASP.NET Core                     |
+| `LaunchPadStrongTypesEntityFrameworkJoint` | `Microsoft.EntityFrameworkCore`     | generic host, ASP.NET Core                     |
+
+`LaunchPadStrongTypes` is the registry the other Joints read, which Primitives' source generator fills in with every strong type the
+application declares or references.
+
 ## Templates or packages
 
-Templates are reserved for gating by host model inside `LaunchPad.Hosting`, where there is no package boundary to draw. Support
-for a third-party technology ships as an [integration package](../integration-packages/) instead.
+Templates are for gating by host model inside `LaunchPad.Hosting`, where there is no package boundary to draw, and for the Joints
+of `LaunchPad.Primitives`, which describe its strong types to libraries it must not depend on
+([ADR 0008](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0008-primitives-is-an-independent-strong-types-package.md)).
+Support for a third-party technology ships as an [integration package](../integration-packages/) instead.
 
 The template mechanism itself is Dovetail's:
 [Shipping templates](https://rocketsurgeonsguild.github.io/Dovetail/guides/shipping-templates/).

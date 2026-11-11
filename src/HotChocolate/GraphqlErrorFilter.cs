@@ -1,6 +1,7 @@
 using HotChocolate;
+using HotChocolate.Execution;
 
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 

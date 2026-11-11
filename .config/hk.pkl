@@ -16,6 +16,9 @@ local excludeDiagnostics = new Listing<String> {
   "CS1591"
   "CS8602"
   "CS8604"
+  // A nullable annotation outside a nullable context: reported when the formatter's workspace evaluates a project without its Nullable
+  // setting (CI's does for the samples), and "fixed" by stripping the annotation, which changes what HotChocolate infers.
+  "CS8632"
   "IDE0052"
   "IDE0060"
   "IDE0130"

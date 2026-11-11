@@ -94,7 +94,7 @@ public class NodaTimeSystemTextJsonJointTests
         builder.AppendJoint<NodaTimeSystemTextJsonJoint>();
         builder.Set(new NodaTimeOptions { DateTimeZoneSource = TestSource(), });
         var services = await TestJoints.ApplyServicesAsync(await DovetailContext.FromAsync(builder));
-        // AddOptions comes from the Primitives DefaultJoint in an application.
+        // AddOptions comes from the Foundation DefaultJoint in an application.
         services.AddOptions();
         using var provider = services.BuildServiceProvider();
 
@@ -130,7 +130,7 @@ public class NodaTimeSystemTextJsonJointTests
 
     private static async Task<JsonSerializerOptions> Options(IDateTimeZoneProvider dateTimeZoneProvider)
     {
-        // AddOptions comes from the Primitives DefaultJoint in an application.
+        // AddOptions comes from the Foundation DefaultJoint in an application.
         var services = new ServiceCollection().AddOptions().AddSingleton(dateTimeZoneProvider);
         new NodaTimeSystemTextJsonJoint().Register(await JointContext(), services);
         return services.BuildServiceProvider().GetRequiredService<IOptions<JsonSerializerOptions>>().Value;

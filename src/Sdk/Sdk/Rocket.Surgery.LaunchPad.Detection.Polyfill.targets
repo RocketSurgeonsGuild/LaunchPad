@@ -2,10 +2,10 @@
     <!--
         Polyfill, imported last by Rocket.Surgery.LaunchPad.Detection.targets, once every package above is declared. Before .NET 11 the C# 15
         union types (System.Runtime.CompilerServices.UnionAttribute and IUnion) come from Polyfill, so a project can declare the portable
-        unions of Rocket.Surgery.LaunchPad.Primitives (docs/design/union-types.md, section 3.3). A project gets it when:
+        unions of Rocket.Surgery.LaunchPad.Foundation (docs/design/union-types.md, section 3.3). A project gets it when:
           - it targets a framework before .NET 11 (each target framework of a multi-targeted project decides for itself), and
-          - it gets Rocket.Surgery.LaunchPad.Primitives: from the SDK, or from a package it references itself, through any LaunchPad package
-            built on Rocket.Surgery.LaunchPad.Foundation, and
+          - it gets Rocket.Surgery.LaunchPad.Foundation, which carries the union generator: from the SDK, or from a package it references
+            itself, through any LaunchPad package built on it, and
           - it references neither Polyfill (Dovetail's SDK leaves a package the project references itself alone) nor PolySharp.
         Polyfill has no per-feature switch, so the project also gets its other polyfills for its target framework, all internal and embedded,
         so no other assembly sees them, even through InternalsVisibleTo. LaunchPadEnablePolyfill set to false opts a project out.
@@ -26,24 +26,22 @@
         <DefineConstants>$(DefineConstants);PolyUseEmbeddedAttribute</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.Primitives" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.Foundation" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.AspNetCore" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.FluentValidation" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.Grpc" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.HotChocolate" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.StrawberryShake" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.StrawberryShake.Spatial" />
-        <_LaunchPadPrimitivesPackage Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.Foundation" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.AspNetCore" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.Grpc" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.HotChocolate" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.StrawberryShake" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.StrawberryShake.Spatial" />
+        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake" />
 
-        <!-- The packages the project gets that bring Primitives: everything it gets, less what doesn't. -->
+        <!-- The packages the project gets that bring Foundation: everything it gets, less what doesn't. -->
         <_LaunchPadPackage Include="@(DovetailSdkImplicitPackageReference);@(PackageReference)" />
-        <_LaunchPadPackageWithoutPrimitives Include="@(_LaunchPadPackage)" Exclude="@(_LaunchPadPrimitivesPackage)" />
-        <_LaunchPadPackageWithPrimitives Include="@(_LaunchPadPackage)" Exclude="@(_LaunchPadPackageWithoutPrimitives)" />
+        <_LaunchPadPackageWithoutFoundation Include="@(_LaunchPadPackage)" Exclude="@(_LaunchPadFoundationPackage)" />
+        <_LaunchPadPackageWithFoundation Include="@(_LaunchPadPackage)" Exclude="@(_LaunchPadPackageWithoutFoundation)" />
 
         <DovetailSdkImplicitPackageReference
             Include="Polyfill"
@@ -52,7 +50,7 @@
             Condition="'$(LaunchPadEnablePolyfill)' != 'false'
                    and '$(TargetFramework)' != ''
                    and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))
-                   and '@(_LaunchPadPackageWithPrimitives)' != ''
+                   and '@(_LaunchPadPackageWithFoundation)' != ''
                    and @(PackageReference->AnyHaveMetadataValue('Identity', 'PolySharp')) != 'true'"
         />
     </ItemGroup>

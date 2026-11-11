@@ -1,4 +1,8 @@
+using System.Text.Json;
+
+using HotChocolate.Features;
 using HotChocolate.Language;
+using HotChocolate.Text.Json;
 using HotChocolate.Types;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
@@ -7,14 +11,13 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
 ///     Additional struct types
 /// </summary>
 /// <typeparam name="TRuntimeType"></typeparam>
-public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeType, IntValueNode>
+/// <remarks>
+///     Create the base type
+/// </remarks>
+/// <param name="name"></param>
+public abstract class IntToStructBaseType<TRuntimeType>(string name) : ScalarType<TRuntimeType, IntValueNode>(name, BindingBehavior.Implicit)
     where TRuntimeType : struct
 {
-    /// <summary>
-    ///     Create the base type
-    /// </summary>
-    /// <param name="name"></param>
-    protected IntToStructBaseType(string name) : base(name, BindingBehavior.Implicit) { }
 
     /// <summary>
     ///     Method to try and serialize
@@ -33,77 +36,30 @@ public abstract class IntToStructBaseType<TRuntimeType> : ScalarType<TRuntimeTyp
     protected abstract bool TryDeserialize(int val, [NotNullWhen(true)] out TRuntimeType? output);
 
     /// <inheritdoc />
-    protected override TRuntimeType ParseLiteral(IntValueNode valueSyntax)
+    protected override TRuntimeType OnCoerceInputLiteral(IntValueNode valueLiteral)
     {
-        if (TryDeserialize(valueSyntax.ToInt32(), out var value)) return value.Value;
-
-        throw new SerializationException(
-            $"Unable to deserialize integer to {Name}",
-            this
-        );
+        return TryDeserialize(valueLiteral.ToInt32(), out var value)
+            ? value.Value
+            : throw new LeafCoercionException($"Unable to deserialize integer to {Name}", this);
     }
 
     /// <inheritdoc />
-    protected override IntValueNode ParseValue(TRuntimeType runtimeValue)
+    protected override TRuntimeType OnCoerceInputValue(JsonElement inputValue, IFeatureProvider context)
     {
-        if (TrySerialize(runtimeValue, out var val)) return new(val.Value);
-
-        throw new SerializationException(
-            $"Unable to deserialize integer to {Name}",
-            this
-        );
+        return inputValue.TryGetInt32(out var number) && TryDeserialize(number, out var value)
+            ? value.Value
+            : throw new LeafCoercionException($"Unable to deserialize integer to {Name}", this);
     }
 
     /// <inheritdoc />
-    public override IValueNode ParseResult(object? resultValue)
-    {
-        if (resultValue is null) return NullValueNode.Default;
-
-        if (resultValue is int s) return new IntValueNode(s);
-
-        if (resultValue is TRuntimeType v) return ParseValue(v);
-
-        throw new SerializationException(
-            $"Unable to deserialize integer to {Name}",
-            this
-        );
-    }
+    protected override void OnCoerceOutputValue(TRuntimeType runtimeValue, ResultElement resultValue) =>
+        resultValue.SetNumberValue(SerializeOrThrow(runtimeValue));
 
     /// <inheritdoc />
-    public override bool TrySerialize(object? runtimeValue, out object? resultValue)
-    {
-        if (runtimeValue is null)
-        {
-            resultValue = null;
-            return true;
-        }
+    protected override IntValueNode OnValueToLiteral(TRuntimeType runtimeValue) => new(SerializeOrThrow(runtimeValue));
 
-        if (runtimeValue is TRuntimeType dt && TrySerialize(dt, out var val))
-        {
-            resultValue = val.Value;
-            return true;
-        }
-
-        resultValue = null;
-        return false;
-    }
-
-    /// <inheritdoc />
-    public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
-    {
-        if (resultValue is null)
-        {
-            runtimeValue = null;
-            return true;
-        }
-
-        if (resultValue is int str && TryDeserialize(str, out var val))
-        {
-            runtimeValue = val;
-            return true;
-        }
-
-        runtimeValue = null;
-        return false;
-    }
+    private int SerializeOrThrow(TRuntimeType runtimeValue) =>
+        TrySerialize(runtimeValue, out var number)
+            ? number.Value
+            : throw new LeafCoercionException($"Unable to serialize {Name} to an integer", this);
 }

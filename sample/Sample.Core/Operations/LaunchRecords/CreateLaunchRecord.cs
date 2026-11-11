@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Api;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using ZeroAlloc.Mediator;
@@ -53,13 +53,13 @@ public static partial class CreateLaunchRecord
         /// <summary>
         ///     The actual launch date
         /// </summary>
-        public Instant? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public OffsetDateTime? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The intended launch date
         /// </summary>
         [Required]
-        public Instant ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public OffsetDateTime ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
 
         internal bool IsAssigned(RocketId id) => id != default;
     }

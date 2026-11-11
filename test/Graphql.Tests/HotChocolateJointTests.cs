@@ -49,7 +49,7 @@ public class HotChocolateJointTests
         var dovetailContext = await JointContext.Create();
         dovetailContext.GetOrAdd(() => serviceCollection.AddGraphQL()).AddQueryType<NestedQuery>();
         new HotChocolateJoint().Register(dovetailContext, serviceCollection);
-        return await serviceCollection.BuildServiceProvider().GetRequiredService<IRequestExecutorResolver>().GetRequestExecutorAsync();
+        return await serviceCollection.BuildServiceProvider().GetRequiredService<IRequestExecutorProvider>().GetExecutorAsync();
     }
 }
 

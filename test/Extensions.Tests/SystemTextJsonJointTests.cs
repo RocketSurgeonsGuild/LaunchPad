@@ -6,8 +6,8 @@ using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Foundation.Joints;
 
 namespace Extensions.Tests;
 
@@ -43,7 +43,7 @@ public class SystemTextJsonJointTests
         options.PropertyNamingPolicy.ShouldBe(JsonNamingPolicy.CamelCase);
     }
 
-    // NodaTime support is its own package (NodaTimeSystemTextJsonJoint), so Primitives must not ask for a time zone provider.
+    // NodaTime support is its own package (NodaTimeSystemTextJsonJoint), so Foundation must not ask for a time zone provider.
     // Resolving the options runs every post configure registered for them, and one that wants a provider throws when none is registered.
     [Test]
     public async Task Does_Not_Need_A_Time_Zone_Provider() => await Options();
@@ -143,7 +143,7 @@ public class SystemTextJsonJointTests
 
     private static async Task<JsonSerializerOptions> Options(Action<IServiceCollection>? configure = null)
     {
-        // AddOptions comes from the Primitives DefaultJoint in an application.
+        // AddOptions comes from the Foundation DefaultJoint in an application.
         var services = new ServiceCollection().AddOptions();
         new SystemTextJsonJoint().Register(await JointContext.Create(), services);
         configure?.Invoke(services);

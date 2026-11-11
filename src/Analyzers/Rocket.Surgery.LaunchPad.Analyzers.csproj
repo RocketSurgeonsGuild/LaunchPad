@@ -23,7 +23,7 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
-        <!-- The mediator request table, shared with the JSON context manifest of Rocket.Surgery.LaunchPad.Primitives.Analyzers. -->
+        <!-- The mediator request table, shared with the JSON context manifest of Rocket.Surgery.LaunchPad.Analyzers. -->
         <Compile Include="../Shared/MediatorLibraries.cs" Link="Api/Core/MediatorLibraries.cs" />
     </ItemGroup>
     <!-- The generator is packed from wherever the build wrote it: an artifacts path (pack's artifacts-path option) moves it out of bin. -->

@@ -3,7 +3,7 @@ using Sdk.Tests.Scaffolding;
 namespace Sdk.Tests;
 
 /// <summary>
-///     Before .NET 11, a project that gets <c>Rocket.Surgery.LaunchPad.Primitives</c> gets Polyfill too, with embedded types, so it can declare
+///     Before .NET 11, a project that gets <c>Rocket.Surgery.LaunchPad.Foundation</c> gets Polyfill too, with embedded types, so it can declare
 ///     the portable unions of docs/design/union-types.md. On .NET 11 the BCL has the union types and nothing is added.
 /// </summary>
 /// <param name="targetFramework">The target framework of the throwaway projects.</param>
@@ -15,10 +15,10 @@ public class SdkPolyfillTests(string targetFramework)
     private bool BeforeNet11 => targetFramework == "net10.0";
 
     /// <summary>
-    ///     An ASP.NET Core application gets Rocket.Surgery.LaunchPad.AspNetCore, which brings Primitives.
+    ///     An ASP.NET Core application gets Rocket.Surgery.LaunchPad.AspNetCore, which brings Foundation.
     /// </summary>
     [Test]
-    public async Task Should_Add_Polyfill_Before_Net11_When_The_Project_Gets_Primitives()
+    public async Task Should_Add_Polyfill_Before_Net11_When_The_Project_Gets_Foundation()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.AspNetCore, HostModelShape.Project(HostModel.AspNetCore, targetFramework));
@@ -30,22 +30,22 @@ public class SdkPolyfillTests(string targetFramework)
     }
 
     /// <summary>
-    ///     A library that references Primitives itself gets Polyfill as well.
+    ///     A library that references Foundation itself gets Polyfill as well.
     /// </summary>
     [Test]
-    public async Task Should_Add_Polyfill_Before_Net11_For_A_Direct_Primitives_Reference()
+    public async Task Should_Add_Polyfill_Before_Net11_For_A_Direct_Foundation_Reference()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("library", HostModel.None, HostModelShape.Project(HostModel.None, targetFramework).ItemPackageReference("Rocket.Surgery.LaunchPad.Primitives"));
+        tree.AddProject("library", HostModel.None, HostModelShape.Project(HostModel.None, targetFramework).ItemPackageReference("Rocket.Surgery.LaunchPad.Foundation"));
 
         ( await tree.EvaluatePolyfill("library", Cancellation) ).Polyfill.ShouldBe(BeforeNet11);
     }
 
     /// <summary>
-    ///     A generic host gets only Rocket.Surgery.LaunchPad.Hosting, which doesn't bring Primitives.
+    ///     A generic host gets only Rocket.Surgery.LaunchPad.Hosting, which doesn't bring Foundation.
     /// </summary>
     [Test]
-    public async Task Should_Not_Add_Polyfill_Without_Primitives()
+    public async Task Should_Not_Add_Polyfill_Without_Foundation()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework));
