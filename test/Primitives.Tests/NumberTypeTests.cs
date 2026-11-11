@@ -5,29 +5,6 @@ using static Primitives.Tests.StrongTypeAssert;
 namespace Primitives.Tests;
 
 // Attributes cannot hold decimals, so the decimal cases are written as doubles that convert exactly.
-public class AgeTests
-{
-    [Test]
-    [Arguments(0)]
-    [Arguments(42)]
-    [Arguments(150)]
-    public void Accepts(int value) => Accepts<Age, int>(value);
-
-    [Test]
-    [Arguments(-1)]
-    [Arguments(151)]
-    [Arguments(int.MinValue)]
-    [Arguments(int.MaxValue)]
-    public void Rejects(int value) => Rejects<Age, int>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Age.From(42), "42");
-        FailsToRead<Age>("-1");
-    }
-}
-
 public class PercentageTests
 {
     [Test]
@@ -68,27 +45,6 @@ public class PriceTests
     {
         RoundTrips(Price.From(19.99m), "19.99");
         FailsToRead<Price>("-1");
-    }
-}
-
-public class DiscountTests
-{
-    [Test]
-    [Arguments(0d)]
-    [Arguments(15d)]
-    [Arguments(100d)]
-    public void Accepts(double value) => Accepts<Discount, decimal>((decimal)value);
-
-    [Test]
-    [Arguments(-1d)]
-    [Arguments(100.5d)]
-    public void Rejects(double value) => Rejects<Discount, decimal>((decimal)value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Discount.From(15m), "15");
-        FailsToRead<Discount>("150");
     }
 }
 
@@ -156,27 +112,6 @@ public class RatingTests
     }
 }
 
-public class ScoreTests
-{
-    [Test]
-    [Arguments(0)]
-    [Arguments(50)]
-    [Arguments(100)]
-    public void Accepts(int value) => Accepts<Score, int>(value);
-
-    [Test]
-    [Arguments(-1)]
-    [Arguments(101)]
-    public void Rejects(int value) => Rejects<Score, int>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Score.From(87), "87");
-        FailsToRead<Score>("101");
-    }
-}
-
 public class LatitudeTests
 {
     [Test]
@@ -222,70 +157,6 @@ public class LongitudeTests
     {
         RoundTrips(Longitude.From(-0.1278), "-0.1278");
         FailsToRead<Longitude>("181");
-    }
-}
-
-public class HeightTests
-{
-    [Test]
-    [Arguments(0d)]
-    [Arguments(1.82d)]
-    [Arguments(8848.86d)]
-    public void Accepts(double value) => Accepts<Height, double>(value);
-
-    [Test]
-    [Arguments(-0.01d)]
-    [Arguments(double.NaN)]
-    [Arguments(double.PositiveInfinity)]
-    public void Rejects(double value) => Rejects<Height, double>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Height.From(1.82), "1.82");
-        FailsToRead<Height>("-1");
-    }
-}
-
-public class WeightTests
-{
-    [Test]
-    [Arguments(0d)]
-    [Arguments(72.5d)]
-    public void Accepts(double value) => Accepts<Weight, double>(value);
-
-    [Test]
-    [Arguments(-0.5d)]
-    [Arguments(double.NaN)]
-    [Arguments(double.PositiveInfinity)]
-    public void Rejects(double value) => Rejects<Weight, double>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Weight.From(72.5), "72.5");
-        FailsToRead<Weight>("-72.5");
-    }
-}
-
-public class DistanceTests
-{
-    [Test]
-    [Arguments(0d)]
-    [Arguments(42195d)]
-    public void Accepts(double value) => Accepts<Distance, double>(value);
-
-    [Test]
-    [Arguments(-1d)]
-    [Arguments(double.NaN)]
-    [Arguments(double.PositiveInfinity)]
-    public void Rejects(double value) => Rejects<Distance, double>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Distance.From(42195), "42195");
-        FailsToRead<Distance>("-1");
     }
 }
 
@@ -352,48 +223,5 @@ public class QuarterTests
     {
         RoundTrips(Quarter.From(2), "2");
         FailsToRead<Quarter>("5");
-    }
-}
-
-public class WeekTests
-{
-    [Test]
-    [Arguments(1)]
-    [Arguments(26)]
-    [Arguments(53)]
-    public void Accepts(int value) => Accepts<Week, int>(value);
-
-    [Test]
-    [Arguments(0)]
-    [Arguments(54)]
-    public void Rejects(int value) => Rejects<Week, int>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Week.From(53), "53");
-        FailsToRead<Week>("54");
-    }
-}
-
-public class FiscalYearTests
-{
-    [Test]
-    [Arguments(1)]
-    [Arguments(2026)]
-    [Arguments(9999)]
-    public void Accepts(int value) => Accepts<FiscalYear, int>(value);
-
-    [Test]
-    [Arguments(0)]
-    [Arguments(-2026)]
-    [Arguments(10000)]
-    public void Rejects(int value) => Rejects<FiscalYear, int>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(FiscalYear.From(2026), "2026");
-        FailsToRead<FiscalYear>("10000");
     }
 }

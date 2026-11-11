@@ -10,7 +10,7 @@ type Customer {
   id: UUID!
   email: String!
   country: String!
-  age: Int!
+  rating: Int!
   balance: Money!
   membership: DateRange
   handle: String
@@ -45,7 +45,7 @@ scalar UUID
       "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
       "email": "ada@example.com",
       "country": "GB",
-      "age": 36,
+      "rating": 4,
       "balance": {
         "amount": 12.5,
         "currency": "GBP"

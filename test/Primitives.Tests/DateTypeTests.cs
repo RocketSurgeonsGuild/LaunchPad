@@ -6,43 +6,6 @@ using static Primitives.Tests.StrongTypeAssert;
 
 namespace Primitives.Tests;
 
-public class BirthDateTests
-{
-    private static DateOnly UtcToday => DateOnly.FromDateTime(DateTime.UtcNow);
-
-    [Test]
-    public void Accepts_Today_And_Past_Dates()
-    {
-        Accepts<BirthDate, DateOnly>(UtcToday);
-        Accepts<BirthDate, DateOnly>(new(1990, 5, 17));
-        Accepts<BirthDate, DateOnly>(UtcToday.AddYears(-149));
-    }
-
-    [Test]
-    public void Accepts_Today_Anywhere_On_Earth() => Accepts<BirthDate, DateOnly>(UtcToday.AddDays(1).AddDays(DateTime.UtcNow.Hour >= 10 ? 0 : -1));
-
-    [Test]
-    public void Rejects_The_Future()
-    {
-        Rejects<BirthDate, DateOnly>(UtcToday.AddDays(2));
-        Rejects<BirthDate, DateOnly>(DateOnly.MaxValue);
-    }
-
-    [Test]
-    public void Rejects_More_Than_150_Years_Ago()
-    {
-        Rejects<BirthDate, DateOnly>(UtcToday.AddYears(-150).AddDays(-2));
-        Rejects<BirthDate, DateOnly>(DateOnly.MinValue);
-    }
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(BirthDate.From(new(1990, 5, 17)), "\"1990-05-17\"");
-        FailsToRead<BirthDate>("\"9999-12-31\"");
-    }
-}
-
 public class ExpirationDateTests
 {
     [Test]

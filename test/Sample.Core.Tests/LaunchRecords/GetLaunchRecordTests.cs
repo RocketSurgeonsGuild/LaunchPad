@@ -49,7 +49,7 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
         response.Payload.ShouldBe("geo-fence-ftl");
         response.RocketType.ShouldBe(RocketType.Falcon9);
         response.RocketSerialNumber.ShouldBe("12345678901234");
-        response.ScheduledLaunchDate.ShouldBe(Instant.FromDateTimeOffset(record.ScheduledLaunchDate));
+        response.ScheduledLaunchDate.ShouldBe(OffsetDateTime.FromDateTimeOffset(record.ScheduledLaunchDate));
     }
 
     [Test]

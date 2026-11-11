@@ -2,7 +2,7 @@
     "Id" TEXT NOT NULL CONSTRAINT "PK_Customers" PRIMARY KEY,
     "Email" TEXT NOT NULL,
     "Country" TEXT NOT NULL,
-    "Age" INTEGER NOT NULL,
+    "Rating" INTEGER NOT NULL,
     "Handle" TEXT NULL,
     "Balance_Amount" TEXT NOT NULL,
     "Balance_Currency" TEXT NOT NULL,
@@ -10,4 +10,4 @@
     "Membership_Start" TEXT NULL
 );
 
-6f9619ff-8b86-d011-b42d-00cf4fc964ff ada@example.com GB 36 12.5 GBP 2026-01-01..2026-12-31 ada-lovelace
+6f9619ff-8b86-d011-b42d-00cf4fc964ff ada@example.com GB 4 12.5 GBP 2026-01-01..2026-12-31 ada-lovelace

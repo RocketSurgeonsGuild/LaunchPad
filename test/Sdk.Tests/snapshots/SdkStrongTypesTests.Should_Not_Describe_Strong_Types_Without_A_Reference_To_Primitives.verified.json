@@ -18,14 +18,14 @@
         }
       },
       {
-        "name": "age",
+        "name": "rating",
         "in": "query",
         "schema": {
           "type": "string"
         }
       }
     ],
-    "/customers/{id}/age": [
+    "/customers/{id}/rating": [
       {
         "name": "id",
         "in": "path",
@@ -44,7 +44,6 @@
     ]
   },
   "schemas": {
-    "Age": {},
     "CountryCode": {},
     "CurrencyCode": {},
     "Customer": {
@@ -52,7 +51,7 @@
         "id",
         "email",
         "country",
-        "age",
+        "rating",
         "balance"
       ],
       "type": "object",
@@ -66,8 +65,8 @@
         "country": {
           "$ref": "#/components/schemas/CountryCode"
         },
-        "age": {
-          "$ref": "#/components/schemas/Age"
+        "rating": {
+          "$ref": "#/components/schemas/Rating"
         },
         "balance": {
           "$ref": "#/components/schemas/Money"
@@ -133,6 +132,7 @@
         }
       }
     },
+    "Rating": {},
     "Slug": {}
   }
 }

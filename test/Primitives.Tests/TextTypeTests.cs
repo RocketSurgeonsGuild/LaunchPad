@@ -175,37 +175,6 @@ public class SlugTests
     }
 }
 
-public class UsernameTests
-{
-    [Test]
-    [Arguments("bob")]
-    [Arguments("Bob_Smith")]
-    [Arguments("bob.smith-2")]
-    [Arguments("a1b")]
-    [Arguments("abcdefghijklmnopqrstuvwxyz012345")]
-    public void Accepts(string value) => Accepts<Username, string>(value);
-
-    [Test]
-    [Arguments("")]
-    [Arguments("ab")]
-    [Arguments("abcdefghijklmnopqrstuvwxyz0123456")]
-    [Arguments("_bob")]
-    [Arguments("bob.")]
-    [Arguments("bob..smith")]
-    [Arguments("bob._smith")]
-    [Arguments("bob smith")]
-    [Arguments("bob@smith")]
-    [Arguments("bøb")]
-    public void Rejects(string value) => Rejects<Username, string>(value);
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(Username.From("bob.smith"), "\"bob.smith\"");
-        FailsToRead<Username>("\"b\"");
-    }
-}
-
 public class HexColorTests
 {
     [Test]
@@ -231,37 +200,5 @@ public class HexColorTests
     {
         RoundTrips(HexColor.From("#1a2b3c"), "\"#1a2b3c\"");
         FailsToRead<HexColor>("\"#1A2B3C\"");
-    }
-}
-
-public class PasswordHashTests
-{
-    [Test]
-    [Arguments("$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$RdescudvJCsgt3ub+b+dWRWJTmaaJObG")]
-    [Arguments("$2b$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW")]
-    [Arguments("AQAAAAIAAYagAAAAEP3V0+8i0aNLGRgM7lWbI9DFlC1G2T4m")]
-    [Arguments("x")]
-    public void Accepts(string value) => Accepts<PasswordHash, string>(value);
-
-    [Test]
-    [Arguments("")]
-    [Arguments(" ")]
-    [Arguments("\t\n")]
-    public void Rejects(string value) => Rejects<PasswordHash, string>(value);
-
-    [Test]
-    public void Does_Not_Write_The_Hash_In_ToString()
-    {
-        var hash = PasswordHash.From("$2b$12$secret");
-        hash.ToString().ShouldBe("***");
-        $"{hash}".ShouldNotContain("secret");
-        hash.AsPrimitive().ShouldBe("$2b$12$secret");
-    }
-
-    [Test]
-    public void Round_Trips_Through_Json()
-    {
-        RoundTrips(PasswordHash.From("$2b$12$abc"), "\"$2b$12$abc\"");
-        FailsToRead<PasswordHash>("\"\"");
     }
 }

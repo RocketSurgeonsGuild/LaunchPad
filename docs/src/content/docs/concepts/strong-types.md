@@ -81,9 +81,7 @@ The XML documentation of each rules set gives the full rules and the standard be
 | `PhoneNumber`  | `string` | ITU-T E.164: `+`, then 7 to 15 digits, the first not 0. No spaces or punctuation.                                                                                                                                                          |
 | `Url`          | `string` | An absolute `http` or `https` URI (RFC 3986) with a host, the scheme in lower case, only characters RFC 3986 allows (others percent-encoded), at most 8000 characters.                                                                     |
 | `Slug`         | `string` | Lower-case ASCII letters and digits in groups separated by single hyphens, at most 100 characters.                                                                                                                                         |
-| `Username`     | `string` | 3 to 32 ASCII letters and digits, with single `.`, `_` or `-` between them. Case is kept.                                                                                                                                                  |
 | `HexColor`     | `string` | CSS `#rgb` or `#rrggbb` in lower case. No alpha channel.                                                                                                                                                                                   |
-| `PasswordHash` | `string` | Not empty or white space; the format belongs to the hashing function. `ToString()` writes `***`.                                                                                                                                           |
 
 ### Codes and identifiers
 
@@ -102,30 +100,21 @@ The XML documentation of each rules set gives the full rules and the standard be
 
 | Type          | Value     | Rules                                         |
 | ------------- | --------- | --------------------------------------------- |
-| `Age`         | `int`     | 0 to 150 years.                               |
 | `Percentage`  | `decimal` | 0 to 100.                                     |
 | `Price`       | `decimal` | Zero or more; no currency, no rounding.       |
-| `Discount`    | `decimal` | A percentage taken off, 0 to 100.             |
 | `TaxRate`     | `decimal` | A percentage, 0 to 100.                       |
 | `Quantity`    | `int`     | Zero or more.                                 |
 | `Rating`      | `int`     | 1 to 5 (schema.org's default worst and best). |
-| `Score`       | `int`     | 0 to 100.                                     |
 | `Latitude`    | `double`  | Finite, -90 to 90 degrees.                    |
 | `Longitude`   | `double`  | Finite, -180 to 180 degrees.                  |
-| `Height`      | `double`  | Finite, zero or more, in metres.              |
-| `Weight`      | `double`  | Finite, zero or more, in kilograms.           |
-| `Distance`    | `double`  | Finite, zero or more, in metres.              |
 | `Temperature` | `double`  | Finite, at least absolute zero (-273.15 °C).  |
 | `Month`       | `int`     | 1 to 12.                                      |
 | `Quarter`     | `int`     | 1 to 4.                                       |
-| `Week`        | `int`     | An ISO 8601 week, 1 to 53.                    |
-| `FiscalYear`  | `int`     | 1 to 9999, the years a `DateOnly` can hold.   |
 
 ### Dates
 
 | Type             | Value      | Rules                                                                                                                                   |
 | ---------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `BirthDate`      | `DateOnly` | Not after today anywhere on Earth (UTC+14), and not more than 150 years ago. The bounds move with the clock.                            |
 | `ExpirationDate` | `DateOnly` | Any date but `DateOnly.MinValue`; past dates are accepted so expired values still load. `IsExpiredOn(date)` is true from the day after. |
 | `BusinessDate`   | `DateOnly` | Monday to Friday. Public holidays are not checked.                                                                                      |
 

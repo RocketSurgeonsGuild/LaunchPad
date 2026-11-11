@@ -150,7 +150,7 @@ public class SdkStrongTypesTests(string targetFramework)
             public required CustomerId Id { get; set; }
             public required CustomerEmail Email { get; set; }
             public required CountryCode Country { get; set; }
-            public required Age Age { get; set; }
+            public required Rating Rating { get; set; }
             public required Money Balance { get; set; }
             public DateRange? Membership { get; set; }
             public Slug? Handle { get; set; }
@@ -180,7 +180,7 @@ public class SdkStrongTypesTests(string targetFramework)
         foreach (var country in new[] { "GB", "gb" })
         {
             var result = await executor.ExecuteAsync(
-                $$"""{ customer(id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff", country: "{{country}}") { id email country age balance { amount currency } membership { start end } handle } }"""
+                $$"""{ customer(id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff", country: "{{country}}") { id email country rating balance { amount currency } membership { start end } handle } }"""
             );
             Console.WriteLine();
             Console.WriteLine(result.ToJson());
@@ -194,7 +194,7 @@ public class SdkStrongTypesTests(string targetFramework)
                     Id = id,
                     Email = CustomerEmail.From("ada@example.com"),
                     Country = country,
-                    Age = Age.From(36),
+                    Rating = Rating.From(4),
                     Balance = Money.From(12.5m, CurrencyCode.From("GBP")),
                     Membership = DateRange.From(new(2026, 1, 1), new(2026, 12, 31)),
                     Handle = Slug.From("ada-lovelace"),
@@ -244,7 +244,7 @@ public class SdkStrongTypesTests(string targetFramework)
                     Id = id,
                     Email = CustomerEmail.From("ada@example.com"),
                     Country = CountryCode.From("GB"),
-                    Age = Age.From(36),
+                    Rating = Rating.From(4),
                     Balance = Money.From(12.5m, CurrencyCode.From("GBP")),
                     Membership = DateRange.From(new(2026, 1, 1), new(2026, 12, 31)),
                     Handle = Slug.From("ada-lovelace"),
@@ -254,11 +254,11 @@ public class SdkStrongTypesTests(string targetFramework)
             context.ChangeTracker.Clear();
             var customer = context.Customers.Single(z => z.Id == id);
             Console.WriteLine();
-            Console.WriteLine($"{customer.Id} {customer.Email} {customer.Country} {customer.Age} {customer.Balance} {customer.Membership?.Start:O}..{customer.Membership?.End:O} {customer.Handle}");
+            Console.WriteLine($"{customer.Id} {customer.Email} {customer.Country} {customer.Rating} {customer.Balance} {customer.Membership?.Start:O}..{customer.Membership?.End:O} {customer.Handle}");
             return;
         }
 
-        app.MapGet("/customers/{id}", (CustomerId id, CustomerEmail email, Age? age) => (Customer?)null);
+        app.MapGet("/customers/{id}", (CustomerId id, CustomerEmail email, Rating? rating) => (Customer?)null);
         app.MapControllers();
         app.Urls.Add("http://127.0.0.1:0");
         await app.StartAsync();
@@ -296,8 +296,8 @@ public class SdkStrongTypesTests(string targetFramework)
         [Route("customers")]
         public sealed class CustomersController : ControllerBase
         {
-            [HttpGet("{id}/age")]
-            public Age? Get(CustomerId id, [FromQuery] CountryCode country) => null;
+            [HttpGet("{id}/rating")]
+            public Rating? Get(CustomerId id, [FromQuery] CountryCode country) => null;
         }
         """;
 }

@@ -18,14 +18,14 @@
         }
       },
       {
-        "name": "age",
+        "name": "rating",
         "in": "query",
         "schema": {
-          "$ref": "#/components/schemas/Age"
+          "$ref": "#/components/schemas/Rating"
         }
       }
     ],
-    "/customers/{id}/age": [
+    "/customers/{id}/rating": [
       {
         "name": "id",
         "in": "path",
@@ -44,16 +44,6 @@
     ]
   },
   "schemas": {
-    "Age": {
-      "maximum": 150,
-      "minimum": 0,
-      "pattern": "^-?(?:0|[1-9]\\d*)$",
-      "type": [
-        "integer",
-        "string"
-      ],
-      "format": "int32"
-    },
     "CountryCode": {
       "pattern": "^[A-Z]{2}$",
       "type": "string"
@@ -67,7 +57,7 @@
         "id",
         "email",
         "country",
-        "age",
+        "rating",
         "balance"
       ],
       "type": "object",
@@ -81,8 +71,8 @@
         "country": {
           "$ref": "#/components/schemas/CountryCode"
         },
-        "age": {
-          "$ref": "#/components/schemas/Age"
+        "rating": {
+          "$ref": "#/components/schemas/Rating"
         },
         "balance": {
           "$ref": "#/components/schemas/Money"
@@ -155,6 +145,16 @@
           "$ref": "#/components/schemas/CurrencyCode"
         }
       }
+    },
+    "Rating": {
+      "maximum": 5,
+      "minimum": 1,
+      "pattern": "^-?(?:0|[1-9]\\d*)$",
+      "type": [
+        "integer",
+        "string"
+      ],
+      "format": "int32"
     },
     "Slug": {
       "maxLength": 100,
