@@ -9,9 +9,6 @@
     <PropertyGroup>
         <AssemblyInfoNamespace Condition="'$(AssemblyInfoNamespace)' == ''">$(AssemblyName)</AssemblyInfoNamespace>
     </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
-    </ItemGroup>
     <!--
         The templates of LaunchPad.Hosting are declared in the targets the package ships, which NuGet imports into a project that references
         the package. A ProjectReference imports no package assets, and the samples and tests reference Hosting that way, so the targets are

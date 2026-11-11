@@ -17,7 +17,6 @@
         <PackageReference Include="Verify.SystemJson" />
         <PackageReference Include="Verify.NewtonsoftJson" />
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
-        <PackageReference Include="JetBrains.Annotations.Sources" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true'">
         <PackageReference Include="FakeItEasy.Analyzer.CSharp" />
