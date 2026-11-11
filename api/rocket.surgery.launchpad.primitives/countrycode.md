@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.340`
+- Version: `2.0.1-beta.342`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net10.0`
 - Implements: `IStrongType<CountryCode, string>`, `IComparable<CountryCode>`, `IConvertible`, `IEquatable<CountryCode>`, `IParsable<CountryCode>`, `ISpanParsable<CountryCode>`, `IEqualityOperators<CountryCode, CountryCode, bool>`
