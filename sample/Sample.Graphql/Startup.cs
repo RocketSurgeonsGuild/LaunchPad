@@ -1,3 +1,4 @@
+// The geometry fields are optional: an explicit nullable context keeps their annotations wherever this file is analysed.
 using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
@@ -79,18 +80,18 @@ public class NodaTimeInputs
 
 public class GeometryOutputs
 {
-    public Geometry Geometry { get; init; }
-    public Point Point { get; init; }
-    public LineString LineString { get; init; }
-    public Polygon Polygon { get; init; }
-    public MultiPoint MultiPoint { get; init; }
-    public MultiLineString MultiLineString { get; init; }
-    public MultiPolygon MultiPolygon { get; init; }
+    public Geometry? Geometry { get; init; }
+    public Point? Point { get; init; }
+    public LineString? LineString { get; init; }
+    public Polygon? Polygon { get; init; }
+    public MultiPoint? MultiPoint { get; init; }
+    public MultiLineString? MultiLineString { get; init; }
+    public MultiPolygon? MultiPolygon { get; init; }
 }
 
 public class GeometryInputs
 {
-    public Geometry Geometry { get; init; }
+    public Geometry? Geometry { get; init; }
 }
 
 [ExtendObjectType(OperationTypeNames.Query)]
