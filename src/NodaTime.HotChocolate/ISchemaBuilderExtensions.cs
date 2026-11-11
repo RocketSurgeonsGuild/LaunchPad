@@ -12,7 +12,8 @@ public static class ISchemaBuilderExtensions
 {
     /// <summary>
     ///     Binds the NodaTime types HotChocolate has scalars for (<see cref="OffsetDateTime" />, <see cref="Duration" />,
-    ///     <see cref="LocalDate" />, <see cref="LocalDateTime" /> and <see cref="LocalTime" />) to comparable filters.
+    ///     <see cref="LocalDate" />, <see cref="LocalDateTime" /> and <see cref="LocalTime" />), and <see cref="Instant" />, which
+    ///     the Joint binds to the <c>DateTime</c> scalar, to comparable filters.
     /// </summary>
     /// <remarks>
     ///     The scalars themselves come from HotChocolate's own <c>AddNodaTime()</c> on the request executor builder.
@@ -33,6 +34,8 @@ public static class ISchemaBuilderExtensions
                              .BindRuntimeType<LocalTime?, ComparableOperationFilterInputType<LocalTime>>()
                              .BindRuntimeType<OffsetDateTime, ComparableOperationFilterInputType<OffsetDateTime>>()
                              .BindRuntimeType<OffsetDateTime?, ComparableOperationFilterInputType<OffsetDateTime>>()
+                             .BindRuntimeType<Instant, ComparableOperationFilterInputType<Instant>>()
+                             .BindRuntimeType<Instant?, ComparableOperationFilterInputType<Instant>>()
                              // HotChocolate's AddNodaTime binds these to the NodaTime scalars, which take the names of the scalars the
                              // default filters of HotChocolate.Data are built on (DateTime, LocalDateTime, LocalDate, LocalTime); filters
                              // over the runtime types use the NodaTime scalars instead of adding a second scalar of the same name.

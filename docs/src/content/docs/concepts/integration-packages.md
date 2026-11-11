@@ -35,26 +35,24 @@ in the mediator pipeline instead (the ZeroAlloc HotChocolate package reports its
 ### NodaTime with HotChocolate and StrawberryShake
 
 `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate` adds HotChocolate 16's own NodaTime scalars (`AddNodaTime()` from
-`HotChocolate.Types.NodaTime`) and binds the same types to comparable filters:
+`HotChocolate.Types.NodaTime`), binds `Instant` to the `DateTime` scalar and binds all of these types to comparable filters:
 
-| NodaTime type    | GraphQL scalar  | Format                                     |
-| ---------------- | --------------- | ------------------------------------------ |
-| `OffsetDateTime` | `DateTime`      | `2020-01-02T03:04:05.5+01:00`, `Z` for UTC |
-| `Duration`       | `Duration`      | ISO 8601, `P1DT2H3M4.5S`                   |
-| `LocalDate`      | `LocalDate`     | `2020-01-02`                               |
-| `LocalDateTime`  | `LocalDateTime` | `2020-01-02T03:04:05.5`                    |
-| `LocalTime`      | `LocalTime`     | `03:04:05.5`                               |
+| NodaTime type    | GraphQL scalar  | Format                                                         |
+| ---------------- | --------------- | -------------------------------------------------------------- |
+| `OffsetDateTime` | `DateTime`      | `2020-01-02T03:04:05.5+01:00`, `Z` for UTC                     |
+| `Instant`        | `DateTime`      | written in UTC, `2020-01-02T02:04:05.5Z`; read with any offset |
+| `Duration`       | `Duration`      | ISO 8601, `P1DT2H3M4.5S`                                       |
+| `LocalDate`      | `LocalDate`     | `2020-01-02`                                                   |
+| `LocalDateTime`  | `LocalDateTime` | `2020-01-02T03:04:05.5`                                        |
+| `LocalTime`      | `LocalTime`     | `03:04:05.5`                                                   |
+
+An `Instant` is an `OffsetDateTime` at UTC, so it travels as the `DateTime` scalar without losing anything: the package converts
+it with `instant.WithOffset(Offset.Zero)` on the way out and `dateTime.ToInstant()` on the way in, so a `DateTime` sent with an
+offset arrives as the same instant.
 
 HotChocolate 16 renamed the `OffsetDateTime` scalar to `DateTime` and dropped the others; LaunchPad does not add them back.
-`Instant`, `ZonedDateTime`, `OffsetDate`, `OffsetTime`, `Offset`, `Period`, `DateTimeZone` and `IsoDayOfWeek` have no scalar:
-expose one of the types above, or bind the type to a scalar yourself, for example an `Instant` as a `DateTime` in UTC:
-
-```csharp
-builder.Services.AddGraphQLServer()
-   .BindRuntimeType<Instant, HotChocolate.Types.NodaTime.DateTimeType>()
-   .AddTypeConverter<Instant, OffsetDateTime>(instant => instant.WithOffset(Offset.Zero))
-   .AddTypeConverter<OffsetDateTime, Instant>(dateTime => dateTime.ToInstant());
-```
+`ZonedDateTime`, `OffsetDate`, `OffsetTime`, `Offset`, `Period`, `DateTimeZone` and `IsoDayOfWeek` have no scalar: expose one of
+the types above, or bind the type to a scalar yourself with `BindRuntimeType` and a pair of `AddTypeConverter` calls.
 
 `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake` registers a serializer for each of the five scalars, in the formats above. A
 client maps the scalars to the NodaTime types in its `schema.extensions.graphql`, for example
