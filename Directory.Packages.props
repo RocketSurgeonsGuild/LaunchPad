@@ -130,7 +130,7 @@
         <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.4.3" />
         <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.4.3" />
         <!-- no project references it: Rocket.Surgery.LaunchPad.Sdk chains this version of Dovetail's SDK (src/Sdk) -->
-        <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.4.3" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.4.5" />
         <PackageVersion Include="Spectre.Console.Cli" Version="0.57.2" />
         <PackageVersion Include="Spectre.Console.Testing" Version="0.57.2" />
 
