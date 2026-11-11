@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate](/LaunchPad/pr-preview/pr-3175/api/rocket.surgery.launchpad.zeroalloc.hotchocolate.md)
-- Version: `2.0.1-pr.1167`
+- Version: `2.0.1-pr.1168`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Validation`
 - Target framework: `net10.0`
 - Implements: `IErrorFilter`
@@ -15,7 +15,7 @@ Reports each failure of a request the ZeroAlloc validators rejected as a `VALIDA
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Validation;
 
 public sealed class ZeroAllocValidationErrorFilter
-    : HotChocolate.IErrorFilter
+    : HotChocolate.Execution.IErrorFilter
 {
     // ...
 }

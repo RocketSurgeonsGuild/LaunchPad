@@ -7,22 +7,22 @@
 
 Represents a void or unit type in Hot Chocolate
 
-<a id="isinstanceoftype"></a>
-<a id="isinstanceoftype-ivaluenode"></a>
+<a id="coerceinputliteral"></a>
+<a id="coerceinputliteral-ivaluenode"></a>
 
-## IsInstanceOfType(IValueNode)
+## CoerceInputLiteral(IValueNode)
 
-- Name: `IsInstanceOfType(IValueNode)`
+- Name: `CoerceInputLiteral(IValueNode)`
 - Modifiers: `override`
-- Returns: `bool`
+- Returns: `object`
 
-Defines if the specified `valueSyntax` can be parsed by this scalar.
+Coerces a GraphQL literal (AST value node) into a runtime value.
 
 ```csharp
 public class VoidType
 {
-    public override bool IsInstanceOfType(
-        IValueNode valueSyntax)
+    public override object CoerceInputLiteral(
+        IValueNode valueLiteral)
     {
         // ...
     }
@@ -31,33 +31,35 @@ public class VoidType
 
 ## Parameters
 
-- `valueSyntax` (`IValueNode`)
-  The literal that shall be checked.
+- `valueLiteral` (`IValueNode`)
+  The GraphQL literal to coerce.
 
 ## Returns
 
-`bool` -- `true` if the literal can be parsed by this scalar; otherwise, `false`.
+`object` -- Returns the runtime value representation.
 
 ## Exceptions
 
-- `ArgumentNullException` -- `valueSyntax` is `null`.
+- `ArgumentNullException` -- `valueLiteral` is `null`.
+- `LeafCoercionException` -- Unable to coerce the given `valueLiteral` into a runtime value.
 
-<a id="parseliteral"></a>
-<a id="parseliteral-ivaluenode"></a>
+<a id="coerceinputvalue"></a>
+<a id="coerceinputvalue-jsonelement-ifeatureprovider"></a>
 
-## ParseLiteral(IValueNode)
+## CoerceInputValue(JsonElement, IFeatureProvider)
 
-- Name: `ParseLiteral(IValueNode)`
-- Modifiers: `override` `nullable`
-- Returns: `object?`
+- Name: `CoerceInputValue(JsonElement, IFeatureProvider)`
+- Modifiers: `override`
+- Returns: `object`
 
-Parses the specified `valueSyntax` to the .NET representation of this type.
+Coerces an external input value (deserialized JSON) into a runtime value.
 
 ```csharp
 public class VoidType
 {
-    public override object? ParseLiteral(
-        IValueNode valueSyntax)
+    public override object CoerceInputValue(
+        JsonElement inputValue,
+        IFeatureProvider context)
     {
         // ...
     }
@@ -66,30 +68,130 @@ public class VoidType
 
 ## Parameters
 
-- `valueSyntax` (`IValueNode`)
-  The literal that shall be parsed.
+- `inputValue` (`JsonElement`)
+  The deserialized JSON input value to coerce.
+- `context` (`IFeatureProvider`)
+  Provides access to the coercion context.
+
+## Returns
+
+`object` -- Returns the runtime value representation.
 
 ## Exceptions
 
-- `ArgumentNullException` -- `valueSyntax` is `null`.
-- `SerializationException` -- The specified `valueSyntax` cannot be parsed by this scalar.
+- `LeafCoercionException` -- Unable to coerce the given `inputValue` into a runtime value.
 
-<a id="parseresult"></a>
-<a id="parseresult-object"></a>
+<a id="coerceoutputvalue"></a>
+<a id="coerceoutputvalue-object-resultelement"></a>
 
-## ParseResult(object?)
+## CoerceOutputValue(object, ResultElement)
 
-- Name: `ParseResult(object?)`
+- Name: `CoerceOutputValue(object, ResultElement)`
+- Modifiers: `override`
+
+Coerces a runtime value into an external output representation and writes it to the result.
+
+```csharp
+public class VoidType
+{
+    public override void CoerceOutputValue(
+        object runtimeValue,
+        ResultElement resultValue)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `runtimeValue` (`object`)
+  The runtime value to coerce. Must not be `null`; null handling is the responsibility of the caller.
+- `resultValue` (`ResultElement`)
+  The result element to write the output value to.
+
+## Exceptions
+
+- `ArgumentNullException` -- `runtimeValue` is `null`.
+- `LeafCoercionException` -- Unable to coerce the given `runtimeValue` into an output value.
+
+<a id="isvaluecompatible"></a>
+<a id="isvaluecompatible-ivaluenode"></a>
+
+## IsValueCompatible(IValueNode)
+
+- Name: `IsValueCompatible(IValueNode)`
+- Modifiers: `override`
+- Returns: `bool`
+
+Checks if the value literal is compatible with this scalar type.
+
+```csharp
+public class VoidType
+{
+    public override bool IsValueCompatible(
+        IValueNode valueLiteral)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `valueLiteral` (`IValueNode`)
+  The value literal to check.
+
+## Returns
+
+`bool` -- `true` if the value literal is compatible with this type; otherwise, `false`.
+
+<a id="isvaluecompatible-jsonelement"></a>
+
+## IsValueCompatible(JsonElement)
+
+- Name: `IsValueCompatible(JsonElement)`
+- Modifiers: `override`
+- Returns: `bool`
+
+Determines if the given `inputValue` is compatible with this type.
+
+```csharp
+public class VoidType
+{
+    public override bool IsValueCompatible(
+        JsonElement inputValue)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `inputValue` (`JsonElement`)
+  The deserialized JSON input value to validate.
+
+## Returns
+
+`bool` -- `true` if the given `inputValue` is compatible with this type.
+
+<a id="valuetoliteral"></a>
+<a id="valuetoliteral-object"></a>
+
+## ValueToLiteral(object)
+
+- Name: `ValueToLiteral(object)`
 - Modifiers: `override`
 - Returns: `IValueNode`
 
-Parses a result value of this scalar into a GraphQL value syntax representation.
+Converts a runtime value into a GraphQL literal (AST value node). Used for default value representation in SDL and introspection.
 
 ```csharp
 public class VoidType
 {
-    public override IValueNode ParseResult(
-        object? resultValue)
+    public override IValueNode ValueToLiteral(
+        object runtimeValue)
     {
         // ...
     }
@@ -98,116 +200,14 @@ public class VoidType
 
 ## Parameters
 
-- `resultValue` (`object?`)
-  A result value representation of this type.
+- `runtimeValue` (`object`)
+  The runtime value to convert. Must not be `null`; null handling is the responsibility of the caller.
 
 ## Returns
 
-`IValueNode` -- Returns a GraphQL value syntax representation of the `resultValue`.
+`IValueNode` -- Returns a GraphQL literal representation of the runtime value.
 
 ## Exceptions
 
-- `SerializationException` -- Unable to parse the given `resultValue` into a GraphQL value syntax representation of this type.
-
-<a id="parsevalue"></a>
-<a id="parsevalue-object"></a>
-
-## ParseValue(object?)
-
-- Name: `ParseValue(object?)`
-- Modifiers: `override`
-- Returns: `IValueNode`
-
-Parses the .NET value representation to a value literal.
-
-```csharp
-public class VoidType
-{
-    public override IValueNode ParseValue(
-        object? runtimeValue)
-    {
-        // ...
-    }
-}
-```
-
-## Parameters
-
-- `runtimeValue` (`object?`)
-  The .NET value representation.
-
-## Returns
-
-`IValueNode` -- Returns a GraphQL literal representing the .NET value.
-
-## Exceptions
-
-- `SerializationException` -- The specified `runtimeValue` cannot be parsed by this scalar.
-
-<a id="trydeserialize"></a>
-<a id="trydeserialize-object-object"></a>
-
-## TryDeserialize(object?, object?)
-
-- Name: `TryDeserialize(object?, object?)`
-- Modifiers: `override`
-- Returns: `bool`
-
-Tries to deserializes the value from the output format to the .NET value representation.
-
-```csharp
-public class VoidType
-{
-    public override bool TryDeserialize(
-        object? resultValue,
-        out object? runtimeValue)
-    {
-        // ...
-    }
-}
-```
-
-## Parameters
-
-- `resultValue` (`object?`)
-  The serialized value.
-- `runtimeValue` (`object?`)
-  The .NET value representation.
-
-## Returns
-
-`bool` -- `true` if the serialized value was correctly deserialized; otherwise, `false`.
-
-<a id="tryserialize"></a>
-<a id="tryserialize-object-object"></a>
-
-## TrySerialize(object?, object?)
-
-- Name: `TrySerialize(object?, object?)`
-- Modifiers: `override`
-- Returns: `bool`
-
-Tries to serializes the .NET value representation to the output format.
-
-```csharp
-public class VoidType
-{
-    public override bool TrySerialize(
-        object? runtimeValue,
-        out object? resultValue)
-    {
-        // ...
-    }
-}
-```
-
-## Parameters
-
-- `runtimeValue` (`object?`)
-  The .NET value representation.
-- `resultValue` (`object?`)
-  The serialized value.
-
-## Returns
-
-`bool` -- `true` if the value was correctly serialized; otherwise, `false`.
+- `ArgumentNullException` -- `runtimeValue` is `null`.
+- `LeafCoercionException` -- Unable to convert the given `runtimeValue` into a literal.

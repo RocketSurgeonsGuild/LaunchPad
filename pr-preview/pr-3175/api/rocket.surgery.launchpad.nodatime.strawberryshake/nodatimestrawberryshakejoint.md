@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](/LaunchPad/pr-preview/pr-3175/api/rocket.surgery.launchpad.nodatime.strawberryshake.md)
-- Version: `2.0.1-pr.1167`
+- Version: `2.0.1-pr.1168`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
@@ -24,9 +24,7 @@ public class NodaTimeStrawberryShakeJoint
 
 ## Remarks
 
-Every NodaTime scalar that `AddNodaTime` puts in a HotChocolate schema has a serializer here, and all of them are registered, [OffsetDateSerializer](/LaunchPad/pr-preview/pr-3175/api/rocket.surgery.launchpad.nodatime.strawberryshake/offsetdateserializer.md) and [DateTimeZoneSerializer](/LaunchPad/pr-preview/pr-3175/api/rocket.surgery.launchpad.nodatime.strawberryshake/datetimezoneserializer.md) included (decided in RocketSurgeonsGuild/LaunchPad#3066). A generated client resolves a serializer for every scalar its operations use, and cannot create its serializer resolver, for any operation, when one of them is missing.
-
-[ZonedDateTimeSerializer](/LaunchPad/pr-preview/pr-3175/api/rocket.surgery.launchpad.nodatime.strawberryshake/zoneddatetimeserializer.md) and [DateTimeZoneSerializer](/LaunchPad/pr-preview/pr-3175/api/rocket.surgery.launchpad.nodatime.strawberryshake/datetimezoneserializer.md) resolve the `IDateTimeZoneProvider` that the `TimeJoint` of Rocket.Surgery.LaunchPad.NodaTime registers.
+Every NodaTime scalar that HotChocolate 16's `AddNodaTime` puts in a schema has a serializer here, and all of them are registered: `DateTime` ( `OffsetDateTime`), `Duration`, `LocalDate`, `LocalDateTime` and `LocalTime`. A generated client resolves a serializer for every scalar its operations use, and cannot create its serializer resolver, for any operation, when one of them is missing. A client maps the scalars to the NodaTime types with `@runtimeType` in its `schema.extensions.graphql`.
 
 ## Constructors
 

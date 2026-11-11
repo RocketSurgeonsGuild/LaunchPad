@@ -8,11 +8,11 @@
 Adds a type interceptor to be aware of nested types and ensure that they get named with the outer type and the inner type combined
 
 <a id="onbeforecompletename"></a>
-<a id="onbeforecompletename-itypecompletioncontext-definitionbase"></a>
+<a id="onbeforecompletename-itypecompletioncontext-typesystemconfiguration"></a>
 
-## OnBeforeCompleteName(ITypeCompletionContext, DefinitionBase?)
+## OnBeforeCompleteName(ITypeCompletionContext, TypeSystemConfiguration)
 
-- Name: `OnBeforeCompleteName(ITypeCompletionContext, DefinitionBase?)`
+- Name: `OnBeforeCompleteName(ITypeCompletionContext, TypeSystemConfiguration)`
 - Modifiers: `override`
 
 This event is called before the type name is assigned.
@@ -22,7 +22,7 @@ public class NestedTypeNameTypeInterceptor
 {
     public override void OnBeforeCompleteName(
         ITypeCompletionContext completionContext,
-        DefinitionBase? definition)
+        TypeSystemConfiguration configuration)
     {
         // ...
     }
@@ -33,5 +33,5 @@ public class NestedTypeNameTypeInterceptor
 
 - `completionContext` (`ITypeCompletionContext`)
   The type completion context.
-- `definition` (`DefinitionBase?`)
-  The type definition of the type system member.
+- `configuration` (`TypeSystemConfiguration`)
+  The type system configuration of the type system member.
