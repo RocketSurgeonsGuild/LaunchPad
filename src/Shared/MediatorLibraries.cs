@@ -1,4 +1,4 @@
-// Compiled into both Rocket.Surgery.LaunchPad.Analyzers (the API generators' mediator profiles) and Rocket.Surgery.LaunchPad.Primitives.Analyzers
+// Compiled into both Rocket.Surgery.LaunchPad.Analyzers (the API generators' mediator profiles) and Rocket.Surgery.LaunchPad.Analyzers
 // (the JSON context manifest), so both recognise the same mediator requests. Plain data: no Roslyn types.
 namespace Rocket.Surgery.LaunchPad.Mediators;
 

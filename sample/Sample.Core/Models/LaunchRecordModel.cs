@@ -1,4 +1,4 @@
-﻿using NodaTime;
+using NodaTime;
 using Riok.Mapperly.Abstractions;
 using Sample.Core.Domain;
 using StronglyTypedIds;
@@ -10,7 +10,7 @@ namespace Sample.Core.Models;
 /// </summary>
 #pragma warning disable CA1036
 [StronglyTypedId(Template.Guid, "guid-efcore")]
-public partial struct LaunchRecordId { }
+public readonly partial struct LaunchRecordId { }
 #pragma warning restore CA1036
 
 /// <summary>
@@ -44,12 +44,12 @@ public partial record LaunchRecordModel
     /// <remarks>
     ///     Will be updated when the launch happens
     /// </remarks>
-    public Instant? ActualLaunchDate { get; init; }
+    public OffsetDateTime? ActualLaunchDate { get; init; }
 
     /// <summary>
     ///     The intended date for the launch
     /// </summary>
-    public Instant ScheduledLaunchDate { get; init; }
+    public OffsetDateTime ScheduledLaunchDate { get; init; }
 
     /// <summary>
     ///     The serial number of the reusable rocket

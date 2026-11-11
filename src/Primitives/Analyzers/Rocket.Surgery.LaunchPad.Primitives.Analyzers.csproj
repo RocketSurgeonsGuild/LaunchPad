@@ -1,23 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <!-- The union generator, analyzers and code fixes (docs/design/union-types.md), and the JSON generators: the camel case enum converters and
-         the JSON context manifest (docs/adr/0007-no-json-reflection.md). Packed as its own analyzer package, which Rocket.Surgery.LaunchPad.Primitives
-         depends on, so every project that references Primitives can declare portable unions and lists its JSON types. -->
+    <!--
+        The strong type registry generator (docs/adr/0008-primitives-is-an-independent-strong-types-package.md): it finds the strong types of an
+        application and its references and describes each one, for the Joints Primitives writes into the application as templates. Packed as its
+        own analyzer package, which Rocket.Surgery.LaunchPad.Primitives depends on; Primitives depends on nothing else of LaunchPad, so it can't
+        use the analyzer assembly Foundation carries.
+    -->
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
         <RootNamespace>Rocket.Surgery.LaunchPad.Primitives.Analyzers</RootNamespace>
-        <!-- RS1038: the code fixes need Workspaces, which the command-line compiler doesn't carry; it never creates them (see src/Api). -->
-        <NoWarn>$(NoWarn);RS1038</NoWarn>
-        <PackageDescription>The union generator, analyzers and code fixes for LaunchPad: portable unions ([Union] partial struct) that compile on C# 14 and C# 15; and the JSON generators: camel case enum converters and the JSON context manifest an application's build reads.</PackageDescription>
-        <PackageTags>$(PackageTags);source-generator;union</PackageTags>
+        <PackageDescription>The strong type registry generator of Rocket.Surgery.LaunchPad.Primitives.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;strong-types</PackageTags>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
         <!-- The oldest Roslyn the generator supports: the compiler of the .NET 10 SDK, so an application on either SDK can load it. -->
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
@@ -25,12 +25,8 @@
         <Using Remove="Joinery.Dovetail.Attributes" />
         <Using Remove="Joinery.Dovetail.Joints" />
     </ItemGroup>
-    <ItemGroup>
-        <!-- The mediator request table, shared with the API generators' mediator profiles (docs/adr/0004-one-generator-assembly.md). -->
-        <Compile Include="../../Shared/MediatorLibraries.cs" Link="MediatorLibraries.cs" />
-    </ItemGroup>
     <!-- Packed from wherever the build wrote it: an artifacts path moves it out of bin. -->
-    <Target Name="_LaunchPadPackUnionAnalyzer" BeforeTargets="_GetPackageFiles">
+    <Target Name="_LaunchPadPackStrongTypeAnalyzer" BeforeTargets="_GetPackageFiles">
         <ItemGroup>
             <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
         </ItemGroup>

@@ -20,8 +20,6 @@
     <!-- the SDK, every package it can add to an application, and the LaunchPad packages those depend on -->
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Sdk\Rocket.Surgery.LaunchPad.Sdk.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Primitives\Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
@@ -37,7 +35,6 @@
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.AspNetCore\Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Blazor\Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.Grpc\Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj" />
-    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\FluentValidation.HotChocolate\Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.Blazor\Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.Grpc\Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj" />

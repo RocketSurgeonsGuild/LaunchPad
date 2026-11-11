@@ -19,18 +19,12 @@ extend scalar Geometry
 #    @serializationType(name: "global::System.Text.Json.JsonElement")
 #    @runtimeType(name: "global::NetTopologySuite.Geometries.Coordinate")
 
-extend scalar DateTimeZone
+extend scalar DateTime
     @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.DateTimeZone")
+    @runtimeType(name: "global::NodaTime.OffsetDateTime", valueType: true)
 extend scalar Duration
     @serializationType(name: "global::System.String")
     @runtimeType(name: "global::NodaTime.Duration", valueType: true)
-extend scalar Instant
-    @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.Instant", valueType: true)
-extend scalar IsoDayOfWeek
-    @serializationType(name: "global::System.Int32")
-    @runtimeType(name: "global::NodaTime.IsoDayOfWeek", valueType: true)
 extend scalar LocalDateTime
     @serializationType(name: "global::System.String")
     @runtimeType(name: "global::NodaTime.LocalDateTime", valueType: true)
@@ -40,21 +34,3 @@ extend scalar LocalDate
 extend scalar LocalTime
     @serializationType(name: "global::System.String")
     @runtimeType(name: "global::NodaTime.LocalTime", valueType: true)
-extend scalar OffsetDateTime
-    @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.OffsetDateTime", valueType: true)
-extend scalar OffsetDate
-    @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.OffsetDate", valueType: true)
-extend scalar OffsetTime
-    @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.OffsetTime", valueType: true)
-extend scalar Offset
-    @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.Offset", valueType: true)
-extend scalar Period
-    @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.Period")
-extend scalar ZonedDateTime
-    @serializationType(name: "global::System.String")
-    @runtimeType(name: "global::NodaTime.ZonedDateTime", valueType: true)

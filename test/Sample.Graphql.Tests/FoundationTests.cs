@@ -45,6 +45,6 @@ public class FoundationTests() : LoggerTest<TestRecord>(TestRecord.Create())
             new SqliteExtension<RocketDbContext>()
         );
         var exeuctor = await host.Services.GetRequestExecutorAsync(cancellationToken: TestContext.CancellationToken);
-        await Verify(exeuctor.Schema.Print(), "txt");
+        await Verify(exeuctor.Schema.ToString(), "txt");
     }
 }

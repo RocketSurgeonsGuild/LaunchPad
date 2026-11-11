@@ -1,4 +1,8 @@
-﻿using HotChocolate.Language;
+using System.Text.Json;
+
+using HotChocolate.Features;
+using HotChocolate.Language;
+using HotChocolate.Text.Json;
 using HotChocolate.Types;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Types;
@@ -11,48 +15,29 @@ public class VoidType : ScalarType
     /// <summary>
     ///     THe constructor
     /// </summary>
-    public VoidType() : base("Void", BindingBehavior.Implicit)
-    {
-    }
+    public VoidType() : base("Void", BindingBehavior.Implicit) { }
 
     /// <inheritdoc />
     public override Type RuntimeType { get; } = typeof(void);
 
     /// <inheritdoc />
-    public override bool IsInstanceOfType(IValueNode valueSyntax)
-    {
-        return false;
-    }
+    public override ScalarSerializationType SerializationType => ScalarSerializationType.Object;
 
     /// <inheritdoc />
-    public override object? ParseLiteral(IValueNode valueSyntax)
-    {
-        return (object?)new object();
-    }
+    public override bool IsValueCompatible(IValueNode valueLiteral) => false;
 
     /// <inheritdoc />
-    public override IValueNode ParseValue(object? runtimeValue)
-    {
-        return new ObjectValueNode();
-    }
+    public override bool IsValueCompatible(JsonElement inputValue) => false;
 
     /// <inheritdoc />
-    public override IValueNode ParseResult(object? resultValue)
-    {
-        return new ObjectValueNode();
-    }
+    public override object CoerceInputLiteral(IValueNode valueLiteral) => new();
 
     /// <inheritdoc />
-    public override bool TrySerialize(object? runtimeValue, out object? resultValue)
-    {
-        resultValue = new object();
-        return true;
-    }
+    public override object CoerceInputValue(JsonElement inputValue, IFeatureProvider context) => new();
 
     /// <inheritdoc />
-    public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
-    {
-        runtimeValue = new object();
-        return true;
-    }
+    public override void CoerceOutputValue(object runtimeValue, ResultElement resultValue) => resultValue.SetObjectValue(0);
+
+    /// <inheritdoc />
+    public override IValueNode ValueToLiteral(object runtimeValue) => new ObjectValueNode();
 }

@@ -1,7 +1,0 @@
-﻿{
-  Data: {
-    NodaTimeTest: {
-      IsoDayOfWeek: Wednesday
-    }
-  }
-}

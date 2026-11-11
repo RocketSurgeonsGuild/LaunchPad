@@ -40,7 +40,7 @@ public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
             await context.SaveChangesAsync(TestContext.CancellationToken);
         }
 
-        var launchDate = record.ScheduledLaunchDate.ToInstant().Plus(Duration.FromSeconds(1));
+        var launchDate = record.ScheduledLaunchDate.ToInstant().Plus(Duration.FromSeconds(1)).WithOffset(Offset.Zero);
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 

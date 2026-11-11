@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        The MSBuild task Rocket.Surgery.LaunchPad.Foundation ships in its build folder: it reads the JSON context manifests of an application's
+        referenced assemblies and writes the application's JSON context. It runs inside MSBuild, which brings Microsoft.Build and
+        System.Reflection.Metadata, so neither is copied.
+    -->
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Foundation.Tasks</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" PrivateAssets="all" />
+        <PackageReference Include="System.Reflection.Metadata" ExcludeAssets="runtime" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
+    </ItemGroup>
+</Project>

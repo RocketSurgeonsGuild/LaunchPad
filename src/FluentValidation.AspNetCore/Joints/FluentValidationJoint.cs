@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 

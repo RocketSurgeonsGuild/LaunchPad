@@ -1,11 +1,11 @@
-﻿using HotChocolate.Data.Filters;
+using HotChocolate.Data.Filters;
 using HotChocolate.Types;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
 [UsedImplicitly]
 internal sealed class StronglyTypedIdFilterConventionExtension<TStrongType, TSchemaType> : FilterConventionExtension
-    where TSchemaType : INamedType
+    where TSchemaType : ITypeDefinition
 {
     protected override void Configure(IFilterConventionDescriptor descriptor)
     {

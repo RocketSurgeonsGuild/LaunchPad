@@ -3,6 +3,7 @@
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
         <PackageDescription />
         <PackageTags>$(PackageTags)</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
@@ -11,10 +12,21 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.Logging" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+        <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
         <PackageReference Include="Specular" />
+        <PackageReference Include="System.Text.Json" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+        <!--
+            LaunchPad's one analyzer assembly (docs/adr/0004-one-generator-assembly.md): the operation host, property tracking and union
+            generators, and the JSON generators (enum converters, JSON context manifest). They run on Foundation itself and flow to every
+            project that references it.
+        -->
         <ProjectReference
             Include="..\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj"
             IncludeAssets="analyzers"
@@ -22,5 +34,15 @@
             PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"
             OutputItemType="Analyzer"
         />
+        <!-- The task that writes an application's JSON context (build/Rocket.Surgery.LaunchPad.Foundation.JsonContext.targets), packed under tasks/. -->
+        <ProjectReference Include="..\Foundation.Tasks\Rocket.Surgery.LaunchPad.Foundation.Tasks.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
     </ItemGroup>
+    <Target Name="_LaunchPadPackJsonContextTask" BeforeTargets="_GetPackageFiles">
+        <MSBuild Projects="..\Foundation.Tasks\Rocket.Surgery.LaunchPad.Foundation.Tasks.csproj" Targets="GetTargetPath">
+            <Output TaskParameter="TargetOutputs" ItemName="_LaunchPadJsonContextTask" />
+        </MSBuild>
+        <ItemGroup>
+            <None Include="@(_LaunchPadJsonContextTask)" Pack="true" PackagePath="tasks/netstandard2.0" Visible="false" />
+        </ItemGroup>
+    </Target>
 </Project>

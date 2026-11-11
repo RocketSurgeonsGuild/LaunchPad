@@ -102,37 +102,37 @@ namespace Sample.Server
                 return __value;
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Invalid __error0)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Invalid __error0)
             {
                 throw ApiGrpcErrors.Error(StatusCode.InvalidArgument, "Invalid", null, __error0.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.NotFound __error1)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.NotFound __error1)
             {
                 throw ApiGrpcErrors.Error(StatusCode.NotFound, "NotFound", null, __error1.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.UnprocessableEntity __error2)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.UnprocessableEntity __error2)
             {
                 throw ApiGrpcErrors.Error(StatusCode.InvalidArgument, "UnprocessableEntity", null, __error2.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Unauthorized __error3)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Unauthorized __error3)
             {
                 throw ApiGrpcErrors.Error(StatusCode.Unauthenticated, "Unauthorized", null, __error3.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Forbidden __error4)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Forbidden __error4)
             {
                 throw ApiGrpcErrors.Error(StatusCode.PermissionDenied, "Forbidden", null, __error4.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Conflict __error5)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Conflict __error5)
             {
                 throw ApiGrpcErrors.Error(StatusCode.FailedPrecondition, "Conflict", null, __error5.Detail);
             }
 
-            if (__case is global::Rocket.Surgery.LaunchPad.Primitives.Problem __error6)
+            if (__case is global::Rocket.Surgery.LaunchPad.Foundation.Problem __error6)
             {
                 throw ApiGrpcErrors.Error(StatusCode.Internal, "Problem", null, __error6.Detail);
             }

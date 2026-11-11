@@ -1,4 +1,4 @@
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Sample.Core.Operations;
 

@@ -16,7 +16,7 @@ internal sealed record UnionMemberModel(string Name, string WireName);
 /// <param name="NestedName">For a nested case type, its name with its container's in front (<c>GetRocketNotFound</c>), as protobuf-net names it.</param>
 /// <param name="IsMessage">The case is a class protobuf-net can serialize as it is (the gRPC <c>case-bin</c> trailer).</param>
 /// <param name="ProblemMembers">
-///     For a case implementing <c>Rocket.Surgery.LaunchPad.Primitives.IProblemDetailsData</c>, its problem data: the property and the reserved
+///     For a case implementing <c>Rocket.Surgery.LaunchPad.Foundation.IProblemDetailsData</c>, its problem data: the property and the reserved
 ///     key the generated helpers map it to (<c>$detail</c>, <c>$title</c>, <c>$type</c>, <c>$instance</c>, <c>$properties</c>).
 /// </param>
 internal sealed record UnionCaseModel(
@@ -68,8 +68,8 @@ internal static class UnionResults
 {
     public const string UnionAttribute = "System.Runtime.CompilerServices.UnionAttribute";
     public const string UnionInterface = "System.Runtime.CompilerServices.IUnion";
-    public const string ProblemDetailsData = "Rocket.Surgery.LaunchPad.Primitives.IProblemDetailsData";
-    public const string Problem = "Rocket.Surgery.LaunchPad.Primitives.Problem";
+    public const string ProblemDetailsData = "Rocket.Surgery.LaunchPad.Foundation.IProblemDetailsData";
+    public const string Problem = "Rocket.Surgery.LaunchPad.Foundation.Problem";
 
     /// <summary>The standard problem cases a <c>Problem</c> case stands for, tested before <c>Problem</c> itself (docs/design/union-types.md 3.5).</summary>
     private static readonly string[] StandardProblems = ["NotFound", "Invalid", "UnprocessableEntity", "Unauthorized", "Forbidden", "Conflict"];
@@ -80,7 +80,7 @@ internal static class UnionResults
 
     /// <summary>
     ///     A case name's statuses, matched in this order: the first rule whose word the name starts or ends with wins. The table is the one
-    ///     #3147 lists for LaunchPad's standard error cases (<c>Rocket.Surgery.LaunchPad.Primitives.NotFound</c>, <c>Invalid</c>, …), whose
+    ///     #3147 lists for LaunchPad's standard error cases (<c>Rocket.Surgery.LaunchPad.Foundation.NotFound</c>, <c>Invalid</c>, …), whose
     ///     names it matches.
     /// </summary>
     private static readonly (string Word, int Status, string Grpc, string GraphQL)[] Rules =
@@ -179,7 +179,7 @@ internal static class UnionResults
         return null;
     }
 
-    /// <summary>Whether an error case carries problem data: it implements <c>Rocket.Surgery.LaunchPad.Primitives.IProblemDetailsData</c>.</summary>
+    /// <summary>Whether an error case carries problem data: it implements <c>Rocket.Surgery.LaunchPad.Foundation.IProblemDetailsData</c>.</summary>
     public static bool IsProblemData(ITypeSymbol errorCase) => errorCase.AllInterfaces.Any(i => i.Is(ProblemDetailsData));
 
     /// <summary>
@@ -189,7 +189,7 @@ internal static class UnionResults
     public static IEnumerable<ITypeSymbol> Expand(ITypeSymbol errorCase) =>
         errorCase.Is(Problem)
             ? StandardProblems
-             .Select(name => errorCase.ContainingAssembly.GetTypeByMetadataName($"Rocket.Surgery.LaunchPad.Primitives.{name}"))
+             .Select(name => errorCase.ContainingAssembly.GetTypeByMetadataName($"Rocket.Surgery.LaunchPad.Foundation.{name}"))
              .OfType<ITypeSymbol>()
              .Append(errorCase)
             : [errorCase];

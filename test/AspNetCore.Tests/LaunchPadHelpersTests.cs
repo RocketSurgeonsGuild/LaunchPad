@@ -9,7 +9,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
-using Rocket.Surgery.LaunchPad.Primitives.Joints;
+using Rocket.Surgery.LaunchPad.Foundation.Joints;
 
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 

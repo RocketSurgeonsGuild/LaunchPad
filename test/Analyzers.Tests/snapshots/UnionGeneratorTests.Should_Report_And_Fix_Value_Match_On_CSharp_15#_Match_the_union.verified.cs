@@ -1,6 +1,6 @@
 ﻿//HintName: 
 using System.Runtime.CompilerServices;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 public record RocketModel(string Id);
 

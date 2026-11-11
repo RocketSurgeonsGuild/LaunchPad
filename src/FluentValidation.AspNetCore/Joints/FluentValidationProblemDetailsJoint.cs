@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 

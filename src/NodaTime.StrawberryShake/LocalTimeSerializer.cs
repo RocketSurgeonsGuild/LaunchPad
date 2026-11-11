@@ -11,7 +11,7 @@ public class LocalTimeSerializer : NodaTimeStringScalarSerializer<LocalTime>
     /// <summary>
     /// Create a new LocalTimeSerializer
     /// </summary>
-    public LocalTimeSerializer() : base(LocalTimePattern.GeneralIso, "LocalTime")
+    public LocalTimeSerializer() : base(LocalTimePattern.CreateWithInvariantCulture("HH':'mm':'ss;FFFFFFFFF"), "LocalTime")
     {
     }
 }

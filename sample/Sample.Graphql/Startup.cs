@@ -61,36 +61,20 @@ public class QueryType
 
 public class NodaTimeOutputs
 {
-    public Instant? Instant { get; init; }
     public LocalDate? LocalDate { get; init; }
     public LocalTime? LocalTime { get; init; }
     public LocalDateTime? LocalDateTime { get; init; }
     public OffsetDateTime? OffsetDateTime { get; init; }
-    public OffsetTime? OffsetTime { get; init; }
-    public Period? Period { get; init; }
     public Duration? Duration { get; init; }
-    public ZonedDateTime? ZonedDateTime { get; init; }
-    public Offset? Offset { get; init; }
-    public IsoDayOfWeek? IsoDayOfWeek { get; init; }
-    public OffsetDate? OffsetDate { get; init; }
-    public DateTimeZone? DateTimeZone { get; init; }
 }
 
 public class NodaTimeInputs
 {
-    public Instant? Instant { get; init; }
     public LocalDate? LocalDate { get; init; }
     public LocalTime? LocalTime { get; init; }
     public LocalDateTime? LocalDateTime { get; init; }
     public OffsetDateTime? OffsetDateTime { get; init; }
-    public OffsetTime? OffsetTime { get; init; }
-    public Period? Period { get; init; }
     public Duration? Duration { get; init; }
-    public ZonedDateTime? ZonedDateTime { get; init; }
-    public Offset? Offset { get; init; }
-    public IsoDayOfWeek? IsoDayOfWeek { get; init; }
-    public OffsetDate? OffsetDate { get; init; }
-    public DateTimeZone? DateTimeZone { get; init; }
 }
 
 public class GeometryOutputs
@@ -114,19 +98,11 @@ public class QueryTests
 {
     public NodaTimeOutputs NodaTimeTest(NodaTimeInputs inputs) => new()
     {
-        Instant = inputs.Instant,
         LocalDate = inputs.LocalDate,
         LocalTime = inputs.LocalTime,
         LocalDateTime = inputs.LocalDateTime,
         OffsetDateTime = inputs.OffsetDateTime,
-        OffsetTime = inputs.OffsetTime,
-        Period = inputs.Period,
         Duration = inputs.Duration,
-        ZonedDateTime = inputs.ZonedDateTime,
-        Offset = inputs.Offset,
-        IsoDayOfWeek = inputs.IsoDayOfWeek,
-        OffsetDate = inputs.OffsetDate,
-        DateTimeZone = inputs.DateTimeZone,
     };
 
     public GeometryOutputs GeometryTest(GeometryInputs inputs) => new()

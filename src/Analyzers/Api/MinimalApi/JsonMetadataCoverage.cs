@@ -33,7 +33,7 @@ internal static class JsonMetadataCoverage
     private static readonly string[] TrimmedProperties =
         ["build_property.PublishAot", "build_property.IsAotCompatible", "build_property.PublishTrimmed", "build_property.IsTrimmable"];
 
-    // What LaunchPad's own context (Rocket.Surgery.LaunchPad.Primitives.LaunchPadJsonSerializerContext) declares, as FullyQualified() writes it.
+    // What LaunchPad's own context (Rocket.Surgery.LaunchPad.Foundation.LaunchPadJsonSerializerContext) declares, as FullyQualified() writes it.
     private static readonly HashSet<string> LaunchPadTypes =
     [
         with(StringComparer.Ordinal),

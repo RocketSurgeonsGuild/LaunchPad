@@ -1,0 +1,156 @@
+﻿{
+  "parameters": {
+    "/customers/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      {
+        "name": "email",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "maxLength": 254,
+          "pattern": "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$",
+          "type": "string",
+          "format": "email"
+        }
+      },
+      {
+        "name": "rating",
+        "in": "query",
+        "schema": {
+          "maximum": 5,
+          "minimum": 1,
+          "pattern": "^-?(?:0|[1-9]\\d*)$",
+          "type": [
+            "integer",
+            "string"
+          ],
+          "format": "int32"
+        }
+      }
+    ],
+    "/customers/{id}/rating": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      {
+        "name": "country",
+        "in": "query",
+        "schema": {
+          "pattern": "^[A-Z]{2}$",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  "schemas": {
+    "Customer": {
+      "required": [
+        "id",
+        "email",
+        "country",
+        "rating",
+        "balance"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "email": {
+          "maxLength": 254,
+          "pattern": "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$",
+          "type": "string",
+          "format": "email"
+        },
+        "country": {
+          "pattern": "^[A-Z]{2}$",
+          "type": "string"
+        },
+        "rating": {
+          "maximum": 5,
+          "minimum": 1,
+          "pattern": "^-?(?:0|[1-9]\\d*)$",
+          "type": [
+            "integer",
+            "string"
+          ],
+          "format": "int32"
+        },
+        "balance": {
+          "$ref": "#/components/schemas/Money"
+        },
+        "membership": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/DateRange"
+            }
+          ]
+        },
+        "handle": {
+          "maxLength": 100,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "DateRange": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Money": {
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "type": "object",
+      "properties": {
+        "amount": {
+          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "type": [
+            "number",
+            "string"
+          ],
+          "format": "double"
+        },
+        "currency": {
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

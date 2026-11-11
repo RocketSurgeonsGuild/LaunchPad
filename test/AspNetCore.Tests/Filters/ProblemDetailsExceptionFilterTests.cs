@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace AspNetCore.Tests.Filters;
 

@@ -1,8 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-using Rocket.Surgery.LaunchPad.Primitives;
-using Rocket.Surgery.LaunchPad.Primitives.Tasks;
+using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Foundation.Tasks;
 
 namespace Analyzers.Tests;
 
@@ -40,10 +40,10 @@ public class JsonContextManifestTaskTests
                 directory,
                 "Contracts",
                 """
-                [assembly: Rocket.Surgery.LaunchPad.Primitives.JsonContextType(typeof(Sample.Core.RocketModel))]
-                [assembly: Rocket.Surgery.LaunchPad.Primitives.JsonContextType(typeof(Sample.Core.CreateRocket.Request))]
-                [assembly: Rocket.Surgery.LaunchPad.Primitives.JsonContextType(typeof(System.Collections.Generic.List<Sample.Core.RocketModel>))]
-                [assembly: Rocket.Surgery.LaunchPad.Primitives.JsonContextType(typeof(Sample.Core.Request), TypeInfoPropertyName = "RootRequest")]
+                [assembly: Rocket.Surgery.LaunchPad.Foundation.JsonContextType(typeof(Sample.Core.RocketModel))]
+                [assembly: Rocket.Surgery.LaunchPad.Foundation.JsonContextType(typeof(Sample.Core.CreateRocket.Request))]
+                [assembly: Rocket.Surgery.LaunchPad.Foundation.JsonContextType(typeof(System.Collections.Generic.List<Sample.Core.RocketModel>))]
+                [assembly: Rocket.Surgery.LaunchPad.Foundation.JsonContextType(typeof(Sample.Core.Request), TypeInfoPropertyName = "RootRequest")]
                 namespace Sample.Core
                 {
                     public record RocketModel(string Name);
@@ -57,7 +57,7 @@ public class JsonContextManifestTaskTests
                 directory,
                 "Other",
                 """
-                [assembly: Rocket.Surgery.LaunchPad.Primitives.JsonContextType(typeof(Other.RocketModel))]
+                [assembly: Rocket.Surgery.LaunchPad.Foundation.JsonContextType(typeof(Other.RocketModel))]
                 namespace Other { public record RocketModel(int Id); }
                 """
             );

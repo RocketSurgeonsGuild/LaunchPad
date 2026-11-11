@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
-using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
@@ -49,7 +49,7 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
         response.Payload.ShouldBe("geo-fence-ftl");
         response.RocketType.ShouldBe(RocketType.Falcon9);
         response.RocketSerialNumber.ShouldBe("12345678901234");
-        response.ScheduledLaunchDate.ShouldBe(Instant.FromDateTimeOffset(record.ScheduledLaunchDate));
+        response.ScheduledLaunchDate.ShouldBe(OffsetDateTime.FromDateTimeOffset(record.ScheduledLaunchDate));
     }
 
     [Test]

@@ -14,21 +14,21 @@ namespace Sample.Grpc;
 [UseStaticMapper(typeof(NodaTimeMapper))]
 public partial class WellKnownGrpcTypesMapper
 {
-    public static Instant ConvertToInstant(Timestamp ts) => Instant.FromDateTimeOffset(ts.ToDateTimeOffset());
+    public static OffsetDateTime ConvertToOffsetDateTime(Timestamp ts) => OffsetDateTime.FromDateTimeOffset(ts.ToDateTimeOffset());
 
-    public static Timestamp ConvertToTimestamp(Instant ts) => Timestamp.FromDateTimeOffset(ts.ToDateTimeOffset());
+    public static Timestamp ConvertToTimestamp(OffsetDateTime ts) => Timestamp.FromDateTimeOffset(ts.ToDateTimeOffset());
 
-    public static Instant? ConvertToNullableInstant(NullableTimestamp ts) => ts.KindCase == NullableTimestamp.KindOneofCase.Data
-        ? Instant.FromDateTimeOffset(ts.Data.ToDateTimeOffset())
+    public static OffsetDateTime? ConvertToNullableOffsetDateTime(NullableTimestamp ts) => ts.KindCase == NullableTimestamp.KindOneofCase.Data
+        ? OffsetDateTime.FromDateTimeOffset(ts.Data.ToDateTimeOffset())
         : default;
 
-    public static NullableTimestamp ConvertFromNullableInstant(Instant? ts) => ts.HasValue
+    public static NullableTimestamp ConvertFromNullableOffsetDateTime(OffsetDateTime? ts) => ts.HasValue
         ? new() { Data = Timestamp.FromDateTimeOffset(ts.Value.ToDateTimeOffset()) }
         : new() { Null = NullValue.NullValue };
 
-    public static NullableTimestamp ConvertFromInstant(Instant ts) => new() { Data = Timestamp.FromDateTimeOffset(ts.ToDateTimeOffset()) };
+    public static NullableTimestamp ConvertFromOffsetDateTime(OffsetDateTime ts) => new() { Data = Timestamp.FromDateTimeOffset(ts.ToDateTimeOffset()) };
 
-    public static Instant ConvertFromInstant(NullableTimestamp ts) => Instant.FromDateTimeOffset(ts.Data.ToDateTimeOffset());
+    public static OffsetDateTime ConvertFromOffsetDateTime(NullableTimestamp ts) => OffsetDateTime.FromDateTimeOffset(ts.Data.ToDateTimeOffset());
 
     public static Duration ConvertToDuration(WktDuration ts) => Duration.FromTimeSpan(ts.ToTimeSpan());
 

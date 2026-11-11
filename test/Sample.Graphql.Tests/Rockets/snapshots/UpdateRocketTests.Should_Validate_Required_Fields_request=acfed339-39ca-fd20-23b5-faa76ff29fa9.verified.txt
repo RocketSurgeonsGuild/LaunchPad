@@ -1,12 +1,12 @@
 ﻿[
   {
     Message: The required input field `type` is missing.,
-    Path: [
-      req,
-      type
-    ],
     Extensions: {
-      field: EditRocketRequest.type
+      field: EditRocketRequest.type,
+      inputPath: [
+        req,
+        type
+      ]
     }
   }
 ]
