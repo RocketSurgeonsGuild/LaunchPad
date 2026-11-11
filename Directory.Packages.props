@@ -59,7 +59,7 @@
         <PackageVersion Include="ZeroAlloc.Mediator" Version="6.6.5" />
         <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="6.6.5" />
         <PackageVersion Include="ZeroAlloc.Mediator.Validation" Version="6.6.5" />
-        <PackageVersion Include="ZeroAlloc.Validation" Version="2.5.0" />
+        <PackageVersion Include="ZeroAlloc.Validation" Version="2.6.0" />
         <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="2.5.0" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
