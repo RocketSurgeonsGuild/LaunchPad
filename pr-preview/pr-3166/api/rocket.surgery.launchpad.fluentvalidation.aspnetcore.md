@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore`
-- Version: `2.0.1-pr.1162`
+- Version: `2.0.1-pr.1167`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore)
 
@@ -23,7 +23,7 @@
 
 ### Rocket.Surgery.LaunchPad.AspNetCore.Joints
 
-- [FluentValidationJoint](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationjoint.md) -- `class` -- Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter, the problem details converter, and the [FluentValidationProblemDetails](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationproblemdetails.md) as the documented validation response of the restful api controllers. Implements the `Joints.IServiceJoint`
+- [FluentValidationJoint](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationjoint.md) -- `class` -- Wires FluentValidation into ASP.NET Core: the client side adapters, the validation exception filter, the problem details converter and the source generated metadata it writes with, and the [FluentValidationProblemDetails](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationproblemdetails.md) as the documented validation response of the restful api controllers. Implements the `Joints.IServiceJoint`
 - [FluentValidationOpenApiJoint](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationopenapijoint.md) -- `class` -- Adds the experimental FluentValidation schema transformer to the OpenAPI document, so the validation rules show in the schemas. Implements the `Joints.IServiceJoint`
 - [FluentValidationProblemDetailsJoint](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationproblemdetailsjoint.md) -- `class` -- Maps the FluentValidation `ValidationException` to an unprocessable entity, and registers the problem details writers that describe validation failures with [FluentValidationProblemDetails](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore/fluentvalidationproblemdetails.md). Implements the `Joints.IServiceJoint`
 

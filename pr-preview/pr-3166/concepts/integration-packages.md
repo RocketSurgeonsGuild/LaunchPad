@@ -13,18 +13,17 @@ small packages, which the [LaunchPad SDK](../launchpad-sdk/) chooses for you.
 
 ## The packages the SDK chooses
 
-| The project references           | The SDK adds                                                                                      |
-| -------------------------------- | ------------------------------------------------------------------------------------------------- |
-| a [host model](../host-models/)  | `Rocket.Surgery.LaunchPad.Hosting`                                                                |
-| the `WebApplication` host model  | `Rocket.Surgery.LaunchPad.AspNetCore`                                                             |
-| `NodaTime`                       | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries      |
-| `NetTopologySuite`               | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                                   |
-| `FluentValidation`               | `.FluentValidation`, and its ASP.NET Core, gRPC, HotChocolate and Blazor packages with those      |
-| `ZeroAlloc.Validation`           | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                     |
-| `HotChocolate`                   | `.HotChocolate`                                                                                   |
-| `StrawberryShake`                | `.StrawberryShake`                                                                                |
-| `Grpc.AspNetCore`                | `.Grpc`                                                                                           |
-| `EricksonLopez.DomainPrimitives` | `.Primitives`, as a direct reference, for its [templates](../templates/#the-primitives-templates) |
+| The project references          | The SDK adds                                                                                 |
+| ------------------------------- | -------------------------------------------------------------------------------------------- |
+| a [host model](../host-models/) | `Rocket.Surgery.LaunchPad.Hosting`                                                           |
+| the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`                                                        |
+| `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
+| `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
+| `FluentValidation`              | `.FluentValidation`, and its ASP.NET Core, gRPC, HotChocolate and Blazor packages with those |
+| `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                |
+| `HotChocolate`                  | `.HotChocolate`                                                                              |
+| `StrawberryShake`               | `.StrawberryShake`                                                                           |
+| `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
 
 A file-based app (`dotnet run app.cs`) also gets `Rocket.Surgery.LaunchPad.Foundation` and counts as referencing NodaTime.
 
@@ -38,8 +37,8 @@ integration package it is part of:
 ```
 
 The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`,
-`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableFluentValidation`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate`,
-`LaunchPadEnableStrawberryShake` and `LaunchPadEnableDomainPrimitives`.
+`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableFluentValidation`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and
+`LaunchPadEnableStrawberryShake`.
 
 ## Direct references
 

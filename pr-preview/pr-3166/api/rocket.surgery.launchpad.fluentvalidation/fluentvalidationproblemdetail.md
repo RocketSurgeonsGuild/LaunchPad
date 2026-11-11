@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation.md)
-- Version: `2.0.1-pr.1162`
+- Version: `2.0.1-pr.1167`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net10.0`
 
@@ -21,6 +21,7 @@ public class FluentValidationProblemDetail
 
 ## Constructors
 
+- [FluentValidationProblemDetail](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation/fluentvalidationproblemdetail/constructors.md#constructor) -- An empty validation error problem, for deserialization.
 - [FluentValidationProblemDetail(ValidationFailure)](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.fluentvalidation/fluentvalidationproblemdetail/constructors.md#constructor-validationfailure) -- A validation error problem
 
 ## Properties

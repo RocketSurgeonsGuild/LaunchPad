@@ -34,3 +34,7 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
 
 - `options` (`JsonSerializerOptions`)
 - `dateTimeZoneProvider` (`IDateTimeZoneProvider`)
+
+## Remarks
+
+Adds the NodaTime converters, and [NodaTimeSystemTextJsonSerializationExtensions.TypeInfoResolver](/LaunchPad/pr-preview/pr-3166/api/rocket.surgery.launchpad.nodatime/nodatimesystemtextjsonserializationextensions/properties.md#typeinforesolver) to the options' `JsonSerializerOptions.TypeInfoResolverChain` so the NodaTime types also resolve in a trimmed or native AOT application. No reflection based resolver is added: options that should reflect over other types need one of their own.
