@@ -1,0 +1,87 @@
+﻿schema {
+  query: Query
+}
+
+type Query {
+  customer(id: CustomerId!, country: CountryCode!): Customer!
+}
+
+type Customer {
+  id: CustomerId!
+  email: CustomerEmail!
+  country: CountryCode!
+  age: Age!
+  balance: Money!
+  membership: DateRange
+  handle: Slug
+}
+
+type DateRange {
+  contains(date: LocalDate!): Boolean!
+  start: LocalDate!
+  end: LocalDate!
+}
+
+type Money {
+  amount: Decimal!
+  currency: CurrencyCode!
+}
+
+scalar Age
+
+scalar CountryCode
+
+scalar CurrencyCode
+
+scalar CustomerEmail
+
+scalar CustomerId
+
+"The `Decimal` scalar type represents a decimal floating-point number with high precision."
+scalar Decimal
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/decimal.html")
+
+"The `LocalDate` scalar type represents a date without time or time zone information."
+scalar LocalDate
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/local-date.html")
+
+scalar Slug
+
+{
+  "data": {
+    "customer": {
+      "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
+      "email": "ada@example.com",
+      "country": "GB",
+      "age": 36,
+      "balance": {
+        "amount": 12.5,
+        "currency": "GBP"
+      },
+      "membership": {
+        "start": "2026-01-01",
+        "end": "2026-12-31"
+      },
+      "handle": "ada-lovelace"
+    }
+  }
+}
+
+{
+  "errors": [
+    {
+      "message": "The value is not a valid CountryCode.",
+      "path": [
+        "customer"
+      ],
+      "extensions": {
+        "inputPath": [
+          "country"
+        ],
+        "coordinate": "Query.customer(country:)",
+        "fieldType": "CountryCode"
+      }
+    }
+  ],
+  "data": null
+}

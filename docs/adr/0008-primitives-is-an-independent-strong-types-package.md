@@ -13,4 +13,4 @@ Everything Primitives used to hold that isn't a strong type moved to Foundation:
 
 ## Consequences
 
-Moving the types is a breaking change for every application (namespaces, and Primitives no longer arrives through other packages). The API generators match the error cases by their Foundation names. Primitives is the one place LaunchPad depends on a strong types library, so replacing SuperStrong touches only Primitives.
+Moving the types is a breaking change for every application (namespaces, and Primitives no longer arrives through other packages). The API generators match the error cases by their Foundation names. Primitives is the one place LaunchPad depends on a strong types library, so replacing SuperStrong touches only Primitives. Primitives' Joints read a registry of the application's strong types written by Primitives' own source generator, in its own analyzer package (`Rocket.Surgery.LaunchPad.Primitives.Analyzers`): an exception to [ADR 0004](0004-one-generator-assembly.md), since Primitives can't depend on the analyzer assembly Foundation carries.

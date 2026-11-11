@@ -37,6 +37,11 @@
             Hosts="WebApplication"
         />
         <_LaunchPadPrimitivesTemplate
+            Include="LaunchPadStrongTypesHotChocolateJoint"
+            References="SuperStrong.Types;HotChocolate.Types"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadPrimitivesTemplate
             Include="LaunchPadStrongTypesEntityFrameworkJoint"
             References="SuperStrong.Types;Microsoft.EntityFrameworkCore"
             Hosts="HostApplication;WebApplication"

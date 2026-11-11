@@ -69,6 +69,34 @@ public class SdkStrongTypesTests(string targetFramework)
     }
 
     /// <summary>
+    ///     In a GraphQL schema a strong type is the scalar of its value (a CustomerId is a UUID): it is read and written as its value, and a
+    ///     value that breaks its rules is an input error.
+    /// </summary>
+    [Test]
+    public async Task Should_Make_Strong_Types_Scalars_Of_Their_Value()
+    {
+        using var tree = await Tree(graphQL: true);
+
+        await tree.Build("app", Cancellation);
+
+        await Verify(await tree.Run("app", Cancellation), "txt");
+    }
+
+    /// <summary>
+    ///     <c>LaunchPadStrongTypeGraphQLRepresentation</c> set to <c>Named</c> makes each strong type a scalar named after it, written as its
+    ///     value.
+    /// </summary>
+    [Test]
+    public async Task Should_Make_Strong_Types_Named_Scalars_When_Asked()
+    {
+        using var tree = await Tree(application => application.Property("LaunchPadStrongTypeGraphQLRepresentation", "Named"), graphQL: true);
+
+        await tree.Build("app", Cancellation);
+
+        await Verify(await tree.Run("app", Cancellation), "txt");
+    }
+
+    /// <summary>
     ///     An application whose strong types reach it only through its contracts has not referenced Primitives itself, so it gets no
     ///     templates, and ASP.NET Core describes the strong types as empty schemas and strings.
     /// </summary>
@@ -84,7 +112,7 @@ public class SdkStrongTypesTests(string targetFramework)
 
     private const string Primitives = "Rocket.Surgery.LaunchPad.Primitives";
 
-    private async Task<SdkTree> Tree(Func<ProjectCreator, ProjectCreator>? application = null, bool referencePrimitives = true)
+    private async Task<SdkTree> Tree(Func<ProjectCreator, ProjectCreator>? application = null, bool referencePrimitives = true, bool graphQL = false)
     {
         var packages = await PackedSdk.Pack();
         var tree = new SdkTree(packages, targetFramework);
@@ -96,8 +124,9 @@ public class SdkStrongTypesTests(string targetFramework)
                      .ItemProjectReference("../contracts/contracts.csproj")
                      .ItemPackageReference("Microsoft.EntityFrameworkCore.Sqlite", Repository.PackageVersion("Microsoft.EntityFrameworkCore.Sqlite", targetFramework));
         if (referencePrimitives) project.ItemPackageReference(Primitives, packages.Version);
+        if (graphQL) project.ItemPackageReference("HotChocolate.AspNetCore", Repository.PackageVersion("HotChocolate.AspNetCore", targetFramework));
         tree.AddProject("app", HostModel.AspNetCore, application?.Invoke(project) ?? project);
-        File.WriteAllText(Path.Combine(tree.Directory, "app", "Program.cs"), App);
+        File.WriteAllText(Path.Combine(tree.Directory, "app", "Program.cs"), graphQL ? GraphQLApp : App);
         return tree;
     }
 
@@ -127,6 +156,51 @@ public class SdkStrongTypesTests(string targetFramework)
             public Slug? Handle { get; set; }
         }
         """;
+
+    // The application prints its GraphQL schema, then the result of a query and of one whose country breaks CountryCode's rules.
+    private const string GraphQLApp = """"
+        #nullable enable
+        using System;
+        using HotChocolate;
+        using HotChocolate.Execution;
+        using Microsoft.AspNetCore.Builder;
+        using Microsoft.Extensions.DependencyInjection;
+        using Microsoft.Extensions.Logging;
+        using Rocket.Surgery.LaunchPad.StrongTypes;
+        using Throwaway;
+        using Throwaway.Contracts;
+
+        var builder = WebApplication.CreateBuilder(args);
+        builder.Logging.ClearProviders();
+        builder.Services.AddGraphQL().AddQueryType<Query>();
+        var app = await builder.ConfigureDovetail();
+
+        var executor = await app.Services.GetRequiredService<IRequestExecutorProvider>().GetExecutorAsync();
+        Console.WriteLine(executor.Schema.ToString().Trim());
+        foreach (var country in new[] { "GB", "gb" })
+        {
+            var result = await executor.ExecuteAsync(
+                $$"""{ customer(id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff", country: "{{country}}") { id email country age balance { amount currency } membership { start end } handle } }"""
+            );
+            Console.WriteLine();
+            Console.WriteLine(result.ToJson());
+        }
+
+        public sealed class Query
+        {
+            public Customer GetCustomer(CustomerId id, CountryCode country) =>
+                new()
+                {
+                    Id = id,
+                    Email = CustomerEmail.From("ada@example.com"),
+                    Country = country,
+                    Age = Age.From(36),
+                    Balance = Money.From(12.5m, CurrencyCode.From("GBP")),
+                    Membership = DateRange.From(new(2026, 1, 1), new(2026, 12, 31)),
+                    Handle = Slug.From("ada-lovelace"),
+                };
+        }
+        """";
 
     // The application serves the operations and prints the parameters and the schemas of its OpenAPI document, or, with --ef, the database
     // its context creates and an entity read back from it. The minimal API endpoints are only in the document once the application started.

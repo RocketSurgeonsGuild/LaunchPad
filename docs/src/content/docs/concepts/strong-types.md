@@ -15,6 +15,34 @@ no other LaunchPad package, and nothing else brings it: an application or librar
 <PackageReference Include="Rocket.Surgery.LaunchPad.Primitives" />
 ```
 
+## In OpenAPI, GraphQL and EF Core
+
+An application that references Primitives itself gets [Joints](../joints/) that describe its strong types, and those of its
+references, to the libraries it uses. They are [templates](../templates/#the-primitives-templates): written into the application only
+when it references the library, so Primitives depends on none of them. A source generator in Primitives finds the strong types (any
+class implementing SuperStrong's `IStrongType<TSelf, TPrimitive>`) at build time, so nothing reflects over them.
+
+| Library                      | What a strong type becomes                                                                                                                                                       |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Microsoft.AspNetCore.OpenApi | the schema of its value with the constraints of its rules (lengths, patterns, bounds, allowed values, format), in bodies and in Minimal API and MVC parameters                   |
+| HotChocolate                 | a scalar: the scalar of its value (a `Guid` strong type is `UUID`), or a scalar named after it                                                                                   |
+| Entity Framework Core        | a column of its value, with the maximum length of its rules, in every `DbContext` the application declares or references; `DateRange`, `TimeRange` and `Money` are complex types |
+
+Two MSBuild properties choose the representation:
+
+```xml
+<PropertyGroup>
+  <!-- Component (default): a schema named after the strong type; Inline: the value's schema in place -->
+  <LaunchPadStrongTypeOpenApiRepresentation>Inline</LaunchPadStrongTypeOpenApiRepresentation>
+  <!-- Value (default): the scalar of the value; Named: a scalar named after the strong type -->
+  <LaunchPadStrongTypeGraphQLRepresentation>Named</LaunchPadStrongTypeGraphQLRepresentation>
+</PropertyGroup>
+```
+
+A rule written as a predicate (`Satisfies`) has no OpenAPI form; put `[StrongTypeFormat("...")]` on a strong type or its rules to give
+its value a format (`EmailAddressRules` has `email`, `UrlRules` has `uri`). EF Core gets the converters through its
+`IValueConverterSelector`: a context that replaces that service itself configures its strong types in `ConfigureConventions`.
+
 ## Using a strong type
 
 Every strong type has the surface SuperStrong generates:
