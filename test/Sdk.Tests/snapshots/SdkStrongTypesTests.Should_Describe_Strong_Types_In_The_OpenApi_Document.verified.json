@@ -1,0 +1,165 @@
+﻿{
+  "parameters": {
+    "/customers/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerId"
+        }
+      },
+      {
+        "name": "email",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerEmail"
+        }
+      },
+      {
+        "name": "age",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/Age"
+        }
+      }
+    ],
+    "/customers/{id}/age": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerId"
+        }
+      },
+      {
+        "name": "country",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/CountryCode"
+        }
+      }
+    ]
+  },
+  "schemas": {
+    "Age": {
+      "maximum": 150,
+      "minimum": 0,
+      "pattern": "^-?(?:0|[1-9]\\d*)$",
+      "type": [
+        "integer",
+        "string"
+      ],
+      "format": "int32"
+    },
+    "CountryCode": {
+      "pattern": "^[A-Z]{2}$",
+      "type": "string"
+    },
+    "CurrencyCode": {
+      "pattern": "^[A-Z]{3}$",
+      "type": "string"
+    },
+    "Customer": {
+      "required": [
+        "id",
+        "email",
+        "country",
+        "age",
+        "balance"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/CustomerId"
+        },
+        "email": {
+          "$ref": "#/components/schemas/CustomerEmail"
+        },
+        "country": {
+          "$ref": "#/components/schemas/CountryCode"
+        },
+        "age": {
+          "$ref": "#/components/schemas/Age"
+        },
+        "balance": {
+          "$ref": "#/components/schemas/Money"
+        },
+        "membership": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/DateRange"
+            }
+          ]
+        },
+        "handle": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Slug"
+            }
+          ]
+        }
+      }
+    },
+    "CustomerEmail": {
+      "maxLength": 254,
+      "pattern": "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$",
+      "type": "string",
+      "format": "email"
+    },
+    "CustomerId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "DateRange": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Money": {
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "type": "object",
+      "properties": {
+        "amount": {
+          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "type": [
+            "number",
+            "string"
+          ],
+          "format": "double"
+        },
+        "currency": {
+          "$ref": "#/components/schemas/CurrencyCode"
+        }
+      }
+    },
+    "Slug": {
+      "maxLength": 100,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "type": "string"
+    }
+  }
+}

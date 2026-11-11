@@ -172,9 +172,10 @@ internal sealed class SdkTree : IDisposable
     /// </summary>
     /// <param name="name">The name of the project.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="arguments">The application's command line, if any.</param>
     /// <returns>The output of the application.</returns>
-    public Task<string> Run(string name, CancellationToken cancellationToken = default) =>
-        DotnetCli.Run($"\"{Path.Combine(Directory, name, "bin", "Debug", TargetFramework, $"{name}.dll")}\"", Directory, cancellationToken: cancellationToken);
+    public Task<string> Run(string name, CancellationToken cancellationToken = default, string arguments = "") =>
+        DotnetCli.Run($"\"{Path.Combine(Directory, name, "bin", "Debug", TargetFramework, $"{name}.dll")}\" {arguments}".TrimEnd(), Directory, cancellationToken: cancellationToken);
 
     /// <inheritdoc />
     public void Dispose()

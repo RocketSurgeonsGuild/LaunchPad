@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        The strong type registry generator (docs/adr/0008-primitives-is-an-independent-strong-types-package.md): it finds the strong types of an
+        application and its references and describes each one, for the Joints Primitives writes into the application as templates. Packed as its
+        own analyzer package, which Rocket.Surgery.LaunchPad.Primitives depends on; Primitives depends on nothing else of LaunchPad, so it can't
+        use the analyzer assembly Foundation carries.
+    -->
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <RootNamespace>Rocket.Surgery.LaunchPad.Primitives.Analyzers</RootNamespace>
+        <PackageDescription>The strong type registry generator of Rocket.Surgery.LaunchPad.Primitives.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;strong-types</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Polyfill" PrivateAssets="All" />
+        <!-- The oldest Roslyn the generator supports: the compiler of the .NET 10 SDK, so an application on either SDK can load it. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+        <Using Remove="Joinery.Dovetail" />
+        <Using Remove="Joinery.Dovetail.Attributes" />
+        <Using Remove="Joinery.Dovetail.Joints" />
+    </ItemGroup>
+    <!-- Packed from wherever the build wrote it: an artifacts path moves it out of bin. -->
+    <Target Name="_LaunchPadPackStrongTypeAnalyzer" BeforeTargets="_GetPackageFiles">
+        <ItemGroup>
+            <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        </ItemGroup>
+    </Target>
+</Project>

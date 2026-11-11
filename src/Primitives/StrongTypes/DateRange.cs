@@ -35,10 +35,10 @@ public sealed record DateRange
     }
 
     /// <summary>The first day of the range.</summary>
-    public DateOnly Start { get; }
+    public DateOnly Start { get; private init; }
 
     /// <summary>The last day of the range.</summary>
-    public DateOnly End { get; }
+    public DateOnly End { get; private init; }
 
     /// <summary>Whether <paramref name="date" /> is in the range.</summary>
     public bool Contains(DateOnly date) => date >= Start && date <= End;

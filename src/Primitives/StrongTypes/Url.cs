@@ -18,6 +18,7 @@ namespace Rocket.Surgery.LaunchPad.StrongTypes;
 ///         <item>The value is kept as given; it is not normalized.</item>
 ///     </list>
 /// </remarks>
+[StrongTypeFormat("uri")]
 public sealed partial class UrlRules : IStrongTypeTemplate<string>
 {
     /// <summary>The longest URL allowed.</summary>

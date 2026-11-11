@@ -32,6 +32,7 @@ namespace Rocket.Surgery.LaunchPad.StrongTypes;
 ///         </item>
 ///     </list>
 /// </remarks>
+[StrongTypeFormat("email")]
 public sealed partial class EmailAddressRules : IStrongTypeTemplate<string>
 {
     /// <summary>The longest email address RFC 5321 can deliver to.</summary>

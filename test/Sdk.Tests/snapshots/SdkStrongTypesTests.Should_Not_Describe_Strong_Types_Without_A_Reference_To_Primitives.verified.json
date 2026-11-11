@@ -1,0 +1,138 @@
+﻿{
+  "parameters": {
+    "/customers/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "email",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "age",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "/customers/{id}/age": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "country",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ]
+  },
+  "schemas": {
+    "Age": {},
+    "CountryCode": {},
+    "CurrencyCode": {},
+    "Customer": {
+      "required": [
+        "id",
+        "email",
+        "country",
+        "age",
+        "balance"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/CustomerId"
+        },
+        "email": {
+          "$ref": "#/components/schemas/CustomerEmail"
+        },
+        "country": {
+          "$ref": "#/components/schemas/CountryCode"
+        },
+        "age": {
+          "$ref": "#/components/schemas/Age"
+        },
+        "balance": {
+          "$ref": "#/components/schemas/Money"
+        },
+        "membership": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/DateRange"
+            }
+          ]
+        },
+        "handle": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Slug"
+            }
+          ]
+        }
+      }
+    },
+    "CustomerEmail": {},
+    "CustomerId": {},
+    "DateRange": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Money": {
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "type": "object",
+      "properties": {
+        "amount": {
+          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "type": [
+            "number",
+            "string"
+          ],
+          "format": "double"
+        },
+        "currency": {
+          "$ref": "#/components/schemas/CurrencyCode"
+        }
+      }
+    },
+    "Slug": {}
+  }
+}

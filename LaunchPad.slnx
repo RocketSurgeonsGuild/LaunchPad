@@ -91,6 +91,7 @@
     <Project Path="src/NodaTime.HotChocolate/Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <Project Path="src/NodaTime.StrawberryShake/Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj" />
     <Project Path="src/NodaTime/Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    <Project Path="src/Primitives/Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Sdk/Rocket.Surgery.LaunchPad.Sdk.csproj" />
     <Project Path="src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />

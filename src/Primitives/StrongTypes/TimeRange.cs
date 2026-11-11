@@ -35,10 +35,10 @@ public sealed record TimeRange
     }
 
     /// <summary>The time the range starts at.</summary>
-    public TimeOnly Start { get; }
+    public TimeOnly Start { get; private init; }
 
     /// <summary>The time the range ends at.</summary>
-    public TimeOnly End { get; }
+    public TimeOnly End { get; private init; }
 
     /// <summary>How long the range is.</summary>
     [JsonIgnore]

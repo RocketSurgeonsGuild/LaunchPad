@@ -40,10 +40,10 @@ public sealed record Money
     }
 
     /// <summary>The amount, in units of the currency (not minor units: 12.50 US dollars is 12.50).</summary>
-    public decimal Amount { get; }
+    public decimal Amount { get; private init; }
 
     /// <summary>The currency.</summary>
-    public CurrencyCode Currency { get; }
+    public CurrencyCode Currency { get; private init; }
 
     /// <inheritdoc />
     public override string ToString() => string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{Amount} {Currency}");

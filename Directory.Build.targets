@@ -20,6 +20,15 @@
     -->
     <Import Project="$(MSBuildThisFileDirectory)src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets" />
     <!--
+        The templates of LaunchPad.Primitives, for the same reason: written into a project with a direct reference to Primitives that meets the
+        template's other gates (src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.Templates.targets). Only the templates: the rest of
+        Primitives' targets is for the projects that reference the package.
+    -->
+    <Import
+        Project="$(MSBuildThisFileDirectory)src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.Templates.targets"
+        Condition="'$(_LaunchPadPrimitivesTemplatesImported)' != 'true'"
+    />
+    <!--
         The same for LaunchPad.Foundation, whose targets write an executable's JSON context with the task of src/Foundation.Tasks. Here the task
         comes from that project's output instead of the package's tasks folder; every project that writes a context builds it first.
     -->
