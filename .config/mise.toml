@@ -24,7 +24,7 @@ biome = "2.5.2"
 "dotnet:verify.tool" = "0.7.0"
 "dotnet:gitreleasemanager.tool" = "0.20.0"
 "dotnet:NuGet.Mcp.Server" = "1.4.3"
-tombi = "1.10.0"
+tombi = "1.11.2"
 oxfmt = "0.75.0"
 
 [tasks]
