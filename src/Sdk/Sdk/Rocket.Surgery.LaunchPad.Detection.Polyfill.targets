@@ -32,7 +32,6 @@
         <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore" />
         <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor" />
         <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc" />
-        <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate" />
         <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.Grpc" />
         <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.HotChocolate" />
         <_LaunchPadFoundationPackage Include="Rocket.Surgery.LaunchPad.StrawberryShake" />

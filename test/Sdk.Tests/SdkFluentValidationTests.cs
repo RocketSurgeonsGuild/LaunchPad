@@ -6,8 +6,8 @@ namespace Sdk.Tests;
 
 /// <summary>
 ///     The LaunchPad SDK adds <c>Rocket.Surgery.LaunchPad.FluentValidation</c> to a project that references FluentValidation directly, and
-///     each of its partner packages only when the partner is there too: ASP.NET Core (the host model), gRPC (<c>Grpc.AspNetCore</c>),
-///     GraphQL (<c>HotChocolate</c>) and Blazor (the WebAssembly host model, or <c>Microsoft.AspNetCore.Components.Web</c>).
+///     each of its partner packages only when the partner is there too: ASP.NET Core (the host model), gRPC (<c>Grpc.AspNetCore</c>)
+///     and Blazor (the WebAssembly host model, or <c>Microsoft.AspNetCore.Components.Web</c>). GraphQL has no FluentValidation package.
 ///     <c>LaunchPadEnableFluentValidation</c> set to <c>false</c> opts a project out.
 /// </summary>
 /// <param name="targetFramework">The target framework of the throwaway projects.</param>
@@ -65,10 +65,10 @@ public class SdkFluentValidationTests(string targetFramework)
     }
 
     /// <summary>
-    ///     An application that references HotChocolate gets the GraphQL package, and not the gRPC one.
+    ///     An application that references HotChocolate gets no FluentValidation package for it: there is none for HotChocolate 16.
     /// </summary>
     [Test]
-    public async Task Should_Give_An_Application_FluentValidation_For_GraphQL()
+    public async Task Should_Not_Give_An_Application_FluentValidation_For_GraphQL()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.AspNetCore, WithFluentValidation(HostModel.AspNetCore).ItemPackageReference("HotChocolate", Repository.PackageVersion("HotChocolate", targetFramework)));

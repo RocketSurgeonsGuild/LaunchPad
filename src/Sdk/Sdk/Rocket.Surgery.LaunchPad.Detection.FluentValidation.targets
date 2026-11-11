@@ -5,12 +5,12 @@
           - Rocket.Surgery.LaunchPad.FluentValidation
           - Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore, when it is an ASP.NET Core application (the WebApplication host model)
           - Rocket.Surgery.LaunchPad.FluentValidation.Grpc, when it also references a gRPC server package
-          - Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate, when it also references HotChocolate
           - Rocket.Surgery.LaunchPad.FluentValidation.Blazor, when it is a Blazor WebAssembly application (the WebAssembly host model), or
             references Microsoft.AspNetCore.Components.Web. A Blazor Server application gets the components from the ASP.NET Core shared
             framework, which is no package reference, so it references Rocket.Surgery.LaunchPad.FluentValidation.Blazor itself.
         LaunchPadEnableFluentValidation set to false opts a project out, the integration packages included; opting the partner technology
-        out keeps its integration package out.
+        out keeps its integration package out. There is no FluentValidation package for GraphQL: FairyBread, which it was built on, has no
+        release for HotChocolate 16.
     -->
     <ItemGroup Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'FluentValidation')) == 'true'">
         <DovetailSdkImplicitPackageReference Include="Rocket.Surgery.LaunchPad.FluentValidation" Version="$(LaunchPadVersion)" />
@@ -23,11 +23,6 @@
             Include="Rocket.Surgery.LaunchPad.FluentValidation.Grpc"
             Version="$(LaunchPadVersion)"
             Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'Grpc')) == 'true'"
-        />
-        <DovetailSdkImplicitPackageReference
-            Include="Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate"
-            Version="$(LaunchPadVersion)"
-            Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'HotChocolate')) == 'true'"
         />
         <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.FluentValidation.Blazor"

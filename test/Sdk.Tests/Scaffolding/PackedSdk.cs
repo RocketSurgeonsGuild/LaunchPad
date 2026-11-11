@@ -42,7 +42,6 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         Path.Combine("src", "FluentValidation.AspNetCore", "Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore.csproj"),
         Path.Combine("src", "FluentValidation.Blazor", "Rocket.Surgery.LaunchPad.FluentValidation.Blazor.csproj"),
         Path.Combine("src", "FluentValidation.Grpc", "Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj"),
-        Path.Combine("src", "FluentValidation.HotChocolate", "Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj"),
         Path.Combine("src", "ZeroAlloc.AspNetCore", "Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj"),
         Path.Combine("src", "ZeroAlloc.Blazor", "Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj"),
         Path.Combine("src", "ZeroAlloc.Grpc", "Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj"),

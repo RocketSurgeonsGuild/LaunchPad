@@ -82,7 +82,6 @@
     <Project Path="src/ZeroAlloc.Blazor/Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
     <Project Path="src/FluentValidation.Grpc/Rocket.Surgery.LaunchPad.FluentValidation.Grpc.csproj" />
     <Project Path="src/ZeroAlloc.Grpc/Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj" />
-    <Project Path="src/FluentValidation.HotChocolate/Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate.csproj" />
     <Project Path="src/ZeroAlloc.HotChocolate/Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate.csproj" />
     <Project Path="src/Foundation/Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <Project Path="src/Grpc/Rocket.Surgery.LaunchPad.Grpc.csproj" />
@@ -112,7 +111,6 @@
     <Project Path="test/ZeroAlloc.Blazor.Tests/ZeroAlloc.Blazor.Tests.csproj" />
     <Project Path="test/FluentValidation.Grpc.Tests/FluentValidation.Grpc.Tests.csproj" />
     <Project Path="test/ZeroAlloc.Grpc.Tests/ZeroAlloc.Grpc.Tests.csproj" />
-    <Project Path="test/FluentValidation.HotChocolate.Tests/FluentValidation.HotChocolate.Tests.csproj" />
     <Project Path="test/ZeroAlloc.HotChocolate.Tests/ZeroAlloc.HotChocolate.Tests.csproj" />
     <Project Path="test/FluentValidation.Tests/FluentValidation.Tests.csproj" />
     <Project Path="test/Graphql.Tests/Graphql.Tests.csproj" />
