@@ -43,7 +43,6 @@
               <Exclude>
                 <ModulePath>.*[\\/]Alba\.dll</ModulePath>
                 <ModulePath>.*[\\/]Bogus\.dll</ModulePath>
-                <ModulePath>.*[\\/]FairyBread\.dll</ModulePath>
                 <ModulePath>.*[\\/]FakeItEasy\.Analyzer\.CSharp\.dll</ModulePath>
                 <ModulePath>.*[\\/]FakeItEasy\.dll</ModulePath>
                 <ModulePath>.*[\\/]FluentValidation\.AspNetCore\.dll</ModulePath>

@@ -129,8 +129,8 @@ Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3
 | `LaunchPad.NodaTime.NewtonsoftJson`  | converters and extensions from `Foundation.NewtonsoftJson`                                           | Newtonsoft.Json            | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
 | `LaunchPad.NodaTime.Mapping`         | `NodaTimeMapper`, `NodaTimeDateTimeMapper`                                                           | Riok.Mapperly              | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
 | `LaunchPad.NodaTime.EntityFramework` | the two NodaTime value generators                                                                    | EF Core                    | [#3065](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3065) |
-| `LaunchPad.NodaTime.HotChocolate`    | `AddNodaTime`, the time-zone cache setup                                                             | HotChocolate               | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
-| `LaunchPad.NodaTime.StrawberryShake` | the 13 NodaTime serializers and their base, all registered (OffsetDate, DateTimeZone were not)       | StrawberryShake            | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
+| `LaunchPad.NodaTime.HotChocolate`    | HotChocolate 16's `AddNodaTime` and the filter bindings (the five scalars HotChocolate 16 has)       | HotChocolate               | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
+| `LaunchPad.NodaTime.StrawberryShake` | the serializers for HotChocolate 16's five NodaTime scalars and their base, all registered           | StrawberryShake            | [#3066](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3066) |
 | `LaunchPad.NodaTime.Serilog`         | `NodaTimeDestructuringPolicy`, `Destructure.NodaTimeTypes()` and the Core `NodaTimeSerilogJoint`     | Serilog                    | [#3067](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3067) |
 
 ### Newtonsoft.Json and NetTopologySuite
@@ -147,7 +147,7 @@ Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3
 | `LaunchPad.FluentValidation`              | the convention, validators and the MediatR pipeline behavior, out of Foundation          | FluentValidation           | [#3068](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3068) |
 | `LaunchPad.FluentValidation.AspNetCore`   | ASP.NET Core validation behaviours; absorbs the experimental OpenAPI transformer package | ASP.NET Core               | [#3069](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3069) |
 | `LaunchPad.FluentValidation.Grpc`         | gRPC validation                                                                          | Grpc.AspNetCore            | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) |
-| `LaunchPad.FluentValidation.HotChocolate` | the FairyBread integration                                                               | HotChocolate               | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) |
+| `LaunchPad.FluentValidation.HotChocolate` | removed: FairyBread has no release for HotChocolate 16                                   | HotChocolate               | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) |
 | `LaunchPad.FluentValidation.Blazor`       | the validator component (all that `AspNetCore.Blazor` contains)                          | Blazor components          | [#3070](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3070) |
 
 ### SDK detection
@@ -161,7 +161,7 @@ All packages are `Rocket.Surgery.LaunchPad.<name>`. Detection uses direct packag
 | Newtonsoft.Json     | `Foundation.NewtonsoftJson`; `AspNetCore.NewtonsoftJson` (ASP.NET Core); `Mapping.NewtonsoftJson` (Mapperly); `Spatial.NewtonsoftJson` (NetTopologySuite); `NewtonsoftJson.Serilog` (Serilog) | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
 | NetTopologySuite    | `Spatial`; `Spatial.NewtonsoftJson` (Newtonsoft.Json); `StrawberryShake.Spatial` (StrawberryShake); `Spatial.Serilog` (Serilog)                                                               | [#3074](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3074) |
 | Serilog             | Dovetail's Serilog package (through the chained SDK); `Serilog.AspNetCore` (ASP.NET Core: request logging, #3063)                                                                             | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
-| FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.HotChocolate`; `.Blazor` (each when its host library is referenced)                                                                             | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
+| FluentValidation    | `FluentValidation`; `.AspNetCore`; `.Grpc`; `.Blazor` (each when its host library is referenced)                                                                                              | [#3075](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3075) |
 
 Other libraries (HotChocolate, Grpc, EF Core, Mapperly, MediatR) are referenced explicitly in the first release.
 

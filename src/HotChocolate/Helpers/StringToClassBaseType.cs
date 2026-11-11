@@ -1,4 +1,8 @@
+using System.Text.Json;
+
+using HotChocolate.Features;
 using HotChocolate.Language;
+using HotChocolate.Text.Json;
 using HotChocolate.Types;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
@@ -7,14 +11,13 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate.Helpers;
 ///     String class base type
 /// </summary>
 /// <typeparam name="TRuntimeType"></typeparam>
-public abstract class StringToClassBaseType<TRuntimeType> : ScalarType<TRuntimeType, StringValueNode>
+/// <remarks>
+///     Create the base type
+/// </remarks>
+/// <param name="name"></param>
+public abstract class StringToClassBaseType<TRuntimeType>(string name) : ScalarType<TRuntimeType, StringValueNode>(name, BindingBehavior.Implicit)
     where TRuntimeType : class
 {
-    /// <summary>
-    ///     Create the base type
-    /// </summary>
-    /// <param name="name"></param>
-    protected StringToClassBaseType(string name) : base(name, BindingBehavior.Implicit) { }
 
     /// <summary>
     ///     Method to serialize
@@ -32,72 +35,25 @@ public abstract class StringToClassBaseType<TRuntimeType> : ScalarType<TRuntimeT
     protected abstract bool TryDeserialize(string str, [NotNullWhen(true)] out TRuntimeType? output);
 
     /// <inheritdoc />
-    protected override TRuntimeType ParseLiteral(StringValueNode valueSyntax)
+    protected override TRuntimeType OnCoerceInputLiteral(StringValueNode valueLiteral)
     {
-        if (TryDeserialize(valueSyntax.Value, out var value)) return value;
-
-        throw new SerializationException(
-            $"Unable to deserialize string to {Name}",
-            this
-        );
+        return TryDeserialize(valueLiteral.Value, out var value)
+            ? value
+            : throw new LeafCoercionException($"Unable to deserialize string to {Name}", this);
     }
 
     /// <inheritdoc />
-    protected override StringValueNode ParseValue(TRuntimeType runtimeValue)
+    protected override TRuntimeType OnCoerceInputValue(JsonElement inputValue, IFeatureProvider context)
     {
-        return new(Serialize(runtimeValue));
+        return inputValue.GetString() is { } str && TryDeserialize(str, out var value)
+            ? value
+            : throw new LeafCoercionException($"Unable to deserialize string to {Name}", this);
     }
 
     /// <inheritdoc />
-    public override IValueNode ParseResult(object? resultValue)
-    {
-        if (resultValue is null) return NullValueNode.Default;
-
-        if (resultValue is string s) return new StringValueNode(s);
-
-        if (resultValue is TRuntimeType v) return ParseValue(v);
-
-        throw new SerializationException(
-            $"Unable to deserialize string to {Name}",
-            this
-        );
-    }
+    protected override void OnCoerceOutputValue(TRuntimeType runtimeValue, ResultElement resultValue) =>
+        resultValue.SetStringValue(Serialize(runtimeValue));
 
     /// <inheritdoc />
-    public override bool TrySerialize(object? runtimeValue, out object? resultValue)
-    {
-        if (runtimeValue is null)
-        {
-            resultValue = null;
-            return true;
-        }
-
-        if (runtimeValue is TRuntimeType dt)
-        {
-            resultValue = Serialize(dt);
-            return true;
-        }
-
-        resultValue = null;
-        return false;
-    }
-
-    /// <inheritdoc />
-    public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
-    {
-        if (resultValue is null)
-        {
-            runtimeValue = null;
-            return true;
-        }
-
-        if (resultValue is string str && TryDeserialize(str, out var val))
-        {
-            runtimeValue = val;
-            return true;
-        }
-
-        runtimeValue = null;
-        return false;
-    }
+    protected override StringValueNode OnValueToLiteral(TRuntimeType runtimeValue) => new(Serialize(runtimeValue));
 }

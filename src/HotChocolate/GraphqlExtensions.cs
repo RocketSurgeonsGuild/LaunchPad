@@ -24,7 +24,7 @@ public static class GraphqlExtensions
     /// <param name="error"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public static IErrorBuilder WithProblemDetails(this IErrorBuilder error, IProblemDetailsData data)
+    public static ErrorBuilder WithProblemDetails(this ErrorBuilder error, IProblemDetailsData data)
     {
         error.SetExtension("type", "ProblemDetails");
         if (data.Title is { })
@@ -55,7 +55,7 @@ public static class GraphqlExtensions
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)]
     TStrongType,
         TSchemaType>(this IRequestExecutorBuilder builder)
-        where TSchemaType : INamedType
+        where TSchemaType : ITypeDefinition
     {
         AddTypeConversion<TStrongType>(builder);
         builder.BindRuntimeType<TStrongType, TSchemaType>();

@@ -1,11 +1,11 @@
-﻿using HotChocolate.Data.Filters;
+using HotChocolate.Data.Filters;
 using HotChocolate.Types;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
 [UsedImplicitly]
 internal sealed class StronglyTypedIdFilter<TSchemaType> : FilterInputType, IComparableOperationFilterInputType
-    where TSchemaType : INamedType
+    where TSchemaType : ITypeDefinition
 {
     protected override void Configure(IFilterInputTypeDescriptor descriptor)
     {

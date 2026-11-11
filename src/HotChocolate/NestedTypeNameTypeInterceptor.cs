@@ -1,7 +1,7 @@
 using HotChocolate.Configuration;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
-using HotChocolate.Types.Descriptors.Definitions;
+using HotChocolate.Types.Descriptors.Configurations;
 
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
@@ -11,30 +11,27 @@ namespace Rocket.Surgery.LaunchPad.HotChocolate;
 public class NestedTypeNameTypeInterceptor : TypeInterceptor
 {
     /// <inheritdoc />
-    public override void OnBeforeCompleteName(
-        ITypeCompletionContext completionContext,
-        DefinitionBase? definition
-    )
+    public override void OnBeforeCompleteName(ITypeCompletionContext completionContext, TypeSystemConfiguration configuration)
     {
-        if (definition is IFilterInputTypeDefinition { EntityType: { IsNested: true, DeclaringType: { }, }, } ft)
+        if (configuration is IFilterInputTypeConfiguration { EntityType: { IsNested: true, DeclaringType: { } }, } ft)
         {
-            definition.Name = Prefixed(ft.EntityType.DeclaringType, definition.Name);
+            configuration.Name = Prefixed(ft.EntityType.DeclaringType, configuration.Name);
         }
-        else if (definition is ISortInputTypeDefinition { EntityType: { IsNested: true, DeclaringType: { }, }, } st)
+        else if (configuration is ISortInputTypeConfiguration { EntityType: { IsNested: true, DeclaringType: { } }, } st)
         {
-            definition.Name = Prefixed(st.EntityType.DeclaringType, definition.Name);
+            configuration.Name = Prefixed(st.EntityType.DeclaringType, configuration.Name);
         }
-        else if (definition is IComplexOutputTypeDefinition { RuntimeType: { IsNested: true, DeclaringType: { }, }, } cot)
+        else if (configuration is IComplexOutputTypeConfiguration { RuntimeType: { IsNested: true, DeclaringType: { } }, } cot)
         {
-            definition.Name = Prefixed(cot.RuntimeType.DeclaringType, cot.Name);
-            if (definition.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && cot.RuntimeType.Name == "Request")
-                definition.Name = $"{cot.RuntimeType.DeclaringType.Name}{cot.RuntimeType.Name}";
+            configuration.Name = Prefixed(cot.RuntimeType.DeclaringType, configuration.Name);
+            if (configuration.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && cot.RuntimeType.Name == "Request")
+                configuration.Name = $"{cot.RuntimeType.DeclaringType.Name}{cot.RuntimeType.Name}";
         }
-        else if (definition is ITypeDefinition { RuntimeType: { IsNested: true, DeclaringType: { }, }, } ot)
+        else if (configuration is ITypeConfiguration { RuntimeType: { IsNested: true, DeclaringType: { } }, } ot)
         {
-            definition.Name = Prefixed(ot.RuntimeType.DeclaringType, ot.Name);
-            if (definition.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && ot.RuntimeType.Name == "Request")
-                definition.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.RuntimeType.Name}";
+            configuration.Name = Prefixed(ot.RuntimeType.DeclaringType, configuration.Name);
+            if (configuration.Name.EndsWith("Input", StringComparison.OrdinalIgnoreCase) && ot.RuntimeType.Name == "Request")
+                configuration.Name = $"{ot.RuntimeType.DeclaringType.Name}{ot.RuntimeType.Name}";
         }
     }
 

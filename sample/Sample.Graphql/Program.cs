@@ -2,6 +2,8 @@ using HotChocolate;
 using HotChocolate.Configuration;
 using HotChocolate.Types.Spatial;
 
+using NodaTime;
+
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
 
@@ -20,6 +22,10 @@ builder
    .AddProjections()
    .ConfigureStronglyTypedId<RocketId, UuidType>()
    .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
+   // HotChocolate 16 has no Instant scalar: the launch dates of Sample.Core travel as the DateTime scalar, in UTC.
+   .BindRuntimeType<Instant, HotChocolate.Types.NodaTime.DateTimeType>()
+   .AddTypeConverter<Instant, OffsetDateTime>(instant => instant.WithOffset(Offset.Zero))
+   .AddTypeConverter<OffsetDateTime, Instant>(dateTime => dateTime.ToInstant())
 //           .AddDefaultTransactionScopeHandler()
 
 //           .AddSpatialProjections()

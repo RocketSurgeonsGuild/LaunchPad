@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using NodaTime;
-using NodaTime.Extensions;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
@@ -51,7 +50,7 @@ public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
                 RocketId = record.RocketId.Value,
-                ScheduledLaunchDate = launchDate.ToInstant(),
+                ScheduledLaunchDate = OffsetDateTime.FromDateTimeOffset(launchDate),
                 PayloadWeightKg = 200,
             }, TestContext.CancellationToken
         );
@@ -59,7 +58,7 @@ public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest
         var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value, TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.ShouldBe(launchDate);
+        response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.ToDateTimeOffset().ShouldBe(launchDate);
         response.Data.LaunchRecords!.Nodes[0].PayloadWeightKg.ShouldBe(200);
     }
 

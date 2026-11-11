@@ -1,15 +1,9 @@
-﻿#query GetNodaTimeTypes($inputs: NodaTimeInputsInput!) {
+#query GetNodaTimeTypes($inputs: NodaTimeInputsInput!) {
 #    nodaTimeTest(inputs: $inputs) {
-#        isoDayOfWeek
-#        offset
-#        period
-#        zonedDateTime
-#        offsetTime
 #        offsetDateTime
 #        localTime
 #        localDateTime
 #        localDate
-#        instant
 #        duration
 #    }
 #}

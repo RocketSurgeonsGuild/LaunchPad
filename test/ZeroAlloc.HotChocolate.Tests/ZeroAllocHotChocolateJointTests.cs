@@ -64,7 +64,7 @@ public class ZeroAllocHotChocolateJointTests
         context.GetOrAdd(() => services.AddGraphQL()).AddQueryType<Query>();
         new GraphqlJoint().Register(context, services);
         new ZeroAllocHotChocolateJoint().Register(context, services);
-        return await services.BuildServiceProvider().GetRequiredService<IRequestExecutorResolver>().GetRequestExecutorAsync();
+        return await services.BuildServiceProvider().GetRequiredService<IRequestExecutorProvider>().GetExecutorAsync();
     }
 
     public class Query
