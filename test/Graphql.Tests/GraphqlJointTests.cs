@@ -83,7 +83,7 @@ public class GraphqlJointTests
         var context = await JointContext.Create();
         context.GetOrAdd(() => services.AddGraphQL()).AddQueryType<Query>();
         new GraphqlJoint().Register(context, services);
-        return await services.BuildServiceProvider().GetRequiredService<IRequestExecutorResolver>().GetRequestExecutorAsync();
+        return await services.BuildServiceProvider().GetRequiredService<IRequestExecutorProvider>().GetExecutorAsync();
     }
 
     public class Query

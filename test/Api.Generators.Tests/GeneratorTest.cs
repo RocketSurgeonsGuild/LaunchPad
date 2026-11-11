@@ -219,7 +219,11 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                 typeof(SchemaRequestExecutorBuilderExtensions).Assembly,
                 typeof(HotChocolate.Authorization.AuthorizeAttribute).Assembly,
                 typeof(HotChocolate.Types.IInputObjectTypeDescriptor<>).Assembly,
-                typeof(HotChocolate.Language.OperationType).Assembly
+                typeof(HotChocolate.Language.OperationType).Assembly,
+                // HotChocolate 16 moved GraphQLException, IError and ErrorBuilder to HotChocolate.Execution.Abstractions, and the
+                // resolver context carries the IFeatureProvider of HotChocolate.Features
+                typeof(HotChocolate.GraphQLException).Assembly,
+                typeof(HotChocolate.Features.IFeatureProvider).Assembly
             );
 
 

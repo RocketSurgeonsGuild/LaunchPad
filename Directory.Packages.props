@@ -27,9 +27,6 @@
     <PackageVersion Include="Sourcy.DotNet" Version="1.1.1" />
     <PackageVersion Include="Sourcy.Git" Version="1.1.1" />
     <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.52" />
-        <PackageVersion Include="FairyBread">
-            <Version>11.0.0</Version>
-        </PackageVersion>
         <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
 
         <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.20.1-rc.1" />
@@ -66,23 +63,23 @@
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
         <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.4.3" />
-        <PackageVersion Include="HotChocolate" Version="15.1.21" />
+        <PackageVersion Include="HotChocolate" Version="16.7.5" />
 
-        <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Data" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Diagnostics" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="15.1.21" />
+        <PackageVersion Include="HotChocolate.AspNetCore" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Data" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Diagnostics" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="16.7.5" />
 
-        <PackageVersion Include="HotChocolate.Data.Spatial" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Types.Analyzers" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Types.NodaTime" Version="15.1.21" />
-        <PackageVersion Include="HotChocolate.Types.Spatial" Version="15.1.21" />
-        <PackageVersion Include="StrawberryShake.Transport.Http" Version="15.1.21" />
+        <PackageVersion Include="HotChocolate.Data.Spatial" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Types.Analyzers" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Types.NodaTime" Version="16.7.5" />
+        <PackageVersion Include="HotChocolate.Types.Spatial" Version="16.7.5" />
+        <PackageVersion Include="StrawberryShake.Transport.Http" Version="16.7.5" />
 
-        <PackageVersion Include="StrawberryShake.Core" Version="15.1.21" />
-        <PackageVersion Include="StrawberryShake.Server" Version="15.1.21" />
+        <PackageVersion Include="StrawberryShake.Core" Version="16.7.5" />
+        <PackageVersion Include="StrawberryShake.Server" Version="16.7.5" />
 
 
         <PackageVersion Include="MediatR" Version="12.5.0" />

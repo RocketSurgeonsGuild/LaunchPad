@@ -11,7 +11,7 @@ public class LocalDateTimeSerializer : NodaTimeStringScalarSerializer<LocalDateT
     /// <summary>
     /// Create a new LocalDateTimeSerializer
     /// </summary>
-    public LocalDateTimeSerializer() : base(LocalDateTimePattern.GeneralIso, "LocalDateTime")
+    public LocalDateTimeSerializer() : base(LocalDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFF"), "LocalDateTime")
     {
     }
 }

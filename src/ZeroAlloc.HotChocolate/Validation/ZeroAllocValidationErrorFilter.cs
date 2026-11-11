@@ -1,4 +1,5 @@
 using HotChocolate;
+using HotChocolate.Execution;
 
 using ZeroAlloc.Mediator.Validation;
 

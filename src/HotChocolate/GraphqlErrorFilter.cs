@@ -1,4 +1,5 @@
 using HotChocolate;
+using HotChocolate.Execution;
 
 using Rocket.Surgery.LaunchPad.Foundation;
 

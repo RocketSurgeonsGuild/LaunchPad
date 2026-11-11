@@ -37,7 +37,7 @@ public class CreateLaunchRecordTests : GraphQlWebAppFixtureTest
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
                 RocketId = rocket.Id.Value,
-                ScheduledLaunchDate = clock.GetCurrentInstant(),
+                ScheduledLaunchDate = clock.GetCurrentInstant().WithOffset(Offset.Zero),
                 PayloadWeightKg = 100,
             },
             cancellationToken: TestContext.CancellationToken
