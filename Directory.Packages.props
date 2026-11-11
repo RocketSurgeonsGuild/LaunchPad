@@ -50,6 +50,7 @@
         <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.11.0" />
         <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.11.0" />
         <PackageVersion Include="Polyfill" Version="11.4.5" />
+        <PackageVersion Include="SuperStrong.Types" Version="1.0.0" />
 
 
 

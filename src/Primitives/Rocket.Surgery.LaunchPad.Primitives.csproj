@@ -5,14 +5,28 @@
     -->
     <PropertyGroup>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
-        <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageDescription>Ready-made strong types (email addresses, country and currency codes, IBANs, amounts and more) built on SuperStrong.</PackageDescription>
+        <PackageTags>$(PackageTags);strong-types;superstrong</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
+        <!-- The strong types live in Rocket.Surgery.LaunchPad.StrongTypes, under the StrongTypes folder. -->
+        <RootNamespace>Rocket.Surgery.LaunchPad</RootNamespace>
+        <!--
+            SuperStrong's generator writes each strong type's members (From, TryFrom, Parse, the operators) without XML documentation, and an
+            .editorconfig severity does not reach generated code for CS1591.
+        -->
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
+    </ItemGroup>
+    <ItemGroup>
+        <!--
+            SuperStrong's source generator and analyzers flow to every project that references Primitives, so an application declares its own
+            strong types with the same rules sets.
+        -->
+        <PackageReference Include="SuperStrong.Types" />
     </ItemGroup>
     <ItemGroup>
         <!-- Primitives uses nothing of Dovetail; the joints it ships are templates compiled in the application. -->
