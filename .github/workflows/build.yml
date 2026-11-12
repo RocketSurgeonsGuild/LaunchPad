@@ -167,10 +167,21 @@ jobs:
                   cache_save: false
                   experimental: true
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-            - name: 🧪 Test
-              run: mise exec -- dotnet test --project "test/$PROJECT/$PROJECT.csproj" --configuration Release --results-directory artifacts/logs/tests --report-trx --report-trx-filename "$PROJECT.trx"
+            # Built first and tested with --no-build, as the pipeline does: on a fresh runner, letting dotnet test build the
+            # multi-targeted Hosting.Tests failed with MSB3030 (obj/Release/net10.0/apphost not found).
+            - name: ⚙️ Build
+              run: mise exec -- dotnet build "test/$PROJECT/$PROJECT.csproj" --configuration Release
               env:
                   PROJECT: ${{ matrix.project }}
+                  # mise exec would otherwise install every tool of .config/mise.toml first; these jobs only need dotnet.
+                  MISE_EXEC_AUTO_INSTALL: 'false'
+            - name: 🧪 Test
+              # No --report-trx-filename: the two target frameworks of Hosting.Tests would write the same file, and the second would
+              # replace the first. The default names are unique.
+              run: mise exec -- dotnet test --project "test/$PROJECT/$PROJECT.csproj" --configuration Release --no-build --results-directory artifacts/logs/tests --report-trx
+              env:
+                  PROJECT: ${{ matrix.project }}
+                  MISE_EXEC_AUTO_INSTALL: 'false'
             # Publish Results reads every "test data" artifact of the run.
             - name: 🏺 Publish test data
               if: always()
