@@ -167,8 +167,7 @@ jobs:
                   cache_save: false
                   experimental: true
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-            # Built first and tested with --no-build, as the pipeline does: on a fresh runner, letting dotnet test build the
-            # multi-targeted Hosting.Tests failed with MSB3030 (obj/Release/net10.0/apphost not found).
+            # Built first and tested with --no-build, as the pipeline does, so a build failure shows as one.
             - name: ⚙️ Build
               run: mise exec -- dotnet build "test/$PROJECT/$PROJECT.csproj" --configuration Release
               env:
