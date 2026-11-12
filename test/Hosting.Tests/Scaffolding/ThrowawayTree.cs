@@ -128,7 +128,7 @@ internal sealed class ThrowawayTree : IDisposable
         // A tree in the repository builds src/ projects (Hosting, and Foundation.Tasks for the JSON context) into their own bin and obj
         // folders, which every such tree shares: two of these builds at once, from tests running in parallel or from the process of the other
         // target framework, write the same files and fail with "being used by another process". They take turns instead.
-        await using var turn = await RepositoryBuildLock.Acquire(cancellationToken);
+        await using var turn = await AcquireRepositoryBuildLock(cancellationToken);
         return await DotnetCli.Run(arguments, Directory, null, cancellationToken);
     }
 
@@ -235,6 +235,32 @@ internal sealed class ThrowawayTree : IDisposable
     ///     MSBuild reports the project of a project reference under the resolved path, and NuGet leaves a project it finds under another
     ///     path than the reference's out of the restore.
     /// </summary>
+    /// <summary>
+    ///     Takes the lock, held across processes, on building projects of the repository: a file in <c>artifacts/hosting-tests</c> opened
+    ///     without sharing (an <c>flock</c> on Linux and macOS). The test processes of both target frameworks open the same file, so only
+    ///     one build holds it at a time.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The lock, released when it is disposed.</returns>
+    private static async Task<IAsyncDisposable> AcquireRepositoryBuildLock(CancellationToken cancellationToken)
+    {
+        var lockFile = Path.Combine(Repository.Root, "artifacts", "hosting-tests", ".build.lock");
+        System.IO.Directory.CreateDirectory(Path.GetDirectoryName(lockFile)!);
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                return new FileStream(lockFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                // another build has it
+                await Task.Delay(TimeSpan.FromMilliseconds(250), cancellationToken);
+            }
+        }
+    }
+
     private static string ResolveLinks(string path)
     {
         if (OperatingSystem.IsWindows()) return path;
