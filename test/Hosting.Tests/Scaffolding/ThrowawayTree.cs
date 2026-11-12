@@ -117,13 +117,20 @@ internal sealed class ThrowawayTree : IDisposable
     /// <param name="name">The name of the project.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The output of the build.</returns>
-    public Task<string> Build(string name, CancellationToken cancellationToken = default) =>
-        DotnetCli.Run(
-            $"build \"{Path.Combine(Directory, name, $"{name}.csproj")}\" --nologo -nodeReuse:false",
-            Directory,
-            _inRepository ? null : new Dictionary<string, string?> { ["NUGET_PACKAGES"] = PackagesFolder },
-            cancellationToken
-        );
+    public async Task<string> Build(string name, CancellationToken cancellationToken = default)
+    {
+        var arguments = $"build \"{Path.Combine(Directory, name, $"{name}.csproj")}\" --nologo -nodeReuse:false";
+        if (!_inRepository)
+        {
+            return await DotnetCli.Run(arguments, Directory, new Dictionary<string, string?> { ["NUGET_PACKAGES"] = PackagesFolder }, cancellationToken);
+        }
+
+        // A tree in the repository builds src/ projects (Hosting, and Foundation.Tasks for the JSON context) into their own bin and obj
+        // folders, which every such tree shares: two of these builds at once, from tests running in parallel or from the process of the other
+        // target framework, write the same files and fail with "being used by another process". They take turns instead.
+        await using var turn = await RepositoryBuildLock.Acquire(cancellationToken);
+        return await DotnetCli.Run(arguments, Directory, null, cancellationToken);
+    }
 
     /// <summary>
     ///     Runs a project that was built, and returns what it wrote.
