@@ -42,4 +42,14 @@
         />
     </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+    <!--
+        The test projects named in LaunchPadTestsInOwnJob (an environment variable, ';'-separated project names) are not test projects for
+        this build: the pipeline's TestSolutionModule runs only the projects whose IsTestProject is true, and build.yml runs these in jobs of
+        their own (package-tests). They still build. A `mise run build` on a dev machine leaves the variable unset and runs every test.
+    -->
+    <PropertyGroup
+        Condition="'$(LaunchPadTestsInOwnJob)' != '' and $([System.String]::Copy(';$(LaunchPadTestsInOwnJob);').Contains(';$(MSBuildProjectName);'))"
+    >
+        <IsTestProject>false</IsTestProject>
+    </PropertyGroup>
 </Project>
