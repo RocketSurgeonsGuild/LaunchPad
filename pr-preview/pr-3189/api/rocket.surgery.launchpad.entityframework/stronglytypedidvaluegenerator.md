@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.EntityFramework](/LaunchPad/pr-preview/pr-3189/api/rocket.surgery.launchpad.entityframework.md)
-- Version: `2.0.1-pr.1180`
+- Version: `2.0.1-pr.1181`
 - Namespace: `Rocket.Surgery.LaunchPad.EntityFramework`
 - Target framework: `net10.0`
 

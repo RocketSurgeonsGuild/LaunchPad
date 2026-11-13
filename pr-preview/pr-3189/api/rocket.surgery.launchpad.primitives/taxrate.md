@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3189/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1180`
+- Version: `2.0.1-pr.1181`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net10.0`
 - Implements: `IStrongType<TaxRate, decimal>`, `IComparable<TaxRate>`, `IConvertible`, `IEquatable<TaxRate>`, `IFormattable`, `IParsable<TaxRate>`, `ISpanFormattable`, `ISpanParsable<TaxRate>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<TaxRate>`, `IComparisonOperators<TaxRate, TaxRate, bool>`, `IEqualityOperators<TaxRate, TaxRate, bool>`
