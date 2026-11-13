@@ -1,0 +1,12 @@
+<Project>
+    <!--
+        The build host (Build.cs) uses the repository's versions, except for the Dovetail and Specular packages it references directly so their
+        generators run in it: those stay at the versions Rocket.Surgery.ModularPipelines.Extensions is built against, apart from the ones the
+        libraries use.
+    -->
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))" />
+    <ItemGroup>
+        <PackageVersion Include="Joinery.Dovetail.ModularPipelines" Version="0.5.3" />
+        <PackageVersion Update="Specular" Version="0.4.1" />
+    </ItemGroup>
+</Project>
