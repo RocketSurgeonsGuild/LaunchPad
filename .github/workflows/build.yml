@@ -83,8 +83,6 @@ jobs:
             - name: ⚙️ Build
               id: build
               run: |
-                  # Experiment (measurement branch only): 8 MSBuild nodes for every dotnet build of the pipeline.
-                  printf -- '-maxCpuCount:8\n' > Directory.Build.rsp
                   mise run build
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
