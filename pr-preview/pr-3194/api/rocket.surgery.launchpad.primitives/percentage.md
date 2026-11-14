@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3194/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1181`
+- Version: `2.0.1-pr.1190`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net10.0`
 - Implements: `IStrongType<Percentage, decimal>`, `IComparable<Percentage>`, `IConvertible`, `IEquatable<Percentage>`, `IFormattable`, `IParsable<Percentage>`, `ISpanFormattable`, `ISpanParsable<Percentage>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Percentage>`, `IComparisonOperators<Percentage, Percentage, bool>`, `IEqualityOperators<Percentage, Percentage, bool>`
