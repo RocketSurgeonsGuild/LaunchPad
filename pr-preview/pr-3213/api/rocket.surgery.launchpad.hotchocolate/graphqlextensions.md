@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/pr-preview/pr-3213/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-pr.1194`
+- Version: `2.0.1-pr.1197`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate`
 - Target framework: `net10.0`
 
