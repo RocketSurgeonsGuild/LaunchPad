@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore`
-- Version: `2.0.1-pr.1183`
+- Version: `2.0.1-pr.1192`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore)
 
