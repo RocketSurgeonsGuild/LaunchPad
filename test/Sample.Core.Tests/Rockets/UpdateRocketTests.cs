@@ -23,7 +23,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
             {
                 Id = rocket.Id,
                 Type = RocketType.FalconHeavy,
-                SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
+                SerialNumber = new string([.. rocket.SerialNumber.Reverse()]),
             },
             TestContext.CancellationToken
         ) ).Value).IsTypeOf<RocketModel>();
@@ -41,7 +41,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         {
             Id = rocket.Id,
             //            Type = RocketType.FalconHeavy,
-            SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
+            SerialNumber = new string([.. rocket.SerialNumber.Reverse()]),
         }.ResetChanges() with
         {
             Type = RocketType.FalconHeavy,

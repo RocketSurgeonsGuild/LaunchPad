@@ -93,7 +93,7 @@ public class JsonContextManifestTaskTests
         );
         var path = Path.Combine(directory.FullName, name + ".dll");
         var result = compilation.Emit(path);
-        await result.Success.Should().Because(string.Join("\n", result.Diagnostics)).BeTrue();
+        await result.Success.Should().Because(string.Join("\n", result.Diagnostics.Select(d => d.ToString()))).BeTrue();
         return path;
     }
 }

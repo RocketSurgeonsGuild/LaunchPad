@@ -17,13 +17,15 @@ internal sealed class CapturingSink : ILogEventSink
     {
         for (var attempt = 0; attempt < 50; attempt++)
         {
-            var events = _events.Where(x => x.MessageTemplate.Text.StartsWith("HTTP ", StringComparison.Ordinal)).ToArray();
+            var events = RequestEvents();
             if (events.Length > 0) return await events.Should().HaveSingleItem();
             await Task.Delay(20);
         }
 
         throw new InvalidOperationException("The request logging middleware wrote no event to the logger in the container.");
     }
+
+    private LogEvent[] RequestEvents() => [.. _events.Where(x => x.MessageTemplate.Text.StartsWith("HTTP ", StringComparison.Ordinal))];
 
     private readonly ConcurrentQueue<LogEvent> _events = new();
 }

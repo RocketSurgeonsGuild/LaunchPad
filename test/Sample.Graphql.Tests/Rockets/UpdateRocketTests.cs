@@ -22,7 +22,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             {
                 Id = rocket.Id.Value,
                 Type = GraphQlRocketType.FalconHeavy,
-                SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
+                SerialNumber = new string([.. rocket.SerialNumber.Reverse()]),
             },
             TestContext.CancellationToken
         );

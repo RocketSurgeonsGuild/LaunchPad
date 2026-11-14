@@ -40,7 +40,7 @@ public class UpdateRocketTests : WebAppFixtureTest
             {
                 Id = rocket.Id.ToString(),
                 Type = GrpcRocketType.FalconHeavy,
-                SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
+                SerialNumber = new string([.. rocket.SerialNumber.Reverse()])
             },
             cancellationToken: TestContext.CancellationToken
         );

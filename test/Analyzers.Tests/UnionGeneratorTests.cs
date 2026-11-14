@@ -46,7 +46,7 @@ public class UnionGeneratorTests() : GeneratorTest()
         using var stream = new MemoryStream();
         // a static initializer cannot await an assertion
         var result = compilation.Emit(stream);
-        return !result.Success ? throw new InvalidOperationException(string.Join("\n", result.Diagnostics)) : stream.ToArray();
+        return !result.Success ? throw new InvalidOperationException(string.Join("\n", result.Diagnostics.Select(d => d.ToString()))) : stream.ToArray();
     }
 
     public override async Task InitializeAsync()
