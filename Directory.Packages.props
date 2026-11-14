@@ -28,8 +28,6 @@
     <PackageVersion Include="Rocket.Surgery.ModularPipelines.Extensions" Version="0.2.3" />
     <!-- build/Build.cs references it directly, so its generator writes ConfigureDovetail(); the version Rocket.Surgery.ModularPipelines.Extensions needs -->
     <PackageVersion Include="Joinery.Dovetail.ModularPipelines" Version="0.5.3" />
-    <PackageVersion Include="Sourcy.DotNet" Version="1.1.1" />
-    <PackageVersion Include="Sourcy.Git" Version="1.1.1" />
     <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.52" />
         <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
 

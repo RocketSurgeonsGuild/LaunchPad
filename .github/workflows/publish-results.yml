@@ -40,7 +40,8 @@ jobs:
               continue-on-error: true
               uses: actions/download-artifact@v8
               with:
-                  name: test data
+                  # The pipeline's "test data" and one "test data (<project>)" per package-tests job, each in a folder of its own.
+                  pattern: test data*
                   path: artifacts/tests/
                   run-id: ${{ github.event.workflow_run.id }}
                   github-token: ${{ secrets.GITHUB_TOKEN }}
