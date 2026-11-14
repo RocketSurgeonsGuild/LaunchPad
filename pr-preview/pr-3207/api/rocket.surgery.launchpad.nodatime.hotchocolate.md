@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.NodaTime.HotChocolate
 
 - Package: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate`
-- Version: `2.0.1-pr.1218`
+- Version: `2.0.1-pr.1222`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.NodaTime.HotChocolate](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.NodaTime.HotChocolate)
 
