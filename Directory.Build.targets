@@ -10,6 +10,17 @@
         <AssemblyInfoNamespace Condition="'$(AssemblyInfoNamespace)' == ''">$(AssemblyName)</AssemblyInfoNamespace>
     </PropertyGroup>
     <!--
+        On CI, skip Verify's sponsor check, whose result the OpenSource exemption in test/Directory.Build.props already settles. Before
+        BeforeBuild of every test project's inner build it calls MSBuild on each project reference (and their references) without removing
+        TargetFramework, and those calls queue behind nodes busy compiling (12,226 s of waiting in the solution build of run 43488163702).
+        ContinuousIntegrationBuild comes from Rocket.Surgery.MSBuild.CI's props, which NuGet imports after Directory.Build.props, so the
+        condition is read here. Local builds still run the check. The suffix is Verify's hash of its package id; if Verify renames the property,
+        this stops applying (and the build gets slower again, nothing else).
+    -->
+    <PropertyGroup Condition="'$(ContinuousIntegrationBuild)' == 'true'">
+        <_SponsorCheck_OwnerVerified_Verify_eea2745e>true</_SponsorCheck_OwnerVerified_Verify_eea2745e>
+    </PropertyGroup>
+    <!--
         The templates of LaunchPad.Hosting are declared in the targets the package ships, which NuGet imports into a project that references
         the package. A ProjectReference imports no package assets, and the samples and tests reference Hosting that way, so the targets are
         imported into every project here. They write a template into a project that has a direct reference to Hosting and meets the

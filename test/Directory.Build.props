@@ -13,17 +13,6 @@
         <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
         <Verify_SponsorshipExemptionUntil>$([System.DateTime]::Today.AddDays(300).ToString("yyyy-MM"))</Verify_SponsorshipExemptionUntil>
     </PropertyGroup>
-    <!--
-        On CI, skip Verify's sponsor check, whose result the exemption above already settles. Before BeforeBuild of every test project's inner
-        build it calls MSBuild on each project reference (and their references) without removing TargetFramework. Each call must be served by
-        the node that owns that configuration, and a node busy compiling makes it wait: in the solution build of run 43488163702 that left 53
-        of the 69 test builds waiting more than 10 s (12,226 s in all), with the 4 nodes 42 % busy, and kept BuildSolution at 12 min.
-        Local builds still run the check. The suffix is Verify's hash of its package id; if Verify renames the property, this stops applying
-        (and the build gets slower again, nothing else).
-    -->
-    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-        <_SponsorCheck_OwnerVerified_Verify_eea2745e>true</_SponsorCheck_OwnerVerified_Verify_eea2745e>
-    </PropertyGroup>
     <!-- used to trigger build information -->
     <PropertyGroup>
         <GitVersion_Major Condition="'$(GitVersion_Major)' == ''">0</GitVersion_Major>
