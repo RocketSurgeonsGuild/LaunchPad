@@ -32,7 +32,7 @@ public class DataGenerationJointTests() : LoggerTest<TestRecord>(TestRecord.Crea
 
         var services = await ApplyServicesAsync(context);
 
-        await services.Should().All(x => !( x.ServiceType == typeof(RocketDbContext) ));
+        await services.Should().All(x => x.ServiceType != typeof(RocketDbContext));
         await services.Should().All(x => !( x.ServiceType == typeof(IHostedService) && x.ImplementationType != null && x.ImplementationType.DeclaringType == typeof(DataGenerationJoint) ));
     }
 

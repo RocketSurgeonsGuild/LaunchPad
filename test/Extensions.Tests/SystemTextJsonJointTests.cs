@@ -23,7 +23,7 @@ public class SystemTextJsonJointTests
         await JsonSerializer.Serialize(DayOfWeek.Monday, options).Should().BeEqualTo("\"monday\"");
         await JsonSerializer.Deserialize<DayOfWeek>("\"tuesday\"", options).Should().BeEqualTo(DayOfWeek.Tuesday);
         await JsonSerializer.Serialize(new TestRocket("falcon", 9, Stage.LowOrbit), options).Should().BeEqualTo("""{"name":"falcon","engines":9,"stage":"lowOrbit"}""");
-        await options.Converters.Should().All(x => !( x.GetType() == typeof(JsonStringEnumConverter) ));
+        await options.Converters.Should().All(x => x.GetType() != typeof(JsonStringEnumConverter));
     }
 
     // An enum no JSON context reaches has no converter: with a reflection resolver (ASP.NET Core's options in a JIT application) it is a number.

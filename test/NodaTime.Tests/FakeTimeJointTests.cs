@@ -7,7 +7,7 @@ using Rocket.Surgery.LaunchPad.NodaTime.Joints;
 
 namespace NodaTime.Tests;
 
-public class FakeTimeJointTests() : JointTest()
+public class FakeTimeJointTests : JointTest
 {
     [Test]
     public async Task Clock_Joint_Default()
