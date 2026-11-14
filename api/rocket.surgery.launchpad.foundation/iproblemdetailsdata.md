@@ -2,7 +2,7 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-beta.347`
+- Version: `2.0.1-beta.349`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net10.0`
 

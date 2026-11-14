@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc`
-- Version: `2.0.1-beta.347`
+- Version: `2.0.1-beta.349`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc)
 
