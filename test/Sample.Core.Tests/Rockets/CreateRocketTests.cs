@@ -16,16 +16,16 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = ( await mediator.Send(
+        var response = await Assert.That(( await mediator.Send(
             new CreateRocket.Request
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234",
             },
             TestContext.CancellationToken
-        ) ).Value.ShouldBeOfType<CreateRocket.Response>();
+        ) ).Value).IsTypeOf<CreateRocket.Response>();
 
-        response.Id.Value.ShouldNotBe(Guid.Empty);
+        await response.Id.Value.Should().NotBeEqualTo(Guid.Empty);
     }
 
     [Test]
@@ -56,7 +56,7 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
             },
             TestContext.CancellationToken
         );
-        result.Value.ShouldBeOfType<Conflict>().Title.ShouldBe("Rocket Creation Failed");
+        await ( await Assert.That(result.Value).IsTypeOf<Conflict>() )!.Title.Should().BeEqualTo("Rocket Creation Failed");
     }
 
     [Test]
@@ -68,7 +68,7 @@ public class CreateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         Func<Task> a = async () => await mediator.Send(request, TestContext.CancellationToken);
-        ( await a.ShouldThrowAsync<ValidationFailedException>() ).Error.Failures.Select(x => x.PropertyName).ShouldContain(propertyName);
+        await ( await a.Should().Throw<ValidationFailedException>() ).Error.Failures.Select(x => x.PropertyName).Should().Contain(propertyName);
     }
 
     public static IEnumerable<Func<(CreateRocket.Request Request, string PropertyName)>> RequiredFieldData()

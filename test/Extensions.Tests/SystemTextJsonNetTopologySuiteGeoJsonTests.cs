@@ -15,89 +15,83 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
     // typeof(GeometryCollection)
     [Test]
     [Arguments("{\"type\": \"Point\",\"coordinates\": [30, 10]}")]
-    public void Geometry_Tests(string geom)
+    public async Task Geometry_Tests(string geom)
     {
-        JsonSerializer.Deserialize<Point>(geom, _settings)
-                      .ShouldBe(new Point(30, 10));
+        await JsonSerializer.Deserialize<Point>(geom, _settings)
+                      .Should().BeEqualTo(new Point(30, 10));
     }
 
     [Test]
     [Arguments("{\"type\": \"LineString\",\"coordinates\": [[30, 10], [10, 30], [40, 40]]}")]
-    public void LineString_Tests(string geom)
+    public async Task LineString_Tests(string geom)
     {
-        JsonSerializer.Deserialize<LineString>(geom, _settings)
-                      .ShouldBe(
-                           new LineString(
+        await JsonSerializer.Deserialize<LineString>(geom, _settings)
+                      .Should().BeEqualTo(new LineString(
                                [
                                    new Coordinate(30, 10),
                                    new Coordinate(10, 30),
                                    new Coordinate(40, 40),
                                ]
-                           )
-                       );
+                           ));
     }
 
     [Test]
     [Arguments("{\"type\": \"Polygon\",\"coordinates\": [[[30, 10], [40, 40], [20, 40], [10, 20], [30, 10]]]}")]
-    public void Polygon_Tests(string geom)
+    public async Task Polygon_Tests(string geom)
     {
-        JsonSerializer.Deserialize<Polygon>(geom, _settings)
-                      .ShouldBe(
-                           new Polygon(
+        await JsonSerializer.Deserialize<Polygon>(geom, _settings)
+                      .Should().BeEqualTo(new Polygon(
                                new LinearRing(
                                    [
                                        new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
                                    ]
                                )
-                           )
-                       );
+                           ));
     }
 
     [Test]
     [Arguments("{\"type\": \"MultiPoint\",\"coordinates\": [[10, 40], [40, 30], [20, 20], [30, 10]]}")]
-    public void MultiPoint_Tests(string geom)
+    public async Task MultiPoint_Tests(string geom)
     {
-        JsonSerializer.Deserialize<MultiPoint>(geom, _settings)
+        await JsonSerializer.Deserialize<MultiPoint>(geom, _settings)
 
-   .ShouldBe(
-        new MultiPoint(
+   .Should().BeEqualTo(new MultiPoint(
             [
                         new Point(10, 40),
                         new Point(40, 30),
                         new Point(20, 20),
                         new Point(30, 10)
             ]
-        )
-    );
+        ));
     }
 
     [Test]
     [Arguments(
         "{\n    \"type\": \"MultiLineString\", \n    \"coordinates\": [\n        [[10, 10], [20, 20], [10, 40]], \n        [[40, 40], [30, 30], [40, 20], [30, 10]]\n    ]\n}"
     )]
-    public void MultiLineString_Tests(string geom)
+    public async Task MultiLineString_Tests(string geom)
     {
-        JsonSerializer.Deserialize<MultiLineString>(geom, _settings)
-                      .ShouldBeOfType<MultiLineString>();
+        await JsonSerializer.Deserialize<MultiLineString>(geom, _settings)
+                      .Should().BeOfType(typeof(MultiLineString));
     }
 
     [Test]
     [Arguments(
         "{\n    \"type\": \"MultiPolygon\", \n    \"coordinates\": [\n        [\n            [[40, 40], [20, 45], [45, 30], [40, 40]]\n        ], \n        [\n            [[20, 35], [10, 30], [10, 10], [30, 5], [45, 20], [20, 35]], \n            [[30, 20], [20, 15], [20, 25], [30, 20]]\n        ]\n    ]\n}"
     )]
-    public void MultiPolygon_Tests(string geom)
+    public async Task MultiPolygon_Tests(string geom)
     {
-        JsonSerializer.Deserialize<MultiPolygon>(geom, _settings)
-                      .ShouldBeOfType<MultiPolygon>();
+        await JsonSerializer.Deserialize<MultiPolygon>(geom, _settings)
+                      .Should().BeOfType(typeof(MultiPolygon));
     }
 
     [Test]
     [Arguments(
         "{\n    \"type\": \"GeometryCollection\",\n    \"geometries\": [\n        {\n            \"type\": \"Point\",\n            \"coordinates\": [40, 10]\n        },\n        {\n            \"type\": \"LineString\",\n            \"coordinates\": [\n                [10, 10], [20, 20], [10, 40]\n            ]\n        },\n        {\n            \"type\": \"Polygon\",\n            \"coordinates\": [\n                [[40, 40], [20, 45], [45, 30], [40, 40]]\n            ]\n        }\n    ]\n}"
     )]
-    public void GeometryCollection_Tests(string geom)
+    public async Task GeometryCollection_Tests(string geom)
     {
-        JsonSerializer.Deserialize<GeometryCollection>(geom, _settings)
-                      .ShouldBeOfType<GeometryCollection>();
+        await JsonSerializer.Deserialize<GeometryCollection>(geom, _settings)
+                      .Should().BeOfType(typeof(GeometryCollection));
     }
 }

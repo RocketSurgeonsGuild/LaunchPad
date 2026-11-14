@@ -34,8 +34,6 @@
     <InternalsVisibleTo Include="Sample.Worker" />
     <InternalsVisibleTo Include="Sample.Core.Tests" />
     <InternalsVisibleTo Include="Sample.Worker.Tests" />
-    <!-- lets FakeItEasy fake the internal mediator in the tests -->
-    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>

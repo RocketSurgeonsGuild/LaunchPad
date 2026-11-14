@@ -21,8 +21,8 @@ public class DataGenerationJointTests() : LoggerTest<TestRecord>(TestRecord.Crea
 
         await using var scope = provider.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
-        ( await dbContext.Rockets.CountAsync(TestContext.CancellationToken) ).ShouldBeGreaterThanOrEqualTo(10);
-        ( await dbContext.LaunchRecords.CountAsync(TestContext.CancellationToken) ).ShouldBeGreaterThanOrEqualTo(100);
+        await ( await dbContext.Rockets.CountAsync(TestContext.CancellationToken) ).Should().BeGreaterThanOrEqualTo(10);
+        await ( await dbContext.LaunchRecords.CountAsync(TestContext.CancellationToken) ).Should().BeGreaterThanOrEqualTo(100);
     }
 
     [Test]
@@ -32,8 +32,8 @@ public class DataGenerationJointTests() : LoggerTest<TestRecord>(TestRecord.Crea
 
         var services = await ApplyServicesAsync(context);
 
-        services.ShouldNotContain(x => x.ServiceType == typeof(RocketDbContext));
-        services.ShouldNotContain(x => x.ServiceType == typeof(IHostedService) && x.ImplementationType != null && x.ImplementationType.DeclaringType == typeof(DataGenerationJoint));
+        await services.Should().All(x => !( x.ServiceType == typeof(RocketDbContext) ));
+        await services.Should().All(x => !( x.ServiceType == typeof(IHostedService) && x.ImplementationType != null && x.ImplementationType.DeclaringType == typeof(DataGenerationJoint) ));
     }
 
     private async Task<ServiceProvider> CreateLiveProvider()

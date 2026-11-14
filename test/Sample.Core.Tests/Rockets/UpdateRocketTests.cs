@@ -18,7 +18,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = ( await mediator.Send(
+        var response = await Assert.That(( await mediator.Send(
             new EditRocket.Request
             {
                 Id = rocket.Id,
@@ -26,10 +26,10 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse()),
             },
             TestContext.CancellationToken
-        ) ).Value.ShouldBeOfType<RocketModel>();
+        ) ).Value).IsTypeOf<RocketModel>();
 
-        response.Type.ShouldBe(RocketType.FalconHeavy);
-        response.Sn.ShouldBe("43210987654321");
+        await response.Type.Should().BeEqualTo(RocketType.FalconHeavy);
+        await response.Sn.Should().BeEqualTo("43210987654321");
     }
 
     [Test]
@@ -49,10 +49,10 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = ( await mediator.Send(request, TestContext.CancellationToken) ).Value.ShouldBeOfType<RocketModel>();
+        var response = await Assert.That(( await mediator.Send(request, TestContext.CancellationToken) ).Value).IsTypeOf<RocketModel>();
 
-        response.Type.ShouldBe(RocketType.FalconHeavy);
-        response.Sn.ShouldBe("12345678901234");
+        await response.Type.Should().BeEqualTo(RocketType.FalconHeavy);
+        await response.Sn.Should().BeEqualTo("12345678901234");
     }
 
     [Test]
@@ -64,7 +64,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         Func<Task> a = async () => await mediator.Send(request, TestContext.CancellationToken);
-        ( await a.ShouldThrowAsync<ValidationFailedException>() ).Error.Failures.Select(x => x.PropertyName).ShouldContain(propertyName);
+        await ( await a.Should().Throw<ValidationFailedException>() ).Error.Failures.Select(x => x.PropertyName).Should().Contain(propertyName);
     }
 
     public static IEnumerable<Func<(EditRocket.Request Request, string PropertyName)>> RequiredFieldData()

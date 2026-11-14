@@ -20,10 +20,10 @@ public class SystemTextJsonJointTests
     {
         var options = await Options(services => services.AddJsonTypeInfoResolver(TestJsonContext.Default));
 
-        JsonSerializer.Serialize(DayOfWeek.Monday, options).ShouldBe("\"monday\"");
-        JsonSerializer.Deserialize<DayOfWeek>("\"tuesday\"", options).ShouldBe(DayOfWeek.Tuesday);
-        JsonSerializer.Serialize(new TestRocket("falcon", 9, Stage.LowOrbit), options).ShouldBe("""{"name":"falcon","engines":9,"stage":"lowOrbit"}""");
-        options.Converters.ShouldNotContain(x => x.GetType() == typeof(JsonStringEnumConverter));
+        await JsonSerializer.Serialize(DayOfWeek.Monday, options).Should().BeEqualTo("\"monday\"");
+        await JsonSerializer.Deserialize<DayOfWeek>("\"tuesday\"", options).Should().BeEqualTo(DayOfWeek.Tuesday);
+        await JsonSerializer.Serialize(new TestRocket("falcon", 9, Stage.LowOrbit), options).Should().BeEqualTo("""{"name":"falcon","engines":9,"stage":"lowOrbit"}""");
+        await options.Converters.Should().All(x => !( x.GetType() == typeof(JsonStringEnumConverter) ));
     }
 
     // An enum no JSON context reaches has no converter: with a reflection resolver (ASP.NET Core's options in a JIT application) it is a number.
@@ -32,7 +32,7 @@ public class SystemTextJsonJointTests
     {
         var options = await Options(services => services.Configure<JsonSerializerOptions>(o => o.TypeInfoResolverChain.Add(new DefaultJsonTypeInfoResolver())));
 
-        JsonSerializer.Serialize(Unreached.Second, options).ShouldBe("1");
+        await JsonSerializer.Serialize(Unreached.Second, options).Should().BeEqualTo("1");
     }
 
     [Test]
@@ -40,7 +40,7 @@ public class SystemTextJsonJointTests
     {
         var options = await Options();
 
-        options.PropertyNamingPolicy.ShouldBe(JsonNamingPolicy.CamelCase);
+        await options.PropertyNamingPolicy.Should().BeEqualTo(JsonNamingPolicy.CamelCase);
     }
 
     // NodaTime support is its own package (NodaTimeSystemTextJsonJoint), so Foundation must not ask for a time zone provider.
@@ -53,9 +53,9 @@ public class SystemTextJsonJointTests
     {
         var options = await Options(services => services.AddJsonTypeInfoResolver(TestJsonContext.Default));
 
-        options.TypeInfoResolverChain[0].ShouldBeSameAs(TestJsonContext.Default);
-        options.TypeInfoResolverChain.ShouldNotContain(x => x is DefaultJsonTypeInfoResolver);
-        Should.Throw<NotSupportedException>(() => JsonSerializer.Serialize(new UnknownRocket("starship"), options));
+        await options.TypeInfoResolverChain[0].Should().BeSameReferenceAs(TestJsonContext.Default);
+        await options.TypeInfoResolverChain.Should().All(x => x is not DefaultJsonTypeInfoResolver);
+        await ( (Action)( () => JsonSerializer.Serialize(new UnknownRocket("starship"), options) ) ).Should().Throw<NotSupportedException>();
     }
 
     [Test]
@@ -64,8 +64,8 @@ public class SystemTextJsonJointTests
         var reflection = new DefaultJsonTypeInfoResolver();
         var options = await Options(services => services.Configure<JsonSerializerOptions>(o => o.TypeInfoResolverChain.Add(reflection)));
 
-        options.TypeInfoResolverChain[^1].ShouldBeSameAs(reflection);
-        JsonSerializer.Serialize(new UnknownRocket("starship"), options).ShouldBe("""{"name":"starship"}""");
+        await options.TypeInfoResolverChain[^1].Should().BeSameReferenceAs(reflection);
+        await JsonSerializer.Serialize(new UnknownRocket("starship"), options).Should().BeEqualTo("""{"name":"starship"}""");
     }
 
     [Test]
@@ -83,10 +83,10 @@ public class SystemTextJsonJointTests
         );
 
         var chain = options.TypeInfoResolverChain.ToList();
-        chain.IndexOf(first).ShouldBe(0);
-        chain.IndexOf(second).ShouldBe(1);
-        chain.Count(x => ReferenceEquals(x, first)).ShouldBe(1);
-        chain.IndexOf(library).ShouldBeGreaterThan(1);
+        await chain.IndexOf(first).Should().BeEqualTo(0);
+        await chain.IndexOf(second).Should().BeEqualTo(1);
+        await chain.Count(x => ReferenceEquals(x, first)).Should().BeEqualTo(1);
+        await chain.IndexOf(library).Should().BeGreaterThan(1);
     }
 
     [Test]
@@ -95,8 +95,8 @@ public class SystemTextJsonJointTests
         var options = await Options(services => services.AddJsonTypeInfoResolver(TestJsonContext.Default));
 
         // TryGetTypeInfo rather than GetTypeInfo<T>(), which System.Text.Json has only from .NET 11.
-        options.TryGetTypeInfo(typeof(TestRocket), out var typeInfo).ShouldBeTrue();
-        typeInfo!.OriginatingResolver.ShouldBeSameAs(TestJsonContext.Default);
+        await options.TryGetTypeInfo(typeof(TestRocket), out var typeInfo).Should().BeTrue();
+        await typeInfo!.OriginatingResolver.Should().BeSameReferenceAs(TestJsonContext.Default);
     }
 
     // Native AOT turns reflection off: then only the chained resolvers are left, and what LaunchPad writes as an object must still serialize.
@@ -105,10 +105,10 @@ public class SystemTextJsonJointTests
     {
         var options = WithoutReflection(await Options());
 
-        JsonSerializer.Serialize<object>(new Dictionary<string, object> { ["count"] = 3, ["name"] = "falcon", ["tags"] = Tags }, options)
-                      .ShouldBe("""{"count":3,"name":"falcon","tags":["a","b"]}""");
-        JsonSerializer.Serialize<object>(Guid.Empty, options).ShouldBe("\"00000000-0000-0000-0000-000000000000\"");
-        JsonSerializer.Serialize<object>(JsonNode.Parse("""{"a":1}""")!, options).ShouldBe("""{"a":1}""");
+        await JsonSerializer.Serialize<object>(new Dictionary<string, object> { ["count"] = 3, ["name"] = "falcon", ["tags"] = Tags }, options)
+                      .Should().BeEqualTo("""{"count":3,"name":"falcon","tags":["a","b"]}""");
+        await JsonSerializer.Serialize<object>(Guid.Empty, options).Should().BeEqualTo("\"00000000-0000-0000-0000-000000000000\"");
+        await JsonSerializer.Serialize<object>(JsonNode.Parse("""{"a":1}""")!, options).Should().BeEqualTo("""{"a":1}""");
     }
 
     [Test]
@@ -116,8 +116,8 @@ public class SystemTextJsonJointTests
     {
         var options = WithoutReflection(await Options(services => services.AddJsonTypeInfoResolver(TestJsonContext.Default)));
 
-        JsonSerializer.Serialize<object>(new TestRocket("falcon", 9, Stage.Pad), options).ShouldBe("""{"name":"falcon","engines":9,"stage":"pad"}""");
-        Should.Throw<NotSupportedException>(() => JsonSerializer.Serialize<object>(new UnknownRocket("starship"), options));
+        await JsonSerializer.Serialize<object>(new TestRocket("falcon", 9, Stage.Pad), options).Should().BeEqualTo("""{"name":"falcon","engines":9,"stage":"pad"}""");
+        await ( (Action)( () => JsonSerializer.Serialize<object>(new UnknownRocket("starship"), options) ) ).Should().Throw<NotSupportedException>();
     }
 
     [Test]
@@ -131,9 +131,9 @@ public class SystemTextJsonJointTests
             )
         );
 
-        JsonSerializer.Serialize<object>(new RocketName("falcon"), options).ShouldBe("\"falcon\"");
-        JsonSerializer.Serialize<RocketName?>(null, options).ShouldBe("null");
-        JsonSerializer.Deserialize<RocketName?>("\"starship\"", options).ShouldBe(new RocketName("starship"));
+        await JsonSerializer.Serialize<object>(new RocketName("falcon"), options).Should().BeEqualTo("\"falcon\"");
+        await JsonSerializer.Serialize<RocketName?>(null, options).Should().BeEqualTo("null");
+        await JsonSerializer.Deserialize<RocketName?>("\"starship\"", options).Should().BeEqualTo(new RocketName("starship"));
     }
 
     private static readonly string[] Tags = ["a", "b"];

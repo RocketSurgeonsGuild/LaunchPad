@@ -20,9 +20,9 @@ public class TimeJointTests() : LoggerTest<TestRecord>(TestRecord.Create())
     {
         var provider = await CreateProvider(builder => builder);
 
-        provider.GetRequiredService<TimeProvider>().ShouldBe(TimeProvider.System);
-        provider.GetRequiredService<IClock>().ShouldBe(SystemClock.Instance);
-        provider.GetRequiredService<IDateTimeZoneProvider>().VersionId.ShouldBe(DateTimeZoneProviders.Tzdb.VersionId);
+        await provider.GetRequiredService<TimeProvider>().Should().BeEqualTo(TimeProvider.System);
+        await provider.GetRequiredService<IClock>().Should().BeEqualTo(SystemClock.Instance);
+        await provider.GetRequiredService<IDateTimeZoneProvider>().VersionId.Should().BeEqualTo(DateTimeZoneProviders.Tzdb.VersionId);
     }
 
     [Test]
@@ -32,18 +32,18 @@ public class TimeJointTests() : LoggerTest<TestRecord>(TestRecord.Create())
 
         var provider = await CreateProvider(builder => builder.Set(new NodaTimeOptions { DateTimeZoneSource = source, }));
 
-        provider.GetRequiredService<IDateTimeZoneProvider>().VersionId.ShouldBe("launchpad-test");
+        await provider.GetRequiredService<IDateTimeZoneProvider>().VersionId.Should().BeEqualTo("launchpad-test");
     }
 
     [Test]
-    public void Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
+    public async Task Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
     {
         var export = NodaTimeExports.Joints().Single(x => x.Joint is TimeJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldBeEmpty();
-        export.Category.ToString().ShouldBe(DovetailCategory.Core);
-        typeof(TimeJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Core);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        await export.Dependencies.Should().BeEmpty();
+        await export.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
+        await typeof(TimeJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
     }
 
     private static async Task<IServiceProvider> CreateProvider(Func<DovetailContextBuilder, DovetailContextBuilder> configure)

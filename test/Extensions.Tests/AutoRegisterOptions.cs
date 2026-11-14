@@ -7,14 +7,14 @@ using Microsoft.Extensions.Options;
 
 namespace Extensions.Tests;
 
-public class AutoRegisterOptions() : JointFakeTest()
+public class AutoRegisterOptions() : JointTest()
 {
     [Test]
     public async Task Should_Register_Options()
     {
         await Init(x => x.ConfigureConfiguration((_, builder) => builder.AddInMemoryCollection([new("OptionsA:A", "B"), new("OptionsB:B", "A")])));
-        ServiceProvider.GetRequiredService<IOptions<OptionsA>>().Value.A.ShouldBe("B");
-        ServiceProvider.GetRequiredService<IOptions<OptionsB>>().Value.B.ShouldBe("A");
+        await ServiceProvider.GetRequiredService<IOptions<OptionsA>>().Value.A.Should().BeEqualTo("B");
+        await ServiceProvider.GetRequiredService<IOptions<OptionsB>>().Value.B.Should().BeEqualTo("A");
     }
 
     [DovetailConfiguration("OptionsA")]

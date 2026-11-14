@@ -1,6 +1,5 @@
 using System.Reflection;
 
-using FakeItEasy;
 
 using Joinery.Dovetail;
 
@@ -23,8 +22,8 @@ public class AspNetCoreJointTests
     {
         var services = await JointTestContext.ApplyServicesAsync<AspNetCoreJoint>();
 
-        services.ShouldContain(d => d.ServiceType == typeof(ApplicationPartManager));
-        services.ShouldContain(d => d.ServiceType == typeof(IApiDescriptionGroupCollectionProvider));
+        await services.Should().Contain(d => d.ServiceType == typeof(ApplicationPartManager));
+        await services.Should().Contain(d => d.ServiceType == typeof(IApiDescriptionGroupCollectionProvider));
     }
 
     [Test]
@@ -41,9 +40,9 @@ public class AspNetCoreJointTests
                      .Select(z => z.ImplementationType)
                      .ToArray();
 
-        filters.ShouldContain(typeof(NotFoundExceptionFilter));
-        filters.ShouldContain(typeof(NotAuthorizedExceptionFilter));
-        filters.ShouldContain(typeof(RequestFailedExceptionFilter));
+        await filters.Should().Contain(typeof(NotFoundExceptionFilter));
+        await filters.Should().Contain(typeof(NotAuthorizedExceptionFilter));
+        await filters.Should().Contain(typeof(RequestFailedExceptionFilter));
     }
 
     [Test]
@@ -54,8 +53,8 @@ public class AspNetCoreJointTests
         var services = await JointTestContext.ApplyServicesAsync<AspNetCoreJoint>(JointTestContext.CreateProvider(assemblies));
 
         var parts = GetApplicationParts(services);
-        parts.ShouldContain(assemblies[0]);
-        parts.ShouldContain(assemblies[1]);
+        await parts.Should().Contain(assemblies[0]);
+        await parts.Should().Contain(assemblies[1]);
     }
 
     [Test]
@@ -67,7 +66,7 @@ public class AspNetCoreJointTests
 
         var services = await JointTestContext.ApplyServicesAsync(builder);
 
-        GetApplicationParts(services).ShouldContain(typeof(AspNetCoreJointTests).Assembly);
+        await GetApplicationParts(services).Should().Contain(typeof(AspNetCoreJointTests).Assembly);
     }
 
     [Test]
@@ -77,16 +76,9 @@ public class AspNetCoreJointTests
 
         await JointTestContext.ApplyServicesAsync<AspNetCoreJoint>(provider);
 
-        A
-           .CallTo(
-                () => provider.GetAssemblies(
-                    A<Action<Specular.Abstractions.IReflectionAssemblySelector>>._,
-                    A<int>._,
-                    A<string>._,
-                    A<string>.That.Contains("DependenciesFromAssemblyOf<AspNetCoreJoint>")
-                )
-            )
-           .MustHaveHappenedOnceExactly();
+        Mock.Get(provider)
+            .GetAssemblies(Any(), Any(), Any(), Contains("DependenciesFromAssemblyOf<AspNetCoreJoint>"))
+            .WasCalled(Times.Once);
     }
 
     [Test]
@@ -102,8 +94,8 @@ public class AspNetCoreJointTests
         var services = await JointTestContext.ApplyServicesAsync(builder);
 
         var parts = GetApplicationParts(services);
-        parts.ShouldContain(included);
-        parts.ShouldNotContain(excluded);
+        await parts.Should().Contain(included);
+        await parts.Should().NotContain(excluded);
     }
 
     [Test]
@@ -121,14 +113,13 @@ public class AspNetCoreJointTests
             thrown = exception;
         }
 
-        thrown.ShouldNotBeNull();
-        thrown.ToString().ShouldContain(nameof(ISpecularProvider));
+        await thrown.Should().NotBeNull();
+        await thrown.ToString().Should().Contain(nameof(ISpecularProvider));
     }
 
-    private static Assembly[] GetApplicationParts(IServiceCollection services) => [.. services
+    private static Assembly[] GetApplicationParts(IServiceCollection services) => [.. ( (ApplicationPartManager)services
                                                                                .Last(d => d.ServiceType == typeof(ApplicationPartManager))
-                                                                               .ImplementationInstance
-                                                                               .ShouldBeOfType<ApplicationPartManager>()
+                                                                               .ImplementationInstance! )
                                                                                .ApplicationParts
                                                                                .OfType<AssemblyPart>()
                                                                                .Select(z => z.Assembly)];

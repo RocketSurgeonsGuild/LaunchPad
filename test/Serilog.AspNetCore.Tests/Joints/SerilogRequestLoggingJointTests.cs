@@ -20,16 +20,15 @@ namespace Serilog.AspNetCore.Tests.Joints;
 public class SerilogRequestLoggingJointTests
 {
     [Test]
-    public void Is_Exported_As_An_Application_Joint_That_Runs_After_The_AspNetCore_Joint()
+    public async Task Is_Exported_As_An_Application_Joint_That_Runs_After_The_AspNetCore_Joint()
     {
         var export = Exports.Joints().Single(x => x.Joint is SerilogRequestLoggingJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
-            x => x.Type.ShouldBe(typeof(AspNetCoreJoint))
-        );
-        typeof(SerilogRequestLoggingJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
+        await x.Type.Should().BeEqualTo(typeof(AspNetCoreJoint));
+        await typeof(SerilogRequestLoggingJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -45,8 +44,8 @@ public class SerilogRequestLoggingJointTests
                      .OfType<TypeFilterAttribute>()
                      .ToArray();
 
-        filters.ShouldContain(x => x.ImplementationType == typeof(SerilogLoggingActionFilter) && x.Order == 0);
-        filters.ShouldContain(x => x.ImplementationType == typeof(SerilogLoggingPageFilter) && x.Order == 0);
+        await filters.Should().Contain(x => x.ImplementationType == typeof(SerilogLoggingActionFilter) && x.Order == 0);
+        await filters.Should().Contain(x => x.ImplementationType == typeof(SerilogLoggingPageFilter) && x.Order == 0);
     }
 
     [Test]
@@ -55,7 +54,7 @@ public class SerilogRequestLoggingJointTests
         var services = await JointTestContext.ApplyServicesAsync<SerilogRequestLoggingJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IDiagnosticContext>().ShouldBeSameAs(provider.GetRequiredService<DiagnosticContext>());
+        await provider.GetRequiredService<IDiagnosticContext>().Should().BeSameReferenceAs(provider.GetRequiredService<DiagnosticContext>());
     }
 
     [Test]
@@ -67,6 +66,6 @@ public class SerilogRequestLoggingJointTests
         await services.ApplyService(context);
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IDiagnosticContext>().ShouldBeSameAs(existing);
+        await provider.GetRequiredService<IDiagnosticContext>().Should().BeSameReferenceAs(existing);
     }
 }

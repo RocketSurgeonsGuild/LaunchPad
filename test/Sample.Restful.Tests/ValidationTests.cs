@@ -17,12 +17,12 @@ public class ValidationTests : WebAppFixtureTest
             TestContext.CancellationToken
         );
 
-        response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        await response.StatusCode.Should().BeEqualTo(HttpStatusCode.UnprocessableEntity);
         using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.CancellationToken));
         var failures = document.RootElement.GetProperty("errors").GetProperty("SerialNumber");
-        failures.GetArrayLength().ShouldBe(1);
-        failures[0].GetProperty("propertyName").GetString().ShouldBe("SerialNumber");
-        failures[0].GetProperty("errorMessage").GetString().ShouldBe("SerialNumber must be at least 10 characters.");
+        await failures.GetArrayLength().Should().BeEqualTo(1);
+        await failures[0].GetProperty("propertyName").GetString().Should().BeEqualTo("SerialNumber");
+        await failures[0].GetProperty("errorMessage").GetString().Should().BeEqualTo("SerialNumber must be at least 10 characters.");
     }
 
     [Test]
@@ -34,6 +34,6 @@ public class ValidationTests : WebAppFixtureTest
             TestContext.CancellationToken
         );
 
-        response.StatusCode.ShouldBe(HttpStatusCode.Created, await response.Content.ReadAsStringAsync(TestContext.CancellationToken));
+        await response.StatusCode.Should().Because(await response.Content.ReadAsStringAsync(TestContext.CancellationToken)).BeEqualTo(HttpStatusCode.Created);
     }
 }

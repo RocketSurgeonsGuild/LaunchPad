@@ -25,7 +25,7 @@ public class ListRocketsTests() : HandleTestHostBase(LogEventLevel.Verbose)
 
         var response = await mediator.CreateStream(new ListRockets.Request(null), TestContext.CancellationToken).ToListAsync(TestContext.CancellationToken);
 
-        response.Count.ShouldBe(10);
+        await response.Count.Should().BeEqualTo(10);
     }
 
     private static readonly Faker Faker = new();

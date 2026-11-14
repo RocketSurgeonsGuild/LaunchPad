@@ -30,6 +30,6 @@ public class RemoveRocketsTests : GraphQlWebAppFixtureTest
         await client.DeleteRocket.ExecuteAsync(new DeleteRocketRequest { Id = id.Value }, TestContext.CancellationToken);
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
-        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.ShouldBeEmpty();
+        await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.Should().BeEmpty();
     }
 }

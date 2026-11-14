@@ -4,9 +4,9 @@ using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Extensions.Tests;
+namespace FluentValidation.Tests;
 
-public abstract class JointFakeTest() : AutoFakeTest<TestRecord>(TestRecord.Create())
+public abstract class JointTest() : ContainerTest<TestRecord>(TestRecord.Create())
 {
     protected async Task Init(Action<DovetailContextBuilder>? action = null)
     {

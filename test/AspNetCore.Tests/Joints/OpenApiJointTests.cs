@@ -14,7 +14,7 @@ public class OpenApiJointTests
         var services = await JointTestContext.ApplyServicesAsync<OpenApiJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IOptionsMonitor<OpenApiOptions>>().Get("v1").DocumentName.ShouldBe("v1");
+        await provider.GetRequiredService<IOptionsMonitor<OpenApiOptions>>().Get("v1").DocumentName.Should().BeEqualTo("v1");
     }
 
     [Test]
@@ -23,6 +23,6 @@ public class OpenApiJointTests
         var services = await JointTestContext.ApplyServicesAsync<OpenApiJoint>();
 
         // they come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
-        services.ShouldNotContain(d => d.ServiceType.Name == "IPropertyRuleHandler");
+        await services.Should().All(d => d.ServiceType.Name != "IPropertyRuleHandler");
     }
 }

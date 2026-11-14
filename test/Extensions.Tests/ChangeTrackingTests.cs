@@ -5,27 +5,27 @@ namespace Extensions.Tests;
 public partial class ChangeTrackingTests() : LoggerTest<TestRecord>(TestRecord.Create())
 {
     [Test]
-    public void ShouldTrackChanges_For_Classes()
+    public async Task ShouldTrackChanges_For_Classes()
     {
         var tracking = new ClassWithTracking(1);
-        tracking.Name.HasValue.ShouldBeFalse();
+        await tracking.Name.HasValue.Should().BeFalse();
         tracking.Name = "Test";
-        tracking.Name.HasValue.ShouldBeTrue();
+        await tracking.Name.HasValue.Should().BeTrue();
     }
 
     [Test]
-    public void ShouldResetChanges_For_Classes()
+    public async Task ShouldResetChanges_For_Classes()
     {
         var tracking = new ClassWithTracking(1)
         {
             Name = "Test",
         };
         tracking.ResetChanges();
-        tracking.Name.HasValue.ShouldBeFalse();
+        await tracking.Name.HasValue.Should().BeFalse();
     }
 
     [Test]
-    public void ShouldApplyChanges_For_Classes()
+    public async Task ShouldApplyChanges_For_Classes()
     {
         var instance = new Class(1)
         {
@@ -37,11 +37,11 @@ public partial class ChangeTrackingTests() : LoggerTest<TestRecord>(TestRecord.C
         };
         tracking.ApplyChanges(instance);
 
-        instance.Name.ShouldBe("Test");
+        await instance.Name.Should().BeEqualTo("Test");
     }
 
     [Test]
-    public void ShouldCreate_For_Classes()
+    public async Task ShouldCreate_For_Classes()
     {
         var instance = new Class(1)
         {
@@ -50,36 +50,36 @@ public partial class ChangeTrackingTests() : LoggerTest<TestRecord>(TestRecord.C
         };
         var tracking = ClassWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
-        tracking.Name.HasValue.ShouldBeFalse();
-        tracking.Description.HasValue.ShouldBeTrue();
+        await tracking.Name.HasValue.Should().BeFalse();
+        await tracking.Description.HasValue.Should().BeTrue();
         tracking.ApplyChanges(instance);
 
-        instance.Name.ShouldBe("MyName");
-        instance.Description.ShouldBe("My New description");
+        await instance.Name.Should().BeEqualTo("MyName");
+        await instance.Description.Should().BeEqualTo("My New description");
     }
 
     [Test]
-    public void ShouldTrackChanges_For_Records()
+    public async Task ShouldTrackChanges_For_Records()
     {
         var tracking = new RecordWithTracking(1);
-        tracking.Name.HasValue.ShouldBeFalse();
+        await tracking.Name.HasValue.Should().BeFalse();
         tracking.Name = "Test";
-        tracking.Name.HasValue.ShouldBeTrue();
+        await tracking.Name.HasValue.Should().BeTrue();
     }
 
     [Test]
-    public void ShouldResetChanges_For_Records()
+    public async Task ShouldResetChanges_For_Records()
     {
         var tracking = new RecordWithTracking(1)
         {
             Name = "Test",
         };
         tracking.ResetChanges();
-        tracking.Name.HasValue.ShouldBeFalse();
+        await tracking.Name.HasValue.Should().BeFalse();
     }
 
     [Test]
-    public void ShouldApplyChanges_For_Records()
+    public async Task ShouldApplyChanges_For_Records()
     {
         var instance = new Record(1, "MyName");
         var tracking = new RecordWithTracking(1)
@@ -88,11 +88,11 @@ public partial class ChangeTrackingTests() : LoggerTest<TestRecord>(TestRecord.C
         };
         instance = tracking.ApplyChanges(instance);
 
-        instance.Name.ShouldBe("Test");
+        await instance.Name.Should().BeEqualTo("Test");
     }
 
     [Test]
-    public void ShouldCreate_For_Records()
+    public async Task ShouldCreate_For_Records()
     {
         var instance = new Record(1, "MyName")
         {
@@ -100,12 +100,12 @@ public partial class ChangeTrackingTests() : LoggerTest<TestRecord>(TestRecord.C
         };
         var tracking = RecordWithTracking.TrackChanges(instance);
         tracking.Description = "My New description";
-        tracking.Name.HasValue.ShouldBeFalse();
-        tracking.Description.HasValue.ShouldBeTrue();
+        await tracking.Name.HasValue.Should().BeFalse();
+        await tracking.Description.HasValue.Should().BeTrue();
         instance = tracking.ApplyChanges(instance);
 
-        instance.Name.ShouldBe("MyName");
-        instance.Description.ShouldBe("My New description");
+        await instance.Name.Should().BeEqualTo("MyName");
+        await instance.Description.Should().BeEqualTo("My New description");
     }
 
     public partial class Class(int Id)

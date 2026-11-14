@@ -48,7 +48,7 @@ public class JsonMetadataTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        result.Results.Values.SelectMany(r => r.Diagnostics).Count(d => d.Id == "LPAD1030").ShouldBe(4);
+        await result.Results.Values.SelectMany(r => r.Diagnostics).Count(d => d.Id == "LPAD1030").Should().BeEqualTo(4);
     }
 
     [Test]
@@ -57,7 +57,7 @@ public class JsonMetadataTests() : GeneratorTest()
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts).AddSources(Contracts.ServerHost).Build().GenerateAsync(TestContext.CancellationToken);
 
-        result.Results.Values.SelectMany(r => r.Diagnostics).ShouldNotContain(d => d.Id == "LPAD1030");
+        await result.Results.Values.SelectMany(r => r.Diagnostics).Should().All(d => d.Id != "LPAD1030");
     }
 
     [Test]
@@ -71,7 +71,7 @@ public class JsonMetadataTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        result.Results.Values.SelectMany(r => r.Diagnostics).ShouldNotContain(d => d.Id == "LPAD1030");
+        await result.Results.Values.SelectMany(r => r.Diagnostics).Should().All(d => d.Id != "LPAD1030");
     }
 
     [Test]
@@ -101,7 +101,7 @@ public class JsonMetadataTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        result.Results.Values.SelectMany(r => r.Diagnostics).ShouldNotContain(d => d.Id == "LPAD1030");
+        await result.Results.Values.SelectMany(r => r.Diagnostics).Should().All(d => d.Id != "LPAD1030");
     }
 
     // The source generator writes metadata for everything a declared type reaches: properties, collections and their elements.
@@ -131,7 +131,7 @@ public class JsonMetadataTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        result.Results.Values.SelectMany(r => r.Diagnostics).ShouldNotContain(d => d.Id == "LPAD1030");
+        await result.Results.Values.SelectMany(r => r.Diagnostics).Should().All(d => d.Id != "LPAD1030");
     }
 
     [Test]

@@ -19,90 +19,81 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
     // typeof(GeometryCollection)
     [Test]
     [Arguments("POINT (30 10)")]
-    public void Geometry_Tests(string geom)
+    public async Task Geometry_Tests(string geom)
     {
         var value = DeserializeObject<Point>(geom, _settings);
-        value.ShouldBe(new Point(30, 10));
-        SerializeObject(value, _settings).ShouldBe(geom);
+        await value.Should().BeEqualTo(new Point(30, 10));
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 
     [Test]
     [Arguments("LINESTRING (30 10, 10 30, 40 40)")]
-    public void LineString_Tests(string geom)
+    public async Task LineString_Tests(string geom)
     {
         var value = DeserializeObject<LineString>(geom, _settings);
-        value.ShouldBe(
-             new LineString(
+        await value.Should().BeEqualTo(new LineString(
                  [
                                 new Coordinate(30, 10),
                                 new Coordinate(10, 30),
                                 new Coordinate(40, 40),
                  ]
-             )
-         );
-        SerializeObject(value, _settings).ShouldBe(geom);
+             ));
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 
     [Test]
     [Arguments("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")]
-    public void Polygon_Tests(string geom)
+    public async Task Polygon_Tests(string geom)
     {
         var value = DeserializeObject<Polygon>(geom, _settings);
-        value.ShouldBe(
-             new Polygon(
+        await value.Should().BeEqualTo(new Polygon(
                  new LinearRing(
                      [
                                     new Coordinate(30, 10), new Coordinate(40, 40), new Coordinate(20, 40), new Coordinate(10, 20), new Coordinate(30, 10)
                      ]
                  )
-             )
-         );
-        SerializeObject(value, _settings).ShouldBe(geom);
+             ));
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 
     [Test]
     [Arguments("MULTIPOINT ((10 40), (40 30), (20 20), (30 10))")]
-    public void MultiPoint_Tests(string geom)
+    public async Task MultiPoint_Tests(string geom)
     {
         var value = DeserializeObject<MultiPoint>(geom, _settings);
-        value.ShouldBe(
-             new MultiPoint(
+        await value.Should().BeEqualTo(new MultiPoint(
                  [
                                 new Point(10, 40),
                                 new Point(40, 30),
                                 new Point(20, 20),
                                 new Point(30, 10)
                  ]
-             )
-         );
-        SerializeObject(value, _settings).ShouldBe(geom);
+             ));
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 
     [Test]
     [Arguments("MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))")]
-    public void MultiLineString_Tests(string geom)
+    public async Task MultiLineString_Tests(string geom)
     {
-        var value = DeserializeObject<MultiLineString>(geom, _settings)
-                   .ShouldBeOfType<MultiLineString>();
-        SerializeObject(value, _settings).ShouldBe(geom);
+        var value = await Assert.That(DeserializeObject<MultiLineString>(geom, _settings)).IsTypeOf<MultiLineString>();
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 
     [Test]
     [Arguments("MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35)), ((30 20, 20 15, 20 25, 30 20)))")]
-    public void MultiPolygon_Tests(string geom)
+    public async Task MultiPolygon_Tests(string geom)
     {
-        var value = DeserializeObject<MultiPolygon>(geom, _settings)
-                   .ShouldBeOfType<MultiPolygon>();
-        SerializeObject(value, _settings).ShouldBe(geom);
+        var value = await Assert.That(DeserializeObject<MultiPolygon>(geom, _settings)).IsTypeOf<MultiPolygon>();
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 
     [Test]
     [Arguments("GEOMETRYCOLLECTION (POINT (40 10), LINESTRING (10 10, 20 20, 10 40), POLYGON ((40 40, 20 45, 45 30, 40 40)))")]
-    public void GeometryCollection_Tests(string geom)
+    public async Task GeometryCollection_Tests(string geom)
     {
-        var value = DeserializeObject<GeometryCollection>(geom, _settings)
-                   .ShouldBeOfType<GeometryCollection>();
-        SerializeObject(value, _settings).ShouldBe(geom);
+        var value = await Assert.That(DeserializeObject<GeometryCollection>(geom, _settings)).IsTypeOf<GeometryCollection>();
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 
     public class ValueOf<T>

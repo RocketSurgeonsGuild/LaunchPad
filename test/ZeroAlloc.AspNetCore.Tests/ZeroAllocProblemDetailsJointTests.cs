@@ -22,16 +22,15 @@ namespace ZeroAlloc.AspNetCore.Tests;
 public class ZeroAllocProblemDetailsJointTests
 {
     [Test]
-    public void Is_Exported_As_An_Application_Joint_That_Runs_After_The_Problem_Details_Joint()
+    public async Task Is_Exported_As_An_Application_Joint_That_Runs_After_The_Problem_Details_Joint()
     {
         var export = ZeroAllocExports.Joints().Single(x => x.Joint is ZeroAllocProblemDetailsJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
-            x => x.Type.ShouldBe(typeof(ProblemDetailsJoint))
-        );
-        typeof(ZeroAllocProblemDetailsJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
+        await x.Type.Should().BeEqualTo(typeof(ProblemDetailsJoint));
+        await typeof(ZeroAllocProblemDetailsJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -42,10 +41,10 @@ public class ZeroAllocProblemDetailsJointTests
         new ZeroAllocProblemDetailsJoint().Register(await Context(), services);
         using var provider = services.BuildServiceProvider();
 
-        var selector = provider.GetRequiredService<IOptions<ExceptionHandlerOptions>>().Value.StatusCodeSelector.ShouldNotBeNull();
+        var selector = await provider.GetRequiredService<IOptions<ExceptionHandlerOptions>>().Value.StatusCodeSelector.Should().NotBeNull();
 
-        selector(Failures.Exception(("Name", "Name must not be empty."))).ShouldBe(StatusCodes.Status422UnprocessableEntity);
-        selector(new InvalidOperationException()).ShouldBe(StatusCodes.Status404NotFound);
+        await selector(Failures.Exception(("Name", "Name must not be empty."))).Should().BeEqualTo(StatusCodes.Status422UnprocessableEntity);
+        await selector(new InvalidOperationException()).Should().BeEqualTo(StatusCodes.Status404NotFound);
     }
 
     [Test]
@@ -56,13 +55,13 @@ public class ZeroAllocProblemDetailsJointTests
         joint.Register(await Context(), services);
         joint.Register(await Context(), services);
 
-        services
+        await services
            .Count(d => d.ServiceType == typeof(IProblemDetailsWriter) && d.ImplementationType == typeof(ZeroAllocProblemDetailsJoint.ValidationFailureProblemDetailsWriter))
-           .ShouldBe(1);
+           .Should().BeEqualTo(1);
     }
 
     [Test]
-    public void Answers_A_Controller_With_The_Failures_Grouped_By_Property()
+    public async Task Answers_A_Controller_With_The_Failures_Grouped_By_Property()
     {
         var context = new ExceptionContext(
             new ActionContext(new DefaultHttpContext(), new RouteData(), new ActionDescriptor()),
@@ -74,15 +73,15 @@ public class ZeroAllocProblemDetailsJointTests
 
         new ZeroAllocProblemDetailsJoint.ValidationFailureExceptionFilter().OnException(context);
 
-        context.ExceptionHandled.ShouldBeTrue();
-        var details = context.Result.ShouldBeOfType<UnprocessableEntityObjectResult>().Value.ShouldBeOfType<ValidationFailureProblemDetails>();
-        details.Status.ShouldBe(StatusCodes.Status422UnprocessableEntity);
-        details.Errors.Keys.ShouldBe(["Name", "Type"]);
-        details.Errors["Name"].Select(x => x.ErrorMessage).ShouldBe(["Name must not be empty.", "Name is too short."]);
+        await context.ExceptionHandled.Should().BeTrue();
+        var details = await Assert.That(( await Assert.That(context.Result).IsTypeOf<UnprocessableEntityObjectResult>() )!.Value).IsTypeOf<ValidationFailureProblemDetails>();
+        await details.Status.Should().BeEqualTo(StatusCodes.Status422UnprocessableEntity);
+        await details.Errors.Keys.Should().BeEquivalentTo(["Name", "Type"], CollectionOrdering.Matching);
+        await details.Errors["Name"].Select(x => x.ErrorMessage).Should().BeEquivalentTo(["Name must not be empty.", "Name is too short."], CollectionOrdering.Matching);
     }
 
     [Test]
-    public void Leaves_Other_Exceptions_To_The_Other_Filters()
+    public async Task Leaves_Other_Exceptions_To_The_Other_Filters()
     {
         var context = new ExceptionContext(new ActionContext(new DefaultHttpContext(), new RouteData(), new ActionDescriptor()), [])
         {
@@ -91,8 +90,8 @@ public class ZeroAllocProblemDetailsJointTests
 
         new ZeroAllocProblemDetailsJoint.ValidationFailureExceptionFilter().OnException(context);
 
-        context.ExceptionHandled.ShouldBeFalse();
-        context.Result.ShouldBeNull();
+        await context.ExceptionHandled.Should().BeFalse();
+        await context.Result.Should().BeNull();
     }
 
     private static async Task<IDovetailContext> Context() =>

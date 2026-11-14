@@ -1,12 +1,10 @@
 using System.Reflection;
 
-using FakeItEasy;
 
 using Joinery.Dovetail;
 using Joinery.Dovetail.Joints;
 
 using Microsoft.Extensions.DependencyInjection;
-using Specular.Abstractions;
 
 namespace FluentValidation.AspNetCore.Tests.Joints;
 
@@ -32,15 +30,13 @@ internal static class JointTestContext
     public static DovetailContextBuilder CreateBuilder() => CreateBuilder(CreateProvider());
 
     /// <summary>
-    ///     A fake Specular provider that finds the given assemblies for every assembly scan.
+    ///     A mocked Specular provider that finds the given assemblies for every assembly scan.
     /// </summary>
     public static ISpecularProvider CreateProvider(params Assembly[] assemblies)
     {
-        var provider = A.Fake<ISpecularProvider>();
-        A
-           .CallTo(() => provider.GetAssemblies(A<Action<IReflectionAssemblySelector>>._, A<int>._, A<string>._, A<string>._))
-           .Returns(assemblies);
-        return provider;
+        var provider = ISpecularProvider.Mock();
+        provider.GetAssemblies(Any(), Any(), Any(), Any()).Returns(assemblies);
+        return provider.Object;
     }
 
     /// <summary>

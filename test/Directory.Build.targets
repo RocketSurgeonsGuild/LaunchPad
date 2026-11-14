@@ -7,11 +7,11 @@
         -->
         <PackageReference Include="TUnit" />
         <PackageReference Include="Verify.TUnit" />
-        <PackageReference Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.TUnit" />
         <PackageReference Include="Bogus" />
-        <PackageReference Include="FakeItEasy" />
-        <PackageReference Include="Shouldly" />
+        <!-- TUnit's own mocks (source generated) and its Should assertion syntax -->
+        <PackageReference Include="TUnit.Mocks" />
+        <PackageReference Include="TUnit.Assertions.Should" />
         <PackageReference Include="Verify.DiffPlex" />
         <PackageReference Include="Verify.NodaTime" />
         <PackageReference Include="Verify.SystemJson" />
@@ -19,10 +19,11 @@
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     </ItemGroup>
     <ItemGroup Condition="'$(IsTestSupportProject)' != 'true'">
-        <PackageReference Include="FakeItEasy.Analyzer.CSharp" />
         <Using Include="Rocket.Surgery.Extensions.Testing" />
         <Using Include="Bogus" />
-        <Using Include="Shouldly" />
+        <Using Include="TUnit.Assertions.Should" />
+        <Using Include="TUnit.Assertions.Should.Extensions" />
+        <Using Include="TUnit.Assertions.Enums" />
     </ItemGroup>
     <!--
         Every test project is wired through Dovetail and scanned through Specular. A test project gets the joints of the projects it references

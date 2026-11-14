@@ -13,7 +13,7 @@ using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Sample.BlazorWasm.Tests;
 
-public abstract class HandleTestHostBase(LogEventLevel logLevel) : AutoFakeTest<TestRecord>(TestRecord.Create(logLevel)), IAsyncInitializer
+public abstract class HandleTestHostBase(LogEventLevel logLevel) : ContainerTest<TestRecord>(TestRecord.Create(logLevel)), IAsyncInitializer
 {
     protected HandleTestHostBase() : this(LogEventLevel.Information) { }
 

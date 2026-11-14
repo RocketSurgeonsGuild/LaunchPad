@@ -30,7 +30,7 @@ public class CreateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
         var clock = scope.ServiceProvider.GetRequiredService<IClock>();
 
-        var response = ( await mediator.Send(
+        var response = await Assert.That(( await mediator.Send(
             new CreateLaunchRecord.Request
             {
                 Partner = "partner",
@@ -40,9 +40,9 @@ public class CreateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
                 PayloadWeightKg = 100,
             },
             TestContext.CancellationToken
-        ) ).Value.ShouldBeOfType<CreateLaunchRecord.Response>();
+        ) ).Value).IsTypeOf<CreateLaunchRecord.Response>();
 
-        response.Id.Value.ShouldNotBe(Guid.Empty);
+        await response.Id.Value.Should().NotBeEqualTo(Guid.Empty);
     }
 
     private static readonly Faker Faker = new();

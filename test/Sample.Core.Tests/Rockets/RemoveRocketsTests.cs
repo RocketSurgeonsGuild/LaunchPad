@@ -27,11 +27,11 @@ public class RemoveRocketsTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            ( await mediator.Send(new DeleteRocket.Request(id), TestContext.CancellationToken) ).Value.ShouldBeOfType<Unit>();
+            await ( await mediator.Send(new DeleteRocket.Request(id), TestContext.CancellationToken) ).Value.Should().BeOfType(typeof(Unit));
         }
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
-        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.ShouldBeEmpty();
+        await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.Should().BeEmpty();
     }
 
     private static readonly Faker Faker = new();

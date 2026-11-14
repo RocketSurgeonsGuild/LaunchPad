@@ -92,7 +92,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
     {
         var client = ServiceProvider.GetRequiredService<IRocketClient>();
         var response = await client.UpdateRocket.ExecuteAsync(request, TestContext.CancellationToken);
-        response.IsErrorResult().ShouldBeTrue();
+        await response.IsErrorResult().Should().BeTrue();
 
         await Verify(response.Errors).UseParameters(request.Id);
     }

@@ -34,6 +34,6 @@ public class RemoveLaunchRecordsTests : GraphQlWebAppFixtureTest
         response.EnsureNoErrors();
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
-        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.ShouldBeEmpty();
+        await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.Should().BeEmpty();
     }
 }

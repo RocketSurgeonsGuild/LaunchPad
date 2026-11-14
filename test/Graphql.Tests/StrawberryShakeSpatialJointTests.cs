@@ -17,19 +17,17 @@ public class StrawberryShakeSpatialJointTests
         var services = new ServiceCollection();
         new StrawberryShakeSpatialJoint().Register(await JointContext.Create(), services);
 
-        services.Where(x => x.ServiceType == typeof(ISerializer)).Select(x => (x.ImplementationType, x.Lifetime)).ShouldBe(
-            [(typeof(GeometrySerializer), ServiceLifetime.Singleton)]
-        );
+        await services.Where(x => x.ServiceType == typeof(ISerializer)).Select(x => (x.ImplementationType, x.Lifetime)).Should().BeEquivalentTo([(typeof(GeometrySerializer), ServiceLifetime.Singleton)], CollectionOrdering.Matching);
     }
 
     [Test]
-    public void Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
+    public async Task Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
     {
         var export = Exports.Joints().Single(x => x.Joint is StrawberryShakeSpatialJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldBeEmpty();
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        await export.Dependencies.Should().BeEmpty();
         // The generated export metadata does not carry the category in Dovetail 0.3.0, so the attribute is what declares it.
-        typeof(StrawberryShakeSpatialJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Core);
+        await typeof(StrawberryShakeSpatialJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
     }
 }

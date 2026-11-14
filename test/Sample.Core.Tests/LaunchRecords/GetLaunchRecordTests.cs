@@ -43,13 +43,13 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = ( await mediator.Send(new GetLaunchRecord.Request(record.Id), TestContext.CancellationToken) ).Value.ShouldBeOfType<LaunchRecordModel>();
+        var response = await Assert.That(( await mediator.Send(new GetLaunchRecord.Request(record.Id), TestContext.CancellationToken) ).Value).IsTypeOf<LaunchRecordModel>();
 
-        response.Partner.ShouldBe("partner");
-        response.Payload.ShouldBe("geo-fence-ftl");
-        response.RocketType.ShouldBe(RocketType.Falcon9);
-        response.RocketSerialNumber.ShouldBe("12345678901234");
-        response.ScheduledLaunchDate.ShouldBe(OffsetDateTime.FromDateTimeOffset(record.ScheduledLaunchDate));
+        await response.Partner.Should().BeEqualTo("partner");
+        await response.Payload.Should().BeEqualTo("geo-fence-ftl");
+        await response.RocketType.Should().BeEqualTo(RocketType.Falcon9);
+        await response.RocketSerialNumber.Should().BeEqualTo("12345678901234");
+        await response.ScheduledLaunchDate.Should().BeEqualTo(OffsetDateTime.FromDateTimeOffset(record.ScheduledLaunchDate));
     }
 
     [Test]
@@ -60,7 +60,7 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
 
         var result = await mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()), TestContext.CancellationToken);
 
-        result.Value.ShouldBeOfType<NotFound>();
+        await result.Value.Should().BeOfType(typeof(NotFound));
     }
 
     private static readonly Faker Faker = new();

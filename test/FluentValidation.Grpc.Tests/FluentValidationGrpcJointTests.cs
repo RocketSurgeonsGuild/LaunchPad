@@ -1,12 +1,8 @@
 using System.Reflection;
 
-using FakeItEasy;
-
-using FluentValidation.Results;
-
-using global::Grpc.AspNetCore.Server;
-using global::Grpc.Core;
-using global::Grpc.Core.Interceptors;
+using Grpc.AspNetCore.Server;
+using Grpc.Core;
+using Grpc.Core.Interceptors;
 
 using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
@@ -25,16 +21,15 @@ namespace FluentValidation.Grpc.Tests;
 public class FluentValidationGrpcJointTests
 {
     [Test]
-    public void Is_Exported_To_Run_Before_The_Grpc_Joint()
+    public async Task Is_Exported_To_Run_Before_The_Grpc_Joint()
     {
         var export = FluentValidationExports.Joints().Single(x => x.Joint is FluentValidationGrpcJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependentOf),
-            x => x.Type.ShouldBe(typeof(GrpcJoint))
-        );
-        typeof(FluentValidationGrpcJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependentOf);
+        await x.Type.Should().BeEqualTo(typeof(GrpcJoint));
+        await typeof(FluentValidationGrpcJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -45,9 +40,9 @@ public class FluentValidationGrpcJointTests
         using var grpcOnly = await BuildAsync(includeValidation: false);
 
         var interceptors = Interceptors(provider);
-        interceptors[0].ShouldBe(typeof(ValidationInterceptor));
-        interceptors.Skip(1).ShouldBe(Interceptors(grpcOnly));
-        Interceptors(grpcOnly).ShouldNotBeEmpty();
+        await interceptors[0].Should().BeEqualTo(typeof(ValidationInterceptor));
+        await interceptors.Skip(1).Should().BeEquivalentTo(Interceptors(grpcOnly), CollectionOrdering.Matching);
+        await Interceptors(grpcOnly).Should().NotBeEmpty();
     }
 
     [Test]
@@ -55,16 +50,16 @@ public class FluentValidationGrpcJointTests
     {
         using var provider = await BuildAsync();
 
-        provider.GetRequiredService<IValidatorErrorMessageHandler>().ShouldBeOfType<DefaultErrorMessageHandler>();
+        await provider.GetRequiredService<IValidatorErrorMessageHandler>().Should().BeOfType(typeof(DefaultErrorMessageHandler));
     }
 
     [Test]
     public async Task Keeps_The_Validator_Error_Message_Handler_That_Was_Already_Registered()
     {
-        var handler = A.Fake<IValidatorErrorMessageHandler>();
+        var handler = IValidatorErrorMessageHandler.Mock().Object;
         using var provider = await BuildAsync(services => services.AddSingleton(handler));
 
-        provider.GetRequiredService<IValidatorErrorMessageHandler>().ShouldBeSameAs(handler);
+        await provider.GetRequiredService<IValidatorErrorMessageHandler>().Should().BeSameReferenceAs(handler);
     }
 
     [Test]
@@ -73,13 +68,11 @@ public class FluentValidationGrpcJointTests
         using var provider = await BuildAsync(services => services.AddSingleton<IValidator<Request>, RequestValidator>());
         var interceptor = ValidationInterceptorFrom(provider);
 
-        var exception = await Should.ThrowAsync<RpcException>(
-            () => interceptor.UnaryServerHandler(new Request(""), A.Fake<ServerCallContext>(), (_, _) => Task.FromResult("called"))
-        );
+        var exception = await ( (Func<Task>)( () => interceptor.UnaryServerHandler(new Request(""), Mock.Of<ServerCallContext>().Object, (_, _) => Task.FromResult("called")) ) ).Should().Throw<RpcException>();
 
-        exception.StatusCode.ShouldBe(StatusCode.InvalidArgument);
-        exception.Status.Detail.ShouldBe("Property Name failed validation.");
-        exception.Trailers.GetValue("title").ShouldBe("Unprocessable Entity");
+        await exception.StatusCode.Should().BeEqualTo(StatusCode.InvalidArgument);
+        await exception.Status.Detail.Should().BeEqualTo("Property Name failed validation.");
+        await exception.Trailers.GetValue("title").Should().BeEqualTo("Unprocessable Entity");
     }
 
     [Test]
@@ -88,41 +81,38 @@ public class FluentValidationGrpcJointTests
         using var provider = await BuildAsync(services => services.AddSingleton<IValidator<Request>, RequestValidator>());
         var interceptor = ValidationInterceptorFrom(provider);
 
-        var response = await interceptor.UnaryServerHandler(new Request("a"), A.Fake<ServerCallContext>(), (_, _) => Task.FromResult("called"));
+        var response = await interceptor.UnaryServerHandler(new Request("a"), Mock.Of<ServerCallContext>().Object, (_, _) => Task.FromResult("called"));
 
-        response.ShouldBe("called");
+        await response.Should().BeEqualTo("called");
     }
 
     [Test]
     public async Task Uses_The_Registered_Error_Message_Handler()
     {
-        var handler = A.Fake<IValidatorErrorMessageHandler>();
-        A.CallTo(() => handler.HandleAsync(A<IEnumerable<ValidationFailure>>._)).Returns("Validation Error!");
+        var handler = IValidatorErrorMessageHandler.Mock();
+        handler.HandleAsync(Any()).Returns("Validation Error!");
         using var provider = await BuildAsync(
-            services => services.AddSingleton(handler).AddSingleton<IValidator<Request>, RequestValidator>()
+            services => services.AddSingleton(handler.Object).AddSingleton<IValidator<Request>, RequestValidator>()
         );
         var interceptor = ValidationInterceptorFrom(provider);
 
-        var exception = await Should.ThrowAsync<RpcException>(
-            () => interceptor.UnaryServerHandler(new Request(""), A.Fake<ServerCallContext>(), (_, _) => Task.FromResult("called"))
-        );
+        var exception = await ( (Func<Task>)( () => interceptor.UnaryServerHandler(new Request(""), Mock.Of<ServerCallContext>().Object, (_, _) => Task.FromResult("called")) ) ).Should().Throw<RpcException>();
 
-        exception.Status.Detail.ShouldBe("Validation Error!");
+        await exception.Status.Detail.Should().BeEqualTo("Validation Error!");
     }
 
-    private static Type[] Interceptors(IServiceProvider provider) => provider
+    private static Type[] Interceptors(IServiceProvider provider) => [.. provider
                                                                     .GetRequiredService<IOptions<GrpcServiceOptions>>()
                                                                     .Value
                                                                     .Interceptors
-                                                                    .Select(z => z.Type)
-                                                                    .ToArray();
+                                                                    .Select(z => z.Type)];
 
     private static Interceptor ValidationInterceptorFrom(IServiceProvider provider) =>
         (Interceptor)ActivatorUtilities.CreateInstance(provider, Interceptors(provider).First());
 
     private static async Task<ServiceProvider> BuildAsync(Action<IServiceCollection>? configure = null, bool reverse = false, bool includeValidation = true)
     {
-        IEnumerable<IDovetailJointMetadata> joints = [..Exports.Joints(), ..( includeValidation ? FluentValidationExports.Joints() : [] )];
+        IEnumerable<IDovetailJointMetadata> joints = [.. Exports.Joints(), ..  includeValidation ? FluentValidationExports.Joints() : [] ];
         // Dovetail resolves joints whose category is not in the context's category set, so the set stays empty to run every joint.
         var context = await DovetailContext.FromAsync(
             DovetailContextBuilder.Create(reverse ? joints.Reverse() : joints, new Dictionary<object, object>(), DovetailHostType.Live, [])

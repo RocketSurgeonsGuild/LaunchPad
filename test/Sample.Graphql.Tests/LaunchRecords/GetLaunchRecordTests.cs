@@ -47,11 +47,11 @@ public class GetLaunchRecordTests : GraphQlWebAppFixtureTest
             cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes![0].Partner.ShouldBe("partner");
-        response.Data.LaunchRecords!.Nodes[0].Payload.ShouldBe("geo-fence-ftl");
-        response.Data.LaunchRecords!.Nodes[0].Rocket.Type.ShouldBe(GraphQlRocketType.Falcon9);
-        response.Data.LaunchRecords!.Nodes[0].Rocket.SerialNumber.ShouldBe("12345678901234");
-        response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.ToDateTimeOffset().ShouldBe(record.ScheduledLaunchDate);
+        await response.Data!.LaunchRecords!.Nodes![0].Partner.Should().BeEqualTo("partner");
+        await response.Data.LaunchRecords!.Nodes[0].Payload.Should().BeEqualTo("geo-fence-ftl");
+        await response.Data.LaunchRecords!.Nodes[0].Rocket.Type.Should().BeEqualTo(GraphQlRocketType.Falcon9);
+        await response.Data.LaunchRecords!.Nodes[0].Rocket.SerialNumber.Should().BeEqualTo("12345678901234");
+        await response.Data.LaunchRecords!.Nodes[0].ScheduledLaunchDate.ToDateTimeOffset().Should().BeEqualTo(record.ScheduledLaunchDate);
     }
 
     private static readonly Faker Faker = new();

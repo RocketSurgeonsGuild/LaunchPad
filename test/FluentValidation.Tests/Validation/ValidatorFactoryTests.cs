@@ -2,7 +2,7 @@ using Serilog.Events;
 
 namespace FluentValidation.Tests.Validation;
 
-public class ValidatorFactoryTests() : AutoFakeTest<TestRecord>(TestRecord.Create(LogEventLevel.Information))
+public class ValidatorFactoryTests() : ContainerTest<TestRecord>(TestRecord.Create(LogEventLevel.Information))
 {
     //    [Test]
     //    public void Should_Aggregate_Validators()

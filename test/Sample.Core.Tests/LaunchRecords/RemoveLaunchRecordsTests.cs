@@ -30,11 +30,11 @@ public class RemoveLaunchRecordsTests() : HandleTestHostBase(LogEventLevel.Verbo
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            ( await mediator.Send(new DeleteLaunchRecord.Request(id), TestContext.CancellationToken) ).Value.ShouldBeOfType<Unit>();
+            await ( await mediator.Send(new DeleteLaunchRecord.Request(id), TestContext.CancellationToken) ).Value.Should().BeOfType(typeof(Unit));
         }
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
-        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.ShouldBeEmpty();
+        await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.Should().BeEmpty();
     }
 
     [Test]
@@ -58,7 +58,7 @@ public class RemoveLaunchRecordsTests() : HandleTestHostBase(LogEventLevel.Verbo
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         var result = await mediator.Send(new DeleteLaunchRecord.Request(id), TestContext.CancellationToken);
-        result.Value.ShouldBeOfType<Forbidden>();
+        await result.Value.Should().BeOfType(typeof(Forbidden));
     }
 
     private static readonly Faker Faker = new();

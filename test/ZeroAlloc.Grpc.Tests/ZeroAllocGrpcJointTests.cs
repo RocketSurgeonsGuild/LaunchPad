@@ -1,6 +1,5 @@
 using System.Reflection;
 
-using FakeItEasy;
 
 using Grpc.AspNetCore.Server;
 using Grpc.Core;
@@ -24,16 +23,15 @@ namespace ZeroAlloc.Grpc.Tests;
 public class ZeroAllocGrpcJointTests
 {
     [Test]
-    public void Is_Exported_To_Run_After_The_Grpc_Joint()
+    public async Task Is_Exported_To_Run_After_The_Grpc_Joint()
     {
         var export = ZeroAllocExports.Joints().Single(x => x.Joint is ZeroAllocGrpcJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
-            x => x.Type.ShouldBe(typeof(GrpcJoint))
-        );
-        typeof(ZeroAllocGrpcJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
+        await x.Type.Should().BeEqualTo(typeof(GrpcJoint));
+        await typeof(ZeroAllocGrpcJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -43,7 +41,7 @@ public class ZeroAllocGrpcJointTests
         new ZeroAllocGrpcJoint().Register(await Context(), services);
         using var provider = services.BuildServiceProvider();
 
-        provider.GetRequiredService<IOptions<GrpcServiceOptions>>().Value.Interceptors.Select(x => x.Type).ShouldBe([typeof(ZeroAllocValidationInterceptor)]);
+        await provider.GetRequiredService<IOptions<GrpcServiceOptions>>().Value.Interceptors.Select(x => x.Type).Should().BeEquivalentTo([typeof(ZeroAllocValidationInterceptor)], CollectionOrdering.Matching);
     }
 
     [Test]
@@ -51,20 +49,16 @@ public class ZeroAllocGrpcJointTests
     {
         var interceptor = new ZeroAllocValidationInterceptor();
 
-        var exception = await Should.ThrowAsync<RpcException>(
-            () => interceptor.UnaryServerHandler<string, string>(
+        var exception = await ( (Func<Task>)( () => interceptor.UnaryServerHandler<string, string>(
                 "request",
-                A.Fake<ServerCallContext>(),
+                Mock.Of<ServerCallContext>().Object,
                 (_, _) => throw Failure(("SerialNumber", "SerialNumber must not be empty."), ("Type", "Type is not valid."))
-            )
-        );
+            ) ) ).Should().Throw<RpcException>();
 
-        exception.StatusCode.ShouldBe(StatusCode.InvalidArgument);
-        exception.Status.Detail.ShouldBe(
-            "Property SerialNumber failed validation. SerialNumber must not be empty." + Environment.NewLine + "Property Type failed validation. Type is not valid."
-        );
-        exception.Trailers.GetValue("serialnumber").ShouldBe("SerialNumber must not be empty.");
-        exception.Trailers.GetValue("type").ShouldBe("Type is not valid.");
+        await exception.StatusCode.Should().BeEqualTo(StatusCode.InvalidArgument);
+        await exception.Status.Detail.Should().BeEqualTo("Property SerialNumber failed validation. SerialNumber must not be empty." + Environment.NewLine + "Property Type failed validation. Type is not valid.");
+        await exception.Trailers.GetValue("serialnumber").Should().BeEqualTo("SerialNumber must not be empty.");
+        await exception.Trailers.GetValue("type").Should().BeEqualTo("Type is not valid.");
     }
 
     [Test]
@@ -72,16 +66,14 @@ public class ZeroAllocGrpcJointTests
     {
         var interceptor = new ZeroAllocValidationInterceptor();
 
-        var exception = await Should.ThrowAsync<RpcException>(
-            () => interceptor.ServerStreamingServerHandler(
+        var exception = await ( (Func<Task>)( () => interceptor.ServerStreamingServerHandler(
                 "request",
-                A.Fake<IServerStreamWriter<string>>(),
-                A.Fake<ServerCallContext>(),
+                IServerStreamWriter<string>.Mock().Object,
+                Mock.Of<ServerCallContext>().Object,
                 (_, _, _) => throw Failure(("Id", "Id must not be empty."))
-            )
-        );
+            ) ) ).Should().Throw<RpcException>();
 
-        exception.StatusCode.ShouldBe(StatusCode.InvalidArgument);
+        await exception.StatusCode.Should().BeEqualTo(StatusCode.InvalidArgument);
     }
 
     [Test]
@@ -89,10 +81,8 @@ public class ZeroAllocGrpcJointTests
     {
         var interceptor = new ZeroAllocValidationInterceptor();
 
-        ( await interceptor.UnaryServerHandler("request", A.Fake<ServerCallContext>(), (_, _) => Task.FromResult("called")) ).ShouldBe("called");
-        await Should.ThrowAsync<InvalidOperationException>(
-            () => interceptor.UnaryServerHandler<string, string>("request", A.Fake<ServerCallContext>(), (_, _) => throw new InvalidOperationException())
-        );
+        await ( await interceptor.UnaryServerHandler("request", Mock.Of<ServerCallContext>().Object, (_, _) => Task.FromResult("called")) ).Should().BeEqualTo("called");
+        await ( (Func<Task>)( () => interceptor.UnaryServerHandler<string, string>("request", Mock.Of<ServerCallContext>().Object, (_, _) => throw new InvalidOperationException()) ) ).Should().Throw<InvalidOperationException>();
     }
 
     private static ValidationFailedException Failure(params (string Property, string Message)[] failures) =>

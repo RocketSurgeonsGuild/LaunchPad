@@ -22,7 +22,7 @@ public class CreateRocketTests() : GraphQlWebAppFixtureTest(LogEventLevel.Inform
         );
 
         response.EnsureNoErrors();
-        response.Data!.CreateRocket.Id.ShouldNotBe(Guid.Empty);
+        await response.Data!.CreateRocket.Id.Should().NotBeEqualTo(Guid.Empty);
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class CreateRocketTests() : GraphQlWebAppFixtureTest(LogEventLevel.Inform
             },
             cancellationToken: TestContext.CancellationToken
         );
-        response.IsErrorResult().ShouldBeFalse();
+        await response.IsErrorResult().Should().BeFalse();
 
         var response2 = await client.CreateRocket.ExecuteAsync(
             new CreateRocketRequest
@@ -47,7 +47,7 @@ public class CreateRocketTests() : GraphQlWebAppFixtureTest(LogEventLevel.Inform
             },
             cancellationToken: TestContext.CancellationToken
         );
-        response2.IsErrorResult().ShouldBeTrue();
-        response2.Errors[0].Message.ShouldBe("A Rocket already exists with that serial number!");
+        await response2.IsErrorResult().Should().BeTrue();
+        await response2.Errors[0].Message.Should().BeEqualTo("A Rocket already exists with that serial number!");
     }
 }

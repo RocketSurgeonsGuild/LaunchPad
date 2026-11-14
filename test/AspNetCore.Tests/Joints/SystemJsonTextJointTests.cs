@@ -19,7 +19,7 @@ public class SystemJsonTextJointTests
         services.Configure<JsonSerializerOptions>(options => options.WriteIndented = true);
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.JsonSerializerOptions.WriteIndented.ShouldBeTrue();
+        await provider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.JsonSerializerOptions.WriteIndented.Should().BeTrue();
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class SystemJsonTextJointTests
         services.Configure<JsonSerializerOptions>(options => options.WriteIndented = true);
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IOptions<HttpJsonOptions>>().Value.SerializerOptions.WriteIndented.ShouldBeTrue();
+        await provider.GetRequiredService<IOptions<HttpJsonOptions>>().Value.SerializerOptions.WriteIndented.Should().BeTrue();
     }
 
     [Test]
@@ -38,6 +38,6 @@ public class SystemJsonTextJointTests
         var services = await JointTestContext.ApplyServicesAsync<SystemJsonTextJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.JsonSerializerOptions.WriteIndented.ShouldBeFalse();
+        await provider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.JsonSerializerOptions.WriteIndented.Should().BeFalse();
     }
 }

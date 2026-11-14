@@ -19,9 +19,9 @@ public class NodaTimeSerilogJointTests
     {
         var context = await JointContext.Create();
 
-        JointContext
+        await JointContext
            .RenderDestructured(configuration => new NodaTimeSerilogJoint().Register(context, new ServiceCollection(), configuration), Instant.FromUtc(2022, 1, 1, 4, 4, 4))
-           .ShouldBe("Value \"2022-01-01T04:04:04Z\"");
+           .Should().BeEqualTo("Value \"2022-01-01T04:04:04Z\"");
     }
 
     [Test]
@@ -34,18 +34,18 @@ public class NodaTimeSerilogJointTests
         var withExtension = JointContext.RenderDestructured(configuration => configuration.Destructure.NodaTimeTypes(), value);
         var withoutDestructuring = JointContext.RenderDestructured(_ => { }, value);
 
-        withJoint.ShouldBe(withExtension);
-        withJoint.ShouldNotBe(withoutDestructuring);
+        await withJoint.Should().BeEqualTo(withExtension);
+        await withJoint.Should().NotBeEqualTo(withoutDestructuring);
     }
 
     [Test]
-    public void Is_Exported_As_A_Core_Serilog_Joint_Without_Ordering_Or_Gating()
+    public async Task Is_Exported_As_A_Core_Serilog_Joint_Without_Ordering_Or_Gating()
     {
         var export = NodaTimeExports.Joints().Single(x => x.Joint is NodaTimeSerilogJoint);
 
-        export.Joint.ShouldBeAssignableTo<ISerilogJoint>();
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldBeEmpty();
-        typeof(NodaTimeSerilogJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Core);
+        await Assert.That(export.Joint).IsAssignableTo<ISerilogJoint>();
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        await export.Dependencies.Should().BeEmpty();
+        await typeof(NodaTimeSerilogJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
     }
 }

@@ -7,14 +7,14 @@ namespace EntityFramework.Tests;
 public class StronglyTypedIdValueGeneratorTests
 {
     [Test]
-    public void Should_Generate_Each_Value_From_The_Factory()
+    public async Task Should_Generate_Each_Value_From_The_Factory()
     {
         var next = 0;
         var generator = StronglyTypedIdValueGenerator.Create(() => new RocketId(++next))(null!, null!);
 
-        generator.GeneratesTemporaryValues.ShouldBeFalse();
-        generator.Next(null!).ShouldBe(new RocketId(1));
-        generator.Next(null!).ShouldBe(new RocketId(2));
+        await generator.GeneratesTemporaryValues.Should().BeFalse();
+        await generator.Next(null!).Should().BeEqualTo(new RocketId(1));
+        await generator.Next(null!).Should().BeEqualTo(new RocketId(2));
     }
 
     [Test]
@@ -27,9 +27,9 @@ public class StronglyTypedIdValueGeneratorTests
         var rocket = new Rocket { Name = "Saturn V", };
         context.Add(rocket);
 
-        rocket.Id.ShouldBe(RocketContext.GeneratedId);
+        await rocket.Id.Should().BeEqualTo(RocketContext.GeneratedId);
         await context.SaveChangesAsync();
-        ( await context.Set<Rocket>().SingleAsync() ).Id.ShouldBe(RocketContext.GeneratedId);
+        await ( await context.Set<Rocket>().SingleAsync() ).Id.Should().BeEqualTo(RocketContext.GeneratedId);
     }
 
     private readonly record struct RocketId(int Value);

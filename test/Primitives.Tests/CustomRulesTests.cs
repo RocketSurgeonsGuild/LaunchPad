@@ -31,30 +31,30 @@ public sealed partial class Sku;
 public class CustomRulesTests
 {
     [Test]
-    public void An_Application_Rules_Set_Backs_A_Type()
+    public async Task An_Application_Rules_Set_Backs_A_Type()
     {
-        Accepts<Sku, string>("ABC-1234");
-        Rejects<Sku, string>("TST-1234");
-        Rejects<Sku, string>("abc-1234");
-        Rejects<Sku, string>("ABC-12345");
+        await Accepts<Sku, string>("ABC-1234");
+        await Rejects<Sku, string>("TST-1234");
+        await Rejects<Sku, string>("abc-1234");
+        await Rejects<Sku, string>("ABC-12345");
     }
 
     [Test]
-    public void An_Application_Type_Gets_The_Rules()
+    public async Task An_Application_Type_Gets_The_Rules()
     {
-        Accepts<WorkEmail, string>("someone@example.com");
-        Rejects<WorkEmail, string>("not an email");
-        Rejects<WorkEmail, string>("someone@localhost");
+        await Accepts<WorkEmail, string>("someone@example.com");
+        await Rejects<WorkEmail, string>("not an email");
+        await Rejects<WorkEmail, string>("someone@localhost");
     }
 
     [Test]
-    public void An_Application_Type_Holds_The_Same_Value() =>
-        WorkEmail.From("someone@example.com").AsPrimitive().ShouldBe(EmailAddress.From("someone@example.com").AsPrimitive());
+    public async Task An_Application_Type_Holds_The_Same_Value() =>
+        await WorkEmail.From("someone@example.com").AsPrimitive().Should().BeEqualTo(EmailAddress.From("someone@example.com").AsPrimitive());
 
     // The System.Text.Json generator does not see the [JsonConverter] SuperStrong generates in the same compilation, so a JSON context in
     // the project that declares the strong type cannot list it; the converter is registered through a resolver instead.
     [Test]
-    public void An_Application_Type_Round_Trips_Through_Json_With_Its_Converter()
+    public async Task An_Application_Type_Round_Trips_Through_Json_With_Its_Converter()
     {
         var options = new JsonSerializerOptions(StrongTypesJsonContext.Default.Options)
         {
@@ -68,9 +68,9 @@ public class CustomRulesTests
         var typeInfo = (JsonTypeInfo<WorkEmail>)options.GetTypeInfo(typeof(WorkEmail));
 #pragma warning restore CA2263
 
-        JsonSerializer.Serialize(WorkEmail.From("someone@example.com"), typeInfo).ShouldBe("\"someone@example.com\"");
-        JsonSerializer.Deserialize("\"someone@example.com\"", typeInfo).ShouldBe(WorkEmail.From("someone@example.com"));
-        Should.Throw<JsonException>(() => JsonSerializer.Deserialize("\"nope\"", typeInfo));
+        await JsonSerializer.Serialize(WorkEmail.From("someone@example.com"), typeInfo).Should().BeEqualTo("\"someone@example.com\"");
+        await JsonSerializer.Deserialize("\"someone@example.com\"", typeInfo).Should().BeEqualTo(WorkEmail.From("someone@example.com"));
+        await ( (Action)( () => JsonSerializer.Deserialize("\"nope\"", typeInfo) ) ).Should().Throw<JsonException>();
     }
 
     private sealed class ConverterResolver<T>(JsonConverter<T> converter) : IJsonTypeInfoResolver

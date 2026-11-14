@@ -31,10 +31,10 @@ public class GetRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = ( await mediator.Send(new GetRocket.Request(rocket), TestContext.CancellationToken) ).Value.ShouldBeOfType<RocketModel>();
+        var response = await Assert.That(( await mediator.Send(new GetRocket.Request(rocket), TestContext.CancellationToken) ).Value).IsTypeOf<RocketModel>();
 
-        response.Type.ShouldBe(RocketType.Falcon9);
-        response.Sn.ShouldBe("12345678901234");
+        await response.Type.Should().BeEqualTo(RocketType.Falcon9);
+        await response.Sn.Should().BeEqualTo("12345678901234");
     }
 
     [Test]
@@ -45,7 +45,7 @@ public class GetRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
 
         var result = await mediator.Send(new GetRocket.Request(RocketId.New()), TestContext.CancellationToken);
 
-        result.Value.ShouldBeOfType<NotFound>();
+        await result.Value.Should().BeOfType(typeof(NotFound));
     }
 
     private static readonly Faker Faker = new();

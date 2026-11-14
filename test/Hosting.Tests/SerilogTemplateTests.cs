@@ -40,11 +40,11 @@ public class SerilogTemplateTests
         await tree.Build("app", Cancellation);
         var output = await tree.Run("app", Cancellation);
 
-        tree.EmittedTemplates("app").Where(IsSerilogJoint).ShouldBe(CoreJoints);
-        output.ShouldContain("event: Hello { a: 1, b: [True, null] }");
-        output.ShouldContain("  Pushed = \"from the log context\"");
-        output.ShouldContain("  EnvironmentName = \"Production\"");
-        output.ShouldContain("  ApplicationName = \"app\"");
+        await tree.EmittedTemplates("app").Where(IsSerilogJoint).Should().BeEquivalentTo(CoreJoints, CollectionOrdering.Matching);
+        await output.Should().Contain("event: Hello { a: 1, b: [True, null] }");
+        await output.Should().Contain("  Pushed = \"from the log context\"");
+        await output.Should().Contain("  EnvironmentName = \"Production\"");
+        await output.Should().Contain("  ApplicationName = \"app\"");
     }
 
     /// <summary>
@@ -67,8 +67,8 @@ public class SerilogTemplateTests
         await tree.Build("app", Cancellation);
         var output = await tree.Run("app", Cancellation);
 
-        tree.EmittedTemplates("app").Where(IsSerilogJoint).ShouldBeEmpty();
-        output.ShouldNotContain("event:");
+        await tree.EmittedTemplates("app").Where(IsSerilogJoint).Should().BeEmpty();
+        await output.Should().NotContain("event:");
     }
 
     /// <summary>
@@ -87,10 +87,10 @@ public class SerilogTemplateTests
         var configured = await tree.Run("app", "--Serilog:MinimumLevel:Default=Verbose", Cancellation);
         var applicationState = await tree.Run("app", "--Serilog:MinimumLevel:Default=Verbose --ApplicationState:LogLevel=Warning", Cancellation);
 
-        configured.ShouldContain("event: Hello");
-        configured.ShouldContain("event: Failed");
-        applicationState.ShouldNotContain("event: Hello");
-        applicationState.ShouldContain("event: Failed");
+        await configured.Should().Contain("event: Hello");
+        await configured.Should().Contain("event: Failed");
+        await applicationState.Should().NotContain("event: Hello");
+        await applicationState.Should().Contain("event: Failed");
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class SerilogTemplateTests
 
         await tree.Build("app", Cancellation);
 
-        tree.EmittedTemplates("app").Where(IsSerilogJoint).ShouldBe(CoreJoints.Append(joint).Order(StringComparer.Ordinal));
+        await tree.EmittedTemplates("app").Where(IsSerilogJoint).Should().BeEquivalentTo(CoreJoints.Append(joint).Order(StringComparer.Ordinal), CollectionOrdering.Matching);
     }
 
     /// <summary>
@@ -138,22 +138,22 @@ public class SerilogTemplateTests
 
         // the sinks write the message with the literal (lj) format, which renders a structure as JSON; the debug sink writes to the trace
         // listeners as well, and the trace listener puts its own prefix in front of the message
-        output.ShouldContain("console: Hello {\"a\": 1, \"b\": [true, null]}");
-        output.ShouldContain("debug: Hello {\"a\":1,\"b\":[true,null]}");
-        output.ShouldContain("trace: Hello {\"a\":1,\"b\":[true,null]}");
+        await output.Should().Contain("console: Hello {\"a\": 1, \"b\": [true, null]}");
+        await output.Should().Contain("debug: Hello {\"a\":1,\"b\":[true,null]}");
+        await output.Should().Contain("trace: Hello {\"a\":1,\"b\":[true,null]}");
         // the properties of the first event, as the program writes them: the name, and the value when it is the same on every machine
         var lines = output.ReplaceLineEndings("\n").Split('\n');
-        lines.ShouldContain("  AssemblyName = \"app\"");
+        await lines.Should().Contain("  AssemblyName = \"app\"");
         foreach (var property in new[]
                  {
                      "AssemblyInformationalVersion", "AssemblyVersion", "EnvironmentUserName", "MachineName", "ProcessId", "ProcessName", "ThreadId",
                      "ParentId", "SpanId", "TraceId", "ExceptionDetail",
                  })
         {
-            lines.ShouldContain($"  {property}");
+            await lines.Should().Contain($"  {property}");
         }
 
-        output.ShouldContain("DiagnosticContext:True");
+        await output.Should().Contain("DiagnosticContext:True");
     }
 
     /// <summary>
@@ -181,8 +181,8 @@ public class SerilogTemplateTests
         await tree.Build("app", Cancellation);
         var output = await tree.Run("app", Cancellation);
 
-        tree.EmittedTemplates("app").ShouldContain("LaunchPadSerilogOpenTelemetryJoint");
-        output.ShouldContain(exported ? "Exported:/v1/logs" : "Exported:nothing");
+        await tree.EmittedTemplates("app").Should().Contain("LaunchPadSerilogOpenTelemetryJoint");
+        await output.Should().Contain(exported ? "Exported:/v1/logs" : "Exported:nothing");
     }
 
     private static bool IsSerilogJoint(string template) => template.StartsWith("LaunchPadSerilog", StringComparison.Ordinal);

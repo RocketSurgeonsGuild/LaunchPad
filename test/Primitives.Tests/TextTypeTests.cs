@@ -15,7 +15,7 @@ public class EmailAddressTests
     [Arguments("User@Example.COM")]
     [Arguments("user@xn--bcher-kva.example")]
     [Arguments("a@b-c.io")]
-    public void Accepts(string value) => Accepts<EmailAddress, string>(value);
+    public async Task Accepts(string value) => await Accepts<EmailAddress, string>(value);
 
     [Test]
     [Arguments("")]
@@ -36,32 +36,32 @@ public class EmailAddressTests
     [Arguments("üser@example.com")]
     [Arguments("user@bücher.example")]
     [Arguments("a@b@example.com")]
-    public void Rejects(string value) => Rejects<EmailAddress, string>(value);
+    public async Task Rejects(string value) => await Rejects<EmailAddress, string>(value);
 
     [Test]
-    public void Accepts_A_Local_Part_Of_64_And_Rejects_65()
+    public async Task Accepts_A_Local_Part_Of_64_And_Rejects_65()
     {
-        Accepts<EmailAddress, string>(new string('a', 64) + "@example.com");
-        Rejects<EmailAddress, string>(new string('a', 65) + "@example.com");
+        await Accepts<EmailAddress, string>(new string('a', 64) + "@example.com");
+        await Rejects<EmailAddress, string>(new string('a', 65) + "@example.com");
     }
 
     [Test]
-    public void Accepts_254_Characters_And_Rejects_255()
+    public async Task Accepts_254_Characters_And_Rejects_255()
     {
         // 64 + 1 + 189 = 254: the domain is three labels of 61 and a top-level label of 3.
         var domain = $"{new string('b', 61)}.{new string('c', 61)}.{new string('d', 61)}.abc";
-        Accepts<EmailAddress, string>($"{new string('a', 64)}@{domain}");
-        Rejects<EmailAddress, string>($"{new string('a', 64)}@{domain}e");
+        await Accepts<EmailAddress, string>($"{new string('a', 64)}@{domain}");
+        await Rejects<EmailAddress, string>($"{new string('a', 64)}@{domain}e");
     }
 
     [Test]
-    public void Keeps_Case() => EmailAddress.From("User@example.com").ShouldNotBe(EmailAddress.From("user@example.com"));
+    public async Task Keeps_Case() => await EmailAddress.From("User@example.com").Should().NotBeEqualTo(EmailAddress.From("user@example.com"));
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(EmailAddress.From("user@example.com"), "\"user@example.com\"");
-        FailsToRead<EmailAddress>("\"not an email\"");
+        await RoundTrips(EmailAddress.From("user@example.com"), "\"user@example.com\"");
+        await FailsToRead<EmailAddress>("\"not an email\"");
     }
 }
 
@@ -72,7 +72,7 @@ public class PhoneNumberTests
     [Arguments("+442071838750")]
     [Arguments("+6834001")]
     [Arguments("+123456789012345")]
-    public void Accepts(string value) => Accepts<PhoneNumber, string>(value);
+    public async Task Accepts(string value) => await Accepts<PhoneNumber, string>(value);
 
     [Test]
     [Arguments("")]
@@ -84,14 +84,14 @@ public class PhoneNumberTests
     [Arguments("+123456")]
     [Arguments("+1234567890123456")]
     [Arguments("+1415555267x")]
-    public void Rejects(string value) => Rejects<PhoneNumber, string>(value);
+    public async Task Rejects(string value) => await Rejects<PhoneNumber, string>(value);
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
         // The default encoder escapes the plus sign.
-        RoundTrips(PhoneNumber.From("+14155552671"), "\"\\u002B14155552671\"");
-        FailsToRead<PhoneNumber>("\"4155552671\"");
+        await RoundTrips(PhoneNumber.From("+14155552671"), "\"\\u002B14155552671\"");
+        await FailsToRead<PhoneNumber>("\"4155552671\"");
     }
 }
 
@@ -107,7 +107,7 @@ public class UrlTests
     [Arguments("https://example.com/a%20b")]
     [Arguments("https://Example.COM/Path")]
     [Arguments("https://xn--bcher-kva.example/")]
-    public void Accepts(string value) => Accepts<Url, string>(value);
+    public async Task Accepts(string value) => await Accepts<Url, string>(value);
 
     [Test]
     [Arguments("")]
@@ -121,21 +121,21 @@ public class UrlTests
     [Arguments("https://example.com/%zz")]
     [Arguments("https://bücher.example/")]
     [Arguments("https://example.com/\n")]
-    public void Rejects(string value) => Rejects<Url, string>(value);
+    public async Task Rejects(string value) => await Rejects<Url, string>(value);
 
     [Test]
-    public void Accepts_8000_Characters_And_Rejects_8001()
+    public async Task Accepts_8000_Characters_And_Rejects_8001()
     {
         const string prefix = "https://example.com/";
-        Accepts<Url, string>(prefix + new string('a', UrlRules.MaxLength - prefix.Length));
-        Rejects<Url, string>(prefix + new string('a', UrlRules.MaxLength - prefix.Length + 1));
+        await Accepts<Url, string>(prefix + new string('a', UrlRules.MaxLength - prefix.Length));
+        await Rejects<Url, string>(prefix + new string('a', UrlRules.MaxLength - prefix.Length + 1));
     }
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(Url.From("https://example.com/a?b=c"), "\"https://example.com/a?b=c\"");
-        FailsToRead<Url>("\"ftp://example.com/\"");
+        await RoundTrips(Url.From("https://example.com/a?b=c"), "\"https://example.com/a?b=c\"");
+        await FailsToRead<Url>("\"ftp://example.com/\"");
     }
 }
 
@@ -147,7 +147,7 @@ public class SlugTests
     [Arguments("hello-world-2")]
     [Arguments("2024")]
     [Arguments("a")]
-    public void Accepts(string value) => Accepts<Slug, string>(value);
+    public async Task Accepts(string value) => await Accepts<Slug, string>(value);
 
     [Test]
     [Arguments("")]
@@ -158,20 +158,20 @@ public class SlugTests
     [Arguments("hello-")]
     [Arguments("hello--world")]
     [Arguments("héllo")]
-    public void Rejects(string value) => Rejects<Slug, string>(value);
+    public async Task Rejects(string value) => await Rejects<Slug, string>(value);
 
     [Test]
-    public void Accepts_100_Characters_And_Rejects_101()
+    public async Task Accepts_100_Characters_And_Rejects_101()
     {
-        Accepts<Slug, string>(new string('a', 100));
-        Rejects<Slug, string>(new string('a', 101));
+        await Accepts<Slug, string>(new string('a', 100));
+        await Rejects<Slug, string>(new string('a', 101));
     }
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(Slug.From("hello-world"), "\"hello-world\"");
-        FailsToRead<Slug>("\"Hello World\"");
+        await RoundTrips(Slug.From("hello-world"), "\"hello-world\"");
+        await FailsToRead<Slug>("\"Hello World\"");
     }
 }
 
@@ -181,7 +181,7 @@ public class HexColorTests
     [Arguments("#fff")]
     [Arguments("#000000")]
     [Arguments("#1a2b3c")]
-    public void Accepts(string value) => Accepts<HexColor, string>(value);
+    public async Task Accepts(string value) => await Accepts<HexColor, string>(value);
 
     [Test]
     [Arguments("")]
@@ -193,12 +193,12 @@ public class HexColorTests
     [Arguments("#ff")]
     [Arguments("#gggggg")]
     [Arguments("#fffffff")]
-    public void Rejects(string value) => Rejects<HexColor, string>(value);
+    public async Task Rejects(string value) => await Rejects<HexColor, string>(value);
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(HexColor.From("#1a2b3c"), "\"#1a2b3c\"");
-        FailsToRead<HexColor>("\"#1A2B3C\"");
+        await RoundTrips(HexColor.From("#1a2b3c"), "\"#1a2b3c\"");
+        await FailsToRead<HexColor>("\"#1A2B3C\"");
     }
 }

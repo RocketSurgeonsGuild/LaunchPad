@@ -15,9 +15,9 @@ public class RequestLoggingTests
         await host.Client.GetAsync("/ping");
 
         var logEvent = await host.Sink.SingleRequestEventAsync();
-        logEvent.Level.ShouldBe(LogEventLevel.Information);
-        logEvent.Properties["RequestPath"].ToString().ShouldBe("\"/ping\"");
-        logEvent.Properties["StatusCode"].ToString().ShouldBe("200");
+        await logEvent.Level.Should().BeEqualTo(LogEventLevel.Information);
+        await logEvent.Properties["RequestPath"].ToString().Should().BeEqualTo("\"/ping\"");
+        await logEvent.Properties["StatusCode"].ToString().Should().BeEqualTo("200");
     }
 
     [Test]
@@ -28,12 +28,12 @@ public class RequestLoggingTests
         await host.Client.GetAsync("/ping?name=value");
 
         var properties = ( await host.Sink.SingleRequestEventAsync() ).Properties;
-        properties["Host"].ToString().ShouldBe("\"localhost\"");
-        properties["Protocol"].ToString().ShouldBe("\"HTTP/1.1\"");
-        properties["Scheme"].ToString().ShouldBe("\"http\"");
-        properties["QueryString"].ToString().ShouldBe("\"?name=value\"");
-        properties["EndpointName"].ToString().ShouldBe("\"Ping\"");
-        properties.ShouldContainKey("ContentType");
+        await properties["Host"].ToString().Should().BeEqualTo("\"localhost\"");
+        await properties["Protocol"].ToString().Should().BeEqualTo("\"HTTP/1.1\"");
+        await properties["Scheme"].ToString().Should().BeEqualTo("\"http\"");
+        await properties["QueryString"].ToString().Should().BeEqualTo("\"?name=value\"");
+        await properties["EndpointName"].ToString().Should().BeEqualTo("\"Ping\"");
+        await properties.Should().ContainKey("ContentType");
     }
 
     [Test]
@@ -43,7 +43,7 @@ public class RequestLoggingTests
 
         await host.Client.GetAsync("/ping");
 
-        ( await host.Sink.SingleRequestEventAsync() ).Properties.ShouldNotContainKey("QueryString");
+        await ( await host.Sink.SingleRequestEventAsync() ).Properties.Should().NotContainKey("QueryString");
     }
 
     [Test]
@@ -53,7 +53,7 @@ public class RequestLoggingTests
 
         await host.Client.GetAsync("/fail");
 
-        ( await host.Sink.SingleRequestEventAsync() ).Level.ShouldBe(LogEventLevel.Error);
+        await ( await host.Sink.SingleRequestEventAsync() ).Level.Should().BeEqualTo(LogEventLevel.Error);
     }
 
     [Test]
@@ -63,7 +63,7 @@ public class RequestLoggingTests
 
         await host.Client.GetAsync("/missing");
 
-        ( await host.Sink.SingleRequestEventAsync() ).Level.ShouldBe(LogEventLevel.Information);
+        await ( await host.Sink.SingleRequestEventAsync() ).Level.Should().BeEqualTo(LogEventLevel.Information);
     }
 
     [Test]
@@ -83,8 +83,8 @@ public class RequestLoggingTests
         }
 
         var logEvent = await host.Sink.SingleRequestEventAsync();
-        logEvent.Level.ShouldBe(LogEventLevel.Error);
-        logEvent.Exception.ShouldBeOfType<InvalidOperationException>();
+        await logEvent.Level.Should().BeEqualTo(LogEventLevel.Error);
+        await logEvent.Exception.Should().BeOfType(typeof(InvalidOperationException));
     }
 
     [Test]
@@ -94,7 +94,7 @@ public class RequestLoggingTests
 
         await host.Client.GetAsync("/health");
 
-        ( await host.Sink.SingleRequestEventAsync() ).Level.ShouldBe(LogEventLevel.Verbose);
+        await ( await host.Sink.SingleRequestEventAsync() ).Level.Should().BeEqualTo(LogEventLevel.Verbose);
     }
 
     [Test]
@@ -105,10 +105,10 @@ public class RequestLoggingTests
         await host.Client.GetAsync("/request-logging/42");
 
         var properties = ( await host.Sink.SingleRequestEventAsync() ).Properties;
-        properties["ActionName"].ToString().ShouldContain(nameof(RequestLoggingController.Get));
-        properties.ShouldContainKey("ActionId");
-        properties["RouteData"].ToString().ShouldContain("RequestLogging");
-        properties["ValidationState"].ToString().ShouldBe("True");
+        await properties["ActionName"].ToString().Should().Contain(nameof(RequestLoggingController.Get));
+        await properties.Should().ContainKey("ActionId");
+        await properties["RouteData"].ToString().Should().Contain("RequestLogging");
+        await properties["ValidationState"].ToString().Should().BeEqualTo("True");
     }
 }
 

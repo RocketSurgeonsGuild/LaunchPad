@@ -5,11 +5,11 @@ namespace FluentValidation.Tests;
 public class FoundationBoundaryTests
 {
     [Test]
-    public void Foundation_Does_Not_Reference_FluentValidation()
+    public async Task Foundation_Does_Not_Reference_FluentValidation()
     {
         var references = typeof(FoundationOptions).Assembly.GetReferencedAssemblies().Select(x => x.Name).ToList();
 
-        references.ShouldNotContain("FluentValidation");
-        references.ShouldNotContain("FluentValidation.DependencyInjectionExtensions");
+        await references.Should().NotContain("FluentValidation");
+        await references.Should().NotContain("FluentValidation.DependencyInjectionExtensions");
     }
 }

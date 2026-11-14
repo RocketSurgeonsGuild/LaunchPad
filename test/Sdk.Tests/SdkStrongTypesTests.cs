@@ -24,7 +24,7 @@ public class SdkStrongTypesTests(string targetFramework)
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.AspNetCore);
 
-        ( await tree.Evaluate("app", Cancellation) ).PackageReferences.ShouldNotContain(z => z.StartsWith(Primitives, StringComparison.Ordinal));
+        await ( await tree.Evaluate("app", Cancellation) ).PackageReferences.Should().All(z => !z.StartsWith(Primitives, StringComparison.Ordinal));
     }
 
     /// <summary>

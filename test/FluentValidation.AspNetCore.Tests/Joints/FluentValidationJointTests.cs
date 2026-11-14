@@ -19,16 +19,15 @@ namespace FluentValidation.AspNetCore.Tests.Joints;
 public class FluentValidationJointTests
 {
     [Test]
-    public void Is_Exported_As_An_Application_Joint_That_Runs_After_The_AspNetCore_Joint()
+    public async Task Is_Exported_As_An_Application_Joint_That_Runs_After_The_AspNetCore_Joint()
     {
         var export = FluentValidationExports.Joints().Single(x => x.Joint is FluentValidationJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
-            x => x.Type.ShouldBe(typeof(AspNetCoreJoint))
-        );
-        typeof(FluentValidationJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
+        await x.Type.Should().BeEqualTo(typeof(AspNetCoreJoint));
+        await typeof(FluentValidationJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -37,7 +36,7 @@ public class FluentValidationJointTests
         var services = await JointTestContext.ApplyServicesAsync<FluentValidationJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IOptions<MvcOptions>>().Value.Filters[0].ShouldBeOfType<ValidationExceptionFilter>();
+        await provider.GetRequiredService<IOptions<MvcOptions>>().Value.Filters[0].Should().BeOfType(typeof(ValidationExceptionFilter));
     }
 
     [Test]
@@ -46,13 +45,13 @@ public class FluentValidationJointTests
         var services = await JointTestContext.ApplyServicesAsync<FluentValidationJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider
+        await provider
            .GetRequiredService<IOptions<MvcJsonOptions>>()
            .Value
            .JsonSerializerOptions
            .Converters
            .OfType<ValidationProblemDetailsConverter>()
-           .ShouldHaveSingleItem();
+           .Should().HaveSingleItem();
     }
 
     [Test]
@@ -61,12 +60,12 @@ public class FluentValidationJointTests
         var services = await JointTestContext.ApplyServicesAsync<FluentValidationJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider
+        await provider
            .GetRequiredService<IOptions<HttpJsonOptions>>()
            .Value
            .SerializerOptions
            .Converters
            .OfType<ValidationProblemDetailsConverter>()
-           .ShouldHaveSingleItem();
+           .Should().HaveSingleItem();
     }
 }

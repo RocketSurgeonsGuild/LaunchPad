@@ -11,33 +11,33 @@ namespace Spatial.Serilog.Tests;
 public class SpatialSystemTextJsonTests
 {
     [Test]
-    public void Writes_GeoJson_Without_Reflection()
+    public async Task Writes_GeoJson_Without_Reflection()
     {
         var options = WithoutReflection(new JsonSerializerOptions().ConfigureGeoJsonForLaunchPad(null));
 
         var json = JsonSerializer.Serialize<object>(new Point(1, 2), options);
 
-        json.ShouldContain("\"type\":\"Point\"");
-        JsonSerializer.Deserialize<Point>(json, options)!.X.ShouldBe(1);
-        JsonSerializer.Deserialize<Geometry>(json, options).ShouldBeOfType<Point>();
+        await json.Should().Contain("\"type\":\"Point\"");
+        await JsonSerializer.Deserialize<Point>(json, options)!.X.Should().BeEqualTo(1);
+        await JsonSerializer.Deserialize<Geometry>(json, options).Should().BeOfType(typeof(Point));
     }
 
     [Test]
-    public void Writes_Well_Known_Text_Without_Reflection()
+    public async Task Writes_Well_Known_Text_Without_Reflection()
     {
         var options = WithoutReflection(new JsonSerializerOptions().ConfigureWellKnownTextForLaunchPad(null));
 
-        JsonSerializer.Serialize<Geometry>(new Point(1, 2), options).ShouldBe("\"POINT (1 2)\"");
-        JsonSerializer.Deserialize<Geometry>("\"POINT (1 2)\"", options).ShouldBeOfType<Point>();
+        await JsonSerializer.Serialize<Geometry>(new Point(1, 2), options).Should().BeEqualTo("\"POINT (1 2)\"");
+        await JsonSerializer.Deserialize<Geometry>("\"POINT (1 2)\"", options).Should().BeOfType(typeof(Point));
     }
 
     [Test]
-    public void Chains_Only_Its_Own_Resolver_When_Configured_Standalone()
+    public async Task Chains_Only_Its_Own_Resolver_When_Configured_Standalone()
     {
         var options = new JsonSerializerOptions().ConfigureGeoJsonForLaunchPad(null);
 
-        options.TypeInfoResolverChain.ShouldBe([NetTopologySuiteSystemTextJsonSerializationExtensions.TypeInfoResolver]);
-        JsonSerializer.Serialize<Geometry>(new Point(1, 2), options).ShouldContain("\"type\":\"Point\"");
+        await options.TypeInfoResolverChain.Should().BeEquivalentTo([NetTopologySuiteSystemTextJsonSerializationExtensions.TypeInfoResolver], CollectionOrdering.Matching);
+        await JsonSerializer.Serialize<Geometry>(new Point(1, 2), options).Should().Contain("\"type\":\"Point\"");
     }
 
     private static JsonSerializerOptions WithoutReflection(JsonSerializerOptions options) =>

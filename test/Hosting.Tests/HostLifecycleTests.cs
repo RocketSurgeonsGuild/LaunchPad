@@ -1,4 +1,3 @@
-using FakeItEasy;
 using Hosting.Tests.Scaffolding;
 using Joinery.Dovetail;
 using Microsoft.Extensions.Hosting;
@@ -16,23 +15,23 @@ public class HostLifecycleTests
     public async Task Should_Run_The_Handlers_Of_Each_Moment_Once()
     {
         var builder = Host.CreateApplicationBuilder();
-        var onStarted = A.Fake<Func<IServiceProvider, Task>>();
-        var onStarting = A.Fake<Action<IServiceProvider>>();
-        var onStopping = A.Fake<Func<IServiceProvider, CancellationToken, Task>>();
-        var onStopped = A.Fake<Func<IServiceProvider, Task>>();
-        builder.OnHostStarted(onStarted);
-        builder.OnHostStarting(onStarting);
-        builder.OnHostStopped(onStopped);
-        builder.OnHostStopping(onStopping);
+        var onStarted = Mock.OfDelegate<Func<IServiceProvider, Task>>();
+        var onStarting = Mock.OfDelegate<Action<IServiceProvider>>();
+        var onStopping = Mock.OfDelegate<Func<IServiceProvider, CancellationToken, Task>>();
+        var onStopped = Mock.OfDelegate<Func<IServiceProvider, Task>>();
+        builder.OnHostStarted(onStarted.Object);
+        builder.OnHostStarting(onStarting.Object);
+        builder.OnHostStopped(onStopped.Object);
+        builder.OnHostStopping(onStopping.Object);
 
         using var app = builder.Build();
         await app.StartAsync(TestContext.Current!.Execution.CancellationToken);
         await app.StopAsync(TestContext.Current!.Execution.CancellationToken);
 
-        A.CallTo(onStarted).MustHaveHappenedOnceExactly();
-        A.CallTo(onStarting).MustHaveHappenedOnceExactly();
-        A.CallTo(onStopped).MustHaveHappenedOnceExactly();
-        A.CallTo(onStopping).MustHaveHappenedOnceExactly();
+        onStarted.Invoke(Any()).WasCalled(Times.Once);
+        onStarting.Invoke(Any()).WasCalled(Times.Once);
+        onStopped.Invoke(Any()).WasCalled(Times.Once);
+        onStopping.Invoke(Any(), Any()).WasCalled(Times.Once);
     }
 
     /// <summary>

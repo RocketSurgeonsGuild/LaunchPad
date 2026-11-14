@@ -4,20 +4,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 
 using Rocket.Surgery.LaunchPad.NodaTime.Joints;
-using Rocket.Surgery.LaunchPad.Testing;
 
 namespace NodaTime.Tests;
 
-public class FakeTimeJointTests() : JointFakeTest()
+public class FakeTimeJointTests() : JointTest()
 {
     [Test]
     public async Task Clock_Joint_Default()
     {
         await Init(x => { x.Set(DovetailHostType.UnitTest); });
         var clock = Container.GetRequiredService<IClock>();
-        clock.ShouldBeAssignableTo<IClock>();
-        clock.GetCurrentInstant().ShouldBe(Instant.FromUnixTimeSeconds(1577836800));
-        clock.GetCurrentInstant().ShouldBe(Instant.FromUnixTimeSeconds(1577836800) + Duration.FromSeconds(1));
+        await Assert.That(clock).IsAssignableTo<IClock>();
+        await clock.GetCurrentInstant().Should().BeEqualTo(Instant.FromUnixTimeSeconds(1577836800));
+        await clock.GetCurrentInstant().Should().BeEqualTo(Instant.FromUnixTimeSeconds(1577836800) + Duration.FromSeconds(1));
     }
 
     [Test]
@@ -26,9 +25,9 @@ public class FakeTimeJointTests() : JointFakeTest()
         await Init(x => { x.Set(new FakeTimeOptions { UnixTimeSeconds = 0, AdvanceBy = Duration.FromMinutes(1), }); });
 
         var clock = ServiceProvider.GetRequiredService<IClock>();
-        clock.ShouldBeAssignableTo<IClock>();
-        clock.GetCurrentInstant().ShouldBe(Instant.FromUnixTimeSeconds(0));
-        clock.GetCurrentInstant().ShouldBe(Instant.FromUnixTimeSeconds(0) + Duration.FromMinutes(1));
+        await Assert.That(clock).IsAssignableTo<IClock>();
+        await clock.GetCurrentInstant().Should().BeEqualTo(Instant.FromUnixTimeSeconds(0));
+        await clock.GetCurrentInstant().Should().BeEqualTo(Instant.FromUnixTimeSeconds(0) + Duration.FromMinutes(1));
     }
 
     [Test]
@@ -43,8 +42,8 @@ public class FakeTimeJointTests() : JointFakeTest()
         var services = await TestJoints.ApplyServicesAsync(await DovetailContext.FromAsync(builder));
         var provider = services.BuildServiceProvider();
 
-        ( provider.GetService<FakeTimeProvider>() is { } ).ShouldBe(applies);
-        provider.GetRequiredService<TimeProvider>().ShouldBe(applies ? provider.GetRequiredService<FakeTimeProvider>() : TimeProvider.System);
+        await ( provider.GetService<FakeTimeProvider>() is { } ).Should().BeEqualTo(applies);
+        await provider.GetRequiredService<TimeProvider>().Should().BeEqualTo(applies ? provider.GetRequiredService<FakeTimeProvider>() : TimeProvider.System);
     }
 
     [Test]
@@ -54,8 +53,8 @@ public class FakeTimeJointTests() : JointFakeTest()
 
         var joints = context.Joints.Select(z => z.GetType()).ToList();
 
-        joints.ShouldContain(typeof(FakeTimeJoint));
-        joints.ShouldContain(typeof(TimeJoint));
-        joints.IndexOf(typeof(FakeTimeJoint)).ShouldBeLessThan(joints.IndexOf(typeof(TimeJoint)));
+        await joints.Should().Contain(typeof(FakeTimeJoint));
+        await joints.Should().Contain(typeof(TimeJoint));
+        await joints.IndexOf(typeof(FakeTimeJoint)).Should().BeLessThan(joints.IndexOf(typeof(TimeJoint)));
     }
 }

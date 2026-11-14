@@ -46,11 +46,11 @@ public class GetLaunchRecordTests : WebAppFixtureTest
 
         var response = (await client.GetLaunchRecordAsync(record.Id.Value)).Result;
 
-        response.Partner.ShouldBe("partner");
-        response.Payload.ShouldBe("geo-fence-ftl");
-        response.RocketType.ShouldBe(HttpRocketType.Falcon9);
-        response.RocketSerialNumber.ShouldBe("12345678901234");
-        response.ScheduledLaunchDate.ShouldBe(record.ScheduledLaunchDate);
+        await response.Partner.Should().BeEqualTo("partner");
+        await response.Payload.Should().BeEqualTo("geo-fence-ftl");
+        await response.RocketType.Should().BeEqualTo(HttpRocketType.Falcon9);
+        await response.RocketSerialNumber.Should().BeEqualTo("12345678901234");
+        await response.ScheduledLaunchDate.Should().BeEqualTo(record.ScheduledLaunchDate);
     }
 
     [Test]
@@ -59,7 +59,7 @@ public class GetLaunchRecordTests : WebAppFixtureTest
         var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
 
         Func<Task> action = () => client.GetLaunchRecordAsync(Guid.NewGuid());
-        await action.ShouldThrowAsync<ApiException<ProblemDetails>>()
+        await (await action.Should().Throw<ApiException<ProblemDetails>>())!
                     .Where(
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );

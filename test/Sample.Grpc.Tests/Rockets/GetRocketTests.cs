@@ -35,7 +35,7 @@ public class GetRocketTests : WebAppFixtureTest
         var response = await client.GetRocketsAsync(new GetRocketRequest { Id = rocket.Id.ToString() },
             cancellationToken: TestContext.CancellationToken);
 
-        response.Type.ShouldBe(GrpcRocketType.Falcon9);
-        response.Sn.ShouldBe("12345678901234");
+        await response.Type.Should().BeEqualTo(GrpcRocketType.Falcon9);
+        await response.Sn.Should().BeEqualTo("12345678901234");
     }
 }

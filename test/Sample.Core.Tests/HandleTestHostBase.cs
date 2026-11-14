@@ -1,6 +1,3 @@
-using DryIoc;
-using DryIoc.Microsoft.DependencyInjection;
-
 using Joinery.Dovetail;
 using Joinery.Dovetail.Joints;
 
@@ -19,7 +16,7 @@ using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Sample.Core.Tests;
 
-public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncInitializer
+public abstract class HandleTestHostBase(LogEventLevel logLevel) : ContainerTest<TestRecord>(TestRecord.Create(logLevel)), IAsyncInitializer
 {
     public async Task InitializeAsync()
     {
@@ -57,8 +54,5 @@ public abstract class HandleTestHostBase : AutoFakeTest<TestRecord>, IAsyncIniti
 
     protected HandleTestHostBase() : this(LogEventLevel.Information) { }
 
-    protected HandleTestHostBase(LogEventLevel logLevel) : base(TestRecord.Create(logLevel)) => ExcludeSourceContext(nameof(AutoFakeTest));
-
-    protected override IContainer BuildContainer(IContainer container) => container.WithDependencyInjectionAdapter().Container;
     private SqliteConnection? _connection;
 }

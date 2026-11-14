@@ -17,15 +17,15 @@ namespace Serilog.AspNetCore.Tests.Filters;
 public class SerilogLoggingPageFilterTests
 {
     [Test]
-    public void Should_Add_The_Selected_Page_Handler_To_The_Request_Event()
+    public async Task Should_Add_The_Selected_Page_Handler_To_The_Request_Event()
     {
-        var properties = Collect(new() { Name = "Submit", MethodInfo = typeof(SerilogLoggingPageFilterTests).GetMethod(nameof(OnPostSubmit), BindingFlags.NonPublic | BindingFlags.Static)! });
+        var properties = await Collect(new() { Name = "Submit", MethodInfo = typeof(SerilogLoggingPageFilterTests).GetMethod(nameof(OnPostSubmit), BindingFlags.NonPublic | BindingFlags.Static)! });
 
-        properties.ShouldContain(x => x.Name == "RazorPageHandler" && x.Value.ToString() == "\"Submit\"");
+        await properties.Should().Contain(x => x.Name == "RazorPageHandler" && x.Value.ToString() == "\"Submit\"");
     }
 
     [Test]
-    public void Should_Leave_Out_The_Page_Handler_When_None_Was_Selected() => Collect(null).ShouldNotContain(x => x.Name == "RazorPageHandler");
+    public async Task Should_Leave_Out_The_Page_Handler_When_None_Was_Selected() => await ( await Collect(null) ).Should().All(x => x.Name != "RazorPageHandler");
 
     // The page handler the selected handler descriptor stands for.
     private static void OnPostSubmit()
@@ -33,7 +33,7 @@ public class SerilogLoggingPageFilterTests
         // Only its MethodInfo is used; the filter never invokes the handler
     }
 
-    private static LogEventProperty[] Collect(HandlerMethodDescriptor? handler)
+    private static async Task<LogEventProperty[]> Collect(HandlerMethodDescriptor? handler)
     {
         // the context binds the properties through its logger, and the static one (when it has none) binds nothing
         using var logger = new LoggerConfiguration().CreateLogger();
@@ -44,7 +44,7 @@ public class SerilogLoggingPageFilterTests
 
         new SerilogLoggingPageFilter(diagnosticContext).OnPageHandlerSelected(context);
 
-        collector.TryComplete(out var properties).ShouldBeTrue();
+        await collector.TryComplete(out var properties).Should().BeTrue();
         return [.. properties ?? []];
     }
 }

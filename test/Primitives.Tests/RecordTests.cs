@@ -10,39 +10,39 @@ public class DateRangeTests
     private static readonly DateOnly January31 = new(2024, 1, 31);
 
     [Test]
-    public void Accepts_A_Start_Before_Or_On_The_End()
+    public async Task Accepts_A_Start_Before_Or_On_The_End()
     {
-        DateRange.TryFrom(January1, January31, out var range).ShouldBeTrue();
-        range.ShouldBe(DateRange.From(January1, January31));
-        range!.Start.ShouldBe(January1);
-        range.End.ShouldBe(January31);
-        DateRange.From(January1, January1).End.ShouldBe(January1);
+        await DateRange.TryFrom(January1, January31, out var range).Should().BeTrue();
+        await range.Should().BeEqualTo(DateRange.From(January1, January31));
+        await range!.Start.Should().BeEqualTo(January1);
+        await range.End.Should().BeEqualTo(January31);
+        await DateRange.From(January1, January1).End.Should().BeEqualTo(January1);
     }
 
     [Test]
-    public void Rejects_A_Start_After_The_End()
+    public async Task Rejects_A_Start_After_The_End()
     {
-        DateRange.TryFrom(January31, January1, out var range).ShouldBeFalse();
-        range.ShouldBeNull();
-        Should.Throw<ArgumentException>(() => DateRange.From(January31, January1));
-        Should.Throw<ArgumentException>(() => new DateRange(January31, January1));
+        await DateRange.TryFrom(January31, January1, out var range).Should().BeFalse();
+        await range.Should().BeNull();
+        await ( (Action)( () => DateRange.From(January31, January1) ) ).Should().Throw<ArgumentException>();
+        await ( (Action)( () => new DateRange(January31, January1) ) ).Should().Throw<ArgumentException>();
     }
 
     [Test]
-    public void Contains_Both_Ends()
+    public async Task Contains_Both_Ends()
     {
         var range = DateRange.From(January1, January31);
-        range.Contains(January1).ShouldBeTrue();
-        range.Contains(January31).ShouldBeTrue();
-        range.Contains(new(2024, 2, 1)).ShouldBeFalse();
-        range.Contains(new(2023, 12, 31)).ShouldBeFalse();
+        await range.Contains(January1).Should().BeTrue();
+        await range.Contains(January31).Should().BeTrue();
+        await range.Contains(new(2024, 2, 1)).Should().BeFalse();
+        await range.Contains(new(2023, 12, 31)).Should().BeFalse();
     }
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(DateRange.From(January1, January31), """{"start":"2024-01-01","end":"2024-01-31"}""");
-        FailsToRead<DateRange>("""{"start":"2024-01-31","end":"2024-01-01"}""");
+        await RoundTrips(DateRange.From(January1, January31), """{"start":"2024-01-01","end":"2024-01-31"}""");
+        await FailsToRead<DateRange>("""{"start":"2024-01-31","end":"2024-01-01"}""");
     }
 }
 
@@ -52,27 +52,27 @@ public class TimeRangeTests
     private static readonly TimeOnly FiveThirty = new(17, 30);
 
     [Test]
-    public void Accepts_A_Start_Before_Or_On_The_End()
+    public async Task Accepts_A_Start_Before_Or_On_The_End()
     {
-        TimeRange.TryFrom(Nine, FiveThirty, out var range).ShouldBeTrue();
-        range.ShouldBe(TimeRange.From(Nine, FiveThirty));
-        range!.Duration.ShouldBe(TimeSpan.FromHours(8.5));
-        TimeRange.From(Nine, Nine).Duration.ShouldBe(TimeSpan.Zero);
+        await TimeRange.TryFrom(Nine, FiveThirty, out var range).Should().BeTrue();
+        await range.Should().BeEqualTo(TimeRange.From(Nine, FiveThirty));
+        await range!.Duration.Should().BeEqualTo(TimeSpan.FromHours(8.5));
+        await TimeRange.From(Nine, Nine).Duration.Should().BeEqualTo(TimeSpan.Zero);
     }
 
     [Test]
-    public void Rejects_A_Range_That_Runs_Past_Midnight()
+    public async Task Rejects_A_Range_That_Runs_Past_Midnight()
     {
-        TimeRange.TryFrom(new(22, 0), new(2, 0), out var range).ShouldBeFalse();
-        range.ShouldBeNull();
-        Should.Throw<ArgumentException>(() => TimeRange.From(new(22, 0), new(2, 0)));
+        await TimeRange.TryFrom(new(22, 0), new(2, 0), out var range).Should().BeFalse();
+        await range.Should().BeNull();
+        await ( (Action)( () => TimeRange.From(new(22, 0), new(2, 0)) ) ).Should().Throw<ArgumentException>();
     }
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(TimeRange.From(Nine, FiveThirty), """{"start":"09:00:00","end":"17:30:00"}""");
-        FailsToRead<TimeRange>("""{"start":"17:30:00","end":"09:00:00"}""");
+        await RoundTrips(TimeRange.From(Nine, FiveThirty), """{"start":"09:00:00","end":"17:30:00"}""");
+        await FailsToRead<TimeRange>("""{"start":"17:30:00","end":"09:00:00"}""");
     }
 }
 
@@ -85,35 +85,35 @@ public class MoneyTests
     [Arguments(12.5d)]
     [Arguments(-12.5d)]
     [Arguments(0.0001d)]
-    public void Accepts_Any_Amount(double amount)
+    public async Task Accepts_Any_Amount(double amount)
     {
-        Money.TryFrom((decimal)amount, Usd, out var money).ShouldBeTrue();
-        money.ShouldBe(Money.From((decimal)amount, Usd));
-        money!.Amount.ShouldBe((decimal)amount);
-        money.Currency.ShouldBe(Usd);
+        await Money.TryFrom((decimal)amount, Usd, out var money).Should().BeTrue();
+        await money.Should().BeEqualTo(Money.From((decimal)amount, Usd));
+        await money!.Amount.Should().BeEqualTo((decimal)amount);
+        await money.Currency.Should().BeEqualTo(Usd);
     }
 
     [Test]
-    public void Rejects_No_Currency()
+    public async Task Rejects_No_Currency()
     {
-        Money.TryFrom(1m, null, out var money).ShouldBeFalse();
-        money.ShouldBeNull();
-        Should.Throw<ArgumentNullException>(() => Money.From(1m, null!));
+        await Money.TryFrom(1m, null, out var money).Should().BeFalse();
+        await money.Should().BeNull();
+        await ( (Action)( () => Money.From(1m, null!) ) ).Should().Throw<ArgumentNullException>();
     }
 
     [Test]
-    public void Compares_Amount_And_Currency()
+    public async Task Compares_Amount_And_Currency()
     {
-        Money.From(1m, Usd).ShouldBe(Money.From(1m, CurrencyCode.From("USD")));
-        Money.From(1m, Usd).ShouldNotBe(Money.From(1m, CurrencyCode.From("EUR")));
-        Money.From(1m, Usd).ToString().ShouldBe("1 USD");
+        await Money.From(1m, Usd).Should().BeEqualTo(Money.From(1m, CurrencyCode.From("USD")));
+        await Money.From(1m, Usd).Should().NotBeEqualTo(Money.From(1m, CurrencyCode.From("EUR")));
+        await Money.From(1m, Usd).ToString().Should().BeEqualTo("1 USD");
     }
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(Money.From(12.5m, Usd), """{"amount":12.5,"currency":"USD"}""");
-        FailsToRead<Money>("""{"amount":12.5,"currency":"usd"}""");
-        FailsToRead<Money>("""{"amount":12.5}""");
+        await RoundTrips(Money.From(12.5m, Usd), """{"amount":12.5,"currency":"USD"}""");
+        await FailsToRead<Money>("""{"amount":12.5,"currency":"usd"}""");
+        await FailsToRead<Money>("""{"amount":12.5}""");
     }
 }

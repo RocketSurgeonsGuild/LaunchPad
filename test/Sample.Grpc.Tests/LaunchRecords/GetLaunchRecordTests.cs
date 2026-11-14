@@ -49,11 +49,11 @@ public class GetLaunchRecordTests : WebAppFixtureTest
 
         var response = await client.GetLaunchRecordsAsync(new() { Id = record.Id.ToString(), }, cancellationToken: TestContext.CancellationToken);
 
-        response.Partner.ShouldBe("partner");
-        response.Payload.ShouldBe("geo-fence-ftl");
-        response.RocketType.ShouldBe(GrpcRocketType.Falcon9);
-        response.RocketSerialNumber.ShouldBe("12345678901234");
-        response.ScheduledLaunchDate.ShouldBe(Timestamp.FromDateTimeOffset(record.ScheduledLaunchDate));
+        await response.Partner.Should().BeEqualTo("partner");
+        await response.Payload.Should().BeEqualTo("geo-fence-ftl");
+        await response.RocketType.Should().BeEqualTo(GrpcRocketType.Falcon9);
+        await response.RocketSerialNumber.Should().BeEqualTo("12345678901234");
+        await response.ScheduledLaunchDate.Should().BeEqualTo(Timestamp.FromDateTimeOffset(record.ScheduledLaunchDate));
     }
 
     private static readonly Faker Faker = new();

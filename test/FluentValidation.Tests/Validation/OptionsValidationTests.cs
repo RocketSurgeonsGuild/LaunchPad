@@ -11,20 +11,19 @@ using TUnit.Core.Interfaces;
 
 namespace FluentValidation.Tests.Validation;
 
-public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
+public class OptionsValidationTests() : ContainerTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
     [Test]
     public async Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a
-                      .ShouldThrow<OptionsValidationException>()
+        var failures = ( await a.Should().Throw<OptionsValidationException>() )!
                       .Failures;
         await Verify(failures);
     }
 
     [Test]
-    public void Should_Validate_Options_And_Pass()
+    public async Task Should_Validate_Options_And_Pass()
     {
         var services = new ServiceCollection();
         services
@@ -39,8 +38,8 @@ public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Crea
                 }
             );
         Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.ShouldNotThrow();
+        Options a() => Container.Resolve<IOptions<Options>>().Value;
+        await Assert.That(a).ThrowsNothing();
     }
 
     [Test]
@@ -60,8 +59,7 @@ public class OptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Crea
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a
-                      .ShouldThrow<OptionsValidationException>()
+        var failures = ( await a.Should().Throw<OptionsValidationException>() )!
                       .Failures;
         await Verify(failures);
     }
