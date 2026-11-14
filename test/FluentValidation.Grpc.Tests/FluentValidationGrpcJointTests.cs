@@ -112,7 +112,7 @@ public class FluentValidationGrpcJointTests
 
     private static async Task<ServiceProvider> BuildAsync(Action<IServiceCollection>? configure = null, bool reverse = false, bool includeValidation = true)
     {
-        IEnumerable<IDovetailJointMetadata> joints = [.. Exports.Joints(), ..  includeValidation ? FluentValidationExports.Joints() : [] ];
+        IEnumerable<IDovetailJointMetadata> joints = [.. Exports.Joints(), .. includeValidation ? FluentValidationExports.Joints() : []];
         // Dovetail resolves joints whose category is not in the context's category set, so the set stays empty to run every joint.
         var context = await DovetailContext.FromAsync(
             DovetailContextBuilder.Create(reverse ? joints.Reverse() : joints, new Dictionary<object, object>(), DovetailHostType.Live, [])
