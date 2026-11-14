@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`
-- Version: `2.0.1-pr.1191`
+- Version: `2.0.1-pr.1196`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor)
 

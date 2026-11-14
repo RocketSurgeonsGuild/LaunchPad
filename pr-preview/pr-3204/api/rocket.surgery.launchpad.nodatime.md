@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.NodaTime
 
 - Package: `Rocket.Surgery.LaunchPad.NodaTime`
-- Version: `2.0.1-pr.1191`
+- Version: `2.0.1-pr.1196`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.NodaTime](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.NodaTime)
 

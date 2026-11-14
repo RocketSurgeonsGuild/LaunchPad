@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/pr-preview/pr-3204/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-pr.1191`
+- Version: `2.0.1-pr.1196`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation.Extensions`
 - Target framework: `net10.0`
 

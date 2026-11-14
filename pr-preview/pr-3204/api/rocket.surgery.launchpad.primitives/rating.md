@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3204/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1191`
+- Version: `2.0.1-pr.1196`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net10.0`
 - Implements: `IStrongType<Rating, int>`, `IComparable<Rating>`, `IConvertible`, `IEquatable<Rating>`, `IFormattable`, `IParsable<Rating>`, `ISpanFormattable`, `ISpanParsable<Rating>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Rating>`, `IComparisonOperators<Rating, Rating, bool>`, `IEqualityOperators<Rating, Rating, bool>`
