@@ -31,7 +31,7 @@ public class CustomValidatorIntegrationTest : WebAppFixtureTest
         var response = await client.ListRockets(new ListRocketsRequest()).ResponseStream.ReadAllAsync(TestContext.CancellationToken).ToListAsync(TestContext.CancellationToken);
 
         // Then nothing happen.
-        response.Count.ShouldBeGreaterThan(0);
+        await response.Count.Should().BeGreaterThan(0);
     }
 
     [Test]
@@ -44,7 +44,7 @@ public class CustomValidatorIntegrationTest : WebAppFixtureTest
         async Task Action() => await client.GetRocketsAsync(new GetRocketRequest { Id = "" });
 
         // Then
-        var rpcException = await Should.ThrowAsync<RpcException>(Action);
-        rpcException.Status.StatusCode.ShouldBe(StatusCode.InvalidArgument);
+        var rpcException = await ( (Func<Task>)Action ).Should().Throw<RpcException>();
+        await rpcException.Status.StatusCode.Should().BeEqualTo(StatusCode.InvalidArgument);
     }
 }

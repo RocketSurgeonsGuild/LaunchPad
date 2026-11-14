@@ -10,14 +10,14 @@ public class ClassicRestfulConventionTests
 
     [Test]
     [MethodDataSource(nameof(ApiDescriptions))]
-    public void Should_Have_Success_Response_Types(ApiDescriptionData description) => description.Description.SupportedResponseTypes.ShouldContain(z => z.StatusCode >= 200 && z.StatusCode < 300);
+    public async Task Should_Have_Success_Response_Types(ApiDescriptionData description) => await description.Description.SupportedResponseTypes.Should().Contain(z => z.StatusCode is >= 200 and < 300);
 
     [Test]
     [MethodDataSource(nameof(ApiDescriptions))]
-    public void Should_Have_Bad_Request_Responses_When_Binding(ApiDescriptionData description)
+    public async Task Should_Have_Bad_Request_Responses_When_Binding(ApiDescriptionData description)
     {
         var bound = description.Description.ParameterDescriptions.Any(p => p.Source == BindingSource.Path || p.Source == BindingSource.Query || p.Source == BindingSource.Body);
         if (!bound) return;
-        description.Description.SupportedResponseTypes.ShouldContain(z => z.StatusCode == StatusCodes.Status400BadRequest);
+        await description.Description.SupportedResponseTypes.Should().Contain(z => z.StatusCode == StatusCodes.Status400BadRequest);
     }
 }

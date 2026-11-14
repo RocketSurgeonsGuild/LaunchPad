@@ -10,7 +10,7 @@ public class ClassicFoundationTests : WebAppFixtureTest
     public async Task Starts()
     {
         var response = await AlbaHost.Server.CreateClient().GetAsync("/", TestContext.CancellationToken);
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        await response.StatusCode.Should().BeEqualTo(HttpStatusCode.NotFound);
     }
 
     //    [Fact]

@@ -40,11 +40,11 @@ public class UpdateRocketTests : WebAppFixtureTest
             {
                 Id = rocket.Id.ToString(),
                 Type = GrpcRocketType.FalconHeavy,
-                SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
+                SerialNumber = new string([.. rocket.SerialNumber.Reverse()])
             },
             cancellationToken: TestContext.CancellationToken
         );
-        u.ShouldNotBeNull();
+        await u.Should().NotBeNull();
 
         // var response = await client.GetRocketAsync(rocket.Id);
         //
@@ -58,9 +58,9 @@ public class UpdateRocketTests : WebAppFixtureTest
     {
         var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
         Func<Task> a = async () => await client.EditRocketAsync(request);
-        var e = await a.ShouldThrowAsync<RpcException>();
-        e.Status.StatusCode.ShouldBe(StatusCode.InvalidArgument);
-        e.Message.ShouldContain(propertyName);
+        var e = await a.Should().Throw<RpcException>();
+        await e.Status.StatusCode.Should().BeEqualTo(StatusCode.InvalidArgument);
+        await e.Message.Should().Contain(propertyName);
     }
 
     public static IEnumerable<Func<(UpdateRocketRequest Request, string PropertyName)>> RequiredFieldData()

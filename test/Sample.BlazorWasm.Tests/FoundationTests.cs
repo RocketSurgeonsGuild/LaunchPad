@@ -14,7 +14,7 @@ public class FoundationTests : HandleTestHostBase
                             .GetRequiredService<IMediator>()
                             .Send(new TestHandler.Request { FirstName = "Ada", LastName = "Lovelace" }, TestContext.CancellationToken);
 
-        response.FullName.ShouldBe("Ada Lovelace");
+        await response.FullName.Should().BeEqualTo("Ada Lovelace");
     }
 
     [Test]
@@ -24,6 +24,6 @@ public class FoundationTests : HandleTestHostBase
                           .GetRequiredService<ValidatorFor<TestHandler.Request>>()
                           .ValidateAsync(new TestHandler.Request(), TestContext.CancellationToken);
 
-        result.Failures.ToArray().Select(z => z.PropertyName).Distinct().ShouldBe([nameof(TestHandler.Request.FirstName), nameof(TestHandler.Request.LastName)]);
+        await result.Failures.ToArray().Select(z => z.PropertyName).Distinct().Should().BeEquivalentTo([nameof(TestHandler.Request.FirstName), nameof(TestHandler.Request.LastName)], CollectionOrdering.Matching);
     }
 }

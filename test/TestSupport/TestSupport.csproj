@@ -12,7 +12,6 @@
         <!-- fake time -->
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
         <PackageReference Include="NodaTime.Testing" />
-        <PackageReference Include="Shouldly" />
         <PackageReference Include="Joinery.Dovetail" />
         <!-- web application fixtures -->
         <PackageReference Include="Alba" />

@@ -41,10 +41,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<InheritFromGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0001");
-        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.");
+        await result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0001");
+        await diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket+Request must be made partial.");
 
         await Verify(result);
     }
@@ -81,10 +81,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<InheritFromGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0001");
-        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.CreateRocket must be made partial.");
+        await result.TryGetResult<InheritFromGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0001");
+        await diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.CreateRocket must be made partial.");
 
         await Verify(result);
     }

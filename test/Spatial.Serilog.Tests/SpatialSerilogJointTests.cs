@@ -21,9 +21,9 @@ public class SpatialSerilogJointTests
     {
         var context = await JointContext.Create();
 
-        JointContext
+        await JointContext
            .RenderDestructured(configuration => new SpatialSerilogJoint().Register(context, new ServiceCollection(), configuration), new Point(30, 10))
-           .ShouldBe("Value \"POINT (30 10)\"");
+           .Should().BeEqualTo("Value \"POINT (30 10)\"");
     }
 
     [Test]
@@ -36,21 +36,21 @@ public class SpatialSerilogJointTests
         var withExtension = JointContext.RenderDestructured(configuration => configuration.Destructure.NetTopologySuiteTypes(), geometry);
         var withoutDestructuring = JointContext.RenderDestructured(_ => { }, geometry);
 
-        withJoint.ShouldBe(withExtension);
-        withJoint.ShouldNotBe(withoutDestructuring);
+        await withJoint.Should().BeEqualTo(withExtension);
+        await withJoint.Should().NotBeEqualTo(withoutDestructuring);
     }
 
     [Test]
-    public void Is_Exported_As_A_Core_Serilog_Joint_Without_Ordering_Or_Gating()
+    public async Task Is_Exported_As_A_Core_Serilog_Joint_Without_Ordering_Or_Gating()
     {
         var export = Exports.Joints().Single(x => x.Joint is SpatialSerilogJoint);
 
-        export.Joint.ShouldBeAssignableTo<ISerilogJoint>();
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldBeEmpty();
-        typeof(SpatialSerilogJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Core);
+        await Assert.That(export.Joint).IsAssignableTo<ISerilogJoint>();
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        await export.Dependencies.Should().BeEmpty();
+        await typeof(SpatialSerilogJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
     }
 
     [Test]
-    public void The_Spatial_Joint_Is_No_Longer_A_Serilog_Joint() => typeof(SpatialJoint).IsAssignableTo(typeof(ISerilogJoint)).ShouldBeFalse();
+    public async Task The_Spatial_Joint_Is_No_Longer_A_Serilog_Joint() => await typeof(SpatialJoint).IsAssignableTo(typeof(ISerilogJoint)).Should().BeFalse();
 }

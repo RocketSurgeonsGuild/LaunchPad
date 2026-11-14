@@ -23,7 +23,7 @@ public class CreateRocketTests : WebAppFixtureTest
             cancellationToken: TestContext.CancellationToken
         );
 
-        response.Id.ShouldNotBeEmpty();
+        await response.Id.Should().NotBeEmpty();
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class CreateRocketTests : WebAppFixtureTest
             },
             cancellationToken: TestContext.CancellationToken
         );
-        var r = await action.ShouldThrowAsync<RpcException>();
-        r.Message.ShouldContain("Rocket Creation Failed");
+        var r = await action.Should().Throw<RpcException>();
+        await r.Message.Should().Contain("Rocket Creation Failed");
     }
 }

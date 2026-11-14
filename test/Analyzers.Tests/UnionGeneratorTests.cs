@@ -44,8 +44,9 @@ public class UnionGeneratorTests() : GeneratorTest()
             new(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary)
         );
         using var stream = new MemoryStream();
-        compilation.Emit(stream).Success.ShouldBeTrue();
-        return stream.ToArray();
+        // a static initializer cannot await an assertion
+        var result = compilation.Emit(stream);
+        return !result.Success ? throw new InvalidOperationException(string.Join("\n", result.Diagnostics.Select(d => d.ToString()))) : stream.ToArray();
     }
 
     public override async Task InitializeAsync()
@@ -302,10 +303,10 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        result.FinalDiagnostics.Where(diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error).ShouldBeEmpty();
+        await result.FinalDiagnostics.Where(diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error).Should().BeEmpty();
         LoadPolyfill();
         var run = result.Assembly!.GetType("Exercise")!.GetMethod("Run", BindingFlags.Public | BindingFlags.Static)!;
-        run.Invoke(null, null).ShouldBe("rocket 1|not found: Rocket 2 not found|empty|True:1|True:False|True");
+        await run.Invoke(null, null).Should().BeEqualTo("rocket 1|not found: Rocket 2 not found|empty|True:1|True:False|True");
     }
 
     [Test]
@@ -344,10 +345,10 @@ public class UnionGeneratorTests() : GeneratorTest()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        result.FinalDiagnostics.Where(diagnostic => diagnostic.Severity >= Microsoft.CodeAnalysis.DiagnosticSeverity.Warning).ShouldBeEmpty();
+        await result.FinalDiagnostics.Where(diagnostic => diagnostic.Severity >= Microsoft.CodeAnalysis.DiagnosticSeverity.Warning).Should().BeEmpty();
         LoadPolyfill();
         var run = result.Assembly!.GetType("Exercise")!.GetMethod("Run", BindingFlags.Public | BindingFlags.Static)!;
-        run.Invoke(null, null).ShouldBe("rocket 1|not found|problem Conflict");
+        await run.Invoke(null, null).Should().BeEqualTo("rocket 1|not found|problem Conflict");
     }
 
     [Test]

@@ -13,8 +13,8 @@ public class CommandLineApplicationTests() : LoggerTest<TestRecord>(TestRecord.C
 
         var exitCode = await CommandLineApplication.RunAsync([], console, cancellationToken: TestContext.CancellationToken);
 
-        exitCode.ShouldBe(0, console.Output);
-        console.Output.ShouldContain("Hello World!");
+        await exitCode.Should().Because(console.Output).BeEqualTo(0);
+        await console.Output.Should().Contain("Hello World!");
     }
 
     [Test]
@@ -29,12 +29,12 @@ public class CommandLineApplicationTests() : LoggerTest<TestRecord>(TestRecord.C
             TestContext.CancellationToken
         );
 
-        exitCode.ShouldBe(0, console.Output);
+        await exitCode.Should().Because(console.Output).BeEqualTo(0);
         // the configuration the host was started with
-        console.Output.ShouldContain("Sample:Greeting");
-        console.Output.ShouldContain("Hello from the test");
+        await console.Output.Should().Contain("Sample:Greeting");
+        await console.Output.Should().Contain("Hello from the test");
         // InstanceThing is registered in the DryIoc container only, so the command was created by it
-        console.Output.ShouldContain("DryIoc");
+        await console.Output.Should().Contain("DryIoc");
     }
 
     [Test]
@@ -44,6 +44,6 @@ public class CommandLineApplicationTests() : LoggerTest<TestRecord>(TestRecord.C
 
         var exitCode = await CommandLineApplication.RunAsync(["missing"], console, cancellationToken: TestContext.CancellationToken);
 
-        exitCode.ShouldNotBe(0);
+        await exitCode.Should().NotBeEqualTo(0);
     }
 }

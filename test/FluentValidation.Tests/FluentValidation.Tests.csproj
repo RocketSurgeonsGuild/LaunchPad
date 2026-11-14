@@ -5,4 +5,8 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\FluentValidation\Rocket.Surgery.LaunchPad.FluentValidation.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <Compile Include="../Shared/ContainerTest.cs" Link="Shared/ContainerTest.cs" />
+        <Using Include="Rocket.Surgery.LaunchPad.Testing" />
+    </ItemGroup>
 </Project>

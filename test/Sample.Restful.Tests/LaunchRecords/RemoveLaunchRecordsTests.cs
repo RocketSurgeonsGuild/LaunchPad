@@ -29,7 +29,7 @@ public class RemoveLaunchRecordsTests : WebAppFixtureTest
         await client.DeleteLaunchRecordAsync(record.Id.Value);
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
-        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.ShouldBeEmpty();
+        await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.Should().BeEmpty();
     }
 
     [Test]
@@ -51,7 +51,7 @@ public class RemoveLaunchRecordsTests : WebAppFixtureTest
         }
 
         Func<Task> action = () => client.DeleteLaunchRecordAsync(id.Value);
-        await action.ShouldThrowAsync<ApiException<ProblemDetails>>()
+        await (await action.Should().Throw<ApiException<ProblemDetails>>())!
                     .Where(z => z.StatusCode == 403 && z.Result.Status == 403 && z.Result.Title == "Forbidden");
     }
 

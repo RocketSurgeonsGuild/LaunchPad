@@ -24,8 +24,8 @@ public class NodaTimeSystemTextJsonJointTests
     {
         var options = await Options(DateTimeZoneProviders.Tzdb);
 
-        JsonSerializer.Serialize(Instant.FromUtc(2020, 1, 1, 12, 12, 12), options).ShouldBe("\"2020-01-01T12:12:12Z\"");
-        JsonSerializer.Serialize(new LocalDate(2020, 1, 1), options).ShouldBe("\"2020-01-01\"");
+        await JsonSerializer.Serialize(Instant.FromUtc(2020, 1, 1, 12, 12, 12), options).Should().BeEqualTo("\"2020-01-01T12:12:12Z\"");
+        await JsonSerializer.Serialize(new LocalDate(2020, 1, 1), options).Should().BeEqualTo("\"2020-01-01\"");
     }
 
     // Native AOT turns reflection off: the NodaTime types then resolve from the converters alone, also as an object or a nullable.
@@ -40,19 +40,19 @@ public class NodaTimeSystemTextJsonJointTests
             ),
         };
 
-        JsonSerializer.Serialize<object>(Instant.FromUtc(2020, 1, 1, 12, 12, 12), options).ShouldBe("\"2020-01-01T12:12:12Z\"");
-        JsonSerializer.Serialize<LocalDate?>(new LocalDate(2020, 1, 1), options).ShouldBe("\"2020-01-01\"");
-        JsonSerializer.Deserialize<Duration?>("null", options).ShouldBeNull();
-        JsonSerializer.Deserialize<DateTimeZone>("\"Europe/London\"", options)!.Id.ShouldBe("Europe/London");
+        await JsonSerializer.Serialize<object>(Instant.FromUtc(2020, 1, 1, 12, 12, 12), options).Should().BeEqualTo("\"2020-01-01T12:12:12Z\"");
+        await JsonSerializer.Serialize<LocalDate?>(new LocalDate(2020, 1, 1), options).Should().BeEqualTo("\"2020-01-01\"");
+        await JsonSerializer.Deserialize<Duration?>("null", options).Should().BeNull();
+        await JsonSerializer.Deserialize<DateTimeZone>("\"Europe/London\"", options)!.Id.Should().BeEqualTo("Europe/London");
     }
 
     [Test]
-    public void Chains_Only_Its_Own_Resolver_When_Configured_Standalone()
+    public async Task Chains_Only_Its_Own_Resolver_When_Configured_Standalone()
     {
         var options = new JsonSerializerOptions().ConfigureNodaTimeForLaunchPad(DateTimeZoneProviders.Tzdb);
 
-        options.TypeInfoResolverChain.ShouldBe([NodaTimeSystemTextJsonSerializationExtensions.TypeInfoResolver]);
-        JsonSerializer.Serialize(new LocalDate(2020, 1, 1), options).ShouldBe("\"2020-01-01\"");
+        await options.TypeInfoResolverChain.Should().BeEquivalentTo([NodaTimeSystemTextJsonSerializationExtensions.TypeInfoResolver], CollectionOrdering.Matching);
+        await JsonSerializer.Serialize(new LocalDate(2020, 1, 1), options).Should().BeEqualTo("\"2020-01-01\"");
     }
 
     [Test]
@@ -61,7 +61,7 @@ public class NodaTimeSystemTextJsonJointTests
         var options = await Options(DateTimeZoneProviders.Tzdb);
 
         // The converter NodaTime ships rejects date time offset text for an instant, the composite one falls back to it.
-        JsonSerializer.Deserialize<Instant>("\"01/01/2020 12:12:12 +00:00\"", options).ShouldBe(Instant.FromUtc(2020, 1, 1, 12, 12, 12));
+        await JsonSerializer.Deserialize<Instant>("\"01/01/2020 12:12:12 +00:00\"", options).Should().BeEqualTo(Instant.FromUtc(2020, 1, 1, 12, 12, 12));
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class NodaTimeSystemTextJsonJointTests
         var provider = TestProvider();
         var options = await Options(provider);
 
-        JsonSerializer.Deserialize<DateTimeZone>($"\"{TestZoneId}\"", options).ShouldBeSameAs(provider[TestZoneId]);
+        await JsonSerializer.Deserialize<DateTimeZone>($"\"{TestZoneId}\"", options).Should().BeSameReferenceAs(provider[TestZoneId]);
     }
 
     [Test]
@@ -83,7 +83,7 @@ public class NodaTimeSystemTextJsonJointTests
 
         var options = services.BuildServiceProvider().GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
 
-        JsonSerializer.Deserialize<DateTimeZone>($"\"{TestZoneId}\"", options).ShouldBeSameAs(provider[TestZoneId]);
+        await JsonSerializer.Deserialize<DateTimeZone>($"\"{TestZoneId}\"", options).Should().BeSameReferenceAs(provider[TestZoneId]);
     }
 
     [Test]
@@ -100,21 +100,20 @@ public class NodaTimeSystemTextJsonJointTests
 
         var options = provider.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
 
-        JsonSerializer.Deserialize<DateTimeZone>($"\"{TestZoneId}\"", options).ShouldBeSameAs(provider.GetRequiredService<IDateTimeZoneProvider>()[TestZoneId]);
+        await JsonSerializer.Deserialize<DateTimeZone>($"\"{TestZoneId}\"", options).Should().BeSameReferenceAs(provider.GetRequiredService<IDateTimeZoneProvider>()[TestZoneId]);
     }
 
     [Test]
-    public void Is_Exported_As_A_Core_Joint_That_Runs_After_The_Time_Joint()
+    public async Task Is_Exported_As_A_Core_Joint_That_Runs_After_The_Time_Joint()
     {
         var export = NodaTimeExports.Joints().Single(x => x.Joint is NodaTimeSystemTextJsonJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
-            x => x.Type.ShouldBe(typeof(TimeJoint))
-        );
-        export.Category.ToString().ShouldBe(DovetailCategory.Core);
-        typeof(NodaTimeSystemTextJsonJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Core);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
+        await x.Type.Should().BeEqualTo(typeof(TimeJoint));
+        await export.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
+        await typeof(NodaTimeSystemTextJsonJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
     }
 
     private const string TestZoneId = "UTC+03";

@@ -1,4 +1,3 @@
-using FakeItEasy;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
@@ -11,10 +10,8 @@ public class BackgroundWorkerTests() : LoggerTest<TestRecord>(TestRecord.Create(
     [Test]
     public async Task Should_List_The_Rockets_With_A_Mediator_From_A_Scope_Of_Its_Own()
     {
-        var mediator = A.Fake<IMediator>();
-        A
-           .CallTo(() => mediator.CreateStream(A<ListRockets.Request>._, A<CancellationToken>._))
-           .Returns(AsyncEnumerable.Empty<RocketModel>());
+        var mediator = IMediator.Mock();
+        mediator.CreateStream(Any<ListRockets.Request>(), Any()).Returns(AsyncEnumerable.Empty<RocketModel>());
         var scopes = 0;
         var services = new ServiceCollection();
         services.AddLogging();
@@ -22,7 +19,7 @@ public class BackgroundWorkerTests() : LoggerTest<TestRecord>(TestRecord.Create(
             _ =>
             {
                 Interlocked.Increment(ref scopes);
-                return mediator;
+                return mediator.Object;
             }
         );
         // a provider that validates scopes: resolving the scoped mediator from the root provider would throw
@@ -33,7 +30,7 @@ public class BackgroundWorkerTests() : LoggerTest<TestRecord>(TestRecord.Create(
         await WaitUntil(() => Volatile.Read(ref scopes) >= 1);
         await worker.StopAsync(TestContext.CancellationToken);
 
-        A.CallTo(() => mediator.CreateStream(A<ListRockets.Request>._, A<CancellationToken>._)).MustHaveHappened();
+        mediator.CreateStream(Any<ListRockets.Request>(), Any()).WasCalled();
     }
 
     private static async Task WaitUntil(Func<bool> condition)

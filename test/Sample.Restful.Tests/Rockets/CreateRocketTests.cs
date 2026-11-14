@@ -18,7 +18,7 @@ public class CreateRocketTests : WebAppFixtureTest
             }
         );
 
-        response.Result.Id.ShouldNotBeEmpty();
+        await response.Result.Id.Should().NotBeEmpty();
     }
 
     [Test]
@@ -40,8 +40,8 @@ public class CreateRocketTests : WebAppFixtureTest
                 SerialNumber = "12345678901234"
             }
         );
-        var r = (await action.ShouldThrowAsync<ApiException<ProblemDetails>>())
+        var r = (await action.Should().Throw<ApiException<ProblemDetails>>())
                .And.Result;
-        r.Title.ShouldBe("Rocket Creation Failed");
+        await r.Title.Should().BeEqualTo("Rocket Creation Failed");
     }
 }

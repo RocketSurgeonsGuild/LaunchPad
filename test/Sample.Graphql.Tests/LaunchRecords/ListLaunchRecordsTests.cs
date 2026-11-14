@@ -27,7 +27,7 @@ public class ListLaunchRecordsTests : GraphQlWebAppFixtureTest
             cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes!.Count.ShouldBe(10);
+        await response.Data!.LaunchRecords!.Nodes!.Count.Should().BeEqualTo(10);
     }
 
 
@@ -50,7 +50,7 @@ public class ListLaunchRecordsTests : GraphQlWebAppFixtureTest
             cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes!.Count.ShouldBe(3);
+        await response.Data!.LaunchRecords!.Nodes!.Count.Should().BeEqualTo(3);
     }
 
     private static readonly Faker Faker = new();

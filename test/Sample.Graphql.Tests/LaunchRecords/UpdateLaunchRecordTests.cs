@@ -58,8 +58,8 @@ public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest
         var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value, TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.ToDateTimeOffset().ShouldBe(launchDate);
-        response.Data.LaunchRecords!.Nodes[0].PayloadWeightKg.ShouldBe(200);
+        await response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.ToDateTimeOffset().Should().BeEqualTo(launchDate);
+        await response.Data.LaunchRecords!.Nodes[0].PayloadWeightKg.Should().BeEqualTo(200);
     }
 
     private static readonly Faker Faker = new();

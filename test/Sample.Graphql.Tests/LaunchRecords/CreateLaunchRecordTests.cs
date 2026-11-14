@@ -44,6 +44,6 @@ public class CreateLaunchRecordTests : GraphQlWebAppFixtureTest
         );
         response.EnsureNoErrors();
 
-        response.Data!.CreateLaunchRecord.Id.ShouldNotBe(Guid.Empty);
+        await response.Data!.CreateLaunchRecord.Id.Should().NotBeEqualTo(Guid.Empty);
     }
 }

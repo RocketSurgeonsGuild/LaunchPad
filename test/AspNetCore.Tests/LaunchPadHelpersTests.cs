@@ -41,9 +41,9 @@ public class LaunchPadHelpersTests
         context.Response.Body.Position = 0;
         using var document = await JsonDocument.ParseAsync(context.Response.Body);
         var written = document.RootElement.GetProperty("results").GetProperty("db").GetProperty("data");
-        written.GetProperty("count").GetInt32().ShouldBe(3);
-        written.GetProperty("tags").EnumerateArray().Select(x => x.GetString()).ShouldBe(Tags);
-        written.GetProperty("rocket").GetString().ShouldBe("Rocket { Name = falcon }");
+        await written.GetProperty("count").GetInt32().Should().BeEqualTo(3);
+        await written.GetProperty("tags").EnumerateArray().Select(x => x.GetString()).Should().BeEquivalentTo(Tags, CollectionOrdering.Matching);
+        await written.GetProperty("rocket").GetString().Should().BeEqualTo("Rocket { Name = falcon }");
     }
 
     private static readonly string[] Tags = ["a", "b"];

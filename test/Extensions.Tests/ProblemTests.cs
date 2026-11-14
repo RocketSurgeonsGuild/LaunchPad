@@ -17,13 +17,13 @@ public class ProblemTests
 
     [Test]
     [MethodDataSource(nameof(DefaultExceptions))]
-    public void Should_Give_Each_Exception_A_Default_Message_And_No_Details(ProblemDetailsException exception, string message)
+    public async Task Should_Give_Each_Exception_A_Default_Message_And_No_Details(ProblemDetailsException exception, string message)
     {
-        exception.Message.ShouldBe(message);
-        exception.Title.ShouldBeNull();
-        exception.Link.ShouldBeNull();
-        exception.Instance.ShouldBeNull();
-        exception.Properties.ShouldBeEmpty();
+        await exception.Message.Should().BeEqualTo(message);
+        await exception.Title.Should().BeNull();
+        await exception.Link.Should().BeNull();
+        await exception.Instance.Should().BeNull();
+        await exception.Properties.Should().BeEmpty();
     }
 
     public static IEnumerable<Func<(Func<string, Exception, ProblemDetailsException> Create, Type Type)>> ExceptionsWithInnerExceptions()
@@ -35,19 +35,19 @@ public class ProblemTests
 
     [Test]
     [MethodDataSource(nameof(ExceptionsWithInnerExceptions))]
-    public void Should_Keep_The_Inner_Exception(Func<string, Exception, ProblemDetailsException> create, Type type)
+    public async Task Should_Keep_The_Inner_Exception(Func<string, Exception, ProblemDetailsException> create, Type type)
     {
         var inner = new InvalidOperationException("inner");
 
         var exception = create("outer", inner);
 
-        exception.ShouldBeOfType(type);
-        exception.Message.ShouldBe("outer");
-        exception.InnerException.ShouldBeSameAs(inner);
+        await exception.Should().BeOfType(type);
+        await exception.Message.Should().BeEqualTo("outer");
+        await exception.InnerException.Should().BeSameReferenceAs(inner);
     }
 
     [Test]
-    public void Should_Carry_The_Problem_Details()
+    public async Task Should_Carry_The_Problem_Details()
     {
         IProblemDetailsData data = new RequestFailedException("bad request")
         {
@@ -57,14 +57,14 @@ public class ProblemTests
             Properties = { ["field"] = "name", },
         };
 
-        data.Title.ShouldBe("Bad request");
-        data.Link.ShouldBe("https://example.com/problems/bad-request");
-        data.Instance.ShouldBe("/rockets");
-        data.Properties.ShouldContainKeyAndValue("field", "name");
+        await data.Title.Should().BeEqualTo("Bad request");
+        await data.Link.Should().BeEqualTo("https://example.com/problems/bad-request");
+        await data.Instance.Should().BeEqualTo("/rockets");
+        await data.Properties.Should().ContainKeyWithValue("field", "name");
     }
 
     [Test]
-    public void Should_Configure_And_Validate_An_Existing_Options_Instance()
+    public async Task Should_Configure_And_Validate_An_Existing_Options_Instance()
     {
         using var provider = new ServiceCollection()
                             .Configure<LaunchOptions>(options => options.Name += "-configured")
@@ -74,11 +74,11 @@ public class ProblemTests
 
         ExistingValueOptions.Apply(provider, options, Options.DefaultName);
 
-        options.Name.ShouldBe("existing-configured-post");
+        await options.Name.Should().BeEqualTo("existing-configured-post");
     }
 
     [Test]
-    public void Should_Fail_When_The_Existing_Options_Instance_Is_Invalid()
+    public async Task Should_Fail_When_The_Existing_Options_Instance_Is_Invalid()
     {
         using var provider = new ServiceCollection()
                             .AddSingleton<IValidateOptions<LaunchOptions>>(
@@ -86,13 +86,12 @@ public class ProblemTests
                              )
                             .BuildServiceProvider();
 
-        Should
-           .Throw<OptionsValidationException>(() => ExistingValueOptions.Apply(provider, new LaunchOptions(), Options.DefaultName))
-           .Failures.ShouldBe(["a name is required"]);
+        await ( await ( (Action)( () => ExistingValueOptions.Apply(provider, new LaunchOptions(), Options.DefaultName) ) ).Should().Throw<OptionsValidationException>() )!
+           .Failures.Should().BeEquivalentTo(["a name is required"], CollectionOrdering.Matching);
     }
 
     [Test]
-    public void Should_Enumerate_An_Enumerator()
+    public async Task Should_Enumerate_An_Enumerator()
     {
         using var enumerator = new List<int> { 1, 2, 3, }.GetEnumerator() as IEnumerator<int>;
         var values = new List<int>();
@@ -102,7 +101,7 @@ public class ProblemTests
             values.Add(value);
         }
 
-        values.ShouldBe([1, 2, 3]);
+        await values.Should().BeEquivalentTo([1, 2, 3], CollectionOrdering.Matching);
     }
 
     [Test]
@@ -116,7 +115,7 @@ public class ProblemTests
             values.Add(value);
         }
 
-        values.ShouldBe([1, 2]);
+        await values.Should().BeEquivalentTo([1, 2], CollectionOrdering.Matching);
 
         static async IAsyncEnumerable<int> Values()
         {

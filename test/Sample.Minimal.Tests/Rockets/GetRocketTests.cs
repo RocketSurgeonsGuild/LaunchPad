@@ -30,8 +30,8 @@ public class GetRocketTests : WebAppFixtureTest
 
         var response = await client.GetRocketAsync(rocket.Id.Value);
 
-        response.Result.Type.ShouldBe(HttpRocketType.Falcon9);
-        response.Result.Sn.ShouldBe("12345678901234");
+        await response.Result.Type.Should().BeEqualTo(HttpRocketType.Falcon9);
+        await response.Result.Sn.Should().BeEqualTo("12345678901234");
     }
 
     [Test]
@@ -40,7 +40,7 @@ public class GetRocketTests : WebAppFixtureTest
         var client = new RocketClient(AlbaHost.Server.CreateClient());
 
         Func<Task> action = () => client.GetRocketAsync(Guid.NewGuid());
-        await action.ShouldThrowAsync<ApiException<ProblemDetails>>()
+        await (await action.Should().Throw<ApiException<ProblemDetails>>())!
                     .Where(
                          z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
                      );

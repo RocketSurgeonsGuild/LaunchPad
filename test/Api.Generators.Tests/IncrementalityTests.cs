@@ -35,31 +35,31 @@ public class IncrementalityTests() : GeneratorTest()
     [Test]
     public async Task Should_Skip_Emission_When_An_Unrelated_File_Changes()
     {
-        var (driver, compilation) = Run();
+        var (driver, compilation) = await Run();
         var edited = compilation.AddSyntaxTrees(Parse("public static class Unrelated { public const int Value = 1; }"));
         driver = driver.RunGenerators(edited, TestContext.CancellationToken);
 
-        Reasons(driver, "Hosts").ShouldAllBe(reason => reason == IncrementalStepRunReason.Unchanged || reason == IncrementalStepRunReason.Cached);
+        await Reasons(driver, "Hosts").Should().All(reason => reason is IncrementalStepRunReason.Unchanged or IncrementalStepRunReason.Cached);
         await Task.CompletedTask;
     }
 
     [Test]
     public async Task Should_Rerun_When_A_Listed_Request_Changes_In_Another_File()
     {
-        var (driver, compilation) = Run();
+        var (driver, compilation) = await Run();
         var contracts = compilation.SyntaxTrees.Single(t => t.ToString().Contains("Load a rocket", StringComparison.Ordinal));
         var edited = compilation.ReplaceSyntaxTree(contracts, Parse(Contracts.Replace("Load a rocket", "Fetch a rocket", StringComparison.Ordinal)));
         driver = driver.RunGenerators(edited, TestContext.CancellationToken);
 
-        Reasons(driver, "Hosts").ShouldContain(IncrementalStepRunReason.Modified);
-        driver.GetRunResult().GeneratedTrees.Any(t => t.ToString().Contains("Fetch a rocket", StringComparison.Ordinal)).ShouldBeTrue();
+        await Reasons(driver, "Hosts").Should().Contain(IncrementalStepRunReason.Modified);
+        await driver.GetRunResult().GeneratedTrees.Any(t => t.ToString().Contains("Fetch a rocket", StringComparison.Ordinal)).Should().BeTrue();
         await Task.CompletedTask;
     }
 
     private static SyntaxTree Parse(string source) =>
         CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview, preprocessorSymbols: ["NET7_0_OR_GREATER"]));
 
-    private (GeneratorDriver Driver, CSharpCompilation Compilation) Run()
+    private async Task<(GeneratorDriver Driver, CSharpCompilation Compilation)> Run()
     {
         var compilation = CSharpCompilation.Create(
             "Server",
@@ -73,7 +73,7 @@ public class IncrementalityTests() : GeneratorTest()
             driverOptions: new GeneratorDriverOptions(IncrementalGeneratorOutputKind.None, trackIncrementalGeneratorSteps: true)
         );
         driver = driver.RunGenerators(compilation, TestContext.CancellationToken);
-        driver.GetRunResult().GeneratedTrees.Any(t => t.FilePath.EndsWith("RocketsEndpoints.MinimalApi.g.cs", StringComparison.Ordinal)).ShouldBeTrue();
+        await driver.GetRunResult().GeneratedTrees.Any(t => t.FilePath.EndsWith("RocketsEndpoints.MinimalApi.g.cs", StringComparison.Ordinal)).Should().BeTrue();
         return (driver, compilation);
     }
 

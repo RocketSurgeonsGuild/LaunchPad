@@ -25,9 +25,9 @@ public class ValidationProblemDetailsJsonTests
 
         var json = JsonSerializer.Serialize<object>(Problem(), options);
 
-        json.ShouldContain("\"errors\":{\"Name\":[{\"propertyName\":\"Name\",\"errorMessage\":\"Name is required\"");
-        json.ShouldContain("\"rules\":[\"default\"]");
-        json.ShouldContain("\"traceId\":\"abc\"");
+        await json.Should().Contain("\"errors\":{\"Name\":[{\"propertyName\":\"Name\",\"errorMessage\":\"Name is required\"");
+        await json.Should().Contain("\"rules\":[\"default\"]");
+        await json.Should().Contain("\"traceId\":\"abc\"");
     }
 
     [Test]
@@ -37,11 +37,11 @@ public class ValidationProblemDetailsJsonTests
 
         var problem = JsonSerializer.Deserialize<FluentValidationProblemDetails>(JsonSerializer.Serialize(Problem(), options), options)!;
 
-        problem.Title.ShouldBe("Validation failed");
-        problem.Status.ShouldBe(400);
-        problem.Rules.ShouldBe(["default"]);
-        problem.ValidationErrors["Name"].ShouldHaveSingleItem().ErrorMessage.ShouldBe("Name is required");
-        problem.Extensions.ShouldContainKey("traceId");
+        await problem.Title.Should().BeEqualTo("Validation failed");
+        await problem.Status.Should().BeEqualTo(400);
+        await problem.Rules.Should().BeEquivalentTo(["default"], CollectionOrdering.Matching);
+        await ( await problem.ValidationErrors["Name"].Should().HaveSingleItem() ).ErrorMessage.Should().BeEqualTo("Name is required");
+        await problem.Extensions.Should().ContainKey("traceId");
     }
 
     private static FluentValidationProblemDetails Problem()

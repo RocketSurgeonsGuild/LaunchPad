@@ -47,6 +47,6 @@ public class CreateLaunchRecordTests : WebAppFixtureTest
             cancellationToken: TestContext.CancellationToken
         );
 
-        response.Id.ShouldNotBeEmpty();
+        await response.Id.Should().NotBeEmpty();
     }
 }

@@ -14,7 +14,7 @@ public class CountryCodeTests
     [Arguments("AQ")]
     [Arguments("SS")]
     [Arguments("ZW")]
-    public void Accepts(string value) => Accepts<CountryCode, string>(value);
+    public async Task Accepts(string value) => await Accepts<CountryCode, string>(value);
 
     [Test]
     [Arguments("")]
@@ -30,17 +30,17 @@ public class CountryCodeTests
     [Arguments("CS")]
     [Arguments("YU")]
     [Arguments("12")]
-    public void Rejects(string value) => Rejects<CountryCode, string>(value);
+    public async Task Rejects(string value) => await Rejects<CountryCode, string>(value);
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(CountryCode.From("US"), "\"US\"");
-        FailsToRead<CountryCode>("\"us\"");
+        await RoundTrips(CountryCode.From("US"), "\"US\"");
+        await FailsToRead<CountryCode>("\"us\"");
     }
 
     [Test]
-    public void Round_Trips_As_A_Dictionary_Key() => RoundTrips(
+    public async Task Round_Trips_As_A_Dictionary_Key() => await RoundTrips(
         new Dictionary<CountryCode, Money> { [CountryCode.From("US")] = Money.From(1.5m, CurrencyCode.From("USD")) },
         """{"US":{"amount":1.5,"currency":"USD"}}"""
     );
@@ -60,7 +60,7 @@ public class CurrencyCodeTests
     [Arguments("SLE")]
     [Arguments("XTS")]
     [Arguments("XXX")]
-    public void Accepts(string value) => Accepts<CurrencyCode, string>(value);
+    public async Task Accepts(string value) => await Accepts<CurrencyCode, string>(value);
 
     [Test]
     [Arguments("")]
@@ -76,13 +76,13 @@ public class CurrencyCodeTests
     [Arguments("SLL")]
     [Arguments("DEM")]
     [Arguments("840")]
-    public void Rejects(string value) => Rejects<CurrencyCode, string>(value);
+    public async Task Rejects(string value) => await Rejects<CurrencyCode, string>(value);
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(CurrencyCode.From("EUR"), "\"EUR\"");
-        FailsToRead<CurrencyCode>("\"eur\"");
+        await RoundTrips(CurrencyCode.From("EUR"), "\"EUR\"");
+        await FailsToRead<CurrencyCode>("\"eur\"");
     }
 }
 
@@ -97,7 +97,7 @@ public class LanguageCodeTests
     [Arguments("zh-Hans-CN")]
     [Arguments("sr-Latn-RS")]
     [Arguments("gsw")]
-    public void Accepts(string value) => Accepts<LanguageCode, string>(value);
+    public async Task Accepts(string value) => await Accepts<LanguageCode, string>(value);
 
     [Test]
     [Arguments("")]
@@ -111,12 +111,12 @@ public class LanguageCodeTests
     [Arguments("i-klingon")]
     [Arguments("x-private")]
     [Arguments("english")]
-    public void Rejects(string value) => Rejects<LanguageCode, string>(value);
+    public async Task Rejects(string value) => await Rejects<LanguageCode, string>(value);
 
     [Test]
-    public void Round_Trips_Through_Json()
+    public async Task Round_Trips_Through_Json()
     {
-        RoundTrips(LanguageCode.From("en-US"), "\"en-US\"");
-        FailsToRead<LanguageCode>("\"en_US\"");
+        await RoundTrips(LanguageCode.From("en-US"), "\"en-US\"");
+        await FailsToRead<LanguageCode>("\"en_US\"");
     }
 }

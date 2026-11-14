@@ -18,8 +18,8 @@ public class SpatialJointTests
     {
         var provider = await Register(new ServiceCollection());
 
-        provider.GetRequiredService<NtsGeometryServices>().ShouldBeSameAs(NtsGeometryServices.Instance);
-        provider.GetRequiredService<GeometryFactory>().SRID.ShouldBe(4326);
+        await provider.GetRequiredService<NtsGeometryServices>().Should().BeSameReferenceAs(NtsGeometryServices.Instance);
+        await provider.GetRequiredService<GeometryFactory>().SRID.Should().BeEqualTo(4326);
     }
 
     [Test]
@@ -30,8 +30,8 @@ public class SpatialJointTests
 
         var provider = await Register(new ServiceCollection().AddSingleton(geometryServices).AddSingleton(factory));
 
-        provider.GetRequiredService<NtsGeometryServices>().ShouldBeSameAs(geometryServices);
-        provider.GetRequiredService<GeometryFactory>().ShouldBeSameAs(factory);
+        await provider.GetRequiredService<NtsGeometryServices>().Should().BeSameReferenceAs(geometryServices);
+        await provider.GetRequiredService<GeometryFactory>().Should().BeSameReferenceAs(factory);
     }
 
     [Test]
@@ -40,19 +40,19 @@ public class SpatialJointTests
         var provider = await Register(new ServiceCollection());
         var options = provider.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
 
-        JsonSerializer.Deserialize<Point>("""{"type": "Point","coordinates": [30, 10]}""", options).ShouldBe(new Point(30, 10));
-        JsonSerializer.Serialize<Geometry>(new Point(30, 10), options).ShouldBe("""{"type":"Point","coordinates":[30,10]}""");
+        await JsonSerializer.Deserialize<Point>("""{"type": "Point","coordinates": [30, 10]}""", options).Should().BeEqualTo(new Point(30, 10));
+        await JsonSerializer.Serialize<Geometry>(new Point(30, 10), options).Should().BeEqualTo("""{"type":"Point","coordinates":[30,10]}""");
     }
 
     [Test]
-    public void Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
+    public async Task Is_Exported_As_A_Core_Joint_Without_Ordering_Or_Gating()
     {
         var export = Exports.Joints().Single(x => x.Joint is SpatialJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldBeEmpty();
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        await export.Dependencies.Should().BeEmpty();
         // The generated export metadata does not carry the category in Dovetail 0.3.0, so the attribute is what declares it.
-        typeof(SpatialJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Core);
+        await typeof(SpatialJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Core);
     }
 
     private static async Task<IServiceProvider> Register(IServiceCollection services)

@@ -28,7 +28,7 @@ public class ListLaunchRecordsTests : WebAppFixtureTest
 
         var response = await client.ListLaunchRecordsAsync();
 
-        response.Result.ShouldHaveCount(10);
+        await response.Result.Should().HaveCount(10);
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class ListLaunchRecordsTests : WebAppFixtureTest
         }
 
         var response = await client.ListLaunchRecordsAsync(RocketType.FalconHeavy);
-        response.Result.ShouldHaveCount(3);
+        await response.Result.Should().HaveCount(3);
     }
 
     private static readonly Faker Faker = new();

@@ -11,14 +11,13 @@ using TUnit.Core.Interfaces;
 
 namespace FluentValidation.Tests.Validation;
 
-public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
+public class HealthCheckOptionsValidationTests() : ContainerTest<TestRecord>(TestRecord.Create()), IAsyncInitializer
 {
     [Test]
-    public Task Should_Validate_Options_And_Throw()
+    public async Task Should_Validate_Options_And_Throw()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.ShouldThrow<OptionsValidationException>();
-        return Task.CompletedTask;
+        await a.Should().Throw<OptionsValidationException>();
     }
 
     [Test]
@@ -38,21 +37,20 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.ShouldThrow<OptionsValidationException>();
+        await a.Should().Throw<OptionsValidationException>();
     }
 
     [Test]
     public async Task Should_Validate_Options_And_Throw_After_Application_Has_Started()
     {
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a
-                      .ShouldThrow<OptionsValidationException>()
+        var failures = ( await a.Should().Throw<OptionsValidationException>() )!
                       .Failures;
         await Verify(failures);
     }
 
     [Test]
-    public void Should_Validate_Options_And_Pass_After_Application_Has_Started()
+    public async Task Should_Validate_Options_And_Pass_After_Application_Has_Started()
     {
         var services = new ServiceCollection();
         services
@@ -67,8 +65,8 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
                 }
             );
         Populate(services);
-        var a = () => Container.Resolve<IOptions<Options>>().Value;
-        a.ShouldNotThrow();
+        Options a() => Container.Resolve<IOptions<Options>>().Value;
+        await Assert.That(a).ThrowsNothing();
     }
 
     [Test]
@@ -88,8 +86,7 @@ public class HealthCheckOptionsValidationTests() : AutoFakeTest<TestRecord>(Test
             );
         Populate(services);
         var a = () => Container.Resolve<IOptions<Options>>().Value;
-        var failures = a
-                      .ShouldThrow<OptionsValidationException>().Failures;
+        var failures = ( await a.Should().Throw<OptionsValidationException>() )!.Failures;
         await Verify(failures);
     }
 

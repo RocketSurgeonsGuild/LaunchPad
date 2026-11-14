@@ -41,7 +41,7 @@ public class CreateLaunchRecordTests : WebAppFixtureTest
             }
         );
 
-        response.Result.Id.ShouldNotBeEmpty();
+        await response.Result.Id.Should().NotBeEmpty();
     }
 
     private static readonly Faker Faker = new();

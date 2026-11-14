@@ -59,8 +59,8 @@ public class UpdateLaunchRecordTests : WebAppFixtureTest
 
         var response = await client.GetLaunchRecordAsync(record.Id.Value);
 
-        response.Result.ScheduledLaunchDate.ShouldBe(launchDate);
-        response.Result.PayloadWeightKg.ShouldBe(200);
+        await response.Result.ScheduledLaunchDate.Should().BeEqualTo(launchDate);
+        await response.Result.PayloadWeightKg.Should().BeEqualTo(200);
     }
 
     private static readonly Faker Faker = new();

@@ -26,7 +26,7 @@ public class ListRocketsTests : WebAppFixtureTest
 
         var response = await client.ListRocketsAsync();
 
-        response.Result.ShouldHaveCount(10);
+        await response.Result.Should().HaveCount(10);
     }
 
     [Test]
@@ -44,7 +44,7 @@ public class ListRocketsTests : WebAppFixtureTest
 
         var response = await client.ListRocketsAsync(RocketType.AtlasV);
 
-        response.Result.ShouldHaveCount(5);
+        await response.Result.Should().HaveCount(5);
     }
 
     private static readonly Faker Faker = new();

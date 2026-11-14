@@ -33,6 +33,6 @@ public class RemoveLaunchRecordsTests : WebAppFixtureTest
         await client.DeleteLaunchRecordAsync(new DeleteLaunchRecordRequest { Id = record.Id.ToString() }, cancellationToken: TestContext.CancellationToken);
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
-        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.ShouldBeEmpty();
+        await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.Should().BeEmpty();
     }
 }

@@ -26,8 +26,8 @@ public class ProblemDetailsJointTests
 
         var selector = provider.GetRequiredService<IOptions<ExceptionHandlerOptions>>().Value.StatusCodeSelector;
 
-        selector.ShouldNotBeNull();
-        selector(exception).ShouldBe(expected);
+        await selector.Should().NotBeNull();
+        await selector(exception).Should().BeEqualTo(expected);
     }
 
     [Test]
@@ -41,9 +41,9 @@ public class ProblemDetailsJointTests
 
         var selector = provider.GetRequiredService<IOptions<ExceptionHandlerOptions>>().Value.StatusCodeSelector;
 
-        selector.ShouldNotBeNull();
-        selector(new InvalidOperationException()).ShouldBe(StatusCodes.Status418ImATeapot);
-        selector(new NotFoundException()).ShouldBe(StatusCodes.Status404NotFound);
+        await selector.Should().NotBeNull();
+        await selector(new InvalidOperationException()).Should().BeEqualTo(StatusCodes.Status418ImATeapot);
+        await selector(new NotFoundException()).Should().BeEqualTo(StatusCodes.Status404NotFound);
     }
 
     [Test]
@@ -54,10 +54,10 @@ public class ProblemDetailsJointTests
 
         var writers = provider.GetServices<IProblemDetailsWriter>().Select(z => z.GetType()).ToArray();
 
-        writers.ShouldContain(typeof(OnBeforeWriteProblemDetailsWriter));
+        await writers.Should().Contain(typeof(OnBeforeWriteProblemDetailsWriter));
         // the validation writers come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
-        writers.Select(z => z.Name).ShouldNotContain("FluentValidationProblemDetailsWriter");
-        writers.Select(z => z.Name).ShouldNotContain("ValidationExceptionProblemDetailsWriter");
+        await writers.Select(z => z.Name).Should().NotContain("FluentValidationProblemDetailsWriter");
+        await writers.Select(z => z.Name).Should().NotContain("ValidationExceptionProblemDetailsWriter");
     }
 
     [Test]
@@ -70,9 +70,9 @@ public class ProblemDetailsJointTests
         await services.ApplyService(context);
         await services.ApplyService(context);
 
-        services
+        await services
            .Count(d => d.ServiceType == typeof(IProblemDetailsWriter) && d.ImplementationType == typeof(OnBeforeWriteProblemDetailsWriter))
-           .ShouldBe(1);
+           .Should().BeEqualTo(1);
     }
 
     [Test]
@@ -81,6 +81,6 @@ public class ProblemDetailsJointTests
         var services = await JointTestContext.ApplyServicesAsync<ProblemDetailsJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        provider.GetRequiredService<IOptions<ApiBehaviorOptions>>().Value.SuppressModelStateInvalidFilter.ShouldBeTrue();
+        await provider.GetRequiredService<IOptions<ApiBehaviorOptions>>().Value.SuppressModelStateInvalidFilter.Should().BeTrue();
     }
 }

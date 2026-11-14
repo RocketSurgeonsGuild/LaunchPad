@@ -96,8 +96,8 @@ public class HostingWebAssemblyTemplateTests
 
         await tree.Build("app", Cancellation);
 
-        tree.EmittedTemplates("app").ShouldNotContain(BrowserConsoleLoggingJoint);
-        tree.EmittedTemplates("app").ShouldNotContain(WebAssemblyEnvironmentLoggingJoint);
+        await tree.EmittedTemplates("app").Should().NotContain(BrowserConsoleLoggingJoint);
+        await tree.EmittedTemplates("app").Should().NotContain(WebAssemblyEnvironmentLoggingJoint);
     }
 
     /// <summary>
@@ -112,10 +112,10 @@ public class HostingWebAssemblyTemplateTests
         tree.AddProject("app", BrowserApplication(package).AddPackage(AppProject.BannedApiAnalyzers).AddPackage(AppProject.HostingAbstractions));
         tree.AddFile("app/Program.cs", GenericHostingProgram);
 
-        var failure = await Should.ThrowAsync<InvalidOperationException>(() => tree.Build("app", Cancellation));
+        var failure = await ( (Func<Task>)( () => tree.Build("app", Cancellation) ) ).Should().Throw<InvalidOperationException>();
 
-        failure.Message.ShouldContain("error RS0030");
-        failure.Message.ShouldContain("'IHostEnvironment' is banned");
+        await failure.Message.Should().Contain("error RS0030");
+        await failure.Message.Should().Contain("'IHostEnvironment' is banned");
     }
 
     /// <summary>
@@ -135,8 +135,8 @@ public class HostingWebAssemblyTemplateTests
 
         var output = await tree.Build("app", Cancellation);
 
-        output.ShouldNotContain("RS0030");
-        tree.EmittedTemplates("app").ShouldBe([BrowserConsoleLoggingJoint, WebAssemblyEnvironmentLoggingJoint]);
+        await output.Should().NotContain("RS0030");
+        await tree.EmittedTemplates("app").Should().BeEquivalentTo([BrowserConsoleLoggingJoint, WebAssemblyEnvironmentLoggingJoint], CollectionOrdering.Matching);
     }
 
     /// <summary>
@@ -153,11 +153,11 @@ public class HostingWebAssemblyTemplateTests
         tree.AddFile("banned/Program.cs", GenericHostingProgram);
 
         var clean = await tree.Build("clean", Cancellation);
-        var failure = await Should.ThrowAsync<InvalidOperationException>(() => tree.Build("banned", Cancellation));
+        var failure = await ( (Func<Task>)( () => tree.Build("banned", Cancellation) ) ).Should().Throw<InvalidOperationException>();
 
-        clean.ShouldNotContain("RS0030");
-        tree.EmittedTemplates("clean").ShouldBe([BrowserConsoleLoggingJoint, WebAssemblyEnvironmentLoggingJoint]);
-        failure.Message.ShouldContain("Program.cs(1,26): error RS0030");
+        await clean.Should().NotContain("RS0030");
+        await tree.EmittedTemplates("clean").Should().BeEquivalentTo([BrowserConsoleLoggingJoint, WebAssemblyEnvironmentLoggingJoint], CollectionOrdering.Matching);
+        await failure.Message.Should().Contain("Program.cs(1,26): error RS0030");
 
         static AppProject RepositoryBrowserApplication() =>
             AppProject
@@ -188,7 +188,7 @@ public class HostingWebAssemblyTemplateTests
 
         var output = await tree.Build("app", Cancellation);
 
-        output.ShouldNotContain("RS0030");
+        await output.Should().NotContain("RS0030");
     }
 
     /// <summary>

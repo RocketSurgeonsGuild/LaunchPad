@@ -33,17 +33,17 @@ public class UnionTests
         var unknown = Guid.NewGuid();
 
         using var launched = await http.PostAsync($"api/launches/{falcon}", EmptyBody(), cancellationToken);
-        launched.StatusCode.ShouldBe(HttpStatusCode.OK);
-        ( await launched.Content.ReadFromJsonAsync<JsonElement>(cancellationToken) ).GetProperty("name").GetString().ShouldBe("Falcon");
+        await launched.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
+        await ( await launched.Content.ReadFromJsonAsync<JsonElement>(cancellationToken) ).GetProperty("name").GetString().Should().BeEqualTo("Falcon");
 
         var notFound = await Problem(http, $"api/launches/{unknown}", HttpStatusCode.NotFound, cancellationToken);
-        notFound.GetProperty("case").GetString().ShouldBe("RocketNotFound");
-        notFound.GetProperty("status").GetInt32().ShouldBe(404);
-        notFound.GetProperty("id").GetGuid().ShouldBe(unknown);
+        await notFound.GetProperty("case").GetString().Should().BeEqualTo("RocketNotFound");
+        await notFound.GetProperty("status").GetInt32().Should().BeEqualTo(404);
+        await notFound.GetProperty("id").GetGuid().Should().BeEqualTo(unknown);
 
         var notReady = await Problem(http, $"api/launches/{grounded}", HttpStatusCode.UnprocessableEntity, cancellationToken);
-        notReady.GetProperty("case").GetString().ShouldBe("NotReady");
-        notReady.GetProperty("reason").GetString().ShouldBe("grounded");
+        await notReady.GetProperty("case").GetString().Should().BeEqualTo("NotReady");
+        await notReady.GetProperty("reason").GetString().Should().BeEqualTo("grounded");
     }
 
     // A stream of unions streams its value cases and ends with the first error case: as the response's problem before anything was written,
@@ -59,22 +59,22 @@ public class UnionTests
         await Create(http, "Grounded", cancellationToken);
 
         using var values = await http.GetAsync("api/launches?name=Falcon", cancellationToken);
-        values.StatusCode.ShouldBe(HttpStatusCode.OK);
-        Lines(await values.Content.ReadAsStringAsync(cancellationToken)).Select(l => l.GetProperty("id").GetGuid()).ShouldBe([falcon]);
+        await values.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
+        await Lines(await values.Content.ReadAsStringAsync(cancellationToken)).Select(l => l.GetProperty("id").GetGuid()).Should().BeEquivalentTo([falcon], CollectionOrdering.Matching);
 
         using var first = await http.GetAsync("api/launches?name=Grounded", cancellationToken);
-        first.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
-        first.Content.Headers.ContentType?.MediaType.ShouldBe("application/problem+json");
-        ( await first.Content.ReadFromJsonAsync<JsonElement>(cancellationToken) ).GetProperty("case").GetString().ShouldBe("NotReady");
+        await first.StatusCode.Should().BeEqualTo(HttpStatusCode.UnprocessableEntity);
+        await first.Content.Headers.ContentType?.MediaType.Should().BeEqualTo("application/problem+json");
+        await ( await first.Content.ReadFromJsonAsync<JsonElement>(cancellationToken) ).GetProperty("case").GetString().Should().BeEqualTo("NotReady");
 
         using var later = await http.GetAsync("api/launches", cancellationToken);
-        later.StatusCode.ShouldBe(HttpStatusCode.OK);
+        await later.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
         var lines = Lines(await later.Content.ReadAsStringAsync(cancellationToken));
-        lines.Length.ShouldBe(2);
-        lines[0].GetProperty("name").GetString().ShouldBe("Falcon");
-        lines[1].GetProperty("case").GetString().ShouldBe("NotReady");
-        lines[1].GetProperty("status").GetInt32().ShouldBe(422);
-        lines[1].GetProperty("reason").GetString().ShouldBe("grounded");
+        await lines.Length.Should().BeEqualTo(2);
+        await lines[0].GetProperty("name").GetString().Should().BeEqualTo("Falcon");
+        await lines[1].GetProperty("case").GetString().Should().BeEqualTo("NotReady");
+        await lines[1].GetProperty("status").GetInt32().Should().BeEqualTo(422);
+        await lines[1].GetProperty("reason").GetString().Should().BeEqualTo("grounded");
     }
 
     // The .proto declares the error cases' messages, so a client generated from it can decode the case-bin trailer.
@@ -83,8 +83,8 @@ public class UnionTests
     {
         var proto = Launches.LaunchesService.GetProto();
 
-        proto.ShouldContain("message RocketNotFound");
-        proto.ShouldContain("message NotReady");
+        await proto.Should().Contain("message RocketNotFound");
+        await proto.Should().Contain("message NotReady");
         await Task.CompletedTask;
     }
 
@@ -100,8 +100,8 @@ public class UnionTests
         var document = await http.GetFromJsonAsync<JsonElement>("openapi/v1.json", cancellationToken);
         var responses = document.GetProperty("paths").GetProperty("/api/launches/{id}").GetProperty("post").GetProperty("responses");
 
-        responses.EnumerateObject().Select(r => r.Name).ShouldBe(["200", "400", "404", "422"], ignoreOrder: true);
-        responses.GetProperty("422").GetProperty("content").EnumerateObject().Select(c => c.Name).ShouldContain("application/problem+json");
+        await responses.EnumerateObject().Select(r => r.Name).Should().BeEquivalentTo(["200", "400", "404", "422"]);
+        await responses.GetProperty("422").GetProperty("content").EnumerateObject().Select(c => c.Name).Should().Contain("application/problem+json");
     }
 
     [Test]
@@ -116,17 +116,17 @@ public class UnionTests
         var grounded = ( await rockets.CreateRocket(new("Grounded")) ).Id;
         var unknown = Guid.NewGuid();
 
-        ( await launches.LaunchRocket(new(falcon), new(new CallOptions(cancellationToken: cancellationToken))) ).Name.ShouldBe("Falcon");
+        await ( await launches.LaunchRocket(new(falcon), new(new CallOptions(cancellationToken: cancellationToken))) ).Name.Should().BeEqualTo("Falcon");
 
-        var notFound = await Should.ThrowAsync<RpcException>(async () => await launches.LaunchRocket(new(unknown), new(new CallOptions(cancellationToken: cancellationToken))));
-        notFound.StatusCode.ShouldBe(StatusCode.NotFound);
-        notFound.Trailers.GetValue("case").ShouldBe("RocketNotFound");
-        ProtoBuf.Serializer.Deserialize<RocketNotFound>(notFound.Trailers.GetValueBytes("case-bin")).Id.ShouldBe(unknown);
+        var notFound = await ( (Func<Task>)( async () => await launches.LaunchRocket(new(unknown), new(new CallOptions(cancellationToken: cancellationToken))) ) ).Should().Throw<RpcException>();
+        await notFound.StatusCode.Should().BeEqualTo(StatusCode.NotFound);
+        await notFound.Trailers.GetValue("case").Should().BeEqualTo("RocketNotFound");
+        await ProtoBuf.Serializer.Deserialize<RocketNotFound>(notFound.Trailers.GetValueBytes("case-bin")).Id.Should().BeEqualTo(unknown);
 
-        var notReady = await Should.ThrowAsync<RpcException>(async () => await launches.LaunchRocket(new(grounded), new(new CallOptions(cancellationToken: cancellationToken))));
-        notReady.StatusCode.ShouldBe(StatusCode.FailedPrecondition);
-        notReady.Trailers.GetValue("case").ShouldBe("NotReady");
-        ProtoBuf.Serializer.Deserialize<NotReady>(notReady.Trailers.GetValueBytes("case-bin")).Reason.ShouldBe("grounded");
+        var notReady = await ( (Func<Task>)( async () => await launches.LaunchRocket(new(grounded), new(new CallOptions(cancellationToken: cancellationToken))) ) ).Should().Throw<RpcException>();
+        await notReady.StatusCode.Should().BeEqualTo(StatusCode.FailedPrecondition);
+        await notReady.Trailers.GetValue("case").Should().BeEqualTo("NotReady");
+        await ProtoBuf.Serializer.Deserialize<NotReady>(notReady.Trailers.GetValueBytes("case-bin")).Reason.Should().BeEqualTo("grounded");
     }
 
     [Test]
@@ -138,17 +138,17 @@ public class UnionTests
         var grounded = await Create(http, "Grounded", cancellationToken);
         var unknown = Guid.NewGuid();
 
-        ( await Launch(http, falcon, cancellationToken) ).GetProperty("data").GetProperty("launchRocket").GetProperty("name").GetString().ShouldBe("Falcon");
+        await ( await Launch(http, falcon, cancellationToken) ).GetProperty("data").GetProperty("launchRocket").GetProperty("name").GetString().Should().BeEqualTo("Falcon");
 
         var notFound = ( await Launch(http, unknown, cancellationToken) ).GetProperty("errors")[0].GetProperty("extensions");
-        notFound.GetProperty("code").GetString().ShouldBe("NOT_FOUND");
-        notFound.GetProperty("case").GetString().ShouldBe("RocketNotFound");
-        notFound.GetProperty("id").GetGuid().ShouldBe(unknown);
+        await notFound.GetProperty("code").GetString().Should().BeEqualTo("NOT_FOUND");
+        await notFound.GetProperty("case").GetString().Should().BeEqualTo("RocketNotFound");
+        await notFound.GetProperty("id").GetGuid().Should().BeEqualTo(unknown);
 
         var notReady = ( await Launch(http, grounded, cancellationToken) ).GetProperty("errors")[0].GetProperty("extensions");
-        notReady.GetProperty("code").GetString().ShouldBe("UNPROCESSABLE");
-        notReady.GetProperty("case").GetString().ShouldBe("NotReady");
-        notReady.GetProperty("reason").GetString().ShouldBe("grounded");
+        await notReady.GetProperty("code").GetString().Should().BeEqualTo("UNPROCESSABLE");
+        await notReady.GetProperty("case").GetString().Should().BeEqualTo("NotReady");
+        await notReady.GetProperty("reason").GetString().Should().BeEqualTo("grounded");
     }
 
     [Test]
@@ -162,16 +162,14 @@ public class UnionTests
         await rockets.CreateRocket(new("Grounded"));
 
         var received = new List<Guid>();
-        var error = await Should.ThrowAsync<RpcException>(
-            async () =>
+        var error = await ( (Func<Task>)( async () =>
             {
                 await foreach (var rocket in launches.ListLaunches(new(null), new(new CallOptions(cancellationToken: cancellationToken)))) received.Add(rocket.Id);
-            }
-        );
+            } ) ).Should().Throw<RpcException>();
 
-        received.ShouldBe([falcon]);
-        error.StatusCode.ShouldBe(StatusCode.FailedPrecondition);
-        error.Trailers.GetValue("case").ShouldBe("NotReady");
+        await received.Should().BeEquivalentTo([falcon], CollectionOrdering.Matching);
+        await error.StatusCode.Should().BeEqualTo(StatusCode.FailedPrecondition);
+        await error.Trailers.GetValue("case").Should().BeEqualTo("NotReady");
     }
 
     private static JsonElement[] Lines(string ndjson) =>
@@ -187,8 +185,8 @@ public class UnionTests
     private static async Task<JsonElement> Problem(System.Net.Http.HttpClient http, string uri, HttpStatusCode status, CancellationToken cancellationToken)
     {
         using var response = await http.PostAsync(uri, EmptyBody(), cancellationToken);
-        response.StatusCode.ShouldBe(status);
-        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/problem+json");
+        await response.StatusCode.Should().BeEqualTo(status);
+        await response.Content.Headers.ContentType?.MediaType.Should().BeEqualTo("application/problem+json");
         return await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
     }
 

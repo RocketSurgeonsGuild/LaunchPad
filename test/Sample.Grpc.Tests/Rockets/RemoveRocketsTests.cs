@@ -32,6 +32,6 @@ public class RemoveRocketsTests : WebAppFixtureTest
             cancellationToken: TestContext.CancellationToken);
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
-        assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.ShouldBeEmpty();
+        await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.Should().BeEmpty();
     }
 }

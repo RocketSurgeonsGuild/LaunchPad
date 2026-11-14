@@ -26,12 +26,12 @@ public class UpdateRocketTests : WebAppFixtureTest
                 SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
             }
         );
-        (u.StatusCode is >= 200 and < 300).ShouldBeTrue();
+        await (u.StatusCode is >= 200 and < 300).Should().BeTrue();
 
         var response = await client.GetRocketAsync(rocket.Id.Value);
 
-        response.Result.Type.ShouldBe(ClientRocketType.FalconHeavy);
-        response.Result.Sn.ShouldBe("43210987654321");
+        await response.Result.Type.Should().BeEqualTo(ClientRocketType.FalconHeavy);
+        await response.Result.Sn.Should().BeEqualTo("43210987654321");
     }
 
     [Test]
@@ -48,12 +48,12 @@ public class UpdateRocketTests : WebAppFixtureTest
                 SerialNumber = new() { Value = "123456789012345" }
             }
         );
-        (u.StatusCode is >= 200 and < 300).ShouldBeTrue();
+        await (u.StatusCode is >= 200 and < 300).Should().BeTrue();
 
         var response = await client.GetRocketAsync(rocket.Id.Value);
 
-        response.Result.Type.ShouldBe(ClientRocketType.AtlasV);
-        response.Result.Sn.ShouldBe("123456789012345");
+        await response.Result.Type.Should().BeEqualTo(ClientRocketType.AtlasV);
+        await response.Result.Sn.Should().BeEqualTo("123456789012345");
     }
 
     [Test]
@@ -70,9 +70,9 @@ public class UpdateRocketTests : WebAppFixtureTest
                 SerialNumber = new() { Value = null }
             }
         );
-        var result = (await action.ShouldThrowAsync<ApiException<FluentValidationProblemDetails>>()).And.Result;
-        result.Errors.ShouldHaveCount(1);
-        result.Errors["SerialNumber"][0].ErrorMessage.ShouldBe("'Serial Number' must not be empty.");
+        var result = (await action.Should().Throw<ApiException<FluentValidationProblemDetails>>()).And.Result;
+        await result.Errors.Should().HaveCount(1);
+        await result.Errors["SerialNumber"][0].ErrorMessage.Should().BeEqualTo("'Serial Number' must not be empty.");
     }
 
     [Test]
@@ -89,11 +89,11 @@ public class UpdateRocketTests : WebAppFixtureTest
                 Type = new() { Value = ClientRocketType.FalconHeavy }
             }
         );
-        (u.StatusCode is >= 200 and < 300).ShouldBeTrue();
+        await (u.StatusCode is >= 200 and < 300).Should().BeTrue();
 
         var response = await client.GetRocketAsync(rocket.Id.Value);
-        response.Result.Type.ShouldBe(ClientRocketType.FalconHeavy);
-        response.Result.Sn.ShouldBe("12345678901234");
+        await response.Result.Type.Should().BeEqualTo(ClientRocketType.FalconHeavy);
+        await response.Result.Sn.Should().BeEqualTo("12345678901234");
     }
 
     [Test]
@@ -102,12 +102,12 @@ public class UpdateRocketTests : WebAppFixtureTest
     {
         var client = new RocketClient(AlbaHost.Server.CreateClient());
         Func<Task> a = () => client.EditRocketAsync(Guid.NewGuid(), request);
-        (await a.ShouldThrowAsync<ApiException<FluentValidationProblemDetails>>())
+        await (await a.Should().Throw<ApiException<FluentValidationProblemDetails>>())
            .And
            .Result.Errors.Values
            .SelectMany(x => x)
            .Select(z => z.PropertyName)
-           .ShouldContain(propertyName);
+           .Should().Contain(propertyName);
     }
 
     public static IEnumerable<Func<(EditRocketRequest Request, string PropertyName)>> RequiredFieldData()

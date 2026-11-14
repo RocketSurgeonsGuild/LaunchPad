@@ -20,10 +20,10 @@ public class ZeroAllocValidatorTests
         var editContext = new EditContext(model);
         await using var renderer = await Render(editContext, services => services.AddSingleton<ValidatorFor<Person>, PersonValidator>());
 
-        editContext.Validate().ShouldBeFalse();
+        await editContext.Validate().Should().BeFalse();
 
-        editContext.GetValidationMessages(editContext.Field(nameof(Person.Name))).ShouldBe(["Name is required"]);
-        editContext.GetValidationMessages(editContext.Field(nameof(Person.Nickname))).ShouldBe(["Nickname is required"]);
+        await editContext.GetValidationMessages(editContext.Field(nameof(Person.Name))).Should().BeEquivalentTo(["Name is required"], CollectionOrdering.Matching);
+        await editContext.GetValidationMessages(editContext.Field(nameof(Person.Nickname))).Should().BeEquivalentTo(["Nickname is required"], CollectionOrdering.Matching);
     }
 
     [Test]
@@ -35,7 +35,7 @@ public class ZeroAllocValidatorTests
 
         editContext.NotifyFieldChanged(editContext.Field(nameof(Person.Name)));
 
-        editContext.GetValidationMessages().ShouldBe(["Name is required"]);
+        await editContext.GetValidationMessages().Should().BeEquivalentTo(["Name is required"], CollectionOrdering.Matching);
     }
 
     [Test]
@@ -49,8 +49,8 @@ public class ZeroAllocValidatorTests
         model.Name = "Ada";
         model.Nickname = "Countess";
 
-        editContext.Validate().ShouldBeTrue();
-        editContext.GetValidationMessages().ShouldBeEmpty();
+        await editContext.Validate().Should().BeTrue();
+        await editContext.GetValidationMessages().Should().BeEmpty();
     }
 
     [Test]
@@ -59,7 +59,7 @@ public class ZeroAllocValidatorTests
         var editContext = new EditContext(new Person { Name = "" });
         await using var renderer = await Render(editContext);
 
-        editContext.Validate().ShouldBeTrue();
+        await editContext.Validate().Should().BeTrue();
     }
 
     private static async Task<HtmlRenderer> Render(EditContext editContext, Action<IServiceCollection>? configure = null)

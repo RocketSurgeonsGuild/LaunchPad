@@ -42,10 +42,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0001");
-        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.PatchGraphRocket must be made partial.");
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0001");
+        await diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.PatchGraphRocket must be made partial.");
 
         await Verify(result);
     }
@@ -112,10 +112,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0005");
-        diagnostic.ToString().ShouldContain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.");
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0005");
+        await diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a record.");
 
         await Verify(result);
     }
@@ -146,10 +146,10 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0005");
-        diagnostic.ToString().ShouldContain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.");
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0005");
+        await diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchGraphRocket must be a class.");
 
         await Verify(result);
     }
@@ -180,7 +180,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -211,7 +211,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -240,7 +240,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -274,7 +274,7 @@ namespace Sample.Core.Operations.Rockets
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).ShouldBeTrue();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -442,8 +442,8 @@ public record Request : IRequest<RocketModel>
 
         await Verify(result).UseParameters(property, value, propertyTracking);
 
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var typeInstance = Activator.CreateInstance(type);
@@ -458,7 +458,7 @@ public record Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(typeInstance, Activator.CreateInstance(optionalType, value));
         var request = patchCreateMethod.Invoke(typeInstance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
+        await Assert.That(assignedPropertyUnderTest.GetValue(r)).IsEquivalentTo(value);
     }
 
     [Test]
@@ -487,8 +487,8 @@ public class Request : IRequest<RocketModel>
                           .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result).UseParameters(property, value, propertyTracking);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var typeInstance = Activator.CreateInstance(type);
@@ -503,7 +503,7 @@ public class Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(typeInstance, Activator.CreateInstance(optionalType, value));
         var request = patchCreateMethod.Invoke(typeInstance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
+        await Assert.That(assignedPropertyUnderTest.GetValue(r)).IsEquivalentTo(value);
     }
 
     [Test]
@@ -536,8 +536,8 @@ public record Request : IRequest<RocketModel>
                           .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result).UseParameters(property, value, propertyTracking);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
@@ -552,7 +552,7 @@ public record Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(optionalType, value));
         var request = applyChangesMethod.Invoke(instance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).ShouldBeEquivalentTo(value);
+        await Assert.That(assignedPropertyUnderTest.GetValue(r)).IsEquivalentTo(value);
     }
 
     [Test]
@@ -590,8 +590,8 @@ public record Request : IRequest<RocketModel>
                           .GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result).UseParameters(property, value, modelType, propertyTracking);
-        result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<GraphqlOptionalPropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchGraphRocket");
         var applyChangesMethod = type.GetMethod("Create")!;
@@ -606,7 +606,7 @@ public record Request : IRequest<RocketModel>
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(optionalType, value));
         var request = applyChangesMethod.Invoke(instance, []);
         var r = requestPropertyUnderTest.GetValue(request);
-        assignedPropertyUnderTest.GetValue(r).ShouldBe(value);
+        await assignedPropertyUnderTest.GetValue(r).Should().BeEqualTo(value);
     }
 
     [Test]

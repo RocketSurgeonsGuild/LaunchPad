@@ -44,7 +44,7 @@ public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var response = ( await mediator.Send(
+        var response = await Assert.That(( await mediator.Send(
             new EditLaunchRecord.Request
             {
                 Id = record.Id,
@@ -55,10 +55,10 @@ public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
                 PayloadWeightKg = 200,
             },
             TestContext.CancellationToken
-        ) ).Value.ShouldBeOfType<LaunchRecordModel>();
+        ) ).Value).IsTypeOf<LaunchRecordModel>();
 
-        response.ScheduledLaunchDate.ShouldBe(launchDate);
-        response.PayloadWeightKg.ShouldBe(200);
+        await response.ScheduledLaunchDate.Should().BeEqualTo(launchDate);
+        await response.PayloadWeightKg.Should().BeEqualTo(200);
     }
 
     private static readonly Faker Faker = new();

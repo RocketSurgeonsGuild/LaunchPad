@@ -25,8 +25,8 @@ public class SdkPolyfillTests(string targetFramework)
 
         var (polyfill, embedded) = await tree.EvaluatePolyfill("app", Cancellation);
 
-        polyfill.ShouldBe(BeforeNet11);
-        embedded.ShouldBe(BeforeNet11 ? "true" : null);
+        await polyfill.Should().BeEqualTo(BeforeNet11);
+        await embedded.Should().BeEqualTo(BeforeNet11 ? "true" : null);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class SdkPolyfillTests(string targetFramework)
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("library", HostModel.None, HostModelShape.Project(HostModel.None, targetFramework).ItemPackageReference("Rocket.Surgery.LaunchPad.Foundation"));
 
-        ( await tree.EvaluatePolyfill("library", Cancellation) ).Polyfill.ShouldBe(BeforeNet11);
+        await ( await tree.EvaluatePolyfill("library", Cancellation) ).Polyfill.Should().BeEqualTo(BeforeNet11);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public class SdkPolyfillTests(string targetFramework)
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.GenericHost, HostModelShape.Project(HostModel.GenericHost, targetFramework));
 
-        ( await tree.EvaluatePolyfill("app", Cancellation) ).Polyfill.ShouldBeFalse();
+        await ( await tree.EvaluatePolyfill("app", Cancellation) ).Polyfill.Should().BeFalse();
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public class SdkPolyfillTests(string targetFramework)
         project = optOut == "PolySharp" ? project.ItemPackageReference("PolySharp") : project.Property("LaunchPadEnablePolyfill", "false");
         tree.AddProject("app", HostModel.AspNetCore, project);
 
-        ( await tree.EvaluatePolyfill("app", Cancellation) ).Polyfill.ShouldBeFalse();
+        await ( await tree.EvaluatePolyfill("app", Cancellation) ).Polyfill.Should().BeFalse();
     }
 
     /// <summary>
@@ -79,6 +79,6 @@ public class SdkPolyfillTests(string targetFramework)
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.AspNetCore, HostModelShape.Project(HostModel.AspNetCore, targetFramework).Property("PolyPublic", "true"));
 
-        ( await tree.EvaluatePolyfill("app", Cancellation) ).PolyUseEmbeddedAttribute.ShouldBeNull();
+        await ( await tree.EvaluatePolyfill("app", Cancellation) ).PolyUseEmbeddedAttribute.Should().BeNull();
     }
 }

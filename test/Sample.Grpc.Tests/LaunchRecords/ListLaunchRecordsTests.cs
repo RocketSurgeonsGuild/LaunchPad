@@ -35,7 +35,7 @@ public class ListLaunchRecordsTests : WebAppFixtureTest
                             .ResponseStream.ReadAllAsync(TestContext.CancellationToken)
                             .ToListAsync(TestContext.CancellationToken);
 
-        response.Count.ShouldBe(10);
+        await response.Count.Should().BeEqualTo(10);
     }
 
     [Test]
@@ -67,6 +67,6 @@ public class ListLaunchRecordsTests : WebAppFixtureTest
                             .ResponseStream.ReadAllAsync(TestContext.CancellationToken)
                             .ToListAsync(TestContext.CancellationToken);
 
-        response.Count.ShouldBe(3);
+        await response.Count.Should().BeEqualTo(3);
     }
 }

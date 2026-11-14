@@ -59,19 +59,19 @@ public class RoundTripTests
         var rockets = new Http.RocketsClient(http);
 
         var id = ( await rockets.CreateRocketAsync(new() { Name = "Falcon" }, cancellationToken) ).Id;
-        Rocket(await rockets.GetRocketAsync(id, cancellationToken)).ShouldBe((id, "Falcon"));
+        await Rocket(await rockets.GetRocketAsync(id, cancellationToken)).Should().BeEqualTo((id, "Falcon"));
 
-        Rocket(await rockets.EditRocketAsync(id, new() { Name = "Falcon 9" }, cancellationToken)).ShouldBe((id, "Falcon 9"));
+        await Rocket(await rockets.EditRocketAsync(id, new() { Name = "Falcon 9" }, cancellationToken)).Should().BeEqualTo((id, "Falcon 9"));
         var other = ( await rockets.CreateRocketAsync(new() { Name = "Starship" }, cancellationToken) ).Id;
         // ListRockets streams application/x-ndjson, which NSwag's client doesn't read: one JSON rocket per line.
         var listed = ( await http.GetStringAsync("api/rockets?name=Falcon%209", cancellationToken) )
                     .Split('\n', StringSplitOptions.RemoveEmptyEntries)
                     .Select(line => Rocket(JsonSerializer.Deserialize<Http.RocketModel>(line, JsonSerializerOptions.Web)!));
-        listed.ShouldBe([(id, "Falcon 9")]);
+        await listed.Should().BeEquivalentTo([(id, "Falcon 9")], CollectionOrdering.Matching);
 
         await rockets.DeleteRocketAsync(id, cancellationToken);
-        ( await Should.ThrowAsync<Http.ApiException>(() => rockets.GetRocketAsync(id, cancellationToken)) ).StatusCode.ShouldBe(404);
-        Rocket(await rockets.GetRocketAsync(other, cancellationToken)).ShouldBe((other, "Starship"));
+        await ( await ( (Func<Task>)( () => rockets.GetRocketAsync(id, cancellationToken) ) ).Should().Throw<Http.ApiException>() ).StatusCode.Should().BeEqualTo(404);
+        await Rocket(await rockets.GetRocketAsync(other, cancellationToken)).Should().BeEqualTo((other, "Starship"));
     }
 
     [Test]
@@ -94,10 +94,10 @@ public class RoundTripTests
 
         using var response = await http.PostAsync("api/rockets", new StringContent("""{"name":"Falcon"}""", Encoding.UTF8, "application/json"), cancellationToken);
 
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
-        response.Headers.Location.ShouldNotBeNull().ToString().ShouldStartWith("/api/rockets/");
+        await response.StatusCode.Should().BeEqualTo(HttpStatusCode.Created);
+        await ( await response.Headers.Location.Should().NotBeNull() )!.ToString().Should().StartWith("/api/rockets/");
         using var location = await http.GetAsync(response.Headers.Location, cancellationToken);
-        location.StatusCode.ShouldBe(HttpStatusCode.OK);
+        await location.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
     }
 
     [Test]
@@ -114,13 +114,13 @@ public class RoundTripTests
         var rockets = new Proto.Rockets.RocketsClient(channel);
 
         var id = ( await rockets.CreateRocketAsync(new() { Name = "Falcon" }, cancellationToken: cancellationToken) ).Id;
-        Rocket(await rockets.GetRocketAsync(new() { Id = id }, cancellationToken: cancellationToken)).ShouldBe((Guid.Parse(id), "Falcon"));
-        Rocket(await rockets.EditRocketAsync(new() { Id = id, Name = "Falcon 9" }, cancellationToken: cancellationToken)).ShouldBe((Guid.Parse(id), "Falcon 9"));
+        await Rocket(await rockets.GetRocketAsync(new() { Id = id }, cancellationToken: cancellationToken)).Should().BeEqualTo((Guid.Parse(id), "Falcon"));
+        await Rocket(await rockets.EditRocketAsync(new() { Id = id, Name = "Falcon 9" }, cancellationToken: cancellationToken)).Should().BeEqualTo((Guid.Parse(id), "Falcon 9"));
         using var list = rockets.ListRockets(new() { Name = "Falcon 9" }, cancellationToken: cancellationToken);
-        ( await list.ResponseStream.ReadAllAsync(cancellationToken).Select(Rocket).ToListAsync(cancellationToken) ).ShouldBe([(Guid.Parse(id), "Falcon 9")]);
+        await ( await list.ResponseStream.ReadAllAsync(cancellationToken).Select(Rocket).ToListAsync(cancellationToken) ).Should().BeEquivalentTo([(Guid.Parse(id), "Falcon 9")], CollectionOrdering.Matching);
 
         await rockets.DeleteRocketAsync(new() { Id = id }, cancellationToken: cancellationToken);
-        ( await Should.ThrowAsync<RpcException>(async () => await rockets.GetRocketAsync(new() { Id = id }, cancellationToken: cancellationToken)) ).StatusCode.ShouldBe(StatusCode.NotFound);
+        await ( await ( (Func<Task>)( async () => await rockets.GetRocketAsync(new() { Id = id }, cancellationToken: cancellationToken) ) ).Should().Throw<RpcException>() ).StatusCode.Should().BeEqualTo(StatusCode.NotFound);
     }
 
     [Test]
@@ -150,12 +150,12 @@ public class RoundTripTests
         var id = created.Data!.CreateRocket.Id;
         var edited = await rockets.EditRocket.ExecuteAsync(new GraphQLClient.EditRocketRequest { Id = id, Name = "Falcon 9" }, cancellationToken);
         edited.EnsureNoErrors();
-        (edited.Data!.EditRocket.Id, edited.Data.EditRocket.Name).ShouldBe((id, "Falcon 9"));
-        ( await http.GetStringAsync($"api/rockets/{id}", cancellationToken) ).ShouldContain("Falcon 9");
+        await (edited.Data!.EditRocket.Id, edited.Data.EditRocket.Name).Should().BeEqualTo((id, "Falcon 9"));
+        await ( await http.GetStringAsync($"api/rockets/{id}", cancellationToken) ).Should().Contain("Falcon 9");
 
         var deleted = await rockets.DeleteRocket.ExecuteAsync(new GraphQLClient.DeleteRocketRequest { Id = id }, cancellationToken);
         deleted.EnsureNoErrors();
-        ( await http.GetAsync($"api/rockets/{id}", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        await ( await http.GetAsync($"api/rockets/{id}", cancellationToken) ).StatusCode.Should().BeEqualTo(HttpStatusCode.NotFound);
     }
 
     [Test]
@@ -170,12 +170,12 @@ public class RoundTripTests
         using var created = await http.PostAsync("api/versioned-rockets/rocket?api-version=1.0", new StringContent("""{"name":"Falcon"}""", Encoding.UTF8, "application/json"), cancellationToken);
         created.EnsureSuccessStatusCode();
         var id = JsonDocument.Parse(await created.Content.ReadAsStringAsync(cancellationToken)).RootElement.GetProperty("id").GetGuid();
-        ( await http.GetStringAsync($"api/versioned-rockets/{id}/rocket?api-version=2.0", cancellationToken) ).ShouldContain("Falcon");
+        await ( await http.GetStringAsync($"api/versioned-rockets/{id}/rocket?api-version=2.0", cancellationToken) ).Should().Contain("Falcon");
 
         // GetVersionedRocket isn't in 1.0, 3.0 isn't a version at all, and a request without a version names none: Asp.Versioning answers 400 to each.
-        ( await http.GetAsync($"api/versioned-rockets/{id}/rocket?api-version=1.0", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        ( await http.GetAsync($"api/versioned-rockets/{id}/rocket?api-version=3.0", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        ( await http.GetAsync($"api/versioned-rockets/{id}/rocket", cancellationToken) ).StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        await ( await http.GetAsync($"api/versioned-rockets/{id}/rocket?api-version=1.0", cancellationToken) ).StatusCode.Should().BeEqualTo(HttpStatusCode.BadRequest);
+        await ( await http.GetAsync($"api/versioned-rockets/{id}/rocket?api-version=3.0", cancellationToken) ).StatusCode.Should().BeEqualTo(HttpStatusCode.BadRequest);
+        await ( await http.GetAsync($"api/versioned-rockets/{id}/rocket", cancellationToken) ).StatusCode.Should().BeEqualTo(HttpStatusCode.BadRequest);
     }
 
     /// <summary>The clients above were generated from the MediatR server's specs; each mediator's server must expose the same ones.</summary>
@@ -187,10 +187,10 @@ public class RoundTripTests
     [Arguments("ZeroAlloc")]
     public async Task Should_Expose_The_Same_Specs(string mediator, CancellationToken cancellationToken)
     {
-        ( await OpenApi(mediator, false, cancellationToken) ).ShouldBe(await OpenApi(Reference, false, cancellationToken));
-        ( await OpenApi(mediator, true, cancellationToken) ).ShouldBe(await OpenApi(Reference, true, cancellationToken));
-        ( await GraphQLSchema(mediator, cancellationToken) ).ShouldBe(await GraphQLSchema(Reference, cancellationToken));
-        Servers[mediator].Proto().ShouldBe(Servers[Reference].Proto());
+        await ( await OpenApi(mediator, false, cancellationToken) ).Should().BeEqualTo(await OpenApi(Reference, false, cancellationToken));
+        await ( await OpenApi(mediator, true, cancellationToken) ).Should().BeEqualTo(await OpenApi(Reference, true, cancellationToken));
+        await ( await GraphQLSchema(mediator, cancellationToken) ).Should().BeEqualTo(await GraphQLSchema(Reference, cancellationToken));
+        await Servers[mediator].Proto().Should().BeEqualTo(Servers[Reference].Proto());
     }
 
     private static async Task<string> OpenApi(string mediator, bool controllers, CancellationToken cancellationToken)

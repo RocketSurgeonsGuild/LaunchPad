@@ -9,52 +9,52 @@ namespace EntityFramework.Tests;
 public class LpContextTests
 {
     [Test]
-    public void Should_Apply_The_Entity_Configurations_Of_The_Context_Assembly()
+    public async Task Should_Apply_The_Entity_Configurations_Of_The_Context_Assembly()
     {
         using var context = CreateContext();
 
-        var entity = context.Model.FindEntityType(typeof(Launch)).ShouldNotBeNull();
+        var entity = await context.Model.FindEntityType(typeof(Launch)).Should().NotBeNull();
 
-        entity.GetTableName().ShouldBe("launches");
-        entity.FindProperty(nameof(Launch.Name)).ShouldNotBeNull().GetMaxLength().ShouldBe(64);
+        await entity.GetTableName().Should().BeEqualTo("launches");
+        await ( await entity.FindProperty(nameof(Launch.Name)).Should().NotBeNull() )!.GetMaxLength().Should().BeEqualTo(64);
     }
 
     [Test]
     [Arguments(nameof(Launch.ScheduledAt))]
     [Arguments(nameof(Launch.LaunchedAt))]
-    public void Should_Store_A_DateTimeOffset_As_Binary_On_Sqlite(string property)
+    public async Task Should_Store_A_DateTimeOffset_As_Binary_On_Sqlite(string property)
     {
         using var context = CreateContext();
 
-        context
+        await ( await context
            .Model.FindEntityType(typeof(Launch))!
            .FindProperty(property)
-           .ShouldNotBeNull()
+           .Should().NotBeNull() )!
            .GetValueConverter()
-           .ShouldBeOfType<DateTimeOffsetToBinaryConverter>();
+           .Should().BeOfType(typeof(DateTimeOffsetToBinaryConverter));
     }
 
     [Test]
     [Arguments(nameof(Launch.CreatedAt))]
     [Arguments(nameof(Launch.UpdatedAt))]
-    public void Should_Store_A_DateTime_As_Binary_On_Sqlite(string property)
+    public async Task Should_Store_A_DateTime_As_Binary_On_Sqlite(string property)
     {
         using var context = CreateContext();
 
-        context
+        await ( await context
            .Model.FindEntityType(typeof(Launch))!
            .FindProperty(property)
-           .ShouldNotBeNull()
+           .Should().NotBeNull() )!
            .GetValueConverter()
-           .ShouldBeOfType<DateTimeToBinaryConverter>();
+           .Should().BeOfType(typeof(DateTimeToBinaryConverter));
     }
 
     [Test]
-    public void Should_Leave_Other_Properties_Unconverted()
+    public async Task Should_Leave_Other_Properties_Unconverted()
     {
         using var context = CreateContext();
 
-        context.Model.FindEntityType(typeof(Launch))!.FindProperty(nameof(Launch.Name))!.GetValueConverter().ShouldBeNull();
+        await context.Model.FindEntityType(typeof(Launch))!.FindProperty(nameof(Launch.Name))!.GetValueConverter().Should().BeNull();
     }
 
     [Test]
@@ -70,8 +70,8 @@ public class LpContextTests
         context.ChangeTracker.Clear();
 
         var launch = await context.Set<Launch>().SingleAsync(z => z.ScheduledAt == scheduledAt);
-        launch.ScheduledAt.ShouldBe(scheduledAt);
-        launch.LaunchedAt.ShouldBeNull();
+        await launch.ScheduledAt.Should().BeEqualTo(scheduledAt);
+        await launch.LaunchedAt.Should().BeNull();
     }
 
     private static LaunchContext CreateContext() => new(new DbContextOptionsBuilder<LaunchContext>().UseSqlite("Data Source=:memory:").Options);

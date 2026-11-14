@@ -28,8 +28,8 @@ public class NodaTimeHotChocolateJointTests
 
         var result = ( await executor.ExecuteAsync($$"""{ {{field}}(value: "{{value}}") }""") ).ExpectOperationResult();
 
-        string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).ShouldBeEmpty();
-        result.ToJson().ShouldContain(value);
+        await string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).Should().BeEmpty();
+        await result.ToJson().Should().Contain(value);
     }
 
     [Test]
@@ -43,12 +43,12 @@ public class NodaTimeHotChocolateJointTests
             $$"""{ instant(value: "{{value}}") nullableInstant(value: "{{value}}") nextInstant(value: "{{value}}") }"""
         ) ).ExpectOperationResult();
 
-        string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).ShouldBeEmpty();
+        await string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).Should().BeEmpty();
         var data = JsonElement.Parse(result.ToJson()).GetProperty("data");
-        data.GetProperty("instant").GetString().ShouldBe(expected);
-        data.GetProperty("nullableInstant").GetString().ShouldBe(expected);
+        await data.GetProperty("instant").GetString().Should().BeEqualTo(expected);
+        await data.GetProperty("nullableInstant").GetString().Should().BeEqualTo(expected);
         // the resolver received an Instant, not the text
-        data.GetProperty("nextInstant").GetString().ShouldBe(anHourLater);
+        await data.GetProperty("nextInstant").GetString().Should().BeEqualTo(anHourLater);
     }
 
     [Test]
@@ -56,9 +56,9 @@ public class NodaTimeHotChocolateJointTests
     {
         var schema = ( await Executor() ).Schema.ToString();
 
-        schema.ShouldContain("instant(value: DateTime!): DateTime!");
-        schema.ShouldContain("nullableInstant(value: DateTime): DateTime");
-        schema.ShouldNotContain("scalar Instant");
+        await schema.Should().Contain("instant(value: DateTime!): DateTime!");
+        await schema.Should().Contain("nullableInstant(value: DateTime): DateTime");
+        await schema.Should().NotContain("scalar Instant");
     }
 
     [Test]
@@ -74,9 +74,9 @@ public class NodaTimeHotChocolateJointTests
             """
         ) ).ExpectOperationResult();
 
-        string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).ShouldBeEmpty();
+        await string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).Should().BeEmpty();
         var records = JsonElement.Parse(result.ToJson()).GetProperty("data").GetProperty("records");
-        records.EnumerateArray().Select(x => x.GetProperty("instant").GetString()).ShouldBe(["2020-01-02T00:00:00Z"]);
+        await records.EnumerateArray().Select(x => x.GetProperty("instant").GetString()).Should().BeEquivalentTo(["2020-01-02T00:00:00Z"], CollectionOrdering.Matching);
     }
 
     [Test]
@@ -84,12 +84,12 @@ public class NodaTimeHotChocolateJointTests
     {
         var schema = ( await Executor() ).Schema.ToString();
 
-        schema.ShouldContain("scalar DateTime");
-        schema.ShouldContain("scalar Duration");
-        schema.ShouldContain("scalar LocalDate");
-        schema.ShouldContain("scalar LocalDateTime");
-        schema.ShouldContain("scalar LocalTime");
-        schema.ShouldNotContain("scalar OffsetDateTime");
+        await schema.Should().Contain("scalar DateTime");
+        await schema.Should().Contain("scalar Duration");
+        await schema.Should().Contain("scalar LocalDate");
+        await schema.Should().Contain("scalar LocalDateTime");
+        await schema.Should().Contain("scalar LocalTime");
+        await schema.Should().NotContain("scalar OffsetDateTime");
     }
 
     [Test]
@@ -98,10 +98,10 @@ public class NodaTimeHotChocolateJointTests
         var schema = ( await Executor() ).Schema.ToString();
 
         // the filter inputs are named for the runtime types, as they were before HotChocolate 16
-        schema.ShouldContain("dateTime: ComparableOffsetDateTimeOperationFilterInput");
-        schema.ShouldContain("duration: ComparableDurationOperationFilterInput");
-        schema.ShouldContain("localDate: ComparableLocalDateOperationFilterInput");
-        schema.ShouldContain("instant: ComparableInstantOperationFilterInput");
+        await schema.Should().Contain("dateTime: ComparableOffsetDateTimeOperationFilterInput");
+        await schema.Should().Contain("duration: ComparableDurationOperationFilterInput");
+        await schema.Should().Contain("localDate: ComparableLocalDateOperationFilterInput");
+        await schema.Should().Contain("instant: ComparableInstantOperationFilterInput");
     }
 
     [Test]
@@ -125,18 +125,18 @@ public class NodaTimeHotChocolateJointTests
             """
         ) ).ExpectOperationResult();
 
-        string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).ShouldBeEmpty();
+        await string.Join("; ", result.Errors?.Select(x => x.Message) ?? []).Should().BeEmpty();
     }
 
     [Test]
-    public void Is_Exported_As_An_Application_Joint_Without_Ordering()
+    public async Task Is_Exported_As_An_Application_Joint_Without_Ordering()
     {
         var export = NodaTimeHotChocolateExports.Joints().Single(x => x.Joint is NodaTimeHotChocolateJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldBeEmpty();
-        export.Category.ToString().ShouldBe(DovetailCategory.Application);
-        typeof(NodaTimeHotChocolateJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        await export.Dependencies.Should().BeEmpty();
+        await export.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
+        await typeof(NodaTimeHotChocolateJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     private static async Task<IRequestExecutor> Executor()

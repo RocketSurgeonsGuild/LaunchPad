@@ -37,20 +37,20 @@ public class NodaTimeStrawberryShakeSerializerTests
 
     [Test]
     [MethodDataSource(nameof(Serializers))]
-    public void Should_Format_The_Value_As_The_Server_Writes_It(ISerializer serializer, ScalarType scalar, object value, string serialized)
+    public async Task Should_Format_The_Value_As_The_Server_Writes_It(ISerializer serializer, ScalarType scalar, object value, string serialized)
     {
-        ( (StringValueNode)scalar.ValueToLiteral(value) ).Value.ShouldBe(serialized);
-        ( (IInputValueFormatter)serializer ).Format(value).ShouldBe(serialized);
+        await ( (StringValueNode)scalar.ValueToLiteral(value) ).Value.Should().BeEqualTo(serialized);
+        await ( (IInputValueFormatter)serializer ).Format(value).Should().BeEqualTo(serialized);
     }
 
     [Test]
     [MethodDataSource(nameof(Serializers))]
-    public void Should_Write_What_The_Server_Reads(ISerializer serializer, ScalarType scalar, object value, string serialized) =>
-        scalar.CoerceInputLiteral(new StringValueNode((string)( (IInputValueFormatter)serializer ).Format(value)!)).ShouldBe(value);
+    public async Task Should_Write_What_The_Server_Reads(ISerializer serializer, ScalarType scalar, object value, string serialized) =>
+        await scalar.CoerceInputLiteral(new StringValueNode((string)( (IInputValueFormatter)serializer ).Format(value)!)).Should().BeEqualTo(value);
 
     [Test]
     [MethodDataSource(nameof(Serializers))]
-    public void Should_Parse_What_The_Server_Writes(ISerializer serializer, ScalarType scalar, object value, string serialized)
+    public async Task Should_Parse_What_The_Server_Writes(ISerializer serializer, ScalarType scalar, object value, string serialized)
     {
         var parsed = serializer switch
         {
@@ -62,20 +62,20 @@ public class NodaTimeStrawberryShakeSerializerTests
             _ => throw new InvalidOperationException($"No parser for {serializer.GetType().Name}"),
         };
 
-        parsed.ShouldBe(value);
+        await parsed.Should().BeEqualTo(value);
     }
 
     [Test]
     [MethodDataSource(nameof(Serializers))]
-    public void Should_Be_Named_For_The_Scalar_It_Serializes(ISerializer serializer, ScalarType scalar, object value, string serialized) =>
-        serializer.TypeName.ShouldBe(scalar.Name);
+    public async Task Should_Be_Named_For_The_Scalar_It_Serializes(ISerializer serializer, ScalarType scalar, object value, string serialized) =>
+        await serializer.TypeName.Should().BeEqualTo(scalar.Name);
 
     [Test]
     [Arguments("P1W2DT3H4M5.5S")]
     [Arguments("P-1DT2H")]
     [Arguments("PT0,25S")]
-    public void Should_Parse_The_Durations_The_Server_Reads(string serialized) =>
-        new DurationSerializer().Parse(serialized).ShouldBe((Duration)new DurationType().CoerceInputLiteral(new StringValueNode(serialized)));
+    public async Task Should_Parse_The_Durations_The_Server_Reads(string serialized) =>
+        await new DurationSerializer().Parse(serialized).Should().BeEqualTo((Duration)new DurationType().CoerceInputLiteral(new StringValueNode(serialized)));
 
     [Test]
     [Arguments("yesterday")]
@@ -84,9 +84,9 @@ public class NodaTimeStrawberryShakeSerializerTests
     [Arguments("P1Y")]
     [Arguments("P1H")]
     [Arguments("PT1S2M")]
-    public void Should_Reject_Text_That_Is_Not_A_Duration(string serialized) => Should.Throw<FormatException>(() => new DurationSerializer().Parse(serialized));
+    public async Task Should_Reject_Text_That_Is_Not_A_Duration(string serialized) => await ( (Action)( () => new DurationSerializer().Parse(serialized) ) ).Should().Throw<FormatException>();
 
     [Test]
-    public void Should_Reject_Text_That_Does_Not_Match_The_Pattern() =>
-        Should.Throw<Text.UnparsableValueException>(() => new OffsetDateTimeSerializer().Parse("yesterday"));
+    public async Task Should_Reject_Text_That_Does_Not_Match_The_Pattern() =>
+        await ( (Action)( () => new OffsetDateTimeSerializer().Parse("yesterday") ) ).Should().Throw<Text.UnparsableValueException>();
 }

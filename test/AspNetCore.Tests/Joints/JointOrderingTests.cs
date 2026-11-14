@@ -24,13 +24,13 @@ public class JointOrderingTests
         var joints = context.Joints.Select(z => z.GetType()).ToList();
 
         var aspNetCore = joints.IndexOf(typeof(AspNetCoreJoint));
-        aspNetCore.ShouldBeGreaterThanOrEqualTo(0);
+        await aspNetCore.Should().BeGreaterThanOrEqualTo(0);
         foreach (var dependent in new[]
                  {
                      typeof(SystemJsonTextJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint),
                  })
         {
-            joints.IndexOf(dependent).ShouldBeGreaterThan(aspNetCore, dependent.Name);
+            await joints.IndexOf(dependent).Should().Because(dependent.Name).BeGreaterThan(aspNetCore);
         }
     }
 
@@ -39,9 +39,9 @@ public class JointOrderingTests
     [Arguments(typeof(OpenApiJoint))]
     [Arguments(typeof(ProblemDetailsJoint))]
     [Arguments(typeof(SystemJsonTextJoint))]
-    public void Should_Be_An_Application_Joint_That_Runs_In_Every_Host_Type(Type joint)
+    public async Task Should_Be_An_Application_Joint_That_Runs_In_Every_Host_Type(Type joint)
     {
-        joint.GetCustomAttribute<DovetailCategoryAttribute>().ShouldNotBeNull().Category.ToString().ShouldBe(DovetailCategory.Application);
-        Attribute.GetCustomAttributes(joint).ShouldNotContain(z => z is LiveJointAttribute || z is UnitTestJointAttribute || z is DovetailHostTypeAttribute);
+        await ( await joint.GetCustomAttribute<DovetailCategoryAttribute>().Should().NotBeNull() )!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
+        await Attribute.GetCustomAttributes(joint).Should().All(z => z is not ( LiveJointAttribute or UnitTestJointAttribute or DovetailHostTypeAttribute ));
     }
 }

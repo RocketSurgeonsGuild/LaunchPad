@@ -22,7 +22,7 @@ public class FoundationTests() : LoggerTest<TestRecord>(TestRecord.Create())
             new SqliteExtension<RocketDbContext>()
         );
         var response = await host.Server.CreateClient().GetAsync("/graphql/index.html", TestContext.CancellationToken);
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        await response.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
     }
 
     [Test]
@@ -32,7 +32,7 @@ public class FoundationTests() : LoggerTest<TestRecord>(TestRecord.Create())
         // runs; the database stands in for the one the sample only registers live
         await using var host = await AlbaHost.For<Program>(new SqliteExtension<RocketDbContext>());
         var response = await host.Server.CreateClient().GetAsync("/graphql/index.html", TestContext.CancellationToken);
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        await response.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
     }
 
     [Test]

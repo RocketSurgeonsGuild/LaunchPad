@@ -28,20 +28,18 @@ public class GrpcJointTests
                           .Select(z => z.Type)
                           .ToArray();
 
-        interceptors.ShouldBe(
-            [
+        await interceptors.Should().BeEquivalentTo([
                 typeof(NotAuthorizedInterceptor),
                 typeof(NotFoundInterceptor),
                 typeof(RequestFailedInterceptor),
-            ]
-        );
+            ], CollectionOrdering.Matching);
     }
 
     [Test]
-    public void Should_Be_An_Application_Joint_That_Runs_In_Every_Host_Type()
+    public async Task Should_Be_An_Application_Joint_That_Runs_In_Every_Host_Type()
     {
-        typeof(GrpcJoint).GetCustomAttribute<DovetailCategoryAttribute>().ShouldNotBeNull().Category.ToString().ShouldBe(DovetailCategory.Application);
-        Attribute.GetCustomAttributes(typeof(GrpcJoint)).ShouldNotContain(z => z is LiveJointAttribute || z is UnitTestJointAttribute || z is DovetailHostTypeAttribute);
+        await ( await typeof(GrpcJoint).GetCustomAttribute<DovetailCategoryAttribute>().Should().NotBeNull() )!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
+        await Attribute.GetCustomAttributes(typeof(GrpcJoint)).Should().All(z => z is not ( LiveJointAttribute or UnitTestJointAttribute or DovetailHostTypeAttribute ));
     }
 
     // Dovetail resolves joints whose category is not in the context's category set, so the set stays empty to run every joint.

@@ -43,9 +43,9 @@ public class SdkFileBasedAppTests(string targetFramework)
 
         var output = await DotnetCli.Run("run fileapp/app.cs", tree.Directory, cancellationToken: Cancellation);
 
-        output.ShouldContain("HealthChecks:True");
-        output.ShouldContain("Clock:SystemClock");
-        output.ShouldContain("Foundation:Rocket.Surgery.LaunchPad.Foundation");
+        await output.Should().Contain("HealthChecks:True");
+        await output.Should().Contain("Clock:SystemClock");
+        await output.Should().Contain("Foundation:Rocket.Surgery.LaunchPad.Foundation");
     }
 
     private string PinnedVersion(string packageId) => Repository.PackageVersion(packageId, targetFramework);

@@ -8,16 +8,16 @@ using Rocket.Surgery.LaunchPad.Foundation.Joints;
 
 namespace Extensions.Tests;
 
-public class DefaultJointTests() : JointFakeTest()
+public class DefaultJointTests() : JointTest()
 {
     [Test]
     public async Task Should_Register_Services_Marked_With_The_Specular_Service_Registration_Attributes()
     {
         await Init();
 
-        ServiceProvider.GetRequiredService<ISingletonThing>().ShouldBeOfType<SingletonThing>();
-        ServiceProvider.GetRequiredService<ITransientThing>().ShouldBeOfType<TransientThing>();
-        ServiceProvider.GetRequiredKeyedService<IKeyedThing>("keyed").ShouldBeOfType<KeyedThing>();
+        await ServiceProvider.GetRequiredService<ISingletonThing>().Should().BeOfType(typeof(SingletonThing));
+        await ServiceProvider.GetRequiredService<ITransientThing>().Should().BeOfType(typeof(TransientThing));
+        await ServiceProvider.GetRequiredKeyedService<IKeyedThing>("keyed").Should().BeOfType(typeof(KeyedThing));
     }
 
     [Test]
@@ -25,8 +25,8 @@ public class DefaultJointTests() : JointFakeTest()
     {
         await Init();
 
-        ServiceProvider.GetService<IOptions<object>>().ShouldNotBeNull();
-        ServiceProvider.GetService<ILoggerFactory>().ShouldNotBeNull();
+        await ServiceProvider.GetService<IOptions<object>>().Should().NotBeNull();
+        await ServiceProvider.GetService<ILoggerFactory>().Should().NotBeNull();
     }
 
     [Test]
@@ -36,9 +36,9 @@ public class DefaultJointTests() : JointFakeTest()
         var builder = DovetailContextBuilder.Create([], new Dictionary<object, object>(), []);
         var context = await DovetailContext.FromAsync(builder);
 
-        var exception = Should.Throw<KeyNotFoundException>(() => new DefaultJoint().Register(context, new ServiceCollection()));
+        var exception = await ( (Action)( () => new DefaultJoint().Register(context, new ServiceCollection()) ) ).Should().Throw<KeyNotFoundException>();
 
-        exception.Message.ShouldContain(nameof(ISpecularProvider));
+        await exception.Message.Should().Contain(nameof(ISpecularProvider));
     }
 
     [Test]
@@ -46,7 +46,7 @@ public class DefaultJointTests() : JointFakeTest()
     {
         var context = await DovetailContext.FromAsync(Imports.Joints());
 
-        context.Get<ISpecularProvider>().ShouldNotBeNull();
+        await context.Get<ISpecularProvider>().Should().NotBeNull();
     }
 
     public interface ISingletonThing;

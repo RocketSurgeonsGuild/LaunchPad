@@ -20,7 +20,7 @@ public class GraphqlJointTests
 
         var result = ( await executor.ExecuteAsync("{ missing }") ).ExpectOperationResult();
 
-        result.Errors.ShouldHaveSingleItem().Code.ShouldBe("NOTFOUND");
+        await ( await result.Errors.Should().HaveSingleItem() ).Code.Should().BeEqualTo("NOTFOUND");
     }
 
     // Before it became a joint, this wiring took FoundationOptions and an empty RocketChocolateOptions in its constructor but never read them,
@@ -37,21 +37,20 @@ public class GraphqlJointTests
             context => context.Set(new FoundationOptions { ValidatorLifetime = ServiceLifetime.Transient }).Set(new RocketChocolateOptions())
         );
 
-        withOptions.Select(x => (x.ServiceType, x.Lifetime)).ShouldBe(withoutOptions.Select(x => (x.ServiceType, x.Lifetime)));
+        await withOptions.Select(x => (x.ServiceType, x.Lifetime)).Should().BeEquivalentTo(withoutOptions.Select(x => (x.ServiceType, x.Lifetime)), CollectionOrdering.Matching);
     }
 
     [Test]
-    public void Is_Exported_To_Run_Before_The_Hot_Chocolate_Joint()
+    public async Task Is_Exported_To_Run_Before_The_Hot_Chocolate_Joint()
     {
         var export = Exports.Joints().Single(x => x.Joint is GraphqlJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependentOf),
-            x => x.Type.ShouldBe(typeof(HotChocolateJoint))
-        );
-        export.Category.ToString().ShouldBe(DovetailCategory.Application);
-        typeof(GraphqlJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependentOf);
+        await x.Type.Should().BeEqualTo(typeof(HotChocolateJoint));
+        await export.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
+        await typeof(GraphqlJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -68,7 +67,7 @@ public class GraphqlJointTests
 
         var order = context.Joints.Select(x => x.GetType()).ToList();
 
-        order.IndexOf(typeof(GraphqlJoint)).ShouldBeLessThan(order.IndexOf(typeof(HotChocolateJoint)));
+        await order.IndexOf(typeof(GraphqlJoint)).Should().BeLessThan(order.IndexOf(typeof(HotChocolateJoint)));
     }
 
     private static async Task Register(IServiceCollection services, Action<IDovetailContext>? configure = null)

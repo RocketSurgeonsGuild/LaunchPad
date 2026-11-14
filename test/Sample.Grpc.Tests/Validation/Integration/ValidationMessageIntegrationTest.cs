@@ -24,8 +24,8 @@ public class ValidationMessageIntegrationTest : WebAppFixtureTest
         }
 
         // Then
-        var rpcException = await Should.ThrowAsync<RpcException>(Action);
-        rpcException.Status.StatusCode.ShouldBe(StatusCode.InvalidArgument);
-        rpcException.Status.Detail.ShouldStartWith("Property Id failed validation.");
+        var rpcException = await ( (Func<Task>)Action ).Should().Throw<RpcException>();
+        await rpcException.Status.StatusCode.Should().BeEqualTo(StatusCode.InvalidArgument);
+        await rpcException.Status.Detail.Should().StartWith("Property Id failed validation.");
     }
 }

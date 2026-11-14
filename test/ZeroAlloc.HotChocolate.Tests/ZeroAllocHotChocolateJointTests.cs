@@ -21,16 +21,15 @@ namespace ZeroAlloc.HotChocolate.Tests;
 public class ZeroAllocHotChocolateJointTests
 {
     [Test]
-    public void Is_Exported_To_Run_After_The_Graphql_Joint()
+    public async Task Is_Exported_To_Run_After_The_Graphql_Joint()
     {
         var export = ZeroAllocExports.Joints().Single(x => x.Joint is ZeroAllocHotChocolateJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
-            x => x.Type.ShouldBe(typeof(GraphqlJoint))
-        );
-        typeof(ZeroAllocHotChocolateJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().ShouldBe(DovetailCategory.Application);
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
+        await x.Type.Should().BeEqualTo(typeof(GraphqlJoint));
+        await typeof(ZeroAllocHotChocolateJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -40,11 +39,12 @@ public class ZeroAllocHotChocolateJointTests
 
         var result = ( await executor.ExecuteAsync("""{ echo(name: "") }""") ).ExpectOperationResult();
 
-        var errors = result.Errors.ShouldNotBeNull();
-        errors.Select(x => x.Message).ShouldBe(["Name must not be empty.", "Name is too short."]);
-        errors.ShouldAllBe(x => x.Code == ZeroAllocValidationErrorFilter.ValidationCode);
-        errors[0].Extensions!["propertyName"].ShouldBe("Name");
-        errors[0].Extensions!["errorCode"].ShouldBe("NotEmpty");
+        await result.Errors.Should().NotBeNull();
+        var errors = result.Errors!;
+        await errors.Select(x => x.Message).Should().BeEquivalentTo(["Name must not be empty.", "Name is too short."], CollectionOrdering.Matching);
+        await errors.Should().All(x => x.Code == ZeroAllocValidationErrorFilter.ValidationCode);
+        await errors[0].Extensions!["propertyName"].Should().BeEqualTo("Name");
+        await errors[0].Extensions!["errorCode"].Should().BeEqualTo("NotEmpty");
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class ZeroAllocHotChocolateJointTests
 
         var result = ( await executor.ExecuteAsync("""{ echo(name: "boom") }""") ).ExpectOperationResult();
 
-        result.Errors.ShouldNotBeNull().ShouldHaveSingleItem().Code.ShouldNotBe(ZeroAllocValidationErrorFilter.ValidationCode);
+        await ( await ( await result.Errors.Should().NotBeNull() )!.Should().HaveSingleItem() ).Code.Should().NotBeEqualTo(ZeroAllocValidationErrorFilter.ValidationCode);
     }
 
     private static async Task<IRequestExecutor> Executor()

@@ -24,7 +24,7 @@ public class ListRocketsTests : GraphQlWebAppFixtureTest
         var response = await client.GetRockets.ExecuteAsync(cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.Rockets!.Nodes!.Count.ShouldBe(10);
+        await response.Data!.Rockets!.Nodes!.Count.Should().BeEqualTo(10);
     }
 
     [Test]
@@ -43,7 +43,7 @@ public class ListRocketsTests : GraphQlWebAppFixtureTest
         var response = await client.GetFilteredRockets.ExecuteAsync(RocketType.AtlasV, TestContext.CancellationToken);
         response.EnsureNoErrors();
 
-        response.Data!.Rockets!.Nodes!.Count.ShouldBe(5);
+        await response.Data!.Rockets!.Nodes!.Count.Should().BeEqualTo(5);
     }
 
     private static readonly Faker Faker = new();

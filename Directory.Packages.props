@@ -31,7 +31,6 @@
     <PackageVersion Include="Sourcy.DotNet" Version="1.1.1" />
     <PackageVersion Include="Sourcy.Git" Version="1.1.1" />
     <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.52" />
-        <PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
 
         <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.20.1-rc.1" />
 
@@ -163,12 +162,12 @@
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.21.0" />
         <PackageVersion Include="Alba" Version="8.5.3" />
         <PackageVersion Include="Bogus" Version="35.6.5" />
-        <PackageVersion Include="FakeItEasy" Version="9.0.1" />
-        <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="11.0.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.TUnit" Version="11.0.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="11.0.1" />
         <PackageVersion Include="TUnit" Version="1.84.0" />
+        <PackageVersion Include="TUnit.Mocks" Version="1.84.0" />
+        <!-- the Should syntax ships as a beta beside each TUnit release -->
+        <PackageVersion Include="TUnit.Assertions.Should" Version="1.84.0-beta" />
         <PackageVersion Include="Verify.TUnit" Version="33.4.0" />
         <!-- test/Sdk.Tests writes its throwaway projects with it, as Dovetail's SDK tests do -->
         <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.0" />

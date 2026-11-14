@@ -17,48 +17,48 @@ namespace Graphql.Tests;
 public class StrawberryShakeSerializerTests
 {
     [Test]
-    public void Should_Format_A_Value_As_Its_Json_Element()
+    public async Task Should_Format_A_Value_As_Its_Json_Element()
     {
         var serializer = new LaunchSerializer(Options.Create(new JsonSerializerOptions(JsonSerializerDefaults.Web) { TypeInfoResolver = LaunchJsonContext.Default }));
 
         var element = (JsonElement)serializer.Format(new Launch("Artemis", 2))!;
 
-        element.GetProperty("name").GetString().ShouldBe("Artemis");
-        element.GetProperty("crew").GetInt32().ShouldBe(2);
-        serializer.TypeName.ShouldBe("Launch");
+        await element.GetProperty("name").GetString().Should().BeEqualTo("Artemis");
+        await element.GetProperty("crew").GetInt32().Should().BeEqualTo(2);
+        await serializer.TypeName.Should().BeEqualTo("Launch");
     }
 
     [Test]
-    public void Should_Parse_A_Json_Element_With_The_Configured_Options()
+    public async Task Should_Parse_A_Json_Element_With_The_Configured_Options()
     {
         var serializer = new LaunchSerializer(Options.Create(new JsonSerializerOptions(JsonSerializerDefaults.Web) { TypeInfoResolver = LaunchJsonContext.Default }));
 
-        serializer.Parse(JsonSerializer.SerializeToElement(new { name = "Artemis", crew = 4, })).ShouldBe(new Launch("Artemis", 4));
+        await serializer.Parse(JsonSerializer.SerializeToElement(new { name = "Artemis", crew = 4, })).Should().BeEqualTo(new Launch("Artemis", 4));
     }
 
     [Test]
-    public void Should_Format_An_Enum_As_Its_Number()
+    public async Task Should_Format_An_Enum_As_Its_Number()
     {
         var serializer = new StageSerializer();
 
-        serializer.Format(Stage.Orbit).ShouldBe(2);
-        serializer.TypeName.ShouldBe("Stage");
+        await serializer.Format(Stage.Orbit).Should().BeEqualTo(2);
+        await serializer.TypeName.Should().BeEqualTo("Stage");
     }
 
     [Test]
-    public void Should_Parse_A_Number_As_Its_Enum() => new StageSerializer().Parse(1).ShouldBe(Stage.Ascent);
+    public async Task Should_Parse_A_Number_As_Its_Enum() => await new StageSerializer().Parse(1).Should().BeEqualTo(Stage.Ascent);
 
     [Test]
-    public void Should_Round_Trip_A_Geometry_As_GeoJson()
+    public async Task Should_Round_Trip_A_Geometry_As_GeoJson()
     {
         var serializer = new GeometrySerializer(SpatialOptions());
         var point = new Point(30, 10) { SRID = 4326, };
 
         var element = (JsonElement)serializer.Format(point)!;
 
-        element.GetProperty("type").GetString().ShouldBe("Point");
-        serializer.Parse(element).EqualsExact(point).ShouldBeTrue();
-        serializer.TypeName.ShouldBe("Geometry");
+        await element.GetProperty("type").GetString().Should().BeEqualTo("Point");
+        await serializer.Parse(element).EqualsExact(point).Should().BeTrue();
+        await serializer.TypeName.Should().BeEqualTo("Geometry");
     }
 
     // the options the spatial joint configures

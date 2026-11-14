@@ -22,18 +22,18 @@ public class ProblemDetailsExceptionFilterTests
 
     [Test]
     [MethodDataSource(nameof(Filters))]
-    public void Should_Turn_The_Exception_Into_Problem_Details(IExceptionFilter filter, Exception exception, int statusCode)
+    public async Task Should_Turn_The_Exception_Into_Problem_Details(IExceptionFilter filter, Exception exception, int statusCode)
     {
         var context = CreateContext(exception);
 
         filter.OnException(context);
 
-        context.ExceptionHandled.ShouldBeTrue();
-        var result = context.Result.ShouldBeOfType<ObjectResult>();
-        result.StatusCode.ShouldBe(statusCode);
-        var problemDetails = result.Value.ShouldBeOfType<ProblemDetails>();
-        problemDetails.Status.ShouldBe(statusCode);
-        problemDetails.Detail.ShouldBe(exception.Message);
+        await context.ExceptionHandled.Should().BeTrue();
+        var result = await Assert.That(context.Result).IsTypeOf<ObjectResult>();
+        await result.StatusCode.Should().BeEqualTo(statusCode);
+        var problemDetails = await Assert.That(result.Value).IsTypeOf<ProblemDetails>();
+        await problemDetails.Status.Should().BeEqualTo(statusCode);
+        await problemDetails.Detail.Should().BeEqualTo(exception.Message);
     }
 
     [Test]
@@ -43,23 +43,23 @@ public class ProblemDetailsExceptionFilterTests
 
         await new NotFoundExceptionFilter(Factory()).OnExceptionAsync(context);
 
-        context.ExceptionHandled.ShouldBeTrue();
-        context.Result.ShouldBeOfType<ObjectResult>().StatusCode.ShouldBe(StatusCodes.Status404NotFound);
+        await context.ExceptionHandled.Should().BeTrue();
+        await ( await Assert.That(context.Result).IsTypeOf<ObjectResult>() )!.StatusCode.Should().BeEqualTo(StatusCodes.Status404NotFound);
     }
 
     [Test]
-    public void Should_Leave_Other_Exceptions_Alone()
+    public async Task Should_Leave_Other_Exceptions_Alone()
     {
         var context = CreateContext(new NotAuthorizedException());
 
         new NotFoundExceptionFilter(Factory()).OnException(context);
 
-        context.ExceptionHandled.ShouldBeFalse();
-        context.Result.ShouldBeNull();
+        await context.ExceptionHandled.Should().BeFalse();
+        await context.Result.Should().BeNull();
     }
 
     [Test]
-    public void Should_Copy_The_Problem_Details_Of_The_Exception()
+    public async Task Should_Copy_The_Problem_Details_Of_The_Exception()
     {
         var context = CreateContext(
             new NotFoundException("no rocket")
@@ -73,25 +73,25 @@ public class ProblemDetailsExceptionFilterTests
 
         new NotFoundExceptionFilter(Factory()).OnException(context);
 
-        var problemDetails = context.Result.ShouldBeOfType<ObjectResult>().Value.ShouldBeOfType<ProblemDetails>();
-        problemDetails.Title.ShouldBe("Rocket not found");
-        problemDetails.Type.ShouldBe("https://example.com/problems/not-found");
-        problemDetails.Instance.ShouldBe("/rockets/1");
-        problemDetails.Extensions["rocketId"].ShouldBe(1);
+        var problemDetails = await Assert.That(( await Assert.That(context.Result).IsTypeOf<ObjectResult>() )!.Value).IsTypeOf<ProblemDetails>();
+        await problemDetails.Title.Should().BeEqualTo("Rocket not found");
+        await problemDetails.Type.Should().BeEqualTo("https://example.com/problems/not-found");
+        await problemDetails.Instance.Should().BeEqualTo("/rockets/1");
+        await problemDetails.Extensions["rocketId"].Should().BeEqualTo(1);
         // the factory's own extensions win over the exception's properties of the same name
-        problemDetails.Extensions["traceId"].ShouldNotBe("from the exception");
+        await problemDetails.Extensions["traceId"].Should().NotBeEqualTo("from the exception");
     }
 
     [Test]
-    public void Should_Let_A_Derived_Filter_Customize_The_Problem_Details()
+    public async Task Should_Let_A_Derived_Filter_Customize_The_Problem_Details()
     {
         var context = CreateContext(new NotFoundException("no rocket"));
 
         new TaggingFilter(Factory()).OnException(context);
 
-        var result = context.Result.ShouldBeOfType<ObjectResult>();
-        result.StatusCode.ShouldBe(StatusCodes.Status410Gone);
-        result.Value.ShouldBeOfType<ProblemDetails>().Extensions["tag"].ShouldBe("custom");
+        var result = await Assert.That(context.Result).IsTypeOf<ObjectResult>();
+        await result.StatusCode.Should().BeEqualTo(StatusCodes.Status410Gone);
+        await ( await Assert.That(result.Value).IsTypeOf<ProblemDetails>() )!.Extensions["tag"].Should().BeEqualTo("custom");
     }
 
     private static ProblemDetailsFactory Factory() =>

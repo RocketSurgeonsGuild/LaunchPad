@@ -38,10 +38,10 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0001");
-        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.PatchRocket must be made partial.");
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0001");
+        await diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.PatchRocket must be made partial.");
 
         await Verify(result);
     }
@@ -78,10 +78,10 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0001");
-        diagnostic.ToString().ShouldContain("Type Sample.Core.Operations.Rockets.PublicClass must be made partial.");
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0001");
+        await diagnostic.ToString().Should().Contain("Type Sample.Core.Operations.Rockets.PublicClass must be made partial.");
 
         await Verify(result);
     }
@@ -111,8 +111,8 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
@@ -129,19 +129,19 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
         var changes = getChangesMethod.Invoke(instance, []);
 
         var serialNumberChanged = (bool)serialNumberChangedProperty.GetValue(changes)!;
-        serialNumberChanged.ShouldBeTrue();
+        await serialNumberChanged.Should().BeTrue();
 
         typeProperty.SetValue(instance, new Assigned<int>(12345));
         changes = getChangesMethod.Invoke(instance, []);
 
         var typeChanged = (bool)typeChangedProperty.GetValue(changes)!;
-        typeChanged.ShouldBeTrue();
+        await typeChanged.Should().BeTrue();
 
         idProperty.SetValue(instance, new Assigned<Guid>(Guid.NewGuid()));
         changes = getChangesMethod.Invoke(instance, []);
 
         var idChanged = (bool)idChangedProperty.GetValue(changes)!;
-        idChanged.ShouldBeTrue();
+        await idChanged.Should().BeTrue();
 
         await Verify(result);
     }
@@ -171,8 +171,8 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var serialNumberProperty = type.GetProperty("SerialNumber")!;
@@ -187,16 +187,16 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
         var changes = getChangesMethod.Invoke(instance, []);
 
         var serialNumberChanged = (bool)serialNumberChangedProperty.GetValue(changes)!;
-        serialNumberChanged.ShouldBeTrue();
+        await serialNumberChanged.Should().BeTrue();
 
         typeProperty.SetValue(instance, new Assigned<int>(12345));
         changes = getChangesMethod.Invoke(instance, []);
 
         var typeChanged = (bool)typeChangedProperty.GetValue(changes)!;
-        typeChanged.ShouldBeTrue();
+        await typeChanged.Should().BeTrue();
 
-        changesType.GetProperty("Id").ShouldBeNull();
-        type.GetProperty("Id").ShouldBeNull();
+        await changesType.GetProperty("Id").Should().BeNull();
+        await type.GetProperty("Id").Should().BeNull();
 
         await Verify(result);
     }
@@ -227,10 +227,10 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0005");
-        diagnostic.ToString().ShouldContain("The declaration Sample.Core.Operations.Rockets.PatchRocket must be a record.");
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0005");
+        await diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchRocket must be a record.");
 
         await Verify(result);
     }
@@ -264,10 +264,10 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        var diagnostic = output!.Diagnostics.ShouldHaveSingleItem();
-        diagnostic.Id.ShouldBe("LPAD0005");
-        diagnostic.ToString().ShouldContain("The declaration Sample.Core.Operations.Rockets.PatchRocket must be a class.");
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
+        await diagnostic.Id.Should().BeEqualTo("LPAD0005");
+        await diagnostic.ToString().Should().Contain("The declaration Sample.Core.Operations.Rockets.PatchRocket must be a class.");
 
         await Verify(result);
     }
@@ -298,7 +298,7 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out _).ShouldBeTrue();
+        await result.TryGetResult<PropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -332,7 +332,7 @@ public class PropertyTrackingGeneratorTests() : GeneratorTest()
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out _).ShouldBeTrue();
+        await result.TryGetResult<PropertyTrackingGenerator>(out _).Should().BeTrue();
 
         await Verify(result);
     }
@@ -453,8 +453,8 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
@@ -468,7 +468,7 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
         request = applyChangesMethod.Invoke(instance, [request]);
         var r = requestPropertyUnderTest.GetValue(request);
-        r.ShouldBe(value);
+        await r.Should().BeEqualTo(value);
 
         await Verify(result).UseParameters(property);
     }
@@ -501,8 +501,8 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
-        output!.Diagnostics.ShouldBeEmpty();
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
 
         var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
         var applyChangesMethod = type.GetMethod("ApplyChanges")!;
@@ -516,7 +516,7 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
         propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
         applyChangesMethod.Invoke(instance, [request]);
         var r = requestPropertyUnderTest.GetValue(request);
-        r.ShouldBe(value);
+        await r.Should().BeEqualTo(value);
 
         await Verify(result).UseParameters(property);
     }
@@ -1072,18 +1072,16 @@ partial class Validator : AbstractValidator<PatchRequest>
                            )
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
-        result.TryGetResult<PropertyTrackingGenerator>(out var output).ShouldBeTrue();
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
 
         // The generator's identity and version, read from AssemblyInfo.Dependencies rather than the generator assembly.
         const string generatorVersion = AssemblyInfo.Dependencies.Rocket_Surgery_LaunchPad_Analyzers.Attributes.FileVersion;
-        generatorVersion.ShouldNotBeNullOrWhiteSpace();
-        output!
-           .SyntaxTrees.ShouldContain(
-                tree => tree.ToString().Contains(
+        await string.IsNullOrWhiteSpace(generatorVersion).Should().BeFalse();
+        await output!
+           .SyntaxTrees.Should().Contain(tree => tree.ToString().Contains(
                     $"""GeneratedCode("{typeof(PropertyTrackingGenerator).Namespace}", "{generatorVersion}")""",
                     StringComparison.Ordinal
-                )
-            );
+                ));
     }
 
     public override async Task InitializeAsync()

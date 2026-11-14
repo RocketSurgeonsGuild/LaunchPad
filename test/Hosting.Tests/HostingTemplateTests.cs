@@ -117,8 +117,8 @@ public class HostingTemplateTests
         await tree.Build("direct", Cancellation);
 
         // the application did receive the package: its assets are imported (it declares the template) and the assembly is copied to its output
-        ( await tree.DeclaredTemplates("app", Cancellation) ).ShouldContain(HealthChecksJoint);
-        tree.HasOutput("app", "Rocket.Surgery.LaunchPad.Hosting.dll").ShouldBeTrue();
+        await ( await tree.DeclaredTemplates("app", Cancellation) ).Should().Contain(HealthChecksJoint);
+        await tree.HasOutput("app", "Rocket.Surgery.LaunchPad.Hosting.dll").Should().BeTrue();
         var transitive = await tree.Run("app", Cancellation);
         var direct = await tree.Run("direct", Cancellation);
 

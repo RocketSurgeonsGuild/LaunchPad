@@ -19,19 +19,18 @@ namespace FluentValidation.AspNetCore.Tests.Joints;
 public class FluentValidationProblemDetailsJointTests
 {
     [Test]
-    public void Is_Exported_As_An_Application_Joint_That_Runs_After_The_Problem_Details_Joint()
+    public async Task Is_Exported_As_An_Application_Joint_That_Runs_After_The_Problem_Details_Joint()
     {
         var export = FluentValidationExports.Joints().Single(x => x.Joint is FluentValidationProblemDetailsJoint);
 
-        export.HostType.ShouldBe(DovetailHostType.Undefined);
-        export.Dependencies.ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-            x => x.Direction.ShouldBe(DependencyDirection.DependsOn),
-            x => x.Type.ShouldBe(typeof(ProblemDetailsJoint))
-        );
-        typeof(FluentValidationProblemDetailsJoint)
+        await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        var x = await export.Dependencies.Should().HaveSingleItem();
+        await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
+        await x.Type.Should().BeEqualTo(typeof(ProblemDetailsJoint));
+        await typeof(FluentValidationProblemDetailsJoint)
            .GetCustomAttribute<DovetailCategoryAttribute>()!
            .Category.ToString()
-           .ShouldBe(DovetailCategory.Application);
+           .Should().BeEqualTo(DovetailCategory.Application);
     }
 
     [Test]
@@ -48,8 +47,8 @@ public class FluentValidationProblemDetailsJointTests
 
         var selector = provider.GetRequiredService<IOptions<ExceptionHandlerOptions>>().Value.StatusCodeSelector;
 
-        selector.ShouldNotBeNull();
-        selector(exception).ShouldBe(expected);
+        await selector.Should().NotBeNull();
+        await selector(exception).Should().BeEqualTo(expected);
     }
 
     [Test]
@@ -62,9 +61,9 @@ public class FluentValidationProblemDetailsJointTests
 
         var writers = provider.GetServices<IProblemDetailsWriter>().Select(z => z.GetType().Name).ToList();
 
-        writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)).ShouldBeGreaterThan(writers.IndexOf("OnBeforeWriteProblemDetailsWriter"));
-        writers.IndexOf(nameof(ValidationExceptionProblemDetailsWriter)).ShouldBeGreaterThan(writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)));
-        writers.IndexOf("OnBeforeWriteProblemDetailsWriter").ShouldBeGreaterThanOrEqualTo(0);
+        await writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)).Should().BeGreaterThan(writers.IndexOf("OnBeforeWriteProblemDetailsWriter"));
+        await writers.IndexOf(nameof(ValidationExceptionProblemDetailsWriter)).Should().BeGreaterThan(writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)));
+        await writers.IndexOf("OnBeforeWriteProblemDetailsWriter").Should().BeGreaterThanOrEqualTo(0);
     }
 
     [Test]
@@ -76,8 +75,8 @@ public class FluentValidationProblemDetailsJointTests
         await services.ApplyService(context);
         await services.ApplyService(context);
 
-        services
+        await services
            .Count(d => d.ServiceType == typeof(IProblemDetailsWriter) && d.ImplementationType == typeof(FluentValidationProblemDetailsWriter))
-           .ShouldBe(1);
+           .Should().BeEqualTo(1);
     }
 }

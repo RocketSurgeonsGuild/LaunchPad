@@ -24,11 +24,11 @@ public class JsonContextManifestTaskTests
         "DictionaryOfStringAndRocketModel"
     )]
     [Arguments("Sample.Core.Outer`1+Inner`1[[System.Int32],[System.String]]", "global::Sample.Core.Outer<global::System.Int32>.Inner<global::System.String>", "OuterInnerOfInt32AndString")]
-    public void Should_Read_Serialized_Type_Names(string serialized, string typeName, string propertyName) =>
-        SerializedTypeName.Parse(serialized).ShouldBe((typeName, propertyName));
+    public async Task Should_Read_Serialized_Type_Names(string serialized, string typeName, string propertyName) =>
+        await SerializedTypeName.Parse(serialized).Should().BeEqualTo((typeName, propertyName));
 
     [Test]
-    public void Should_Skip_A_Name_It_Cannot_Read() => SerializedTypeName.Parse("System.Collections.Generic.List`1[[").ShouldBeNull();
+    public async Task Should_Skip_A_Name_It_Cannot_Read() => await SerializedTypeName.Parse("System.Collections.Generic.List`1[[").Should().BeNull();
 
     [Test]
     public async Task Should_Write_The_Context_From_The_Manifests_Of_The_References()
@@ -36,7 +36,7 @@ public class JsonContextManifestTaskTests
         var directory = Directory.CreateTempSubdirectory("launchpad-json-context-");
         try
         {
-            var contracts = Emit(
+            var contracts = await Emit(
                 directory,
                 "Contracts",
                 """
@@ -53,7 +53,7 @@ public class JsonContextManifestTaskTests
                 """
             );
             // A second assembly lists a type with the same simple name, and one the first already lists.
-            var other = Emit(
+            var other = await Emit(
                 directory,
                 "Other",
                 """
@@ -76,9 +76,9 @@ public class JsonContextManifestTaskTests
     }
 
     [Test]
-    public void Should_Find_Nothing_Without_Manifests() => JsonContextManifest.Read([typeof(object).Assembly.Location, "missing.dll"]).ShouldBeEmpty();
+    public async Task Should_Find_Nothing_Without_Manifests() => await JsonContextManifest.Read([typeof(object).Assembly.Location, "missing.dll"]).Should().BeEmpty();
 
-    private static string Emit(DirectoryInfo directory, string name, string source)
+    private static async Task<string> Emit(DirectoryInfo directory, string name, string source)
     {
         var references = ( (string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")! )
                         .Split(Path.PathSeparator)
@@ -93,7 +93,7 @@ public class JsonContextManifestTaskTests
         );
         var path = Path.Combine(directory.FullName, name + ".dll");
         var result = compilation.Emit(path);
-        result.Success.ShouldBeTrue(string.Join("\n", result.Diagnostics));
+        await result.Success.Should().Because(string.Join("\n", result.Diagnostics.Select(d => d.ToString()))).BeTrue();
         return path;
     }
 }

@@ -37,9 +37,9 @@ public class ZeroAllocOpenApiSchemaTransformerTests
         var document = JsonNode.Parse(await client.GetStringAsync(new Uri("/openapi/v1.json", UriKind.Relative), CancellationToken.None))!;
         var schemas = document["components"]!["schemas"]!;
 
-        Required(schemas["ProblemDetails"]).ShouldBe(["type", "title"]);
-        Required(schemas["HttpValidationProblemDetails"]).ShouldBe(["type", "title", "errors"]);
-        Required(schemas[nameof(ValidationFailureProblemDetails)]).ShouldBe(["type", "title", "errors"]);
+        await Required(schemas["ProblemDetails"]).Should().BeEquivalentTo(["type", "title"], CollectionOrdering.Matching);
+        await Required(schemas["HttpValidationProblemDetails"]).Should().BeEquivalentTo(["type", "title", "errors"], CollectionOrdering.Matching);
+        await Required(schemas[nameof(ValidationFailureProblemDetails)]).Should().BeEquivalentTo(["type", "title", "errors"], CollectionOrdering.Matching);
     }
 
     private static string?[] Required(JsonNode? schema) => [.. schema!["required"]!.AsArray().Select(x => x!.GetValue<string>())];

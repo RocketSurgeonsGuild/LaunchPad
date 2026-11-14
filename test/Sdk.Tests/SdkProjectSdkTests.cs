@@ -44,7 +44,7 @@ public class SdkProjectSdkTests(string targetFramework)
 
         var output = await DotnetCli.Run("run --project projectsdk/app", tree.Directory, cancellationToken: Cancellation);
 
-        output.ShouldContain("HealthChecks:True");
+        await output.Should().Contain("HealthChecks:True");
     }
 
     private string PinnedVersion(string packageId) => Repository.PackageVersion(packageId, targetFramework);
