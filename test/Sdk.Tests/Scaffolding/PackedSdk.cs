@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Xml.Linq;
 
 using Hosting.Tests.Scaffolding;
 
@@ -91,17 +92,15 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         var feed = Path.Combine(root, "feed");
         Directory.CreateDirectory(feed);
 
-        // --artifacts-path keeps the intermediate files of this pack out of the projects' obj folders, where a build running at the same
-        // time (a developer's, or the other target framework of this test project) would collide with it. The package icon is a file the
-        // release pipeline puts in .temp, which a checkout does not have, and packing fails without it: nothing here looks at the icon.
+        // All the projects are packed by one build, so each project they share (Foundation, the analyzers) is built once and the projects
+        // build in parallel; packing them one dotnet pack at a time built every project's references again for each of them. ArtifactsPath
+        // keeps the intermediate files of this pack out of the projects' obj folders, where a build running at the same time (a developer's,
+        // or the other target framework of this test project) would collide with it. The package icon is a file the release pipeline puts
+        // in .temp, which a checkout does not have, and packing fails without it: nothing here looks at the icon.
         var version = $"0.0.0-sdktests.{Guid.NewGuid().ToString("N")[..8]}";
-        foreach (var project in Projects)
-        {
-            await DotnetCli.Run(
-                $"pack \"{Path.Combine(Repository.Root, project)}\" --nologo --artifacts-path \"{Path.Combine(root, "artifacts", Path.GetFileNameWithoutExtension(project))}\" -o \"{feed}\" -p:Version={version} -p:PackageVersion={version} -p:PackageIcon=",
-                Repository.Root
-            );
-        }
+        var traversal = Path.Combine(root, "pack.proj");
+        await File.WriteAllTextAsync(traversal, PackProject(Path.Combine(root, "artifacts"), feed, version));
+        await DotnetCli.Run($"msbuild \"{traversal}\" -nologo -m -nodeReuse:false", Repository.Root);
 
         using var archive = ZipFile.OpenRead(Path.Combine(feed, $"{SdkPackageId}.{version}.nupkg"));
         var files = archive
@@ -112,6 +111,43 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
                    .ToArray();
         using var reader = new StreamReader(archive.GetEntry("Sdk/Packages.props")?.Open() ?? throw new InvalidOperationException("The SDK has no Sdk/Packages.props"));
         return new(feed, version, files, await reader.ReadToEndAsync());
+    }
+
+    /// <summary>
+    ///     A traversal project that packs <see cref="Projects" /> in one parallel build, the way <c>sample/Sample.Sdk/build/pack.proj</c>
+    ///     does: restore first, with a global property of its own so the pack evaluates the projects again and sees what the restore wrote.
+    /// </summary>
+    /// <param name="artifacts">The artifacts folder of the build.</param>
+    /// <param name="feed">The folder the packages are written to.</param>
+    /// <param name="version">The version of the packages.</param>
+    /// <returns>The text of the project.</returns>
+    private static string PackProject(string artifacts, string feed, string version)
+    {
+        var properties = $"Configuration=Release;ArtifactsPath={artifacts};PackageOutputPath={feed};Version={version};PackageVersion={version};PackageIcon=";
+        return new XDocument(
+            new XElement(
+                "Project",
+                new XAttribute("DefaultTargets", "Pack"),
+                new XElement("ItemGroup", Projects.Select(z => new XElement("PackProject", new XAttribute("Include", Path.Combine(Repository.Root, z))))),
+                new XElement(
+                    "Target",
+                    new XAttribute("Name", "Pack"),
+                    new XElement(
+                        "MSBuild",
+                        new XAttribute("Projects", "@(PackProject)"),
+                        new XAttribute("Targets", "Restore"),
+                        new XAttribute("Properties", $"{properties};_SdkTestsRestore=true")
+                    ),
+                    new XElement(
+                        "MSBuild",
+                        new XAttribute("Projects", "@(PackProject)"),
+                        new XAttribute("Targets", "Pack"),
+                        new XAttribute("Properties", properties),
+                        new XAttribute("BuildInParallel", "true")
+                    )
+                )
+            )
+        ).ToString();
     }
 
     private static readonly Lazy<Task<PackedSdk>> _packed = new(PackCore);
