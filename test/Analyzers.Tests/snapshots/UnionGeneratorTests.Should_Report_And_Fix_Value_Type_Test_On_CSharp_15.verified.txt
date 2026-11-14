@@ -8,15 +8,7 @@
         CodeActions: [
           {
             Title: Match the union,
-            Tags: null,
-            TextChanges: {
-              Input0.cs: [
-                {
-                  Length: 6,
-                  NewText: 
-                }
-              ]
-            }
+            Tags: null
           }
         ],
         Diagnostic: {

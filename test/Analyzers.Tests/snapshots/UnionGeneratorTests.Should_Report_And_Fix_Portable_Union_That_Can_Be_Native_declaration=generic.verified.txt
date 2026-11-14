@@ -8,15 +8,7 @@
         CodeActions: [
           {
             Title: Declare as a C# union,
-            Tags: null,
-            TextChanges: {
-              Input0.cs: [
-                {
-                  Length: 147,
-                  NewText: internal union Result<T>(T, Problem) where T : notnull;
-                }
-              ]
-            }
+            Tags: null
           }
         ],
         Diagnostic: {
