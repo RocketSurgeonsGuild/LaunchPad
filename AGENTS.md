@@ -31,7 +31,7 @@ The conversion is done: no project references `Rocket.Surgery.Conventions` or th
 | `src/`               | One folder per package (`Foundation`, `Hosting`, `AspNetCore`, `Grpc`, and so on)                                                    |
 | `test/`              | Test projects, including `Sample.*.Tests` for the samples                                                                            |
 | `sample/`            | `Sample.*` applications                                                                                                              |
-| `build/`             | The build pipeline: `Build.cs` is a file-based app that runs ModularPipelines (`Samples.cs` has the AOT publish of selected samples) |
+| `build/`             | The build pipeline: `Build.cs` is a file-based app that runs ModularPipelines                                                         |
 | `docs/`              | The Astro/Starlight documentation site, plus the ADRs in `docs/adr/`                                                                 |
 | `.config/`           | `mise.toml` (tools and tasks) and `hk.pkl` (lint and format steps)                                                                   |
 | `.github/workflows/` | CI: `build.yml` runs `mise run build`, `lint.yml` runs `hk` through autofix.ci                                                       |
