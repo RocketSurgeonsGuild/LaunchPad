@@ -8,21 +8,7 @@
         CodeActions: [
           {
             Title: Match the union's Value,
-            Tags: null,
-            TextChanges: {
-              Input0.cs: [
-                {
-                  Length: 0,
-                  NewText: .Value
-                },
-                {
-                  Length: 0,
-                  NewText:
-        _ => throw new global::System.Diagnostics.UnreachableException()
-
-                }
-              ]
-            }
+            Tags: null
           }
         ],
         Diagnostic: {
@@ -47,21 +33,7 @@
         CodeActions: [
           {
             Title: Match the union's Value,
-            Tags: null,
-            TextChanges: {
-              Input0.cs: [
-                {
-                  Length: 0,
-                  NewText: .Value
-                },
-                {
-                  Length: 0,
-                  NewText:
-        _ => throw new global::System.Diagnostics.UnreachableException()
-
-                }
-              ]
-            }
+            Tags: null
           }
         ],
         Diagnostic: {
