@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Spatial](/LaunchPad/api/rocket.surgery.launchpad.spatial.md)
-- Version: `2.0.1-beta.346`
+- Version: `2.0.1-beta.347`
 - Namespace: `Rocket.Surgery.LaunchPad.Spatial`
 - Target framework: `net10.0`
 - Inherits: `GeoJsonConverterFactory`
