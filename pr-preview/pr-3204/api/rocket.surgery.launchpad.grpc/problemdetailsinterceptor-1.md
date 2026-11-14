@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Grpc](/LaunchPad/pr-preview/pr-3204/api/rocket.surgery.launchpad.grpc.md)
-- Version: `2.0.1-pr.1183`
+- Version: `2.0.1-pr.1191`
 - Namespace: `Rocket.Surgery.LaunchPad.Grpc`
 - Target framework: `net10.0`
 - Inherits: `Interceptor`
