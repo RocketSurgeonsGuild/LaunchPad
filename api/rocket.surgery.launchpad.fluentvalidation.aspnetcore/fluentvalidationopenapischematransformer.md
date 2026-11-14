@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.aspnetcore.md)
-- Version: `2.0.1-beta.349`
+- Version: `2.0.1-beta.352`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.FluentValidation.OpenApi`
 - Target framework: `net10.0`
 - Implements: `IOpenApiSchemaTransformer`

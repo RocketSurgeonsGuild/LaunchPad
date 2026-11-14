@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.349`
+- Version: `2.0.1-beta.352`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net10.0`
 - Implements: `IStrongType<Quarter, int>`, `IComparable<Quarter>`, `IConvertible`, `IEquatable<Quarter>`, `IFormattable`, `IParsable<Quarter>`, `ISpanFormattable`, `ISpanParsable<Quarter>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Quarter>`, `IComparisonOperators<Quarter, Quarter, bool>`, `IEqualityOperators<Quarter, Quarter, bool>`
