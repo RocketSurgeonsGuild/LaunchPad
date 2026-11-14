@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3203/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1182`
+- Version: `2.0.1-pr.1186`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net10.0`
 - Implements: `IStrongType<Temperature, double>`, `IComparable<Temperature>`, `IConvertible`, `IEquatable<Temperature>`, `IFormattable`, `IParsable<Temperature>`, `ISpanFormattable`, `ISpanParsable<Temperature>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Temperature>`, `IComparisonOperators<Temperature, Temperature, bool>`, `IEqualityOperators<Temperature, Temperature, bool>`

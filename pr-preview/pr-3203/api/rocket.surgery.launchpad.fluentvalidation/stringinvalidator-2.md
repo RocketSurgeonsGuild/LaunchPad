@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation](/LaunchPad/pr-preview/pr-3203/api/rocket.surgery.launchpad.fluentvalidation.md)
-- Version: `2.0.1-pr.1182`
+- Version: `2.0.1-pr.1186`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation.Validation`
 - Target framework: `net10.0`
 - Inherits: `PropertyValidator<T, TProperty?>`
