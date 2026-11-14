@@ -2,7 +2,7 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-beta.354`
+- Version: `2.0.1-beta.358`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate`
 - Target framework: `net10.0`
 
