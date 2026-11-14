@@ -86,9 +86,10 @@ jobs:
                   mise run build
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  # The package-tests job runs these. The pipeline still builds them, but test/Directory.Build.targets makes them no test
-                  # projects for this step, so TestSolutionModule leaves them out (';'-separated project names).
-                  LaunchPadTestsInOwnJob: Sdk.Tests;Hosting.Tests
+                  # The package-tests job runs these; the pipeline still builds them (ExcludeTests, globs relative to the root). Here rather
+                  # than in build/appsettings.yaml, so `mise run build` on a dev machine still runs every test.
+                  ExcludeTests__0: test/Sdk.Tests/**
+                  ExcludeTests__1: test/Hosting.Tests/**
                   # The folder of the gh-pages branch these docs deploy to (see the docs job): a pull request's preview, a
                   # release's version folder, or (empty) the site root that holds latest main.
                   DOCS_BASE: >-
