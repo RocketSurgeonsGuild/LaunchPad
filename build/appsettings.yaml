@@ -9,3 +9,6 @@ testOrder:
     - test/Sdk.Tests/**
     - test/Api.Generators.Tests/**
     - test/Hosting.Tests/**
+# Experiment (measurement branch only): coverage from one framework; the net10.0 hosts run without the coverage collector.
+coverageFrameworks:
+    - net11.0
