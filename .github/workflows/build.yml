@@ -25,8 +25,11 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    build:
+    # The pipeline (build/Build.cs): restore, build, test with coverage, pack, the docs and the AOT samples. The test suites in
+    # package-tests run in a job of their own instead, in parallel with this one.
+    pipeline:
         runs-on: ubuntu-latest
+        timeout-minutes: 60
         steps:
             - name: Checkout
               uses: actions/checkout@v7
@@ -83,6 +86,10 @@ jobs:
                   mise run build
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  # The package-tests job runs these; the pipeline still builds them (ExcludeTests, globs relative to the root). Here rather
+                  # than in build/appsettings.yaml, so `mise run build` on a dev machine still runs every test.
+                  ExcludeTests__0: test/Sdk.Tests/**
+                  ExcludeTests__1: test/Hosting.Tests/**
                   # The folder of the gh-pages branch these docs deploy to (see the docs job): a pull request's preview, a
                   # release's version folder, or (empty) the site root that holds latest main.
                   DOCS_BASE: >-
@@ -145,6 +152,78 @@ jobs:
               if: always() && github.ref == 'refs/heads/main'
               run: mise prune --tools
 
+    # The two slowest suites, about two thirds of the pipeline's test time: they pack LaunchPad and build throwaway applications against
+    # the packages, so they reference nothing of LaunchPad, need no build of the solution and add nothing to the coverage report. Each gets
+    # a runner of its own, in parallel with the pipeline.
+    package-tests:
+        name: ${{ matrix.project }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        strategy:
+            fail-fast: false
+            matrix:
+                project:
+                    - Sdk.Tests
+                    - Hosting.Tests
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+            - name: 🛠️ Setup mise
+              uses: jdx/mise-action@v5
+              env:
+                  # See the pipeline job: the SDK and runtime installs share a download path.
+                  MISE_JOBS: '1'
+              with:
+                  install: true
+                  install_args: dotnet
+                  # The pipeline job's cache; only that job saves it.
+                  cache: true
+                  cache_key: mise-{{platform}}-{{cache_period}}
+                  cache_max_age_days: 7
+                  cache_save: false
+                  experimental: true
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+            # Built first and tested with --no-build, as the pipeline does, so a build failure shows as one.
+            - name: ⚙️ Build
+              run: mise exec -- dotnet build "test/$PROJECT/$PROJECT.csproj" --configuration Release
+              env:
+                  PROJECT: ${{ matrix.project }}
+                  # mise exec would otherwise install every tool of .config/mise.toml first; these jobs only need dotnet.
+                  MISE_EXEC_AUTO_INSTALL: 'false'
+            - name: 🧪 Test
+              # No --report-trx-filename: the two target frameworks of Hosting.Tests would write the same file, and the second would
+              # replace the first. The default names are unique.
+              run: mise exec -- dotnet test --project "test/$PROJECT/$PROJECT.csproj" --configuration Release --no-build --results-directory artifacts/logs/tests --report-trx
+              env:
+                  PROJECT: ${{ matrix.project }}
+                  MISE_EXEC_AUTO_INSTALL: 'false'
+            # Publish Results reads every "test data" artifact of the run.
+            - name: 🏺 Publish test data
+              if: always()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: test data (${{ matrix.project }})
+                  path: artifacts/logs/tests/
+
+    # The check the branch rules require: the pipeline and the package tests together. It runs (and fails) when either of them fails or is
+    # cancelled, since a required check that is skipped counts as passing.
+    build:
+        needs: [pipeline, package-tests]
+        if: always()
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: ✅ Pipeline and package tests
+              run: |
+                  echo "pipeline: $PIPELINE, package-tests: $PACKAGE_TESTS"
+                  if [ "$PIPELINE" != success ] || [ "$PACKAGE_TESTS" != success ]; then
+                      echo "::error::The pipeline ($PIPELINE) or the package tests ($PACKAGE_TESTS) didn't succeed."
+                      exit 1
+                  fi
+              env:
+                  PIPELINE: ${{ needs.pipeline.result }}
+                  PACKAGE_TESTS: ${{ needs.package-tests.result }}
+
     # Deploys the docs the build made to the gh-pages branch: main to the root, each release to v<version>/ (listed in
     # versions.json for the version switcher), and each pull request from this repository to pr-preview/pr-<n>/ (removed
     # again by docs-preview-cleanup.yml). Pre-release tags and fork pull requests don't deploy.
@@ -154,6 +233,7 @@ jobs:
             github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-'))
             || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         runs-on: ubuntu-latest
+        timeout-minutes: 20
         permissions:
             contents: write
             pull-requests: write
@@ -243,6 +323,7 @@ jobs:
         needs: build
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         runs-on: ubuntu-latest
+        timeout-minutes: 15
         environment: nuget
         permissions:
             id-token: write
