@@ -68,6 +68,15 @@ jobs:
               run: mise ls --current --local --json | jq -r 'keys[] | select(. != "dotnet")' | xargs mise install
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # Run history, the modules' and test projects' duration estimates (which order the test projects, longest first) and the
+            # module cache, all under .modularpipelines/. Every ref restores the newest copy main saved; only main saves one.
+            - name: 🕰️ Restore pipeline history
+              uses: actions/cache/restore@v6
+              with:
+                  path: .modularpipelines
+                  key: modularpipelines-${{ github.workflow }}-main-${{ github.run_id }}-${{ github.run_attempt }}
+                  restore-keys: |
+                      modularpipelines-${{ github.workflow }}-main-
             - name: ⚙️ Build
               id: build
               run: |
@@ -83,6 +92,12 @@ jobs:
                   # The docs' changelog loader (docs/src/content.config.ts) reads the releases with this token. Without one the requests
                   # share the runner's anonymous rate limit, and the docs build fails with "Failed to fetch GitHub data: 403".
                   GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: 🕰️ Save pipeline history
+              if: always() && github.ref == 'refs/heads/main'
+              uses: actions/cache/save@v6
+              with:
+                  path: .modularpipelines
+                  key: modularpipelines-${{ github.workflow }}-main-${{ github.run_id }}-${{ github.run_attempt }}
             - name: 🏺 Save GitHub event
               if: always()
               run: cp "$GITHUB_EVENT_PATH" artifacts/event.json || true

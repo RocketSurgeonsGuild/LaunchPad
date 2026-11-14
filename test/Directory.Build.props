@@ -13,6 +13,15 @@
         <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
         <Verify_SponsorshipExemptionUntil>$([System.DateTime]::Today.AddDays(300).ToString("yyyy-MM"))</Verify_SponsorshipExemptionUntil>
     </PropertyGroup>
+    <!--
+        On CI, test projects compile without analyzers (source generators still run). Analyzers are about half of a test project's compile
+        (Sample.Restful.Tests net11.0: Csc 11.6 s with them, 5.8 s without; FakeItEasy's alone is 7.6 s of analyzer time), test projects are
+        661 s of the solution build's 1,131 s of Csc, and nothing on CI acts on their warnings: none is an error, and lint formats only.
+        Local builds and the IDE still run them.
+    -->
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <RunAnalyzers>false</RunAnalyzers>
+    </PropertyGroup>
     <!-- used to trigger build information -->
     <PropertyGroup>
         <GitVersion_Major Condition="'$(GitVersion_Major)' == ''">0</GitVersion_Major>

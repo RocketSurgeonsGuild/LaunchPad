@@ -25,7 +25,9 @@
     </ItemGroup>
     <ItemGroup>
 
-    <PackageVersion Include="Rocket.Surgery.ModularPipelines.Extensions" Version="0.1.15" />
+    <PackageVersion Include="Rocket.Surgery.ModularPipelines.Extensions" Version="0.2.1" />
+    <!-- build/Build.cs references it directly, so its generator writes ConfigureDovetail(); the version Rocket.Surgery.ModularPipelines.Extensions needs -->
+    <PackageVersion Include="Joinery.Dovetail.ModularPipelines" Version="0.5.3" />
     <PackageVersion Include="Sourcy.DotNet" Version="1.1.1" />
     <PackageVersion Include="Sourcy.Git" Version="1.1.1" />
     <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.52" />
@@ -126,7 +128,7 @@
         <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
         <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
         <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.4.3" />
-        <PackageVersion Include="Specular" Version="0.4.0" />
+        <PackageVersion Include="Specular" Version="0.4.1" />
         <PackageVersion Include="Joinery.Dovetail" Version="0.4.3" />
         <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.4.3" />
         <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.4.3" />
@@ -166,8 +168,8 @@
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.FakeItEasy" Version="11.0.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.TUnit" Version="11.0.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="11.0.1" />
-        <PackageVersion Include="TUnit" Version="1.83.8" />
-        <PackageVersion Include="Verify.TUnit" Version="33.3.4" />
+        <PackageVersion Include="TUnit" Version="1.84.0" />
+        <PackageVersion Include="Verify.TUnit" Version="33.4.0" />
         <!-- test/Sdk.Tests writes its throwaway projects with it, as Dovetail's SDK tests do -->
         <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.0" />
         <PackageVersion Include="Verify.NodaTime" Version="2.3.0" />
