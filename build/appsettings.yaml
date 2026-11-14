@@ -3,3 +3,9 @@ solution: LaunchPad.slnx
 # (Dovetail, Specular, the testing libraries, Sdk.Tests' scratch apps) and the JetBrains annotations compiled into each one.
 runSettings: test/coverage.runsettings
 packageIconUrl: https://raw.githubusercontent.com/RocketSurgeonsGuild/graphics/master/png/social-square-thrust-rounded.png
+# The longest test suites start first while they have no previous run (a first run, or a pull request before main saved a history):
+# Sdk.Tests and Hosting.Tests pack LaunchPad and build throwaway applications, and Api.Generators.Tests bounds the rest of the test run.
+testOrder:
+    - test/Sdk.Tests/**
+    - test/Api.Generators.Tests/**
+    - test/Hosting.Tests/**
