@@ -90,6 +90,9 @@ jobs:
                   # than in build/appsettings.yaml, so `mise run build` on a dev machine still runs every test.
                   ExcludeTests__0: test/Sdk.Tests/**
                   ExcludeTests__1: test/Hosting.Tests/**
+                  # Pull requests compile and test the test projects for net11.0 only (test/Directory.Build.targets); the merge queue, main
+                  # and releases test both target frameworks before anything lands.
+                  LaunchPadTestFramework: ${{ github.event_name == 'pull_request' && 'net11.0' || '' }}
                   # The folder of the gh-pages branch these docs deploy to (see the docs job): a pull request's preview, a
                   # release's version folder, or (empty) the site root that holds latest main.
                   DOCS_BASE: >-

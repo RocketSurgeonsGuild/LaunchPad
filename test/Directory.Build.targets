@@ -42,4 +42,13 @@
         />
     </ItemGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+    <!--
+        Pull request builds compile and run the test projects for one target framework (LaunchPadTestFramework, set by build.yml for
+        pull_request only); the merge queue, main and releases build and test both. A project that targets the browser flavour of the
+        framework keeps that one. Set here, after the project file, because the test projects declare their TargetFrameworks themselves.
+    -->
+    <PropertyGroup Condition="'$(LaunchPadTestFramework)' != '' and '$(TargetFrameworks)' != ''">
+        <TargetFrameworks Condition="$([System.String]::Copy(';$(TargetFrameworks);').Contains(';$(LaunchPadTestFramework);'))">$(LaunchPadTestFramework)</TargetFrameworks>
+        <TargetFrameworks Condition="$([System.String]::Copy(';$(TargetFrameworks);').Contains(';$(LaunchPadTestFramework)-browser;'))">$(LaunchPadTestFramework)-browser</TargetFrameworks>
+    </PropertyGroup>
 </Project>
