@@ -198,6 +198,7 @@ type GeometryOutputs {
   multiPoint: GeoJSONMultiPointType
   multiLineString: GeoJSONMultiLineStringType
   multiPolygon: GeoJSONMultiPolygonType
+  geometryCollection: Geometry
 }
 
 type LaunchRecord {
@@ -643,6 +644,7 @@ scalar DateTime
 scalar Duration
   @specifiedBy(url: "https://scalars.graphql.org/chillicream/duration.html")
 
+"A geometry, as a GeoJSON object"
 scalar Geometry
 
 "The `LocalDate` scalar type represents a date without time or time zone information."

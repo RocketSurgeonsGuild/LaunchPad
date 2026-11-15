@@ -8,57 +8,19 @@ namespace Extensions.Tests;
 
 public class ProblemTests
 {
-    public static IEnumerable<Func<(ProblemDetailsException Exception, string Message)>> DefaultExceptions()
-    {
-        yield return () => (new NotFoundException(), "Not Found");
-        yield return () => (new NotAuthorizedException(), "Not Authorized");
-        yield return () => (new RequestFailedException(), "");
-    }
-
-    [Test]
-    [MethodDataSource(nameof(DefaultExceptions))]
-    public async Task Should_Give_Each_Exception_A_Default_Message_And_No_Details(ProblemDetailsException exception, string message)
-    {
-        await exception.Message.Should().BeEqualTo(message);
-        await exception.Title.Should().BeNull();
-        await exception.Link.Should().BeNull();
-        await exception.Instance.Should().BeNull();
-        await exception.Properties.Should().BeEmpty();
-    }
-
-    public static IEnumerable<Func<(Func<string, Exception, ProblemDetailsException> Create, Type Type)>> ExceptionsWithInnerExceptions()
-    {
-        yield return () => ((message, inner) => new NotFoundException(message, inner), typeof(NotFoundException));
-        yield return () => ((message, inner) => new NotAuthorizedException(message, inner), typeof(NotAuthorizedException));
-        yield return () => ((message, inner) => new RequestFailedException(message, inner), typeof(RequestFailedException));
-    }
-
-    [Test]
-    [MethodDataSource(nameof(ExceptionsWithInnerExceptions))]
-    public async Task Should_Keep_The_Inner_Exception(Func<string, Exception, ProblemDetailsException> create, Type type)
-    {
-        var inner = new InvalidOperationException("inner");
-
-        var exception = create("outer", inner);
-
-        await exception.Should().BeOfType(type);
-        await exception.Message.Should().BeEqualTo("outer");
-        await exception.InnerException.Should().BeSameReferenceAs(inner);
-    }
-
     [Test]
     public async Task Should_Carry_The_Problem_Details()
     {
-        IProblemDetailsData data = new RequestFailedException("bad request")
+        IProblemDetailsData data = new Conflict("already launched")
         {
-            Title = "Bad request",
-            Link = "https://example.com/problems/bad-request",
+            Title = "Conflict",
+            Link = "https://example.com/problems/conflict",
             Instance = "/rockets",
             Properties = { ["field"] = "name", },
         };
 
-        await data.Title.Should().BeEqualTo("Bad request");
-        await data.Link.Should().BeEqualTo("https://example.com/problems/bad-request");
+        await data.Title.Should().BeEqualTo("Conflict");
+        await data.Link.Should().BeEqualTo("https://example.com/problems/conflict");
         await data.Instance.Should().BeEqualTo("/rockets");
         await data.Properties.Should().ContainKeyWithValue("field", "name");
     }

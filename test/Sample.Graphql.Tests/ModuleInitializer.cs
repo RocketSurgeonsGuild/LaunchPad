@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 using DiffEngine;
 
@@ -20,6 +21,8 @@ public static class ModuleInitializer
         VerifierSettings.DontScrubDateTimes();
         //        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
         VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new GeometryConverter()));
+        VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new CoordinateConverter()));
+        VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new JsonElementConverter()));
         VerifierSettings.IgnoreMember<IOperationResult>(z => z.DataInfo);
         VerifierSettings.IgnoreMember<IOperationResult>(z => z.DataFactory);
 
@@ -46,5 +49,17 @@ public static class ModuleInitializer
         public override void Write(VerifyJsonWriter writer, object value) => writer.WriteValue(_writer.Write((Geometry)value));
 
         private readonly WKTWriter _writer;
+    }
+
+    // the GeoJSON positions: a Coordinate points back at itself through CoordinateValue
+    private class CoordinateConverter : WriteOnlyJsonConverter<Coordinate>
+    {
+        public override void Write(VerifyJsonWriter writer, Coordinate value) => writer.WriteValue(value.ToString());
+    }
+
+    // the Coordinates scalar, positions of arbitrary depth
+    private class JsonElementConverter : WriteOnlyJsonConverter<JsonElement>
+    {
+        public override void Write(VerifyJsonWriter writer, JsonElement value) => writer.WriteValue(value.GetRawText());
     }
 }

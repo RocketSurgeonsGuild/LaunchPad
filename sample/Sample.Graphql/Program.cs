@@ -1,6 +1,5 @@
 using HotChocolate;
 using HotChocolate.Configuration;
-using HotChocolate.Types.Spatial;
 
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.HotChocolate;
@@ -20,11 +19,8 @@ builder
    .AddProjections()
    .ConfigureStronglyTypedId<RocketId, UuidType>()
    .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
-//           .AddDefaultTransactionScopeHandler()
-
-//           .AddSpatialProjections()
-   .AddType(new GeometryType("Geometry", BindingBehavior.Implicit))
-   .AddSpatialTypes()
+   // HotChocolate's spatial types with a GeoJSON Geometry scalar that covers every geometry, GeometryCollection included
+   .AddGeoJsonSpatialTypes()
    .AddSpatialFiltering()
    .AddSpatialProjections()
    .AddExecutableTypes()
