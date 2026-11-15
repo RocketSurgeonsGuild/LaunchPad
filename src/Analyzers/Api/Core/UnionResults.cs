@@ -205,7 +205,10 @@ internal static class UnionResults
         {
             foreach (var member in current.GetMembers(name))
             {
-                if (member is IPropertySymbol { IsStatic: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } }) return true;
+                if (member is IPropertySymbol { IsStatic: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } })
+                {
+                    return true;
+                }
             }
         }
 

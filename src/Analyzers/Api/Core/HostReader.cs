@@ -352,7 +352,10 @@ internal static class HostReader
         foreach (var ns in new[] { request.ContainingNamespace, host.ContainingNamespace })
         {
             if (compilation.GetCompilationNamespace(ns) is not { } merged) continue;
-            foreach (var type in merged.GetTypeMembers()) candidates.Add(type);
+            foreach (var type in merged.GetTypeMembers())
+            {
+                candidates.Add(type);
+            }
         }
 
         foreach (var candidate in candidates.Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default).Where(c => c.GetAttributes().Any(a => a.AttributeClass.Is("Immediate.Handlers.Shared.HandlerAttribute"))))
