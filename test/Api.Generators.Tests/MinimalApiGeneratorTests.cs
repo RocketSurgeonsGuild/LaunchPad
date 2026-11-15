@@ -3,7 +3,6 @@ namespace Api.Generators.Tests;
 public class MinimalApiGeneratorTests() : GeneratorTest()
 {
     [Test]
-    [Arguments(Mediator.MediatR)]
     [Arguments(Mediator.Mediator)]
     [Arguments(Mediator.ChannelMediator)]
     [Arguments(Mediator.ImmediateHandlers)]
@@ -21,10 +20,10 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
     public async Task Should_Apply_Operation_And_Host_Settings()
     {
         var contracts = await CompileContracts(
-            Mediator.MediatR,
+            Mediator.Mediator,
             """
             #nullable enable
-            using MediatR;
+            using Mediator;
             using Rocket.Surgery.LaunchPad.Api;
 
             namespace Sample.Contracts
@@ -52,7 +51,7 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
             }
             """
         );
-        var result = await Server(Mediator.MediatR, contracts)
+        var result = await Server(Mediator.Mediator, contracts)
                           .AddSources(
                                """
                                using Rocket.Surgery.LaunchPad.Api;
@@ -77,10 +76,10 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
     public async Task Should_Bind_A_Transport_Input()
     {
         var contracts = await CompileContracts(
-            Mediator.MediatR,
+            Mediator.Mediator,
             """
             #nullable enable
-            using MediatR;
+            using Mediator;
 
             namespace Sample.Contracts
             {
@@ -93,7 +92,7 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
             }
             """
         );
-        var result = await Server(Mediator.MediatR, contracts)
+        var result = await Server(Mediator.Mediator, contracts)
                           .AddSources(
                                """
                                using Rocket.Surgery.LaunchPad.Api;
@@ -113,8 +112,8 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
     [Test]
     public async Task Should_Report_A_Host_Without_A_Transport()
     {
-        var contracts = await CompileContracts(Mediator.MediatR, Contracts.For(Mediator.MediatR));
-        var result = await Server(Mediator.MediatR, contracts)
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await Server(Mediator.Mediator, contracts)
                           .AddSources(
                                """
                                using Rocket.Surgery.LaunchPad.Api;
@@ -134,10 +133,10 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
     public async Task Should_Read_Summaries_From_Xml_Documentation()
     {
         var contracts = await CompileContracts(
-            Mediator.MediatR,
+            Mediator.Mediator,
             """
             #nullable enable
-            using MediatR;
+            using Mediator;
 
             namespace Sample.Contracts
             {
@@ -183,7 +182,7 @@ public class MinimalApiGeneratorTests() : GeneratorTest()
                 </members>
             </doc>
             """;
-        var result = await Server(Mediator.MediatR, contracts)
+        var result = await Server(Mediator.Mediator, contracts)
                           .AddAdditionalText("Contracts.xml", documentation)
                           .AddOption("Contracts.xml", "build_metadata.AdditionalFiles.LaunchPadApiDocumentation", "true")
                           .AddSources("using Rocket.Surgery.LaunchPad.Api;\nusing Sample.Contracts;\n[Operation<GetRocket.Request>]\n[Operation<ListRockets.Request>(Summary = \"Explicit wins\")]\npublic static partial class RocketsEndpoints;")

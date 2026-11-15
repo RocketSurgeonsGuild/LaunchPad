@@ -11,7 +11,6 @@
             One server per mediator, built by the generators. Each is aliased: several of them carry the same generated types (Mediator's and
             ZeroAlloc's mediators, the generated helpers), and the tests only reach them through ServerApp and RocketsService.GetProto().
         -->
-        <ProjectReference Include="../Api/Functional/MediatR/Api.Functional.MediatR.Server/Api.Functional.MediatR.Server.csproj" Aliases="mediatrserver" />
         <ProjectReference Include="../Api/Functional/Mediator/Api.Functional.Mediator.Server/Api.Functional.Mediator.Server.csproj" Aliases="mediatorserver" />
         <ProjectReference Include="../Api/Functional/ChannelMediator/Api.Functional.ChannelMediator.Server/Api.Functional.ChannelMediator.Server.csproj" Aliases="channelmediatorserver" />
         <ProjectReference Include="../Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Server/Api.Functional.ImmediateHandlers.Server.csproj" Aliases="immediatehandlersserver" />

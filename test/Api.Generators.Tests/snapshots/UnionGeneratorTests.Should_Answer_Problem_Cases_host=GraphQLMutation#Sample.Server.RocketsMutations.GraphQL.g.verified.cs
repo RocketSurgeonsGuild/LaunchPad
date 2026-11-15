@@ -13,7 +13,7 @@ using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttr
 using GraphQLNameAttribute = global::HotChocolate.GraphQLNameAttribute;
 using IRequestExecutorBuilder = global::HotChocolate.Execution.Configuration.IRequestExecutorBuilder;
 using IResolverContext = global::HotChocolate.Resolvers.IResolverContext;
-using ISender = global::MediatR.ISender;
+using ISender = global::Mediator.ISender;
 using InvalidOperationException = global::System.InvalidOperationException;
 
 namespace Sample.Server

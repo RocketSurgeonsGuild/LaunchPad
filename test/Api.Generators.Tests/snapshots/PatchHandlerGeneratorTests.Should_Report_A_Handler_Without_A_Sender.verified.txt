@@ -7,7 +7,7 @@
       WarningLevel: 0,
       Location: Input1.cs: (23,27)-(23,44),
       MessageFormat: {0} handles the patch operation {1}, but has no constructor parameter, field or property of type {2} to send the patched request through,
-      Message: EditRocketHandler handles the patch operation PatchRequest, but has no constructor parameter, field or property of type global::MediatR.ISender to send the patched request through,
+      Message: EditRocketHandler handles the patch operation PatchRequest, but has no constructor parameter, field or property of type global::Mediator.ISender to send the patched request through,
       Category: LaunchPad.Api
     },
     {
@@ -46,7 +46,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input1.cs: (25,48)-(25,58),
+      Location: Input1.cs: (25,47)-(25,57),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0759),
       MessageFormat: No defining declaration found for implementing declaration of partial method '{0}',
       Message: No defining declaration found for implementing declaration of partial method 'EditRocket.EditRocketHandler.GetRequest(EditRocket.PatchRequest, CancellationToken)',

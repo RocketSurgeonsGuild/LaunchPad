@@ -39,7 +39,6 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
         "HotChocolate.Resolvers",
         "HotChocolate.Types",
         "Immediate.Handlers.Shared",
-        "MediatR",
         "Mediator",
         "Microsoft.AspNetCore.Authorization",
         "Microsoft.AspNetCore.Builder",

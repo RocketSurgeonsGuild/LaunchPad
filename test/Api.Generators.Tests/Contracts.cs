@@ -7,7 +7,6 @@ internal static class Contracts
 {
     public static string For(Mediator mediator) => mediator switch
     {
-        Mediator.MediatR => Shared("using MediatR;", "IRequest<RocketModel?>", "IStreamRequest<RocketModel>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest", "record"),
         Mediator.Mediator => Shared("using Mediator;", "IQuery<RocketModel?>", "IStreamQuery<RocketModel>", "ICommand<Response>", "ICommand<RocketModel>", "ICommand", "record"),
         Mediator.ChannelMediator => Shared("using ChannelMediator;", "IRequest<RocketModel?>", "IStreamRequest<RocketModel>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest", "record"),
         Mediator.ZeroAlloc => Shared("using ZeroAlloc.Mediator;", "IRequest<RocketModel?>", "IStreamRequest<RocketModel>", "IRequest<Response>", "IRequest<RocketModel>", "IRequest", "readonly record struct"),

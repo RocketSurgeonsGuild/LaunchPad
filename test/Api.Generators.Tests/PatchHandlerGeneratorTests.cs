@@ -36,7 +36,6 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     {
         var (usings, request, handlerInterface, sender) = mediator switch
         {
-            Mediator.MediatR => ("using MediatR;", "IRequest<RocketModel>", "IRequestHandler<PatchRequest, RocketModel>", "ISender"),
             Mediator.Mediator => ("using Mediator;", "IRequest<RocketModel>", "IRequestHandler<PatchRequest, RocketModel>", "ISender"),
             Mediator.ZeroAlloc => ("using ZeroAlloc.Mediator;", "IRequest<RocketModel>", "IRequestHandler<PatchRequest, RocketModel>", "IMediator"),
             Mediator.ChannelMediator => throw new NotImplementedException(),
@@ -77,14 +76,6 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     private const string Handler = """
         internal partial class EditRocketHandler({sender} mediator) : {handlerInterface}
                 {
-                    private partial async Task<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
-                        await Task.FromResult(new Request(request.Id, "SN12345678")).ConfigureAwait(false);
-                }
-        """;
-
-    private const string ValueTaskHandler = """
-        internal partial class EditRocketHandler({sender} mediator) : {handlerInterface}
-                {
                     private partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
                         new(new Request(request.Id, "SN12345678"));
                 }
@@ -107,14 +98,13 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
              .GenerateAsync(TestContext.CancellationToken);
 
     [Test]
-    [Arguments(Mediator.MediatR)]
     [Arguments(Mediator.Mediator)]
     [Arguments(Mediator.ZeroAlloc)]
     public async Task Should_Generate_A_Patch_Handler(Mediator mediator)
     {
         var result = await Generate(
             mediator,
-            Operations(mediator, mediator == Mediator.MediatR ? Handler : ValueTaskHandler),
+            Operations(mediator, Handler),
             mediator == Mediator.ZeroAlloc ? [ZeroAllocMediator] : []
         );
 
@@ -126,7 +116,7 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     public async Task Should_Find_A_Sender_The_Mediator_Generates()
     {
         // Without ZeroAlloc's generator the IMediator is an unresolved type, as it is to this generator in a real build.
-        var result = await Generate(Mediator.ZeroAlloc, Operations(Mediator.ZeroAlloc, ValueTaskHandler));
+        var result = await Generate(Mediator.ZeroAlloc, Operations(Mediator.ZeroAlloc, Handler));
 
         await Verify(result);
     }
@@ -135,8 +125,8 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     public async Task Should_Report_A_Handler_Without_A_Sender()
     {
         var result = await Generate(
-            Mediator.MediatR,
-            Operations(Mediator.MediatR, Handler.Replace("({sender} mediator)", "(string name)"))
+            Mediator.Mediator,
+            Operations(Mediator.Mediator, Handler.Replace("({sender} mediator)", "(string name)"))
         );
 
         await VerifyDiagnostics(result);
@@ -146,8 +136,8 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     public async Task Should_Report_A_Handler_In_A_Type_That_Is_Not_Partial()
     {
         var result = await Generate(
-            Mediator.MediatR,
-            Operations(Mediator.MediatR, Handler).Replace("public static partial class EditRocket", "public static class EditRocket")
+            Mediator.Mediator,
+            Operations(Mediator.Mediator, Handler).Replace("public static partial class EditRocket", "public static class EditRocket")
         );
 
         await VerifyDiagnostics(result);
@@ -157,13 +147,13 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     public async Task Should_Leave_A_Handler_That_Implements_The_Patch()
     {
         var result = await Generate(
-            Mediator.MediatR,
+            Mediator.Mediator,
             Operations(
-                Mediator.MediatR,
+                Mediator.Mediator,
                 """
                 internal partial class EditRocketHandler(ISender mediator) : IRequestHandler<PatchRequest, RocketModel>
                         {
-                            public Task<RocketModel> Handle(PatchRequest request, CancellationToken cancellationToken) =>
+                            public ValueTask<RocketModel> Handle(PatchRequest request, CancellationToken cancellationToken) =>
                                 mediator.Send(request.ApplyChanges(new Request(request.Id, "SN12345678")), cancellationToken);
                         }
                 """

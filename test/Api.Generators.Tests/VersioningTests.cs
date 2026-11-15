@@ -27,8 +27,8 @@ public class VersioningTests() : GeneratorTest()
     [Test]
     public async Task Should_Map_Versions_On_Minimal_Api_Endpoints()
     {
-        var contracts = await CompileContracts(Mediator.MediatR, Contracts.For(Mediator.MediatR));
-        var result = await Server(Mediator.MediatR, contracts).AddReferences(Versioning).AddSources(Endpoints).Build().GenerateAsync(TestContext.CancellationToken);
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await Server(Mediator.Mediator, contracts).AddReferences(Versioning).AddSources(Endpoints).Build().GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }
@@ -36,8 +36,8 @@ public class VersioningTests() : GeneratorTest()
     [Test]
     public async Task Should_Map_Versions_On_Controllers()
     {
-        var contracts = await CompileContracts(Mediator.MediatR, Contracts.For(Mediator.MediatR));
-        var result = await Controllers(Mediator.MediatR, contracts).AddReferences(MvcVersioning).AddSources(Controller).Build().GenerateAsync(TestContext.CancellationToken);
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await Controllers(Mediator.Mediator, contracts).AddReferences(MvcVersioning).AddSources(Controller).Build().GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }
@@ -47,8 +47,8 @@ public class VersioningTests() : GeneratorTest()
     public async Task Should_Report_Controller_Versions_Without_Asp_Versioning_Mvc()
     {
         // Asp.Versioning.Http brings in the attributes, but MVC only applies them with Asp.Versioning.Mvc.
-        var contracts = await CompileContracts(Mediator.MediatR, Contracts.For(Mediator.MediatR));
-        var result = await Controllers(Mediator.MediatR, contracts).AddReferences(Versioning).AddSources(Controller).Build().GenerateAsync(TestContext.CancellationToken);
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await Controllers(Mediator.Mediator, contracts).AddReferences(Versioning).AddSources(Controller).Build().GenerateAsync(TestContext.CancellationToken);
 
         await Verify(result);
     }

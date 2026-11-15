@@ -12,7 +12,6 @@
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
         <PackageReference Include="Verify.SourceGenerators" />
         <!-- Referenced so their assemblies can be handed to test compilations; none of their generators run on this project. -->
-        <PackageReference Include="MediatR" />
         <PackageReference Include="Mediator.Abstractions" />
         <PackageReference Include="ChannelMediator" />
         <PackageReference Include="Foundatio.Mediator.Abstractions" />

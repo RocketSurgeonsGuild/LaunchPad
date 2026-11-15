@@ -1,4 +1,4 @@
-using Api.Functional.MediatR.Server;
+using Api.Functional.ZeroAlloc.Server;
 using Microsoft.AspNetCore.TestHost;
 
 // The specs clients are generated from, as the generated servers expose them: the OpenAPI document of the Minimal API endpoints, the GraphQL
