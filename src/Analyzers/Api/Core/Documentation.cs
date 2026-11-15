@@ -54,9 +54,9 @@ internal static class Documentation
     {
         var text = Element(symbol.GetDocumentationCommentXml(), "summary")
                 ?? ( symbol.GetDocumentationCommentId() is { } id && referenced.TryGetValue(id, out var entry) ? entry.Summary : null );
-        return  text is { Length: > 0 } || symbol is not IPropertySymbol { ContainingType: { } type } property 
+        return text is { Length: > 0 } || symbol is not IPropertySymbol { ContainingType: { } type } property
             ? text
-            :  Parameter(type.GetDocumentationCommentXml(), property.Name)
+            : Parameter(type.GetDocumentationCommentXml(), property.Name)
             ?? ( type.GetDocumentationCommentId() is { } typeId && referenced.TryGetValue(ParameterId(typeId, property.Name), out var parameter) ? parameter.Summary : null );
     }
 
