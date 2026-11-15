@@ -1,51 +1,14 @@
-using Joinery.Dovetail.Joints;
-
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
-using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace AspNetCore.Tests.Joints;
 
 public class ProblemDetailsJointTests
 {
-    [Test]
-    [Arguments(typeof(NotFoundException), StatusCodes.Status404NotFound)]
-    [Arguments(typeof(RequestFailedException), StatusCodes.Status400BadRequest)]
-    [Arguments(typeof(NotAuthorizedException), StatusCodes.Status403Forbidden)]
-    [Arguments(typeof(InvalidOperationException), StatusCodes.Status500InternalServerError)]
-    public async Task Should_Map_The_Exception_To_A_Status_Code(Type exceptionType, int expected)
-    {
-        var services = await JointTestContext.ApplyServicesAsync<ProblemDetailsJoint>();
-        using var provider = JointTestContext.BuildServiceProvider(services);
-        var exception = (Exception)Activator.CreateInstance(exceptionType, "message")!;
-
-        var selector = provider.GetRequiredService<IOptions<ExceptionHandlerOptions>>().Value.StatusCodeSelector;
-
-        await selector.Should().NotBeNull();
-        await selector(exception).Should().BeEqualTo(expected);
-    }
-
-    [Test]
-    public async Task Should_Keep_The_Status_Code_Selector_That_Was_Already_Configured()
-    {
-        var context = await JointTestContext.CreateBuilder().AppendJoint<ProblemDetailsJoint>().CreateAsync();
-        var services = new ServiceCollection();
-        services.Configure<ExceptionHandlerOptions>(options => options.StatusCodeSelector = _ => StatusCodes.Status418ImATeapot);
-        await services.ApplyService(context);
-        using var provider = JointTestContext.BuildServiceProvider(services);
-
-        var selector = provider.GetRequiredService<IOptions<ExceptionHandlerOptions>>().Value.StatusCodeSelector;
-
-        await selector.Should().NotBeNull();
-        await selector(new InvalidOperationException()).Should().BeEqualTo(StatusCodes.Status418ImATeapot);
-        await selector(new NotFoundException()).Should().BeEqualTo(StatusCodes.Status404NotFound);
-    }
-
     [Test]
     public async Task Should_Not_Register_The_Validation_Problem_Details_Writers()
     {

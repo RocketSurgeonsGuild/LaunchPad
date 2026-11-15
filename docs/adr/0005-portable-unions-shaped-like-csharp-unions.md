@@ -13,4 +13,4 @@ An operation that can fail responds with a union response instead of throwing, a
 
 - Generators detect a union by name (`UnionAttribute` or `IUnion`), never by symbol: before .NET 11 every assembly carries its own embedded copy, and Roslyn does not surface `[Union]` through `GetAttributes()` on native or metadata unions.
 - Generated code reads a union through `Value` and builds one with its constructor, because a pattern over a union does not compile on C# 14 (CS9327).
-- Every transport answers union responses ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148), ADR-0006), so handlers return error cases instead of throwing `NotFoundException` and its siblings; the exceptions keep working until a follow-up removes them.
+- Every transport answers union responses ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148), ADR-0006), so handlers return error cases instead of throwing `NotFoundException` and its siblings; #3216 removed the exceptions.

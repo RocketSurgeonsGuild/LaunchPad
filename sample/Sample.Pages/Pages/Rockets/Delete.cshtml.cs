@@ -6,9 +6,8 @@ namespace Sample.Pages.Pages.Rockets;
 
 public class RocketDeleteModel : RocketViewModel
 {
-    public async Task<ActionResult> OnPost()
-    {
-        ( await Mediator.Send(new DeleteRocket.Request(Id), HttpContext.RequestAborted) ).Value.Expect<ZeroAlloc.Mediator.Unit>();
-        return RedirectToPage("Index");
-    }
+    public async Task<IActionResult> OnPost() =>
+        ( await Mediator.Send(new DeleteRocket.Request(Id), HttpContext.RequestAborted) ).Value.TryGetValue<ZeroAlloc.Mediator.Unit>(out _, out var problem)
+            ? RedirectToPage("Index")
+            : ProblemResult(problem);
 }

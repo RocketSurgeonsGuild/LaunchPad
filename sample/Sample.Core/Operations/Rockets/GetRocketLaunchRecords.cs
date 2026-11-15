@@ -20,7 +20,7 @@ namespace Sample.Core.Operations.Rockets;
 public static partial class GetRocketLaunchRecords
 {
     [Validate]
-    public record Request : IStreamRequest<LaunchRecordModel>
+    public record Request : IStreamRequest<Result>
     {
         /// <summary>
         ///     The rocket id
@@ -31,11 +31,27 @@ public static partial class GetRocketLaunchRecords
         internal bool IsAssigned(RocketId id) => id != default;
     }
 
-    internal class GetRocketLaunchRecordsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
+    /// <summary>
+    ///     One item of the stream: a launch record, or not found. A stream of unions ends with its first error case, so a missing rocket answers
+    ///     <see cref="NotFound" /> before any launch record.
+    /// </summary>
+    [Union]
+    public readonly partial struct Result
     {
-        public async IAsyncEnumerable<LaunchRecordModel> Handle(Request request, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public partial Result(LaunchRecordModel value);
+        public partial Result(NotFound value);
+    }
+
+    internal class GetRocketLaunchRecordsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, Result>
+    {
+        public async IAsyncEnumerable<Result> Handle(Request request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var rocket = await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException();
+            if (await dbContext.Rockets.FindAsync([request.Id], cancellationToken) is not { } rocket)
+            {
+                yield return new NotFound($"Rocket {request.Id} was not found");
+                yield break;
+            }
+
             var query = ModelMapper.ProjectTo(dbContext.LaunchRecords.Where(z => z.RocketId == rocket.Id));
             await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
             {

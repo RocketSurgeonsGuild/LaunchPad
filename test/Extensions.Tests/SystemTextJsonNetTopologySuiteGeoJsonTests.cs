@@ -8,14 +8,9 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
 {
     private readonly JsonSerializerOptions _settings = new JsonSerializerOptions().ConfigureGeoJsonForLaunchPad(null);
 
-    // typeof(Geometry),
-    // typeof(MultiPoint),
-    // typeof(MultiLineString),
-    // typeof(MultiPolygon),
-    // typeof(GeometryCollection)
     [Test]
     [Arguments("{\"type\": \"Point\",\"coordinates\": [30, 10]}")]
-    public async Task Geometry_Tests(string geom)
+    public async Task Point_Tests(string geom)
     {
         await JsonSerializer.Deserialize<Point>(geom, _settings)
                       .Should().BeEqualTo(new Point(30, 10));
@@ -93,5 +88,26 @@ public class SystemTextJsonNetTopologySuiteGeoJsonTests() : LoggerTest<TestRecor
     {
         await JsonSerializer.Deserialize<GeometryCollection>(geom, _settings)
                       .Should().BeOfType(typeof(GeometryCollection));
+    }
+
+    // every geometry read through the base type comes back as its own type, and writes back to the same geometry
+    [Test]
+    [Arguments("{\"type\":\"Point\",\"coordinates\":[30.0,10.0]}", typeof(Point))]
+    [Arguments("{\"type\":\"LineString\",\"coordinates\":[[30.0,10.0],[10.0,30.0],[40.0,40.0]]}", typeof(LineString))]
+    [Arguments("{\"type\":\"Polygon\",\"coordinates\":[[[30.0,10.0],[40.0,40.0],[20.0,40.0],[10.0,20.0],[30.0,10.0]]]}", typeof(Polygon))]
+    [Arguments("{\"type\":\"MultiPoint\",\"coordinates\":[[10.0,40.0],[40.0,30.0]]}", typeof(MultiPoint))]
+    [Arguments("{\"type\":\"MultiLineString\",\"coordinates\":[[[10.0,10.0],[20.0,20.0]],[[40.0,40.0],[30.0,30.0]]]}", typeof(MultiLineString))]
+    [Arguments("{\"type\":\"MultiPolygon\",\"coordinates\":[[[[40.0,40.0],[20.0,45.0],[45.0,30.0],[40.0,40.0]]]]}", typeof(MultiPolygon))]
+    [Arguments(
+        "{\"type\":\"GeometryCollection\",\"geometries\":[{\"type\":\"Point\",\"coordinates\":[40.0,10.0]},{\"type\":\"LineString\",\"coordinates\":[[10.0,10.0],[20.0,20.0]]}]}",
+        typeof(GeometryCollection)
+    )]
+    public async Task Geometry_Roundtrips_Through_The_Base_Type(string geom, Type type)
+    {
+        var value = JsonSerializer.Deserialize<Geometry>(geom, _settings);
+        await Assert.That(value!.GetType()).IsEqualTo(type);
+
+        var json = JsonSerializer.Serialize(value, _settings);
+        await JsonSerializer.Deserialize<Geometry>(json, _settings).Should().BeEqualTo(value);
     }
 }

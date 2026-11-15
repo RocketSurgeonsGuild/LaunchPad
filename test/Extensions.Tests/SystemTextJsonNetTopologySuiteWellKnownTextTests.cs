@@ -12,14 +12,9 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
 
     private readonly JsonSerializerOptions _settings = new JsonSerializerOptions().ConfigureWellKnownTextForLaunchPad(null);
 
-    // typeof(Geometry),
-    // typeof(MultiPoint),
-    // typeof(MultiLineString),
-    // typeof(MultiPolygon),
-    // typeof(GeometryCollection)
     [Test]
     [Arguments("POINT (30 10)")]
-    public async Task Geometry_Tests(string geom)
+    public async Task Point_Tests(string geom)
     {
         var value = DeserializeObject<Point>(geom, _settings);
         await value.Should().BeEqualTo(new Point(30, 10));
@@ -93,6 +88,22 @@ public class SystemTextJsonNetTopologySuiteWellKnownTextTests() : LoggerTest<Tes
     public async Task GeometryCollection_Tests(string geom)
     {
         var value = await Assert.That(DeserializeObject<GeometryCollection>(geom, _settings)).IsTypeOf<GeometryCollection>();
+        await SerializeObject(value, _settings).Should().BeEqualTo(geom);
+    }
+
+    // every geometry read through the base type comes back as its own type, and writes back to the same text
+    [Test]
+    [Arguments("POINT (30 10)", typeof(Point))]
+    [Arguments("LINESTRING (30 10, 10 30, 40 40)", typeof(LineString))]
+    [Arguments("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", typeof(Polygon))]
+    [Arguments("MULTIPOINT ((10 40), (40 30), (20 20), (30 10))", typeof(MultiPoint))]
+    [Arguments("MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))", typeof(MultiLineString))]
+    [Arguments("MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((30 20, 20 15, 20 25, 30 20)))", typeof(MultiPolygon))]
+    [Arguments("GEOMETRYCOLLECTION (POINT (40 10), LINESTRING (10 10, 20 20, 10 40))", typeof(GeometryCollection))]
+    public async Task Geometry_Roundtrips_Through_The_Base_Type(string geom, Type type)
+    {
+        var value = DeserializeObject<Geometry>(geom, _settings);
+        await Assert.That(value.GetType()).IsEqualTo(type);
         await SerializeObject(value, _settings).Should().BeEqualTo(geom);
     }
 

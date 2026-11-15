@@ -1,19 +1,22 @@
-﻿using System.Text.Json;
-using Microsoft.Extensions.Options;
-using NetTopologySuite.Geometries;
+using System.Text.Json;
+
+using StrawberryShake.Serialization;
 
 namespace Rocket.Surgery.LaunchPad.StrawberryShake.Spatial;
 
 /// <summary>
-/// A general purpose serializer for Coordinates
+///     Serializes HotChocolate's <c>Coordinates</c> scalar, a list of positions of arbitrary depth (the coordinates of a
+///     <c>GeoJSONMultiPolygonType</c>, for example)
 /// </summary>
-public class CoordinatesSerializer : JsonElementScalarSerializer<Coordinate>
+/// <remarks>
+///     The depth depends on the geometry, so there is no one runtime type for it: the value is handed over as the JSON it was sent as.
+/// </remarks>
+[PublicAPI]
+public class CoordinatesSerializer() : ScalarSerializer<JsonElement, JsonElement>("Coordinates")
 {
-    /// <summary>
-    /// Create a new CoordinatesSerializer
-    /// </summary>
-    /// <param name="options"></param>
-    public CoordinatesSerializer(IOptions<JsonSerializerOptions> options) : base("Coordinates", options)
-    {
-    }
+    /// <inheritdoc />
+    public override JsonElement Parse(JsonElement serializedValue) => serializedValue.Clone();
+
+    /// <inheritdoc />
+    protected override JsonElement Format(JsonElement runtimeValue) => runtimeValue;
 }

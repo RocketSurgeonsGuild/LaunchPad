@@ -1,9 +1,7 @@
 using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
@@ -54,15 +52,6 @@ public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
                .GetAssemblies(s => s.DependenciesFromAssemblyOf<AspNetCoreJoint>())
                .Where(_options.AssemblyPartFilter)
                .SelectMany(GetApplicationPartAssemblies)
-        );
-
-        services.Configure<MvcOptions>(
-            options =>
-            {
-                options.Filters.Add<NotFoundExceptionFilter>();
-                options.Filters.Add<NotAuthorizedExceptionFilter>();
-                options.Filters.Add<RequestFailedExceptionFilter>();
-            }
         );
     }
 

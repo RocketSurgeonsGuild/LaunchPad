@@ -1,0 +1,8 @@
+﻿{
+  Data: {
+    GeometryTest: {
+      Geometry: GEOMETRYCOLLECTION (POINT (39 40), LINESTRING (41 42, 43 44)),
+      GeometryCollection: GEOMETRYCOLLECTION (POINT (39 40), LINESTRING (41 42, 43 44))
+    }
+  }
+}
