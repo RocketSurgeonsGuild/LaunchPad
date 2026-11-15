@@ -42,11 +42,12 @@ internal static class HostReader
                 if (ReadOperation(entry, host, hostNoun, kind, mediator, compilation, documentation, diagnostics) is { } operation) operations.Add(operation);
             }
 
-            foreach (var duplicate in operations.Where(_ => HostInference.IsHttp(kind)).GroupBy(o => (o.Verb, Route: NormalizeRoute(o.Route))).Where(g => g.Count() > 1))
+            foreach (var duplicate in DuplicateRoutes(operations, kind))
             {
-                var first = duplicate.First();
-                foreach (var other in duplicate.Skip(1))
+                var first = duplicate[0];
+                for (var i = 1; i < duplicate.Length; i++)
                 {
+                    var other = duplicate[i];
                     diagnostics.Add(
                         DiagnosticInfo.Create(ApiDiagnostics.DuplicateRoute, other.Location, first.Verb.ToString().ToUpperInvariant(), RouteText.Join(group, first.Route), first.Name, other.Name)
                     );
@@ -115,7 +116,7 @@ internal static class HostReader
         // shape. Everything below (status, Created, gRPC messages, GraphQL names) is about the value case.
         var dispatchResponse = response;
         UnionModel? union = null;
-        IEnumerable<ITypeSymbol> errorCases = [];
+        ITypeSymbol[] errorCases = [];
         // A stream of unions works per item: value cases are streamed, an error case ends the stream in the transport's error shape.
         if (requestKind is RequestKind.Unary or RequestKind.Stream && UnionResults.TryRead(response, out var unionType, out var cases, out var valueInterface))
         {
@@ -124,10 +125,9 @@ internal static class HostReader
             var valueCase = cases.FirstOrDefault(c => UnionResults.Status(c) is null) ?? cases[0];
             var errors = new List<UnionCaseModel>();
             // A Problem case stands for each standard problem case, then itself.
-            errorCases = cases.Where(c => !SymbolEqualityComparer.IncludeNullability.Equals(c, valueCase))
-                              .SelectMany(UnionResults.Expand)
-                              .Distinct<ITypeSymbol>(SymbolEqualityComparer.Default)
-                              .ToArray();
+            errorCases = [.. cases.Where(c => !SymbolEqualityComparer.IncludeNullability.Equals(c, valueCase))
+                                  .SelectMany(UnionResults.Expand)
+                                  .Distinct<ITypeSymbol>(SymbolEqualityComparer.Default)];
             foreach (var errorCase in errorCases)
             {
                 if (UnionResults.Status(errorCase) is not { } caseStatus)
@@ -152,7 +152,7 @@ internal static class HostReader
                 );
             }
 
-            if (errors.Count < errorCases.Count()) return null;
+            if (errors.Count < errorCases.Length) return null;
             var unionNullable = dispatchResponse!.NullableAnnotation == NullableAnnotation.Annotated || dispatchResponse.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
             union = new UnionModel(unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified(), valueInterface, unionNullable, errors.ToEquatableArray());
             response = valueCase;
@@ -351,14 +351,13 @@ internal static class HostReader
         if (request.ContainingType is { } containing) candidates.Add(containing);
         foreach (var ns in new[] { request.ContainingNamespace, host.ContainingNamespace })
         {
-            if (compilation.GetCompilationNamespace(ns) is { } merged) candidates.AddRange(merged.GetTypeMembers());
+            if (compilation.GetCompilationNamespace(ns) is not { } merged) continue;
+            foreach (var type in merged.GetTypeMembers()) candidates.Add(type);
         }
 
         foreach (var candidate in candidates.Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default).Where(c => c.GetAttributes().Any(a => a.AttributeClass.Is("Immediate.Handlers.Shared.HandlerAttribute"))))
         {
-            var handle = candidate.GetMembers()
-                                  .OfType<IMethodSymbol>()
-                                  .FirstOrDefault(m => m.Name is "Handle" or "HandleAsync" && m.Parameters.Length > 0 && SymbolEqualityComparer.Default.Equals(m.Parameters[0].Type, request));
+            var handle = HandleMethod(candidate, request);
             if (handle?.ReturnType is not INamedTypeSymbol { Name: "ValueTask" or "Task" } awaitable) continue;
             // A bare ValueTask: Immediate.Handlers implements IHandler<TRequest, ValueTuple>, which the profile's unit type makes void.
             return awaitable.Arity == 1 ? awaitable.TypeArguments[0] : compilation.GetTypeByMetadataName("System.ValueTuple");
@@ -369,17 +368,38 @@ internal static class HostReader
 
     private sealed record RawMember(string Name, ITypeSymbol Type, bool CanAssign, bool CanInit, int ConstructorIndex, ImmutableArray<AttributeData> Attributes);
 
+    // Helpers for the loops in this file, so no loop body runs LINQ itself.
+    private static IEnumerable<OperationModel[]> DuplicateRoutes(List<OperationModel> operations, HostKind kind) =>
+        operations.Where(_ => HostInference.IsHttp(kind)).GroupBy(o => (o.Verb, Route: NormalizeRoute(o.Route))).Where(g => g.Count() > 1).Select(g => g.ToArray());
+
+    private static IMethodSymbol? HandleMethod(INamedTypeSymbol candidate, ITypeSymbol request) =>
+        candidate.GetMembers()
+                 .OfType<IMethodSymbol>()
+                 .FirstOrDefault(m => m.Name is "Handle" or "HandleAsync" && m.Parameters.Length > 0 && SymbolEqualityComparer.Default.Equals(m.Parameters[0].Type, request));
+
+    private static IEnumerable<IPropertySymbol> NewProperties(INamedTypeSymbol type, List<IPropertySymbol> properties) =>
+        type.GetMembers()
+            .OfType<IPropertySymbol>()
+            .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
+            .Where(p => properties.All(existing => existing.Name != p.Name));
+
+    private static string?[] AttributeNames(RawMember member) => [.. member.Attributes.Select(a => a.AttributeClass?.ToDisplayString())];
+
+    private static Dictionary<string, TypedConstant>[] NamedArguments(RawMember member) => [.. member.Attributes.Select(Named)];
+
+    private static string? RouteToken(string[] tokens, string name) => tokens.FirstOrDefault(t => string.Equals(t, name, StringComparison.OrdinalIgnoreCase));
+
+    private static string? WireName(Dictionary<string, TypedConstant>[] named) => named.Select(n => String(n, "Name")).FirstOrDefault(n => n is { });
+
+    private static RawMember? MemberFor(List<RawMember> members, string token) =>
+        members.FirstOrDefault(m => string.Equals(m.Name, token, StringComparison.OrdinalIgnoreCase));
+
     private static List<RawMember> ReadMembers(INamedTypeSymbol type)
     {
         var properties = new List<IPropertySymbol>();
         for (var current = type; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType)
         {
-            properties.AddRange(
-                current.GetMembers()
-                       .OfType<IPropertySymbol>()
-                       .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
-                       .Where(p => properties.All(existing => existing.Name != p.Name))
-            );
+            properties.AddRange(NewProperties(current, properties));
         }
 
         // The public constructor with the most parameters that all map to members (a record's primary constructor).
@@ -424,10 +444,10 @@ internal static class HostReader
         var result = new List<MemberModel>();
         foreach (var member in members)
         {
-            var attribute = member.Attributes.Select(a => a.AttributeClass?.ToDisplayString()).ToArray();
-            var named = member.Attributes.Select(Named).ToArray();
-            var token = tokens.FirstOrDefault(t => string.Equals(t, member.Name, StringComparison.OrdinalIgnoreCase));
-            var wireName = named.Select(n => String(n, "Name")).FirstOrDefault(n => n is { }) ?? Naming.CamelCase(member.Name);
+            var attribute = AttributeNames(member);
+            var named = NamedArguments(member);
+            var token = RouteToken(tokens, member.Name);
+            var wireName = WireName(named) ?? Naming.CamelCase(member.Name);
             // An explicit attribute wins; then a route token; then the verb decides between body and query.
             var source = Has(attribute, KnownNames.ApiIgnoreAttribute) ? BindingSource.Ignored
                 : Has(attribute, KnownNames.ApiServiceAttribute, "Microsoft.AspNetCore.Mvc.FromServicesAttribute") ? BindingSource.Service
@@ -479,7 +499,7 @@ internal static class HostReader
     {
         foreach (var token in RouteText.Tokens(route).ToArray())
         {
-            var member = members.FirstOrDefault(m => string.Equals(m.Name, token, StringComparison.OrdinalIgnoreCase));
+            var member = MemberFor(members, token);
             if (member is null || RouteConstraint(member.Type) is not { } constraint) continue;
             route = route.Replace("{" + token + "}", "{" + token + ":" + constraint + "}");
         }

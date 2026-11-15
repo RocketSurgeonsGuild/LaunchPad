@@ -203,7 +203,10 @@ internal static class UnionResults
     {
         for (var current = type; current is { }; current = current.BaseType)
         {
-            if (current.GetMembers(name).OfType<IPropertySymbol>().Any(p => p is { IsStatic: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } })) return true;
+            foreach (var member in current.GetMembers(name))
+            {
+                if (member is IPropertySymbol { IsStatic: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } }) return true;
+            }
         }
 
         return false;
@@ -220,18 +223,21 @@ internal static class UnionResults
         for (var current = errorCase; current is { SpecialType: not SpecialType.System_Object and not SpecialType.System_ValueType }; current = current.BaseType)
         {
             if (current.SpecialType != SpecialType.None) break;
-            members.AddRange(
-                current.GetMembers()
-                       .OfType<IPropertySymbol>()
-                       .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
-                       .Where(p => members.All(m => m.Name != p.Name))
-                       .Where(p => !problemData || ProblemData.All(data => data.Property != p.Name))
-                       .Select(p => new UnionMemberModel(p.Name, Naming.CamelCase(p.Name)))
-            );
+            members.AddRange(NewMembers(current, members, problemData));
         }
 
         return members.ToEquatableArray();
     }
+
+    // The members a type declares that a derived type didn't already contribute; outside Members' loop, so the loop body runs no LINQ.
+    private static IEnumerable<UnionMemberModel> NewMembers(ITypeSymbol type, List<UnionMemberModel> members, bool problemData) =>
+        type.GetMembers()
+            .OfType<IPropertySymbol>()
+            .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
+            .Where(p => members.All(m => m.Name != p.Name))
+            .Where(p => !problemData || ProblemData.All(data => data.Property != p.Name))
+            .Select(p => new UnionMemberModel(p.Name, Naming.CamelCase(p.Name)))
+            .ToArray();
 
     // The gRPC status for an HTTP status an [ApiError] names without one: the mapping gRPC's own HTTP/2 gateway uses.
     private static string GrpcFromHttp(int status) => status switch
