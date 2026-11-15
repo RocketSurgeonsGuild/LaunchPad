@@ -18,13 +18,15 @@ Add an `OpenApiClient` item. Its `Include` is where the document comes from, and
 </ItemGroup>
 ```
 
-| Metadata       | Meaning                                                                                                                                                                                    |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Generator`    | `Kiota` or `Refitter`.                                                                                                                                                                     |
-| `ClientName`   | A C# identifier. Kiota's client class is called this, Refitter's interface is `I<ClientName>`, the Joint is `<ClientName>Joint`, and the base address is read from `Clients:<ClientName>`. |
-| `Namespace`    | The namespace of the generated code. Defaults to the project's `RootNamespace`. Give each client its own when a project has several.                                                       |
-| `DocumentName` | For a project source that writes several documents, the one to use (`v1` is ASP.NET Core's default).                                                                                       |
-| `Options`      | More arguments for the generator's command line: `kiota generate`, or `refitter` after the settings file the SDK writes.                                                                   |
+| Metadata              | Meaning                                                                                                                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Generator`           | `Kiota` or `Refitter`.                                                                                                                                                                     |
+| `ClientName`          | A C# identifier. Kiota's client class is called this, Refitter's interface is `I<ClientName>`, the Joint is `<ClientName>Joint`, and the base address is read from `Clients:<ClientName>`. |
+| `Namespace`           | The namespace of the generated code. Defaults to the project's `RootNamespace`. Give each client its own when a project has several.                                                       |
+| `DocumentName`        | For a project source that writes several documents, the one to use (`v1` is ASP.NET Core's default).                                                                                       |
+| `DocumentCache`       | For a URL source, the file the downloaded document is kept in, relative to the project (`obj` when not set). Commit it to build without the URL.                                           |
+| `UpdateDocumentCache` | For a URL source, `false` to use the cached document whenever it exists instead of downloading it again. Defaults to `$(LaunchPadUpdateOpenApiDocumentCache)`, which is `true`.            |
+| `Options`             | More arguments for the generator's command line: `kiota generate`, or `refitter` after the settings file the SDK writes.                                                                   |
 
 The SDK adds the packages the generated code needs: `Microsoft.Kiota.Bundle` for Kiota, `Refit.HttpClientFactory` for Refitter,
 and `Microsoft.Extensions.Http` for both. Like every package it adds, one the project already references is left alone, so
@@ -69,9 +71,27 @@ several target frameworks writes its document from its first one. A server that 
 <OpenApiClient Include="https://rockets.example.com/openapi/v1.json" Generator="Kiota" ClientName="RocketsClient" />
 ```
 
-The document is downloaded on every build and kept in `obj`. When the download fails, the build uses the copy it downloaded
-before, with warning `LPSDK0104`, so a build without the network works once the document has been downloaded. A file or project
-source never needs the network once the packages are restored.
+The document is downloaded on every build and kept in a cache, `obj` by default. When the download fails, the build uses the
+cached copy, with warning `LPSDK0104`, so a build without the network works once the document has been downloaded. A file or
+project source never needs the network once the packages are restored.
+
+To keep the cache with the code, name a file in the project with `DocumentCache` and commit it. A fresh clone, or a CI agent,
+then builds even when the URL is down:
+
+```xml
+<OpenApiClient
+  Include="https://rockets.example.com/openapi/v1.json"
+  Generator="Kiota"
+  ClientName="RocketsClient"
+  DocumentCache="openapi/rockets.json"
+/>
+```
+
+Every build still downloads the document and updates the cache when the API changed, so the change shows up in your diff. Set
+`UpdateDocumentCache="false"` to use the cache whenever it exists and download only when it doesn't: the client is then generated
+from the committed document until you update it on purpose (delete the file, or build once with
+`-p:LaunchPadUpdateOpenApiDocumentCache=true`), which keeps a breaking change of the API out of your build.
+`LaunchPadUpdateOpenApiDocumentCache` sets the default for every client of the project.
 
 ## Using the client
 
@@ -135,5 +155,5 @@ var refit = RestService.For<IRockets>(httpClient);
 | `LPSDK0102` | The document file does not exist.                                                  |
 | `LPSDK0103` | The server project wrote several documents (or none matched `DocumentName`).       |
 | `LPSDK0104` | Warning: the URL could not be reached, and the document downloaded before is used. |
-| `LPSDK0105` | The URL could not be reached and nothing was downloaded before.                    |
+| `LPSDK0105` | The URL could not be reached and there is no cached document.                      |
 | `LPSDK0106` | The generator tool is not in the packages folder: restore the project.             |

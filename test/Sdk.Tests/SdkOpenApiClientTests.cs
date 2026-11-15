@@ -98,6 +98,61 @@ public class SdkOpenApiClientTests(string targetFramework)
     }
 
     /// <summary>
+    ///     <c>DocumentCache</c> keeps the downloaded document in a file of the project, which can be committed: a build of a fresh clone
+    ///     (no obj folder) that cannot reach the URL generates the client from it.
+    /// </summary>
+    [Test]
+    public async Task Should_Generate_From_The_Document_Cache_When_The_Url_Cannot_Be_Reached()
+    {
+        var api = RocketsApi.Start();
+        using var tree = await Tree(Generator.Kiota, Source.Url, api, new Dictionary<string, string?> { ["DocumentCache"] = "openapi/rockets.json", });
+        var cache = Path.Combine(tree.Directory, "app", "openapi", "rockets.json");
+
+        try
+        {
+            await tree.Build("app", Cancellation);
+        }
+        finally
+        {
+            await api.DisposeAsync();
+        }
+
+        await ( await File.ReadAllTextAsync(cache, Cancellation) ).Should().BeEqualTo(RocketsApi.Document);
+        Directory.Delete(Path.Combine(tree.Directory, "app", "obj"), recursive: true);
+        Directory.Delete(Path.Combine(tree.Directory, "app", "bin"), recursive: true);
+
+        var offline = await tree.Build("app", Cancellation);
+
+        await offline.Should().Contain("LPSDK0104");
+        await offline.Should().Contain("Generating the OpenAPI client RocketsClient with Kiota");
+    }
+
+    /// <summary>
+    ///     <c>UpdateDocumentCache</c> set to <c>false</c> generates the client from the cached document when there is one, without
+    ///     downloading the document again, so a change to the API does not reach the client until the cache is updated.
+    /// </summary>
+    [Test]
+    public async Task Should_Use_The_Document_Cache_Without_Downloading_When_Not_Updating_It()
+    {
+        await using var api = RocketsApi.Start();
+        using var tree = await Tree(
+            Generator.Kiota,
+            Source.Url,
+            api,
+            new Dictionary<string, string?> { ["DocumentCache"] = "openapi/rockets.json", ["UpdateDocumentCache"] = "false", }
+        );
+        // the document an earlier build cached and the repository committed
+        Directory.CreateDirectory(Path.Combine(tree.Directory, "app", "openapi"));
+        await File.WriteAllTextAsync(Path.Combine(tree.Directory, "app", "openapi", "rockets.json"), RocketsApi.Document, Cancellation);
+
+        var output = await tree.Build("app", Cancellation);
+
+        await output.Should().Contain("Generating the OpenAPI client RocketsClient with Kiota");
+        await api.DocumentRequests.Should().BeEqualTo(0);
+        await ( await tree.Run("app", Cancellation, environment: Environment(api)) ).Should().Contain($"RocketsClient: {RocketsApi.RocketId} FALCON-9");
+    }
+
+    /// <summary>
     ///     A client without a generator, or without a name, fails the build with what to set.
     /// </summary>
     /// <param name="generator">The generator the client declares, if any.</param>
@@ -163,7 +218,7 @@ public class SdkOpenApiClientTests(string targetFramework)
 
     private static Dictionary<string, string?> Environment(RocketsApi api) => new() { ["Clients__RocketsClient__BaseAddress"] = api.BaseAddress.ToString(), };
 
-    private async Task<SdkTree> Tree(Generator generator, Source source, RocketsApi api)
+    private async Task<SdkTree> Tree(Generator generator, Source source, RocketsApi api, IReadOnlyDictionary<string, string?>? metadata = null)
     {
         var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         var include = source switch
@@ -188,7 +243,7 @@ public class SdkOpenApiClientTests(string targetFramework)
                         ["Generator"] = generator.ToString(),
                         ["ClientName"] = "RocketsClient",
                         ["Namespace"] = "Throwaway.Clients",
-                    }
+                    }.Concat(metadata ?? new Dictionary<string, string?>()).ToDictionary()
                 )
         );
         await File.WriteAllTextAsync(Path.Combine(tree.Directory, "app", "rockets.json"), RocketsApi.Document, Cancellation);

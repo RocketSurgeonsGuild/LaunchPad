@@ -12,8 +12,10 @@
             Microsoft.Extensions.ApiDescription.Server, which the server references. The project becomes a reference of the client project
             that is built first, but not referenced by its assembly. DocumentName picks one of several documents (v1 is the default name of
             ASP.NET Core's document).
-          - a URL (http:// or https://): downloaded on every build, and kept in obj. When the download fails, the copy of the last build is
-            used with a warning, so a build without the network still works once the document has been downloaded.
+          - a URL (http:// or https://): downloaded on every build into a cache, obj unless DocumentCache names a file in the project
+            (which can be committed). When the download fails, the cache is used with a warning, so a build without the network still works
+            once the document has been downloaded. UpdateDocumentCache set to false uses the cache whenever it exists and downloads only
+            when it doesn't, which protects the client from a breaking change of the API until the cache is updated on purpose.
           - otherwise a file (.json, .yaml or .yml), relative to the project.
 
         Metadata:
@@ -22,6 +24,9 @@
             joint that registers it is <ClientName>Joint, and its base address is read from Clients:<ClientName>:BaseAddress.
           - Namespace: the namespace of the generated code, $(RootNamespace) when not set.
           - DocumentName: for a project, the document to use when the project writes several.
+          - DocumentCache: for a URL, the file the downloaded document is kept in, relative to the project (obj when not set).
+          - UpdateDocumentCache: for a URL, false to use the cached document when there is one instead of downloading it again;
+            LaunchPadUpdateOpenApiDocumentCache sets it for every client (true by default).
           - Options: more arguments for the generator's command line (kiota generate, or refitter after its settings file).
 
         Each generator is a .NET tool package (Microsoft.OpenApi.Kiota, Refitter), which restore downloads (PackageDownload) and the build runs
@@ -35,6 +40,8 @@
     -->
 
     <PropertyGroup>
+        <!-- the default of UpdateDocumentCache: whether a URL is downloaded again when its document is cached -->
+        <LaunchPadUpdateOpenApiDocumentCache Condition="'$(LaunchPadUpdateOpenApiDocumentCache)' == ''">true</LaunchPadUpdateOpenApiDocumentCache>
         <!-- the folder of the tool packages that holds the tools, which run on .NET 10 or later -->
         <_LaunchPadOpenApiToolFramework>net10.0</_LaunchPadOpenApiToolFramework>
     </PropertyGroup>
@@ -168,7 +175,11 @@
             <_LaunchPadOpenApiServerPath Condition="'$(_LaunchPadOpenApiKind)' == 'Project'">%(_LaunchPadOpenApiClient.FullPath)</_LaunchPadOpenApiServerPath>
         </PropertyGroup>
 
-        <!-- a project: the documents Microsoft.Extensions.ApiDescription.Server wrote when the project was built, as a project reference -->
+        <!--
+            a project: the documents Microsoft.Extensions.ApiDescription.Server writes from the project, which was built first as a project
+            reference. GenerateOpenApiDocuments is asked for explicitly (it is incremental on the server's assembly): its own hook on Build only
+            runs in some builds of a server with several target frameworks.
+        -->
         <ItemGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Project'">
             <_LaunchPadOpenApiServerReference Remove="@(_LaunchPadOpenApiServerReference)" />
             <_LaunchPadOpenApiServerReference
@@ -179,7 +190,7 @@
         <MSBuild
             Condition="'$(_LaunchPadOpenApiKind)' == 'Project'"
             Projects="@(_LaunchPadOpenApiServerReference)"
-            Targets="OpenApiGetDocuments"
+            Targets="GenerateOpenApiDocuments;OpenApiGetDocuments"
             Properties="%(_LaunchPadOpenApiServerReference.SetConfiguration);%(_LaunchPadOpenApiServerReference.SetPlatform)"
             RemoveProperties="TargetFramework;RuntimeIdentifier;SelfContained;%(_LaunchPadOpenApiServerReference.GlobalPropertiesToRemove)"
         >
@@ -201,10 +212,25 @@
             <_LaunchPadOpenApiSource>@(_LaunchPadOpenApiChosenDocument->'%(FullPath)')</_LaunchPadOpenApiSource>
         </PropertyGroup>
 
-        <!-- a URL: downloaded every build, the copy of the last build standing in for it when the download fails -->
-        <RemoveDir Condition="'$(_LaunchPadOpenApiKind)' == 'Url'" Directories="$(_LaunchPadOpenApiDownloadDirectory)" />
+        <!--
+            a URL: kept in a cache, which is DocumentCache when the client names one (a file in the project, which can be committed) or else
+            the copy in obj. The document is downloaded on every build and the cache updated, unless UpdateDocumentCache is false and the
+            cache exists: then the cache is used as it is, so a change to the API reaches the client only when the cache is deleted or updated
+            on purpose. When the download fails, the cache stands in for it with a warning.
+        -->
+        <PropertyGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Url'">
+            <_LaunchPadOpenApiCache>%(_LaunchPadOpenApiClient.DocumentCache)</_LaunchPadOpenApiCache>
+            <_LaunchPadOpenApiCache Condition="'$(_LaunchPadOpenApiCache)' != ''">$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(_LaunchPadOpenApiCache)'))</_LaunchPadOpenApiCache>
+            <_LaunchPadOpenApiCache Condition="'$(_LaunchPadOpenApiCache)' == ''">$(_LaunchPadOpenApiDocument)</_LaunchPadOpenApiCache>
+            <_LaunchPadOpenApiUpdateCache>%(_LaunchPadOpenApiClient.UpdateDocumentCache)</_LaunchPadOpenApiUpdateCache>
+            <_LaunchPadOpenApiUpdateCache Condition="'$(_LaunchPadOpenApiUpdateCache)' == ''">$(LaunchPadUpdateOpenApiDocumentCache)</_LaunchPadOpenApiUpdateCache>
+            <_LaunchPadOpenApiDownload>true</_LaunchPadOpenApiDownload>
+            <_LaunchPadOpenApiDownload Condition="'$(_LaunchPadOpenApiUpdateCache)' == 'false' and Exists('$(_LaunchPadOpenApiCache)')">false</_LaunchPadOpenApiDownload>
+            <_LaunchPadOpenApiDownloaded>$(_LaunchPadOpenApiDownloadDirectory)openapi%(_LaunchPadOpenApiClient.DocumentExtension)</_LaunchPadOpenApiDownloaded>
+        </PropertyGroup>
+        <RemoveDir Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and '$(_LaunchPadOpenApiDownload)' == 'true'" Directories="$(_LaunchPadOpenApiDownloadDirectory)" />
         <DownloadFile
-            Condition="'$(_LaunchPadOpenApiKind)' == 'Url'"
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and '$(_LaunchPadOpenApiDownload)' == 'true'"
             SourceUrl="$(_LaunchPadOpenApiClientIdentity)"
             DestinationFolder="$(_LaunchPadOpenApiDownloadDirectory)"
             DestinationFileName="openapi%(_LaunchPadOpenApiClient.DocumentExtension)"
@@ -212,19 +238,33 @@
             Retries="2"
             ContinueOnError="true"
         />
-        <PropertyGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Url'">
-            <_LaunchPadOpenApiSource>$(_LaunchPadOpenApiDownloadDirectory)openapi%(_LaunchPadOpenApiClient.DocumentExtension)</_LaunchPadOpenApiSource>
-        </PropertyGroup>
         <Warning
-            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and !Exists('$(_LaunchPadOpenApiSource)') and Exists('$(_LaunchPadOpenApiDocument)')"
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and '$(_LaunchPadOpenApiDownload)' == 'true' and !Exists('$(_LaunchPadOpenApiDownloaded)') and Exists('$(_LaunchPadOpenApiCache)')"
             Code="LPSDK0104"
-            Text="The OpenAPI document of the OpenApiClient '$(_LaunchPadOpenApiClientName)' could not be downloaded from '$(_LaunchPadOpenApiClientIdentity)': the client is generated from the copy downloaded before."
+            Text="The OpenAPI document of the OpenApiClient '$(_LaunchPadOpenApiClientName)' could not be downloaded from '$(_LaunchPadOpenApiClientIdentity)': the client is generated from the cached copy, '$(_LaunchPadOpenApiCache)'."
         />
         <Error
-            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and !Exists('$(_LaunchPadOpenApiSource)') and !Exists('$(_LaunchPadOpenApiDocument)')"
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and !Exists('$(_LaunchPadOpenApiDownloaded)') and !Exists('$(_LaunchPadOpenApiCache)')"
             Code="LPSDK0105"
-            Text="The OpenAPI document of the OpenApiClient '$(_LaunchPadOpenApiClientName)' could not be downloaded from '$(_LaunchPadOpenApiClientIdentity)'."
+            Text="The OpenAPI document of the OpenApiClient '$(_LaunchPadOpenApiClientName)' could not be downloaded from '$(_LaunchPadOpenApiClientIdentity)', and there is no cached copy."
         />
+        <!-- a download updates the cache when it differs from it -->
+        <GetFileHash Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and Exists('$(_LaunchPadOpenApiDownloaded)')" Files="$(_LaunchPadOpenApiDownloaded)">
+            <Output TaskParameter="Hash" PropertyName="_LaunchPadOpenApiDownloadedHash" />
+        </GetFileHash>
+        <GetFileHash Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and Exists('$(_LaunchPadOpenApiDownloaded)') and Exists('$(_LaunchPadOpenApiCache)')" Files="$(_LaunchPadOpenApiCache)">
+            <Output TaskParameter="Hash" PropertyName="_LaunchPadOpenApiCacheHash" />
+        </GetFileHash>
+        <Copy
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and Exists('$(_LaunchPadOpenApiDownloaded)') and '$(_LaunchPadOpenApiDownloadedHash)' != '$(_LaunchPadOpenApiCacheHash)'"
+            SourceFiles="$(_LaunchPadOpenApiDownloaded)"
+            DestinationFiles="$(_LaunchPadOpenApiCache)"
+        />
+        <PropertyGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Url'">
+            <_LaunchPadOpenApiSource>$(_LaunchPadOpenApiCache)</_LaunchPadOpenApiSource>
+            <_LaunchPadOpenApiDownloadedHash />
+            <_LaunchPadOpenApiCacheHash />
+        </PropertyGroup>
 
         <!-- copied when its content differs from the copy -->
         <GetFileHash Condition="Exists('$(_LaunchPadOpenApiSource)')" Files="$(_LaunchPadOpenApiSource)">
