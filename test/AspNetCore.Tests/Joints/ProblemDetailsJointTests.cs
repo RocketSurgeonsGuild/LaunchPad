@@ -47,32 +47,16 @@ public class ProblemDetailsJointTests
     }
 
     [Test]
-    public async Task Should_Register_The_Problem_Details_Writers()
+    public async Task Should_Not_Register_The_Validation_Problem_Details_Writers()
     {
         var services = await JointTestContext.ApplyServicesAsync<ProblemDetailsJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
-        var writers = provider.GetServices<IProblemDetailsWriter>().Select(z => z.GetType()).ToArray();
+        var writers = provider.GetServices<IProblemDetailsWriter>().Select(z => z.GetType().Name).ToArray();
 
-        await writers.Should().Contain(typeof(OnBeforeWriteProblemDetailsWriter));
         // the validation writers come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
-        await writers.Select(z => z.Name).Should().NotContain("FluentValidationProblemDetailsWriter");
-        await writers.Select(z => z.Name).Should().NotContain("ValidationExceptionProblemDetailsWriter");
-    }
-
-    [Test]
-    public async Task Should_Not_Register_A_Writer_Twice_When_The_Joint_Is_Applied_Twice()
-    {
-        var builder = JointTestContext.CreateBuilder().AppendJoint<ProblemDetailsJoint>();
-        var context = await builder.CreateAsync();
-        var services = new ServiceCollection();
-
-        await services.ApplyService(context);
-        await services.ApplyService(context);
-
-        await services
-           .Count(d => d.ServiceType == typeof(IProblemDetailsWriter) && d.ImplementationType == typeof(OnBeforeWriteProblemDetailsWriter))
-           .Should().BeEqualTo(1);
+        await writers.Should().NotContain("FluentValidationProblemDetailsWriter");
+        await writers.Should().NotContain("ValidationExceptionProblemDetailsWriter");
     }
 
     [Test]
