@@ -16,13 +16,4 @@ public class OpenApiJointTests
 
         await provider.GetRequiredService<IOptionsMonitor<OpenApiOptions>>().Get("v1").DocumentName.Should().BeEqualTo("v1");
     }
-
-    [Test]
-    public async Task Should_Not_Register_The_Fluent_Validation_Open_Api_Rule_Handlers()
-    {
-        var services = await JointTestContext.ApplyServicesAsync<OpenApiJoint>();
-
-        // they come from Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore
-        await services.Should().All(d => d.ServiceType.Name != "IPropertyRuleHandler");
-    }
 }

@@ -56,7 +56,7 @@ The chain, first to last:
 
 1. The application's resolvers (`order` 0, the default), in the order they were added. A resolver added twice is chained once.
 2. LaunchPad's own resolvers (`JsonTypeInfoResolverRegistration.LibraryOrder`): the primitive and `object` values LaunchPad writes
-   (problem details properties, health check data), the FluentValidation problem details, and the NodaTime and NetTopologySuite types,
+   (problem details properties, health check data) and the NodaTime and NetTopologySuite types,
    which resolve from the converters their packages add.
 
 The first resolver that knows a type wins, so an application can take over any type LaunchPad resolves. LaunchPad adds no reflection based

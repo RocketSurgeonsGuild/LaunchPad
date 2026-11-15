@@ -45,9 +45,6 @@
                 <ModulePath>.*[\\/]Bogus\.dll</ModulePath>
                 <ModulePath>.*[\\/]FakeItEasy\.Analyzer\.CSharp\.dll</ModulePath>
                 <ModulePath>.*[\\/]FakeItEasy\.dll</ModulePath>
-                <ModulePath>.*[\\/]FluentValidation\.AspNetCore\.dll</ModulePath>
-                <ModulePath>.*[\\/]FluentValidation\.DependencyInjectionExtensions\.dll</ModulePath>
-                <ModulePath>.*[\\/]FluentValidation\.dll</ModulePath>
                 <ModulePath>.*[\\/]GitVersion\.Tool\.dll</ModulePath>
                 <ModulePath>.*[\\/]Grpc\.AspNetCore\.dll</ModulePath>
                 <ModulePath>.*[\\/]HotChocolate\.AspNetCore\.dll</ModulePath>

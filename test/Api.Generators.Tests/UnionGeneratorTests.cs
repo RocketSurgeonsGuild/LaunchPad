@@ -268,9 +268,9 @@ internal static class UnionContracts
         }
         """;
 
-    private sealed record Shape(string Usings, Func<string, string>? Marker, Func<string, string>? Stream, string Kind, string Unit);
+    internal sealed record Shape(string Usings, Func<string, string>? Marker, Func<string, string>? Stream, string Kind, string Unit);
 
-    private static Shape ShapeOf(Mediator mediator) => mediator switch
+    internal static Shape ShapeOf(Mediator mediator) => mediator switch
     {
         Mediator.Mediator => new("using Mediator;", t => $"ICommand<{t}>", t => $"IStreamQuery<{t}>", "sealed record", "Mediator.Unit"),
         Mediator.ChannelMediator => new("using ChannelMediator;", t => $"IRequest<{t}>", t => $"IStreamRequest<{t}>", "sealed record", "ChannelMediator.Unit"),

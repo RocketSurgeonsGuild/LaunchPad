@@ -6,7 +6,9 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 /// <summary>One member of an error case, carried in the transport's error shape.</summary>
 /// <param name="Name">The C# property name.</param>
 /// <param name="WireName">The camel-cased name on the wire (a ProblemDetails extension, a GraphQL error extension).</param>
-internal sealed record UnionMemberModel(string Name, string WireName);
+/// <param name="Type">The member's type for <c>typeof</c>, fully qualified, which the generated OpenAPI transformers describe; null for problem data.</param>
+/// <param name="Summary">The member's XML documentation summary, the description of its schema.</param>
+internal sealed record UnionMemberModel(string Name, string WireName, string? Type = null, string? Summary = null);
 
 /// <summary>An error case of a union response and what each transport answers for it.</summary>
 /// <param name="Name">The case name the wire carries: the case type's simple name (<c>NotFound</c>).</param>
@@ -16,6 +18,7 @@ internal sealed record UnionMemberModel(string Name, string WireName);
 /// <param name="GraphQLCode">The GraphQL error category (<c>NOT_FOUND</c>), carried next to the case name.</param>
 /// <param name="NestedName">For a nested case type, its name with its container's in front (<c>GetRocketNotFound</c>), as protobuf-net names it.</param>
 /// <param name="IsMessage">The case is a class protobuf-net can serialize as it is (the gRPC <c>case-bin</c> trailer).</param>
+/// <param name="Summary">The case type's XML documentation summary, the description of its OpenAPI schema.</param>
 /// <param name="ProblemMembers">
 ///     For a case implementing <c>Rocket.Surgery.LaunchPad.Foundation.IProblemDetailsData</c>, its problem data: the property and the reserved
 ///     key the generated helpers map it to (<c>$detail</c>, <c>$title</c>, <c>$type</c>, <c>$instance</c>, <c>$properties</c>).
@@ -29,7 +32,8 @@ internal sealed record UnionCaseModel(
     EquatableArray<UnionMemberModel> Members,
     string? NestedName,
     bool IsMessage,
-    EquatableArray<UnionMemberModel> ProblemMembers
+    EquatableArray<UnionMemberModel> ProblemMembers,
+    string? Summary = null
 )
 {
     /// <summary>The case's <c>Detail</c>, which the gRPC status and the GraphQL error use as their message.</summary>
@@ -219,27 +223,34 @@ internal static class UnionResults
     ///     The camel-cased public, readable instance properties of an error case, carried as its members on the wire. A case with problem data
     ///     carries that separately (<see cref="ProblemMembers" />).
     /// </summary>
-    public static EquatableArray<UnionMemberModel> Members(ITypeSymbol errorCase)
+    public static EquatableArray<UnionMemberModel> Members(ITypeSymbol errorCase, IReadOnlyDictionary<string, DocumentationEntry>? documentation = null)
     {
         var members = new List<UnionMemberModel>();
         var problemData = IsProblemData(errorCase);
         for (var current = errorCase; current is { SpecialType: not SpecialType.System_Object and not SpecialType.System_ValueType }; current = current.BaseType)
         {
             if (current.SpecialType != SpecialType.None) break;
-            members.AddRange(NewMembers(current, members, problemData));
+            members.AddRange(NewMembers(current, members, problemData, documentation));
         }
 
         return members.ToEquatableArray();
     }
 
     // The members a type declares that a derived type didn't already contribute; outside Members' loop, so the loop body runs no LINQ.
-    private static IEnumerable<UnionMemberModel> NewMembers(ITypeSymbol type, List<UnionMemberModel> members, bool problemData) =>
+    private static IEnumerable<UnionMemberModel> NewMembers(ITypeSymbol type, List<UnionMemberModel> members, bool problemData, IReadOnlyDictionary<string, DocumentationEntry>? documentation) =>
         type.GetMembers()
             .OfType<IPropertySymbol>()
             .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
             .Where(p => members.All(m => m.Name != p.Name))
             .Where(p => !problemData || ProblemData.All(data => data.Property != p.Name))
-            .Select(p => new UnionMemberModel(p.Name, Naming.CamelCase(p.Name)))
+            .Select(
+                 p => new UnionMemberModel(
+                     p.Name,
+                     Naming.CamelCase(p.Name),
+                     p.Type.WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified(),
+                     documentation is null ? null : Documentation.Summary(p, documentation)
+                 )
+             )
             .ToArray();
 
     // The gRPC status for an HTTP status an [ApiError] names without one: the mapping gRPC's own HTTP/2 gateway uses.
