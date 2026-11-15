@@ -58,13 +58,14 @@ internal static class Documentation
     }
 
     // A positional record's property: the record's <param> of the same name.
-    private static string? RecordParameter(ISymbol symbol, IReadOnlyDictionary<string, DocumentationEntry> referenced)
-    {
-        return  symbol is not IPropertySymbol { ContainingType: { } type } property 
-            ? (string?)null  
-            :  Parameter(type.GetDocumentationCommentXml(), property.Name)
-            ?? ( type.GetDocumentationCommentId() is { } typeId && referenced.TryGetValue(ParameterId(typeId, property.Name), out var parameter) ? parameter.Summary : null );
-    }
+    private static string? RecordParameter(ISymbol symbol, IReadOnlyDictionary<string, DocumentationEntry> referenced) =>
+        symbol switch
+        {
+            IPropertySymbol { ContainingType: { } type } property =>
+                Parameter(type.GetDocumentationCommentXml(), property.Name)
+             ?? ( type.GetDocumentationCommentId() is { } typeId && referenced.TryGetValue(ParameterId(typeId, property.Name), out var parameter) ? parameter.Summary : null ),
+            _ => null,
+        };
 
     // A record parameter's documentation is kept under its own id, "#P:" + the record + "." + the parameter, next to the record's "T:" entry.
     private static string ParameterId(string typeId, string name) => "#P:" + typeId[2..] + "." + name;
