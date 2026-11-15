@@ -17,7 +17,6 @@ using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttr
 using GrpcServiceEndpointConventionBuilder = global::Microsoft.AspNetCore.Builder.GrpcServiceEndpointConventionBuilder;
 using IEndpointRouteBuilder = global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder;
 using ISender = global::Mediator.ISender;
-using Interlocked = global::System.Threading.Interlocked;
 using InvalidOperationException = global::System.InvalidOperationException;
 using MetaType = global::ProtoBuf.Meta.MetaType;
 using OperationAttribute = global::ProtoBuf.Grpc.Configuration.OperationAttribute;
@@ -60,14 +59,18 @@ namespace Sample.Server
     [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", "version")]
     public partial class RocketsService : IRocketsServiceContract
     {
-        private static int __grpcModelConfigured;
+        private static bool __grpcModelConfigured;
         /// <summary>Adds the carried messages to protobuf-net's model: standard types, no constructor for positional records, nested types named with their container, structs on the wire as themselves.</summary>
         internal static void ConfigureGrpcModel()
         {
-            if (Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
-                return;
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.UpdateRocket.Request), "UpdateRocketRequest");
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.RocketModel), null);
+            lock (RuntimeTypeModel.Default)
+            {
+                if (__grpcModelConfigured)
+                    return;
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.UpdateRocket.Request), "UpdateRocketRequest");
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.RocketModel), null);
+                __grpcModelConfigured = true;
+            }
         }
 
         private static void __ConfigureGrpcType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type, string? name)
