@@ -5,28 +5,26 @@
 - Kind: `Constructors`
 - Members: `1`
 
-A general purpose serializer for Coordinates
+Serializes HotChocolate's `Coordinates` scalar, a list of positions of arbitrary depth (the coordinates of a `GeoJSONMultiPolygonType`, for example)
 
 <a id="constructor"></a>
-<a id="constructor-ioptions-jsonserializeroptions"></a>
 
-## CoordinatesSerializer(IOptions<JsonSerializerOptions>)
+## CoordinatesSerializer
 
-- Name: `Constructor(IOptions<JsonSerializerOptions>)`
+- Name: `Constructor`
 
-Create a new CoordinatesSerializer
+Serializes HotChocolate's `Coordinates` scalar, a list of positions of arbitrary depth (the coordinates of a `GeoJSONMultiPolygonType`, for example)
 
 ```csharp
 public class CoordinatesSerializer
 {
-    public CoordinatesSerializer(
-        IOptions<JsonSerializerOptions> options)
+    public CoordinatesSerializer()
     {
         // ...
     }
 }
 ```
 
-## Parameters
+## Remarks
 
-- `options` (`IOptions<JsonSerializerOptions>`)
+The depth depends on the geometry, so there is no one runtime type for it: the value is handed over as the JSON it was sent as.

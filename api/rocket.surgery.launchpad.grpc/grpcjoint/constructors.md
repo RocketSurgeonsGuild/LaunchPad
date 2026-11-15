@@ -5,7 +5,7 @@
 - Kind: `Constructors`
 - Members: `1`
 
-Registers gRPC with the LaunchPad exception interceptors. Implements the `Joints.IServiceJoint`
+Registers gRPC. An operation reports a failure with a union response, which the generated gRPC servers answer with its status. Implements the `Joints.IServiceJoint`
 
 <a id="constructor"></a>
 

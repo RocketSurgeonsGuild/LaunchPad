@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Foundation
 
 - Package: `Rocket.Surgery.LaunchPad.Foundation`
-- Version: `2.0.1-beta.367`
+- Version: `2.0.1-beta.369`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Foundation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation)
 
@@ -31,12 +31,8 @@
 - [LaunchPadJsonSerializerOptionsExtensions](/LaunchPad/api/rocket.surgery.launchpad.foundation/launchpadjsonserializeroptionsextensions.md) -- `class` `static` -- Builds the `JsonSerializerOptions.TypeInfoResolverChain` of a `Json.JsonSerializerOptions` from registered resolvers.
 - [LaunchPadJsonServiceCollectionExtensions](/LaunchPad/api/rocket.surgery.launchpad.foundation/launchpadjsonservicecollectionextensions.md) -- `class` `static` -- Registers JSON type info resolvers for the `SystemTextJsonJoint` to chain into the application's `Json.JsonSerializerOptions`.
 - [MutableAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute.md) -- `class` `sealed` -- Creates a new class that is a mutable version of the given class.
-- [NotAuthorizedException](/LaunchPad/api/rocket.surgery.launchpad.foundation/notauthorizedexception.md) -- `class` -- NotAuthorizedException.
 - [NotFound](/LaunchPad/api/rocket.surgery.launchpad.foundation/notfound.md) -- `record` `sealed` -- The requested entity doesn't exist. HTTP 404, gRPC `NotFound`, GraphQL `NOT_FOUND`.
-- [NotFoundException](/LaunchPad/api/rocket.surgery.launchpad.foundation/notfoundexception.md) -- `class` -- NotFoundException.
 - [Problem](/LaunchPad/api/rocket.surgery.launchpad.foundation/problem.md) -- `record` `abstract` -- The base of LaunchPad's standard error cases: what a handler returns, as a case of its result union, instead of throwing. Each transport turns a case into its own error shape (HTTP ProblemDetails, a gRPC status, a GraphQL error) from [IProblemDetailsData](/LaunchPad/api/rocket.surgery.launchpad.foundation/iproblemdetailsdata.md).
-- [ProblemDetailsException](/LaunchPad/api/rocket.surgery.launchpad.foundation/problemdetailsexception.md) -- `class` `abstract` -- NotFoundException.
-- [RequestFailedException](/LaunchPad/api/rocket.surgery.launchpad.foundation/requestfailedexception.md) -- `class` -- An exception for failed requests, with overloads to take additional details
 - [Unauthorized](/LaunchPad/api/rocket.surgery.launchpad.foundation/unauthorized.md) -- `record` `sealed` -- The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 - [UnprocessableEntity](/LaunchPad/api/rocket.surgery.launchpad.foundation/unprocessableentity.md) -- `record` `sealed` -- The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 

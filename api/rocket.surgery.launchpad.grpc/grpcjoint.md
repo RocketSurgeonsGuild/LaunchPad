@@ -2,12 +2,12 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Grpc](/LaunchPad/api/rocket.surgery.launchpad.grpc.md)
-- Version: `2.0.1-beta.367`
+- Version: `2.0.1-beta.369`
 - Namespace: `Rocket.Surgery.LaunchPad.Grpc.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
-Registers gRPC with the LaunchPad exception interceptors. Implements the `Joints.IServiceJoint`
+Registers gRPC. An operation reports a failure with a union response, which the generated gRPC servers answer with its status. Implements the `Joints.IServiceJoint`
 
 ## Definition
 
