@@ -48,6 +48,8 @@ public class CreateRocketTests : WebAppFixtureTest
             cancellationToken: TestContext.CancellationToken
         );
         var r = await action.Should().Throw<RpcException>();
-        await r.Message.Should().Contain("Rocket Creation Failed");
+        // the handler answers Conflict, which a gRPC call ends with as FailedPrecondition and the case's detail
+        await r!.Status.StatusCode.Should().BeEqualTo(StatusCode.FailedPrecondition);
+        await r.Status.Detail.Should().BeEqualTo("A Rocket already exists with that serial number!");
     }
 }

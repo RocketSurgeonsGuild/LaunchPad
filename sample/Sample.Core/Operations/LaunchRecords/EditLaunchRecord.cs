@@ -88,7 +88,8 @@ public static partial class EditLaunchRecord
         public partial Result(NotFound value);
     }
 
-    // The patch's handle method is generated: it applies the patch to the request GetRequest loads and sends the result through the mediator.
+    // The patch is handled here rather than by the generated patch handler, whose GetRequest has to return a request and so cannot answer
+    // NotFound: a missing launch record answers NotFound, and otherwise the patch is applied to its current values and sent through the mediator.
     internal partial class EditLaunchRecordHandler(RocketDbContext dbContext, IMediator mediator) : IRequestHandler<Request, Result>, IRequestHandler<PatchRequest, Result>
     {
         public async ValueTask<Result> Handle(Request request, CancellationToken cancellationToken)
@@ -102,12 +103,12 @@ public static partial class EditLaunchRecord
             return ModelMapper.Map(rocket);
         }
 
-        private async partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
-            Map(await GetLaunchRecord(request.Id, cancellationToken).ConfigureAwait(false));
-
-        // The generated patch handle method sends what GetRequest loads, so a patch of a missing launch record still throws NotFoundException here.
-        private async Task<LaunchRecord> GetLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) =>
-            await FindLaunchRecord(id, cancellationToken) ?? throw new NotFoundException();
+        public async ValueTask<Result> Handle(PatchRequest request, CancellationToken cancellationToken)
+        {
+            return  await FindLaunchRecord(request.Id, cancellationToken) is not { } launchRecord 
+                ? (Result)new NotFound($"Launch record {request.Id} was not found")  
+                :  await mediator.Send(request.ApplyChanges(Map(launchRecord)), cancellationToken).ConfigureAwait(false);
+        }
 
         private async Task<LaunchRecord?> FindLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) =>
             await dbContext.LaunchRecords.Include(z => z.Rocket).FirstOrDefaultAsync(z => z.Id == id, cancellationToken).ConfigureAwait(false);

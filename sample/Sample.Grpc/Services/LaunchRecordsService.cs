@@ -1,7 +1,6 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Riok.Mapperly.Abstractions;
-using Sample.Core.Operations;
 using Sample.Core.Operations.LaunchRecords;
 using ZeroAlloc.Mediator;
 using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
@@ -24,17 +23,17 @@ public partial class LaunchRecordsService : LaunchRecords.LaunchRecordsBase
     public static partial LaunchRecordModel Map(Core.Models.LaunchRecordModel request);
 
     public override async Task<CreateLaunchRecordResponse> CreateLaunchRecord(CreateLaunchRecordRequest request, ServerCallContext context) =>
-        Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<CreateLaunchRecord.Response>());
+        Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.ValueOrStatus<CreateLaunchRecord.Response>());
 
-    public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context) => Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<Core.Models.LaunchRecordModel>());
+    public override async Task<LaunchRecordModel> EditLaunchRecord(UpdateLaunchRecordRequest request, ServerCallContext context) => Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.ValueOrStatus<Core.Models.LaunchRecordModel>());
 
     public override async Task<Empty> DeleteLaunchRecord(DeleteLaunchRecordRequest request, ServerCallContext context)
     {
-        ( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<Unit>();
+        ( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.ValueOrStatus<Unit>();
         return new();
     }
 
-    public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context) => Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.Expect<Core.Models.LaunchRecordModel>());
+    public override async Task<LaunchRecordModel> GetLaunchRecords(GetLaunchRecordRequest request, ServerCallContext context) => Map(( await Mediator(context).Send(Map(request), context.CancellationToken) ).Value.ValueOrStatus<Core.Models.LaunchRecordModel>());
 
     public override async Task ListLaunchRecords(
         ListLaunchRecordsRequest request,

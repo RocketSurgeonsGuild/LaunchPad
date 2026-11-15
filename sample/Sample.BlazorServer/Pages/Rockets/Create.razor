@@ -1,6 +1,8 @@
 @page "/rockets/create"
 @using Sample.Core.Domain
 
+<ProblemMessage Problem="Problem" />
+
 <EditForm Model="Model"
           OnValidSubmit="Save">
     <ZeroAllocValidator />

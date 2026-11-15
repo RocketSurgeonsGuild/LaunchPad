@@ -1,0 +1,16 @@
+@using Rocket.Surgery.LaunchPad.Foundation
+@using Sample.Core.Operations
+
+@if (Problem is { })
+{
+    <div class="alert alert-danger"
+         role="alert">
+        @Problem.Message()
+    </div>
+}
+
+@code {
+    /// <summary>The error case of the last operation, if it answered one.</summary>
+    [Parameter]
+    public Problem? Problem { get; set; }
+}

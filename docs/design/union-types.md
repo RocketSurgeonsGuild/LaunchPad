@@ -46,7 +46,9 @@ What the spikes established:
 
 ## 2. What LaunchPad has today
 
-There is no union, result or OneOf-style type in `src/`. Error outcomes are **exceptions** that each transport catches:
+_This section records the state before unions; the exceptions it lists were removed by #3216 (section 5)._
+
+There was no union, result or OneOf-style type in `src/`. Error outcomes were **exceptions** that each transport caught:
 
 | Type                                 | Package    | HTTP (`src/AspNetCore/Filters`) | gRPC (`src/Grpc`)    | GraphQL (`GraphqlErrorFilter`) |
 | ------------------------------------ | ---------- | ------------------------------- | -------------------- | ------------------------------ |
@@ -55,7 +57,7 @@ There is no union, result or OneOf-style type in `src/`. Error outcomes are **ex
 | `NotAuthorizedException`             | Foundation | 403                             | `PermissionDenied`   | `NOTAUTHORIZED`                |
 | `RequestFailedException`             | Foundation | 400                             | `FailedPrecondition` | `FAILED`                       |
 
-The Sample.Core handlers throw `NotFoundException` for missing entities and `RequestFailedException` for conflicts. The API generators add null → 404 for nullable responses (api-generators-plan, decision 6).
+The Sample.Core handlers threw `NotFoundException` for missing entities and `RequestFailedException` for conflicts. The API generators add null → 404 for nullable responses (api-generators-plan, decision 6).
 
 ## 3. Design
 
@@ -189,8 +191,9 @@ This is what the API generators (#3148) and any other LaunchPad generator rely o
 
 ## 5. Migration
 
-- **The samples move to unions** with #3148, in the same pull request. Sample.Core's unary handlers return portable unions (`GetRocket.Result`: `RocketModel` or `NotFound`; `CreateRocket.Result`: `Response` or `Conflict`; `DeleteRocket.Result`: `Unit` or `NotFound`; …) instead of throwing, and the generated Minimal API, controller and GraphQL hosts answer them. The hand-written callers (the Blazor and Razor Pages UIs, the proto-first gRPC services) read the value case with Sample.Core's `Expect<T>()`, which throws the exception LaunchPad's filters and interceptors already answer for a problem. `GetRocketLaunchRecords`, a stream, still throws `NotFoundException` before its first item: a stream of unions answers an error case per item, not for the stream as a whole. The patch operations of `EditRocket` and `EditLaunchRecord` answer the union too, but their handle method is generated (ADR-0004) and sends what `GetRequest` loads, so patching a missing entity still throws `NotFoundException` there.
-- **The exceptions stay.** `NotFoundException`, `NotAuthorizedException`, `RequestFailedException` and their filters and interceptors keep working for hand-written code and handlers that don't return unions; removing them is a follow-up (decision 10).
+- **The samples move to unions** with #3148, in the same pull request. Sample.Core's unary handlers return portable unions (`GetRocket.Result`: `RocketModel` or `NotFound`; `CreateRocket.Result`: `Response` or `Conflict`; `DeleteRocket.Result`: `Unit` or `NotFound`; …) instead of throwing, and the generated Minimal API, controller and GraphQL hosts answer them. The hand-written callers (the Blazor and Razor Pages UIs, the proto-first gRPC services) split a response with Sample.Core's `TryGetValue<T>()` and answer a problem their own way: a page answers its HTTP status or shows the problem, and a gRPC service ends the call with the case's gRPC status.
+- **The rest moved with #3216.** `GetRocketLaunchRecords`, a stream, streams `GetRocketLaunchRecords.Result` (`LaunchRecordModel` or `NotFound`) and answers `NotFound` as its first and only item for a missing rocket, which ends the stream. The patch operations of `EditRocket` and `EditLaunchRecord` implement their handle method themselves, because the generated one (ADR-0004) sends what `GetRequest` loads and can't answer `NotFound`.
+- **The exceptions are gone.** #3216 removed `NotFoundException`, `NotAuthorizedException`, `RequestFailedException` and their base `ProblemDetailsException` from Foundation, with the ASP.NET Core filters (and their base `ProblemDetailsExceptionFilter<T>`), the gRPC interceptors (and their base `ProblemDetailsInterceptor<T>`), their cases in HotChocolate's `GraphqlErrorFilter` and their status codes in the `ProblemDetailsJoint`. Throwing is not a supported way to report a failure: an exception answers as an unexpected error.
 - **No union type in `src/` to migrate**: none existed (section 2).
 - **Applications** that hand-wrote OneOf-style or `Result<T>` types can turn them into portable unions: a `partial struct` with `[Union]` and the case constructors. Their consumers move from `IsSuccess`/`Match` to `Value` patterns (C# 14) or plain patterns (C# 15).
 
@@ -217,7 +220,7 @@ Decided 2026-11-09 with the user (AskUserQuestion, then a grilling session); the
 7. **GraphQL codes**: the common convention (`NOT_FOUND`, `BAD_USER_INPUT`, `UNAUTHENTICATED`, `FORBIDDEN`, `CONFLICT`).
 8. **Analyzers in this change**: the CS9327 code fix (C# 14), LPAD0013 as a warning and LPAD0014 as info (C# 15).
 9. **Missing polyfill**: LPAD0012, an error.
-10. **Migration**: the samples' handlers move to unions in the combined #3147/#3148 change; the exceptions, filters and interceptors stay until a follow-up.
+10. **Migration**: the samples' handlers move to unions in the combined #3147/#3148 change; the exceptions, filters and interceptors stayed until a follow-up, #3216, which moved the last throwing handlers to unions and removed them.
 11. **Problem data**: the transports use `IProblemDetailsData` when an error case implements it (HTTP ProblemDetails fields and extensions; the gRPC status message; the GraphQL message and extensions).
 12. **Validation is 422**: a new `UnprocessableEntity` problem and the `Validation` name rule answer 422; `Invalid` stays 400.
 13. **Terms**: union response, union case, value case, error case, portable union, native union, problem (GLOSSARY.md).

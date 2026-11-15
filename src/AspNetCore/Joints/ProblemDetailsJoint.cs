@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.LaunchPad.Foundation;
-
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     Registers problem details and the exception handler status codes for the LaunchPad exceptions.
+///     Registers problem details, filling in their title and type from the client error mapping of <see cref="ApiBehaviorOptions" />.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <seealso cref="IServiceJoint" />
@@ -27,19 +25,6 @@ public class ProblemDetailsJoint : IServiceJoint
     public void Register(IDovetailContext context, IServiceCollection services)
     {
         services.AddProblemDetails();
-        services.AddExceptionHandler(
-            options =>
-            {
-                var old = options.StatusCodeSelector;
-                options.StatusCodeSelector = exception => exception switch
-                                                          {
-                                                              NotFoundException => StatusCodes.Status404NotFound,
-                                                              RequestFailedException => StatusCodes.Status400BadRequest,
-                                                              NotAuthorizedException => StatusCodes.Status403Forbidden,
-                                                              _ => old?.Invoke(exception) ?? StatusCodes.Status500InternalServerError,
-                                                          };
-            }
-        );
         services
            .AddOptions<ProblemDetailsOptions>()
            .Configure<IOptions<ApiBehaviorOptions>>(

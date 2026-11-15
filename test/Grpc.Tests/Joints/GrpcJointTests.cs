@@ -9,7 +9,6 @@ using Joinery.Dovetail.Joints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Rocket.Surgery.LaunchPad.Grpc;
 using Rocket.Surgery.LaunchPad.Grpc.Joints;
 
 namespace Grpc.Tests.Joints;
@@ -17,7 +16,7 @@ namespace Grpc.Tests.Joints;
 public class GrpcJointTests
 {
     [Test]
-    public async Task Should_Add_The_Exception_Interceptors_In_Order()
+    public async Task Should_Register_Grpc_Without_Exception_Interceptors()
     {
         using var provider = await BuildAsync();
 
@@ -28,11 +27,8 @@ public class GrpcJointTests
                           .Select(z => z.Type)
                           .ToArray();
 
-        await interceptors.Should().BeEquivalentTo([
-                typeof(NotAuthorizedInterceptor),
-                typeof(NotFoundInterceptor),
-                typeof(RequestFailedInterceptor),
-            ], CollectionOrdering.Matching);
+        // an operation reports a failure with a union response, which the generated gRPC servers answer with its status
+        await interceptors.Should().BeEmpty();
     }
 
     [Test]

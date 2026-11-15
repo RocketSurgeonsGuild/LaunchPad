@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Extensions;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.LaunchRecords;
@@ -11,6 +12,17 @@ namespace Sample.Core.Tests.LaunchRecords;
 
 public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
 {
+    [Test]
+    public async Task Should_Not_Patch_A_Missing_Launch_Record()
+    {
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var result = await mediator.Send(new EditLaunchRecord.PatchRequest(LaunchRecordId.New()).ResetChanges(), TestContext.CancellationToken);
+
+        await result.Value.Should().BeOfType(typeof(NotFound));
+    }
+
     [Test]
     public async Task Should_Update_A_LaunchRecord()
     {
