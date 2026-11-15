@@ -72,6 +72,48 @@
         ],
         type: object
       },
+      ConflictProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            properties: {
+              case: {
+                enum: [
+                  Conflict
+                ],
+                type: string
+              }
+            },
+            required: [
+              case
+            ],
+            type: object
+          }
+        ]
+      },
+      ForbiddenProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            properties: {
+              case: {
+                enum: [
+                  Forbidden
+                ],
+                type: string
+              }
+            },
+            required: [
+              case
+            ],
+            type: object
+          }
+        ]
+      },
       LaunchRecordModel: {
         properties: {
           actualLaunchDate: {
@@ -112,6 +154,27 @@
           }
         },
         type: object
+      },
+      NotFoundProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            properties: {
+              case: {
+                enum: [
+                  NotFound
+                ],
+                type: string
+              }
+            },
+            required: [
+              case
+            ],
+            type: object
+          }
+        ]
       },
       PatchRequest: {
         properties: {
@@ -405,9 +468,10 @@
             },
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
+                  format: uri,
                   type: string
                 }
               }
@@ -427,7 +491,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -472,25 +546,37 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ]
                 }
               }
             },
-            description: Forbidden,
-            headers: {
-              www-authenticate: {
-                description: The error details,
-                schema: {
-                  type: string
-                }
-              }
-            }
+            description: Forbidden
           },
           404: {
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -540,7 +626,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -610,7 +706,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -680,7 +786,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -772,9 +888,10 @@
             },
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
+                  format: uri,
                   type: string
                 }
               }
@@ -794,7 +911,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      Conflict: #/components/schemas/ConflictProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ConflictProblem
+                    }
+                  ]
                 }
               }
             },
@@ -839,7 +966,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -889,7 +1026,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -959,7 +1106,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -1029,7 +1186,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -1133,7 +1300,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },

@@ -6,7 +6,8 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 /// <summary>One member of an error case, carried in the transport's error shape.</summary>
 /// <param name="Name">The C# property name.</param>
 /// <param name="WireName">The camel-cased name on the wire (a ProblemDetails extension, a GraphQL error extension).</param>
-internal sealed record UnionMemberModel(string Name, string WireName);
+/// <param name="Type">The member's type for <c>typeof</c>, fully qualified, which the generated OpenAPI transformers describe; null for problem data.</param>
+internal sealed record UnionMemberModel(string Name, string WireName, string? Type = null);
 
 /// <summary>An error case of a union response and what each transport answers for it.</summary>
 /// <param name="Name">The case name the wire carries: the case type's simple name (<c>NotFound</c>).</param>
@@ -239,7 +240,7 @@ internal static class UnionResults
             .Where(p => p is { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } && p.Name != "EqualityContract")
             .Where(p => members.All(m => m.Name != p.Name))
             .Where(p => !problemData || ProblemData.All(data => data.Property != p.Name))
-            .Select(p => new UnionMemberModel(p.Name, Naming.CamelCase(p.Name)))
+            .Select(p => new UnionMemberModel(p.Name, Naming.CamelCase(p.Name), p.Type.WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified()))
             .ToArray();
 
     // The gRPC status for an HTTP status an [ApiError] names without one: the mapping gRPC's own HTTP/2 gateway uses.

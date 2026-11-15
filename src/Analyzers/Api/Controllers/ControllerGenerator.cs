@@ -37,6 +37,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
     {
         // The helpers use the transport's library, so only a project with a host of this kind gets them.
         if (!hosts.IsEmpty) output.AddSource("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs", ControllerHelpers);
+        if (hosts.Any(h => h.HasOpenApi)) output.AddSource("Rocket.Surgery.LaunchPad.Api.Generated.ControllerOpenApi.g.cs", OpenApiEmit.Helpers(Generated.Replace("global::", ""), true));
         // Endpoint names are global to an application: an operation listed on two hosts gets its host noun in front.
         var duplicateNames = hosts.SelectMany(h => h.Operations.Select(o => o.EndpointName)).GroupBy(n => n).Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
         foreach (var host in hosts)
@@ -74,6 +75,18 @@ public sealed class ControllerGenerator : IIncrementalGenerator
             }
 
             actions.Add(Action(host, profile, operation, service, duplicateNames.Contains(operation.EndpointName)));
+            // The action's OpenAPI transformer, a nested type its [ApiOpenApi<T>] convention names.
+            if (OpenApiEmit.NeedsTransformer(host, operation))
+            {
+                actions.Add(
+                    Class(
+                        $"__{operation.Name}OpenApi",
+                        Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.SealedKeyword),
+                        [OpenApiEmit.Transformer(operation, "TransformAsync", Generated, Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword))],
+                        Type($"{Generated}.IApiOpenApiTransformer")
+                    )
+                );
+            }
         }
 
         // What the host declares stays; the rest is added: [ApiController], [Route], the ControllerBase base.
@@ -125,6 +138,10 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         if (operation.AllowAnonymous) yield return Attribute("global::Microsoft.AspNetCore.Authorization.AllowAnonymous");
         if (host.HasApiVersioning && ServerEmit.Version(host, operation) is { } version) yield return Attribute("global::Asp.Versioning.MapToApiVersion", Arg(Literal(version)));
         foreach (var produces in Produces(operation)) yield return produces;
+        if (!host.HasOpenApi) yield break;
+        // Marks the action as generated, so LaunchPad's OpenAPI filters for hand-written endpoints leave it to its own transformer.
+        yield return GeneratedCode(OpenApiEmit.MarkerTool, typeof(ControllerGenerator).Assembly.GetName().Version);
+        if (OpenApiEmit.NeedsTransformer(host, operation)) yield return Attribute($"{Generated}.ApiOpenApi<__{operation.Name}OpenApi>");
     }
 
     // [ProducesResponseType] for every status the action can answer, so ApiExplorer describes it without reading the body.
@@ -155,6 +172,12 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         foreach (var status in operation.Union?.Errors.Select(e => e.StatusCode).Distinct().Where(s => s != 400 || !binds) ?? [])
         {
             yield return ProducesResponseType(Type($"{Mvc}.ProblemDetails"), status, "application/problem+json");
+        }
+
+        // An operation that requires authorization can be challenged (401) or forbidden (403); the authorization middleware answers without a body.
+        foreach (var status in OpenApiEmit.AuthorizationStatuses(operation))
+        {
+            yield return ProducesResponseType(null, status, null);
         }
     }
 

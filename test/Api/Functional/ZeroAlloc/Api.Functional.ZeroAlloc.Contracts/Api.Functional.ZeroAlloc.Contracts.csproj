@@ -6,6 +6,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="ZeroAlloc.Mediator" />
+        <!-- ScheduleLaunch's rules, which the generators state in the OpenAPI document. -->
+        <PackageReference Include="ZeroAlloc.Validation" />
         <PackageReference Include="Polyfill" PrivateAssets="all" />
     </ItemGroup>
 </Project>

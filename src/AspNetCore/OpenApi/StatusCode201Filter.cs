@@ -7,6 +7,7 @@ internal class StatusCode201Filter : IOpenApiOperationTransformer
 {
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
+        if (context.IsGenerated()) return Task.CompletedTask;
         // enhance the 201 with the response header
         if (operation.Responses?.TryGetValue("201", out var value) is not true || value is not OpenApiResponse response)
             return Task.CompletedTask;

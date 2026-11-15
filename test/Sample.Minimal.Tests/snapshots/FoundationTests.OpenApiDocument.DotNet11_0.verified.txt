@@ -76,10 +76,11 @@
           201: {
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
-                  type: string
+                  type: string,
+                  format: uri
                 }
               }
             },
@@ -106,7 +107,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -157,7 +168,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -216,7 +237,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -275,7 +306,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -314,18 +355,20 @@
           },
           403: {
             description: Forbidden,
-            headers: {
-              www-authenticate: {
-                description: The error details,
-                schema: {
-                  type: string
-                }
-              }
-            },
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
                 }
               }
             }
@@ -335,7 +378,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -409,10 +462,11 @@
           201: {
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
-                  type: string
+                  type: string,
+                  format: uri
                 }
               }
             },
@@ -439,7 +493,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ConflictProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Conflict: #/components/schemas/ConflictProblem
+                    }
+                  }
                 }
               }
             }
@@ -490,7 +554,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -549,7 +623,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -608,7 +692,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -650,7 +744,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -732,6 +836,48 @@
           }
         }
       },
+      ConflictProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            required: [
+              case
+            ],
+            type: object,
+            properties: {
+              case: {
+                enum: [
+                  Conflict
+                ],
+                type: string
+              }
+            }
+          }
+        ]
+      },
+      ForbiddenProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            required: [
+              case
+            ],
+            type: object,
+            properties: {
+              case: {
+                enum: [
+                  Forbidden
+                ],
+                type: string
+              }
+            }
+          }
+        ]
+      },
       LaunchRecordModel: {
         type: object,
         properties: {
@@ -772,6 +918,27 @@
             $ref: #/components/schemas/RocketType
           }
         }
+      },
+      NotFoundProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            required: [
+              case
+            ],
+            type: object,
+            properties: {
+              case: {
+                enum: [
+                  NotFound
+                ],
+                type: string
+              }
+            }
+          }
+        ]
       },
       PatchRequest: {
         required: [

@@ -79,6 +79,8 @@ internal static class HostReader
             },
             // A gRPC service host's GetProto() needs protobuf-net.Grpc.Reflection's schema generator.
             kind == HostKind.GrpcService && compilation.GetTypeByMetadataName("ProtoBuf.Grpc.Reflection.SchemaGenerator") is { },
+            // The OpenAPI transformers need Microsoft.AspNetCore.OpenApi; without it an HTTP host describes itself through metadata alone.
+            kind is HostKind.MinimalApi or HostKind.Controller && compilation.GetTypeByMetadataName(OpenApiEmit.TransformerContext) is { },
             profile.Profile,
             operations.ToEquatableArray(),
             diagnostics.ToEquatableArray(),
@@ -488,7 +490,8 @@ internal static class HostReader
                     member.CanInit,
                     member.ConstructorIndex,
                     source is BindingSource.Route or BindingSource.Query or BindingSource.Header ? ParseKindOf(Element(member.Type)) : ParseKind.None,
-                    source is BindingSource.Route or BindingSource.Query or BindingSource.Header ? Element(member.Type).WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified() : null
+                    source is BindingSource.Route or BindingSource.Query or BindingSource.Header ? Element(member.Type).WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified() : null,
+                    source is BindingSource.Service or BindingSource.Ignored ? EquatableArray<SchemaRuleModel>.Empty : SchemaRules.Read(member.Attributes)
                 )
             );
         }

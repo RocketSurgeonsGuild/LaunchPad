@@ -7,6 +7,7 @@ internal class AuthorizeFilter : IOpenApiOperationTransformer
 {
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
+        if (context.IsGenerated()) return Task.CompletedTask;
         // enhance the 401/403 with the media response
         AddAuthenticateHeader(operation, "401");
         AddAuthenticateHeader(operation, "403");

@@ -62,6 +62,8 @@ public static partial class RocketsEndpoints
             endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[3], false, false));
             endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[4], false, false));
             endpoint.WithMetadata(new ProducesResponseTypeMetadata(400, typeof(ProblemDetails), new string[] { "application/problem+json" }));
+            endpoint.WithMetadata(new ProducesResponseTypeMetadata(401, typeof(void)));
+            endpoint.WithMetadata(new ProducesResponseTypeMetadata(403, typeof(void)));
             endpoint.WithName("SearchRockets");
             endpoint.WithSummary("Search");
             endpoint.WithDescription("Find rockets");
@@ -82,6 +84,8 @@ public static partial class RocketsEndpoints
             endpoint.WithMetadata(new ApiParameterBindingMetadata(parameters[3], false, false));
             endpoint.WithMetadata(new ApiAcceptsMetadata(typeof(global::Sample.Contracts.LaunchRocket.Request)));
             endpoint.WithMetadata(new ProducesResponseTypeMetadata(400, typeof(ProblemDetails), new string[] { "application/problem+json" }));
+            endpoint.WithMetadata(new ProducesResponseTypeMetadata(401, typeof(void)));
+            endpoint.WithMetadata(new ProducesResponseTypeMetadata(403, typeof(void)));
             endpoint.WithName("LaunchRocket");
             endpoint.RequireAuthorization(new AuthorizeAttribute() { Roles = "pilot", AuthenticationSchemes = "Bearer" });
             ConfigureLaunchRocket(endpoint);

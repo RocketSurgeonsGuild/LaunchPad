@@ -22,6 +22,8 @@ public static class ServerApp
         builder.Services.AddProblemDetails();
         builder.Services.AddFixtureOpenApi();
         builder.Services.AddMediator();
+        // ScheduleLaunch requires the "launch" policy.
+        if (unions) builder.Services.AddAuthorization(options => options.AddPolicy("launch", policy => policy.RequireAuthenticatedUser()));
         if (controllers)
         {
             var mvc = builder.Services.AddControllers().AddApplicationPart(typeof(ServerApp).Assembly);
@@ -110,10 +112,12 @@ public partial class RocketsMutations;
 // LaunchRocket returns a union on every transport, ListLaunches a stream of unions (not on GraphQL, which has no streams).
 [Operation<LaunchRocket.Request>(Route = "{id}")]
 [Operation<ListLaunches.Request>]
+[Operation<ScheduleLaunch.Request>(Route = "{id}/schedule", Policy = new[] { "launch" })]
 public static partial class LaunchesEndpoints;
 
 [Operation<LaunchRocket.Request>(Route = "{id}")]
 [Operation<ListLaunches.Request>]
+[Operation<ScheduleLaunch.Request>(Route = "{id}/schedule", Policy = new[] { "launch" })]
 public partial class LaunchesController;
 
 [Operation<LaunchRocket.Request>]
@@ -172,6 +176,12 @@ public sealed class LaunchRocketHandler(RocketStore store) : IRequestHandler<Lau
                 var name => new RocketModel(request.Id, name),
             }
         );
+}
+
+public sealed class ScheduleLaunchHandler(RocketStore store) : IRequestHandler<ScheduleLaunch.Request, LaunchRocketResult>
+{
+    public ValueTask<LaunchRocketResult> Handle(ScheduleLaunch.Request request, CancellationToken cancellationToken) =>
+        new(store.Find(request.Id) is { } name ? new RocketModel(request.Id, name) : new RocketNotFound(request.Id));
 }
 
 public sealed class ListLaunchesHandler(RocketStore store) : IStreamRequestHandler<ListLaunches.Request, LaunchRocketResult>

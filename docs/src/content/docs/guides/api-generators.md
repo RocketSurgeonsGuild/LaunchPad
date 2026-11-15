@@ -324,8 +324,7 @@ matches no name and has no `[ApiError]` is LPAD1028. Each transport carries the 
 
 - **HTTP**: ProblemDetails (`application/problem+json`) with the status, the case name in a `case` extension and the case's members as
   camel-cased extensions; a problem's detail, title, link (as `type`) and instance fill those fields and its properties are extensions.
-  Each status is described in OpenAPI as a ProblemDetails response; a schema per case is planned with the OpenAPI
-  transformers (#3149).
+  In OpenAPI each status has a schema per case, keyed on `case` (see [OpenAPI documents](#openapi-documents)).
 - **gRPC**: an `RpcException` with the status, the case name in the `case` trailer and the case, serialized by protobuf-net, in the
   `case-bin` trailer (left out for a case without members). A problem's detail is the status message and it has no `case-bin`. A case with members needs `[DataContract]` or `[ProtoContract]` (LPAD1014), and
   `GetProto()` declares its message.
@@ -338,6 +337,57 @@ response's ProblemDetails when nothing was written yet, otherwise as a last NDJS
 above. GraphQL hosts skip streams (LPAD1015).
 
 `NotFoundException` and a `null` response keep answering 404 for handlers that don't return a union.
+
+### OpenAPI documents
+
+Generated endpoints describe themselves to ApiExplorer, so `AddOpenApi()` documents them like hand-written ones: the endpoint name is the
+operation id, the XML summary and remarks (or `Summary` and `Description`) the summary and description, and every status the endpoint
+answers is a response. An operation with `Policy`, `Roles` or `AuthenticationSchemes` (and without `AllowAnonymous`) also lists 401 and 403.
+
+When the server references Microsoft.AspNetCore.OpenApi, each endpoint also gets a generated operation transformer for what metadata can't
+say. It is registered on the endpoint itself: `Map{Host}()` calls `AddOpenApiOperationTransformer`, and a controller action carries a
+convention attribute that adds the same metadata to the action. The application registers nothing, and nothing is read by reflection when the
+document is built.
+
+- **Union cases.** Each error status of a union response is a `oneOf` of one schema per case, with a discriminator on `case`. A case's
+  schema, `{Case}Problem` in the components, is the ProblemDetails with `case` (an enum of the case name) and the case's members:
+
+    ```yaml
+    RocketNotFoundProblem:
+        allOf:
+            - $ref: '#/components/schemas/ProblemDetails'
+            - type: object
+              required: [case]
+              properties:
+                  case: { type: string, enum: [RocketNotFound] }
+                  id: { type: string, format: uuid }
+    ```
+
+    A 400 that the endpoint also answers for a value it can't bind keeps its plain ProblemDetails schema, since that problem has no case.
+
+- **Created.** A `[Creates]` response's 201 has a `Location` header.
+- **Authorization.** The 401 has a `WWW-Authenticate` header.
+- **Validation rules.** ZeroAlloc.Validation rules on the request's members are read at compile time and written into the request body's
+  schema or the route, query and header parameters:
+
+    | Rule                                                                  | Schema                                     |
+    | --------------------------------------------------------------------- | ------------------------------------------ |
+    | `[NotNull]`                                                           | required                                   |
+    | `[NotEmpty]`                                                          | required, `minLength: 1` (`minItems: 1`)   |
+    | `[MinLength]`, `[MaxLength]`, `[Length]`                              | `minLength`/`maxLength` (items for a list) |
+    | `[InclusiveBetween]`, `[GreaterThanOrEqualTo]`, `[LessThanOrEqualTo]` | `minimum`/`maximum`                        |
+    | `[ExclusiveBetween]`, `[GreaterThan]`, `[LessThan]`                   | `exclusiveMinimum`/`exclusiveMaximum`      |
+    | `[Matches]`                                                           | `pattern`                                  |
+    | `[EmailAddress]`                                                      | `format: email`                            |
+    | `[IsEnumName(typeof(E))]`                                             | `enum` of `E`'s names                      |
+
+    A rule with `When` or `Unless` holds only sometimes and is left out, as are rules a schema can't state (`[Must]`, `[ValidateWith]`, custom
+    and async rules, `[PrecisionScale]`, `[Equal]`, `[NotEqual]`, `[Null]`, `[Empty]`). The rules constrain the request type's schema in the
+    components, so every operation that carries the type shows them. A member whose schema is a shared reference (a strong type) keeps it.
+
+Strong types are described by the Primitives package's own transformer (see [strong types](../../concepts/strong-types/)). LaunchPad's
+OpenAPI filters for hand-written endpoints (`OpenApiJoint`: operation ids, parameter names, the 201 header, the 401/403 header, media types)
+skip generated endpoints, which carry `GeneratedCodeAttribute` metadata with the tool `Rocket.Surgery.LaunchPad.Api`.
 
 ## Generating clients
 
