@@ -14,13 +14,16 @@ namespace Graphql.Tests;
 public class GraphqlJointTests
 {
     [Test]
-    public async Task Gives_Not_Found_Exceptions_The_Notfound_Code()
+    public async Task Gives_An_Unexpected_Exception_Its_Message_And_The_Unknown_Code()
     {
         var executor = await Executor();
 
         var result = ( await executor.ExecuteAsync("{ missing }") ).ExpectOperationResult();
 
-        await ( await result.Errors.Should().HaveSingleItem() ).Code.Should().BeEqualTo("NOTFOUND");
+        // a failure an operation reports is a union response, which the generated mutations answer with its own code; an exception is unexpected
+        var error = await result.Errors.Should().HaveSingleItem();
+        await error.Message.Should().BeEqualTo("nothing here");
+        await error.Code.Should().BeEqualTo("UNKNOWN");
     }
 
     // Before it became a joint, this wiring took FoundationOptions and an empty RocketChocolateOptions in its constructor but never read them,
@@ -87,6 +90,6 @@ public class GraphqlJointTests
 
     public class Query
     {
-        public string Missing() => throw new NotFoundException("nothing here");
+        public string Missing() => throw new InvalidOperationException("nothing here");
     }
 }

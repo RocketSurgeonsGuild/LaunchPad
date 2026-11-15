@@ -21,7 +21,12 @@ public class RocketCreateModel : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        ( await Mediator.Send(Model, HttpContext.RequestAborted) ).Value.Expect<CreateRocket.Response>();
+        if (!( await Mediator.Send(Model, HttpContext.RequestAborted) ).Value.TryGetValue<CreateRocket.Response>(out _, out var problem))
+        {
+            ModelState.AddModelError(string.Empty, problem.Message());
+            return Page();
+        }
+
         return RedirectToPage("Index");
     }
 }

@@ -20,4 +20,4 @@ A stream of unions streams its value cases and ends with the first error case.
 
 ## Consequences
 
-The case name and the member names of error cases are part of an API's wire contract. Renaming a case type is a breaking change for clients. Exceptions (`NotFoundException`, …) keep working for handlers that don't return unions, until the samples move to unions.
+The case name and the member names of error cases are part of an API's wire contract. Renaming a case type is a breaking change for clients. The exceptions (`NotFoundException`, …), their filters and their interceptors were removed once the samples moved to unions (#3216), so an operation reports a failure only with a union response; an exception answers as an unexpected error.
