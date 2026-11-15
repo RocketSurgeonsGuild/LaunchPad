@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
-using System.Xml.Linq;
+
+using Hosting.Tests.Scaffolding;
 
 namespace Sdk.Tests.Scaffolding;
 
@@ -20,30 +21,18 @@ internal static class Repository
     public static JsonObject DotnetSdk { get; } = JsonNode.Parse(File.ReadAllText(Path.Combine(Root, "global.json")))!["sdk"]!.AsObject();
 
     /// <summary>
-    ///     The version <c>Directory.Packages.props</c> pins for <paramref name="packageId" /> on <paramref name="targetFramework" />. The
-    ///     Microsoft packages are pinned once per release line, in item groups conditioned on the target framework, and the packages every
-    ///     project gets are pinned as <c>GlobalPackageReference</c>.
+    ///     The target frameworks the repository declares (<c>LaunchPadTargetFrameworks</c> in <c>Directory.Build.props</c>), which the
+    ///     throwaway projects target in turn (<see cref="TargetFrameworksAttribute" />).
+    /// </summary>
+    public static IReadOnlyList<string> TargetFrameworks { get; } = PinnedPackages.TargetFrameworks(Root);
+
+    /// <summary>
+    ///     The version <c>Directory.Packages.props</c> pins for <paramref name="packageId" /> on <paramref name="targetFramework" />.
     /// </summary>
     /// <param name="packageId">The package id.</param>
-    /// <param name="targetFramework">The target framework (<c>net10.0</c> or <c>net11.0</c>).</param>
+    /// <param name="targetFramework">The target framework, one of <see cref="TargetFrameworks" />.</param>
     /// <returns>The pinned version.</returns>
-    public static string PackageVersion(string packageId, string targetFramework)
-    {
-        var document = XDocument.Load(Path.Combine(Root, "Directory.Packages.props"));
-        var net11 = targetFramework == "net11.0";
-        foreach (var group in document.Root!.Elements("ItemGroup"))
-        {
-            // the net10.0 line is conditioned on !IsTargetFrameworkCompatible(..., 'net11.0'), the net11.0 line on the same without the !
-            if (( (string?)group.Attribute("Condition") )?.Trim() is { Length: > 0, } condition && condition.StartsWith('!') == net11) continue;
-
-            foreach (var item in group.Elements().Where(z => z.Name.LocalName is "PackageVersion" or "GlobalPackageReference" && (string?)z.Attribute("Include") == packageId))
-            {
-                return (string?)item.Attribute("Version") ?? item.Element("Version")?.Value ?? throw new InvalidOperationException($"{packageId} has no version");
-            }
-        }
-
-        throw new InvalidOperationException($"Directory.Packages.props does not pin {packageId} for {targetFramework}");
-    }
+    public static string PackageVersion(string packageId, string targetFramework) => PinnedPackages.Version(Root, packageId, targetFramework);
 
     private static string FindRoot()
     {
