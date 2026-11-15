@@ -20,7 +20,7 @@ public class FoundationTests : WebAppFixtureTest
         var response = await AlbaHost.Server.CreateClient().GetAsync("/openapi/v1.json", TestContext.CancellationToken);
         var document = await response.Content.ReadAsStringAsync(TestContext.CancellationToken);
         await response.StatusCode.Should().Because(document).BeEqualTo(HttpStatusCode.OK);
-        // net10.0 serves OpenAPI 3.1 and net11.0 OpenAPI 3.2
+        // one snapshot per target framework: each ASP.NET Core release serves its own OpenAPI version (3.2 on .NET 11)
         await VerifyJson(document).UniqueForTargetFrameworkAndVersion();
     }
 }

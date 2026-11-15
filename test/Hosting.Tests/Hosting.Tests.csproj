@@ -3,8 +3,9 @@
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <!--
             The test application is an executable. TUnit's package targets say so too, but restore doesn't see them, so without this a restore
-            of this project alone skips the net10.0 apphost pack (the SDK only carries its own version's) and the build then fails with
-            MSB3030 on obj/Release/net10.0/apphost. In a build of the whole solution another project downloads the pack first.
+            of this project alone skips the apphost pack of a target framework older than the SDK (the SDK only carries its own version's)
+            and the build then fails with MSB3030 on obj/Release/&lt;framework&gt;/apphost. In a build of the whole solution another project
+            downloads the pack first.
         -->
         <OutputType>Exe</OutputType>
         <!--

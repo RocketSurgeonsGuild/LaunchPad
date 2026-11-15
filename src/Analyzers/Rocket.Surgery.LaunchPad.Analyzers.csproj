@@ -18,7 +18,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
-        <!-- The oldest Roslyn the generators support: the compiler of the .NET 10 SDK, so an application on either SDK can load them. -->
+        <!-- The oldest Roslyn the generators support (the compiler of the .NET 10 SDK): every SDK that builds LaunchPad's net11.0 applications has a newer one. -->
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0" PrivateAssets="all" />
     </ItemGroup>
