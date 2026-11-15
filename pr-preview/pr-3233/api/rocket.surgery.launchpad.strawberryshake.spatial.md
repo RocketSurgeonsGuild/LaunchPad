@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.StrawberryShake.Spatial
 
 - Package: `Rocket.Surgery.LaunchPad.StrawberryShake.Spatial`
-- Version: `2.0.1-pr.1203`
+- Version: `2.0.1-pr.1208`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.StrawberryShake.Spatial](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial)
 
@@ -9,8 +9,9 @@
 
 ### Rocket.Surgery.LaunchPad.StrawberryShake.Spatial
 
-- [CoordinatesSerializer](/LaunchPad/pr-preview/pr-3233/api/rocket.surgery.launchpad.strawberryshake.spatial/coordinatesserializer.md) -- `class` -- A general purpose serializer for Coordinates
+- [CoordinatesSerializer](/LaunchPad/pr-preview/pr-3233/api/rocket.surgery.launchpad.strawberryshake.spatial/coordinatesserializer.md) -- `class` -- Serializes HotChocolate's `Coordinates` scalar, a list of positions of arbitrary depth (the coordinates of a `GeoJSONMultiPolygonType`, for example)
 - [GeometrySerializer](/LaunchPad/pr-preview/pr-3233/api/rocket.surgery.launchpad.strawberryshake.spatial/geometryserializer.md) -- `class` -- General purpose Geometry Serializer
+- [PositionSerializer](/LaunchPad/pr-preview/pr-3233/api/rocket.surgery.launchpad.strawberryshake.spatial/positionserializer.md) -- `class` -- Serializes HotChocolate's `Position` scalar, a GeoJSON position ( `[x, y]` or `[x, y, z]`), as a `Geometries.Coordinate`
 
 ### Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.Joints
 

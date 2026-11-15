@@ -14,8 +14,8 @@ flowchart LR
   E -- "GET /api/rockets/{id}" --> A
 ```
 
-The generators work with MediatR, [martinothamar/Mediator](https://github.com/martinothamar/Mediator), ChannelMediator,
-Immediate.Handlers, Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
+The generators work with [martinothamar/Mediator](https://github.com/martinothamar/Mediator), ChannelMediator, Immediate.Handlers,
+Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
 scanning assemblies, and the generated Minimal API endpoints are native AOT safe.
 
 This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) servers, and generating clients for them.
@@ -334,7 +334,9 @@ A stream of unions (`IAsyncEnumerable<LaunchRocketResult>`) streams its value ca
 response's ProblemDetails when nothing was written yet, otherwise as a last NDJSON line holding the problem; over gRPC, as the `RpcException`
 above. GraphQL hosts skip streams (LPAD1015).
 
-`NotFoundException` and a `null` response keep answering 404 for handlers that don't return a union.
+A `null` response still answers 404 for a nullable response that isn't a union. Throwing is not a way to report a failure: LaunchPad has no
+exceptions, filters or interceptors that turn an exception into a 404 or a 400 any more, so an exception a handler throws answers as an
+unexpected error (500 over HTTP).
 
 ## Generating clients
 
@@ -372,12 +374,11 @@ Things to know:
 
 ## Mediator profiles
 
-The generators find your mediator from the libraries the project references. Exactly one of the built-in profiles must match, or you
+The generators find your mediator from the libraries the project references. Exactly one of the five built-in profiles must match, or you
 declare one (LPAD1002):
 
 | Mediator               | Requests                                                                                                     | Server dispatches through       |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------- |
-| MediatR                | `IRequest<T>`, `IRequest`, `IStreamRequest<T>`                                                               | `ISender`                       |
 | martinothamar/Mediator | `IRequest<T>`, `ICommand<T>`, `IQuery<T>`, `ICommand` and stream variants                                    | `ISender`                       |
 | ChannelMediator        | `IRequest<T>`, `IRequest`, `IStreamRequest<T>`                                                               | `IMediator`                     |
 | Immediate.Handlers     | anything; the response comes from the `[Handler]` (a bare `ValueTask` is void) or `[ApiOperation(Response)]` | `IHandler<TRequest, TResponse>` |
@@ -420,7 +421,18 @@ internal partial class EditRocketHandler(RocketDbContext dbContext, IMediator me
     public async ValueTask<RocketModel> Handle(Request request, CancellationToken cancellationToken) => /* ... */;
 
     private partial async ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
-        MapRequest(await dbContext.Rockets.FindAsync([request.Id], cancellationToken) ?? throw new NotFoundException());
+        MapRequest(await dbContext.Rockets.SingleAsync(z => z.Id == request.Id, cancellationToken));
+}
+```
+
+`GetRequest` returns a request, so it can't answer an error case. When the entity can be missing and the operation answers a union,
+implement the patch's handle method yourself; the generator writes nothing for a handler that already has one:
+
+```csharp
+public async ValueTask<Result> Handle(PatchRequest request, CancellationToken cancellationToken)
+{
+    if (await dbContext.Rockets.FindAsync([request.Id], cancellationToken) is not { } rocket) return new NotFound($"Rocket {request.Id} was not found");
+    return await mediator.Send(request.ApplyChanges(MapRequest(rocket)), cancellationToken);
 }
 ```
 

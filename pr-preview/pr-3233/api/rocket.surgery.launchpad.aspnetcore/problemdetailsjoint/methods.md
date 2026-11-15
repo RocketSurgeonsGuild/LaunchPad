@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `1`
 
-Registers problem details and the exception handler status codes for the LaunchPad exceptions. Implements the `Joints.IServiceJoint`
+Registers problem details, filling in their title and type from the client error mapping of `Mvc.ApiBehaviorOptions`. Implements the `Joints.IServiceJoint`
 
 <a id="register"></a>
 <a id="register-idovetailcontext-iservicecollection"></a>

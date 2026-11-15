@@ -2,12 +2,12 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3233/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1203`
+- Version: `2.0.1-pr.1208`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
-Registers problem details and the exception handler status codes for the LaunchPad exceptions. Implements the `Joints.IServiceJoint`
+Registers problem details, filling in their title and type from the client error mapping of `Mvc.ApiBehaviorOptions`. Implements the `Joints.IServiceJoint`
 
 ## Definition
 
