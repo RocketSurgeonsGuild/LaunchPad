@@ -41,6 +41,7 @@
     <File Path=".github/workflows/draft-release.yml" />
     <File Path=".github/workflows/lint.yml" />
     <File Path=".github/workflows/publish-results.yml" />
+    <File Path=".github/workflows/samples.yml" />
     <File Path=".github/workflows/sync-labels.yml" />
     <File Path=".github/workflows/update-milestone.yml" />
   </Folder>
