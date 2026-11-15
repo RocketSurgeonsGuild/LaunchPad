@@ -11,30 +11,15 @@
       "depNameTemplate": "dotnet-sdk",
       "datasourceTemplate": "dotnet-version",
       "versioningTemplate": "semver"
-    },
-    {
-      "customType": "regex",
-      "description": "The extra ASP.NET Core runtime pinned in mise (it carries the .NET runtime too; Renovate's mise manager ignores the runtime element)",
-      "managerFilePatterns": ["/^\\.config/mise\\.toml$/"],
-      "matchStrings": ["version = \"(?<currentValue>[^\"]+)\", runtime = \"aspnetcore\""],
-      "depNameTemplate": "dotnet-runtime",
-      "datasourceTemplate": "dotnet-version",
-      "versioningTemplate": "semver"
     }
   ],
   "packageRules": [
     {
-      "description": "Ship the .NET SDK (global.json and mise.toml) and the extra runtime in the same PR as the NuGet packages, rather than splitting the runtime into its own patch PR",
-      "matchDepNames": ["dotnet-sdk", "dotnet-runtime"],
+      "description": "Ship the .NET SDK (global.json and mise.toml) in the same PR as the NuGet packages",
+      "matchDepNames": ["dotnet-sdk"],
       "groupName": "dotnet monorepo",
       "separateMinorPatch": false,
       "separateMultipleMinor": false
-    },
-    {
-      "description": "net10.0 assets stay on the 10.0.x release train; the net11.0 group in Directory.Packages.props moves along 11.0.x",
-      "matchPackageNames": ["Microsoft.AspNetCore.*", "Microsoft.EntityFrameworkCore*", "Microsoft.Extensions.*", "System.Net.Http.Json", "System.Text.Json"],
-      "matchCurrentVersion": "/^10\\./",
-      "allowedVersions": "<11.0.0"
     },
     {
       "matchCategories": ["js"],
