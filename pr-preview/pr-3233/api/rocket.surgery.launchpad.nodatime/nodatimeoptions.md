@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime](/LaunchPad/pr-preview/pr-3233/api/rocket.surgery.launchpad.nodatime.md)
-- Version: `2.0.1-pr.1208`
+- Version: `2.0.1-pr.1209`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime`
 - Target framework: `net10.0`
 
