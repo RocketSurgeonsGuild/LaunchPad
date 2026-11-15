@@ -54,8 +54,14 @@ internal static class Documentation
     {
         var text = Element(symbol.GetDocumentationCommentXml(), "summary")
                 ?? ( symbol.GetDocumentationCommentId() is { } id && referenced.TryGetValue(id, out var entry) ? entry.Summary : null );
-        return  text is { Length: > 0 } || symbol is not IPropertySymbol { ContainingType: { } type } property 
-            ? text
+        return text is { Length: > 0 } ? text : RecordParameter(symbol, referenced);
+    }
+
+    // A positional record's property: the record's <param> of the same name.
+    private static string? RecordParameter(ISymbol symbol, IReadOnlyDictionary<string, DocumentationEntry> referenced)
+    {
+        return  symbol is not IPropertySymbol { ContainingType: { } type } property 
+            ? (string?)null  
             :  Parameter(type.GetDocumentationCommentXml(), property.Name)
             ?? ( type.GetDocumentationCommentId() is { } typeId && referenced.TryGetValue(ParameterId(typeId, property.Name), out var parameter) ? parameter.Summary : null );
     }
