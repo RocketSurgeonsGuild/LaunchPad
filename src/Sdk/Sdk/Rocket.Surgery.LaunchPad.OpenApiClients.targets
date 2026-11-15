@@ -86,9 +86,6 @@
         />
     </ItemGroup>
 
-    <PropertyGroup>
-        <LaunchPadOpenApiClientsDirectory Condition="'$(LaunchPadOpenApiClientsDirectory)' == ''">$(IntermediateOutputPath)openapi/</LaunchPadOpenApiClientsDirectory>
-    </PropertyGroup>
 
     <!--
         Generates every client that is out of date and adds the generated code to the compilation. A design-time build only adds what an
@@ -106,6 +103,10 @@
 
     <!-- Checks each client and decides where its files go. -->
     <Target Name="_LaunchPadPrepareOpenApiClients">
+        <!-- read here rather than when the project is evaluated, so the file can be imported before IntermediateOutputPath is set -->
+        <PropertyGroup>
+            <LaunchPadOpenApiClientsDirectory Condition="'$(LaunchPadOpenApiClientsDirectory)' == ''">$(IntermediateOutputPath)openapi/</LaunchPadOpenApiClientsDirectory>
+        </PropertyGroup>
         <Error
             Condition="'%(OpenApiClient.Generator)' != 'Kiota' and '%(OpenApiClient.Generator)' != 'Refitter'"
             Code="LPSDK0100"
