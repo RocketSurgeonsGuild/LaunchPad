@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime](/LaunchPad/api/rocket.surgery.launchpad.nodatime.md)
-- Version: `2.0.1-beta.369`
+- Version: `2.0.1-beta.374`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.Joints`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`, `ISetupJoint`
 
 A joint that registers the clock, time provider and time zone provider. Implements the `Joints.IServiceJoint`

@@ -4,6 +4,9 @@ An application uses LaunchPad through the [LaunchPad SDK](../concepts/launchpad-
 the LaunchPad and Dovetail packages that match the project: its [host model](../concepts/host-models/) and the libraries it
 references directly.
 
+LaunchPad requires .NET 11 or later: the project targets `net11.0` (or a later framework) and builds with the .NET 11 SDK or
+later. On an older framework the SDK stops with `LPADSDK0001`, which names the minimum.
+
 In the snippets, replace `1.0.0` with the version of `Rocket.Surgery.LaunchPad.Sdk` you use.
 
 ## A worker or console application
@@ -14,11 +17,11 @@ Add the SDK next to the one the project already names:
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
   <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
   </ItemGroup>
 </Project>
 ```

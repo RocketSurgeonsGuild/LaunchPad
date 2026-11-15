@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.369`
+- Version: `2.0.1-beta.374`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongType<Isbn, string>`, `IComparable<Isbn>`, `IConvertible`, `IEquatable<Isbn>`, `IParsable<Isbn>`, `ISpanParsable<Isbn>`, `IEqualityOperators<Isbn, Isbn, bool>`
 
 An ISBN-10 or ISBN-13, valid under [IsbnRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/isbnrules.md).

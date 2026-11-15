@@ -5,7 +5,7 @@
 - Kind: `Constructors`
 - Members: `1`
 
-The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
+The request is well formed but fails validation: what a validator reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 <a id="constructor"></a>
 <a id="constructor-string"></a>
@@ -14,7 +14,7 @@ The request is well formed but fails validation: what FluentValidation reports. 
 
 - Name: `Constructor(string?)`
 
-The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
+The request is well formed but fails validation: what a validator reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 ```csharp
 public record UnprocessableEntity

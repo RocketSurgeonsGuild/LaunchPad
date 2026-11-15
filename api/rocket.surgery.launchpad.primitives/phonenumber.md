@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.369`
+- Version: `2.0.1-beta.374`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongType<PhoneNumber, string>`, `IComparable<PhoneNumber>`, `IConvertible`, `IEquatable<PhoneNumber>`, `IParsable<PhoneNumber>`, `ISpanParsable<PhoneNumber>`, `IEqualityOperators<PhoneNumber, PhoneNumber, bool>`
 
 A phone number in E.164 form, valid under [PhoneNumberRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/phonenumberrules.md).
