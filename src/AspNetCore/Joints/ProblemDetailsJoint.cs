@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -41,28 +40,38 @@ public class ProblemDetailsJoint : IServiceJoint
                                                           };
             }
         );
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, OnBeforeWriteProblemDetailsWriter>());
+        services
+           .AddOptions<ProblemDetailsOptions>()
+           .Configure<IOptions<ApiBehaviorOptions>>(
+                static (options, apiBehaviorOptions) =>
+                {
+                    var previous = options.CustomizeProblemDetails;
+                    options.CustomizeProblemDetails = context =>
+                                                      {
+                                                          ApplyClientErrorMapping(apiBehaviorOptions.Value, context.ProblemDetails);
+                                                          previous?.Invoke(context);
+                                                      };
+                }
+            );
 
         services
            .AddOptions<ApiBehaviorOptions>()
            .Configure(static options => options.SuppressModelStateInvalidFilter = true);
     }
-}
 
-internal class OnBeforeWriteProblemDetailsWriter(IOptions<ApiBehaviorOptions> apiBehaviorOptions) : IProblemDetailsWriter
-{
-    public ValueTask WriteAsync(ProblemDetailsContext context) => throw new NotImplementedException();
-
-    public bool CanWrite(ProblemDetailsContext context)
+    /// <summary>
+    ///     Fills in the title and the type of problem details from the client error mapping of <see cref="ApiBehaviorOptions" />, when its status has one
+    ///     and they are not already set.
+    /// </summary>
+    internal static void ApplyClientErrorMapping(ApiBehaviorOptions apiBehaviorOptions, ProblemDetails problemDetails)
     {
-        if (!context.ProblemDetails.Status.HasValue
-         || !apiBehaviorOptions.Value.ClientErrorMapping.TryGetValue(context.ProblemDetails.Status.Value, out var clientErrorData))
+        if (!problemDetails.Status.HasValue
+         || !apiBehaviorOptions.ClientErrorMapping.TryGetValue(problemDetails.Status.Value, out var clientErrorData))
         {
-            return false;
+            return;
         }
 
-        context.ProblemDetails.Title ??= clientErrorData.Title;
-        context.ProblemDetails.Type ??= clientErrorData.Link;
-        return false;
+        problemDetails.Title ??= clientErrorData.Title;
+        problemDetails.Type ??= clientErrorData.Link;
     }
 }

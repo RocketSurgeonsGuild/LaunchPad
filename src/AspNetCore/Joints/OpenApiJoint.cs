@@ -30,7 +30,6 @@ public partial class OpenApiJoint : IServiceJoint
                             {
                                 options.AddSchemaTransformer<NestedTypeSchemaFilter>();
                                 options.AddSchemaTransformer<ProblemDetailsSchemaFilter>();
-                                options.AddSchemaTransformer<StronglyTypedIdSchemaFilter>();
                                 options.AddOperationTransformer<OperationIdFilter>();
                                 options.AddOperationTransformer<StatusCode201Filter>();
                                 options.AddOperationTransformer<OperationMediaTypesFilter>();

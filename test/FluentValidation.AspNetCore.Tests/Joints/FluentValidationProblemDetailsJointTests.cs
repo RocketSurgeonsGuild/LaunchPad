@@ -61,9 +61,8 @@ public class FluentValidationProblemDetailsJointTests
 
         var writers = provider.GetServices<IProblemDetailsWriter>().Select(z => z.GetType().Name).ToList();
 
-        await writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)).Should().BeGreaterThan(writers.IndexOf("OnBeforeWriteProblemDetailsWriter"));
+        await writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)).Should().BeGreaterThanOrEqualTo(0);
         await writers.IndexOf(nameof(ValidationExceptionProblemDetailsWriter)).Should().BeGreaterThan(writers.IndexOf(nameof(FluentValidationProblemDetailsWriter)));
-        await writers.IndexOf("OnBeforeWriteProblemDetailsWriter").Should().BeGreaterThanOrEqualTo(0);
     }
 
     [Test]
