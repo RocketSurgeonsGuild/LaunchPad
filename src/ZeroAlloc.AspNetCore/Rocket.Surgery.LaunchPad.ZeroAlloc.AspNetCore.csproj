@@ -24,7 +24,7 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <InternalsVisibleTo Include="ZeroAlloc.AspNetCore.Tests" />
     </ItemGroup>
-    <!-- As in FluentValidation.AspNetCore: this package has no API of its own to describe, and the XML comment generator fails on duplicate keys. -->
+    <!-- This package has no API of its own to describe, and the XML comment generator fails on duplicate keys. -->
     <Target Name="RemoveOpenApiXmlCommentGenerator" AfterTargets="ResolveLockFileAnalyzers">
         <ItemGroup>
             <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.AspNetCore.OpenApi.SourceGenerators'" />

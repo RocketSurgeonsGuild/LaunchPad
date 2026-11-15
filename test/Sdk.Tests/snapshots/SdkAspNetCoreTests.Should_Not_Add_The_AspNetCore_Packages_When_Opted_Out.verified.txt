@@ -3,10 +3,9 @@
     WebApplication
   ],
   PackageReferences: [
-    FluentValidation,
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
-    Rocket.Surgery.LaunchPad.FluentValidation {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    ZeroAlloc.Validation
   ]
 }

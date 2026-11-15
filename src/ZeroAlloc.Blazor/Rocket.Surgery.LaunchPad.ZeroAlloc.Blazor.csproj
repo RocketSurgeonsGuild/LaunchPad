@@ -4,7 +4,7 @@
         <PackageDescription>ZeroAlloc.Validation for LaunchPad Blazor forms: a ZeroAllocValidator component that reports the registered validator's failures to the form.</PackageDescription>
         <PackageTags>$(PackageTags);zeroalloc;validation;blazor</PackageTags>
         <!--
-            ZeroAllocValidator lives in the Rocket.Surgery.LaunchPad.AspNetCore.Blazor namespace, next to FluentValidator. A namespace of
+            ZeroAllocValidator lives in the Rocket.Surgery.LaunchPad.AspNetCore.Blazor namespace. A namespace of
             Rocket.Surgery.LaunchPad.ZeroAlloc would shadow ZeroAlloc.* in LaunchPad code.
         -->
         <RootNamespace>Rocket.Surgery.LaunchPad.AspNetCore.Blazor</RootNamespace>
