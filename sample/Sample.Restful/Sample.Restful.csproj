@@ -11,7 +11,10 @@
         <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+        <!-- writes the OpenAPI document at build (OpenApiGenerateDocumentsOnBuild), which the sample tests generate their client from -->
+        <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" PrivateAssets="all" />
         <PackageReference Include="Humanizer.Core" />
+        <Compile Include="../Shared/SampleOpenApiSchemas.cs" Link="SampleOpenApiSchemas.cs" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />

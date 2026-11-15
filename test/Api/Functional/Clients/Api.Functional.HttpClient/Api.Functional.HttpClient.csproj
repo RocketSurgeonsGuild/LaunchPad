@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <!--
         The HTTP client Kiota generates from the servers' OpenAPI document, through the LaunchPad SDK's OpenApiClient item. The SDK's targets
-        are imported directly, as the repository builds against its own projects rather than the packed SDK; the exporter writes the
-        document before the client is prepared.
+        are imported through test/OpenApiClients.targets, as the repository builds against its own projects rather than the packed SDK; the
+        exporter writes the document before the client is prepared.
     -->
     <PropertyGroup>
         <ExportApiSpecsBeforeTargets>_LaunchPadPrepareOpenApiClients</ExportApiSpecsBeforeTargets>
@@ -17,8 +17,6 @@
         <PackageReference Include="Joinery.Dovetail" />
         <PackageReference Include="Microsoft.Extensions.Http" />
         <PackageReference Include="Microsoft.Kiota.Bundle" />
-        <!-- the Kiota tool, at the version Directory.Packages.props pins (the packed SDK writes it into LaunchPadKiotaVersion) -->
-        <PackageDownload Include="@(PackageVersion->WithMetadataValue('Identity', 'Microsoft.OpenApi.Kiota'))" Version="[%(Version)]" />
     </ItemGroup>
-    <Import Project="$(MSBuildThisFileDirectory)../../../../../src/Sdk/Sdk/Rocket.Surgery.LaunchPad.OpenApiClients.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)../../../../OpenApiClients.targets" />
 </Project>

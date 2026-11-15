@@ -1,0 +1,21 @@
+<Project>
+    <!--
+        OpenApiClient items for the repository's own projects, which build against the repository rather than the packed LaunchPad SDK:
+        imports the SDK's targets directly, after the project's items, and downloads the generator tools at the versions
+        Directory.Packages.props pins (the packed SDK writes them into LaunchPadKiotaVersion and LaunchPadRefitterVersion). The packages the
+        generated code needs, which the packed SDK adds, are the project's own references.
+    -->
+    <ItemGroup Condition="'@(OpenApiClient)' != ''">
+        <PackageDownload
+            Include="@(PackageVersion->WithMetadataValue('Identity', 'Microsoft.OpenApi.Kiota'))"
+            Version="[%(Version)]"
+            Condition="@(OpenApiClient->AnyHaveMetadataValue('Generator', 'Kiota')) == 'true'"
+        />
+        <PackageDownload
+            Include="@(PackageVersion->WithMetadataValue('Identity', 'Refitter'))"
+            Version="[%(Version)]"
+            Condition="@(OpenApiClient->AnyHaveMetadataValue('Generator', 'Refitter')) == 'true'"
+        />
+    </ItemGroup>
+    <Import Project="$(MSBuildThisFileDirectory)../src/Sdk/Sdk/Rocket.Surgery.LaunchPad.OpenApiClients.targets" />
+</Project>

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi;
 using Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
@@ -28,7 +27,11 @@ public partial class OpenApiJoint : IServiceJoint
 
         services.AddOpenApi(options =>
                             {
-                                options.AddSchemaTransformer<NestedTypeSchemaFilter>();
+                                // An operation's nested types (CreateRocket.Request) are named after their container: by their own name, every
+                                // nested Request would be one Request schema, and a client generated from the document would send the wrong body.
+                                options.CreateSchemaReferenceId = static type => type.Type is { DeclaringType: { } container, IsGenericType: false, }
+                                    ? container.Name + type.Type.Name
+                                    : OpenApiOptions.CreateDefaultSchemaReferenceId(type);
                                 options.AddSchemaTransformer<ProblemDetailsSchemaFilter>();
                                 options.AddOperationTransformer<OperationIdFilter>();
                                 options.AddOperationTransformer<StatusCode201Filter>();
@@ -46,12 +49,3 @@ public partial class OpenApiJoint : IServiceJoint
     internal static partial void ErrorAddingXMLComments(ILogger logger, Exception exception, string xmlFile);
 }
 
-internal class NestedTypeSchemaFilter : IOpenApiSchemaTransformer
-{
-    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
-    {
-        if (context is not { JsonTypeInfo.Type.DeclaringType: { } }) return Task.CompletedTask;
-        schema.AddExtension("x-schema-id", new JsonNodeExtension($"{context.JsonTypeInfo.Type.DeclaringType.Name}{context.JsonTypeInfo.Type.Name}"));
-        return Task.CompletedTask;
-    }
-}

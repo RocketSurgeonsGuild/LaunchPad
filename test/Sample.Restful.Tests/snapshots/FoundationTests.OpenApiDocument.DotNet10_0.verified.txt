@@ -48,6 +48,20 @@
         ],
         type: object
       },
+      AssignedOfRocketType: {
+        properties: {
+          hasValue: {
+            type: boolean
+          },
+          value: {
+            $ref: #/components/schemas/RocketType
+          }
+        },
+        required: [
+          value
+        ],
+        type: object
+      },
       AssignedOfstring: {
         properties: {
           hasValue: {
@@ -65,120 +79,7 @@
         ],
         type: object
       },
-      LaunchRecordModel: {
-        properties: {
-          actualLaunchDate: {
-            oneOf: [
-              {
-                type: null
-              },
-              {
-                $ref: #/components/schemas/OffsetDateTime
-              }
-            ]
-          },
-          id: {
-            $ref: #/components/schemas/LaunchRecordId
-          },
-          partner: {
-            type: string
-          },
-          payload: {
-            type: string
-          },
-          payloadWeightKg: {
-            format: int64,
-            pattern: ^-?(?:0|[1-9]\d*)$,
-            type: [
-              integer,
-              string
-            ]
-          },
-          rocketSerialNumber: {
-            type: string
-          },
-          rocketType: {
-            $ref: #/components/schemas/RocketType
-          },
-          scheduledLaunchDate: {
-            $ref: #/components/schemas/OffsetDateTime
-          }
-        },
-        type: object
-      },
-      PatchRequest: {
-        properties: {
-          actualLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
-          },
-          id: {
-            $ref: #/components/schemas/LaunchRecordId
-          },
-          partner: {
-            $ref: #/components/schemas/AssignedOfstring
-          },
-          payload: {
-            $ref: #/components/schemas/AssignedOfstring
-          },
-          payloadWeightKg: {
-            $ref: #/components/schemas/AssignedOfdouble
-          },
-          rocketId: {
-            $ref: #/components/schemas/AssignedOfRocketId
-          },
-          scheduledLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
-          }
-        },
-        required: [
-          id
-        ],
-        type: object,
-        x-schema-id: EditLaunchRecordPatchRequest
-      },
-      ProblemDetails: {
-        properties: {
-          detail: {
-            type: [
-              null,
-              string
-            ]
-          },
-          instance: {
-            type: [
-              null,
-              string
-            ]
-          },
-          status: {
-            format: int32,
-            pattern: ^-?(?:0|[1-9]\d*)$,
-            type: [
-              null,
-              integer,
-              string
-            ]
-          },
-          title: {
-            type: [
-              null,
-              string
-            ]
-          },
-          type: {
-            type: [
-              null,
-              string
-            ]
-          }
-        },
-        required: [
-          type,
-          title
-        ],
-        type: object
-      },
-      Request: {
+      CreateLaunchRecordRequest: {
         properties: {
           actualLaunchDate: {
             oneOf: [
@@ -226,17 +127,241 @@
           partner,
           payload
         ],
-        type: object,
-        x-schema-id: CreateLaunchRecordRequest
+        type: object
       },
-      Response: {
+      CreateLaunchRecordResponse: {
         properties: {
           id: {
             $ref: #/components/schemas/LaunchRecordId
           }
         },
-        type: object,
-        x-schema-id: CreateLaunchRecordResponse
+        type: object
+      },
+      CreateRocketRequest: {
+        properties: {
+          serialNumber: {
+            maxLength: 30,
+            minLength: 10,
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType
+          }
+        },
+        required: [
+          serialNumber
+        ],
+        type: object
+      },
+      CreateRocketResponse: {
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          }
+        },
+        type: object
+      },
+      EditLaunchRecordPatchRequest: {
+        properties: {
+          actualLaunchDate: {
+            $ref: #/components/schemas/AssignedOfOffsetDateTime
+          },
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
+          partner: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          payload: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          payloadWeightKg: {
+            $ref: #/components/schemas/AssignedOfdouble
+          },
+          rocketId: {
+            $ref: #/components/schemas/AssignedOfRocketId
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/AssignedOfOffsetDateTime
+          }
+        },
+        required: [
+          id
+        ],
+        type: object
+      },
+      EditLaunchRecordRequest: {
+        properties: {
+          actualLaunchDate: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
+          },
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
+          partner: {
+            minLength: 1,
+            type: string
+          },
+          payload: {
+            minLength: 1,
+            type: string
+          },
+          payloadWeightKg: {
+            format: double,
+            minimum: 0,
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              number,
+              string
+            ]
+          },
+          rocketId: {
+            $ref: #/components/schemas/RocketId
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/OffsetDateTime
+          }
+        },
+        required: [
+          partner,
+          payload
+        ],
+        type: object
+      },
+      EditRocketPatchRequest: {
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          },
+          serialNumber: {
+            $ref: #/components/schemas/AssignedOfstring
+          },
+          type: {
+            $ref: #/components/schemas/AssignedOfRocketType
+          }
+        },
+        type: object
+      },
+      EditRocketRequest: {
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          },
+          serialNumber: {
+            maxLength: 30,
+            minLength: 10,
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType
+          }
+        },
+        required: [
+          serialNumber
+        ],
+        type: object
+      },
+      LaunchRecordId: {
+        format: uuid,
+        type: string
+      },
+      LaunchRecordModel: {
+        properties: {
+          actualLaunchDate: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
+          },
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
+          partner: {
+            type: string
+          },
+          payload: {
+            type: string
+          },
+          payloadWeightKg: {
+            format: int64,
+            pattern: ^-?(?:0|[1-9]\d*)$,
+            type: [
+              integer,
+              string
+            ]
+          },
+          rocketSerialNumber: {
+            type: string
+          },
+          rocketType: {
+            $ref: #/components/schemas/RocketType
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/OffsetDateTime
+          }
+        },
+        type: object
+      },
+      OffsetDateTime: {
+        format: date-time,
+        type: string
+      },
+      ProblemDetails: {
+        properties: {
+          detail: {
+            type: [
+              null,
+              string
+            ]
+          },
+          instance: {
+            type: [
+              null,
+              string
+            ]
+          },
+          status: {
+            format: int32,
+            pattern: ^-?(?:0|[1-9]\d*)$,
+            type: [
+              null,
+              integer,
+              string
+            ]
+          },
+          title: {
+            type: [
+              null,
+              string
+            ]
+          },
+          type: {
+            type: [
+              null,
+              string
+            ]
+          }
+        },
+        required: [
+          type,
+          title
+        ],
+        type: object
+      },
+      RocketId: {
+        format: uuid,
+        type: string
       },
       RocketModel: {
         properties: {
@@ -367,17 +492,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateLaunchRecordRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateLaunchRecordRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateLaunchRecordRequest
               }
             }
           },
@@ -388,7 +513,7 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/Response
+                  $ref: #/components/schemas/CreateLaunchRecordResponse
                 }
               }
             },
@@ -558,17 +683,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
               }
             }
           },
@@ -628,17 +753,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditLaunchRecordRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditLaunchRecordRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditLaunchRecordRequest
               }
             }
           },
@@ -730,17 +855,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateRocketRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateRocketRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateRocketRequest
               }
             }
           },
@@ -751,7 +876,7 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/Response
+                  $ref: #/components/schemas/CreateRocketResponse
                 }
               }
             },
@@ -903,17 +1028,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditRocketPatchRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditRocketPatchRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditRocketPatchRequest
               }
             }
           },
@@ -973,17 +1098,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditRocketRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditRocketRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditRocketRequest
               }
             }
           },

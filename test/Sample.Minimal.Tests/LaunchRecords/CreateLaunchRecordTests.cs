@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
 using Sample.Core.Domain;
-using Sample.Restful.Client;
+using Sample.Minimal.Tests.Client;
 using Sample.Minimal.Tests.Helpers;
 
 using RocketType = Sample.Core.Domain.RocketType;
@@ -15,7 +15,7 @@ public class CreateLaunchRecordTests : WebAppFixtureTest
     [Test]
     public async Task Should_Create_A_LaunchRecord()
     {
-        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         var clock = ServiceProvider.GetRequiredService<IClock>();
         var rocket = new ReadyRocket
         {
@@ -30,7 +30,7 @@ public class CreateLaunchRecordTests : WebAppFixtureTest
             await z.SaveChangesAsync();
         }
 
-        var response = await client.CreateLaunchRecordAsync(
+        var response = await client.CreateLaunchRecord(
             new CreateLaunchRecordRequest
             {
                 Partner = "partner",
@@ -41,7 +41,7 @@ public class CreateLaunchRecordTests : WebAppFixtureTest
             }
         );
 
-        await response.Result.Id.Should().NotBeEmpty();
+        await response.Id.Should().NotBeEqualTo(Guid.Empty);
     }
 
     private static readonly Faker Faker = new();

@@ -2,10 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Sample.Core;
 using Sample.Core.Domain;
-using Sample.Restful.Client;
 using Sample.Minimal.Tests.Helpers;
 
-using RocketType = Sample.Restful.Client.RocketType;
+using RocketType = Sample.Minimal.Tests.Client.RocketType;
 
 namespace Sample.Minimal.Tests.Rockets;
 
@@ -14,7 +13,7 @@ public class ListRocketsTests : WebAppFixtureTest
     [Test]
     public async Task Should_List_Rockets()
     {
-        var client = new RocketClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
             var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
@@ -24,15 +23,15 @@ public class ListRocketsTests : WebAppFixtureTest
             await z.SaveChangesAsync();
         }
 
-        var response = await client.ListRocketsAsync();
+        var response = await client.ListRockets(null).ToListAsync();
 
-        await response.Result.Should().HaveCount(10);
+        await response.Should().HaveCount(10);
     }
 
     [Test]
     public async Task Should_List_Specific_Kinds_Of_Rockets()
     {
-        var client = new RocketClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
             var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
@@ -42,9 +41,9 @@ public class ListRocketsTests : WebAppFixtureTest
             await z.SaveChangesAsync();
         }
 
-        var response = await client.ListRocketsAsync(RocketType.AtlasV);
+        var response = await client.ListRockets(RocketType.AtlasV).ToListAsync();
 
-        await response.Result.Should().HaveCount(5);
+        await response.Should().HaveCount(5);
     }
 
     private static readonly Faker Faker = new();

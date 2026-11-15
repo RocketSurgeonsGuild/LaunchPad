@@ -14,7 +14,9 @@
       Include="..\TestSupport\TestSupport.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="LaunchRecords\*.cs" />
-    <Compile Remove="Rockets\*.cs" />
+    <!-- the Refit client the LaunchPad SDK generates from the document the sample writes when it builds -->
+    <OpenApiClient Include="..\..\sample\Sample.Restful\Sample.Restful.csproj" Generator="Refitter" ClientName="SampleClient" Namespace="Sample.Restful.Tests.Client" />
+    <PackageReference Include="Refit.HttpClientFactory" />
   </ItemGroup>
+  <Import Project="..\OpenApiClients.targets" />
 </Project>
