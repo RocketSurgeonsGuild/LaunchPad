@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 namespace AspNetCore.Tests.Joints;
@@ -27,7 +26,7 @@ public class AspNetCoreJointTests
     }
 
     [Test]
-    public async Task Should_Add_The_Launchpad_Filters_To_Mvc()
+    public async Task Should_Not_Add_Exception_Filters_To_Mvc()
     {
         var services = await JointTestContext.ApplyServicesAsync<AspNetCoreJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
@@ -40,9 +39,8 @@ public class AspNetCoreJointTests
                      .Select(z => z.ImplementationType)
                      .ToArray();
 
-        await filters.Should().Contain(typeof(NotFoundExceptionFilter));
-        await filters.Should().Contain(typeof(NotAuthorizedExceptionFilter));
-        await filters.Should().Contain(typeof(RequestFailedExceptionFilter));
+        // an operation reports a failure with a union response, so no filter turns exceptions into problems
+        await filters.Should().BeEmpty();
     }
 
     [Test]

@@ -33,16 +33,12 @@ public class FluentValidationGrpcJointTests
     }
 
     [Test]
-    public async Task Adds_The_Validation_Interceptor_Before_The_Exception_Interceptors_Whatever_The_Export_Order()
+    public async Task Adds_Only_The_Validation_Interceptor_Whatever_The_Export_Order()
     {
+        // the grpc joint registers no interceptors of its own: a failure an operation reports is a union response, not an exception
         using var provider = await BuildAsync(reverse: true);
 
-        using var grpcOnly = await BuildAsync(includeValidation: false);
-
-        var interceptors = Interceptors(provider);
-        await interceptors[0].Should().BeEqualTo(typeof(ValidationInterceptor));
-        await interceptors.Skip(1).Should().BeEquivalentTo(Interceptors(grpcOnly), CollectionOrdering.Matching);
-        await Interceptors(grpcOnly).Should().NotBeEmpty();
+        await Interceptors(provider).Should().BeEquivalentTo([typeof(ValidationInterceptor)], CollectionOrdering.Matching);
     }
 
     [Test]
@@ -110,9 +106,9 @@ public class FluentValidationGrpcJointTests
     private static Interceptor ValidationInterceptorFrom(IServiceProvider provider) =>
         (Interceptor)ActivatorUtilities.CreateInstance(provider, Interceptors(provider).First());
 
-    private static async Task<ServiceProvider> BuildAsync(Action<IServiceCollection>? configure = null, bool reverse = false, bool includeValidation = true)
+    private static async Task<ServiceProvider> BuildAsync(Action<IServiceCollection>? configure = null, bool reverse = false)
     {
-        IEnumerable<IDovetailJointMetadata> joints = [.. Exports.Joints(), .. includeValidation ? FluentValidationExports.Joints() : []];
+        IEnumerable<IDovetailJointMetadata> joints = [.. Exports.Joints(), .. FluentValidationExports.Joints()];
         // Dovetail resolves joints whose category is not in the context's category set, so the set stays empty to run every joint.
         var context = await DovetailContext.FromAsync(
             DovetailContextBuilder.Create(reverse ? joints.Reverse() : joints, new Dictionary<object, object>(), DovetailHostType.Live, [])

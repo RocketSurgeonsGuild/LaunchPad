@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 using Rocket.Surgery.LaunchPad.AspNetCore.Rivets;
-using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace FluentValidation.AspNetCore.Tests.Joints;
 
@@ -35,9 +34,8 @@ public class FluentValidationProblemDetailsJointTests
 
     [Test]
     [Arguments(typeof(ValidationException), StatusCodes.Status422UnprocessableEntity)]
-    [Arguments(typeof(NotFoundException), StatusCodes.Status404NotFound)]
     [Arguments(typeof(InvalidOperationException), StatusCodes.Status500InternalServerError)]
-    public async Task Should_Map_The_Validation_Exception_And_Keep_The_Problem_Details_Mappings(Type exceptionType, int expected)
+    public async Task Should_Map_The_Validation_Exception_And_Leave_Other_Exceptions_Unhandled(Type exceptionType, int expected)
     {
         var services = await JointTestContext.ApplyServicesAsync(
             JointTestContext.CreateBuilder().AppendJoint<FluentValidationProblemDetailsJoint>().AppendJoint<ProblemDetailsJoint>()

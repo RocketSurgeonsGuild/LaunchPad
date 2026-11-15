@@ -1,8 +1,6 @@
 using HotChocolate;
 using HotChocolate.Execution;
 
-using Rocket.Surgery.LaunchPad.Foundation;
-
 namespace Rocket.Surgery.LaunchPad.HotChocolate;
 
 internal class GraphqlErrorFilter : IErrorFilter
@@ -53,32 +51,6 @@ internal class GraphqlErrorFilter : IErrorFilter
                .SetException(error.Exception)
                .SetMessage(error.Exception?.Message ?? error.Message)
                .SetCode(error.Code ?? "UNKNOWN");
-        }
-
-        if (error.Exception is IProblemDetailsData ex) builder.WithProblemDetails(ex);
-
-        switch (error.Exception)
-        {
-            case NotFoundException:
-                {
-                    builder.SetCode("NOTFOUND");
-                    break;
-                }
-
-            case NotAuthorizedException:
-                {
-                    builder.SetCode("NOTAUTHORIZED");
-                    break;
-                }
-
-            case RequestFailedException:
-                {
-                    builder.SetCode("FAILED");
-                    break;
-                }
-
-            default:
-                break;
         }
 
         return builder.Build();

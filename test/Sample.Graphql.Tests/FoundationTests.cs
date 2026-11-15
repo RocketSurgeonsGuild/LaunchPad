@@ -36,7 +36,6 @@ public class FoundationTests() : LoggerTest<TestRecord>(TestRecord.Create())
     }
 
     [Test]
-    [Skip("snapshots not consistent atm")]
     public async Task GraphqlSchema()
     {
         await using var host = await AlbaHost.For<Program>(

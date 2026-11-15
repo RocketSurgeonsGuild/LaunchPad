@@ -1204,6 +1204,16 @@
               }
             },
             description: Bad Request
+          },
+          404: {
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            },
+            description: Not Found
           }
         },
         summary: Get the launch records for a given rocket,

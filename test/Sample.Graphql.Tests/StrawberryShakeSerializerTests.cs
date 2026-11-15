@@ -1,5 +1,6 @@
 using Alba;
 using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using NodaTime;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
@@ -142,6 +143,7 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
     [Arguments("MULTIPOINT((15 16), (17 18))")]
     [Arguments("MULTILINESTRING((19 20, 21 22), (23 24, 25 26))")]
     [Arguments("MULTIPOLYGON(((27 28, 29 30, 31 32, 27 28)), ((33 34, 35 36, 37 38, 33 34)))")]
+    [Arguments("GEOMETRYCOLLECTION(POINT(39 40), LINESTRING(41 42, 43 44))")]
     public async Task Should_Roundtrip_Geometry(string wkt)
     {
         await using var host = await AlbaHost.For<Program>(
@@ -165,34 +167,32 @@ public class StrawberryShakeSerializerTests() : LoggerTest<TestRecord>(TestRecor
     }
 
 
-    //    [Test]
-    //    public async Task Should_Roundtrip_Point()
-    //    {
-    //        await using var host = await AlbaHost.For<Program>(
-    //            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()), new GraphQlExtension(), new SqliteExtension<RocketDbContext>()
-    //        );
-    //
-    //        var client = host.Services.GetRequiredService<IRocketClient>();
-    //
-    //        var reader = new WKTReader();
-    //        var wkt = "POINT(3 4)";
-    //        var result = await client.GetGeometryTypes.ExecuteAsync(
-    //            new ()
-    //            {
-    //                Point = reader.Read(wkt)
-    //            }
-    //        );
-    //
-    //        await Verify(result).UseTextForParameters(wkt);
-    //    }
+    [Test]
+    public async Task Should_Roundtrip_Point()
+    {
+        await using var host = await AlbaHost.For<Program>(
+            new LaunchPadExtension<FoundationTests>(CreateLoggerFactory()),
+            new GraphQlExtension(),
+            new SqliteExtension<RocketDbContext>()
+        );
 
-    /*
-     * geometry: "POINT(1 2)"
-        point: "POINT(3 4)"
-        lineString: "LINESTRING(5 6, 7 8)"
-        polygon: "POLYGON((9 10, 11 12, 13 14, 9 10))"
-        multiPoint: "MULTIPOINT((15 16), (17 18))"
-        multiLineString: "MULTILINESTRING((19 20, 21 22), (23 24, 25 26))"
-        multiPolygon: "MULTIPOLYGON(((27 28, 29 30, 31 32, 27 28)), ((33 34, 35 36, 37 38, 33 34)))"
-     */
+        var client = host.Services.GetRequiredService<IRocketClient>();
+
+        var point = new Point(3, 4);
+        var result = await client.GetGeometryTypes.ExecuteAsync(
+            new()
+            {
+                Geometry = point,
+            },
+            cancellationToken: TestContext.CancellationToken
+        );
+
+        await result.Errors.Should().BeEmpty();
+        var data = result.Data!.GeometryTest;
+        await data.Geometry.Should().BeEqualTo(point);
+        await data.Point!.Type.Should().BeEqualTo(GeoJSONGeometryType.Point);
+        await data.Point.Coordinates.Should().BeEqualTo(new Coordinate(3, 4));
+        await data.LineString.Should().BeNull();
+        await data.GeometryCollection.Should().BeNull();
+    }
 }

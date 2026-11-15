@@ -12,12 +12,19 @@ namespace Graphql.Tests;
 public class StrawberryShakeSpatialJointTests
 {
     [Test]
-    public async Task Registers_The_Geometry_Serializer_As_A_Singleton()
+    public async Task Registers_The_Spatial_Serializers_As_Singletons()
     {
         var services = new ServiceCollection();
         new StrawberryShakeSpatialJoint().Register(await JointContext.Create(), services);
 
-        await services.Where(x => x.ServiceType == typeof(ISerializer)).Select(x => (x.ImplementationType, x.Lifetime)).Should().BeEquivalentTo([(typeof(GeometrySerializer), ServiceLifetime.Singleton)], CollectionOrdering.Matching);
+        await services.Where(x => x.ServiceType == typeof(ISerializer)).Select(x => (x.ImplementationType, x.Lifetime)).Should().BeEquivalentTo(
+            [
+                (typeof(GeometrySerializer), ServiceLifetime.Singleton),
+                (typeof(PositionSerializer), ServiceLifetime.Singleton),
+                (typeof(CoordinatesSerializer), ServiceLifetime.Singleton),
+            ],
+            CollectionOrdering.Matching
+        );
     }
 
     [Test]

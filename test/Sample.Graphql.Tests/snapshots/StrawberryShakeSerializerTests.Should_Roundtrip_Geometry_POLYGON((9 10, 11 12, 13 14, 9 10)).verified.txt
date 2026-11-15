@@ -1,7 +1,25 @@
 ﻿{
   Data: {
     GeometryTest: {
-      Geometry: POLYGON ((9 10, 13 14, 11 12, 9 10))
+      Geometry: POLYGON ((9 10, 11 12, 13 14, 9 10)),
+      Polygon: {
+        Bbox: [
+          9.0,
+          10.0,
+          13.0,
+          14.0
+        ],
+        Coordinates: [
+          [
+            (9, 10),
+            (13, 14),
+            (11, 12),
+            (9, 10)
+          ]
+        ],
+        Crs: 4326,
+        Type: Polygon
+      }
     }
   }
 }

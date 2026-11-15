@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Rocket.Surgery.LaunchPad.Grpc.Joints;
 
 /// <summary>
-///     Registers gRPC with the LaunchPad exception interceptors.
+///     Registers gRPC. An operation reports a failure with a union response, which the generated gRPC servers answer with its status.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <seealso cref="IServiceJoint" />
@@ -13,17 +13,5 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Joints;
 public class GrpcJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IDovetailContext context, IServiceCollection services)
-    {
-        services
-           .AddGrpc(
-                options =>
-                {
-                    options.Interceptors.Add<NotAuthorizedInterceptor>();
-                    options.Interceptors.Add<NotFoundInterceptor>();
-                    options.Interceptors.Add<RequestFailedInterceptor>();
-                }
-            )
-            ;
-    }
+    public void Register(IDovetailContext context, IServiceCollection services) => services.AddGrpc();
 }

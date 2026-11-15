@@ -137,5 +137,6 @@ query GetGeometryTypes($inputs: GeometryInputsInput!) {
             crs
             type
         }
+        geometryCollection
     }
 }

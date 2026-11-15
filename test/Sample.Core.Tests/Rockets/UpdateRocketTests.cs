@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.Core.Domain;
 using Sample.Core.Models;
 using Sample.Core.Operations.Rockets;
@@ -53,6 +54,17 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
 
         await response.Type.Should().BeEqualTo(RocketType.FalconHeavy);
         await response.Sn.Should().BeEqualTo("12345678901234");
+    }
+
+    [Test]
+    public async Task Should_Not_Patch_A_Missing_Rocket()
+    {
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var result = await mediator.Send(new EditRocket.PatchRequest { Id = RocketId.New(), }.ResetChanges(), TestContext.CancellationToken);
+
+        await result.Value.Should().BeOfType(typeof(NotFound));
     }
 
     [Test]

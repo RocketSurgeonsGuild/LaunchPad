@@ -86,6 +86,10 @@ public class GeometryOutputs
     public MultiPoint? MultiPoint { get; init; }
     public MultiLineString? MultiLineString { get; init; }
     public MultiPolygon? MultiPolygon { get; init; }
+
+    // HotChocolate.Types.Spatial has no GeoJSON object type for a collection, so it goes out as the Geometry scalar like the field above
+    [GraphQLType<GeoJsonGeometryScalarType>]
+    public GeometryCollection? GeometryCollection { get; init; }
 }
 
 public class GeometryInputs
@@ -108,14 +112,14 @@ public class QueryTests
     public GeometryOutputs GeometryTest(GeometryInputs inputs) => new()
     {
         Geometry = inputs.Geometry,
-        // TODO: Determine why these are not working
-        //            Point = inputs.Geometry as Point,
-        //            LineString = inputs.Geometry as LineString,
-        //            Polygon = inputs.Geometry as Polygon,
-        //            MultiPoint = inputs.Geometry as MultiPoint,
-        //            MultiLineString = inputs.Geometry as MultiLineString,
-        //            MultiPolygon = inputs.Geometry as MultiPolygon,
-        //            GeometryCollection = inputs.GeometryCollection
+        Point = inputs.Geometry as Point,
+        LineString = inputs.Geometry as LineString,
+        Polygon = inputs.Geometry as Polygon,
+        MultiPoint = inputs.Geometry as MultiPoint,
+        MultiLineString = inputs.Geometry as MultiLineString,
+        MultiPolygon = inputs.Geometry as MultiPolygon,
+        // a MultiPoint, MultiLineString and MultiPolygon are geometry collections too: this field carries only a heterogeneous one
+        GeometryCollection = inputs.Geometry?.GetType() == typeof(GeometryCollection) ? (GeometryCollection)inputs.Geometry : null,
     };
 }
 
@@ -157,26 +161,19 @@ public class CustomFilterConventionExtension : FilterConventionExtension
 public class ReadyRocketType : ObjectType<ReadyRocket>
 {
     protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor) =>
-        //        descriptor.Implements<InterfaceType<IReadyRocket>>();
         descriptor
            .Field(z => z.LaunchRecords)
-           .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>()
-    //                  .UseFiltering()
-    //                  .UseSorting()
-    ;
-    //        descriptor.Ignore(z => z.LaunchRecords);
+           .Type<NonNullType<ListType<NonNullType<ObjectType<LaunchRecord>>>>>();
 }
 
 public class LaunchRecordType : ObjectType<LaunchRecord>
 {
     protected override void Configure(IObjectTypeDescriptor<LaunchRecord> descriptor)
     {
-        //        descriptor.Implements<InterfaceType<ILaunchRecord>>();
         descriptor
            .Field(z => z.Rocket)
            .Type<NonNullType<ObjectType<ReadyRocket>>>();
         descriptor.Field(z => z.RocketId).Ignore();
-        //        descriptor.Ignore(z => z.LaunchRecords);
     }
 }
 
