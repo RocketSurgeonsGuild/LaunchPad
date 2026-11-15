@@ -1,13 +1,10 @@
 <!--
-    The project SDK syntax: Rocket.Surgery.LaunchPad.Sdk is the project's only SDK, named with its version in the Sdk attribute. It brings
-    Microsoft.NET.Sdk through the Dovetail SDK it chains, and OutputType=Exe makes it find a generic host, as for Sample.Sdk.Worker.
+    The console SDK: Rocket.Surgery.LaunchPad.Sdk.Console is the project's only SDK, named with its version in the Sdk attribute. It chains
+    Joinery.Dovetail.Sdk.Console, which makes the project an Exe on the generic host, adds ConsoleAppFramework and Microsoft.Extensions.Hosting
+    and writes Program.cs, and adds LaunchPad.Hosting as Rocket.Surgery.LaunchPad.Sdk does. The commands are in Commands.cs.
 -->
-<Project Sdk="Rocket.Surgery.LaunchPad.Sdk/0.0.0-sample">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-  </PropertyGroup>
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Console/0.0.0-sample">
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.15" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.15" />
   </ItemGroup>
 </Project>

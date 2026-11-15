@@ -13,12 +13,26 @@ namespace Sdk.Tests.Scaffolding;
 /// <param name="Version">The version of every package in the feed.</param>
 /// <param name="SdkFiles">The files in the SDK package, without the package bookkeeping or the icon CI adds.</param>
 /// <param name="PackagesProps">The text of the props file the SDK generates when it is packed.</param>
-internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<string> SdkFiles, string PackagesProps)
+/// <param name="ConsoleSdkFiles">The files in the console SDK package (<see cref="ConsoleSdkPackageId" />), as <paramref name="SdkFiles" />.</param>
+/// <param name="ConsolePackagesProps">The text of the props file the console SDK generates when it is packed.</param>
+internal sealed record PackedSdk(
+    string Feed,
+    string Version,
+    IReadOnlyList<string> SdkFiles,
+    string PackagesProps,
+    IReadOnlyList<string> ConsoleSdkFiles,
+    string ConsolePackagesProps
+)
 {
     /// <summary>
     ///     The id of the SDK package.
     /// </summary>
     public const string SdkPackageId = "Rocket.Surgery.LaunchPad.Sdk";
+
+    /// <summary>
+    ///     The id of the console SDK package, which chains Joinery.Dovetail.Sdk.Console instead of Joinery.Dovetail.Sdk.
+    /// </summary>
+    public const string ConsoleSdkPackageId = "Rocket.Surgery.LaunchPad.Sdk.Console";
 
     /// <summary>
     ///     The projects packed into the feed: the SDK, every package it can add to an application, and the LaunchPad packages
@@ -27,6 +41,7 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
     private static readonly string[] Projects =
     [
         Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
+        Path.Combine("src", "Sdk.Console", "Rocket.Surgery.LaunchPad.Sdk.Console.csproj"),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
         Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),
         Path.Combine("src", "Primitives", "Rocket.Surgery.LaunchPad.Primitives.csproj"),
@@ -102,15 +117,25 @@ internal sealed record PackedSdk(string Feed, string Version, IReadOnlyList<stri
         await File.WriteAllTextAsync(traversal, PackProject(Path.Combine(root, "artifacts"), feed, version));
         await DotnetCli.Run($"msbuild \"{traversal}\" -nologo -m -nodeReuse:false", Repository.Root);
 
-        using var archive = ZipFile.OpenRead(Path.Combine(feed, $"{SdkPackageId}.{version}.nupkg"));
+        var (files, packagesProps) = await ReadSdk(feed, SdkPackageId, version);
+        var (consoleFiles, consolePackagesProps) = await ReadSdk(feed, ConsoleSdkPackageId, version);
+        return new(feed, version, files, packagesProps, consoleFiles, consolePackagesProps);
+    }
+
+    /// <summary>
+    ///     The files of an SDK package, without the package bookkeeping or the icon CI adds, and the text of its generated props file.
+    /// </summary>
+    private static async Task<(string[] Files, string PackagesProps)> ReadSdk(string feed, string packageId, string version)
+    {
+        using var archive = ZipFile.OpenRead(Path.Combine(feed, $"{packageId}.{version}.nupkg"));
         var files = archive
                    .Entries
                    .Select(z => z.FullName)
                    .Where(z => !z.StartsWith("_rels/", StringComparison.Ordinal) && !z.StartsWith("package/", StringComparison.Ordinal) && !z.StartsWith("images/", StringComparison.Ordinal) && z != "[Content_Types].xml")
                    .Order(StringComparer.Ordinal)
                    .ToArray();
-        using var reader = new StreamReader(archive.GetEntry("Sdk/Packages.props")?.Open() ?? throw new InvalidOperationException("The SDK has no Sdk/Packages.props"));
-        return new(feed, version, files, await reader.ReadToEndAsync());
+        using var reader = new StreamReader(archive.GetEntry("Sdk/Packages.props")?.Open() ?? throw new InvalidOperationException($"{packageId} has no Sdk/Packages.props"));
+        return (files, await reader.ReadToEndAsync());
     }
 
     /// <summary>

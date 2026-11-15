@@ -56,6 +56,12 @@ without a `#:package` directive for LaunchPad.
 
 [Getting started](../../guides/) walks through each of these.
 
+## The console SDK
+
+`Rocket.Surgery.LaunchPad.Sdk.Console` is the same SDK for command line applications: it adds the same LaunchPad packages and
+chains `Joinery.Dovetail.Sdk.Console` instead of `Joinery.Dovetail.Sdk`, which makes the project an `Exe`, adds ConsoleAppFramework
+and writes `Program.cs`. See [Console applications](../../guides/console-apps/).
+
 ## Choosing another Dovetail version
 
 The SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is

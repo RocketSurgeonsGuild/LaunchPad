@@ -1,0 +1,22 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.Sdk.Console is Rocket.Surgery.LaunchPad.Sdk for console applications. It is applied the same way, as a
+        project's only SDK (<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Console/...">, or a file-based app's only #:sdk directive), as
+        <Sdk Name="Rocket.Surgery.LaunchPad.Sdk.Console" Version="..." /> next to another SDK, or once for every project in a
+        Directory.Build.props, with its version pinned in global.json under msbuild-sdks.
+
+        It does what Rocket.Surgery.LaunchPad.Sdk does (the files it shares with it are packed from src/Sdk/Sdk), and chains
+        Joinery.Dovetail.Sdk.Console instead of Joinery.Dovetail.Sdk: the project is an Exe on the generic host, gets ConsoleAppFramework
+        and a generated Program.cs that runs the command the command line names, with the commands registered by IConsoleAppJoint. See
+        docs/src/content/docs/guides/console-apps.md.
+    -->
+
+    <!-- The versions, Serilog and LaunchPad's package detection, shared with Rocket.Surgery.LaunchPad.Sdk. -->
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Sdk.props" />
+
+    <!--
+        The version of the import wins over a Joinery.Dovetail.Sdk.Console entry in global.json. To chain another version, set
+        LaunchPadDovetailSdkVersion before this file is imported, as for Rocket.Surgery.LaunchPad.Sdk.
+    -->
+    <Import Project="Sdk.props" Sdk="Joinery.Dovetail.Sdk.Console" Version="$(LaunchPadDovetailSdkVersion)" />
+</Project>

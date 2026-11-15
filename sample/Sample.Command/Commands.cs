@@ -1,17 +1,11 @@
-using Microsoft.Extensions.Configuration;
+using ConsoleAppFramework;
 
-using Spectre.Console;
-using Spectre.Console.Cli;
+using Microsoft.Extensions.Configuration;
 
 namespace Sample.Command;
 
 /// <summary>
-///     The settings of the commands. The sample has no options.
-/// </summary>
-public class AppSettings : CommandSettings;
-
-/// <summary>
-///     Something that only the DryIoc container knows about.
+///     Something that only the DryIoc container knows about: <see cref="DryIocSetup" /> registers it there, not in the service collection.
 /// </summary>
 public class InstanceThing
 {
@@ -19,30 +13,56 @@ public class InstanceThing
 }
 
 /// <summary>
-///     Writes the configuration the host was started with.
+///     Where the commands write. The entry point registers the standard output, or the writer a test passes.
 /// </summary>
-public class Dump(IConfiguration configuration, IAnsiConsole console, InstanceThing instanceThing) : Command<AppSettings>
+/// <param name="Writer">The writer.</param>
+public sealed record CommandOutput(TextWriter Writer);
+
+/// <summary>
+///     The commands of the sample. ConsoleAppFramework creates the class from the host's services, which the DryIoc container provides. The
+///     class is internal, as ConsoleAppFramework's own types are.
+/// </summary>
+/// <param name="output">Where the commands write.</param>
+internal sealed class SampleCommands(CommandOutput output)
 {
-    public override int Execute(CommandContext context, AppSettings settings, CancellationToken cancellationToken)
+    /// <summary>
+    ///     Runs when no command is given. ConsoleAppFramework hands the root command whatever no other command matched, so it turns down
+    ///     arguments it does not know instead of greeting.
+    /// </summary>
+    /// <param name="context">The command line as ConsoleAppFramework parsed it.</param>
+    /// <returns>The exit code.</returns>
+    [Command("")]
+    public int Hello(ConsoleAppContext context)
     {
-        console.WriteLine($"From: {instanceThing.From}");
-        foreach (var item in configuration.AsEnumerable().Reverse())
+        if (context.CommandArguments.Length > 0)
         {
-            console.WriteLine($"{item.Key}: {item.Value ?? ""}");
+            output.Writer.WriteLine($"Unknown command: {context.CommandArguments[0]}");
+            return 1;
         }
 
+        output.Writer.WriteLine("Hello World!");
         return 0;
     }
 }
 
 /// <summary>
-///     Runs when no command is given.
+///     Writes the configuration the host was started with.
 /// </summary>
-public class DefaultCommand(IAnsiConsole console) : Command<AppSettings>
+/// <param name="configuration">The configuration of the host.</param>
+/// <param name="output">Where the command writes.</param>
+/// <param name="instanceThing">Registered in the DryIoc container only, so the command shows it was created by it.</param>
+internal sealed class DumpCommand(IConfiguration configuration, CommandOutput output, InstanceThing instanceThing)
 {
-    public override int Execute(CommandContext context, AppSettings settings, CancellationToken cancellationToken)
+    /// <summary>
+    ///     Writes the configuration the host was started with.
+    /// </summary>
+    [Command("dump")]
+    public void Dump()
     {
-        console.WriteLine("Hello World!");
-        return 0;
+        output.Writer.WriteLine($"From: {instanceThing.From}");
+        foreach (var item in configuration.AsEnumerable().Reverse())
+        {
+            output.Writer.WriteLine($"{item.Key}: {item.Value ?? ""}");
+        }
     }
 }

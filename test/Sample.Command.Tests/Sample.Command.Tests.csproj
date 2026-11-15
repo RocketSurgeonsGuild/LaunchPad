@@ -5,6 +5,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\sample\Sample.Command\Sample.Command.csproj" />
     <ProjectReference Include="..\TestSupport\TestSupport.csproj" />
-    <PackageReference Include="Spectre.Console.Testing" />
   </ItemGroup>
 </Project>
