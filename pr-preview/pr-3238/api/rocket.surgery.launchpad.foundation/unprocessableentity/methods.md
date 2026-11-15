@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `9`
 
-The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
+The request is well formed but fails validation: what a validator reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 <a id="clone"></a>
 

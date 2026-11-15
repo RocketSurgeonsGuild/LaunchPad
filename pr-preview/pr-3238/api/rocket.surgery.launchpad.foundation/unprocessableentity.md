@@ -2,13 +2,13 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-pr.1208`
+- Version: `2.0.1-pr.1212`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net10.0`
 - Inherits: [Problem](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.foundation/problem.md)
 - Implements: `IEquatable<UnprocessableEntity>`
 
-The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
+The request is well formed but fails validation: what a validator reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 ## Definition
 
@@ -25,7 +25,7 @@ public sealed record UnprocessableEntity
 
 ## Constructors
 
-- [UnprocessableEntity(string?)](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.foundation/unprocessableentity/constructors.md#constructor-string) -- The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
+- [UnprocessableEntity(string?)](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.foundation/unprocessableentity/constructors.md#constructor-string) -- The request is well formed but fails validation: what a validator reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 
 ## Properties
 

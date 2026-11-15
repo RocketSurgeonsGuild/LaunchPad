@@ -19,15 +19,14 @@ small packages, which the [LaunchPad SDK](../launchpad-sdk/) chooses for you.
 | the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`                                                        |
 | `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
 | `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
-| `FluentValidation`              | `.FluentValidation`, and its ASP.NET Core, gRPC and Blazor packages with those               |
 | `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                |
 | `HotChocolate`                  | `.HotChocolate`                                                                              |
 | `StrawberryShake`               | `.StrawberryShake`                                                                           |
 | `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
 
-There is no FluentValidation package for HotChocolate: `Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate` was built on
-FairyBread, which has no release for HotChocolate 16, and was removed with the move to HotChocolate 16. Validate GraphQL requests
-in the mediator pipeline instead (the ZeroAlloc HotChocolate package reports its failures as GraphQL errors).
+Validation is ZeroAlloc.Validation's: validate requests in the mediator pipeline, and the ZeroAlloc package of each transport
+reports the failures in that transport's error shape (problem details over HTTP, a status over gRPC, GraphQL errors over
+HotChocolate).
 
 ### NodaTime with HotChocolate and StrawberryShake
 
@@ -67,7 +66,7 @@ integration package it is part of:
 ```
 
 The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`,
-`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableFluentValidation`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and
+`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and
 `LaunchPadEnableStrawberryShake`.
 
 ## Direct references

@@ -116,7 +116,7 @@ the generated API endpoints.</p>
 <ol>
 <li>The application’s resolvers (<code dir="auto">order</code> 0, the default), in the order they were added. A resolver added twice is chained once.</li>
 <li>LaunchPad’s own resolvers (<code dir="auto">JsonTypeInfoResolverRegistration.LibraryOrder</code>): the primitive and <code dir="auto">object</code> values LaunchPad writes
-(problem details properties, health check data), the FluentValidation problem details, and the NodaTime and NetTopologySuite types,
+(problem details properties, health check data) and the NodaTime and NetTopologySuite types,
 which resolve from the converters their packages add.</li>
 </ol>
 <p>The first resolver that knows a type wins, so an application can take over any type LaunchPad resolves. LaunchPad adds no reflection based
