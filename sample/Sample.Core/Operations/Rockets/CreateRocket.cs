@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -56,12 +55,7 @@ public static partial class CreateRocket
     }
 
     /// <summary>What the operation answers: the new rocket's id, or a conflict with an existing rocket.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(Response value);
-        public partial Result(Conflict value);
-    }
+    public readonly union Result(Response, Conflict);
 
     internal class CreateRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
