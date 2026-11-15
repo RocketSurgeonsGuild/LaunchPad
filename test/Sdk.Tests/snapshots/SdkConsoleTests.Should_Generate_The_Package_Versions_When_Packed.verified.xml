@@ -1,0 +1,8 @@
+﻿<Project>
+<!-- Generated when Rocket.Surgery.LaunchPad.Sdk.Console is packed. Each version is only set when the application has not set it already. -->
+<PropertyGroup>
+<LaunchPadDovetailSdkVersion Condition="'$(LaunchPadDovetailSdkVersion)' == ''">{DovetailVersion}</LaunchPadDovetailSdkVersion>
+<LaunchPadVersion Condition="'$(LaunchPadVersion)' == ''">{LaunchPadVersion}</LaunchPadVersion>
+<LaunchPadPolyfillVersion Condition="'$(LaunchPadPolyfillVersion)' == ''">11.4.5</LaunchPadPolyfillVersion>
+</PropertyGroup>
+</Project>

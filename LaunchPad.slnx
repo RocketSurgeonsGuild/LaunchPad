@@ -93,6 +93,7 @@
     <Project Path="src/Primitives/Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <Project Path="src/Sdk/Rocket.Surgery.LaunchPad.Sdk.csproj" />
+    <Project Path="src/Sdk.Console/Rocket.Surgery.LaunchPad.Sdk.Console.csproj" />
     <Project Path="src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
     <Project Path="src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />

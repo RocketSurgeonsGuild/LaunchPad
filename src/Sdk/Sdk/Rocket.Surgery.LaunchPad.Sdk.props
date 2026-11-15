@@ -1,0 +1,29 @@
+<Project>
+    <!--
+        What every LaunchPad SDK does before it chains its Dovetail SDK: Sdk/Sdk.props of Rocket.Surgery.LaunchPad.Sdk imports this file and
+        then Joinery.Dovetail.Sdk, and Sdk/Sdk.props of Rocket.Surgery.LaunchPad.Sdk.Console imports it and then Joinery.Dovetail.Sdk.Console.
+        Both packages ship this file and the detection files, packed from src/Sdk/Sdk.
+    -->
+
+    <!-- The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. -->
+    <Import Project="$(MSBuildThisFileDirectory)Packages.props" />
+
+    <!--
+        LaunchPad turns on what Dovetail leaves off. Dovetail's SDK reads these after the project has been evaluated, so a project (or a
+        Directory.Build.props below the SDK entry) that sets one to false still wins.
+          - DovetailEnableSerilog: a project that references Serilog directly gets Joinery.Dovetail.Serilog.
+    -->
+    <PropertyGroup>
+        <DovetailEnableSerilog Condition="'$(DovetailEnableSerilog)' == ''">true</DovetailEnableSerilog>
+    </PropertyGroup>
+
+    <!--
+        Dovetail's host detection runs through CustomAfterMicrosoftCommonTargets, after the whole project has been evaluated, as it reads
+        properties the project sets (OutputType). LaunchPad's detection reads what Dovetail's found (the DovetailHost items), so it has to come
+        after it: MSBuild imports the files of the list in order. It is added before Dovetail's Sdk.props is imported, which puts host detection
+        in front of it and the file that turns the DovetailSdkImplicitPackageReference items of both into PackageReferences behind it.
+    -->
+    <PropertyGroup>
+        <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.targets</CustomAfterMicrosoftCommonTargets>
+    </PropertyGroup>
+</Project>

@@ -11,6 +11,7 @@
   Sdk/Rocket.Surgery.LaunchPad.Detection.Polyfill.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.ZeroAlloc.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.targets,
+  Sdk/Rocket.Surgery.LaunchPad.Sdk.props,
   Sdk/Sdk.props,
   Sdk/Sdk.targets
 ]

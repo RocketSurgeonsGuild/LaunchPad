@@ -1,5 +1,5 @@
 <!--
-    Packs Rocket.Surgery.LaunchPad.Sdk and the packages it adds into artifacts/nuget-sample at the version the sample's <Sdk> elements and
+    Packs Rocket.Surgery.LaunchPad.Sdk, Rocket.Surgery.LaunchPad.Sdk.Console and the packages it adds into artifacts/nuget-sample at the version the sample's <Sdk> elements and
     #:sdk directive name, so this sample consumes LaunchPad exactly as published packages, never through a ProjectReference or an import
     from src/.
 
@@ -19,6 +19,7 @@
   <ItemGroup>
     <!-- the SDK, every package it can add to an application, and the LaunchPad packages those depend on -->
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Sdk\Rocket.Surgery.LaunchPad.Sdk.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Sdk.Console\Rocket.Surgery.LaunchPad.Sdk.Console.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />

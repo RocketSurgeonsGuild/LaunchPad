@@ -27,7 +27,7 @@ Vocabulary lives in [GLOSSARY.md](../GLOSSARY.md). The two hard-to-reverse decis
 | 11  | `IExecuteScoped<T>` and `AddExecuteScopedServices()` are dropped; their users create scopes directly.                                                                                              |
 | 12  | `LaunchPad.WebAssembly.Hosting` folds into `LaunchPad.Hosting`.                                                                                                                                    |
 | 13  | "Joint" replaces "convention" in code and docs. `InstrumentationConvention` becomes `InstrumentationJoint`.                                                                                        |
-| 14  | `Sample.Pages` is restored. `Sample.Command` is rebuilt on Spectre.Console.Cli with `Joinery.Dovetail.DryIoc`.                                                                                     |
+| 14  | `Sample.Pages` is restored. `Sample.Command` is rebuilt with `Joinery.Dovetail.DryIoc`, on ConsoleAppFramework and the console SDK since #3145.                                                    |
 | 15  | `SerilogTelemetryConvention` (never exported today) is ported as a live joint.                                                                                                                     |
 
 ## Sequence

@@ -1,16 +1,26 @@
+<!--
+    The console application sample, on ConsoleAppFramework and Dovetail's console support. An application outside this repository gets all of
+    this from Rocket.Surgery.LaunchPad.Sdk.Console (see sample/Sample.Sdk/Sample.Sdk.Console and docs/.../guides/console-apps.md): the SDK sets
+    DovetailConsoleApp and adds ConsoleAppFramework, Microsoft.Extensions.Hosting and LaunchPad.Hosting. The samples here reference LaunchPad
+    through project references instead of packages, so this project names what the SDK would add itself.
+-->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <!-- Joinery.Dovetail.Hosting declares the ConsoleApp joint (IConsoleAppJoint), what Joinery.Dovetail.Sdk.Console turns on -->
+        <DovetailConsoleApp>true</DovetailConsoleApp>
+        <!-- Program.cs is written by hand, so the tests can run the application in-process with their own output and configuration -->
+        <DovetailUseDefaultProgram>false</DovetailUseDefaultProgram>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+        <PackageReference Include="ConsoleAppFramework" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
         <PackageReference Include="Joinery.Dovetail.DryIoc" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />
         <PackageReference Include="Microsoft.Extensions.Hosting" />
-        <PackageReference Include="Spectre.Console.Cli" />
     </ItemGroup>
     <ItemGroup>
         <!-- the generic host's entry point: ConfigureDovetail on the HostApplicationBuilder -->

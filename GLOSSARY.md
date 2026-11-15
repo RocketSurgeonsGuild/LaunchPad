@@ -69,7 +69,7 @@ The description of how one mediator library shapes its requests, dispatches them
 _Avoid_: Mediator adapter, mediator configuration
 
 **LaunchPad SDK**:
-The MSBuild SDK an application opts into so that the right LaunchPad packages are chosen from what the project references. It builds on Dovetail's SDK.
+The MSBuild SDK an application opts into so that the right LaunchPad packages are chosen from what the project references. It builds on Dovetail's SDK. `Rocket.Surgery.LaunchPad.Sdk` chains `Joinery.Dovetail.Sdk`; `Rocket.Surgery.LaunchPad.Sdk.Console`, for command line applications on ConsoleAppFramework, chains `Joinery.Dovetail.Sdk.Console`.
 _Avoid_: Meta-package, bundle
 
 **Union case**:

@@ -39,6 +39,8 @@ The SDK finds a generic host (`HostApplication`) and adds `Joinery.Dovetail.Host
 `Rocket.Surgery.LaunchPad.Hosting`, whose [templates](../concepts/templates/) bring health checks, logging and telemetry Joints
 when their libraries are referenced.
 
+For a command line application, use the console SDK instead: [Console applications](./console-apps/).
+
 ## An ASP.NET Core application
 
 The same line in a `Microsoft.NET.Sdk.Web` project gives the `WebApplication` host model, which also gets
@@ -102,5 +104,6 @@ otherwise take it from the file name.
 
 - [Choosing integration packages](./choosing-packages/): what the SDK adds for each technology, and how to turn one off.
 - [Writing a Joint](./writing-a-joint/): add wiring of your own.
+- [Console applications](./console-apps/): commands on ConsoleAppFramework with `Rocket.Surgery.LaunchPad.Sdk.Console`.
 - The [samples](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/main/sample/Sample.Sdk) consume LaunchPad only through the
   SDK, the way an application outside the repository does.
