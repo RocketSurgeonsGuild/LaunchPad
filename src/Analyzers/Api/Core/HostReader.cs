@@ -79,6 +79,8 @@ internal static class HostReader
             },
             // A gRPC service host's GetProto() needs protobuf-net.Grpc.Reflection's schema generator.
             kind == HostKind.GrpcService && compilation.GetTypeByMetadataName("ProtoBuf.Grpc.Reflection.SchemaGenerator") is { },
+            // The OpenAPI transformers need Microsoft.AspNetCore.OpenApi; without it an HTTP host describes itself through metadata alone.
+            kind is HostKind.MinimalApi or HostKind.Controller && compilation.GetTypeByMetadataName(OpenApiEmit.TransformerContext) is { },
             profile.Profile,
             operations.ToEquatableArray(),
             diagnostics.ToEquatableArray(),
@@ -143,11 +145,12 @@ internal static class HostReader
                         caseStatus.Status,
                         caseStatus.Grpc,
                         caseStatus.GraphQL,
-                        UnionResults.Members(errorCase),
+                        UnionResults.Members(errorCase, documentation),
                         errorCase.ContainingType is { } outerCase ? outerCase.Name + errorCase.Name : null,
                         // A problem travels as the status, its detail and its case name, so it never needs a protobuf-net contract.
                         IsMessage(errorCase) && !UnionResults.IsProblemData(errorCase),
-                        UnionResults.ProblemMembers(errorCase)
+                        UnionResults.ProblemMembers(errorCase),
+                        Documentation.Summary(errorCase, documentation)
                     )
                 );
             }
@@ -193,7 +196,7 @@ internal static class HostReader
         if (!isHttp) verb = HttpVerb.Post;
         var tokens = RouteText.Tokens(route).ToArray();
 
-        var boundMembers = Bind(wireType, members, tokens, verb, route, name, location, diagnostics, out var bindingFailed);
+        var boundMembers = Bind(wireType, members, tokens, verb, route, name, location, documentation, diagnostics, out var bindingFailed);
         var canConstruct = boundMembers.All(m => m.ConstructorIndex >= 0 || m.CanAssign || m.CanInit || m.Source == BindingSource.Ignored);
         var hasBody = verb is HttpVerb.Post or HttpVerb.Put or HttpVerb.Patch;
         if (!hasBody && !canConstruct)
@@ -311,7 +314,12 @@ internal static class HostReader
             // A void operation (Unit included) answers Empty: its response isn't carried.
             responseNotNull is { } && requestKind != RequestKind.Void && IsStructMessage(responseNotNull),
             union,
-            location
+            location,
+            Documentation.Summary(wireType, documentation),
+            responseNotNull is INamedTypeSymbol describedResponse && requestKind != RequestKind.Void && !isUnit ? Documentation.Summary(describedResponse, documentation) : null,
+            responseNotNull is INamedTypeSymbol documentedResponse && requestKind != RequestKind.Void && !isUnit
+                ? ResponseDescriptions(documentedResponse, documentation)
+                : EquatableArray<DescriptionModel>.Empty
         );
     }
 
@@ -369,7 +377,7 @@ internal static class HostReader
         return null;
     }
 
-    private sealed record RawMember(string Name, ITypeSymbol Type, bool CanAssign, bool CanInit, int ConstructorIndex, ImmutableArray<AttributeData> Attributes);
+    private sealed record RawMember(string Name, ITypeSymbol Type, bool CanAssign, bool CanInit, int ConstructorIndex, ImmutableArray<AttributeData> Attributes, IPropertySymbol Symbol);
 
     // Helpers for the loops in this file, so no loop body runs LINQ itself.
     private static IEnumerable<OperationModel[]> DuplicateRoutes(List<OperationModel> operations, HostKind kind) =>
@@ -397,6 +405,13 @@ internal static class HostReader
     private static RawMember? MemberFor(List<RawMember> members, string token) =>
         members.FirstOrDefault(m => string.Equals(m.Name, token, StringComparison.OrdinalIgnoreCase));
 
+    // The documented public properties of a response type, by their camel-cased JSON names.
+    private static EquatableArray<DescriptionModel> ResponseDescriptions(INamedTypeSymbol type, IReadOnlyDictionary<string, DocumentationEntry> documentation) =>
+        ReadMembers(type)
+           .Select(m => Documentation.Summary(m.Symbol, documentation) is { } summary ? new DescriptionModel(Naming.CamelCase(m.Name), summary) : null)
+           .OfType<DescriptionModel>()
+           .ToEquatableArray();
+
     private static List<RawMember> ReadMembers(INamedTypeSymbol type)
     {
         var properties = new List<IPropertySymbol>();
@@ -419,7 +434,8 @@ internal static class HostReader
                        p.SetMethod is { IsInitOnly: false, DeclaredAccessibility: Accessibility.Public },
                        p.SetMethod is { IsInitOnly: true, DeclaredAccessibility: Accessibility.Public },
                        constructor is null ? -1 : constructor.Parameters.IndexOf(constructor.Parameters.FirstOrDefault(c => string.Equals(c.Name, p.Name, StringComparison.OrdinalIgnoreCase))!),
-                       p.GetAttributes()
+                       p.GetAttributes(),
+                       p
                    )
                )];
     }
@@ -432,6 +448,7 @@ internal static class HostReader
         string route,
         string operationName,
         LocationInfo? location,
+        IReadOnlyDictionary<string, DocumentationEntry> documentation,
         List<DiagnosticInfo> diagnostics,
         out bool failed
     )
@@ -488,7 +505,9 @@ internal static class HostReader
                     member.CanInit,
                     member.ConstructorIndex,
                     source is BindingSource.Route or BindingSource.Query or BindingSource.Header ? ParseKindOf(Element(member.Type)) : ParseKind.None,
-                    source is BindingSource.Route or BindingSource.Query or BindingSource.Header ? Element(member.Type).WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified() : null
+                    source is BindingSource.Route or BindingSource.Query or BindingSource.Header ? Element(member.Type).WithNullableAnnotation(NullableAnnotation.NotAnnotated).FullyQualified() : null,
+                    source is BindingSource.Service or BindingSource.Ignored ? EquatableArray<SchemaRuleModel>.Empty : SchemaRules.Read(member.Attributes),
+                    source is BindingSource.Service or BindingSource.Ignored ? null : Documentation.Summary(member.Symbol, documentation)
                 )
             );
         }

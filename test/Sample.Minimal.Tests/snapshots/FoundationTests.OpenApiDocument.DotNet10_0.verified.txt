@@ -21,6 +21,7 @@
           {
             name: rocketType,
             in: query,
+            description: The rocket type,
             schema: {
               $ref: #/components/schemas/RocketType
             }
@@ -62,7 +63,7 @@
           content: {
             application/json: {
               schema: {
-                $ref: #/components/schemas/CreateLaunchRecordRequest
+                $ref: #/components/schemas/Request
               }
             }
           },
@@ -72,17 +73,18 @@
           201: {
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
-                  type: string
+                  type: string,
+                  format: uri
                 }
               }
             },
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/CreateLaunchRecordResponse
+                  $ref: #/components/schemas/Response
                 }
               }
             }
@@ -102,7 +104,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -121,6 +133,7 @@
           {
             name: id,
             in: path,
+            description: The id of the launch record,
             required: true,
             schema: {
               $ref: #/components/schemas/LaunchRecordId
@@ -153,7 +166,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -170,6 +193,7 @@
           {
             name: id,
             in: path,
+            description: The launch record to update,
             required: true,
             schema: {
               $ref: #/components/schemas/LaunchRecordId
@@ -180,7 +204,7 @@
           content: {
             application/json: {
               schema: {
-                $ref: #/components/schemas/EditLaunchRecordRequest
+                $ref: #/components/schemas/Request
               }
             }
           },
@@ -212,7 +236,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -229,6 +263,7 @@
           {
             name: id,
             in: path,
+            description: The rocket id,
             required: true,
             schema: {
               $ref: #/components/schemas/LaunchRecordId
@@ -239,7 +274,7 @@
           content: {
             application/json: {
               schema: {
-                $ref: #/components/schemas/EditLaunchRecordPatchRequest
+                $ref: #/components/schemas/PatchRequest
               }
             }
           },
@@ -271,7 +306,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -288,6 +333,7 @@
           {
             name: id,
             in: path,
+            description: The id of the record to delete,
             required: true,
             schema: {
               $ref: #/components/schemas/LaunchRecordId
@@ -313,25 +359,37 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
           },
           403: {
             description: Forbidden,
-            headers: {
-              www-authenticate: {
-                description: The error details,
-                schema: {
-                  type: string
-                }
-              }
-            },
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
                 }
               }
             }
@@ -350,6 +408,7 @@
           {
             name: rocketType,
             in: query,
+            description: The type of the rocket,
             schema: {
               $ref: #/components/schemas/RocketType
             }
@@ -391,7 +450,7 @@
           content: {
             application/json: {
               schema: {
-                $ref: #/components/schemas/CreateRocketRequest
+                $ref: #/components/schemas/Request
               }
             }
           },
@@ -401,17 +460,18 @@
           201: {
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
-                  type: string
+                  type: string,
+                  format: uri
                 }
               }
             },
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/CreateRocketResponse
+                  $ref: #/components/schemas/Response
                 }
               }
             }
@@ -431,7 +491,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ConflictProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Conflict: #/components/schemas/ConflictProblem
+                    }
+                  }
                 }
               }
             }
@@ -450,6 +520,7 @@
           {
             name: id,
             in: path,
+            description: The id of the rocket,
             required: true,
             schema: {
               $ref: #/components/schemas/RocketId
@@ -482,7 +553,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -499,6 +580,7 @@
           {
             name: id,
             in: path,
+            description: The rocket id,
             required: true,
             schema: {
               $ref: #/components/schemas/RocketId
@@ -509,7 +591,7 @@
           content: {
             application/json: {
               schema: {
-                $ref: #/components/schemas/EditRocketRequest
+                $ref: #/components/schemas/Request
               }
             }
           },
@@ -541,7 +623,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -558,6 +650,7 @@
           {
             name: id,
             in: path,
+            description: The rocket id,
             required: true,
             schema: {
               $ref: #/components/schemas/RocketId
@@ -568,7 +661,7 @@
           content: {
             application/json: {
               schema: {
-                $ref: #/components/schemas/EditRocketPatchRequest
+                $ref: #/components/schemas/PatchRequest
               }
             }
           },
@@ -600,7 +693,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -617,6 +720,7 @@
           {
             name: id,
             in: path,
+            description: The id of the rocket to remove,
             required: true,
             schema: {
               $ref: #/components/schemas/RocketId
@@ -642,7 +746,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
                 }
               }
             }
@@ -700,20 +814,6 @@
           }
         }
       },
-      AssignedOfRocketType: {
-        required: [
-          value
-        ],
-        type: object,
-        properties: {
-          value: {
-            $ref: #/components/schemas/RocketType
-          },
-          hasValue: {
-            type: boolean
-          }
-        }
-      },
       AssignedOfstring: {
         required: [
           value
@@ -731,40 +831,73 @@
           }
         }
       },
-      CreateLaunchRecordRequest: {
-        required: [
-          rocketId,
-          scheduledLaunchDate,
-          partner,
-          payload
+      ConflictProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            required: [
+              case
+            ],
+            type: object,
+            properties: {
+              case: {
+                enum: [
+                  Conflict
+                ],
+                type: string
+              }
+            }
+          }
         ],
+        description: The request conflicts with the current state. HTTP 409, gRPC FailedPrecondition, GraphQL CONFLICT.
+      },
+      ForbiddenProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            required: [
+              case
+            ],
+            type: object,
+            properties: {
+              case: {
+                enum: [
+                  Forbidden
+                ],
+                type: string
+              }
+            }
+          }
+        ],
+        description: The caller may not do this. HTTP 403, gRPC PermissionDenied, GraphQL FORBIDDEN.
+      },
+      LaunchRecordModel: {
         type: object,
         properties: {
-          rocketId: {
-            $ref: #/components/schemas/RocketId
+          id: {
+            description: The launch record id,
+            $ref: #/components/schemas/LaunchRecordId
           },
           partner: {
-            minLength: 1,
-            type: [
-              null,
-              string
-            ]
+            type: string,
+            description: The launch partner
           },
           payload: {
-            minLength: 1,
-            type: [
-              null,
-              string
-            ]
+            type: string,
+            description: The payload details
           },
           payloadWeightKg: {
-            minimum: 0,
-            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            pattern: ^-?(?:0|[1-9]\d*)$,
             type: [
-              number,
+              integer,
               string
             ],
-            format: double
+            description: The payload weight in Kg,
+            format: int64
           },
           actualLaunchDate: {
             oneOf: [
@@ -774,46 +907,47 @@
               {
                 $ref: #/components/schemas/OffsetDateTime
               }
-            ]
+            ],
+            description: The actual launch date
           },
           scheduledLaunchDate: {
+            description: The intended date for the launch,
             $ref: #/components/schemas/OffsetDateTime
-          }
-        }
-      },
-      CreateLaunchRecordResponse: {
-        type: object,
-        properties: {
-          id: {
-            $ref: #/components/schemas/LaunchRecordId
-          }
-        }
-      },
-      CreateRocketRequest: {
-        required: [
-          serialNumber
-        ],
-        type: object,
-        properties: {
-          serialNumber: {
-            maxLength: 30,
-            minLength: 10,
-            type: string
           },
-          type: {
+          rocketSerialNumber: {
+            type: string,
+            description: The serial number of the reusable rocket
+          },
+          rocketType: {
+            description: The kind of rocket that will be launching,
             $ref: #/components/schemas/RocketType
           }
-        }
+        },
+        description: The launch record details
       },
-      CreateRocketResponse: {
-        type: object,
-        properties: {
-          id: {
-            $ref: #/components/schemas/RocketId
+      NotFoundProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            required: [
+              case
+            ],
+            type: object,
+            properties: {
+              case: {
+                enum: [
+                  NotFound
+                ],
+                type: string
+              }
+            }
           }
-        }
+        ],
+        description: The requested entity doesn't exist. HTTP 404, gRPC NotFound, GraphQL NOT_FOUND.
       },
-      EditLaunchRecordPatchRequest: {
+      PatchRequest: {
         required: [
           id
         ],
@@ -840,134 +974,9 @@
           rocketId: {
             $ref: #/components/schemas/AssignedOfRocketId
           }
-        }
-      },
-      EditLaunchRecordRequest: {
-        required: [
-          partner,
-          payload
-        ],
-        type: object,
-        properties: {
-          id: {
-            $ref: #/components/schemas/LaunchRecordId
-          },
-          partner: {
-            minLength: 1,
-            type: string
-          },
-          payload: {
-            minLength: 1,
-            type: string
-          },
-          payloadWeightKg: {
-            minimum: 0,
-            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
-            type: [
-              number,
-              string
-            ],
-            format: double
-          },
-          actualLaunchDate: {
-            oneOf: [
-              {
-                type: null
-              },
-              {
-                $ref: #/components/schemas/OffsetDateTime
-              }
-            ]
-          },
-          scheduledLaunchDate: {
-            $ref: #/components/schemas/OffsetDateTime
-          },
-          rocketId: {
-            $ref: #/components/schemas/RocketId
-          }
-        }
-      },
-      EditRocketPatchRequest: {
-        type: object,
-        properties: {
-          id: {
-            $ref: #/components/schemas/RocketId
-          },
-          serialNumber: {
-            $ref: #/components/schemas/AssignedOfstring
-          },
-          type: {
-            $ref: #/components/schemas/AssignedOfRocketType
-          }
-        }
-      },
-      EditRocketRequest: {
-        required: [
-          serialNumber
-        ],
-        type: object,
-        properties: {
-          id: {
-            $ref: #/components/schemas/RocketId
-          },
-          serialNumber: {
-            maxLength: 30,
-            minLength: 10,
-            type: string
-          },
-          type: {
-            $ref: #/components/schemas/RocketType
-          }
-        }
-      },
-      LaunchRecordId: {
-        type: string,
-        format: uuid
-      },
-      LaunchRecordModel: {
-        type: object,
-        properties: {
-          id: {
-            $ref: #/components/schemas/LaunchRecordId
-          },
-          partner: {
-            type: string
-          },
-          payload: {
-            type: string
-          },
-          payloadWeightKg: {
-            pattern: ^-?(?:0|[1-9]\d*)$,
-            type: [
-              integer,
-              string
-            ],
-            format: int64
-          },
-          actualLaunchDate: {
-            oneOf: [
-              {
-                type: null
-              },
-              {
-                $ref: #/components/schemas/OffsetDateTime
-              }
-            ]
-          },
-          scheduledLaunchDate: {
-            $ref: #/components/schemas/OffsetDateTime
-          },
-          rocketSerialNumber: {
-            type: string
-          },
-          rocketType: {
-            $ref: #/components/schemas/RocketType
-          }
-        }
-      },
-      OffsetDateTime: {
-        type: string,
-        format: date-time
+        },
+        description: The patch request,
+        x-schema-id: EditLaunchRecordPatchRequest
       },
       ProblemDetails: {
         required: [
@@ -1011,23 +1020,92 @@
           }
         }
       },
-      RocketId: {
-        type: string,
-        format: uuid
+      Request: {
+        required: [
+          rocketId,
+          scheduledLaunchDate,
+          partner,
+          payload
+        ],
+        type: object,
+        properties: {
+          rocketId: {
+            description: The rocket to use,
+            $ref: #/components/schemas/RocketId
+          },
+          partner: {
+            minLength: 1,
+            type: [
+              null,
+              string
+            ],
+            description: The launch partner
+          },
+          payload: {
+            minLength: 1,
+            type: [
+              null,
+              string
+            ],
+            description: The launch partners payload
+          },
+          payloadWeightKg: {
+            minimum: 0,
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              number,
+              string
+            ],
+            description: The payload weight,
+            format: double
+          },
+          actualLaunchDate: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ],
+            description: The actual launch date
+          },
+          scheduledLaunchDate: {
+            description: The intended launch date,
+            $ref: #/components/schemas/OffsetDateTime
+          }
+        },
+        description: Create a launch record,
+        x-schema-id: CreateLaunchRecordRequest
+      },
+      Response: {
+        type: object,
+        properties: {
+          id: {
+            description: The id of the new launch record,
+            $ref: #/components/schemas/LaunchRecordId
+          }
+        },
+        description: The launch record creation response,
+        x-schema-id: CreateLaunchRecordResponse
       },
       RocketModel: {
         type: object,
         properties: {
           id: {
+            description: The unique rocket identifier,
             $ref: #/components/schemas/RocketId
           },
           sn: {
-            type: string
+            type: string,
+            description: The serial number of the rocket
           },
           type: {
+            description: The type of the rocket,
             $ref: #/components/schemas/RocketType
           }
-        }
+        },
+        description: The details of a given rocket
       },
       RocketType: {
         enum: [

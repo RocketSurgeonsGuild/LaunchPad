@@ -6,7 +6,7 @@
         <PackageReference Include="Microsoft.AspNetCore.TestHost" />
         <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" IncludeAssets="all" />
     </ItemGroup>
-    <!-- As in FluentValidation.AspNetCore.Tests: the OpenAPI XML comment generator fails on the duplicate JetBrains.Annotations documentation. -->
+    <!-- The OpenAPI XML comment generator fails on the duplicate JetBrains.Annotations documentation. -->
     <Target Name="RemoveOpenApiXmlCommentGenerator" AfterTargets="ResolveLockFileAnalyzers">
         <ItemGroup>
             <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.AspNetCore.OpenApi.SourceGenerators'" />

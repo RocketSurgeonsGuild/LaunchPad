@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Rocket.Surgery.LaunchPad.Api;
 using ZeroAlloc.Mediator;
+using Rules = ZeroAlloc.Validation;
 namespace Api.Functional.ZeroAlloc.Contracts;
 
 // ZeroAlloc's requests are structs. System.Text.Json builds a struct through its parameterless constructor, so the OpenAPI document doesn't
@@ -25,8 +26,12 @@ public static class DeleteRocket { [DataContract] public readonly record struct 
 
 // A union response (C# 15's lowering of `union LaunchRocketResult(RocketModel, RocketNotFound, NotReady)`), served only by the Launches* hosts:
 // the value case answers 200, RocketNotFound 404 from its name, NotReady 422 from [ApiError].
+/// <summary>No rocket has the id.</summary>
+/// <param name="Id">The id that wasn't found.</param>
 [DataContract] public sealed record RocketNotFound([property: DataMember(Order = 1)] Guid Id);
 
+/// <summary>The rocket can't launch yet.</summary>
+/// <param name="Reason">Why it can't.</param>
 [ApiError(422, GrpcStatus = 9, GraphQLCode = "UNPROCESSABLE")]
 [DataContract] public sealed record NotReady([property: DataMember(Order = 1)] string Reason);
 
@@ -47,3 +52,21 @@ public static class LaunchRocket { [DataContract] public readonly record struct 
 
 // A stream of unions: launches every rocket in order, and ends with NotReady at the first grounded one.
 public static class ListLaunches { [DataContract] public readonly record struct Request([property: DataMember(Order = 1)] string? Name) : IStreamRequest<LaunchRocketResult>; }
+
+// Schedules a launch: served only by the Launches* Minimal API and controller hosts, with a policy, so their OpenAPI document shows the
+// ZeroAlloc.Validation rules of its body (read by the generators at compile time) and the 401 and 403 it can answer.
+public static class ScheduleLaunch
+{
+    /// <summary>Books a launch window for a rocket.</summary>
+    /// <param name="Id">The rocket.</param>
+    /// <param name="Window">The launch window's name.</param>
+    /// <param name="Crew">How many crew fly.</param>
+    /// <param name="Contact">Who to tell about changes.</param>
+    [DataContract]
+    public readonly record struct Request(
+        [property: DataMember(Order = 1)] Guid Id,
+        [property: DataMember(Order = 2), Rules.NotEmpty, Rules.MaxLength(40), Rules.Matches("^[A-Za-z ]+$")] string Window,
+        [property: DataMember(Order = 3), Rules.InclusiveBetween(1, 10)] int Crew,
+        [property: DataMember(Order = 4), Rules.EmailAddress] string? Contact
+    ) : IRequest<LaunchRocketResult>;
+}

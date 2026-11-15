@@ -7,6 +7,7 @@ internal class OperationMediaTypesFilter : IOpenApiOperationTransformer
 {
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
+        if (context.IsGenerated()) return Task.CompletedTask;
         foreach (var response in operation.Responses?.Values ?? Enumerable.Empty<IOpenApiResponse>())
         {
             RemoveMediaTypes(response.Content);

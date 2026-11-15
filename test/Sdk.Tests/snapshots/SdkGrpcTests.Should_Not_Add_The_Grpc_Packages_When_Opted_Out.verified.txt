@@ -3,13 +3,12 @@
     WebApplication
   ],
   PackageReferences: [
-    FluentValidation,
     Grpc.AspNetCore,
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
     Rocket.Surgery.LaunchPad.AspNetCore {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.FluentValidation {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.FluentValidation.AspNetCore {LaunchPadVersion} (SDK),
-    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
+    Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore {LaunchPadVersion} (SDK),
+    ZeroAlloc.Validation
   ]
 }

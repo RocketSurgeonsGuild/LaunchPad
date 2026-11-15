@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OpenApi;
@@ -13,10 +13,7 @@ internal class OperationIdFilter : IOpenApiOperationTransformer
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    private static string Pascalize(string input)
-    {
-        return Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
-    }
+    private static string Pascalize(string input) => Regex.Replace(input, "(?:^|_| +)(.)", match => match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture));
 
     /// <summary>
     ///     Same as Pascalize except that the first character is lower case
@@ -26,13 +23,14 @@ internal class OperationIdFilter : IOpenApiOperationTransformer
     private static string Camelize(string input)
     {
         var word = Pascalize(input);
-        #pragma warning disable CA1308
-        return word.Length > 0 ? string.Concat(word.Substring(0, 1).ToLower(CultureInfo.InvariantCulture), word.AsSpan(1)) : word;
-        #pragma warning restore CA1308
+#pragma warning disable CA1308
+        return word.Length > 0 ? string.Concat(word[..1].ToLower(CultureInfo.InvariantCulture), word.AsSpan(1)) : word;
+#pragma warning restore CA1308
     }
 
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
+        if (context.IsGenerated()) return Task.CompletedTask;
         if (string.IsNullOrWhiteSpace(operation.OperationId) && context.Description.ActionDescriptor is ControllerActionDescriptor cad)
             operation.OperationId = cad.ActionName;
 

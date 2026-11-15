@@ -42,6 +42,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     {
         // The helpers use the transport's library, so only a project with a host of this kind gets them.
         if (!hosts.IsEmpty) output.AddSource("Rocket.Surgery.LaunchPad.Api.Generated.ServerHelpers.g.cs", ServerHelpers);
+        if (hosts.Any(h => h.HasOpenApi)) output.AddSource("Rocket.Surgery.LaunchPad.Api.Generated.MinimalApiOpenApi.g.cs", OpenApiEmit.Helpers(Generated.Replace("global::", ""), false));
         // Endpoint names are global to an application: an operation listed on two hosts gets its host noun in front.
         var duplicateNames = hosts.SelectMany(h => h.Operations.Select(o => o.EndpointName)).GroupBy(n => n).Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
         foreach (var host in hosts)
@@ -52,13 +53,14 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             output.AddSource(host.FullyQualifiedName.Replace("global::", "") + ".MinimalApi.g.cs", Write(host, host.Profile, duplicateNames, output));
         }
 
-        foreach (var duplicate in hosts.SelectMany(h => h.Operations.Select(o => (Host: h, Operation: o)))
+        foreach (var (Key, Items) in hosts.SelectMany(h => h.Operations.Select(o => (Host: h, Operation: o)))
                                        .GroupBy(x => (x.Operation.Verb, Route: "/" + RouteText.Join(x.Host.BaseRoute, x.Operation.Route).ToLowerInvariant()))
-                                       .Where(g => g.Select(x => x.Host.Name).Distinct().Count() > 1))
+                                       .Where(g => g.Select(x => x.Host.Name).Distinct().Count() > 1)
+                                       .Select(g => (g.Key, Items: g.ToArray())))
         {
-            var items = duplicate.ToArray();
+            var items = Items;
             output.ReportDiagnostic(
-                DiagnosticInfo.Create(ApiDiagnostics.DuplicateRoute, items[1].Operation.Location, ServerEmit.Verb(duplicate.Key.Verb), duplicate.Key.Route, items[0].Host.Name, items[1].Host.Name)
+                DiagnosticInfo.Create(ApiDiagnostics.DuplicateRoute, items[1].Operation.Location, ServerEmit.Verb(Key.Verb), Key.Route, items[0].Host.Name, items[1].Host.Name)
                               .ToDiagnostic()
             );
         }
@@ -108,6 +110,8 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         {
             members.Add(Handler(host, profile, operation, service));
             members.Add(RequestDelegate(profile, operation, service));
+            if (OpenApiEmit.NeedsTransformer(host, operation))
+                members.Add(OpenApiEmit.Transformer(operation, $"__{operation.Name}OpenApi", Generated, Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword)));
             members.Add(
                 PartialHook($"Configure{operation.Name}", true, Parameter(Type("global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder"), "endpoint"))
                    .Summary($"Customises the generated <c>{operation.Name}</c> endpoint. Implement it in your part of <see cref=\"{host.Name}\" />.")
@@ -192,6 +196,13 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             statements.Add(Statement(WithMetadata(ProblemMetadata(status))));
         }
 
+        // An operation that requires authorization can be challenged (401) or forbidden (403); the authorization middleware answers without a body.
+        foreach (var status in OpenApiEmit.AuthorizationStatuses(operation))
+        {
+            // ApiExplorer reads a Minimal API response without a type only when the type is void, as MVC's [ProducesResponseType(status)] says.
+            statements.Add(Statement(WithMetadata(New(Type("global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata"), Literal(status), TypeOf(Type("void"))))));
+        }
+
         var name = prefixName ? Naming.HostNoun(host.Name) + operation.EndpointName : operation.EndpointName;
         statements.Add(Statement(Invoke(Member(Endpoints, "WithName"), endpoint, Literal(name))));
         if (operation.Summary is { } summary) statements.Add(Statement(Invoke(Member(OpenApi, "WithSummary"), endpoint, Literal(summary))));
@@ -212,6 +223,28 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             // Every endpoint of the host belongs to its version set; one without a version of its own serves all of them.
             statements.Add(Statement(Invoke(Member(endpoint, "WithApiVersionSet"), Id("__versionSet"))));
             if (ServerEmit.Version(host, operation) is { } version) statements.Add(Statement(Invoke(Member(endpoint, "MapToApiVersion"), ServerEmit.ApiVersion(version))));
+        }
+
+        if (host.HasOpenApi)
+        {
+            // Marks the endpoint as generated, so LaunchPad's OpenAPI filters for hand-written endpoints leave it to its own transformer.
+            statements.Add(
+                Statement(
+                    WithMetadata(
+                        New(
+                            Type("global::System.CodeDom.Compiler.GeneratedCodeAttribute"),
+                            Literal(OpenApiEmit.MarkerTool),
+                            Literal(typeof(MinimalApiGenerator).Assembly.GetName().Version?.ToString())
+                        )
+                    )
+                )
+            );
+            if (OpenApiEmit.NeedsTransformer(host, operation))
+            {
+                statements.Add(
+                    Statement(Invoke(Member("global::Microsoft.AspNetCore.Builder.OpenApiEndpointConventionBuilderExtensions", "AddOpenApiOperationTransformer"), endpoint, Id($"__{operation.Name}OpenApi")))
+                );
+            }
         }
 
         statements.Add(Statement(Invoke(Id($"Configure{operation.Name}"), endpoint)));

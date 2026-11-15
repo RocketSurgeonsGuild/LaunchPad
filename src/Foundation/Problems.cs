@@ -46,7 +46,7 @@ public sealed record Invalid(string? Detail = null) : Problem(Detail)
 }
 
 /// <summary>
-///     The request is well formed but fails validation: what FluentValidation reports. HTTP 422, gRPC <c>InvalidArgument</c>, GraphQL
+///     The request is well formed but fails validation: what a validator reports. HTTP 422, gRPC <c>InvalidArgument</c>, GraphQL
 ///     <c>BAD_USER_INPUT</c>.
 /// </summary>
 /// <param name="Detail">A human-readable explanation specific to this occurrence of the problem.</param>
