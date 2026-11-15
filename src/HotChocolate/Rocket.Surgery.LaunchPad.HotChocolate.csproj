@@ -9,7 +9,6 @@
     <PackageReference Include="HotChocolate.Data" />
     <PackageReference Include="HotChocolate.Diagnostics" />
     <PackageReference Include="HotChocolate.Execution.Abstractions" />
-    <!--        <PackageReference Include="Scrutor" />-->
     <PackageReference Include="Joinery.Dovetail" />
     <PackageReference Include="Humanizer.Core" />
   </ItemGroup>

@@ -5988,7 +5988,6 @@ resharper_web_mapped_path_highlighting = hint
 resharper_with_expression_instead_of_initializer_highlighting = suggestion
 resharper_with_expression_modifies_all_members_highlighting = warning
 resharper_wrong_indent_size_highlighting = none
-resharper_xunit_xunit_test_with_console_output_highlighting = warning
 resharper_zero_index_from_end_highlighting = warning
 
 [*.g.cs]

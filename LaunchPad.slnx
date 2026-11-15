@@ -41,6 +41,7 @@
     <File Path=".github/workflows/draft-release.yml" />
     <File Path=".github/workflows/lint.yml" />
     <File Path=".github/workflows/publish-results.yml" />
+    <File Path=".github/workflows/samples.yml" />
     <File Path=".github/workflows/sync-labels.yml" />
     <File Path=".github/workflows/update-milestone.yml" />
   </Folder>
@@ -63,7 +64,6 @@
     <Project Path="sample/Sample.Grpc/Sample.Grpc.csproj" />
     <Project Path="sample/Sample.Minimal/Sample.Minimal.csproj" />
     <Project Path="sample/Sample.Pages/Sample.Pages.csproj" />
-    <Project Path="sample/Sample.Restful.Client/Sample.Restful.Client.csproj" />
     <Project Path="sample/Sample.Restful/Sample.Restful.csproj" />
     <Project Path="sample/Sample.Worker/Sample.Worker.csproj" />
   </Folder>

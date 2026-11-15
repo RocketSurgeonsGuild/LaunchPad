@@ -113,7 +113,6 @@
         <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="5.9.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="5.9.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.9.0" />
-        <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
         <PackageVersion Include="NetTopologySuite.Features" Version="2.2.0" />
 
