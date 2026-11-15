@@ -105,9 +105,9 @@ public static partial class EditLaunchRecord
 
         public async ValueTask<Result> Handle(PatchRequest request, CancellationToken cancellationToken)
         {
-            return  await FindLaunchRecord(request.Id, cancellationToken) is not { } launchRecord 
-                ? (Result)new NotFound($"Launch record {request.Id} was not found")  
-                :  await mediator.Send(request.ApplyChanges(Map(launchRecord)), cancellationToken).ConfigureAwait(false);
+            return await FindLaunchRecord(request.Id, cancellationToken) is not { } launchRecord
+                ? (Result)new NotFound($"Launch record {request.Id} was not found")
+                : await mediator.Send(request.ApplyChanges(Map(launchRecord)), cancellationToken).ConfigureAwait(false);
         }
 
         private async Task<LaunchRecord?> FindLaunchRecord(LaunchRecordId id, CancellationToken cancellationToken) =>

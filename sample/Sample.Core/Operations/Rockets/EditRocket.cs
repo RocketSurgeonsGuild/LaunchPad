@@ -91,9 +91,9 @@ public static partial class EditRocket
 
         public async ValueTask<Result> Handle(PatchRequest request, CancellationToken cancellationToken)
         {
-            return  await FindRocket(request.Id, cancellationToken) is not { } rocket 
-                ? (Result)new NotFound($"Rocket {request.Id} was not found")  
-                :  await mediator.Send(request.ApplyChanges(MapRequest(rocket)), cancellationToken).ConfigureAwait(false);
+            return await FindRocket(request.Id, cancellationToken) is not { } rocket
+                ? (Result)new NotFound($"Rocket {request.Id} was not found")
+                : await mediator.Send(request.ApplyChanges(MapRequest(rocket)), cancellationToken).ConfigureAwait(false);
         }
 
         private async Task<ReadyRocket?> FindRocket(RocketId id, CancellationToken cancellationToken) =>
