@@ -64,7 +64,6 @@
     <Project Path="sample/Sample.Grpc/Sample.Grpc.csproj" />
     <Project Path="sample/Sample.Minimal/Sample.Minimal.csproj" />
     <Project Path="sample/Sample.Pages/Sample.Pages.csproj" />
-    <Project Path="sample/Sample.Restful.Client/Sample.Restful.Client.csproj" />
     <Project Path="sample/Sample.Restful/Sample.Restful.csproj" />
     <Project Path="sample/Sample.Worker/Sample.Worker.csproj" />
   </Folder>
