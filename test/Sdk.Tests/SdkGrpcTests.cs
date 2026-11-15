@@ -40,7 +40,7 @@ public class SdkGrpcTests(string targetFramework)
     }
 
     /// <summary>
-    ///     <c>LaunchPadEnableGrpc</c> set to <c>false</c> leaves the package out, and the FluentValidation integration with it.
+    ///     <c>LaunchPadEnableGrpc</c> set to <c>false</c> leaves the package out, and the ZeroAlloc integration with it.
     /// </summary>
     [Test]
     public async Task Should_Not_Add_The_Grpc_Packages_When_Opted_Out()
@@ -53,7 +53,7 @@ public class SdkGrpcTests(string targetFramework)
                .Project(HostModel.AspNetCore, targetFramework)
                .Property("LaunchPadEnableGrpc", "false")
                .ItemPackageReference("Grpc.AspNetCore")
-               .ItemPackageReference("FluentValidation")
+               .ItemPackageReference("ZeroAlloc.Validation")
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));

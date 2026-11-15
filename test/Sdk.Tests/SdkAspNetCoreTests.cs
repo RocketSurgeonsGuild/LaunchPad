@@ -29,8 +29,8 @@ public class SdkAspNetCoreTests(string targetFramework)
     }
 
     /// <summary>
-    ///     <c>LaunchPadEnableAspNetCore</c> set to <c>false</c> leaves the package out, and the FluentValidation integration with it: the
-    ///     application still gets LaunchPad.Hosting and the FluentValidation package itself.
+    ///     <c>LaunchPadEnableAspNetCore</c> set to <c>false</c> leaves the package out, and the ZeroAlloc integration with it: the
+    ///     application still gets LaunchPad.Hosting and the ZeroAlloc.Validation package itself.
     /// </summary>
     [Test]
     public async Task Should_Not_Add_The_AspNetCore_Packages_When_Opted_Out()
@@ -39,7 +39,7 @@ public class SdkAspNetCoreTests(string targetFramework)
         tree.AddProject(
             "app",
             HostModel.AspNetCore,
-            HostModelShape.Project(HostModel.AspNetCore, targetFramework).Property("LaunchPadEnableAspNetCore", "false").ItemPackageReference("FluentValidation")
+            HostModelShape.Project(HostModel.AspNetCore, targetFramework).Property("LaunchPadEnableAspNetCore", "false").ItemPackageReference("ZeroAlloc.Validation")
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));

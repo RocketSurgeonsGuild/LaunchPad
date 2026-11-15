@@ -4,7 +4,7 @@
           - Rocket.Surgery.LaunchPad.HotChocolate, when it references HotChocolate (a GraphQL server)
           - Rocket.Surgery.LaunchPad.StrawberryShake, when it references a StrawberryShake client package (a GraphQL client)
         LaunchPadEnableHotChocolate and LaunchPadEnableStrawberryShake set to false opt a project out. The NodaTime, NetTopologySuite and
-        FluentValidation integration packages of both are added by the files of those technologies.
+        ZeroAlloc integration packages of both are added by the files of those technologies.
     -->
     <ItemGroup>
         <DovetailSdkImplicitPackageReference

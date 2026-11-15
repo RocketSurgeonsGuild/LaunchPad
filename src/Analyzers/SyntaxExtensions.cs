@@ -12,14 +12,12 @@ internal static class SyntaxExtensions
 {
     public static TypeSyntax EnsureNullable(this TypeSyntax typeSyntax, NullableAnnotation? annotation = null)
     {
-        if (annotation.HasValue && annotation == NullableAnnotation.Annotated) return typeSyntax;
-        return typeSyntax as NullableTypeSyntax ?? NullableType(typeSyntax);
+        return  annotation.HasValue && annotation == NullableAnnotation.Annotated 
+            ? typeSyntax
+            :   typeSyntax as NullableTypeSyntax ?? NullableType(typeSyntax);
     }
 
-    public static TypeSyntax EnsureNotNullable(this TypeSyntax typeSyntax)
-    {
-        return typeSyntax is NullableTypeSyntax nts ? nts.ElementType : typeSyntax;
-    }
+    public static TypeSyntax EnsureNotNullable(this TypeSyntax typeSyntax) => typeSyntax is NullableTypeSyntax nts ? nts.ElementType : typeSyntax;
 
     public static IEnumerable<TypeDeclarationSyntax> GetParentDeclarationsWithSelf(
         this TypeDeclarationSyntax source
@@ -86,9 +84,11 @@ internal static class SyntaxExtensions
                          .AddMembers(classToNest);
 
             if (!parentSyntax.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
+            {
                 context.ReportDiagnostic(
                     Diagnostic.Create(GeneratorDiagnostics.MustBePartial, parentSyntax.Identifier.GetLocation(), parentSyntax.GetFullMetadataName())
                 );
+            }
 
             parent = parentSyntax.Parent;
         }
@@ -146,34 +146,25 @@ internal static class SyntaxExtensions
 
         return sb.ToString();
 
-        static bool IsRootNamespace(ISymbol symbol)
+        static bool IsRootNamespace(ISymbol symbol) => symbol is INamespaceSymbol s && s.IsGlobalNamespace;
+    }
+
+    public static string? GetSyntaxName(this NameSyntax nameSyntax)
+    {
+        return nameSyntax switch
         {
-            return symbol is INamespaceSymbol s && s.IsGlobalNamespace;
-        }
+            SimpleNameSyntax sns => sns.Identifier.Text,
+            QualifiedNameSyntax qns => qns.Right.Identifier.Text,
+            AliasQualifiedNameSyntax aqns => aqns.Name.Identifier.Text,
+            _ => null,
+        };
     }
 
-    public static string? GetSyntaxName(this TypeSyntax typeSyntax)
-    {
-        return typeSyntax switch
-               {
-                   SimpleNameSyntax sns     => sns.Identifier.Text,
-                   QualifiedNameSyntax qns  => qns.Right.Identifier.Text,
-                   NullableTypeSyntax nts   => nts.ElementType.GetSyntaxName() + "?",
-                   PredefinedTypeSyntax pts => pts.Keyword.Text,
-                   ArrayTypeSyntax ats      => ats.ElementType.GetSyntaxName() + "[]",
-                   TupleTypeSyntax tts      => "(" + tts.Elements.Select(z => $"{z.Type.GetSyntaxName()}{z.Identifier.Text}") + ")",
-                   _                        => null, // there might be more but for now... throw new NotSupportedException(typeSyntax.GetType().FullName)
-               };
-    }
-
-    public static bool ContainsAttribute(this TypeDeclarationSyntax syntax, string attributePrefixes) // string is comma separated
-    {
-        return syntax.AttributeLists.ContainsAttribute(attributePrefixes);
-    }
+    public static bool ContainsAttribute(this TypeDeclarationSyntax syntax, string attributePrefixes) => syntax.AttributeLists.ContainsAttribute(attributePrefixes); // string is comma separated
 
     public static bool ContainsAttribute(this AttributeListSyntax list, string attributePrefixes) // string is comma separated
     {
-        if (list is { Attributes: { Count: 0, }, })
+        if (list is { Attributes.Count: 0, })
             return false;
         var names = GetNames(attributePrefixes);
 
@@ -204,14 +195,11 @@ internal static class SyntaxExtensions
         return false;
     }
 
-    public static AttributeSyntax? GetAttribute(this TypeDeclarationSyntax syntax, string attributePrefixes) // string is comma separated
-    {
-        return syntax.AttributeLists.GetAttribute(attributePrefixes);
-    }
+    public static AttributeSyntax? GetAttribute(this TypeDeclarationSyntax syntax, string attributePrefixes) => syntax.AttributeLists.GetAttribute(attributePrefixes); // string is comma separated
 
     public static AttributeSyntax? GetAttribute(this AttributeListSyntax list, string attributePrefixes) // string is comma separated
     {
-        if (list is { Attributes: { Count: 0, }, })
+        if (list is { Attributes.Count: 0, })
             return null;
         var names = GetNames(attributePrefixes);
 
@@ -249,7 +237,7 @@ internal static class SyntaxExtensions
     }
 
     private static readonly string[] _disabledWarnings =
-    {
+    [
         "CA1002",
         "CA1034",
         "CA1822",
@@ -259,12 +247,10 @@ internal static class SyntaxExtensions
         "CS8603",
         "CS8618",
         "CS8669",
-    };
+    ];
 
     private static readonly Lazy<ImmutableArray<ExpressionSyntax>> DisabledWarnings = new(
-        () => _disabledWarnings
-             .Select(z => (ExpressionSyntax)IdentifierName(z))
-             .ToImmutableArray()
+        () => [.. _disabledWarnings.Select(z => (ExpressionSyntax)IdentifierName(z))]
     );
 
     private static readonly ConcurrentDictionary<string, HashSet<string>> AttributeNames = new();
@@ -273,7 +259,7 @@ internal static class SyntaxExtensions
     {
         if (!AttributeNames.TryGetValue(attributePrefixes, out var names))
         {
-            names = new(attributePrefixes.Split(',').SelectMany(z => new[] { z, z + "Attribute", }));
+            names = [with(attributePrefixes.Split(',').SelectMany(z => new[] { z, z + "Attribute", }))];
             AttributeNames.TryAdd(attributePrefixes, names);
         }
 
