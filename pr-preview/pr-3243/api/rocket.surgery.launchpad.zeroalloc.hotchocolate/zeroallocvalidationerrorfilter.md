@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate](/LaunchPad/pr-preview/pr-3243/api/rocket.surgery.launchpad.zeroalloc.hotchocolate.md)
-- Version: `2.0.1-pr.1222`
+- Version: `2.0.1-pr.1225`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Validation`
 - Target framework: `net11.0`
 - Implements: `IErrorFilter`

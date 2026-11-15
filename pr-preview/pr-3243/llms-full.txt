@@ -14,7 +14,7 @@ Health checks, logging, telemetry, validation and time are [Joints](concepts/joi
 
 Reference it, get it
 
-Referencing NodaTime, FluentValidation, HotChocolate or a Serilog sink is enough: the matching [integration packages](concepts/integration-packages/) and [templates](concepts/templates/) come with it.
+Referencing NodaTime, ZeroAlloc.Validation, HotChocolate or a Serilog sink is enough: the matching [integration packages](concepts/integration-packages/) and [templates](concepts/templates/) come with it.
 
 C# API reference
 
@@ -86,13 +86,12 @@ Each package exports the [Joints](../joints/) for its pair of technologies and d
 | the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`                                                        |
 | `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
 | `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
-| `FluentValidation`              | `.FluentValidation`, and its ASP.NET Core, gRPC and Blazor packages with those               |
 | `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                |
 | `HotChocolate`                  | `.HotChocolate`                                                                              |
 | `StrawberryShake`               | `.StrawberryShake`                                                                           |
 | `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
 
-There is no FluentValidation package for HotChocolate: `Rocket.Surgery.LaunchPad.FluentValidation.HotChocolate` was built on FairyBread, which has no release for HotChocolate 16, and was removed with the move to HotChocolate 16. Validate GraphQL requests in the mediator pipeline instead (the ZeroAlloc HotChocolate package reports its failures as GraphQL errors).
+Validation is ZeroAlloc.Validation’s: validate requests in the mediator pipeline, and the ZeroAlloc package of each transport reports the failures in that transport’s error shape (problem details over HTTP, a status over gRPC, GraphQL errors over HotChocolate).
 
 ### NodaTime with HotChocolate and StrawberryShake
 
@@ -125,7 +124,7 @@ Each technology can be turned off with its `LaunchPadEnable<Technology>` propert
 </PropertyGroup>
 ```
 
-The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`, `LaunchPadEnableNetTopologySuite`, `LaunchPadEnableFluentValidation`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and `LaunchPadEnableStrawberryShake`.
+The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`, `LaunchPadEnableNetTopologySuite`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and `LaunchPadEnableStrawberryShake`.
 
 ## Direct references
 
@@ -963,13 +962,59 @@ The value case answers like a plain response: 200, 201 with `[Creates]`, 204 for
 
 `[ApiError(statusCode)]` sets the HTTP status; its gRPC status and GraphQL code default to the ones for that status. A second case that matches no name and has no `[ApiError]` is LPAD1028. Each transport carries the case name, so cases that share a status stay distinct:
 
-* **HTTP**: ProblemDetails (`application/problem+json`) with the status, the case name in a `case` extension and the case’s members as camel-cased extensions; a problem’s detail, title, link (as `type`) and instance fill those fields and its properties are extensions. Each status is described in OpenAPI as a ProblemDetails response; a schema per case is planned with the OpenAPI transformers (#3149).
+* **HTTP**: ProblemDetails (`application/problem+json`) with the status, the case name in a `case` extension and the case’s members as camel-cased extensions; a problem’s detail, title, link (as `type`) and instance fill those fields and its properties are extensions. In OpenAPI each status has a schema per case, keyed on `case` (see [OpenAPI documents](#openapi-documents)).
 * **gRPC**: an `RpcException` with the status, the case name in the `case` trailer and the case, serialized by protobuf-net, in the `case-bin` trailer (left out for a case without members). A problem’s detail is the status message and it has no `case-bin`. A case with members needs `[DataContract]` or `[ProtoContract]` (LPAD1014), and `GetProto()` declares its message.
 * **GraphQL**: an error whose `extensions.code` is the code from the table (or `[ApiError(GraphQLCode)]`), with the case name in `extensions.case` and the case’s members as extensions. A problem’s detail is the error message and its properties are extensions. The codes follow the convention most GraphQL servers and clients use.
 
 A stream of unions (`IAsyncEnumerable<LaunchRocketResult>`) streams its value cases and ends with the first error case: over HTTP, as the response’s ProblemDetails when nothing was written yet, otherwise as a last NDJSON line holding the problem; over gRPC, as the `RpcException` above. GraphQL hosts skip streams (LPAD1015).
 
 A `null` response still answers 404 for a nullable response that isn’t a union. Throwing is not a way to report a failure: LaunchPad has no exceptions, filters or interceptors that turn an exception into a 404 or a 400 any more, so an exception a handler throws answers as an unexpected error (500 over HTTP).
+
+### OpenAPI documents
+
+[Section titled “OpenAPI documents”](#openapi-documents)
+
+Generated endpoints describe themselves to ApiExplorer, so `AddOpenApi()` documents them like hand-written ones: the endpoint name is the operation id, the XML summary and remarks (or `Summary` and `Description`) the summary and description, and every status the endpoint answers is a response. An operation with `Policy`, `Roles` or `AuthenticationSchemes` (and without `AllowAnonymous`) also lists 401 and 403.
+
+When the server references Microsoft.AspNetCore.OpenApi, each endpoint also gets a generated operation transformer for what metadata can’t say. It is registered on the endpoint itself: `Map{Host}()` calls `AddOpenApiOperationTransformer`, and a controller action carries a convention attribute that adds the same metadata to the action. The application registers nothing, and nothing is read by reflection when the document is built.
+
+* **Union cases.** Each error status of a union response is a `oneOf` of one schema per case, with a discriminator on `case`. A case’s schema, `{Case}Problem` in the components, is the ProblemDetails with `case` (an enum of the case name) and the case’s members:
+
+  ```yaml
+  RocketNotFoundProblem:
+      allOf:
+          - $ref: '#/components/schemas/ProblemDetails'
+          - type: object
+            required: [case]
+            properties:
+                case: { type: string, enum: [RocketNotFound] }
+                id: { type: string, format: uuid }
+  ```
+
+  A 400 that the endpoint also answers for a value it can’t bind keeps its plain ProblemDetails schema, since that problem has no case.
+
+* **Created.** A `[Creates]` response’s 201 has a `Location` header.
+
+* **Authorization.** The 401 has a `WWW-Authenticate` header.
+
+* **XML documentation.** The summaries of the request type, its response type and each union error case describe their schemas, and their properties’ summaries describe the properties and the route, query and header parameters. A positional record’s property without a summary of its own takes the record’s `<param>` for it, so `/// <param name="Id">The rocket's id.</param>` is enough. LaunchPad’s standard problem cases (`NotFound`, `Forbidden`, …) are described from their own documentation. A description something else already set (another transformer, `[Description]`) stays. Types from another project or package are documented when the build hands their XML file over: the base package’s targets do it for project references and LaunchPad’s packages; add a contracts package’s file with `<AdditionalFiles Include="path/to/Contracts.xml" LaunchPadApiDocumentation="true" />`.
+
+* **Validation rules.** ZeroAlloc.Validation rules on the request’s members are read at compile time and written into the request body’s schema or the route, query and header parameters:
+
+  | Rule                                                                  | Schema                                     |
+  | --------------------------------------------------------------------- | ------------------------------------------ |
+  | `[NotNull]`                                                           | required                                   |
+  | `[NotEmpty]`                                                          | required, `minLength: 1` (`minItems: 1`)   |
+  | `[MinLength]`, `[MaxLength]`, `[Length]`                              | `minLength`/`maxLength` (items for a list) |
+  | `[InclusiveBetween]`, `[GreaterThanOrEqualTo]`, `[LessThanOrEqualTo]` | `minimum`/`maximum`                        |
+  | `[ExclusiveBetween]`, `[GreaterThan]`, `[LessThan]`                   | `exclusiveMinimum`/`exclusiveMaximum`      |
+  | `[Matches]`                                                           | `pattern`                                  |
+  | `[EmailAddress]`                                                      | `format: email`                            |
+  | `[IsEnumName(typeof(E))]`                                             | `enum` of `E`’s names                      |
+
+  A rule with `When` or `Unless` holds only sometimes and is left out, as are rules a schema can’t state (`[Must]`, `[ValidateWith]`, custom and async rules, `[PrecisionScale]`, `[Equal]`, `[NotEqual]`, `[Null]`, `[Empty]`). The rules constrain the request type’s schema in the components, so every operation that carries the type shows them. A member whose schema is a shared reference (a strong type) keeps it.
+
+Strong types are described by the Primitives package’s own transformer (see [strong types](../../concepts/strong-types/)). LaunchPad’s OpenAPI filters for hand-written endpoints (`OpenApiJoint`: operation ids, parameter names, the 201 header, the 401/403 header, media types) skip generated endpoints, which carry `GeneratedCodeAttribute` metadata with the tool `Rocket.Surgery.LaunchPad.Api`.
 
 ## Generating clients
 
@@ -1359,7 +1404,7 @@ services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
 The chain, first to last:
 
 1. The application’s resolvers (`order` 0, the default), in the order they were added. A resolver added twice is chained once.
-2. LaunchPad’s own resolvers (`JsonTypeInfoResolverRegistration.LibraryOrder`): the primitive and `object` values LaunchPad writes (problem details properties, health check data), the FluentValidation problem details, and the NodaTime and NetTopologySuite types, which resolve from the converters their packages add.
+2. LaunchPad’s own resolvers (`JsonTypeInfoResolverRegistration.LibraryOrder`): the primitive and `object` values LaunchPad writes (problem details properties, health check data) and the NodaTime and NetTopologySuite types, which resolve from the converters their packages add.
 
 The first resolver that knows a type wins, so an application can take over any type LaunchPad resolves. LaunchPad adds no reflection based resolver: a type no JSON context knows throws `NotSupportedException`. An application that wants reflection adds `DefaultJsonTypeInfoResolver` to the chain itself, and LaunchPad leaves it there. ASP.NET Core’s own HTTP and MVC JSON options keep the reflection resolver ASP.NET adds to a JIT application; LaunchPad’s resolvers go in front of it.
 
