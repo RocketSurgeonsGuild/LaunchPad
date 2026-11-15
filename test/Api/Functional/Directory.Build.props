@@ -6,7 +6,12 @@
     -->
     <Import Project="$(MSBuildThisFileDirectory)../../../Directory.Build.props" />
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <!--
+            One framework, the oldest, which every framework of test/Api.Functional.Tests can reference. NSwag's client generation
+            (Microsoft.Extensions.ApiDescription.Client) doesn't run in the inner build of a project that declares TargetFrameworks, which is
+            all a project reference builds, so the HTTP client would come out empty.
+        -->
+        <TargetFramework>$(LaunchPadOldestTargetFramework)</TargetFramework>
         <IsPackable>false</IsPackable>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <AnalysisMode>Default</AnalysisMode>

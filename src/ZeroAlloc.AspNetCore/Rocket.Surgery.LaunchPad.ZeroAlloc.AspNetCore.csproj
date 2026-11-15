@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription>
             ZeroAlloc.Mediator and ZeroAlloc.Validation for LaunchPad ASP.NET Core applications: a rejected request answers 422 with problem details
             that list the failures by property, and the validation attributes show in the OpenAPI schemas.

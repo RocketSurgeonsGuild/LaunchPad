@@ -194,8 +194,8 @@ jobs:
                   # mise exec would otherwise install every tool of .config/mise.toml first; these jobs only need dotnet.
                   MISE_EXEC_AUTO_INSTALL: 'false'
             - name: 🧪 Test
-              # No --report-trx-filename: the two target frameworks of Hosting.Tests would write the same file, and the second would
-              # replace the first. The default names are unique.
+              # No --report-trx-filename: with more than one target framework (LaunchPadTargetFrameworks) each framework of
+              # Hosting.Tests would write the same file, and the last would replace the others. The default names are unique.
               run: mise exec -- dotnet test --project "test/$PROJECT/$PROJECT.csproj" --configuration Release --no-build --results-directory artifacts/logs/tests --report-trx
               env:
                   PROJECT: ${{ matrix.project }}

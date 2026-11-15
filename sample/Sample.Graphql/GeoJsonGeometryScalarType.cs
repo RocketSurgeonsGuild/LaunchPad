@@ -31,11 +31,7 @@ public sealed class GeoJsonGeometryScalarType : ScalarType<Geometry, ObjectValue
     {
         var options = new JsonSerializerOptions().ConfigureGeoJsonForLaunchPad(null);
         options.MakeReadOnly();
-#if NET11_0_OR_GREATER
         return options.GetTypeInfo<Geometry>();
-#else
-        return (JsonTypeInfo<Geometry>)options.GetTypeInfo(typeof(Geometry));
-#endif
     }
 
     private readonly AnyType _json = new();

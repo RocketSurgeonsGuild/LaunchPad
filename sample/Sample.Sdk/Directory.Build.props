@@ -2,10 +2,12 @@
     Settings every project here shares. The LaunchPad wiring is in each project: <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="..." />
     next to its own SDK (#:sdk in the file-based app) chains Joinery.Dovetail.Sdk, so every project finds its host model and gets Dovetail
     and LaunchPad.Hosting for it. No project references LaunchPad or Dovetail itself.
+    It stands for an application outside this repository, so it names its framework instead of reading the repository's
+    LaunchPadTargetFrameworks: .NET 11 is the oldest the LaunchPad SDK accepts.
 -->
 <Project>
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>

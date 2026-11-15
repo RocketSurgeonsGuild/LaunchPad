@@ -2,6 +2,9 @@
 
 A common set of libraries used to build console and web applications.
 
+LaunchPad 2.0 requires .NET 11 or later: its packages target `net11.0`, and the LaunchPad SDK stops a project on an older .NET with
+`LPADSDK0001`.
+
 # Status
 
 <!-- badges -->
