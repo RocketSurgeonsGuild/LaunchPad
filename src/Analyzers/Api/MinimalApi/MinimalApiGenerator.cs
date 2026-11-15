@@ -53,13 +53,14 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             output.AddSource(host.FullyQualifiedName.Replace("global::", "") + ".MinimalApi.g.cs", Write(host, host.Profile, duplicateNames, output));
         }
 
-        foreach (var duplicate in hosts.SelectMany(h => h.Operations.Select(o => (Host: h, Operation: o)))
+        foreach (var (Key, Items) in hosts.SelectMany(h => h.Operations.Select(o => (Host: h, Operation: o)))
                                        .GroupBy(x => (x.Operation.Verb, Route: "/" + RouteText.Join(x.Host.BaseRoute, x.Operation.Route).ToLowerInvariant()))
-                                       .Where(g => g.Select(x => x.Host.Name).Distinct().Count() > 1))
+                                       .Where(g => g.Select(x => x.Host.Name).Distinct().Count() > 1)
+                                       .Select(g => (g.Key, Items: g.ToArray())))
         {
-            var items = duplicate.ToArray();
+            var items = Items;
             output.ReportDiagnostic(
-                DiagnosticInfo.Create(ApiDiagnostics.DuplicateRoute, items[1].Operation.Location, ServerEmit.Verb(duplicate.Key.Verb), duplicate.Key.Route, items[0].Host.Name, items[1].Host.Name)
+                DiagnosticInfo.Create(ApiDiagnostics.DuplicateRoute, items[1].Operation.Location, ServerEmit.Verb(Key.Verb), Key.Route, items[0].Host.Name, items[1].Host.Name)
                               .ToDiagnostic()
             );
         }

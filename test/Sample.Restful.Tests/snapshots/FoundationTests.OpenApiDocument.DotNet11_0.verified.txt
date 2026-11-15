@@ -1288,7 +1288,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },

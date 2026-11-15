@@ -139,7 +139,7 @@ internal static class Documentation
                 case XText text:
                     builder.Append(text.Value);
                     break;
-                case XElement { Name.LocalName: "see" or "seealso" } reference when !reference.Nodes().Any():
+                case XElement { Name.LocalName: "see" or "seealso", FirstNode: null } reference:
                     builder.Append(ReferenceText(reference));
                     break;
                 case XElement { Name.LocalName: "paramref" or "typeparamref" } parameter:
