@@ -1,7 +1,17 @@
 ﻿{
   Data: {
     GeometryTest: {
-      Geometry: POINT (3 4)
+      Geometry: POINT (3 4),
+      Point: {
+        Bbox: [
+          3.0,
+          4.0,
+          3.0,
+          4.0
+        ],
+        Coordinates: (3, 4),
+        Crs: 4326
+      }
     }
   }
 }
