@@ -52,12 +52,14 @@
         <_LaunchPadOpenApiClientServer Include="@(OpenApiClient->WithMetadataValue('Extension', '.vbproj'))" />
         <!--
             The server is built before the client project, as a whole: a server with several target frameworks writes its document from its
-            outer build, which SkipGetTargetFrameworkProperties builds instead of the target framework closest to the client's.
+            outer build. SkipGetTargetFrameworkProperties skips choosing the target framework closest to the client's, and removing the
+            client's TargetFramework builds the outer build instead of building the server for the client's target framework.
         -->
         <ProjectReference
             Include="@(_LaunchPadOpenApiClientServer->'%(Identity)')"
             ReferenceOutputAssembly="false"
             SkipGetTargetFrameworkProperties="true"
+            GlobalPropertiesToRemove="TargetFramework"
             Private="false"
             PrivateAssets="all"
             LaunchPadOpenApiClientServer="true"
@@ -178,7 +180,10 @@
         <!--
             a project: the documents Microsoft.Extensions.ApiDescription.Server writes from the project, which was built first as a project
             reference. GenerateOpenApiDocuments is asked for explicitly (it is incremental on the server's assembly): its own hook on Build only
-            runs in some builds of a server with several target frameworks.
+            runs in some builds of a server with several target frameworks. Build is asked for first, in the same build of the server:
+            GenerateOpenApiDocuments doesn't depend on it, and in a solution build the server's build for that target framework can still be
+            running (waiting on its own references) when the client gets here, when the document's tool would run on an assembly whose
+            deps.json isn't written yet. Asking for Build waits for that build to finish.
         -->
         <ItemGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Project'">
             <_LaunchPadOpenApiServerReference Remove="@(_LaunchPadOpenApiServerReference)" />
@@ -187,6 +192,13 @@
                 Condition="'%(_MSBuildProjectReferenceExistent.LaunchPadOpenApiClientServer)' == 'true' and '%(FullPath)' == '$(_LaunchPadOpenApiServerPath)'"
             />
         </ItemGroup>
+        <MSBuild
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Project'"
+            Projects="@(_LaunchPadOpenApiServerReference)"
+            Targets="Build"
+            Properties="%(_LaunchPadOpenApiServerReference.SetConfiguration);%(_LaunchPadOpenApiServerReference.SetPlatform)"
+            RemoveProperties="TargetFramework;RuntimeIdentifier;SelfContained;%(_LaunchPadOpenApiServerReference.GlobalPropertiesToRemove)"
+        />
         <MSBuild
             Condition="'$(_LaunchPadOpenApiKind)' == 'Project'"
             Projects="@(_LaunchPadOpenApiServerReference)"
