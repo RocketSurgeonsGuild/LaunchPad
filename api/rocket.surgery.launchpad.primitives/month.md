@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.360`
+- Version: `2.0.1-beta.362`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net10.0`
 - Implements: `IStrongType<Month, int>`, `IComparable<Month>`, `IConvertible`, `IEquatable<Month>`, `IFormattable`, `IParsable<Month>`, `ISpanFormattable`, `ISpanParsable<Month>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Month>`, `IComparisonOperators<Month, Month, bool>`, `IEqualityOperators<Month, Month, bool>`
