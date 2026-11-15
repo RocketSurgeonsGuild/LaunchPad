@@ -2,6 +2,8 @@
   LICENSE,
   Readme.md,
   Rocket.Surgery.LaunchPad.Sdk.nuspec,
+  Sdk/OpenApiClients/KiotaJoint.cs.template,
+  Sdk/OpenApiClients/RefitterJoint.cs.template,
   Sdk/Packages.props,
   Sdk/Rocket.Surgery.LaunchPad.Detection.FluentValidation.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.GraphQL.targets,
@@ -11,6 +13,7 @@
   Sdk/Rocket.Surgery.LaunchPad.Detection.Polyfill.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.ZeroAlloc.targets,
   Sdk/Rocket.Surgery.LaunchPad.Detection.targets,
+  Sdk/Rocket.Surgery.LaunchPad.OpenApiClients.targets,
   Sdk/Rocket.Surgery.LaunchPad.Sdk.props,
   Sdk/Sdk.props,
   Sdk/Sdk.targets

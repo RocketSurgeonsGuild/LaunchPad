@@ -1,0 +1,384 @@
+<Project>
+    <!--
+        HTTP clients generated from OpenAPI documents, imported by Rocket.Surgery.LaunchPad.Detection.targets (during evaluation, after the
+        whole project, so it sees the project's OpenApiClient items). A project declares a client with an item:
+
+            <OpenApiClient Include="../Rockets.Api/Rockets.Api.csproj" Generator="Kiota" ClientName="RocketsClient" />
+            <OpenApiClient Include="openapi/rockets.yaml" Generator="Refitter" ClientName="Rockets" Namespace="MyApp.Rockets" />
+            <OpenApiClient Include="https://example.com/openapi/v1.json" Generator="Kiota" ClientName="ExampleClient" />
+
+        The Include is where the OpenAPI document comes from:
+          - a project (.csproj, .fsproj or .vbproj): the document the project writes when it builds, through
+            Microsoft.Extensions.ApiDescription.Server, which the server references. The project becomes a reference of the client project
+            that is built first, but not referenced by its assembly. DocumentName picks one of several documents (v1 is the default name of
+            ASP.NET Core's document).
+          - a URL (http:// or https://): downloaded on every build, and kept in obj. When the download fails, the copy of the last build is
+            used with a warning, so a build without the network still works once the document has been downloaded.
+          - otherwise a file (.json, .yaml or .yml), relative to the project.
+
+        Metadata:
+          - Generator (required): Kiota or Refitter.
+          - ClientName (required): the name of the client. Kiota's client class is called this, Refitter's interface is I<ClientName>, the
+            joint that registers it is <ClientName>Joint, and its base address is read from Clients:<ClientName>:BaseAddress.
+          - Namespace: the namespace of the generated code, $(RootNamespace) when not set.
+          - DocumentName: for a project, the document to use when the project writes several.
+          - Options: more arguments for the generator's command line (kiota generate, or refitter after its settings file).
+
+        Each generator is a .NET tool package (Microsoft.OpenApi.Kiota, Refitter), which restore downloads (PackageDownload) and the build runs
+        from the packages folder: nothing is installed, and a project or file source needs no network once the packages are restored. The
+        packages the generated code needs are added to the project: Microsoft.Kiota.Bundle and Microsoft.Extensions.Http (for the
+        IHttpClientFactory registration) for Kiota, Refit.HttpClientFactory, which brings Microsoft.Extensions.Http, for Refitter.
+
+        Generation is incremental: the document is copied into obj only when its content changes, and a client is generated again only when
+        that copy or its settings (generator, its version, ClientName, Namespace, Options) change. The generated code is in
+        $(IntermediateOutputPath)openapi/<ClientName>/, with the joint next to it.
+    -->
+
+    <PropertyGroup>
+        <!-- the folder of the tool packages that holds the tools, which run on .NET 10 or later -->
+        <_LaunchPadOpenApiToolFramework>net10.0</_LaunchPadOpenApiToolFramework>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'@(OpenApiClient)' != ''">
+        <_LaunchPadOpenApiClientServer Include="@(OpenApiClient->WithMetadataValue('Extension', '.csproj'))" />
+        <_LaunchPadOpenApiClientServer Include="@(OpenApiClient->WithMetadataValue('Extension', '.fsproj'))" />
+        <_LaunchPadOpenApiClientServer Include="@(OpenApiClient->WithMetadataValue('Extension', '.vbproj'))" />
+        <!--
+            The server is built before the client project, as a whole: a server with several target frameworks writes its document from its
+            outer build, which SkipGetTargetFrameworkProperties builds instead of the target framework closest to the client's.
+        -->
+        <ProjectReference
+            Include="@(_LaunchPadOpenApiClientServer->'%(Identity)')"
+            ReferenceOutputAssembly="false"
+            SkipGetTargetFrameworkProperties="true"
+            Private="false"
+            PrivateAssets="all"
+            LaunchPadOpenApiClientServer="true"
+        />
+    </ItemGroup>
+
+    <!-- The generators, when a client uses them, at the versions the SDK was packed with. -->
+    <ItemGroup Condition="'@(OpenApiClient)' != ''">
+        <PackageDownload
+            Include="Microsoft.OpenApi.Kiota"
+            Version="[$(LaunchPadKiotaVersion)]"
+            Condition="'$(LaunchPadKiotaVersion)' != '' and @(OpenApiClient->AnyHaveMetadataValue('Generator', 'Kiota')) == 'true'"
+        />
+        <PackageDownload
+            Include="Refitter"
+            Version="[$(LaunchPadRefitterVersion)]"
+            Condition="'$(LaunchPadRefitterVersion)' != '' and @(OpenApiClient->AnyHaveMetadataValue('Generator', 'Refitter')) == 'true'"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="Microsoft.Kiota.Bundle"
+            Version="$(LaunchPadKiotaBundleVersion)"
+            Condition="'$(LaunchPadKiotaBundleVersion)' != '' and @(OpenApiClient->AnyHaveMetadataValue('Generator', 'Kiota')) == 'true'"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="Refit.HttpClientFactory"
+            Version="$(LaunchPadRefitVersion)"
+            Condition="'$(LaunchPadRefitVersion)' != '' and @(OpenApiClient->AnyHaveMetadataValue('Generator', 'Refitter')) == 'true'"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="Microsoft.Extensions.Http"
+            Version="$(LaunchPadMicrosoftExtensionsHttpVersion)"
+            Condition="'$(LaunchPadMicrosoftExtensionsHttpVersion)' != '' and @(OpenApiClient->AnyHaveMetadataValue('Generator', 'Kiota')) == 'true'"
+        />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <LaunchPadOpenApiClientsDirectory Condition="'$(LaunchPadOpenApiClientsDirectory)' == ''">$(IntermediateOutputPath)openapi/</LaunchPadOpenApiClientsDirectory>
+    </PropertyGroup>
+
+    <!--
+        Generates every client that is out of date and adds the generated code to the compilation. A design-time build only adds what an
+        earlier build generated.
+    -->
+    <Target
+        Name="LaunchPadGenerateOpenApiClients"
+        BeforeTargets="CoreCompile;BeforeCompile"
+        AfterTargets="ResolveProjectReferences"
+        DependsOnTargets="_LaunchPadGenerateOpenApiClients;_LaunchPadCompileOpenApiClients"
+        Condition="'@(OpenApiClient)' != ''"
+    />
+
+    <Target Name="_LaunchPadGenerateOpenApiClients" DependsOnTargets="_LaunchPadPrepareOpenApiClients;_LaunchPadResolveOpenApiClientDocuments;_LaunchPadWriteOpenApiClientSettings;_LaunchPadRunOpenApiClientGenerators" Condition="'$(DesignTimeBuild)' != 'true'" />
+
+    <!-- Checks each client and decides where its files go. -->
+    <Target Name="_LaunchPadPrepareOpenApiClients">
+        <Error
+            Condition="'%(OpenApiClient.Generator)' != 'Kiota' and '%(OpenApiClient.Generator)' != 'Refitter'"
+            Code="LPSDK0100"
+            Text="The OpenApiClient '%(OpenApiClient.Identity)' has Generator '%(OpenApiClient.Generator)': set it to Kiota or Refitter."
+        />
+        <Error
+            Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('%(OpenApiClient.ClientName)', '^[A-Za-z_][A-Za-z0-9_]*$'))"
+            Code="LPSDK0101"
+            Text="The OpenApiClient '%(OpenApiClient.Identity)' has ClientName '%(OpenApiClient.ClientName)': set it to the name of the client, a C# identifier."
+        />
+
+        <ItemGroup>
+            <_LaunchPadOpenApiClient Remove="@(_LaunchPadOpenApiClient)" />
+            <_LaunchPadOpenApiClient Include="@(OpenApiClient)">
+                <Kind>File</Kind>
+                <Kind Condition="'%(Extension)' == '.csproj' or '%(Extension)' == '.fsproj' or '%(Extension)' == '.vbproj'">Project</Kind>
+                <Kind Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Identity)', '(?i)^https?://'))">Url</Kind>
+            </_LaunchPadOpenApiClient>
+            <_LaunchPadOpenApiClient>
+                <Source Condition="'%(_LaunchPadOpenApiClient.Kind)' == 'File'">%(_LaunchPadOpenApiClient.FullPath)</Source>
+                <Namespace Condition="'%(_LaunchPadOpenApiClient.Namespace)' == ''">$(RootNamespace)</Namespace>
+                <ClientDirectory>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(LaunchPadOpenApiClientsDirectory)', '%(_LaunchPadOpenApiClient.ClientName)'))</ClientDirectory>
+                <!-- the document keeps the extension of its source, which tells the generators JSON from YAML -->
+                <DocumentExtension>.json</DocumentExtension>
+                <DocumentExtension Condition="'%(_LaunchPadOpenApiClient.Kind)' != 'Project' and ('%(_LaunchPadOpenApiClient.Extension)' == '.yaml' or '%(_LaunchPadOpenApiClient.Extension)' == '.yml')">%(_LaunchPadOpenApiClient.Extension)</DocumentExtension>
+            </_LaunchPadOpenApiClient>
+            <_LaunchPadOpenApiClient>
+                <GeneratedDirectory>%(_LaunchPadOpenApiClient.ClientDirectory)generated/</GeneratedDirectory>
+                <SettingsFile>%(_LaunchPadOpenApiClient.ClientDirectory)settings.txt</SettingsFile>
+                <JointFile>%(_LaunchPadOpenApiClient.ClientDirectory)%(_LaunchPadOpenApiClient.ClientName)Joint.g.cs</JointFile>
+                <StampFile>%(_LaunchPadOpenApiClient.ClientDirectory)generated.stamp</StampFile>
+                <RefitterSettingsFile>%(_LaunchPadOpenApiClient.ClientDirectory)%(_LaunchPadOpenApiClient.ClientName).refitter</RefitterSettingsFile>
+                <Document>%(_LaunchPadOpenApiClient.ClientDirectory)openapi%(_LaunchPadOpenApiClient.DocumentExtension)</Document>
+            </_LaunchPadOpenApiClient>
+        </ItemGroup>
+
+        <Error
+            Condition="'%(_LaunchPadOpenApiClient.Kind)' == 'File' and !Exists('%(_LaunchPadOpenApiClient.Source)')"
+            Code="LPSDK0102"
+            Text="The OpenAPI document '%(_LaunchPadOpenApiClient.Identity)' of the OpenApiClient '%(_LaunchPadOpenApiClient.ClientName)' does not exist."
+        />
+        <MakeDir Directories="@(_LaunchPadOpenApiClient->'%(ClientDirectory)')" />
+    </Target>
+
+    <!--
+        Finds the source document of each client (asking a server project for the documents it wrote, or downloading a URL), and copies it to
+        the client's folder when its content differs from the copy there, so a document that was written again unchanged regenerates
+        nothing. Batched on each client.
+    -->
+    <Target Name="_LaunchPadResolveOpenApiClientDocuments" Outputs="%(_LaunchPadOpenApiClient.Identity)">
+        <PropertyGroup>
+            <_LaunchPadOpenApiKind>%(_LaunchPadOpenApiClient.Kind)</_LaunchPadOpenApiKind>
+            <_LaunchPadOpenApiSource>%(_LaunchPadOpenApiClient.Source)</_LaunchPadOpenApiSource>
+            <_LaunchPadOpenApiDocument>%(_LaunchPadOpenApiClient.Document)</_LaunchPadOpenApiDocument>
+            <_LaunchPadOpenApiClientName>%(_LaunchPadOpenApiClient.ClientName)</_LaunchPadOpenApiClientName>
+            <_LaunchPadOpenApiDocumentName>%(_LaunchPadOpenApiClient.DocumentName)</_LaunchPadOpenApiDocumentName>
+            <_LaunchPadOpenApiClientIdentity>%(_LaunchPadOpenApiClient.Identity)</_LaunchPadOpenApiClientIdentity>
+            <_LaunchPadOpenApiDownloadDirectory>%(_LaunchPadOpenApiClient.ClientDirectory)download/</_LaunchPadOpenApiDownloadDirectory>
+            <_LaunchPadOpenApiServerPath Condition="'$(_LaunchPadOpenApiKind)' == 'Project'">%(_LaunchPadOpenApiClient.FullPath)</_LaunchPadOpenApiServerPath>
+        </PropertyGroup>
+
+        <!-- a project: the documents Microsoft.Extensions.ApiDescription.Server wrote when the project was built, as a project reference -->
+        <ItemGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Project'">
+            <_LaunchPadOpenApiServerReference Remove="@(_LaunchPadOpenApiServerReference)" />
+            <_LaunchPadOpenApiServerReference
+                Include="@(_MSBuildProjectReferenceExistent)"
+                Condition="'%(_MSBuildProjectReferenceExistent.LaunchPadOpenApiClientServer)' == 'true' and '%(FullPath)' == '$(_LaunchPadOpenApiServerPath)'"
+            />
+        </ItemGroup>
+        <MSBuild
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Project'"
+            Projects="@(_LaunchPadOpenApiServerReference)"
+            Targets="OpenApiGetDocuments"
+            Properties="%(_LaunchPadOpenApiServerReference.SetConfiguration);%(_LaunchPadOpenApiServerReference.SetPlatform)"
+            RemoveProperties="TargetFramework;RuntimeIdentifier;SelfContained;%(_LaunchPadOpenApiServerReference.GlobalPropertiesToRemove)"
+        >
+            <Output TaskParameter="TargetOutputs" ItemName="_LaunchPadOpenApiServerDocument" />
+        </MSBuild>
+        <ItemGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Project'">
+            <!-- ASP.NET Core's default document, v1, is <Project>.json; any other is <Project>_<name>.json -->
+            <_LaunchPadOpenApiChosenDocument
+                Include="@(_LaunchPadOpenApiServerDocument)"
+                Condition="'$(_LaunchPadOpenApiDocumentName)' == '' or ('$(_LaunchPadOpenApiDocumentName)' == 'v1' and !$([System.String]::Copy('%(Filename)').Contains('_'))) or $([System.String]::Copy('%(Filename)').EndsWith('_$(_LaunchPadOpenApiDocumentName)'))"
+            />
+        </ItemGroup>
+        <Error
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Project' and '@(_LaunchPadOpenApiChosenDocument->Count())' != '1'"
+            Code="LPSDK0103"
+            Text="The project '$(_LaunchPadOpenApiClientIdentity)' of the OpenApiClient '$(_LaunchPadOpenApiClientName)' wrote the documents '@(_LaunchPadOpenApiServerDocument)': set DocumentName to the one the client is generated from."
+        />
+        <PropertyGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Project'">
+            <_LaunchPadOpenApiSource>@(_LaunchPadOpenApiChosenDocument->'%(FullPath)')</_LaunchPadOpenApiSource>
+        </PropertyGroup>
+
+        <!-- a URL: downloaded every build, the copy of the last build standing in for it when the download fails -->
+        <RemoveDir Condition="'$(_LaunchPadOpenApiKind)' == 'Url'" Directories="$(_LaunchPadOpenApiDownloadDirectory)" />
+        <DownloadFile
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Url'"
+            SourceUrl="$(_LaunchPadOpenApiClientIdentity)"
+            DestinationFolder="$(_LaunchPadOpenApiDownloadDirectory)"
+            DestinationFileName="openapi%(_LaunchPadOpenApiClient.DocumentExtension)"
+            SkipUnchangedFiles="false"
+            Retries="2"
+            ContinueOnError="true"
+        />
+        <PropertyGroup Condition="'$(_LaunchPadOpenApiKind)' == 'Url'">
+            <_LaunchPadOpenApiSource>$(_LaunchPadOpenApiDownloadDirectory)openapi%(_LaunchPadOpenApiClient.DocumentExtension)</_LaunchPadOpenApiSource>
+        </PropertyGroup>
+        <Warning
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and !Exists('$(_LaunchPadOpenApiSource)') and Exists('$(_LaunchPadOpenApiDocument)')"
+            Code="LPSDK0104"
+            Text="The OpenAPI document of the OpenApiClient '$(_LaunchPadOpenApiClientName)' could not be downloaded from '$(_LaunchPadOpenApiClientIdentity)': the client is generated from the copy downloaded before."
+        />
+        <Error
+            Condition="'$(_LaunchPadOpenApiKind)' == 'Url' and !Exists('$(_LaunchPadOpenApiSource)') and !Exists('$(_LaunchPadOpenApiDocument)')"
+            Code="LPSDK0105"
+            Text="The OpenAPI document of the OpenApiClient '$(_LaunchPadOpenApiClientName)' could not be downloaded from '$(_LaunchPadOpenApiClientIdentity)'."
+        />
+
+        <!-- copied when its content differs from the copy -->
+        <GetFileHash Condition="Exists('$(_LaunchPadOpenApiSource)')" Files="$(_LaunchPadOpenApiSource)">
+            <Output TaskParameter="Hash" PropertyName="_LaunchPadOpenApiSourceHash" />
+        </GetFileHash>
+        <GetFileHash Condition="Exists('$(_LaunchPadOpenApiDocument)')" Files="$(_LaunchPadOpenApiDocument)">
+            <Output TaskParameter="Hash" PropertyName="_LaunchPadOpenApiDocumentHash" />
+        </GetFileHash>
+        <Copy
+            Condition="Exists('$(_LaunchPadOpenApiSource)') and '$(_LaunchPadOpenApiSourceHash)' != '$(_LaunchPadOpenApiDocumentHash)'"
+            SourceFiles="$(_LaunchPadOpenApiSource)"
+            DestinationFiles="$(_LaunchPadOpenApiDocument)"
+        />
+
+        <PropertyGroup>
+            <_LaunchPadOpenApiSourceHash />
+            <_LaunchPadOpenApiDocumentHash />
+        </PropertyGroup>
+        <ItemGroup>
+            <_LaunchPadOpenApiServerDocument Remove="@(_LaunchPadOpenApiServerDocument)" />
+            <_LaunchPadOpenApiChosenDocument Remove="@(_LaunchPadOpenApiChosenDocument)" />
+        </ItemGroup>
+    </Target>
+
+    <!--
+        Writes what a client is generated with, only when it changed (so its time stamp tells when it did), the settings file of Refitter,
+        and the joint that registers the client.
+    -->
+    <Target Name="_LaunchPadWriteOpenApiClientSettings" DependsOnTargets="_LaunchPadFindOpenApiTools">
+        <ItemGroup>
+            <_LaunchPadOpenApiClient>
+                <ToolVersion Condition="'%(_LaunchPadOpenApiClient.Generator)' == 'Kiota'">$(_LaunchPadKiotaToolVersion)</ToolVersion>
+                <ToolVersion Condition="'%(_LaunchPadOpenApiClient.Generator)' == 'Refitter'">$(_LaunchPadRefitterToolVersion)</ToolVersion>
+            </_LaunchPadOpenApiClient>
+        </ItemGroup>
+        <WriteLinesToFile
+            File="%(_LaunchPadOpenApiClient.SettingsFile)"
+            Lines="Generator=%(_LaunchPadOpenApiClient.Generator);Version=%(_LaunchPadOpenApiClient.ToolVersion);ClientName=%(_LaunchPadOpenApiClient.ClientName);Namespace=%(_LaunchPadOpenApiClient.Namespace);Options=$([MSBuild]::Escape('%(_LaunchPadOpenApiClient.Options)'))"
+            Overwrite="true"
+            WriteOnlyWhenDifferent="true"
+        />
+        <WriteLinesToFile
+            Condition="'%(_LaunchPadOpenApiClient.Generator)' == 'Refitter'"
+            File="%(_LaunchPadOpenApiClient.RefitterSettingsFile)"
+            Lines="{ &quot;openApiPath&quot;: &quot;$([System.String]::Copy('%(_LaunchPadOpenApiClient.Document)').Replace('\', '/'))&quot;, &quot;namespace&quot;: &quot;%(_LaunchPadOpenApiClient.Namespace)&quot;, &quot;naming&quot;: { &quot;useOpenApiTitle&quot;: false, &quot;interfaceName&quot;: &quot;%(_LaunchPadOpenApiClient.ClientName)&quot; }, &quot;useCancellationTokens&quot;: true }"
+            Overwrite="true"
+            WriteOnlyWhenDifferent="true"
+        />
+        <ItemGroup>
+            <_LaunchPadOpenApiClientJoint Remove="@(_LaunchPadOpenApiClientJoint)" />
+            <_LaunchPadOpenApiClientJoint
+                Include="@(_LaunchPadOpenApiClient->'%(JointFile)')"
+                Text="$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)OpenApiClients/%(Generator)Joint.cs.template').Replace('__Namespace__', '%(Namespace)').Replace('__ClientName__', '%(ClientName)'))"
+            />
+        </ItemGroup>
+        <WriteLinesToFile File="%(_LaunchPadOpenApiClientJoint.Identity)" Lines="$([MSBuild]::Escape('%(_LaunchPadOpenApiClientJoint.Text)'))" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    </Target>
+
+    <!--
+        The generator tools, in the packages folders restore uses (the packages folder, or a fallback folder), at the version the SDK was
+        packed with, or else the version Directory.Packages.props pins (LaunchPad's own repository imports this file directly).
+    -->
+    <Target Name="_LaunchPadFindOpenApiTools">
+        <PropertyGroup>
+            <_LaunchPadKiotaToolVersion>$(LaunchPadKiotaVersion)</_LaunchPadKiotaToolVersion>
+            <_LaunchPadKiotaToolVersion Condition="'$(_LaunchPadKiotaToolVersion)' == ''">@(PackageVersion->WithMetadataValue('Identity', 'Microsoft.OpenApi.Kiota')->'%(Version)')</_LaunchPadKiotaToolVersion>
+            <_LaunchPadRefitterToolVersion>$(LaunchPadRefitterVersion)</_LaunchPadRefitterToolVersion>
+            <_LaunchPadRefitterToolVersion Condition="'$(_LaunchPadRefitterToolVersion)' == ''">@(PackageVersion->WithMetadataValue('Identity', 'Refitter')->'%(Version)')</_LaunchPadRefitterToolVersion>
+        </PropertyGroup>
+        <ItemGroup>
+            <_LaunchPadPackageFolder Remove="@(_LaunchPadPackageFolder)" />
+            <_LaunchPadPackageFolder Include="$(NuGetPackageFolders);$(NuGetPackageRoot)" />
+            <_LaunchPadOpenApiToolCandidate Remove="@(_LaunchPadOpenApiToolCandidate)" />
+            <_LaunchPadOpenApiToolCandidate
+                Include="@(_LaunchPadPackageFolder->'%(Identity)/microsoft.openapi.kiota/$(_LaunchPadKiotaToolVersion)/tools/$(_LaunchPadOpenApiToolFramework)/any/kiota.dll')"
+                Generator="Kiota"
+            />
+            <_LaunchPadOpenApiToolCandidate
+                Include="@(_LaunchPadPackageFolder->'%(Identity)/refitter/$(_LaunchPadRefitterToolVersion)/tools/$(_LaunchPadOpenApiToolFramework)/any/refitter.dll')"
+                Generator="Refitter"
+            />
+            <_LaunchPadOpenApiTool Remove="@(_LaunchPadOpenApiTool)" />
+            <_LaunchPadOpenApiTool Include="@(_LaunchPadOpenApiToolCandidate)" Condition="Exists('%(_LaunchPadOpenApiToolCandidate.Identity)')" />
+        </ItemGroup>
+        <PropertyGroup>
+            <_LaunchPadKiotaToolPath>@(_LaunchPadOpenApiTool->WithMetadataValue('Generator', 'Kiota')->'%(FullPath)'->Distinct())</_LaunchPadKiotaToolPath>
+            <_LaunchPadKiotaToolPath>$(_LaunchPadKiotaToolPath.Split(';')[0])</_LaunchPadKiotaToolPath>
+            <_LaunchPadRefitterToolPath>@(_LaunchPadOpenApiTool->WithMetadataValue('Generator', 'Refitter')->'%(FullPath)'->Distinct())</_LaunchPadRefitterToolPath>
+            <_LaunchPadRefitterToolPath>$(_LaunchPadRefitterToolPath.Split(';')[0])</_LaunchPadRefitterToolPath>
+            <_LaunchPadOpenApiDotnet>$(DOTNET_HOST_PATH)</_LaunchPadOpenApiDotnet>
+            <_LaunchPadOpenApiDotnet Condition="'$(_LaunchPadOpenApiDotnet)' == ''">dotnet</_LaunchPadOpenApiDotnet>
+        </PropertyGroup>
+    </Target>
+
+    <!-- Generates a client when its document or its settings changed since it was last generated. Batched on each client. -->
+    <Target
+        Name="_LaunchPadRunOpenApiClientGenerators"
+        Inputs="%(_LaunchPadOpenApiClient.Document);%(_LaunchPadOpenApiClient.SettingsFile)"
+        Outputs="%(_LaunchPadOpenApiClient.StampFile)"
+    >
+        <PropertyGroup>
+            <_LaunchPadOpenApiGenerator>%(_LaunchPadOpenApiClient.Generator)</_LaunchPadOpenApiGenerator>
+            <_LaunchPadOpenApiTool Condition="'$(_LaunchPadOpenApiGenerator)' == 'Kiota'">$(_LaunchPadKiotaToolPath)</_LaunchPadOpenApiTool>
+            <_LaunchPadOpenApiTool Condition="'$(_LaunchPadOpenApiGenerator)' == 'Refitter'">$(_LaunchPadRefitterToolPath)</_LaunchPadOpenApiTool>
+            <_LaunchPadOpenApiGeneratedDirectory>%(_LaunchPadOpenApiClient.GeneratedDirectory)</_LaunchPadOpenApiGeneratedDirectory>
+            <!-- the tools run on the newest runtime installed when .NET 10 is not -->
+            <_LaunchPadOpenApiCommand>&quot;$(_LaunchPadOpenApiDotnet)&quot; exec --roll-forward Major &quot;$(_LaunchPadOpenApiTool)&quot;</_LaunchPadOpenApiCommand>
+            <_LaunchPadOpenApiCommand Condition="'$(_LaunchPadOpenApiGenerator)' == 'Kiota'">$(_LaunchPadOpenApiCommand) generate --language CSharp --openapi &quot;%(_LaunchPadOpenApiClient.Document)&quot; --class-name %(_LaunchPadOpenApiClient.ClientName) --namespace-name %(_LaunchPadOpenApiClient.Namespace) --output &quot;$(_LaunchPadOpenApiGeneratedDirectory.TrimEnd('/'))&quot; --clean-output --exclude-backward-compatible --log-level Warning %(_LaunchPadOpenApiClient.Options)</_LaunchPadOpenApiCommand>
+            <_LaunchPadOpenApiCommand Condition="'$(_LaunchPadOpenApiGenerator)' == 'Refitter'">$(_LaunchPadOpenApiCommand) --settings-file &quot;%(_LaunchPadOpenApiClient.RefitterSettingsFile)&quot; --output &quot;$(_LaunchPadOpenApiGeneratedDirectory)%(_LaunchPadOpenApiClient.ClientName).cs&quot; --no-logging --no-banner --simple-output %(_LaunchPadOpenApiClient.Options)</_LaunchPadOpenApiCommand>
+        </PropertyGroup>
+        <Error
+            Condition="'$(_LaunchPadOpenApiTool)' == ''"
+            Code="LPSDK0106"
+            Text="The $(_LaunchPadOpenApiGenerator) tool the OpenApiClient '%(_LaunchPadOpenApiClient.ClientName)' is generated with was not found in the packages folders ($(NuGetPackageFolders)): restore the project."
+        />
+
+        <Message Importance="high" Text="Generating the OpenAPI client %(_LaunchPadOpenApiClient.ClientName) with $(_LaunchPadOpenApiGenerator)" />
+        <RemoveDir Directories="$(_LaunchPadOpenApiGeneratedDirectory)" />
+        <MakeDir Directories="$(_LaunchPadOpenApiGeneratedDirectory)" />
+        <!--
+            No telemetry and no update checks: a build is not a place to call home. What the tools write is logged, not parsed for warnings
+            (Kiota warns about every document without a server); when a tool fails, the build fails with what it wrote.
+        -->
+        <Exec
+            Command="$(_LaunchPadOpenApiCommand)"
+            WorkingDirectory="%(_LaunchPadOpenApiClient.ClientDirectory)"
+            EnvironmentVariables="KIOTA_TELEMETRY_OPTOUT=true;KIOTA_UPDATE_DISABLED=true;KIOTA_OFFLINE_ENABLED=true;DOTNET_CLI_TELEMETRY_OPTOUT=1"
+            IgnoreStandardErrorWarningFormat="true"
+            IgnoreExitCode="true"
+            ConsoleToMSBuild="true"
+            StandardOutputImportance="low"
+            StandardErrorImportance="low"
+        >
+            <Output TaskParameter="ExitCode" PropertyName="_LaunchPadOpenApiExitCode" />
+            <Output TaskParameter="ConsoleOutput" ItemName="_LaunchPadOpenApiOutput" />
+        </Exec>
+        <Error
+            Condition="'$(_LaunchPadOpenApiExitCode)' != '0'"
+            Code="LPSDK0107"
+            Text="$(_LaunchPadOpenApiGenerator) could not generate the OpenAPI client %(_LaunchPadOpenApiClient.ClientName) (exit code $(_LaunchPadOpenApiExitCode)):%0A@(_LaunchPadOpenApiOutput, '%0A')"
+        />
+        <ItemGroup>
+            <_LaunchPadOpenApiOutput Remove="@(_LaunchPadOpenApiOutput)" />
+        </ItemGroup>
+        <Touch Files="%(_LaunchPadOpenApiClient.StampFile)" AlwaysCreate="true" />
+    </Target>
+
+    <!-- Adds the code of every client generated so far, and its joint, to the compilation. -->
+    <Target Name="_LaunchPadCompileOpenApiClients" DependsOnTargets="_LaunchPadPrepareOpenApiClients">
+        <ItemGroup>
+            <_LaunchPadOpenApiClientCode Remove="@(_LaunchPadOpenApiClientCode)" />
+            <_LaunchPadOpenApiClientCode Include="%(_LaunchPadOpenApiClient.GeneratedDirectory)**/*.cs" />
+            <_LaunchPadOpenApiClientCode Include="@(_LaunchPadOpenApiClient->'%(JointFile)')" Condition="Exists('%(_LaunchPadOpenApiClient.JointFile)')" />
+            <Compile Include="@(_LaunchPadOpenApiClientCode)" />
+            <FileWrites Include="@(_LaunchPadOpenApiClientCode)" />
+        </ItemGroup>
+    </Target>
+</Project>
