@@ -33,6 +33,19 @@
         <SolutionDir>$(MSBuildThisFileDirectory)</SolutionDir>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
+    <!--
+        The target frameworks of every project in src/, sample/ and test/, oldest first. No project file names a framework itself; each sets
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks> (the WebAssembly projects the -browser form, the few that build for
+        one framework the newest). The generators, analyzers, MSBuild task and SDK packages stay on netstandard2.0, which the compiler and
+        MSBuild load. Adding a framework starts here: CONTRIBUTING.md ("Adding a target framework") lists everything else that changes.
+    -->
+    <PropertyGroup>
+        <LaunchPadTargetFrameworks>net11.0</LaunchPadTargetFrameworks>
+        <!-- The same frameworks for WebAssembly: net11.0-browser for net11.0. -->
+        <LaunchPadBrowserTargetFrameworks>$(LaunchPadTargetFrameworks.Replace(';', '-browser;'))-browser</LaunchPadBrowserTargetFrameworks>
+        <!-- The newest of them, for a project that can only build for one: the SDK tests' host, which loads MSBuild from the SDK of its own version, and the native AOT check. -->
+        <LaunchPadLatestTargetFramework>$([System.Text.RegularExpressions.Regex]::Match('$(LaunchPadTargetFrameworks)', '[^;\s]+(?=\s*$)').Value)</LaunchPadLatestTargetFramework>
+    </PropertyGroup>
     <ItemGroup>
         <None
             Include="$(MSBuildThisFileDirectory).temp/packageicon.png"
