@@ -78,12 +78,12 @@ internal static class SyntaxExtensions
             classToNest = ( parentSyntax is RecordDeclarationSyntax
                               ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), parentSyntax.Identifier)
                               : ClassDeclaration(parentSyntax.Identifier) )
-                         .WithModifiers(TokenList(parentSyntax.Modifiers.Select(z => z.WithoutTrivia())))
+                         .WithModifiers(WithoutTrivia(parentSyntax.Modifiers))
                          .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
                          .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
                          .AddMembers(classToNest);
 
-            if (!parentSyntax.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
+            if (!parentSyntax.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(GeneratorDiagnostics.MustBePartial, parentSyntax.Identifier.GetLocation(), parentSyntax.GetFullMetadataName())
@@ -94,6 +94,17 @@ internal static class SyntaxExtensions
         }
 
         return classToNest;
+    }
+
+    private static SyntaxTokenList WithoutTrivia(SyntaxTokenList tokens)
+    {
+        var withoutTrivia = new SyntaxToken[tokens.Count];
+        for (var i = 0; i < tokens.Count; i++)
+        {
+            withoutTrivia[i] = tokens[i].WithoutTrivia();
+        }
+
+        return TokenList(withoutTrivia);
     }
 
     public static string GetFullMetadataName(this TypeDeclarationSyntax? source)
