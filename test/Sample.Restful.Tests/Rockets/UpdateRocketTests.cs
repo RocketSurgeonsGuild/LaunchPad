@@ -20,7 +20,7 @@ public class UpdateRocketTests : WebAppFixtureTest
             new EditRocketRequest
             {
                 Type = ClientRocketType.FalconHeavy,
-                SerialNumber = string.Join("", rocket.SerialNumber.Reverse())
+                SerialNumber = new string([.. rocket.SerialNumber.Reverse()])
             }
         );
         await u.Should().NotBeNull();
