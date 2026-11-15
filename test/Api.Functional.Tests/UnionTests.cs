@@ -1,14 +1,14 @@
-extern alias mediatrserver;
+extern alias zeroallocserver;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using Api.Functional.MediatR.Contracts;
+using Api.Functional.ZeroAlloc.Contracts;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using ProtoBuf.Grpc.Client;
-using Launches = mediatrserver::Api.Functional.MediatR.Server;
+using Launches = zeroallocserver::Api.Functional.ZeroAlloc.Server;
 
 namespace Api.Functional.Tests;
 
@@ -112,18 +112,18 @@ public class UnionTests
         // The code-first contracts the server generated, so the test needs no .proto of its own.
         var rockets = channel.CreateGrpcService<Launches.IRocketsServiceContract>();
         var launches = channel.CreateGrpcService<Launches.ILaunchesServiceContract>();
-        var falcon = ( await rockets.CreateRocket(new("Falcon")) ).Id;
-        var grounded = ( await rockets.CreateRocket(new("Grounded")) ).Id;
+        var falcon = ( await rockets.CreateRocket(new CreateRocket.Request("Falcon")) ).Id;
+        var grounded = ( await rockets.CreateRocket(new CreateRocket.Request("Grounded")) ).Id;
         var unknown = Guid.NewGuid();
 
-        await ( await launches.LaunchRocket(new(falcon), new(new CallOptions(cancellationToken: cancellationToken))) ).Name.Should().BeEqualTo("Falcon");
+        await ( await launches.LaunchRocket(new LaunchRocket.Request(falcon), new(new CallOptions(cancellationToken: cancellationToken))) ).Name.Should().BeEqualTo("Falcon");
 
-        var notFound = await ( (Func<Task>)( async () => await launches.LaunchRocket(new(unknown), new(new CallOptions(cancellationToken: cancellationToken))) ) ).Should().Throw<RpcException>();
+        var notFound = await ( (Func<Task>)( async () => await launches.LaunchRocket(new LaunchRocket.Request(unknown), new(new CallOptions(cancellationToken: cancellationToken))) ) ).Should().Throw<RpcException>();
         await notFound.StatusCode.Should().BeEqualTo(StatusCode.NotFound);
         await notFound.Trailers.GetValue("case").Should().BeEqualTo("RocketNotFound");
         await ProtoBuf.Serializer.Deserialize<RocketNotFound>(notFound.Trailers.GetValueBytes("case-bin")).Id.Should().BeEqualTo(unknown);
 
-        var notReady = await ( (Func<Task>)( async () => await launches.LaunchRocket(new(grounded), new(new CallOptions(cancellationToken: cancellationToken))) ) ).Should().Throw<RpcException>();
+        var notReady = await ( (Func<Task>)( async () => await launches.LaunchRocket(new LaunchRocket.Request(grounded), new(new CallOptions(cancellationToken: cancellationToken))) ) ).Should().Throw<RpcException>();
         await notReady.StatusCode.Should().BeEqualTo(StatusCode.FailedPrecondition);
         await notReady.Trailers.GetValue("case").Should().BeEqualTo("NotReady");
         await ProtoBuf.Serializer.Deserialize<NotReady>(notReady.Trailers.GetValueBytes("case-bin")).Reason.Should().BeEqualTo("grounded");
@@ -158,13 +158,13 @@ public class UnionTests
         using var channel = GrpcChannel.ForAddress(server.GetTestServer().BaseAddress, new() { HttpHandler = server.GetTestServer().CreateHandler() });
         var rockets = channel.CreateGrpcService<Launches.IRocketsServiceContract>();
         var launches = channel.CreateGrpcService<Launches.ILaunchesServiceContract>();
-        var falcon = ( await rockets.CreateRocket(new("Falcon")) ).Id;
-        await rockets.CreateRocket(new("Grounded"));
+        var falcon = ( await rockets.CreateRocket(new CreateRocket.Request("Falcon")) ).Id;
+        await rockets.CreateRocket(new CreateRocket.Request("Grounded"));
 
         var received = new List<Guid>();
         var error = await ( (Func<Task>)( async () =>
             {
-                await foreach (var rocket in launches.ListLaunches(new(null), new(new CallOptions(cancellationToken: cancellationToken)))) received.Add(rocket.Id);
+                await foreach (var rocket in launches.ListLaunches(new ListLaunches.Request(null), new(new CallOptions(cancellationToken: cancellationToken)))) received.Add(rocket.Id);
             } ) ).Should().Throw<RpcException>();
 
         await received.Should().BeEquivalentTo([falcon], CollectionOrdering.Matching);

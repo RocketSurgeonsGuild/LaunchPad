@@ -158,8 +158,8 @@ internal static class HostReader
             response = valueCase;
         }
 
-        // A union's value case is void when it's the profile's unit type or any mediator's (MediatR's IRequest is void without one, but a
-        // handler can still put MediatR.Unit in a union).
+        // A union's value case is void when it's the profile's unit type or any mediator's (a profile without a unit type, like Foundatio's, can
+        // still put another mediator's unit or ValueTuple in a union).
         var isUnit = response is { } && requestKind != RequestKind.Stream && ( profile.UnitType is { } unit && response.Is(unit) || union is { } && UnionResults.IsUnit(response) );
         if (isUnit) requestKind = RequestKind.Void;
 

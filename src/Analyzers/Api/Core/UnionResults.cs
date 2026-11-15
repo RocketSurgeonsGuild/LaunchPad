@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Rocket.Surgery.LaunchPad.Mediators;
 
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
@@ -99,10 +100,8 @@ internal static class UnionResults
     /// <summary>Endings ignored when a case name is matched: <c>RocketNotFoundError</c> is a not-found case.</summary>
     private static readonly string[] Endings = ["Error", "Exception", "Problem", "Failure", "Result"];
 
-    private static readonly string[] UnitTypes = ["MediatR.Unit", "Mediator.Unit", "ChannelMediator.Unit", "ZeroAlloc.Mediator.Unit", "System.ValueTuple"];
-
     /// <summary>A value case that means "no value": a mediator's unit type, or <c>ValueTuple</c>.</summary>
-    public static bool IsUnit(ITypeSymbol type) => UnitTypes.Any(type.Is);
+    public static bool IsUnit(ITypeSymbol type) => MediatorLibraries.UnitTypes.Any(type.Is);
 
     /// <summary>The words a case name can match, for the diagnostic.</summary>
     public static string Words => "NotFound, Invalid, Validation, UnprocessableEntity, Unauthorized, Forbidden or Conflict";

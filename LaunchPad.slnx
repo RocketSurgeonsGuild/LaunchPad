@@ -172,10 +172,6 @@
     <Project Path="test/Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Contracts/Api.Functional.ImmediateHandlers.Contracts.csproj" />
     <Project Path="test/Api/Functional/ImmediateHandlers/Api.Functional.ImmediateHandlers.Server/Api.Functional.ImmediateHandlers.Server.csproj" />
   </Folder>
-  <Folder Name="/test/Api/Functional/MediatR/">
-    <Project Path="test/Api/Functional/MediatR/Api.Functional.MediatR.Contracts/Api.Functional.MediatR.Contracts.csproj" />
-    <Project Path="test/Api/Functional/MediatR/Api.Functional.MediatR.Server/Api.Functional.MediatR.Server.csproj" />
-  </Folder>
   <Folder Name="/test/Api/Functional/Mediator/">
     <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.Contracts/Api.Functional.Mediator.Contracts.csproj" />
     <Project Path="test/Api/Functional/Mediator/Api.Functional.Mediator.Server/Api.Functional.Mediator.Server.csproj" />

@@ -46,7 +46,7 @@
       Title: ,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input1.cs: (25,48)-(25,58),
+      Location: Input1.cs: (25,47)-(25,57),
       HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0759),
       MessageFormat: No defining declaration found for implementing declaration of partial method '{0}',
       Message: No defining declaration found for implementing declaration of partial method 'EditRocket.EditRocketHandler.GetRequest(EditRocket.PatchRequest, CancellationToken)',

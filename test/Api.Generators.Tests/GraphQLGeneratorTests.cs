@@ -3,7 +3,6 @@ namespace Api.Generators.Tests;
 public class GraphQLGeneratorTests() : GeneratorTest()
 {
     [Test]
-    [Arguments(Mediator.MediatR)]
     [Arguments(Mediator.Mediator)]
     [Arguments(Mediator.ChannelMediator)]
     [Arguments(Mediator.ImmediateHandlers)]
@@ -22,8 +21,8 @@ public class GraphQLGeneratorTests() : GeneratorTest()
     [Test]
     public async Task Should_Report_A_Queries_Host()
     {
-        var contracts = await CompileContracts(Mediator.MediatR, Contracts.For(Mediator.MediatR));
-        var result = await GraphQLServer(Mediator.MediatR, contracts)
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await GraphQLServer(Mediator.Mediator, contracts)
                           .AddSources(
                                """
                                using Rocket.Surgery.LaunchPad.Api;

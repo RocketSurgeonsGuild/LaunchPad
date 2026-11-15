@@ -3,7 +3,6 @@ namespace Api.Generators.Tests;
 public class GrpcGeneratorTests() : GeneratorTest()
 {
     [Test]
-    [Arguments(Mediator.MediatR)]
     [Arguments(Mediator.Mediator)]
     [Arguments(Mediator.ChannelMediator)]
     [Arguments(Mediator.ImmediateHandlers)]

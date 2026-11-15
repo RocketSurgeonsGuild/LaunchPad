@@ -15,7 +15,6 @@ internal static class ProfileResolver
     // (the sender, its methods, the unit type) lives here.
     private static readonly BuiltIn[] BuiltIns =
     [
-        From(MediatorLibraries.MediatR, DispatchKind.Sender, "global::MediatR.ISender", "Send", "CreateStream", false, null),
         From(MediatorLibraries.Mediator, DispatchKind.Sender, "global::Mediator.ISender", "Send", "CreateStream", false, "Mediator.Unit"),
         From(MediatorLibraries.ChannelMediator, DispatchKind.Sender, "global::ChannelMediator.IMediator", "Send", "CreateStream", false, "ChannelMediator.Unit"),
         // A [Handler] returning a bare ValueTask is an IHandler<TRequest, ValueTuple>.

@@ -8,7 +8,7 @@ public class UnionGeneratorTests() : GeneratorTest()
 {
     public static IEnumerable<(HostCase Host, Mediator Mediator)> Cases() =>
         from host in Enum.GetValues<HostCase>()
-        from mediator in new[] { Mediator.MediatR, Mediator.Mediator, Mediator.ChannelMediator, Mediator.ImmediateHandlers, Mediator.Foundatio, Mediator.ZeroAlloc }
+        from mediator in new[] { Mediator.Mediator, Mediator.ChannelMediator, Mediator.ImmediateHandlers, Mediator.Foundatio, Mediator.ZeroAlloc }
         select (host, mediator);
 
     [Test]
@@ -34,10 +34,10 @@ public class UnionGeneratorTests() : GeneratorTest()
     public async Task Should_Map_Case_Names()
     {
         var contracts = await CompileContracts(
-            Mediator.MediatR,
+            Mediator.Mediator,
             $$"""
             #nullable enable
-            using MediatR;
+            using Mediator;
 
             {{UnionContracts.Polyfill}}
 
@@ -72,7 +72,7 @@ public class UnionGeneratorTests() : GeneratorTest()
             }
             """
         );
-        var result = await Server(Mediator.MediatR, contracts)
+        var result = await Server(Mediator.Mediator, contracts)
                           .AddSources("using Rocket.Surgery.LaunchPad.Api;\nusing Sample.Contracts;\n[Operation<GetRocket.Request>]\npublic static partial class RocketsEndpoints;")
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
@@ -85,10 +85,10 @@ public class UnionGeneratorTests() : GeneratorTest()
     public async Task Should_Answer_Not_Found_For_A_Null_Value_Case()
     {
         var contracts = await CompileContracts(
-            Mediator.MediatR,
+            Mediator.Mediator,
             $$"""
             #nullable enable
-            using MediatR;
+            using Mediator;
 
             {{UnionContracts.Polyfill}}
 
@@ -112,7 +112,7 @@ public class UnionGeneratorTests() : GeneratorTest()
             }
             """
         );
-        var result = await Server(Mediator.MediatR, contracts)
+        var result = await Server(Mediator.Mediator, contracts)
                           .AddSources("using Rocket.Surgery.LaunchPad.Api;\nusing Sample.Contracts;\n[Operation<GetRocket.Request>]\n[Operation<FindRocket.Request>(Route = \"find/{id}\")]\npublic static partial class RocketsEndpoints;")
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
@@ -125,10 +125,10 @@ public class UnionGeneratorTests() : GeneratorTest()
     public async Task Should_Answer_A_Native_Union_From_Another_Assembly()
     {
         var contracts = await CompileContracts(
-            Mediator.MediatR,
+            Mediator.Mediator,
             $$"""
             #nullable enable
-            using MediatR;
+            using Mediator;
 
             {{UnionContracts.Polyfill}}
 
@@ -141,7 +141,7 @@ public class UnionGeneratorTests() : GeneratorTest()
             }
             """
         );
-        var result = await Server(Mediator.MediatR, contracts)
+        var result = await Server(Mediator.Mediator, contracts)
                           .AddSources("using Rocket.Surgery.LaunchPad.Api;\nusing Sample.Contracts;\n[Operation<GetRocket.Request>]\npublic static partial class RocketsEndpoints;")
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
@@ -192,10 +192,10 @@ public class UnionGeneratorTests() : GeneratorTest()
     public async Task Should_Answer_Problem_Cases(HostCase host)
     {
         var contracts = await CompileContracts(
-            Mediator.MediatR,
+            Mediator.Mediator,
             $$"""
             #nullable enable
-            using MediatR;
+            using Mediator;
             using Rocket.Surgery.LaunchPad.Foundation;
 
             {{UnionContracts.Polyfill}}
@@ -227,10 +227,10 @@ public class UnionGeneratorTests() : GeneratorTest()
         );
         var builder = host switch
         {
-            HostCase.MinimalApi => Server(Mediator.MediatR, contracts),
-            HostCase.Controller => Controllers(Mediator.MediatR, contracts),
-            HostCase.GrpcService => GrpcServer(Mediator.MediatR, contracts),
-            HostCase.GraphQLMutation => GraphQLServer(Mediator.MediatR, contracts),
+            HostCase.MinimalApi => Server(Mediator.Mediator, contracts),
+            HostCase.Controller => Controllers(Mediator.Mediator, contracts),
+            HostCase.GrpcService => GrpcServer(Mediator.Mediator, contracts),
+            HostCase.GraphQLMutation => GraphQLServer(Mediator.Mediator, contracts),
             _ => throw new ArgumentOutOfRangeException(nameof(host)),
         };
         var declaration = host switch
@@ -272,7 +272,6 @@ internal static class UnionContracts
 
     private static Shape ShapeOf(Mediator mediator) => mediator switch
     {
-        Mediator.MediatR => new("using MediatR;", t => $"IRequest<{t}>", t => $"IStreamRequest<{t}>", "sealed record", "MediatR.Unit"),
         Mediator.Mediator => new("using Mediator;", t => $"ICommand<{t}>", t => $"IStreamQuery<{t}>", "sealed record", "Mediator.Unit"),
         Mediator.ChannelMediator => new("using ChannelMediator;", t => $"IRequest<{t}>", t => $"IStreamRequest<{t}>", "sealed record", "ChannelMediator.Unit"),
         Mediator.ZeroAlloc => new("using ZeroAlloc.Mediator;", t => $"IRequest<{t}>", t => $"IStreamRequest<{t}>", "readonly record struct", "ZeroAlloc.Mediator.Unit"),

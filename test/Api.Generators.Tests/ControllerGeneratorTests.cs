@@ -3,7 +3,6 @@ namespace Api.Generators.Tests;
 public class ControllerGeneratorTests() : GeneratorTest()
 {
     [Test]
-    [Arguments(Mediator.MediatR)]
     [Arguments(Mediator.Mediator)]
     [Arguments(Mediator.ChannelMediator)]
     [Arguments(Mediator.ImmediateHandlers)]
@@ -20,8 +19,8 @@ public class ControllerGeneratorTests() : GeneratorTest()
     [Test]
     public async Task Should_Keep_What_The_Host_Declares()
     {
-        var contracts = await CompileContracts(Mediator.MediatR, Contracts.For(Mediator.MediatR));
-        var result = await Controllers(Mediator.MediatR, contracts)
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await Controllers(Mediator.Mediator, contracts)
                           .AddSources(
                                """
                                using Microsoft.AspNetCore.Mvc;

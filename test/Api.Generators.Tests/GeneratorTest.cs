@@ -20,7 +20,6 @@ internal sealed class CollectibleTestAssemblyLoadContext() : AssemblyLoadContext
 
 public enum Mediator
 {
-    MediatR,
     Mediator,
     ChannelMediator,
     ImmediateHandlers,
@@ -77,7 +76,6 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
 
     protected static Assembly[] MediatorAssemblies(Mediator mediator) => mediator switch
     {
-        Mediator.MediatR => [typeof(MediatR.ISender).Assembly, typeof(MediatR.IRequest<>).Assembly],
         Mediator.Mediator => [typeof(global::Mediator.ISender).Assembly],
         Mediator.ChannelMediator => [typeof(ChannelMediator.IMediator).Assembly, typeof(ChannelMediator.IRequest<>).Assembly],
         Mediator.ImmediateHandlers => [typeof(Immediate.Handlers.Shared.IHandler<,>).Assembly],

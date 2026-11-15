@@ -2,7 +2,6 @@ extern alias channelmediatorserver;
 extern alias foundatioserver;
 extern alias immediatehandlersserver;
 extern alias mediatorserver;
-extern alias mediatrserver;
 extern alias zeroallocserver;
 using System.Net;
 using System.Text;
@@ -21,27 +20,24 @@ namespace Api.Functional.Tests;
 /// <summary>
 ///     For each mediator, a server built by the generators, reached through the clients an application would generate from its specs: NSwag
 ///     from the OpenAPI document, Grpc.Tools from the <c>.proto</c> (<c>RocketsService.GetProto()</c>) and StrawberryShake from the GraphQL
-///     schema. The clients are generated once, from the MediatR server's specs; <see cref="Should_Expose_The_Same_Specs" /> checks that every
+///     schema. The clients are generated once, from the ZeroAlloc.Mediator server's specs; <see cref="Should_Expose_The_Same_Specs" /> checks that every
 ///     other server exposes the same ones.
 /// </summary>
 public class RoundTripTests
 {
-    private const string Reference = "MediatR";
+    private const string Reference = "ZeroAlloc";
 
-    // Only the MediatR server maps the versioned hosts.
+    // Only the ZeroAlloc server, the reference, maps the versioned hosts.
     private static readonly Dictionary<string, (Func<bool, bool, bool, bool, Task<WebApplication>> Start, Func<string> Proto)> Servers = new()
     {
-        ["MediatR"] = ((controllers, grpc, graphql, versioned) => mediatrserver::Api.Functional.MediatR.Server.ServerApp.StartAsync(controllers, grpc, graphql, versioned), mediatrserver::Api.Functional.MediatR.Server.RocketsService.GetProto),
         ["Mediator"] = ((controllers, grpc, graphql, _) => mediatorserver::Api.Functional.Mediator.Server.ServerApp.StartAsync(controllers, grpc, graphql), mediatorserver::Api.Functional.Mediator.Server.RocketsService.GetProto),
         ["ChannelMediator"] = ((controllers, grpc, graphql, _) => channelmediatorserver::Api.Functional.ChannelMediator.Server.ServerApp.StartAsync(controllers, grpc, graphql), channelmediatorserver::Api.Functional.ChannelMediator.Server.RocketsService.GetProto),
         ["ImmediateHandlers"] = ((controllers, grpc, graphql, _) => immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.ServerApp.StartAsync(controllers, grpc, graphql), immediatehandlersserver::Api.Functional.ImmediateHandlers.Server.RocketsService.GetProto),
         ["Foundatio"] = ((controllers, grpc, graphql, _) => foundatioserver::Api.Functional.Foundatio.Server.ServerApp.StartAsync(controllers, grpc, graphql), foundatioserver::Api.Functional.Foundatio.Server.RocketsService.GetProto),
-        ["ZeroAlloc"] = ((controllers, grpc, graphql, _) => zeroallocserver::Api.Functional.ZeroAlloc.Server.ServerApp.StartAsync(controllers, grpc, graphql), zeroallocserver::Api.Functional.ZeroAlloc.Server.RocketsService.GetProto),
+        ["ZeroAlloc"] = ((controllers, grpc, graphql, versioned) => zeroallocserver::Api.Functional.ZeroAlloc.Server.ServerApp.StartAsync(controllers, grpc, graphql, versioned), zeroallocserver::Api.Functional.ZeroAlloc.Server.RocketsService.GetProto),
     };
 
     [Test]
-    [Arguments("MediatR", false)]
-    [Arguments("MediatR", true)]
     [Arguments("Mediator", false)]
     [Arguments("Mediator", true)]
     [Arguments("ChannelMediator", false)]
@@ -75,8 +71,6 @@ public class RoundTripTests
     }
 
     [Test]
-    [Arguments("MediatR", false)]
-    [Arguments("MediatR", true)]
     [Arguments("Mediator", false)]
     [Arguments("Mediator", true)]
     [Arguments("ChannelMediator", false)]
@@ -101,7 +95,6 @@ public class RoundTripTests
     }
 
     [Test]
-    [Arguments("MediatR")]
     [Arguments("Mediator")]
     [Arguments("ChannelMediator")]
     [Arguments("ImmediateHandlers")]
@@ -124,7 +117,6 @@ public class RoundTripTests
     }
 
     [Test]
-    [Arguments("MediatR")]
     [Arguments("Mediator")]
     [Arguments("ChannelMediator")]
     [Arguments("ImmediateHandlers")]
@@ -178,13 +170,12 @@ public class RoundTripTests
         await ( await http.GetAsync($"api/versioned-rockets/{id}/rocket", cancellationToken) ).StatusCode.Should().BeEqualTo(HttpStatusCode.BadRequest);
     }
 
-    /// <summary>The clients above were generated from the MediatR server's specs; each mediator's server must expose the same ones.</summary>
+    /// <summary>The clients above were generated from the ZeroAlloc.Mediator server's specs; each mediator's server must expose the same ones.</summary>
     [Test]
     [Arguments("Mediator")]
     [Arguments("ChannelMediator")]
     [Arguments("ImmediateHandlers")]
     [Arguments("Foundatio")]
-    [Arguments("ZeroAlloc")]
     public async Task Should_Expose_The_Same_Specs(string mediator, CancellationToken cancellationToken)
     {
         await ( await OpenApi(mediator, false, cancellationToken) ).Should().BeEqualTo(await OpenApi(Reference, false, cancellationToken));

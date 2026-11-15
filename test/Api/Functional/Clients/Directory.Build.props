@@ -1,8 +1,8 @@
 <Project>
     <!--
         The test clients, generated the way an application would generate them: from the servers' OpenAPI document, GraphQL schema and .proto,
-        exported at build by Api.Functional.SpecExport from the MediatR fixture server. Every mediator's server exposes the same specs
-        (Api.Functional.Tests checks it), so one client per transport reaches all six.
+        exported at build by Api.Functional.SpecExport from the ZeroAlloc.Mediator fixture server. Every mediator's server exposes the same specs
+        (Api.Functional.Tests checks it), so one client per transport reaches all five.
     -->
     <Import Project="$(MSBuildThisFileDirectory)../Directory.Build.props" />
     <PropertyGroup>

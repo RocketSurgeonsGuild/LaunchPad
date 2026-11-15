@@ -1,5 +1,5 @@
-// Compiled into both Rocket.Surgery.LaunchPad.Analyzers (the API generators' mediator profiles) and Rocket.Surgery.LaunchPad.Analyzers
-// (the JSON context manifest), so both recognise the same mediator requests. Plain data: no Roslyn types.
+// Compiled into Rocket.Surgery.LaunchPad.Analyzers, where the API generators' mediator profiles and the JSON context manifest both read it,
+// so both recognise the same mediator requests. Plain data: no Roslyn types.
 namespace Rocket.Surgery.LaunchPad.Mediators;
 
 /// <summary>How a request interface answers: one response, none, or a stream of items.</summary>
@@ -28,28 +28,18 @@ internal sealed record MediatorLibrary(string Name, string[] DetectedBy, Mediato
 /// <summary>The mediator libraries LaunchPad supports out of the box.</summary>
 internal static class MediatorLibraries
 {
-    public static MediatorLibrary MediatR { get; } = new(
-        "MediatR",
-        ["MediatR.ISender", "MediatR.IRequest`1"],
-        [
-            new("MediatR.IRequest`1", MediatorRequestShape.Unary, 0, "MediatR.IRequestHandler`2", "Handle"),
-            new("MediatR.IRequest", MediatorRequestShape.Void, 0, "MediatR.IRequestHandler`1", "Handle"),
-            new("MediatR.IStreamRequest`1", MediatorRequestShape.Stream, 0, "MediatR.IStreamRequestHandler`2", "Handle"),
-        ]
-    );
-
     public static MediatorLibrary Mediator { get; } = new(
-        "Mediator",
-        ["Mediator.ISender", "Mediator.IMessage"],
-        [
-            new("Mediator.IRequest`1", MediatorRequestShape.Unary, 0, "Mediator.IRequestHandler`2", "Handle"),
+    "Mediator",
+    ["Mediator.ISender", "Mediator.IMessage"],
+    [
+        new("Mediator.IRequest`1", MediatorRequestShape.Unary, 0, "Mediator.IRequestHandler`2", "Handle"),
             new("Mediator.ICommand`1", MediatorRequestShape.Unary, 0, "Mediator.ICommandHandler`2", "Handle"),
             new("Mediator.IQuery`1", MediatorRequestShape.Unary, 0, "Mediator.IQueryHandler`2", "Handle"),
             new("Mediator.IStreamRequest`1", MediatorRequestShape.Stream, 0, "Mediator.IStreamRequestHandler`2", "Handle"),
             new("Mediator.IStreamCommand`1", MediatorRequestShape.Stream, 0, "Mediator.IStreamCommandHandler`2", "Handle"),
             new("Mediator.IStreamQuery`1", MediatorRequestShape.Stream, 0, "Mediator.IStreamQueryHandler`2", "Handle"),
-        ]
-    );
+    ]
+);
 
     public static MediatorLibrary ChannelMediator { get; } = new(
         "ChannelMediator",
@@ -89,8 +79,8 @@ internal static class MediatorLibraries
         ]
     );
 
-    public static IReadOnlyList<MediatorLibrary> All { get; } = [MediatR, Mediator, ChannelMediator, ImmediateHandlers, Foundatio, ZeroAlloc];
+    public static IReadOnlyList<MediatorLibrary> All { get; } = [Mediator, ChannelMediator, ImmediateHandlers, Foundatio, ZeroAlloc];
 
     /// <summary>The metadata names of the unit types mediators answer a void request with; they carry no JSON.</summary>
-    public static IReadOnlyList<string> UnitTypes { get; } = ["Mediator.Unit", "ChannelMediator.Unit", "ZeroAlloc.Mediator.Unit", "MediatR.Unit", "System.ValueTuple"];
+    public static IReadOnlyList<string> UnitTypes { get; } = ["Mediator.Unit", "ChannelMediator.Unit", "ZeroAlloc.Mediator.Unit", "System.ValueTuple"];
 }

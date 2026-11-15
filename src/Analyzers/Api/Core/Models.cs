@@ -21,7 +21,7 @@ internal enum BindingSource
 /// <summary>How the server reaches the mediator.</summary>
 internal enum DispatchKind
 {
-    /// <summary>A sender service with Send/CreateStream methods (MediatR, Mediator, ChannelMediator, Foundatio, ZeroAlloc).</summary>
+    /// <summary>A sender service with Send/CreateStream methods (Mediator, ChannelMediator, Foundatio, ZeroAlloc).</summary>
     Sender,
 
     /// <summary>The closed handler interface is injected and called directly (Immediate.Handlers).</summary>

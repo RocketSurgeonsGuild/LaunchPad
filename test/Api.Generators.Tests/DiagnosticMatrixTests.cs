@@ -19,7 +19,7 @@ public enum HostCase
 public class DiagnosticMatrixTests() : GeneratorTest()
 {
     private static readonly Mediator[] BuiltIn =
-        [Mediator.MediatR, Mediator.Mediator, Mediator.ChannelMediator, Mediator.ImmediateHandlers, Mediator.Foundatio, Mediator.ZeroAlloc];
+        [Mediator.Mediator, Mediator.ChannelMediator, Mediator.ImmediateHandlers, Mediator.Foundatio, Mediator.ZeroAlloc];
 
     private static readonly HostCase[] AllHosts = Enum.GetValues<HostCase>();
     private static readonly HostCase[] Http = [HostCase.MinimalApi, HostCase.Controller];
@@ -85,7 +85,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
             // Two built-in profiles match: the compilation references a second mediator.
             "LPAD1002" => new(
                 $"[Operation<{op}.Request>] {Declare(host)}",
-                Configure: builder => builder.AddReferences(MediatorAssemblies(mediator == Mediator.MediatR ? Mediator.Mediator : Mediator.MediatR))
+                Configure: builder => builder.AddReferences(MediatorAssemblies(mediator == Mediator.Mediator ? Mediator.ChannelMediator : Mediator.Mediator))
             ),
             "LPAD1003" => new($"[Operation<GetRocket.Request>(Route = \"{{rocketId}}\")] {Declare(host)}"),
             "LPAD1004" => new($"[Operation<LocateRocket.Request>(Route = \"locate\")] {Declare(host)}"),
@@ -182,7 +182,6 @@ internal static class MatrixContracts
 
     private static Shapes For(Mediator mediator) => mediator switch
     {
-        Mediator.MediatR => new("using MediatR;", t => $"IRequest<{t}>", t => $"IRequest<{t}>", t => $"IStreamRequest<{t}>", "IRequest", false),
         Mediator.Mediator => new("using Mediator;", t => $"IQuery<{t}>", t => $"ICommand<{t}>", t => $"IStreamQuery<{t}>", "ICommand", false),
         Mediator.ChannelMediator => new("using ChannelMediator;", t => $"IRequest<{t}>", t => $"IRequest<{t}>", t => $"IStreamRequest<{t}>", "IRequest", false),
         Mediator.ZeroAlloc => new("using ZeroAlloc.Mediator;", t => $"IRequest<{t}>", t => $"IRequest<{t}>", t => $"IStreamRequest<{t}>", "IRequest", true),

@@ -13,7 +13,7 @@ public class IncrementalityTests() : GeneratorTest()
 {
     private const string Contracts = """
         #nullable enable
-        using MediatR;
+        using Mediator;
         using Rocket.Surgery.LaunchPad.Api;
         namespace Sample
         {
@@ -64,7 +64,7 @@ public class IncrementalityTests() : GeneratorTest()
         var compilation = CSharpCompilation.Create(
             "Server",
             [Parse(Contracts), Parse(Host)],
-            FrameworkReferences.Concat(MediatorAssemblies(Mediator.MediatR).Select(a => MetadataReference.CreateFromFile(a.Location))),
+            FrameworkReferences.Concat(MediatorAssemblies(Mediator.Mediator).Select(a => MetadataReference.CreateFromFile(a.Location))),
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
         GeneratorDriver driver = CSharpGeneratorDriver.Create(
