@@ -72,9 +72,55 @@
         ],
         type: object
       },
+      ConflictProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            properties: {
+              case: {
+                enum: [
+                  Conflict
+                ],
+                type: string
+              }
+            },
+            required: [
+              case
+            ],
+            type: object
+          }
+        ],
+        description: The request conflicts with the current state. HTTP 409, gRPC FailedPrecondition, GraphQL CONFLICT.
+      },
+      ForbiddenProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            properties: {
+              case: {
+                enum: [
+                  Forbidden
+                ],
+                type: string
+              }
+            },
+            required: [
+              case
+            ],
+            type: object
+          }
+        ],
+        description: The caller may not do this. HTTP 403, gRPC PermissionDenied, GraphQL FORBIDDEN.
+      },
       LaunchRecordModel: {
+        description: The launch record details,
         properties: {
           actualLaunchDate: {
+            description: The actual launch date,
             oneOf: [
               {
                 type: null
@@ -85,15 +131,19 @@
             ]
           },
           id: {
-            $ref: #/components/schemas/LaunchRecordId
+            $ref: #/components/schemas/LaunchRecordId,
+            description: The launch record id
           },
           partner: {
+            description: The launch partner,
             type: string
           },
           payload: {
+            description: The payload details,
             type: string
           },
           payloadWeightKg: {
+            description: The payload weight in Kg,
             format: int64,
             pattern: ^-?(?:0|[1-9]\d*)$,
             type: [
@@ -102,18 +152,44 @@
             ]
           },
           rocketSerialNumber: {
+            description: The serial number of the reusable rocket,
             type: string
           },
           rocketType: {
-            $ref: #/components/schemas/RocketType
+            $ref: #/components/schemas/RocketType,
+            description: The kind of rocket that will be launching
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/OffsetDateTime
+            $ref: #/components/schemas/OffsetDateTime,
+            description: The intended date for the launch
           }
         },
         type: object
       },
+      NotFoundProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            properties: {
+              case: {
+                enum: [
+                  NotFound
+                ],
+                type: string
+              }
+            },
+            required: [
+              case
+            ],
+            type: object
+          }
+        ],
+        description: The requested entity doesn't exist. HTTP 404, gRPC NotFound, GraphQL NOT_FOUND.
+      },
       PatchRequest: {
+        description: The patch request,
         properties: {
           actualLaunchDate: {
             $ref: #/components/schemas/AssignedOfOffsetDateTime
@@ -186,8 +262,10 @@
         type: object
       },
       Request: {
+        description: Create a launch record,
         properties: {
           actualLaunchDate: {
+            description: The actual launch date,
             oneOf: [
               {
                 type: null
@@ -198,6 +276,7 @@
             ]
           },
           partner: {
+            description: The launch partner,
             minLength: 1,
             type: [
               null,
@@ -205,6 +284,7 @@
             ]
           },
           payload: {
+            description: The launch partners payload,
             minLength: 1,
             type: [
               null,
@@ -212,6 +292,7 @@
             ]
           },
           payloadWeightKg: {
+            description: The payload weight,
             format: double,
             minimum: 0,
             pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
@@ -221,10 +302,12 @@
             ]
           },
           rocketId: {
-            $ref: #/components/schemas/RocketId
+            $ref: #/components/schemas/RocketId,
+            description: The rocket to use
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/OffsetDateTime
+            $ref: #/components/schemas/OffsetDateTime,
+            description: The intended launch date
           }
         },
         required: [
@@ -237,24 +320,30 @@
         x-schema-id: CreateLaunchRecordRequest
       },
       Response: {
+        description: The launch record creation response,
         properties: {
           id: {
-            $ref: #/components/schemas/LaunchRecordId
+            $ref: #/components/schemas/LaunchRecordId,
+            description: The id of the new launch record
           }
         },
         type: object,
         x-schema-id: CreateLaunchRecordResponse
       },
       RocketModel: {
+        description: The details of a given rocket,
         properties: {
           id: {
-            $ref: #/components/schemas/RocketId
+            $ref: #/components/schemas/RocketId,
+            description: The unique rocket identifier
           },
           sn: {
+            description: The serial number of the rocket,
             type: string
           },
           type: {
-            $ref: #/components/schemas/RocketType
+            $ref: #/components/schemas/RocketType,
+            description: The type of the rocket
           }
         },
         type: object
@@ -331,6 +420,7 @@
         operationId: ListLaunchRecords,
         parameters: [
           {
+            description: The rocket type,
             in: query,
             name: rocketType,
             schema: {
@@ -405,9 +495,10 @@
             },
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
+                  format: uri,
                   type: string
                 }
               }
@@ -427,7 +518,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -445,6 +546,7 @@
         operationId: DeleteLaunchRecord,
         parameters: [
           {
+            description: The id of the record to delete,
             in: path,
             name: id,
             required: true,
@@ -472,25 +574,37 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ]
                 }
               }
             },
-            description: Forbidden,
-            headers: {
-              www-authenticate: {
-                description: The error details,
-                schema: {
-                  type: string
-                }
-              }
-            }
+            description: Forbidden
           },
           404: {
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -506,6 +620,7 @@
         operationId: GetLaunchRecord,
         parameters: [
           {
+            description: The id of the launch record,
             in: path,
             name: id,
             required: true,
@@ -540,7 +655,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -556,6 +681,7 @@
         operationId: PatchLaunchRecord,
         parameters: [
           {
+            description: The rocket id,
             in: path,
             name: id,
             required: true,
@@ -610,7 +736,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -626,6 +762,7 @@
         operationId: EditLaunchRecord,
         parameters: [
           {
+            description: The launch record to update,
             in: path,
             name: id,
             required: true,
@@ -680,7 +817,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -698,6 +845,7 @@
         operationId: ListRockets,
         parameters: [
           {
+            description: The type of the rocket,
             in: query,
             name: rocketType,
             schema: {
@@ -772,9 +920,10 @@
             },
             description: Created,
             headers: {
-              location: {
-                description: The location of the entity that was created,
+              Location: {
+                description: The location of the created resource.,
                 schema: {
+                  format: uri,
                   type: string
                 }
               }
@@ -794,7 +943,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      Conflict: #/components/schemas/ConflictProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ConflictProblem
+                    }
+                  ]
                 }
               }
             },
@@ -812,6 +971,7 @@
         operationId: RemoveRocket,
         parameters: [
           {
+            description: The id of the rocket to remove,
             in: path,
             name: id,
             required: true,
@@ -839,7 +999,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -855,6 +1025,7 @@
         operationId: GetRocket,
         parameters: [
           {
+            description: The id of the rocket,
             in: path,
             name: id,
             required: true,
@@ -889,7 +1060,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -905,6 +1086,7 @@
         operationId: PatchRocket,
         parameters: [
           {
+            description: The rocket id,
             in: path,
             name: id,
             required: true,
@@ -959,7 +1141,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -975,6 +1167,7 @@
         operationId: EditRocket,
         parameters: [
           {
+            description: The rocket id,
             in: path,
             name: id,
             required: true,
@@ -1029,7 +1222,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -1047,6 +1250,7 @@
         operationId: GetRocketLaunchRecords,
         parameters: [
           {
+            description: The rocket id,
             in: path,
             name: id,
             required: true,
@@ -1084,7 +1288,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },
@@ -1102,6 +1316,7 @@
         operationId: GetRocketLaunchRecord,
         parameters: [
           {
+            description: The rocket id,
             in: path,
             name: id,
             required: true,
@@ -1110,6 +1325,7 @@
             }
           },
           {
+            description: The launch record id,
             in: path,
             name: launchRecordId,
             required: true,
@@ -1143,7 +1359,17 @@
             content: {
               application/problem+json: {
                 schema: {
-                  $ref: #/components/schemas/ProblemDetails
+                  discriminator: {
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    },
+                    propertyName: case
+                  },
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ]
                 }
               }
             },

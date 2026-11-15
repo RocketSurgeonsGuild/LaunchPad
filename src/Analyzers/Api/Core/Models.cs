@@ -77,8 +77,19 @@ internal sealed record MemberModel(
     bool CanInit,
     int ConstructorIndex,
     ParseKind ParseKind,
-    string? ParseType
+    string? ParseType,
+    EquatableArray<SchemaRuleModel> Rules,
+    string? Summary
 );
+
+/// <summary>A property's camel-cased name on the wire and its XML documentation summary, the description of its schema.</summary>
+internal sealed record DescriptionModel(string WireName, string Summary);
+
+/// <summary>
+///     One ZeroAlloc.Validation rule of a member as the OpenAPI schema states it, read at compile time: the <c>ApiSchemaRule</c> method the
+///     generated transformer calls (<c>Required</c>, <c>MinLength</c>, <c>Minimum</c>, …) and its arguments, already formatted.
+/// </summary>
+internal sealed record SchemaRuleModel(string Method, EquatableArray<string> Arguments);
 
 internal sealed record OperationModel(
     string Name,
@@ -123,10 +134,16 @@ internal sealed record OperationModel(
     bool RequestIsStruct,
     bool ResponseIsStruct,
     UnionModel? Union,
-    LocationInfo? Location
+    LocationInfo? Location,
+    string? WireSummary = null,
+    string? ResponseSummary = null,
+    EquatableArray<DescriptionModel> ResponseDescriptions = default
 )
 {
     public bool HasBody => Verb is HttpVerb.Post or HttpVerb.Put or HttpVerb.Patch;
+
+    /// <summary>The operation names a policy, roles or authentication schemes and doesn't allow anonymous callers: it can answer 401 and 403.</summary>
+    public bool RequiresAuthorization => !AllowAnonymous && ( !Policies.IsEmpty || !Roles.IsEmpty || !AuthenticationSchemes.IsEmpty );
 
     /// <summary>The type the transport carries: the input type when one is declared, otherwise the request.</summary>
     public string WireType => InputType ?? RequestType;
@@ -153,6 +170,7 @@ internal sealed record HostModel(
     bool DeclaresGraphQLType,
     bool HasApiVersioning,
     bool CanExportProto,
+    bool HasOpenApi,
     ProfileModel? Profile,
     EquatableArray<OperationModel> Operations,
     EquatableArray<DiagnosticInfo> Diagnostics,

@@ -21,7 +21,7 @@ public static partial class ModuleInitializer
         VerifierSettings.IgnoreMember("TextChanges");
         DiffRunner.Disabled = true;
         DerivePathInfo((sourceFile, _, type, method) => new(Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots"), type.Name, method.Name));
-        // The generators stamp their assembly version into [GeneratedCode].
+        // The generators stamp their assembly version into [GeneratedCode] (and the GeneratedCodeAttribute endpoint metadata).
         VerifierSettings.AddScrubber(
             builder =>
             {
@@ -31,6 +31,6 @@ public static partial class ModuleInitializer
         );
     }
 
-    [GeneratedRegex("""(GeneratedCode\("Rocket\.Surgery\.LaunchPad\.Api[^"]*", )"[^"]*"\)""")]
+    [GeneratedRegex("""(GeneratedCode(?:Attribute)?\("Rocket\.Surgery\.LaunchPad\.Api[^"]*", )"[^"]*"\)""")]
     private static partial Regex GeneratedCodeVersion();
 }

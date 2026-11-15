@@ -44,6 +44,8 @@ public partial class FleetController
     [ProducesResponseType(typeof(global::Sample.Contracts.Rockets.RocketModel), 200, "application/json")]
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
     public async Task<ActionResult<global::Sample.Contracts.Rockets.RocketModel>> GetRocket([FromRoute(Name = "id")] Guid @id, CancellationToken __cancellationToken)
     {
         var __wire = new global::Sample.Contracts.Rockets.GetRocket.Request(@id);
@@ -59,6 +61,8 @@ public partial class FleetController
     [Authorize(Roles = "pilot", AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response), 201, "application/json")]
     [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
     public async Task<ActionResult<global::Sample.Contracts.Rockets.CreateRocket.Response>> CreateRocket([FromBody] global::Sample.Contracts.Rockets.CreateRocket.Request __body, CancellationToken __cancellationToken)
     {
         var __wire = __body;
