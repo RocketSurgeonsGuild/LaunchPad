@@ -12,9 +12,9 @@ internal static class SyntaxExtensions
 {
     public static TypeSyntax EnsureNullable(this TypeSyntax typeSyntax, NullableAnnotation? annotation = null)
     {
-        return  annotation.HasValue && annotation == NullableAnnotation.Annotated 
+        return annotation.HasValue && annotation == NullableAnnotation.Annotated
             ? typeSyntax
-            :   typeSyntax as NullableTypeSyntax ?? NullableType(typeSyntax);
+            : typeSyntax as NullableTypeSyntax ?? NullableType(typeSyntax);
     }
 
     public static TypeSyntax EnsureNotNullable(this TypeSyntax typeSyntax) => typeSyntax is NullableTypeSyntax nts ? nts.ElementType : typeSyntax;
