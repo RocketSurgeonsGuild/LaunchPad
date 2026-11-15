@@ -85,7 +85,7 @@ The **LaunchPad SDK**, `Rocket.Surgery.LaunchPad.Sdk`, is an MSBuild SDK an appl
     }
 }
 ```
- A file-based app uses the directive form, `#:sdk Rocket.Surgery.LaunchPad.Sdk@1.0.0`, and gets what a console application needs without a `#:package` directive for LaunchPad. [Getting started](../../guides/) walks through each of these. ## Choosing another Dovetail version [Section titled “Choosing another Dovetail version”](#choosing-another-dovetail-version) The SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is imported: as a global property, or in a `Directory.Build.props` that sets it and then imports the SDK with `<Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" />`.
+ A file-based app uses the directive form, `#:sdk Rocket.Surgery.LaunchPad.Sdk@1.0.0`, and gets what a console application needs without a `#:package` directive for LaunchPad. [Getting started](../../guides/) walks through each of these. ## The console SDK [Section titled “The console SDK”](#the-console-sdk) `Rocket.Surgery.LaunchPad.Sdk.Console` is the same SDK for command line applications: it adds the same LaunchPad packages and chains `Joinery.Dovetail.Sdk.Console` instead of `Joinery.Dovetail.Sdk`, which makes the project an `Exe`, adds ConsoleAppFramework and writes `Program.cs`. See [Console applications](../../guides/console-apps/). ## Choosing another Dovetail version [Section titled “Choosing another Dovetail version”](#choosing-another-dovetail-version) The SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is imported: as a global property, or in a `Directory.Build.props` that sets it and then imports the SDK with `<Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" />`.
 
 # Operations and operation hosts
 
@@ -98,7 +98,7 @@ An **operation** is a mediator request, together with its response, that is expo
 [Operation<CreateRocket.Request>]
 public static partial class RocketsEndpoints;
 ```
- Referencing a contracts project exposes nothing by itself, and each server shows exactly which operations it exposes. LaunchPad chose this over scanning the contracts for marked requests, which would make every marked request public on every server that references them ([ADR-0003](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0003-explicit-operation-hosts.md)). The host’s **transport** is inferred from its base type, a transport attribute or its name: `…Endpoints` is Minimal API, `…Controller` is MVC, `…Service` is gRPC and `…Mutations` is GraphQL. The generator writes a complete member for each listed operation and adds whatever else the transport needs on the host. The host also owns the **group**, by default its name without the suffix in kebab-case: `RocketsEndpoints` and `RocketsService` are both `rockets`, so the operations live under `/api/rockets` and in the gRPC service `rockets.Rockets`. ## Clients [Section titled “Clients”](#clients) The generators don’t write clients. A server describes its operations in the transport’s standard format, and a client generator for that format (NSwag or Kiota for OpenAPI, StrawberryShake for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither the contracts project nor a mediator, and a route or name the server changes reaches it with the next generated client. ## Mediator profiles [Section titled “Mediator profiles”](#mediator-profiles) Mediator libraries disagree on how a request declares its response and how it is sent. A **mediator profile** describes those shapes, and the generators write code against the profile rather than against one library. LaunchPad has built-in profiles for MediatR, martinothamar/Mediator, ZeroAlloc.Mediator, Immediate.Handlers, Foundatio.Mediator and ChannelMediator, and picks the one the project references. A [custom profile](../../guides/api-generators/#a-custom-profile) covers any other library. The terms on this page are defined in the repository’s [glossary](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/GLOSSARY.md).
+ Referencing a contracts project exposes nothing by itself, and each server shows exactly which operations it exposes. LaunchPad chose this over scanning the contracts for marked requests, which would make every marked request public on every server that references them ([ADR-0003](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0003-explicit-operation-hosts.md)). The host’s **transport** is inferred from its base type, a transport attribute or its name: `…Endpoints` is Minimal API, `…Controller` is MVC, `…Service` is gRPC and `…Mutations` is GraphQL. The generator writes a complete member for each listed operation and adds whatever else the transport needs on the host. The host also owns the **group**, by default its name without the suffix in kebab-case: `RocketsEndpoints` and `RocketsService` are both `rockets`, so the operations live under `/api/rockets` and in the gRPC service `rockets.Rockets`. ## Clients [Section titled “Clients”](#clients) The generators don’t write clients. A server describes its operations in the transport’s standard format, and a client generator for that format (NSwag or Kiota for OpenAPI, StrawberryShake for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither the contracts project nor a mediator, and a route or name the server changes reaches it with the next generated client. ## Mediator profiles [Section titled “Mediator profiles”](#mediator-profiles) Mediator libraries disagree on how a request declares its response and how it is sent. A **mediator profile** describes those shapes, and the generators write code against the profile rather than against one library. LaunchPad has five built-in profiles, for martinothamar/Mediator, ZeroAlloc.Mediator, Immediate.Handlers, Foundatio.Mediator and ChannelMediator, and picks the one the project references. A [custom profile](../../guides/api-generators/#a-custom-profile) covers any other library. The terms on this page are defined in the repository’s [glossary](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/GLOSSARY.md).
 
 # Strong types
 
@@ -184,7 +184,7 @@ An application uses LaunchPad through the [LaunchPad SDK](../concepts/launchpad-
 using var host = await Host.CreateApplicationBuilder(args).ConfigureDovetail();
 await host.RunAsync();
 ```
- `ConfigureDovetail()` is generated into the project’s root namespace, so add a `using` for it if `Program.cs` is in another one. The SDK finds a generic host (`HostApplication`) and adds `Joinery.Dovetail.Hosting`, which generates `ConfigureDovetail()`, and `Rocket.Surgery.LaunchPad.Hosting`, whose [templates](../concepts/templates/) bring health checks, logging and telemetry Joints when their libraries are referenced. ## An ASP.NET Core application [Section titled “An ASP.NET Core application”](#an-aspnet-core-application) The same line in a `Microsoft.NET.Sdk.Web` project gives the `WebApplication` host model, which also gets `Rocket.Surgery.LaunchPad.AspNetCore`: 
+ `ConfigureDovetail()` is generated into the project’s root namespace, so add a `using` for it if `Program.cs` is in another one. The SDK finds a generic host (`HostApplication`) and adds `Joinery.Dovetail.Hosting`, which generates `ConfigureDovetail()`, and `Rocket.Surgery.LaunchPad.Hosting`, whose [templates](../concepts/templates/) bring health checks, logging and telemetry Joints when their libraries are referenced. For a command line application, use the console SDK instead: [Console applications](./console-apps/). ## An ASP.NET Core application [Section titled “An ASP.NET Core application”](#an-aspnet-core-application) The same line in a `Microsoft.NET.Sdk.Web` project gives the `WebApplication` host model, which also gets `Rocket.Surgery.LaunchPad.AspNetCore`: 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
@@ -221,11 +221,11 @@ using MyApp;
 using var host = await Host.CreateApplicationBuilder(args).ConfigureDovetail();
 await host.RunAsync();
 ```
- It gets the generic host, `Rocket.Surgery.LaunchPad.Foundation`, `Hosting` and `NodaTime`, and Dovetail’s Serilog and OpenTelemetry packages. `RootNamespace` names the namespace `ConfigureDovetail()` is generated in; a file-based app would otherwise take it from the file name. ## Next [Section titled “Next”](#next) * [Choosing integration packages](./choosing-packages/): what the SDK adds for each technology, and how to turn one off. * [Writing a Joint](./writing-a-joint/): add wiring of your own. * The [samples](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/main/sample/Sample.Sdk) consume LaunchPad only through the SDK, the way an application outside the repository does.
+ It gets the generic host, `Rocket.Surgery.LaunchPad.Foundation`, `Hosting` and `NodaTime`, and Dovetail’s Serilog and OpenTelemetry packages. `RootNamespace` names the namespace `ConfigureDovetail()` is generated in; a file-based app would otherwise take it from the file name. ## Next [Section titled “Next”](#next) * [Choosing integration packages](./choosing-packages/): what the SDK adds for each technology, and how to turn one off. * [Writing a Joint](./writing-a-joint/): add wiring of your own. * [Console applications](./console-apps/): commands on ConsoleAppFramework with `Rocket.Surgery.LaunchPad.Sdk.Console`. * The [samples](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/main/sample/Sample.Sdk) consume LaunchPad only through the SDK, the way an application outside the repository does.
 
 # API Generators
 
-> Expose mediator requests as Minimal API, MVC, gRPC and GraphQL endpoints with any of six mediators, and generate clients from their specs.
+> Expose mediator requests as Minimal API, MVC, gRPC and GraphQL endpoints with any of five mediators, and generate clients from their specs.
 
 LaunchPad’s API generators turn mediator requests into a server. You list the requests an **operation host** exposes, and the generator writes the endpoints, each of which sends its request through your mediator. Clients are generated the usual way, from what the server describes: its OpenAPI document, its GraphQL schema or its `.proto`. 
 ```mermaid
@@ -237,7 +237,7 @@ flowchart LR
   D --> E["generated client (NSwag, Kiota, StrawberryShake, Grpc.Tools, …)"]
   E -- "GET /api/rockets/{id}" --> A
 ```
- The generators work with MediatR, [martinothamar/Mediator](https://github.com/martinothamar/Mediator), ChannelMediator, Immediate.Handlers, Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by scanning assemblies, and the generated Minimal API endpoints are native AOT safe. This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) servers, and generating clients for them. ## Packages [Section titled “Packages”](#packages) The generators ship in `Rocket.Surgery.LaunchPad.Foundation`, next to LaunchPad’s other source generators, so a project that references Foundation has them: the attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes, and the generators for Minimal API (`*Endpoints`), MVC (`*Controller`), gRPC (`*Service`) and GraphQL (`*Mutations`). Reference Foundation from the servers and from contracts that customise their operations. The attributes are generated into each project that uses them, as `internal` types, so nothing reaches your runtime dependencies. One generator per transport runs in every project that references Foundation, and each writes code only for the hosts of its kind, using that transport’s library (ASP.NET Core, protobuf-net.Grpc or HotChocolate). Why they share Foundation’s analyzer is recorded in [ADR 0004](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0004-one-generator-assembly.md). ## Quick start [Section titled “Quick start”](#quick-start) **Contracts**: plain mediator requests. Nothing is required: XML documentation becomes the OpenAPI summary, `[ApiOperation]` adds metadata to the operation, and `[Creates]` marks a response that identifies a new resource. 
+ The generators work with [martinothamar/Mediator](https://github.com/martinothamar/Mediator), ChannelMediator, Immediate.Handlers, Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by scanning assemblies, and the generated Minimal API endpoints are native AOT safe. This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) servers, and generating clients for them. ## Packages [Section titled “Packages”](#packages) The generators ship in `Rocket.Surgery.LaunchPad.Foundation`, next to LaunchPad’s other source generators, so a project that references Foundation has them: the attributes (`[ApiOperation]`, `[Operation<T>]`, …), host checks, code fixes, and the generators for Minimal API (`*Endpoints`), MVC (`*Controller`), gRPC (`*Service`) and GraphQL (`*Mutations`). Reference Foundation from the servers and from contracts that customise their operations. The attributes are generated into each project that uses them, as `internal` types, so nothing reaches your runtime dependencies. One generator per transport runs in every project that references Foundation, and each writes code only for the hosts of its kind, using that transport’s library (ASP.NET Core, protobuf-net.Grpc or HotChocolate). Why they share Foundation’s analyzer is recorded in [ADR 0004](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0004-one-generator-assembly.md). ## Quick start [Section titled “Quick start”](#quick-start) **Contracts**: plain mediator requests. Nothing is required: XML documentation becomes the OpenAPI summary, `[ApiOperation]` adds metadata to the operation, and `[Creates]` marks a response that identifies a new resource. 
 ```csharp
 namespace Rockets.Contracts;
 
@@ -348,7 +348,7 @@ public static class LaunchRocket { public sealed record Request(Guid Id) : IRequ
           ? outer.Name + type.Type.Name
           : OpenApiOptions.CreateDefaultSchemaReferenceId(type));
   ```
- * **Streams.** OpenAPI documents a stream as `application/x-ndjson`, which most generated clients don’t read: they expect one JSON array. Read the response yourself, one JSON item per line. * **Struct requests.** System.Text.Json builds a struct through its parameterless constructor, so OpenAPI doesn’t mark its positional members required the way it does a record class’s. Add `[Required]` to keep generated clients non-nullable. * **StrawberryShake** declares a local named `request` in each generated operation, so a variable named `$request` doesn’t compile (CS0136). Name the variable something else: `mutation CreateRocket($rocket: CreateRocketRequest!) { createRocket(request: $rocket) { id } }`. ## Mediator profiles [Section titled “Mediator profiles”](#mediator-profiles) The generators find your mediator from the libraries the project references. Exactly one of the built-in profiles must match, or you declare one (LPAD1002): | Mediator | Requests | Server dispatches through | | ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------- | | MediatR | `IRequest<T>`, `IRequest`, `IStreamRequest<T>` | `ISender` | | martinothamar/Mediator | `IRequest<T>`, `ICommand<T>`, `IQuery<T>`, `ICommand` and stream variants | `ISender` | | ChannelMediator | `IRequest<T>`, `IRequest`, `IStreamRequest<T>` | `IMediator` | | Immediate.Handlers | anything; the response comes from the `[Handler]` (a bare `ValueTask` is void) or `[ApiOperation(Response)]` | `IHandler<TRequest, TResponse>` | | Foundatio.Mediator | optional `IRequest<T>`/`ICommand<T>`/`IQuery<T>`, or `ICommand` for void, else `[ApiOperation(Response)]` | `IMediator.InvokeAsync` | | ZeroAlloc.Mediator | `IRequest<T>`, `IRequest`, `IStreamRequest<T>` | its generated `IMediator` | Requests that implement no marker interface (Immediate.Handlers, and optionally Foundatio) name their response with `[ApiOperation(Response = typeof(...))]`. `typeof` can’t say “nullable”, so for Immediate.Handlers the server takes the nullability from its `[Handler]` method when that is next to the request or the host. ### A custom profile [Section titled “A custom profile”](#a-custom-profile) Another mediator can be described with two assembly attributes: 
+ * **Streams.** OpenAPI documents a stream as `application/x-ndjson`, which most generated clients don’t read: they expect one JSON array. Read the response yourself, one JSON item per line. * **Struct requests.** System.Text.Json builds a struct through its parameterless constructor, so OpenAPI doesn’t mark its positional members required the way it does a record class’s. Add `[Required]` to keep generated clients non-nullable. * **StrawberryShake** declares a local named `request` in each generated operation, so a variable named `$request` doesn’t compile (CS0136). Name the variable something else: `mutation CreateRocket($rocket: CreateRocketRequest!) { createRocket(request: $rocket) { id } }`. ## Mediator profiles [Section titled “Mediator profiles”](#mediator-profiles) The generators find your mediator from the libraries the project references. Exactly one of the five built-in profiles must match, or you declare one (LPAD1002): | Mediator | Requests | Server dispatches through | | ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------- | | martinothamar/Mediator | `IRequest<T>`, `ICommand<T>`, `IQuery<T>`, `ICommand` and stream variants | `ISender` | | ChannelMediator | `IRequest<T>`, `IRequest`, `IStreamRequest<T>` | `IMediator` | | Immediate.Handlers | anything; the response comes from the `[Handler]` (a bare `ValueTask` is void) or `[ApiOperation(Response)]` | `IHandler<TRequest, TResponse>` | | Foundatio.Mediator | optional `IRequest<T>`/`ICommand<T>`/`IQuery<T>`, or `ICommand` for void, else `[ApiOperation(Response)]` | `IMediator.InvokeAsync` | | ZeroAlloc.Mediator | `IRequest<T>`, `IRequest`, `IStreamRequest<T>` | its generated `IMediator` | Requests that implement no marker interface (Immediate.Handlers, and optionally Foundatio) name their response with `[ApiOperation(Response = typeof(...))]`. `typeof` can’t say “nullable”, so for Immediate.Handlers the server takes the nullability from its `[Handler]` method when that is next to the request or the host. ### A custom profile [Section titled “A custom profile”](#a-custom-profile) Another mediator can be described with two assembly attributes: 
 ```csharp
 [assembly: MediatorProfile(SenderType = typeof(IMyDispatcher), SendMethod = "Dispatch", StreamMethod = "Stream", Name = "MyMediator")]
 [assembly: MediatorRequest(typeof(IMyRequest<>), HandlerInterface = typeof(IMyHandler<,>), HandleMethod = "Handle")]
@@ -407,6 +407,86 @@ With the [LaunchPad SDK](../../concepts/launchpad-sdk/) a project turns on Launc
 </ItemGroup>
 ```
  gives an ASP.NET Core application `LaunchPadSerilogConsoleJoint` and `LaunchPadAspNetCoreInstrumentationJoint`.
+
+# Console applications
+
+> Build a command line application on ConsoleAppFramework with the LaunchPad console SDK, with commands built from the host's services and registered by a Joint.
+
+`Rocket.Surgery.LaunchPad.Sdk.Console` is the [LaunchPad SDK](../../concepts/launchpad-sdk/) for command line applications. It adds the same LaunchPad packages as `Rocket.Surgery.LaunchPad.Sdk`, and chains Dovetail’s console SDK, `Joinery.Dovetail.Sdk.Console`, instead of `Joinery.Dovetail.Sdk`. The commands run on Cysharp’s [ConsoleAppFramework](https://github.com/Cysharp/ConsoleAppFramework), and Dovetail writes the entry point. In the snippets, replace `1.0.0` with the version of the SDK you use. ## The project [Section titled “The project”](#the-project) 
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Console/1.0.0">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+</Project>
+```
+ There is no `OutputType` to set and no `Program.cs` to write. The SDK: * makes the project an `Exe`, which Dovetail finds a generic host (`HostApplication`) for; * adds ConsoleAppFramework (a source generator, so nothing ships with the application) and `Microsoft.Extensions.Hosting`; * adds `Joinery.Dovetail.Hosting`, which writes `Program.cs` to `obj/`, and `Rocket.Surgery.LaunchPad.Hosting`, whose [templates](../../concepts/templates/) bring the health check, logging and telemetry Joints when their libraries are referenced; * adds the [integration packages](../choosing-packages/) of what the project references, exactly as the LaunchPad SDK does. To apply it to every project of a repository, use `<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Console">` in a `Directory.Build.props` and pin the version in `global.json` under `msbuild-sdks`, as for the LaunchPad SDK. Only use one of the two LaunchPad SDKs in a project. The generated `Program` creates the `HostApplicationBuilder`, configures it with every [Joint](../../concepts/joints/) the application imports, builds and starts the host, applies the `ConsoleApp` Joints, runs the command the command line names and stops the host. The exit code is ConsoleAppFramework’s. ## Commands [Section titled “Commands”](#commands) A command is a method marked `[Command]` on a class that ConsoleAppFramework creates from the host’s services, so it can take anything another Joint registered. An `IConsoleAppJoint` registers the classes: 
+```csharp
+using ConsoleAppFramework;
+using Joinery.Dovetail;
+using Joinery.Dovetail.Attributes;
+using Joinery.Dovetail.Joints;
+using Microsoft.Extensions.DependencyInjection;
+
+
+public sealed class Greeter
+{
+    public string Greet(string name) => $"Hello, {name}";
+}
+
+
+internal sealed class GreetCommands(Greeter greeter)
+{
+    /// <summary>Greets someone.</summary>
+    /// <param name="name">Who to greet.</param>
+    [Command("greet")]
+    public void Greet(string name = "world") => Console.WriteLine(greeter.Greet(name));
+}
+
+
+[DovetailExport]
+internal sealed class AppJoint : IServiceJoint, IConsoleAppJoint
+{
+    public void Register(IDovetailContext context, IServiceCollection services) => services.AddSingleton<Greeter>();
+
+
+    public void Register(IDovetailContext context, ConsoleApp.ConsoleAppBuilder app) => app.Add<GreetCommands>();
+}
+```
+ 
+```bash
+dotnet run -- greet --name LaunchPad
+```
+ `[Command("")]` makes a method the root command, which runs when no command is given. ConsoleAppFramework’s types are internal, so the command classes and the `ConsoleApp` Joints are too. ## Writing the entry point yourself [Section titled “Writing the entry point yourself”](#writing-the-entry-point-yourself) Set `DovetailUseDefaultProgram` to `false` to keep the generated `Program.cs` out, for example so tests can run the application in-process with their own output and configuration. The `ConsoleApp` Joint is still declared, so the entry point applies it with `ApplyConsoleApp`: 
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+
+IDovetailContext? dovetail = null;
+using var host = await builder.ConfigureDovetail(
+    context => context.ConfigureHostCreated<IHost>((created, _) => dovetail = created)
+);
+
+
+ConsoleApp.ServiceProvider = host.Services;
+var app = ConsoleApp.Create();
+await app.ApplyConsoleApp(dovetail!);
+
+
+await host.StartAsync();
+try
+{
+    await app.RunAsync(args, startHost: false, stopHost: false, disposeServiceProvider: false);
+}
+finally
+{
+    await host.StopAsync();
+}
+
+
+return Environment.ExitCode;
+```
+ ConsoleAppFramework keeps the service provider and the exit code in statics (`ConsoleApp.ServiceProvider`, `Environment.ExitCode`), so tests that run the application in-process must not run in parallel. The [`Sample.Command`](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/main/sample/Sample.Command) sample does this, and also configures its DryIoc container from an `IDryIocJoint`. ## Properties [Section titled “Properties”](#properties) | Property | Default | Effect | | ------------------------------------ | --------------------------- | ------------------------------------------------------------------------ | | `DovetailConsoleApp` | `true` with the console SDK | Declares the `ConsoleApp` Joint and writes `Program.cs`. | | `DovetailUseDefaultProgram` | `true` | `false` keeps the generated `Program.cs` out. | | `DovetailConsoleAppFrameworkVersion` | the version Dovetail pins | The ConsoleAppFramework version the SDK adds. | | `LaunchPadDovetailSdkVersion` | the version the SDK pins | The version of `Joinery.Dovetail.Sdk.Console` the SDK chains. | | `LaunchPadEnable<Tech>` | `true` | `false` opts the project out of a technology, as with the LaunchPad SDK. |
 
 # JSON and native AOT
 

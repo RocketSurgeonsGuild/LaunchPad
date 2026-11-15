@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.FluentValidation.Blazor
 
 - Package: `Rocket.Surgery.LaunchPad.FluentValidation.Blazor`
-- Version: `2.0.1-beta.365`
+- Version: `2.0.1-beta.367`
 - Target framework: `net10.0`
 - NuGet: [Rocket.Surgery.LaunchPad.FluentValidation.Blazor](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.FluentValidation.Blazor)
 

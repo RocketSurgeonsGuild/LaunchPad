@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.FluentValidation.Grpc](/LaunchPad/api/rocket.surgery.launchpad.fluentvalidation.grpc.md)
-- Version: `2.0.1-beta.365`
+- Version: `2.0.1-beta.367`
 - Namespace: `Rocket.Surgery.LaunchPad.Grpc.Joints`
 - Target framework: `net10.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`

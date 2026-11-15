@@ -14,8 +14,8 @@ flowchart LR
   E -- "GET /api/rockets/{id}" --> A
 ```
 
-The generators work with MediatR, [martinothamar/Mediator](https://github.com/martinothamar/Mediator), ChannelMediator,
-Immediate.Handlers, Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
+The generators work with [martinothamar/Mediator](https://github.com/martinothamar/Mediator), ChannelMediator, Immediate.Handlers,
+Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
 scanning assemblies, and the generated Minimal API endpoints are native AOT safe.
 
 This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) servers, and generating clients for them.
@@ -372,12 +372,11 @@ Things to know:
 
 ## Mediator profiles
 
-The generators find your mediator from the libraries the project references. Exactly one of the built-in profiles must match, or you
+The generators find your mediator from the libraries the project references. Exactly one of the five built-in profiles must match, or you
 declare one (LPAD1002):
 
 | Mediator               | Requests                                                                                                     | Server dispatches through       |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------- |
-| MediatR                | `IRequest<T>`, `IRequest`, `IStreamRequest<T>`                                                               | `ISender`                       |
 | martinothamar/Mediator | `IRequest<T>`, `ICommand<T>`, `IQuery<T>`, `ICommand` and stream variants                                    | `ISender`                       |
 | ChannelMediator        | `IRequest<T>`, `IRequest`, `IStreamRequest<T>`                                                               | `IMediator`                     |
 | Immediate.Handlers     | anything; the response comes from the `[Handler]` (a bare `ValueTask` is void) or `[ApiOperation(Response)]` | `IHandler<TRequest, TResponse>` |

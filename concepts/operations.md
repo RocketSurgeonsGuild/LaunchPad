@@ -50,7 +50,7 @@ the contracts project nor a mediator, and a route or name the server changes rea
 ## Mediator profiles
 
 Mediator libraries disagree on how a request declares its response and how it is sent. A **mediator profile** describes those shapes, and
-the generators write code against the profile rather than against one library. LaunchPad has built-in profiles for MediatR,
+the generators write code against the profile rather than against one library. LaunchPad has five built-in profiles, for
 martinothamar/Mediator, ZeroAlloc.Mediator, Immediate.Handlers, Foundatio.Mediator and ChannelMediator, and picks the one the project
 references. A [custom profile](../../guides/api-generators/#a-custom-profile) covers any other library.
 
