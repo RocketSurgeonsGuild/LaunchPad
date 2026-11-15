@@ -352,7 +352,8 @@ The generators don't write clients. Each server describes itself in a standard f
 
 Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves
 `/openapi/v1.json`, `/graphql?sdl` and `GetProto()`, then point the client generator at the files. LaunchPad's own functional tests do that
-(`test/Api/Functional/Clients`): NSwag, Grpc.Tools and StrawberryShake clients, generated from the specs on every build.
+(`test/Api/Functional/Clients`): a Kiota client (through the LaunchPad SDK, see [Generating HTTP Clients](../openapi-clients/)),
+Grpc.Tools and StrawberryShake clients, generated from the specs on every build.
 
 Things to know:
 

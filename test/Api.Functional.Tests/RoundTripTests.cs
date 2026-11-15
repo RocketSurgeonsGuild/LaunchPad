@@ -11,15 +11,18 @@ using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Kiota.Abstractions;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
 using StrawberryShake;
-using Http = Api.Functional.HttpClient;
+using Http = Api.Functional.Clients.Http;
 using Proto = Rockets;
 
 namespace Api.Functional.Tests;
 
 /// <summary>
-///     For each mediator, a server built by the generators, reached through the clients an application would generate from its specs: NSwag
-///     from the OpenAPI document, Grpc.Tools from the <c>.proto</c> (<c>RocketsService.GetProto()</c>) and StrawberryShake from the GraphQL
+///     For each mediator, a server built by the generators, reached through the clients an application would generate from its specs: Kiota
+///     (the LaunchPad SDK's OpenApiClient) from the OpenAPI document, Grpc.Tools from the <c>.proto</c> (<c>RocketsService.GetProto()</c>) and StrawberryShake from the GraphQL
 ///     schema. The clients are generated once, from the ZeroAlloc.Mediator server's specs; <see cref="Should_Expose_The_Same_Specs" /> checks that every
 ///     other server exposes the same ones.
 /// </summary>
@@ -52,22 +55,24 @@ public class RoundTripTests
     {
         await using var server = await Servers[mediator].Start(controllers, false, false, false);
         using var http = server.GetTestClient();
-        var rockets = new Http.RocketsClient(http);
+        var rockets = new Http.RocketsClient(new HttpClientRequestAdapter(new AnonymousAuthenticationProvider(), httpClient: http)).Api.Rockets;
 
-        var id = ( await rockets.CreateRocketAsync(new() { Name = "Falcon" }, cancellationToken) ).Id;
-        await Rocket(await rockets.GetRocketAsync(id, cancellationToken)).Should().BeEqualTo((id, "Falcon"));
+        var id = ( await rockets.PostAsync(new() { Name = "Falcon" }, cancellationToken: cancellationToken) )!.Id!.Value;
+        await Rocket(await rockets[id].GetAsync(cancellationToken: cancellationToken)).Should().BeEqualTo((id, "Falcon"));
 
-        await Rocket(await rockets.EditRocketAsync(id, new() { Name = "Falcon 9" }, cancellationToken)).Should().BeEqualTo((id, "Falcon 9"));
-        var other = ( await rockets.CreateRocketAsync(new() { Name = "Starship" }, cancellationToken) ).Id;
-        // ListRockets streams application/x-ndjson, which NSwag's client doesn't read: one JSON rocket per line.
-        var listed = ( await http.GetStringAsync("api/rockets?name=Falcon%209", cancellationToken) )
+        await Rocket(await rockets[id].PutAsync(new() { Name = "Falcon 9" }, cancellationToken: cancellationToken)).Should().BeEqualTo((id, "Falcon 9"));
+        var other = ( await rockets.PostAsync(new() { Name = "Starship" }, cancellationToken: cancellationToken) )!.Id!.Value;
+        // ListRockets streams application/x-ndjson, which Kiota hands over as the stream: one JSON rocket per line.
+        await using var stream = await rockets.GetAsync(request => request.QueryParameters.Name = "Falcon 9", cancellationToken);
+        using var reader = new StreamReader(stream!);
+        var listed = ( await reader.ReadToEndAsync(cancellationToken) )
                     .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(line => Rocket(JsonSerializer.Deserialize<Http.RocketModel>(line, JsonSerializerOptions.Web)!));
+                    .Select(line => Rocket(JsonSerializer.Deserialize<Http.Models.RocketModel>(line, JsonSerializerOptions.Web)));
         await listed.Should().BeEquivalentTo([(id, "Falcon 9")], CollectionOrdering.Matching);
 
-        await rockets.DeleteRocketAsync(id, cancellationToken);
-        await ( await ( (Func<Task>)( () => rockets.GetRocketAsync(id, cancellationToken) ) ).Should().Throw<Http.ApiException>() ).StatusCode.Should().BeEqualTo(404);
-        await Rocket(await rockets.GetRocketAsync(other, cancellationToken)).Should().BeEqualTo((other, "Starship"));
+        await rockets[id].DeleteAsync(cancellationToken: cancellationToken);
+        await ( await ( (Func<Task>)( () => rockets[id].GetAsync(cancellationToken: cancellationToken) ) ).Should().Throw<ApiException>() ).ResponseStatusCode.Should().BeEqualTo(404);
+        await Rocket(await rockets[other].GetAsync(cancellationToken: cancellationToken)).Should().BeEqualTo((other, "Starship"));
     }
 
     [Test]
@@ -198,6 +203,6 @@ public class RoundTripTests
         return await http.GetStringAsync("graphql?sdl", cancellationToken);
     }
 
-    private static (Guid Id, string Name) Rocket(Http.RocketModel rocket) => (rocket.Id, rocket.Name);
+    private static (Guid Id, string? Name) Rocket(Http.Models.RocketModel? rocket) => (rocket!.Id!.Value, rocket.Name);
     private static (Guid Id, string Name) Rocket(Proto.RocketModel rocket) => (Guid.Parse(rocket.Id), rocket.Name);
 }

@@ -155,8 +155,6 @@
         <PackageVersion Include="Serilog.Sinks.Observable" Version="3.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="11.0.0" />
-
-        <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.7.1" />
         <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />
 
         <PackageVersion Include="OpenTelemetry" Version="1.21.0" />
@@ -197,7 +195,6 @@
         <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.15" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.15" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="10.0.15" />
         <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.15" />
         <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.15" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.15" />
@@ -211,7 +208,7 @@
         <PackageVersion Include="System.Net.Http.Json" Version="10.0.15" />
         <PackageVersion Include="System.Text.Json" Version="10.0.15" />
     </ItemGroup>
-    <!-- net11.0 line (Microsoft.Extensions.ApiDescription.Client has no 11.0 release candidate yet; preview.7 is its newest 11.0 build) -->
+    <!-- net11.0 line -->
     <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
         <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0" />
@@ -222,7 +219,6 @@
         <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="11.0.0" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="11.0.0" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="11.0.0-preview.7.26381.103" />
         <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="11.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Configuration" Version="11.0.0" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />

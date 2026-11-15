@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 internal static class FixtureOpenApi
 {
     /// <summary>
-    ///     OpenAPI 3.0, which NSwag reads; and nested types (<c>CreateRocket.Request</c>) named with their container, or every nested <c>Request</c>
+    ///     OpenAPI 3.0 (what the NSwag client first needed; Kiota reads it as well); and nested types (<c>CreateRocket.Request</c>) named with their container, or every nested <c>Request</c>
     ///     would be one <c>Request</c> schema.
     /// </summary>
     public static IServiceCollection AddFixtureOpenApi(this IServiceCollection services) =>
