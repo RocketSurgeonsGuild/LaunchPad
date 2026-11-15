@@ -15,9 +15,12 @@ extend schema @key(fields: "id")
 extend scalar Geometry
     @serializationType(name: "global::System.Text.Json.JsonElement")
     @runtimeType(name: "global::NetTopologySuite.Geometries.Geometry")
-#extend scalar Coordinates
-#    @serializationType(name: "global::System.Text.Json.JsonElement")
-#    @runtimeType(name: "global::NetTopologySuite.Geometries.Coordinate")
+extend scalar Position
+    @serializationType(name: "global::System.Text.Json.JsonElement")
+    @runtimeType(name: "global::NetTopologySuite.Geometries.Coordinate")
+extend scalar Coordinates
+    @serializationType(name: "global::System.Text.Json.JsonElement")
+    @runtimeType(name: "global::System.Text.Json.JsonElement", valueType: true)
 
 extend scalar DateTime
     @serializationType(name: "global::System.String")

@@ -1,7 +1,21 @@
 ﻿{
   Data: {
     GeometryTest: {
-      Geometry: MULTIPOINT ((15 16), (17 18))
+      Geometry: MULTIPOINT ((15 16), (17 18)),
+      MultiPoint: {
+        Bbox: [
+          15.0,
+          16.0,
+          17.0,
+          18.0
+        ],
+        Coordinates: [
+          (15, 16),
+          (17, 18)
+        ],
+        Crs: 4326,
+        Type: Multipoint
+      }
     }
   }
 }
