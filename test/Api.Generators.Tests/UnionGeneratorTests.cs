@@ -1,3 +1,5 @@
+using Microsoft.CodeAnalysis.CSharp;
+
 namespace Api.Generators.Tests;
 
 /// <summary>
@@ -39,8 +41,6 @@ public class UnionGeneratorTests() : GeneratorTest()
             #nullable enable
             using Mediator;
 
-            {{UnionContracts.Polyfill}}
-
             namespace Sample.Contracts
             {
                 public sealed record RocketModel(System.Guid Id);
@@ -80,6 +80,39 @@ public class UnionGeneratorTests() : GeneratorTest()
         await Verify(result);
     }
 
+    // A native union declared in the server's own project. In source, the compiler declares its case constructors implicitly, unlike those of
+    // a union read from a contracts assembly or a hand-written one.
+    [Test]
+    public async Task Should_Answer_A_Native_Union_Declared_In_The_Server()
+    {
+        var contracts = await CompileContracts(Mediator.Mediator, "namespace Sample.Contracts { public sealed record Placeholder; }");
+        var result = await Server(Mediator.Mediator, contracts)
+                          .WithLanguageVersion(LanguageVersion.Preview)
+                          .AddSources(
+                               """
+                               #nullable enable
+                               using Mediator;
+                               using Rocket.Surgery.LaunchPad.Api;
+
+                               namespace Sample.Server
+                               {
+                                   public sealed record RocketModel(System.Guid Id);
+                                   public sealed record RocketNotFound(System.Guid Id);
+                                   public union GetRocketResult(RocketModel, RocketNotFound);
+
+                                   public static class GetRocket { public sealed record Request(System.Guid Id) : IRequest<GetRocketResult>; }
+
+                                   [Operation<GetRocket.Request>]
+                                   public static partial class RocketsEndpoints;
+                               }
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await Verify(result);
+    }
+
     // A union whose value case is nullable answers 404 for null, as a nullable response does.
     [Test]
     public async Task Should_Answer_Not_Found_For_A_Null_Value_Case()
@@ -89,8 +122,6 @@ public class UnionGeneratorTests() : GeneratorTest()
             $$"""
             #nullable enable
             using Mediator;
-
-            {{UnionContracts.Polyfill}}
 
             namespace Sample.Contracts
             {
@@ -129,8 +160,6 @@ public class UnionGeneratorTests() : GeneratorTest()
             $$"""
             #nullable enable
             using Mediator;
-
-            {{UnionContracts.Polyfill}}
 
             namespace Sample.Contracts
             {
@@ -198,7 +227,6 @@ public class UnionGeneratorTests() : GeneratorTest()
             using Mediator;
             using Rocket.Surgery.LaunchPad.Foundation;
 
-            {{UnionContracts.Polyfill}}
 
             {{Problems}}
 
@@ -251,23 +279,11 @@ public class UnionGeneratorTests() : GeneratorTest()
 }
 
 /// <summary>
-///     Union contracts in each mediator's own shapes. The union types follow C# 15's lowering of a <c>union</c> declaration (a <c>[Union]</c>
-///     struct implementing <c>IUnion</c>, one constructor per case), with the attribute and interface declared here so the fixture compiles on
-///     .NET 10 as well.
+///     Union contracts in each mediator's own shapes, as native C# 15 <c>union</c> declarations. The other tests here declare hand-written
+///     custom unions (a <c>[Union]</c> struct implementing <c>IUnion</c>), which the generators detect the same way.
 /// </summary>
 internal static class UnionContracts
 {
-    /// <summary>The C# 15 union attribute and interface, for compilations whose framework doesn't have them (.NET 10).</summary>
-    public const string Polyfill = """
-        namespace System.Runtime.CompilerServices
-        {
-            [global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Struct, AllowMultiple = false)]
-            internal sealed class UnionAttribute : global::System.Attribute { }
-
-            internal interface IUnion { object? Value { get; } }
-        }
-        """;
-
     internal sealed record Shape(string Usings, Func<string, string>? Marker, Func<string, string>? Stream, string Kind, string Unit);
 
     internal static Shape ShapeOf(Mediator mediator) => mediator switch
@@ -300,23 +316,13 @@ internal static class UnionContracts
                 """;
         }
 
-        static string Union(string name, params string[] cases) =>
-            $$"""
-            [System.Runtime.CompilerServices.Union]
-            public readonly struct {{name}} : System.Runtime.CompilerServices.IUnion
-            {
-                {{string.Join("\n    ", cases.Select(c => $"public {name}({c} value) => Value = value;"))}}
-                public object? Value { get; }
-            }
-            """;
+        static string Union(string name, params string[] cases) => $"public union {name}({string.Join(", ", cases)});";
 
         return $$"""
             #nullable enable
             {{shape.Usings}}
             using System.Runtime.Serialization;
             using Rocket.Surgery.LaunchPad.Api;
-
-            {{Polyfill}}
 
             namespace Sample.Contracts.Rockets
             {

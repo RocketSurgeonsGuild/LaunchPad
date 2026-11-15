@@ -127,8 +127,9 @@ internal static class UnionResults
         // declaration or on a union read from metadata, and a portable union has no IUnion until the union generator runs.
         if (!named.GetAttributes().Any(a => a.AttributeClass.Is(UnionAttribute)) && !named.AllInterfaces.Any(i => i.Is(UnionInterface))) return false;
 
+        // Not IsImplicitlyDeclared: the case constructors of a native `union` declaration are, while it is in source.
         cases = named.InstanceConstructors
-                     .Where(c => c is { DeclaredAccessibility: Accessibility.Public, IsImplicitlyDeclared: false, Parameters.Length: 1, IsGenericMethod: false })
+                     .Where(c => c is { DeclaredAccessibility: Accessibility.Public, Parameters.Length: 1, IsGenericMethod: false })
                      .Where(c => c.Parameters[0].RefKind is RefKind.None or RefKind.In)
                      .Select(c => c.Parameters[0].Type)
                      .ToArray();
