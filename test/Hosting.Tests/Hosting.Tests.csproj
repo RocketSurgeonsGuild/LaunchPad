@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <!--
             The test application is an executable. TUnit's package targets say so too, but restore doesn't see them, so without this a restore
             of this project alone skips the net10.0 apphost pack (the SDK only carries its own version's) and the build then fails with

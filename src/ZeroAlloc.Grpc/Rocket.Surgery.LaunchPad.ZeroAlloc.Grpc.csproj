@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription>
             ZeroAlloc.Mediator validation for LaunchPad gRPC services: a rejected request answers InvalidArgument with the failures in the status
             detail and the trailers.
