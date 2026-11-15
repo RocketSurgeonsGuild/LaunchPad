@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
 using Sample.Core.Domain;
-using Sample.Restful.Tests.Client;
 using Sample.Restful.Tests.Helpers;
 
 using RocketType = Sample.Core.Domain.RocketType;

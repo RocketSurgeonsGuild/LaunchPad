@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Minimal.Tests.Client;
 using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Minimal.Tests.LaunchRecords;

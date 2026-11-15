@@ -4,7 +4,6 @@ using NodaTime;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Minimal.Tests.Client;
 using Sample.Minimal.Tests.Helpers;
 
 using RocketType = Sample.Core.Domain.RocketType;

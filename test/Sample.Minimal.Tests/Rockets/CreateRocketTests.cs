@@ -1,4 +1,3 @@
-using Sample.Minimal.Tests.Client;
 using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Minimal.Tests.Rockets;

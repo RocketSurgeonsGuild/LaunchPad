@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Sample.Core.Domain;
-using Sample.Minimal.Tests.Client;
 using Sample.Minimal.Tests.Helpers;
 using ClientRocketType = Sample.Minimal.Tests.Client.RocketType;
 using RocketType = Sample.Core.Domain.RocketType;

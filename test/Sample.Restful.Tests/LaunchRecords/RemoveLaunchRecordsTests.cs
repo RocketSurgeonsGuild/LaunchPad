@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Restful.Tests.Client;
 using Sample.Restful.Tests.Helpers;
 
 namespace Sample.Restful.Tests.LaunchRecords;

@@ -2,8 +2,6 @@ using Alba;
 
 using Refit;
 
-using Sample.Minimal.Tests.Client;
-
 using TUnit.Core.Interfaces;
 
 namespace Sample.Minimal.Tests.Helpers;

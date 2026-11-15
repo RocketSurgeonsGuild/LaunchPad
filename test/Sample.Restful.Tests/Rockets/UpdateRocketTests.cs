@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Sample.Core.Domain;
-using Sample.Restful.Tests.Client;
 using Sample.Restful.Tests.Helpers;
 using ClientRocketType = Sample.Restful.Tests.Client.RocketType;
 using RocketType = Sample.Core.Domain.RocketType;
@@ -140,5 +139,5 @@ public class UpdateRocketTests : WebAppFixtureTest
     }
 
     private static readonly Faker Faker = new();
-    private static readonly string[] expected = new[] { "SerialNumber" };
+    private static readonly string[] expected = ["SerialNumber"];
 }

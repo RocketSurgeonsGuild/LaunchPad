@@ -1,4 +1,3 @@
-using Sample.Restful.Tests.Client;
 using Sample.Restful.Tests.Helpers;
 
 namespace Sample.Restful.Tests.Rockets;

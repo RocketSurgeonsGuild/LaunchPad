@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using Sample.Core.Domain;
-using Sample.Restful.Tests.Client;
 using Sample.Restful.Tests.Helpers;
 
 using HttpRocketType = Sample.Restful.Tests.Client.RocketType;

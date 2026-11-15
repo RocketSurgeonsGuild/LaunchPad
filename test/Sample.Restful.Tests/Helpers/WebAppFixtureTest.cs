@@ -2,8 +2,6 @@ using Alba;
 
 using Refit;
 
-using Sample.Restful.Tests.Client;
-
 using TUnit.Core.Interfaces;
 
 namespace Sample.Restful.Tests.Helpers;
