@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](/LaunchPad/pr-preview/pr-3231/api/rocket.surgery.launchpad.zeroalloc.aspnetcore.md)
-- Version: `2.0.1-pr.1198`
+- Version: `2.0.1-pr.1200`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.OpenApi`
 - Target framework: `net10.0`
 - Implements: `IOpenApiSchemaTransformer`
