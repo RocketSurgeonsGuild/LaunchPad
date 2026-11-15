@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -81,12 +80,7 @@ public static partial class EditLaunchRecord
     public partial record PatchRequest(LaunchRecordId Id) : IRequest<Result>, IPropertyTracking<Request>;
 
     /// <summary>What the operation answers: the updated launch record, or not found.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(LaunchRecordModel value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(LaunchRecordModel, NotFound);
 
     // The patch is handled here rather than by the generated patch handler, whose GetRequest has to return a request and so cannot answer
     // NotFound: a missing launch record answers NotFound, and otherwise the patch is applied to its current values and sent through the mediator.
@@ -106,7 +100,7 @@ public static partial class EditLaunchRecord
         public async ValueTask<Result> Handle(PatchRequest request, CancellationToken cancellationToken)
         {
             return await FindLaunchRecord(request.Id, cancellationToken) is not { } launchRecord
-                ? (Result)new NotFound($"Launch record {request.Id} was not found")
+                ? new NotFound($"Launch record {request.Id} was not found")
                 : await mediator.Send(request.ApplyChanges(Map(launchRecord)), cancellationToken).ConfigureAwait(false);
         }
 

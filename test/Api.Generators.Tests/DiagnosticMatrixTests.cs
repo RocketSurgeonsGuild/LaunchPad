@@ -249,7 +249,6 @@ internal static class MatrixContracts
             {{shapes.Usings}}
             using Rocket.Surgery.LaunchPad.Api;
 
-            {{UnionContracts.Polyfill}}
 
             namespace Sample.Contracts.Rockets
             {

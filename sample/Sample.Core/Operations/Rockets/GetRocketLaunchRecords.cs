@@ -35,12 +35,7 @@ public static partial class GetRocketLaunchRecords
     ///     One item of the stream: a launch record, or not found. A stream of unions ends with its first error case, so a missing rocket answers
     ///     <see cref="NotFound" /> before any launch record.
     /// </summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(LaunchRecordModel value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(LaunchRecordModel, NotFound);
 
     internal class GetRocketLaunchRecordsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, Result>
     {

@@ -58,11 +58,10 @@ internal sealed record UnionModel(string Type, string? ValueInterface, bool Null
 ///     <para>
 ///         <see cref="TryRead" /> is the one place that knows what a union looks like, so it can follow LaunchPad's union types
 ///         (RocketSurgeonsGuild/LaunchPad#3147) without touching the emitters. It follows C# 15: a type marked with
-///         <c>System.Runtime.CompilerServices.UnionAttribute</c> or implementing <c>IUnion</c> (matched by full name, since before .NET 11 every
-///         assembly has its own embedded copy), whose case types are the parameter types of its public
-///         one-parameter constructors, in declaration order, and whose current case is its <c>object? Value</c>. A <c>union</c> declaration
-///         lowers to exactly that; so does #3147's portable <c>[Union] partial struct</c>, whose partial constructors are in source before its
-///         generator implements them.
+///         <c>System.Runtime.CompilerServices.UnionAttribute</c> or implementing <c>IUnion</c> (matched by full name, as a hand-written union may
+///         declare its own copies), whose case types are the parameter types of its public one-parameter constructors, in declaration order,
+///         and whose current case is its <c>object? Value</c>. A native <c>union</c> declaration lowers to exactly that, and so does a
+///         hand-written custom union.
 ///     </para>
 ///     <para>
 ///         An error case is known by <c>[ApiError]</c> on its type or by its name; the value case is the first case that is neither, and any
@@ -122,13 +121,14 @@ internal static class UnionResults
         if (type is not INamedTypeSymbol named) return false;
         // Nullable<U> of a struct union: the union is U.
         if (named.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T && named.TypeArguments[0] is INamedTypeSymbol inner) named = inner;
-        // #3147's contract (docs/design/union-types.md, section 4, rule 1): the attribute or IUnion, by full name, since before .NET 11 every
-        // assembly has its own embedded copy. Both are needed: Roslyn doesn't surface [Union] through GetAttributes() on a native `union`
-        // declaration or on a union read from metadata, and a portable union has no IUnion until the union generator runs.
+        // #3147's contract (docs/design/union-types.md, section 4, rule 1): the attribute or IUnion, by full name. Both are needed: Roslyn
+        // doesn't surface [Union] through GetAttributes() on a native `union` declaration or on a union read from metadata, and a hand-written
+        // union may carry the attribute without implementing IUnion.
         if (!named.GetAttributes().Any(a => a.AttributeClass.Is(UnionAttribute)) && !named.AllInterfaces.Any(i => i.Is(UnionInterface))) return false;
 
+        // Not IsImplicitlyDeclared: the case constructors of a native `union` declaration are, while it is in source.
         cases = named.InstanceConstructors
-                     .Where(c => c is { DeclaredAccessibility: Accessibility.Public, IsImplicitlyDeclared: false, Parameters.Length: 1, IsGenericMethod: false })
+                     .Where(c => c is { DeclaredAccessibility: Accessibility.Public, Parameters.Length: 1, IsGenericMethod: false })
                      .Where(c => c.Parameters[0].RefKind is RefKind.None or RefKind.In)
                      .Select(c => c.Parameters[0].Type)
                      .ToArray();

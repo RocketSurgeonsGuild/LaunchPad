@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using NodaTime;
 using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Api;
@@ -77,12 +76,7 @@ public static partial class CreateLaunchRecord
     }
 
     /// <summary>What the operation answers: the new launch record's id, or not found when its rocket doesn't exist.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(Response value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(Response, NotFound);
 
     internal class CreateLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {
