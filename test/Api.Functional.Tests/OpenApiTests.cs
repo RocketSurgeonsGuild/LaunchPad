@@ -35,6 +35,12 @@ public class OpenApiTests
         await allOf[1].GetProperty("properties").GetProperty("id").GetProperty("format").GetString().Should().BeEqualTo("uuid");
         var notReady = schemas.GetProperty("NotReadyProblem").GetProperty("allOf").EnumerateArray().ElementAt(1).GetProperty("properties");
         await notReady.GetProperty("reason").GetProperty("type").GetString().Should().BeEqualTo("string");
+
+        // Descriptions from the cases' XML documentation: the type's summary, and each member's <param>.
+        await schemas.GetProperty("RocketNotFoundProblem").GetProperty("description").GetString().Should().BeEqualTo("No rocket has the id.");
+        await allOf[1].GetProperty("properties").GetProperty("id").GetProperty("description").GetString().Should().BeEqualTo("The id that wasn't found.");
+        await schemas.GetProperty("NotReadyProblem").GetProperty("description").GetString().Should().BeEqualTo("The rocket can't launch yet.");
+        await notReady.GetProperty("reason").GetProperty("description").GetString().Should().BeEqualTo("Why it can't.");
     }
 
     [Test]
@@ -71,6 +77,13 @@ public class OpenApiTests
         await properties.GetProperty("crew").GetProperty("minimum").GetDouble().Should().BeEqualTo(1);
         await properties.GetProperty("crew").GetProperty("maximum").GetDouble().Should().BeEqualTo(10);
         await properties.GetProperty("contact").GetProperty("format").GetString().Should().BeEqualTo("email");
+
+        // Descriptions from the request's XML documentation: its summary on the body, each <param> on its property or the route parameter.
+        await body.GetProperty("description").GetString().Should().BeEqualTo("Books a launch window for a rocket.");
+        await properties.GetProperty("window").GetProperty("description").GetString().Should().BeEqualTo("The launch window's name.");
+        await properties.GetProperty("crew").GetProperty("description").GetString().Should().BeEqualTo("How many crew fly.");
+        var id = operation.GetProperty("parameters").EnumerateArray().Single(p => p.GetProperty("name").GetString() == "id");
+        await id.GetProperty("description").GetString().Should().BeEqualTo("The rocket.");
     }
 
     private static JsonElement Schema(JsonElement responses, string status) =>

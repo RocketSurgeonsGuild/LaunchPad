@@ -26,8 +26,12 @@ public static class DeleteRocket { [DataContract] public readonly record struct 
 
 // A union response (C# 15's lowering of `union LaunchRocketResult(RocketModel, RocketNotFound, NotReady)`), served only by the Launches* hosts:
 // the value case answers 200, RocketNotFound 404 from its name, NotReady 422 from [ApiError].
+/// <summary>No rocket has the id.</summary>
+/// <param name="Id">The id that wasn't found.</param>
 [DataContract] public sealed record RocketNotFound([property: DataMember(Order = 1)] Guid Id);
 
+/// <summary>The rocket can't launch yet.</summary>
+/// <param name="Reason">Why it can't.</param>
 [ApiError(422, GrpcStatus = 9, GraphQLCode = "UNPROCESSABLE")]
 [DataContract] public sealed record NotReady([property: DataMember(Order = 1)] string Reason);
 
@@ -53,6 +57,11 @@ public static class ListLaunches { [DataContract] public readonly record struct 
 // ZeroAlloc.Validation rules of its body (read by the generators at compile time) and the 401 and 403 it can answer.
 public static class ScheduleLaunch
 {
+    /// <summary>Books a launch window for a rocket.</summary>
+    /// <param name="Id">The rocket.</param>
+    /// <param name="Window">The launch window's name.</param>
+    /// <param name="Crew">How many crew fly.</param>
+    /// <param name="Contact">Who to tell about changes.</param>
     [DataContract]
     public readonly record struct Request(
         [property: DataMember(Order = 1)] Guid Id,

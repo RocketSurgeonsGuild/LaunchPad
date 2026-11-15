@@ -211,8 +211,8 @@ namespace Sample.Server
         /// <summary>Describes <c>GetRocket</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
         private static async Task __GetRocketOpenApi(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
         {
-            await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
-            await ApiOpenApi.Cases(operation, context, 404, new ApiOpenApiCase[] { new ApiOpenApiCase("RocketNotFound", "RocketNotFoundProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("id", typeof(Guid)) }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 404, new ApiOpenApiCase[] { new ApiOpenApiCase("RocketNotFound", "RocketNotFoundProblem", null, new ApiOpenApiMember[] { new ApiOpenApiMember("id", typeof(Guid), null) }) }, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>Customises the generated <c>GetRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
@@ -257,8 +257,8 @@ namespace Sample.Server
         private static async Task __CreateRocketOpenApi(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
         {
             ApiOpenApi.Location(operation);
-            await ApiOpenApi.Cases(operation, context, 409, new ApiOpenApiCase[] { new ApiOpenApiCase("NameConflict", "NameConflictProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("name", typeof(string)) }) }, cancellationToken).ConfigureAwait(false);
-            await ApiOpenApi.Cases(operation, context, 422, new ApiOpenApiCase[] { new ApiOpenApiCase("ValidationFailed", "ValidationFailedProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("errors", typeof(string[])) }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 409, new ApiOpenApiCase[] { new ApiOpenApiCase("NameConflict", "NameConflictProblem", null, new ApiOpenApiMember[] { new ApiOpenApiMember("name", typeof(string), null) }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 422, new ApiOpenApiCase[] { new ApiOpenApiCase("ValidationFailed", "ValidationFailedProblem", null, new ApiOpenApiMember[] { new ApiOpenApiMember("errors", typeof(string[]), null) }) }, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>Customises the generated <c>CreateRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
@@ -325,8 +325,8 @@ namespace Sample.Server
         private static async Task __LaunchRocketOpenApi(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
         {
             ApiOpenApi.Authenticate(operation);
-            await ApiOpenApi.Cases(operation, context, 404, new ApiOpenApiCase[] { new ApiOpenApiCase("RocketNotFound", "RocketNotFoundProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("id", typeof(Guid)) }) }, cancellationToken).ConfigureAwait(false);
-            await ApiOpenApi.Cases(operation, context, 422, new ApiOpenApiCase[] { new ApiOpenApiCase("NotReady", "NotReadyProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("reason", typeof(string)) }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 404, new ApiOpenApiCase[] { new ApiOpenApiCase("RocketNotFound", "RocketNotFoundProblem", null, new ApiOpenApiMember[] { new ApiOpenApiMember("id", typeof(Guid), null) }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 422, new ApiOpenApiCase[] { new ApiOpenApiCase("NotReady", "NotReadyProblem", null, new ApiOpenApiMember[] { new ApiOpenApiMember("reason", typeof(string), null) }) }, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>Customises the generated <c>LaunchRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
@@ -392,8 +392,8 @@ namespace Sample.Server
         /// <summary>Describes <c>ScheduleLaunch</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
         private static async Task __ScheduleLaunchOpenApi(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
         {
-            await ApiOpenApi.Cases(operation, context, 404, new ApiOpenApiCase[] { new ApiOpenApiCase("RocketNotFound", "RocketNotFoundProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("id", typeof(Guid)) }) }, cancellationToken).ConfigureAwait(false);
-            await ApiOpenApi.Cases(operation, context, 422, new ApiOpenApiCase[] { new ApiOpenApiCase("NotReady", "NotReadyProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("reason", typeof(string)) }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 404, new ApiOpenApiCase[] { new ApiOpenApiCase("RocketNotFound", "RocketNotFoundProblem", null, new ApiOpenApiMember[] { new ApiOpenApiMember("id", typeof(Guid), null) }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 422, new ApiOpenApiCase[] { new ApiOpenApiCase("NotReady", "NotReadyProblem", null, new ApiOpenApiMember[] { new ApiOpenApiMember("reason", typeof(string), null) }) }, cancellationToken).ConfigureAwait(false);
             ApiSchemaRule.Body(operation, context, "window").Required().NotEmpty().MaxLength(40).Pattern("^[A-Za-z ]+$");
             ApiSchemaRule.Body(operation, context, "crew").Minimum("1").Maximum("10");
             ApiSchemaRule.Body(operation, context, "contact").Format("email");

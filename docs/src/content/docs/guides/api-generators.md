@@ -367,6 +367,13 @@ document is built.
 
 - **Created.** A `[Creates]` response's 201 has a `Location` header.
 - **Authorization.** The 401 has a `WWW-Authenticate` header.
+- **XML documentation.** The summaries of the request type, its response type and each union error case describe their schemas, and
+  their properties' summaries describe the properties and the route, query and header parameters. A positional record's property without
+  a summary of its own takes the record's `<param>` for it, so `/// <param name="Id">The rocket's id.</param>` is enough. LaunchPad's standard
+  problem cases (`NotFound`, `Forbidden`, …) are described from their own documentation. A description something else already set (another
+  transformer, `[Description]`) stays. Types from another project or package are documented when the build hands their XML file over: the
+  base package's targets do it for project references and LaunchPad's packages; add a contracts package's file with
+  `<AdditionalFiles Include="path/to/Contracts.xml" LaunchPadApiDocumentation="true" />`.
 - **Validation rules.** ZeroAlloc.Validation rules on the request's members are read at compile time and written into the request body's
   schema or the route, query and header parameters:
 

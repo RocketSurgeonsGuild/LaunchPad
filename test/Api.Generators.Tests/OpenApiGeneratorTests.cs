@@ -35,6 +35,89 @@ public class OpenApiGeneratorTests() : GeneratorTest()
         await Verify(result).UseParameters(host, mediator);
     }
 
+    // Descriptions from the contracts' XML documentation, which the base package's targets hand over as an additional file: the request,
+    // its body and route members, the response and its members (a positional record's <param> when the property has no summary of its own),
+    // and each union error case with its members.
+    [Test]
+    [Arguments(HostCase.MinimalApi)]
+    [Arguments(HostCase.Controller)]
+    public async Task Should_Describe_Types_And_Members_From_Xml_Documentation(HostCase host)
+    {
+        var contracts = await CompileContracts(
+            Mediator.Mediator,
+            $$"""
+            #nullable enable
+            using Mediator;
+
+            {{UnionContracts.Polyfill}}
+
+            namespace Sample.Contracts
+            {
+                public sealed record RocketModel(System.Guid Id, string Name)
+                {
+                    public int Stages { get; init; }
+                }
+
+                public sealed record RocketNotFound(System.Guid Id);
+                public sealed record Forbidden;
+
+                [System.Runtime.CompilerServices.Union]
+                public readonly struct EditRocketResult : System.Runtime.CompilerServices.IUnion
+                {
+                    public EditRocketResult(RocketModel value) => Value = value;
+                    public EditRocketResult(RocketNotFound value) => Value = value;
+                    public EditRocketResult(Forbidden value) => Value = value;
+                    public object? Value { get; }
+                }
+
+                public static class EditRocket
+                {
+                    public sealed record Request(System.Guid Id, string Name) : ICommand<EditRocketResult>
+                    {
+                        public string? Notes { get; init; }
+                    }
+                }
+            }
+            """
+        );
+        const string documentation = """
+            <?xml version="1.0"?>
+            <doc>
+                <assembly><name>Contracts</name></assembly>
+                <members>
+                    <member name="T:Sample.Contracts.RocketModel">
+                        <summary>A rocket in the fleet.</summary>
+                        <param name="Id">The rocket's id.</param>
+                        <param name="Name">The rocket's name.</param>
+                    </member>
+                    <member name="P:Sample.Contracts.RocketModel.Stages"><summary>How many stages it has.</summary></member>
+                    <member name="T:Sample.Contracts.RocketNotFound">
+                        <summary>No rocket has the id.</summary>
+                        <param name="Id">The id that wasn't found.</param>
+                    </member>
+                    <member name="T:Sample.Contracts.Forbidden"><summary>The caller may not edit rockets.</summary></member>
+                    <member name="T:Sample.Contracts.EditRocket.Request">
+                        <summary>Renames a rocket.</summary>
+                        <param name="Id">The rocket to rename.</param>
+                        <param name="Name">Its new name.</param>
+                    </member>
+                    <member name="P:Sample.Contracts.EditRocket.Request.Notes"><summary>Why it was renamed.</summary></member>
+                </members>
+            </doc>
+            """;
+        var builder = host == HostCase.Controller ? Controllers(Mediator.Mediator, contracts) : Server(Mediator.Mediator, contracts);
+        var result = await builder.AddReferences(typeof(Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext).Assembly, typeof(Microsoft.OpenApi.OpenApiOperation).Assembly)
+                                  .AddAdditionalText("Contracts.xml", documentation)
+                                  .AddOption("Contracts.xml", "build_metadata.AdditionalFiles.LaunchPadApiDocumentation", "true")
+                                  .AddSources(
+                                       $"using Rocket.Surgery.LaunchPad.Api;\nusing Sample.Contracts;\n[Operation<EditRocket.Request>]\n{( host == HostCase.Controller ? "public partial class RocketsController;" : "public static partial class RocketsEndpoints;" )}"
+                                   )
+                                  .Build()
+                                  .GenerateAsync(TestContext.CancellationToken);
+
+        await Verify(result).UseParameters(host);
+    }
+
     // A body with rules (ScheduleLaunch: route id, body window/crew/contact) and a query string with rules (GetLaunchPlan); a rule with When
     // holds only sometimes and is left out.
     private static string ValidatedContracts(Mediator mediator)

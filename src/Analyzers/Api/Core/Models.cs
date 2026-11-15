@@ -78,8 +78,12 @@ internal sealed record MemberModel(
     int ConstructorIndex,
     ParseKind ParseKind,
     string? ParseType,
-    EquatableArray<SchemaRuleModel> Rules
+    EquatableArray<SchemaRuleModel> Rules,
+    string? Summary
 );
+
+/// <summary>A property's camel-cased name on the wire and its XML documentation summary, the description of its schema.</summary>
+internal sealed record DescriptionModel(string WireName, string Summary);
 
 /// <summary>
 ///     One ZeroAlloc.Validation rule of a member as the OpenAPI schema states it, read at compile time: the <c>ApiSchemaRule</c> method the
@@ -130,7 +134,10 @@ internal sealed record OperationModel(
     bool RequestIsStruct,
     bool ResponseIsStruct,
     UnionModel? Union,
-    LocationInfo? Location
+    LocationInfo? Location,
+    string? WireSummary = null,
+    string? ResponseSummary = null,
+    EquatableArray<DescriptionModel> ResponseDescriptions = default
 )
 {
     public bool HasBody => Verb is HttpVerb.Post or HttpVerb.Put or HttpVerb.Patch;

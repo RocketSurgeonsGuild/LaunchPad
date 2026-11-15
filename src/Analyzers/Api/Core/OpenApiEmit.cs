@@ -47,7 +47,16 @@ internal static class OpenApiEmit
      && ( operation.CreatedLocationRoute is { }
          || operation.RequiresAuthorization
          || CaseStatuses(operation).Any()
-         || operation.Members.Any(m => !m.Rules.IsEmpty) );
+         || operation.Members.Any(m => !m.Rules.IsEmpty)
+         || DescribesRequest(operation)
+         || DescribesResponse(operation) );
+
+    private static bool DescribesRequest(OperationModel operation) =>
+        operation.WireSummary is { } || operation.Members.Any(m => m.Summary is { } && m.Source is not ( BindingSource.Service or BindingSource.Ignored ));
+
+    // A plain response's schema: a stream is described by its items' schema elsewhere, and a void operation has none.
+    private static bool DescribesResponse(OperationModel operation) =>
+        operation.Kind is RequestKind.Unary or RequestKind.Infer && ( operation.ResponseSummary is { } || !operation.ResponseDescriptions.IsEmpty );
 
     /// <summary>
     ///     The transformer's parameters: <c>(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken
@@ -76,6 +85,38 @@ internal static class OpenApiEmit
             statements.Add(
                 Statement(
                     Await(Invoke(Member(openApi, "Cases"), Id(Operation), Id(Context), Literal(status), NewArray(Type($"{helpers}.ApiOpenApiCase"), cases), Id(Ct)))
+                )
+            );
+        }
+
+        // The XML documentation of the request, its response and their properties, where nothing described them yet.
+        if (DescribesRequest(operation))
+        {
+            statements.Add(
+                Statement(
+                    Invoke(
+                        Member(openApi, "DescribeRequest"),
+                        Id(Operation),
+                        Id(Context),
+                        Literal(operation.WireSummary),
+                        Descriptions(operation.Members.Where(m => m.Summary is { } && m.Source is not ( BindingSource.Service or BindingSource.Ignored )).Select(m => (m.WireName, m.Summary!)))
+                    )
+                )
+            );
+        }
+
+        if (DescribesResponse(operation))
+        {
+            statements.Add(
+                Statement(
+                    Invoke(
+                        Member(openApi, "DescribeResponse"),
+                        Id(Operation),
+                        Id(Context),
+                        Literal(operation.SuccessStatusCode.ToString(System.Globalization.CultureInfo.InvariantCulture)),
+                        Literal(operation.ResponseSummary),
+                        Descriptions(operation.ResponseDescriptions.Select(d => (d.WireName, d.Summary)))
+                    )
                 )
             );
         }
@@ -111,11 +152,16 @@ internal static class OpenApiEmit
             Type($"{helpers}.ApiOpenApiCase"),
             Literal(errorCase.Name),
             Literal(( errorCase.NestedName ?? errorCase.Name ) + "Problem"),
+            Literal(errorCase.Summary),
             NewArray(
                 Type($"{helpers}.ApiOpenApiMember"),
-                errorCase.Members.Where(m => m.Type is { }).Select(m => (ExpressionSyntax)New(Type($"{helpers}.ApiOpenApiMember"), Literal(m.WireName), TypeOf(Type(m.Type!))))
+                errorCase.Members.Where(m => m.Type is { }).Select(m => (ExpressionSyntax)New(Type($"{helpers}.ApiOpenApiMember"), Literal(m.WireName), TypeOf(Type(m.Type!)), Literal(m.Summary)))
             )
         );
+
+    // new string[] { "name", "summary", … }: pairs of a property's wire name and its description.
+    private static ExpressionSyntax Descriptions(IEnumerable<(string Name, string Summary)> descriptions) =>
+        NewArray(Type("string"), descriptions.SelectMany(d => new ExpressionSyntax[] { Literal(d.Name), Literal(d.Summary) }));
 
     private static ExpressionSyntax RuleArgument(SchemaRuleModel rule, string argument) =>
         rule.Method is "MinLength" or "MaxLength" && int.TryParse(argument, out var length) ? Literal(length) : Literal(argument);
@@ -197,31 +243,37 @@ namespace __NAMESPACE__
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     internal sealed class ApiOpenApiMember
     {
-        public ApiOpenApiMember(string name, global::System.Type type)
+        public ApiOpenApiMember(string name, global::System.Type type, string? description)
         {
             Name = name;
             Type = type;
+            Description = description;
         }
 
         public string Name { get; }
 
         public global::System.Type Type { get; }
+
+        public string? Description { get; }
     }
 
-    /// <summary>A union error case: its name (the <c>case</c> member), the id of its schema and its members.</summary>
+    /// <summary>A union error case: its name (the <c>case</c> member), the id and description of its schema, and its members.</summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     internal sealed class ApiOpenApiCase
     {
-        public ApiOpenApiCase(string name, string schemaId, ApiOpenApiMember[] members)
+        public ApiOpenApiCase(string name, string schemaId, string? description, ApiOpenApiMember[] members)
         {
             Name = name;
             SchemaId = schemaId;
+            Description = description;
             Members = members;
         }
 
         public string Name { get; }
 
         public string SchemaId { get; }
+
+        public string? Description { get; }
 
         public ApiOpenApiMember[] Members { get; }
     }
@@ -296,7 +348,9 @@ namespace __NAMESPACE__
                 };
                 foreach (var member in errorCase.Members)
                 {
-                    properties[member.Name] = await context.GetOrCreateSchemaAsync(member.Type, null, cancellationToken).ConfigureAwait(false);
+                    var schema = await context.GetOrCreateSchemaAsync(member.Type, null, cancellationToken).ConfigureAwait(false);
+                    if (member.Description is { } memberDescription) schema.Description ??= memberDescription;
+                    properties[member.Name] = schema;
                 }
 
                 var required = new global::System.Collections.Generic.HashSet<string>(global::System.StringComparer.Ordinal) { "case" };
@@ -304,6 +358,7 @@ namespace __NAMESPACE__
                     errorCase.SchemaId,
                     new global::Microsoft.OpenApi.OpenApiSchema
                     {
+                        Description = errorCase.Description,
                         AllOf = new global::System.Collections.Generic.List<global::Microsoft.OpenApi.IOpenApiSchema>
                         {
                             problem,
@@ -314,6 +369,113 @@ namespace __NAMESPACE__
             }
 
             return new global::Microsoft.OpenApi.OpenApiSchemaReference(errorCase.SchemaId, document);
+        }
+
+        /// <summary>
+        ///     Describes the request from its XML documentation: the body's schema and its properties, and the route, query and header
+        ///     parameters (<paramref name="members" /> are pairs of a wire name and its description). What is already described stays.
+        /// </summary>
+        public static void DescribeRequest(
+            global::Microsoft.OpenApi.OpenApiOperation operation,
+            global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context,
+            string? description,
+            string[] members
+        )
+        {
+            var body = default(global::Microsoft.OpenApi.OpenApiSchema);
+            if (operation.RequestBody?.Content is { } content)
+            {
+                foreach (var media in content.Values)
+                {
+                    if (Resolve(media.Schema, context.Document) is { } schema)
+                    {
+                        body = schema;
+                        break;
+                    }
+                }
+            }
+
+            if (body is { } && description is { }) body.Description ??= description;
+            for (var i = 0; i + 1 < members.Length; i += 2)
+            {
+                if (Parameter(operation, members[i]) is { } parameter)
+                    parameter.Description ??= members[i + 1];
+                else if (body is { }) DescribeProperty(body, members[i], members[i + 1]);
+            }
+        }
+
+        /// <summary>Describes the response <paramref name="status" /> answers from its XML documentation: its schema and its properties.</summary>
+        public static void DescribeResponse(
+            global::Microsoft.OpenApi.OpenApiOperation operation,
+            global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context,
+            string status,
+            string? description,
+            string[] members
+        )
+        {
+            if (operation.Responses?.TryGetValue(status, out var value) is not true || value is not global::Microsoft.OpenApi.OpenApiResponse { Content: { } content }) return;
+            foreach (var media in content.Values)
+            {
+                if (Resolve(media.Schema, context.Document) is not { } schema) continue;
+                if (description is { }) schema.Description ??= description;
+                for (var i = 0; i + 1 < members.Length; i += 2)
+                {
+                    DescribeProperty(schema, members[i], members[i + 1]);
+                }
+            }
+        }
+
+        /// <summary>A route, query or header parameter by name.</summary>
+        internal static global::Microsoft.OpenApi.OpenApiParameter? Parameter(global::Microsoft.OpenApi.OpenApiOperation operation, string name)
+        {
+            if (operation.Parameters is null) return null;
+            foreach (var item in operation.Parameters)
+            {
+                if (item is global::Microsoft.OpenApi.OpenApiParameter parameter && string.Equals(parameter.Name, name, global::System.StringComparison.OrdinalIgnoreCase))
+                    return parameter;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        ///     The schema a request or response refers to: the type's schema in the components, which carries its properties; a nullable one
+        ///     is a <c>oneOf</c> with null, whose other schema is the type's.
+        /// </summary>
+        internal static global::Microsoft.OpenApi.OpenApiSchema? Resolve(global::Microsoft.OpenApi.IOpenApiSchema? schema, global::Microsoft.OpenApi.OpenApiDocument? document)
+        {
+            switch (schema)
+            {
+                case global::Microsoft.OpenApi.OpenApiSchemaReference reference:
+                    return reference.Target as global::Microsoft.OpenApi.OpenApiSchema
+                        ?? ( reference.Reference?.Id is { } id && document?.Components?.Schemas?.TryGetValue(id, out var target) is true ? target as global::Microsoft.OpenApi.OpenApiSchema : null );
+                case global::Microsoft.OpenApi.OpenApiSchema { Properties: null, OneOf: { Count: > 0 } oneOf }:
+                    foreach (var item in oneOf)
+                    {
+                        if (item is global::Microsoft.OpenApi.OpenApiSchemaReference) return Resolve(item, document);
+                    }
+
+                    return null;
+                case global::Microsoft.OpenApi.OpenApiSchema inline:
+                    return inline;
+                default:
+                    return null;
+            }
+        }
+
+        // A property's description; one that refers to a shared schema gets it on the reference, which OpenAPI 3.1 lets override it.
+        private static void DescribeProperty(global::Microsoft.OpenApi.OpenApiSchema schema, string name, string description)
+        {
+            if (schema.Properties?.TryGetValue(name, out var property) is not true) return;
+            switch (property)
+            {
+                case global::Microsoft.OpenApi.OpenApiSchema inline:
+                    inline.Description ??= description;
+                    break;
+                case global::Microsoft.OpenApi.OpenApiSchemaReference reference when string.IsNullOrEmpty(reference.Description):
+                    reference.Description = description;
+                    break;
+            }
         }
 
         private static void Header(global::Microsoft.OpenApi.OpenApiOperation operation, string status, string name, string description, string? format)
@@ -355,7 +517,7 @@ namespace __NAMESPACE__
             if (operation.RequestBody?.Content is not { } content) return default;
             foreach (var media in content.Values)
             {
-                if (Resolve(media.Schema, context.Document) is not { Properties: { } properties } owner) continue;
+                if (ApiOpenApi.Resolve(media.Schema, context.Document) is not { Properties: { } properties } owner) continue;
                 if (!properties.TryGetValue(name, out var property)) continue;
                 return new(owner, name, null, property as global::Microsoft.OpenApi.OpenApiSchema);
             }
@@ -364,17 +526,8 @@ namespace __NAMESPACE__
         }
 
         /// <summary>A route, query or header parameter.</summary>
-        public static ApiSchemaRule Parameter(global::Microsoft.OpenApi.OpenApiOperation operation, string name)
-        {
-            if (operation.Parameters is null) return default;
-            foreach (var item in operation.Parameters)
-            {
-                if (item is global::Microsoft.OpenApi.OpenApiParameter parameter && string.Equals(parameter.Name, name, global::System.StringComparison.OrdinalIgnoreCase))
-                    return new(null, null, parameter, parameter.Schema as global::Microsoft.OpenApi.OpenApiSchema);
-            }
-
-            return default;
-        }
+        public static ApiSchemaRule Parameter(global::Microsoft.OpenApi.OpenApiOperation operation, string name) =>
+            ApiOpenApi.Parameter(operation, name) is { } parameter ? new(null, null, parameter, parameter.Schema as global::Microsoft.OpenApi.OpenApiSchema) : default;
 
         public ApiSchemaRule Required()
         {
@@ -463,16 +616,6 @@ namespace __NAMESPACE__
         }
 
         private bool IsArray => _schema?.Type is { } type && type.HasFlag(global::Microsoft.OpenApi.JsonSchemaType.Array);
-
-        // The request body refers to the request type's schema in the components; that schema is the one to constrain.
-        private static global::Microsoft.OpenApi.OpenApiSchema? Resolve(global::Microsoft.OpenApi.IOpenApiSchema? schema, global::Microsoft.OpenApi.OpenApiDocument? document) =>
-            schema switch
-            {
-                global::Microsoft.OpenApi.OpenApiSchema inline => inline,
-                global::Microsoft.OpenApi.OpenApiSchemaReference reference => reference.Target as global::Microsoft.OpenApi.OpenApiSchema
-                 ?? ( reference.Reference?.Id is { } id && document?.Components?.Schemas?.TryGetValue(id, out var target) is true ? target as global::Microsoft.OpenApi.OpenApiSchema : null ),
-                _ => null,
-            };
     }
 __CONTROLLERS__
 }
