@@ -29,3 +29,4 @@ internal sealed class LaunchPadWebAssemblyEnvironmentLoggingJoint : ISerilogJoin
         loggerConfiguration.Enrich.WithProperty(nameof(environment.BaseAddress), environment.BaseAddress);
     }
 }
+

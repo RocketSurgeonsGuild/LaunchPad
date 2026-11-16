@@ -27,3 +27,4 @@ internal sealed class LaunchPadAspNetCoreInstrumentationJoint : IOpenTelemetryJo
         builder.WithMetrics(static metrics => metrics.AddAspNetCoreInstrumentation());
     }
 }
+
