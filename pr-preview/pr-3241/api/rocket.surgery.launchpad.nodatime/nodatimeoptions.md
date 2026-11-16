@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.nodatime.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 
 The options of the NodaTime support, set on the joint context to change how it behaves.
 

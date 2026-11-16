@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Joints`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Wires Serilog's request logging into ASP.NET Core: the MVC and Razor Pages filters that add the action and the page handler to the request's log event, and the `IDiagnosticContext` they and `UseLaunchPadRequestLogging` collect the properties in. Implements the `Joints.IServiceJoint`

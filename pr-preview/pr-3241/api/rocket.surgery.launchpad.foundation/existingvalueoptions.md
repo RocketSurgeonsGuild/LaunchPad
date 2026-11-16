@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 
 Helper methods for creating `Foundation.ExistingValueOptionsFactory`1` instances.
 

@@ -248,6 +248,12 @@ A file-based app uses the directive form, `#:sdk Rocket.Surgery.LaunchPad.Sdk@1.
 
 [Getting started](../../guides/) walks through each of these.
 
+## Target frameworks
+
+[Section titled “Target frameworks”](#target-frameworks)
+
+LaunchPad requires .NET 11 or later. A project that applies the SDK and targets an older .NET or .NET Framework stops before restore with `LPADSDK0001`, which names the minimum (`net11.0`), instead of NuGet reporting every LaunchPad package as incompatible. The check compares versions, so later frameworks pass, and it runs per framework, so a project that targets several fails on the old one. A .NET Standard library is left alone: the SDK adds it nothing.
+
 ## The console SDK
 
 [Section titled “The console SDK”](#the-console-sdk)
@@ -557,6 +563,8 @@ The template mechanism itself is Dovetail’s: [Shipping templates](https://rock
 
 An application uses LaunchPad through the [LaunchPad SDK](../concepts/launchpad-sdk/). It names the SDK once, and the SDK adds the LaunchPad and Dovetail packages that match the project: its [host model](../concepts/host-models/) and the libraries it references directly.
 
+LaunchPad requires .NET 11 or later: the project targets `net11.0` (or a later framework) and builds with the .NET 11 SDK or later. On an older framework the SDK stops with `LPADSDK0001`, which names the minimum.
+
 In the snippets, replace `1.0.0` with the version of `Rocket.Surgery.LaunchPad.Sdk` you use.
 
 ## A worker or console application
@@ -569,11 +577,11 @@ Add the SDK next to the one the project already names:
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
   <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
   </ItemGroup>
 </Project>
 ```
@@ -928,7 +936,7 @@ A binding failure answers 400, with a ProblemDetails body when the application c
 
 [Section titled “Union responses”](#union-responses)
 
-A handler can return a union response, its value case and its error cases, instead of throwing (ADR-0006). A union is a C# 15 union: a `union` declaration, LaunchPad’s portable `[Union] partial struct` (see the [union types design](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/design/union-types.md)), or the same shape written by hand. The generators know it by `System.Runtime.CompilerServices.UnionAttribute` or `IUnion`. Its case types are the parameter types of its public one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is the first case that is neither, and a union has exactly one.
+A handler can return a union response, its value case and its error cases, instead of throwing (ADR-0006). A union is a C# 15 union: a `union` declaration, or the same shape written by hand (see the [union types design](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/design/union-types.md)). The generators know it by `System.Runtime.CompilerServices.UnionAttribute` or `IUnion`. Its case types are the parameter types of its public one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is the first case that is neither, and a union has exactly one.
 
 LaunchPad’s standard problem cases in `Rocket.Surgery.LaunchPad.Foundation` (`NotFound`, `Invalid`, `UnprocessableEntity`, `Unauthorized`, `Forbidden`, `Conflict`) match the name rules below. A union may list `Problem` itself as a case: it answers each standard case by its runtime type, and any other problem as 500. A problem’s detail, title, link, instance and properties fill the transport’s error shape (below).
 
@@ -1226,7 +1234,7 @@ gives an ASP.NET Core application `LaunchPadSerilogConsoleJoint` and `LaunchPadA
 
 `Rocket.Surgery.LaunchPad.Sdk.Console` is the [LaunchPad SDK](../../concepts/launchpad-sdk/) for command line applications. It adds the same LaunchPad packages as `Rocket.Surgery.LaunchPad.Sdk`, and chains Dovetail’s console SDK, `Joinery.Dovetail.Sdk.Console`, instead of `Joinery.Dovetail.Sdk`. The commands run on Cysharp’s [ConsoleAppFramework](https://github.com/Cysharp/ConsoleAppFramework), and Dovetail writes the entry point.
 
-In the snippets, replace `1.0.0` with the version of the SDK you use.
+In the snippets, replace `1.0.0` with the version of the SDK you use. Like the LaunchPad SDK, it requires .NET 11 or later.
 
 ## The project
 
@@ -1235,7 +1243,7 @@ In the snippets, replace `1.0.0` with the version of the SDK you use.
 ```xml
 <Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Console/1.0.0">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
 </Project>
 ```
@@ -1475,8 +1483,8 @@ A project in the same repository that writes its document when it builds. The se
 ```xml
 <!-- Rockets.Api.csproj -->
 <ItemGroup>
-  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
-  <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.15" PrivateAssets="all" />
+  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
+  <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="11.0.0" PrivateAssets="all" />
 </ItemGroup>
 ```
 

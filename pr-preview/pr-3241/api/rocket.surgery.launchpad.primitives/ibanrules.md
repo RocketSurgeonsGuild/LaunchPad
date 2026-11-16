@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongTypeTemplate<string>`
 
 The rules of an IBAN, an international bank account number (ISO 13616-1), such as `GB82WEST12345698765432`.

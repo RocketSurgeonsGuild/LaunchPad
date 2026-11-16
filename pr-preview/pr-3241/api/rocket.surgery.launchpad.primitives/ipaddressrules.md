@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongTypeTemplate<string>`
 
 The rules of an IP address in its canonical text form: IPv4 dotted decimal ( `192.0.2.1`) or IPv6 as RFC 5952 recommends ( `2001:db8::1`).

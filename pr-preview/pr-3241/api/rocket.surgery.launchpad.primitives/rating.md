@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongType<Rating, int>`, `IComparable<Rating>`, `IConvertible`, `IEquatable<Rating>`, `IFormattable`, `IParsable<Rating>`, `ISpanFormattable`, `ISpanParsable<Rating>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Rating>`, `IComparisonOperators<Rating, Rating, bool>`, `IEqualityOperators<Rating, Rating, bool>`
 
 A rating from 1 to 5, valid under [RatingRules](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.primitives/ratingrules.md).

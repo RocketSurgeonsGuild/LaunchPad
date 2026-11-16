@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Spatial](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.spatial.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.Spatial.Joints`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Adds support for spatial types into System.Text.Json

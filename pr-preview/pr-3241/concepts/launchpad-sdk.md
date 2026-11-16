@@ -53,6 +53,13 @@ without a `#:package` directive for LaunchPad.
 
 [Getting started](../../guides/) walks through each of these.
 
+## Target frameworks
+
+LaunchPad requires .NET 11 or later. A project that applies the SDK and targets an older .NET or .NET Framework stops before
+restore with `LPADSDK0001`, which names the minimum (`net11.0`), instead of NuGet reporting every LaunchPad package as
+incompatible. The check compares versions, so later frameworks pass, and it runs per framework, so a project that targets several
+fails on the old one. A .NET Standard library is left alone: the SDK adds it nothing.
+
 ## The console SDK
 
 `Rocket.Surgery.LaunchPad.Sdk.Console` is the same SDK for command line applications: it adds the same LaunchPad packages and

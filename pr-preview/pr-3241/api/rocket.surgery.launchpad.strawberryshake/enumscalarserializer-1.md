@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.StrawberryShake](/LaunchPad/pr-preview/pr-3241/api/rocket.surgery.launchpad.strawberryshake.md)
-- Version: `2.0.1-pr.1221`
+- Version: `2.0.1-pr.1226`
 - Namespace: `Rocket.Surgery.LaunchPad.StrawberryShake`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Inherits: `ScalarSerializer<int, TRuntime>`
 
 Base class for enum serializers
