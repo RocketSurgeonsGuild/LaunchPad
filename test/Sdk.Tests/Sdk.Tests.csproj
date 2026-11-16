@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <!--
-            MSBuild.ProjectCreation loads MSBuild from an installed SDK of the test host's major version, and SDK 11 is the only one mise
-            installs (with just the .NET 10 runtime). The throwaway projects cover both target frameworks instead, through
+            MSBuild.ProjectCreation loads MSBuild from an installed SDK of the test host's major version, and global.json pins the SDK of
+            the newest target framework, so the host runs on that one. The throwaway projects cover every target framework instead, through
             TargetFrameworksAttribute, as in Dovetail's SDK tests.
         -->
-        <TargetFramework>net11.0</TargetFramework>
+        <TargetFramework>$(LaunchPadLatestTargetFramework)</TargetFramework>
         <!--
             The tests pack Rocket.Surgery.LaunchPad.Sdk and Rocket.Surgery.LaunchPad.Hosting and build throwaway applications that apply the
             SDK the way an application outside this repository does, so the project references nothing of LaunchPad itself.
@@ -18,5 +18,7 @@
     <ItemGroup>
         <!-- running dotnet is what the Hosting tests do as well -->
         <Compile Include="../Hosting.Tests/Scaffolding/DotnetCli.cs" Link="Scaffolding/DotnetCli.cs" />
+        <!-- the pinned package versions and the target frameworks, read as the Hosting tests read them -->
+        <Compile Include="../Hosting.Tests/Scaffolding/PinnedPackages.cs" Link="Scaffolding/PinnedPackages.cs" />
     </ItemGroup>
 </Project>

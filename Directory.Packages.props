@@ -175,37 +175,12 @@
         <PackageVersion Include="Verify.SourceGenerators" Version="2.5.0" />
   </ItemGroup>
     <!--
-        The Microsoft packages that ship once per .NET release train are versioned per target framework: net10.0 (and net10.0-browser,
-        netstandard2.0) stays on the 10.0 line, net11.0 (and net11.0-browser) takes the 11.0 line that goes with the SDK pinned in
-        global.json. Renovate keeps the first group on 10.0.x and moves the second along 11.0.x (.github/renovate.json).
+        The Microsoft packages that ship once per .NET release train, on the 11.0 line that goes with the SDK pinned in global.json
+        (Microsoft.Extensions.ApiDescription.Client has no 11.0 release yet; preview.7 is its newest 11.0 build). When LaunchPad targets
+        two frameworks again, each framework gets its own group, conditioned with IsTargetFrameworkCompatible, never with an equality
+        (CONTRIBUTING.md, "Adding a target framework").
     -->
-    <!-- net10.0 line -->
-    <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
-        <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.15" />
-        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.15" />
-        <PackageVersion Include="System.Net.Http.Json" Version="10.0.15" />
-        <PackageVersion Include="System.Text.Json" Version="10.0.15" />
-    </ItemGroup>
-    <!-- net11.0 line (Microsoft.Extensions.ApiDescription.Client has no 11.0 release candidate yet; preview.7 is its newest 11.0 build) -->
-    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+    <ItemGroup>
         <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="11.0.0" />

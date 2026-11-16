@@ -1,9 +1,0 @@
-﻿{
-  AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Analyzers.UnionAnalyzer: []
-  },
-  FinalDiagnostics: [],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Analyzers.UnionGenerator: []
-  }
-}

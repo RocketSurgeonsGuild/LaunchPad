@@ -108,6 +108,11 @@ internal static class GrpcEmit
     ///     constructor when it has no parameterless one (positional records); and, when nested, named with its container
     ///     (<c>CreateRocketRequest</c>), so the many <c>X.Request</c> types don't all become <c>message Request</c>. A carried struct is then made
     ///     the surrogate of its <c>Message&lt;T&gt;</c>.
+    ///     <para>
+    ///         <c>RuntimeTypeModel.Default</c> is process-wide, so every generated host, in whatever assembly, configures it under a lock on that
+    ///         instance: protobuf-net locks only on objects of its own, never on the model, so no generated host can deadlock against it. The host
+    ///         is marked configured once its types are in, so a second caller waits rather than building serializers from a half-configured model.
+    ///     </para>
     /// </summary>
     public static IEnumerable<MemberDeclarationSyntax> ModelConfiguration(HostModel host, IReadOnlyList<OperationModel> operations)
     {
@@ -128,35 +133,38 @@ internal static class GrpcEmit
                                 .OfType<string>()
                                 .Distinct(StringComparer.Ordinal)
                                 .ToArray();
-        yield return Field(Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword), SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)), "__grpcModelConfigured");
+        var model = Member("global::ProtoBuf.Meta.RuntimeTypeModel", "Default");
+        yield return Field(Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword), SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)), "__grpcModelConfigured");
         yield return Method(
                 Modifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword),
                 VoidType,
                 "ConfigureGrpcModel",
                 Parameters(),
-                new[]
-                    {
-                        If(
-                            Equal(Invoke(Member("global::System.Threading.Interlocked", "Exchange"), [RefArgument("__grpcModelConfigured"), SyntaxFactory.Argument(Literal(1))]), Literal(1)),
-                            Return()
-                        ),
-                    }
-                   .Concat(types.Select(t => Statement(Invoke(Id("__ConfigureGrpcType"), TypeOf(Type(t.Type)), t.Name is { } name ? Literal(name) : Null))))
-                   .Concat(structs.Select(t => Statement(Invoke(Id("__ConfigureGrpcSurrogate"), TypeOf(Message(host, t)), TypeOf(Type(t))))))
+                [
+                    SyntaxFactory.LockStatement(
+                        model,
+                        Block(
+                            new[] { If(Id("__grpcModelConfigured"), Return()) }
+                               .Concat(types.Select(t => Statement(Invoke(Id("__ConfigureGrpcType"), TypeOf(Type(t.Type)), t.Name is { } name ? Literal(name) : Null))))
+                               .Concat(structs.Select(t => Statement(Invoke(Id("__ConfigureGrpcSurrogate"), TypeOf(Message(host, t)), TypeOf(Type(t))))))
+                               .Append(Statement(Assign(Id("__grpcModelConfigured"), True)))
+                        )
+                    ),
+                ]
             )
            .Summary("Adds the carried messages to protobuf-net's model: standard types, no constructor for positional records, nested types named with their container, structs on the wire as themselves.");
         var dynamicallyAccessed = Attribute(
             "global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers",
             Arg(Member("global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes", "PublicParameterlessConstructor"))
         );
-        var model = Member("global::ProtoBuf.Meta.RuntimeTypeModel", "Default");
         yield return Method(
             Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword),
             VoidType,
             "__ConfigureGrpcType",
             Parameters(Parameter(Type("global::System.Type"), "type", dynamicallyAccessed), Parameter(Type("string?"), "name")),
             [
-                // Another host that carries the same type has configured it already. (IsDefined would add it, at the default level.)
+                // Called under the model's lock. Another host that carries the same type has configured it already. (IsDefined would add it, at the
+                // default level.)
                 SyntaxFactory.ForEachStatement(
                     Type("global::ProtoBuf.Meta.MetaType"),
                     SyntaxFactory.Identifier("existing"),

@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -30,12 +29,7 @@ public static partial class GetLaunchRecord
     }
 
     /// <summary>What the operation answers: the launch record, or not found.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(LaunchRecordModel value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(LaunchRecordModel, NotFound);
 
     internal class GetLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {

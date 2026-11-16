@@ -18,7 +18,6 @@ using DynamicallyAccessedMembersAttribute = global::System.Diagnostics.CodeAnaly
 using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
 using GrpcServiceEndpointConventionBuilder = global::Microsoft.AspNetCore.Builder.GrpcServiceEndpointConventionBuilder;
 using IEndpointRouteBuilder = global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder;
-using Interlocked = global::System.Threading.Interlocked;
 using InvalidOperationException = global::System.InvalidOperationException;
 using MetaType = global::ProtoBuf.Meta.MetaType;
 using OperationAttribute = global::ProtoBuf.Grpc.Configuration.OperationAttribute;
@@ -71,23 +70,27 @@ namespace Sample.Server
     [GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", "version")]
     public partial class RocketsService : IRocketsServiceContract
     {
-        private static int __grpcModelConfigured;
+        private static bool __grpcModelConfigured;
         /// <summary>Adds the carried messages to protobuf-net's model: standard types, no constructor for positional records, nested types named with their container, structs on the wire as themselves.</summary>
         internal static void ConfigureGrpcModel()
         {
-            if (Interlocked.Exchange(ref __grpcModelConfigured, 1) == 1)
-                return;
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.GetRocket.Request), "GetRocketRequest");
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.RocketModel), null);
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.ListLaunches.Request), "ListLaunchesRequest");
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request), "CreateRocketRequest");
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response), "CreateRocketResponse");
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request), "DeleteRocketRequest");
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.LaunchRocket.Request), "LaunchRocketRequest");
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.RocketNotFound), null);
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.NotReady), null);
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.ValidationFailed), null);
-            __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.NameConflict), null);
+            lock (RuntimeTypeModel.Default)
+            {
+                if (__grpcModelConfigured)
+                    return;
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.GetRocket.Request), "GetRocketRequest");
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.RocketModel), null);
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.ListLaunches.Request), "ListLaunchesRequest");
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Request), "CreateRocketRequest");
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.CreateRocket.Response), "CreateRocketResponse");
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.DeleteRocket.Request), "DeleteRocketRequest");
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.LaunchRocket.Request), "LaunchRocketRequest");
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.RocketNotFound), null);
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.NotReady), null);
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.ValidationFailed), null);
+                __ConfigureGrpcType(typeof(global::Sample.Contracts.Rockets.NameConflict), null);
+                __grpcModelConfigured = true;
+            }
         }
 
         private static void __ConfigureGrpcType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type, string? name)

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using ModularPipelines;
 using ModularPipelines.DotNet.Options;
@@ -25,8 +26,8 @@ public sealed class AotPublishModule(SolutionSettings settings) : Module<Immutab
         Sourcy.DotNet.Projects.Sample_Minimal,
     ];
 
-    // the samples target both frameworks, and publish needs one
-    private static readonly IReadOnlyCollection<string> Frameworks = ["net10.0", "net11.0"];
+    // publish needs a framework: each one the samples target, LaunchPadTargetFrameworks in the repository's Directory.Build.props
+    private static readonly IReadOnlyCollection<string> Frameworks = ReadTargetFrameworks(Projects.First().Directory!);
 
     protected override void Configure(ModuleConfigurationBuilder module) => module.WithRetry(3);
 
@@ -44,6 +45,20 @@ public sealed class AotPublishModule(SolutionSettings settings) : Module<Immutab
                      )
         );
         return [.. results];
+    }
+
+    private static string[] ReadTargetFrameworks(DirectoryInfo from)
+    {
+        for (var directory = from; directory is not null; directory = directory.Parent)
+        {
+            var props = Path.Combine(directory.FullName, "Directory.Build.props");
+            if (!File.Exists(Path.Combine(directory.FullName, "LaunchPad.slnx")) || !File.Exists(props)) continue;
+
+            var frameworks = XDocument.Load(props).Descendants("LaunchPadTargetFrameworks").Single().Value;
+            return frameworks.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+
+        throw new InvalidOperationException($"No Directory.Build.props with LaunchPadTargetFrameworks above {from.FullName}");
     }
 
     [SuppressMessage("ModularPipelines", "MP0016", Justification = "The sub module's token is passed on. MP0016 only recognizes ExecuteAsync's own.")]

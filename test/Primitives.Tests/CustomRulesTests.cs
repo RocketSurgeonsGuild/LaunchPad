@@ -63,10 +63,7 @@ public class CustomRulesTests
                 new ConverterResolver<WorkEmail>(new JsonStrongTypeConverter<WorkEmail, string>())
             ),
         };
-        // The generic GetTypeInfo<T> is new in .NET 11.
-#pragma warning disable CA2263
-        var typeInfo = (JsonTypeInfo<WorkEmail>)options.GetTypeInfo(typeof(WorkEmail));
-#pragma warning restore CA2263
+        var typeInfo = options.GetTypeInfo<WorkEmail>();
 
         await JsonSerializer.Serialize(WorkEmail.From("someone@example.com"), typeInfo).Should().BeEqualTo("\"someone@example.com\"");
         await JsonSerializer.Deserialize("\"someone@example.com\"", typeInfo).Should().BeEqualTo(WorkEmail.From("someone@example.com"));

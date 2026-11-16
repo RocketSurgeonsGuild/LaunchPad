@@ -17,8 +17,6 @@ internal class OperationMediaTypesFilter : IOpenApiOperationTransformer
         return Task.CompletedTask;
     }
 
-    // The content dictionary's value type differs between Microsoft.OpenApi 2.x (net10.0, OpenApiMediaType) and 3.x (net11.0,
-    // IOpenApiMediaType), so the value type is inferred rather than named.
     private static void RemoveMediaTypes<TMediaType>(IDictionary<string, TMediaType>? content)
     {
         if (content is null)

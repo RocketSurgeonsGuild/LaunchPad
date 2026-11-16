@@ -1,5 +1,7 @@
 # Union responses are C# 15 unions, with a portable form until .NET 10 is dropped
 
+_Superseded in part by [ADR-0010](0010-net11-only-and-native-unions.md): LaunchPad 2.0 targets .NET 11 only, and the portable form, its generator and Polyfill are gone. Unions are native C# 15 unions, detected by name as below._
+
 An operation that can fail responds with a union response instead of throwing, and every LaunchPad union is a C# 15 union: a type with `[System.Runtime.CompilerServices.Union]` that implements `IUnion`. Applications that must still compile on C# 14 (the .NET 10 SDK) declare a portable union (`[Union] partial struct` with one `partial` constructor per case), which LaunchPad's union generator implements in exactly the shape the compiler gives a native `union` declaration. Before .NET 11 the attribute and `IUnion` come from the Polyfill package, which the LaunchPad SDK adds. When .NET 12 ships and `net10.0` is dropped, a portable union becomes a native one by rewriting its declaration, and nothing that consumes it changes.
 
 ## Considered Options

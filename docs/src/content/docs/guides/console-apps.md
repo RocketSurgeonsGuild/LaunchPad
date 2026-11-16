@@ -8,14 +8,14 @@ adds the same LaunchPad packages as `Rocket.Surgery.LaunchPad.Sdk`, and chains D
 `Joinery.Dovetail.Sdk.Console`, instead of `Joinery.Dovetail.Sdk`. The commands run on Cysharp's
 [ConsoleAppFramework](https://github.com/Cysharp/ConsoleAppFramework), and Dovetail writes the entry point.
 
-In the snippets, replace `1.0.0` with the version of the SDK you use.
+In the snippets, replace `1.0.0` with the version of the SDK you use. Like the LaunchPad SDK, it requires .NET 11 or later.
 
 ## The project
 
 ```xml
 <Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Console/1.0.0">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
 </Project>
 ```

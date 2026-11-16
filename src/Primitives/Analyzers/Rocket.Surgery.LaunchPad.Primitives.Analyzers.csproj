@@ -16,7 +16,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
-        <!-- The oldest Roslyn the generator supports: the compiler of the .NET 10 SDK, so an application on either SDK can load it. -->
+        <!-- The oldest Roslyn the generator supports (the compiler of the .NET 10 SDK): every SDK that builds a net11.0 application has a newer one. -->
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>

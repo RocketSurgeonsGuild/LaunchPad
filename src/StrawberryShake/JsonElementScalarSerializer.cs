@@ -30,9 +30,5 @@ public abstract class JsonElementScalarSerializer<TRuntime>(string typeName, IOp
 
     private readonly IOptions<JsonSerializerOptions> _options = options;
 
-#if NET11_0_OR_GREATER
     private static JsonTypeInfo<TRuntime> TypeInfoFor(JsonSerializerOptions options) => options.GetTypeInfo<TRuntime>();
-#else
-    private static JsonTypeInfo<TRuntime> TypeInfoFor(JsonSerializerOptions options) => (JsonTypeInfo<TRuntime>)options.GetTypeInfo(typeof(TRuntime));
-#endif
 }

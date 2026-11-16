@@ -97,7 +97,7 @@ jobs:
                   install_args: dotnet
                   cache: true
                   # Restore only, from the key build.yml saves on main: build.yml is the single cache writer.
-                  cache_key: mise-{{platform}}-{{cache_period}}-aspnetcore
+                  cache_key: mise-{{platform}}-{{cache_period}}
                   cache_save: false
                   experimental: true
                   github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -148,7 +148,7 @@ jobs:
                   install: true
                   install_args: dotnet
                   cache: true
-                  cache_key: mise-{{platform}}-{{cache_period}}-aspnetcore
+                  cache_key: mise-{{platform}}-{{cache_period}}
                   cache_save: false
                   experimental: true
                   github_token: ${{ secrets.GITHUB_TOKEN }}

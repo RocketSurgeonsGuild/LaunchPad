@@ -16,7 +16,7 @@ internal static class ModuleInitializer
         // MSBuild.ProjectCreation compiles against MSBuild without shipping it: load it from the installed .NET SDK before it is used.
         MSBuildAssemblyResolver.Register();
         DiffRunner.Disabled = true;
-        // each test runs once per target framework of the throwaway projects (TargetFrameworksAttribute), and both runs share a snapshot
+        // each test runs once per target framework of the throwaway projects (TargetFrameworksAttribute), and the runs share a snapshot
         VerifierSettings.IgnoreConstructorParameters();
         VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();

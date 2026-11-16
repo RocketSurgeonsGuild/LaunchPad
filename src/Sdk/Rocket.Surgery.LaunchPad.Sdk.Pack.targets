@@ -6,10 +6,10 @@
 
         Writes Sdk/Packages.props into the package: LaunchPadVersion, the version of the SDK, which every LaunchPad package it adds to an
         application shares, LaunchPadDovetailSdkVersion, the version of the Dovetail SDK that Sdk/Sdk.props chains, which is the one
-        Directory.Packages.props pins, the version of Polyfill the detection adds before .NET 11, and the versions of the OpenAPI client
-        generators and the packages their code needs (Rocket.Surgery.LaunchPad.OpenApiClients.targets), also pinned there. An application can
-        set any of them first to choose another. As in Joinery.Dovetail.Sdk, the versions are only known when the SDK is packed, so the file
-        is generated then rather than kept in the repository.
+        Directory.Packages.props pins, and the versions of the OpenAPI client generators and the packages their code needs
+        (Rocket.Surgery.LaunchPad.OpenApiClients.targets), also pinned there. An application can set any of them first to choose another.
+        As in Joinery.Dovetail.Sdk, the versions are only known when the SDK is packed, so the file is generated then rather than kept in
+        the repository.
 
         Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which packages an application gets. A package
         added there is also packed by test/Sdk.Tests (PackedSdk.Projects) and sample/Sample.Sdk/build/pack.proj, so the tests and the
@@ -18,7 +18,6 @@
     <Target Name="_LaunchPadGeneratePackagesProps" BeforeTargets="_GetPackageFiles;Pack">
         <ItemGroup>
             <_LaunchPadDovetailSdk Include="@(PackageVersion)" Condition="'%(Identity)' == '$(LaunchPadChainedSdk)'" />
-            <_LaunchPadPolyfill Include="@(PackageVersion)" Condition="'%(Identity)' == 'Polyfill'" />
             <!-- the generators of OpenApiClient items, the packages their code needs, and IHttpClientFactory's -->
             <_LaunchPadOpenApiClientPackage Include="@(PackageVersion)" Condition="'%(Identity)' == 'Microsoft.OpenApi.Kiota'" Property="LaunchPadKiotaVersion" />
             <_LaunchPadOpenApiClientPackage Include="@(PackageVersion)" Condition="'%(Identity)' == 'Microsoft.Kiota.Bundle'" Property="LaunchPadKiotaBundleVersion" />
@@ -28,11 +27,9 @@
         </ItemGroup>
         <PropertyGroup>
             <_LaunchPadDovetailSdkVersion>@(_LaunchPadDovetailSdk->'%(Version)')</_LaunchPadDovetailSdkVersion>
-            <_LaunchPadPolyfillVersion>@(_LaunchPadPolyfill->'%(Version)')</_LaunchPadPolyfillVersion>
             <_LaunchPadPackagesProps>$(IntermediateOutputPath)Packages.props</_LaunchPadPackagesProps>
         </PropertyGroup>
         <Error Condition="'$(_LaunchPadDovetailSdkVersion)' == ''" Text="Directory.Packages.props pins no version of $(LaunchPadChainedSdk), which $(PackageId) chains." />
-        <Error Condition="'$(_LaunchPadPolyfillVersion)' == ''" Text="Directory.Packages.props pins no version of Polyfill, which $(PackageId) adds before .NET 11." />
         <Error
             Condition="'@(_LaunchPadOpenApiClientPackage->Count())' != '5'"
             Text="Directory.Packages.props pins one version of each of Microsoft.OpenApi.Kiota, Microsoft.Kiota.Bundle, Refitter, Refit.HttpClientFactory and Microsoft.Extensions.Http for the project, which the OpenApiClient items of $(PackageId) use: found @(_LaunchPadOpenApiClientPackage)."
@@ -47,9 +44,6 @@
             />
             <_LaunchPadPackagesPropsLine
                 Include="&lt;LaunchPadVersion Condition=&quot;%27%24(LaunchPadVersion)%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/LaunchPadVersion&gt;"
-            />
-            <_LaunchPadPackagesPropsLine
-                Include="&lt;LaunchPadPolyfillVersion Condition=&quot;%27%24(LaunchPadPolyfillVersion)%27 == %27%27&quot;&gt;$(_LaunchPadPolyfillVersion)&lt;/LaunchPadPolyfillVersion&gt;"
             />
             <_LaunchPadPackagesPropsLine
                 Include="@(_LaunchPadOpenApiClientPackage->'&lt;%(Property) Condition=&quot;%27%24(%(Property))%27 == %27%27&quot;&gt;%(Version)&lt;/%(Property)&gt;')"
