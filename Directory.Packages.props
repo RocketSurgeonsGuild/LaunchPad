@@ -143,9 +143,14 @@
         <PackageVersion Include="Serilog.Sinks.Observable" Version="3.0.0" />
         <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="11.0.0" />
-
-        <PackageVersion Include="NSwag.ApiDescription.Client" Version="14.7.1" />
         <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />
+        <!--
+            The runtimes of the clients Chirograph generates in the tests (test/Api/Functional/Clients/Api.Functional.HttpClient, the sample
+            tests), at the versions Chirograph 0.1.0 was packed with. The projects reference them themselves: Chirograph's implicit
+            references carry a version, which central package management rejects for a package that also has a PackageVersion (NU1009).
+        -->
+        <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.1.6" />
+        <PackageVersion Include="Refit.HttpClientFactory" Version="16.4.0" />
 
         <PackageVersion Include="OpenTelemetry" Version="1.21.0" />
 
@@ -170,10 +175,9 @@
         <PackageVersion Include="Verify.SourceGenerators" Version="2.5.0" />
   </ItemGroup>
     <!--
-        The Microsoft packages that ship once per .NET release train, on the 11.0 line that goes with the SDK pinned in global.json
-        (Microsoft.Extensions.ApiDescription.Client has no 11.0 release yet; preview.7 is its newest 11.0 build). When LaunchPad targets
-        two frameworks again, each framework gets its own group, conditioned with IsTargetFrameworkCompatible, never with an equality
-        (CONTRIBUTING.md, "Adding a target framework").
+        The Microsoft packages that ship once per .NET release train, on the 11.0 line that goes with the SDK pinned in global.json.
+        When LaunchPad targets two frameworks again, each framework gets its own group, conditioned with IsTargetFrameworkCompatible,
+        never with an equality (CONTRIBUTING.md, "Adding a target framework").
     -->
     <ItemGroup>
         <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0" />
@@ -185,7 +189,7 @@
         <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="11.0.0" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="11.0.0" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Client" Version="11.0.0-preview.7.26381.103" />
+        <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="11.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Configuration" Version="11.0.0" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Http" Version="11.0.0" />

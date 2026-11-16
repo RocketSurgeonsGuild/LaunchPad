@@ -81,7 +81,6 @@
                 <ModulePath>.*[\\/]Microsoft\.CodeCoverage\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.EntityFrameworkCore\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.EntityFrameworkCore\.Sqlite\.dll</ModulePath>
-                <ModulePath>.*[\\/]Microsoft\.Extensions\.ApiDescription\.Client\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.Extensions\.Configuration\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.Extensions\.DependencyInjection\.dll</ModulePath>
                 <ModulePath>.*[\\/]Microsoft\.Extensions\.Diagnostics\.HealthChecks\.dll</ModulePath>
@@ -102,7 +101,6 @@
                 <ModulePath>.*[\\/]NodaTime\.Serialization\.JsonNet\.dll</ModulePath>
                 <ModulePath>.*[\\/]NodaTime\.Serialization\.SystemTextJson\.dll</ModulePath>
                 <ModulePath>.*[\\/]NodaTime\.Testing\.dll</ModulePath>
-                <ModulePath>.*[\\/]NSwag\.ApiDescription\.Client\.dll</ModulePath>
                 <ModulePath>.*[\\/]Nuke\.Common\.dll</ModulePath>
                 <ModulePath>.*[\\/]OpenTelemetry\.dll</ModulePath>
                 <ModulePath>.*[\\/]OpenTelemetry\.Extensions\.Hosting\.dll</ModulePath>

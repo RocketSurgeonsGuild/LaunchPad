@@ -47,7 +47,8 @@ The host also owns the **group**, by default its name without the suffix in keba
 ## Clients
 
 The generators don't write clients. A server describes its operations in the transport's standard format, and a client generator for that
-format (NSwag or Kiota for OpenAPI, StrawberryShake for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither
+format (Kiota or Refitter for OpenAPI, which [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) runs at build, StrawberryShake
+for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither
 the contracts project nor a mediator, and a route or name the server changes reaches it with the next generated client.
 
 ## Mediator profiles

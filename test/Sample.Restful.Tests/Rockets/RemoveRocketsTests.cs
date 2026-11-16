@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Sample.Core;
 using Sample.Core.Domain;
-using Sample.Restful.Client;
 using Sample.Restful.Tests.Helpers;
 
 namespace Sample.Restful.Tests.Rockets;
@@ -12,7 +11,7 @@ public class RemoveRocketsTests : WebAppFixtureTest
     [Test]
     public async Task Should_Remove_Rocket()
     {
-        var client = new RocketClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         var faker = new RocketFaker();
         var rocket = faker.Generate();
         await using (var scope = ServiceProvider.CreateAsyncScope())
@@ -23,7 +22,7 @@ public class RemoveRocketsTests : WebAppFixtureTest
             await z.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        await client.RemoveRocketAsync(rocket.Id.Value);
+        await client.RemoveRocket(rocket.Id.Value);
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
         await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().Rockets.Should().BeEmpty();

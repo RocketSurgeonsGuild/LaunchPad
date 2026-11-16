@@ -1,4 +1,3 @@
-using Sample.Restful.Client;
 using Sample.Minimal.Tests.Helpers;
 
 namespace Sample.Minimal.Tests.Rockets;
@@ -8,9 +7,9 @@ public class CreateRocketTests : WebAppFixtureTest
     [Test]
     public async Task Should_Create_A_Rocket()
     {
-        var client = new RocketClient(AlbaHost.Server.CreateClient());
+        var client = Client;
 
-        var response = await client.CreateRocketAsync(
+        var response = await client.CreateRocket(
             new CreateRocketRequest
             {
                 Type = RocketType.Falcon9,
@@ -18,14 +17,14 @@ public class CreateRocketTests : WebAppFixtureTest
             }
         );
 
-        await response.Result.Id.Should().NotBeEmpty();
+        await response.Id.Should().NotBeEqualTo(Guid.Empty);
     }
 
     [Test]
     public async Task Should_Throw_If_Rocket_Exists()
     {
-        var client = new RocketClient(AlbaHost.Server.CreateClient());
-        await client.CreateRocketAsync(
+        var client = Client;
+        await client.CreateRocket(
             new CreateRocketRequest
             {
                 Type = RocketType.Falcon9,
@@ -33,15 +32,13 @@ public class CreateRocketTests : WebAppFixtureTest
             }
         );
 
-        Func<Task> action = () => client.CreateRocketAsync(
+        var (_, problem) = await Failure<ProblemDetails>(() => client.CreateRocket(
             new CreateRocketRequest
             {
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234"
             }
-        );
-        var r = (await action.Should().Throw<ApiException<ProblemDetails>>())
-               .And.Result;
-        await r.Title.Should().BeEqualTo("Rocket Creation Failed");
+        ));
+        await problem!.Title.Should().BeEqualTo("Rocket Creation Failed");
     }
 }

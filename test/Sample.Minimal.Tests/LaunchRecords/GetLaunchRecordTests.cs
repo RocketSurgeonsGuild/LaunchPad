@@ -4,10 +4,9 @@ using NodaTime;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Restful.Client;
 using Sample.Minimal.Tests.Helpers;
 
-using HttpRocketType = Sample.Restful.Client.RocketType;
+using HttpRocketType = Sample.Minimal.Tests.Client.RocketType;
 using RocketType = Sample.Core.Domain.RocketType;
 
 namespace Sample.Minimal.Tests.LaunchRecords;
@@ -17,7 +16,7 @@ public class GetLaunchRecordTests : WebAppFixtureTest
     [Test]
     public async Task Should_Get_A_LaunchRecord()
     {
-        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         LaunchRecord record;
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
@@ -44,7 +43,7 @@ public class GetLaunchRecordTests : WebAppFixtureTest
             await context.SaveChangesAsync();
         }
 
-        var response = (await client.GetLaunchRecordAsync(record.Id.Value)).Result;
+        var response = await client.GetLaunchRecord(record.Id.Value);
 
         await response.Partner.Should().BeEqualTo("partner");
         await response.Payload.Should().BeEqualTo("geo-fence-ftl");
@@ -56,13 +55,12 @@ public class GetLaunchRecordTests : WebAppFixtureTest
     [Test]
     public async Task Should_Not_Get_A_Missing_Launch_Record()
     {
-        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        var client = Client;
 
-        Func<Task> action = () => client.GetLaunchRecordAsync(Guid.NewGuid());
-        await (await action.Should().Throw<ApiException<ProblemDetails>>())!
-                    .Where(
-                         z => z.StatusCode == 404 && z.Result.Status == 404 && z.Result.Title == "Not Found"
-                     );
+        var (status, problem) = await Failure<ProblemDetails>(() => client.GetLaunchRecord(Guid.NewGuid()));
+        await status.Should().BeEqualTo(System.Net.HttpStatusCode.NotFound);
+        await problem!.Status.Should().BeEqualTo(404);
+        await problem.Title.Should().BeEqualTo("Not Found");
     }
 
     private static readonly Faker Faker = new();
