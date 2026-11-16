@@ -165,7 +165,7 @@
         <!-- test/Sdk.Tests writes its throwaway projects with it, as Dovetail's SDK tests do -->
         <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.0" />
         <PackageVersion Include="Verify.NodaTime" Version="2.3.0" />
-        <PackageVersion Include="Verify.SystemJson" Version="1.4.1" />
+        <PackageVersion Include="Verify.SystemJson" Version="2.1.0" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />
         <PackageVersion Include="Verify.SourceGenerators" Version="2.5.0" />
   </ItemGroup>
