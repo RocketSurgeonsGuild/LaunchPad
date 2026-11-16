@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.StrawberryShake](/LaunchPad/pr-preview/pr-3257/api/rocket.surgery.launchpad.strawberryshake.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1213`
 - Namespace: `Rocket.Surgery.LaunchPad.StrawberryShake`
 - Target framework: `net11.0`
 - Inherits: `ScalarSerializer<JsonElement, TRuntime>`
