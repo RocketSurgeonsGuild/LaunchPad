@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1040,
+      Title: Operation matches no rpc,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input3.cs: (6,5)-(6,54),
+      MessageFormat: {0} lists operation {1}, but its service base {2} has no rpc named {1}; rename the rpc in the .proto, or name the operation after the rpc with [Operation<T>(Name = "...")],
+      Message: RocketsService lists operation FindRocket, but its service base Sample.Protos.Rockets.RocketsBase has no rpc named FindRocket; rename the rpc in the .proto, or name the operation after the rpc with [Operation<T>(Name = "...")],
+      Category: LaunchPad.Api
+    }
+  ]
+}

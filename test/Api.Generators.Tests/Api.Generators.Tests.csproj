@@ -25,6 +25,9 @@
         <!-- The OpenAPI transformers are emitted when the server references Microsoft.AspNetCore.OpenApi; the rules they state are ZeroAlloc.Validation's. -->
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="ZeroAlloc.Validation" ExcludeAssets="analyzers" />
+        <!-- Proto-first gRPC hosts: Grpc.Tools' service bases (Grpc.Core.Api), proto messages (Google.Protobuf), MapGrpcService, and the mappings. -->
+        <PackageReference Include="Grpc.AspNetCore" />
+        <PackageReference Include="ZeroAlloc.Mapping" ExcludeAssets="analyzers" />
         <ProjectReference Include="..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     </ItemGroup>
 </Project>

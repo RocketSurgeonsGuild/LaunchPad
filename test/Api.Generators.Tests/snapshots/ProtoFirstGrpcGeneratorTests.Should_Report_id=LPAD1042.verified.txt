@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1042,
+      Title: Operation does not fit its rpc,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input3.cs: (6,5)-(6,55),
+      MessageFormat: {0} is a {1} operation, but rpc {2} of {3} is {4}; a unary or void operation needs a unary rpc, a stream operation a server streaming rpc,
+      Message: Sample.Contracts.Rockets.ListRockets.Request is a stream operation, but rpc GetRocket of Sample.Protos.Rockets.RocketsBase is unary; a unary or void operation needs a unary rpc, a stream operation a server streaming rpc,
+      Category: LaunchPad.Api
+    }
+  ]
+}

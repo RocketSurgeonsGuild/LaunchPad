@@ -8,6 +8,9 @@ internal enum HostKind
     MinimalApi,
     Controller,
     GrpcService,
+
+    /// <summary>A proto-first gRPC service: the host derives the service base Grpc.Tools generated from a <c>.proto</c>.</summary>
+    GrpcProtoService,
     GraphQLQuery,
     GraphQLMutation,
 }
@@ -35,6 +38,12 @@ internal static class KnownNames
     public const string ExtendObjectTypeAttribute = "HotChocolate.Types.ExtendObjectTypeAttribute";
     public const string ServiceContractAttribute = "System.ServiceModel.ServiceContractAttribute";
     public const string GrpcCallContext = "ProtoBuf.Grpc.CallContext";
+    public const string BindServiceMethodAttribute = "Grpc.Core.BindServiceMethodAttribute";
+    public const string ServerCallContext = "Grpc.Core.ServerCallContext";
+    public const string GrpcEndpointRouteBuilderExtensions = "Microsoft.AspNetCore.Builder.GrpcEndpointRouteBuilderExtensions";
+    public const string MapAttribute = "ZeroAlloc.Mapping.MapAttribute`2";
+    public const string ReverseMapAttribute = "ZeroAlloc.Mapping.ReverseMapAttribute`2";
+    public const string ProtobufMessage = "Google.Protobuf.IMessage";
 
     public static string MetadataName(this ITypeSymbol symbol)
     {
@@ -84,6 +93,9 @@ internal static class HostInference
 
     public static (HostKind Kind, string? Problem) Infer(INamedTypeSymbol host, Compilation compilation)
     {
+        // A service base Grpc.Tools generated from a .proto carries [BindServiceMethod]: the host is proto-first, whatever its name.
+        if (ProtoServiceBase(host) is { }) return Require(HostKind.GrpcProtoService, compilation, KnownNames.GrpcEndpointRouteBuilderExtensions, "Grpc.AspNetCore");
+
         if (host.InheritsFrom(KnownNames.ControllerBase)) return Require(HostKind.Controller, compilation, KnownNames.ControllerBase, "ASP.NET Core MVC");
 
         var extend = host.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is(KnownNames.ExtendObjectTypeAttribute));
@@ -112,6 +124,7 @@ internal static class HostInference
         HostKind.MinimalApi => "Minimal API",
         HostKind.Controller => "MVC controller",
         HostKind.GrpcService => "gRPC service",
+        HostKind.GrpcProtoService => "proto-first gRPC service",
         HostKind.GraphQLQuery => "GraphQL query",
         HostKind.GraphQLMutation => "GraphQL mutation",
         HostKind.Unknown => "unknown",
@@ -120,6 +133,20 @@ internal static class HostInference
 
     /// <summary>Whether the transport is HTTP with routes and verbs (Minimal API, MVC).</summary>
     public static bool IsHttp(this HostKind kind) => kind is HostKind.MinimalApi or HostKind.Controller;
+
+    /// <summary>The Grpc.Tools service base the host derives (<c>Rockets.RocketsBase</c>), or null for any other host.</summary>
+    public static INamedTypeSymbol? ProtoServiceBase(INamedTypeSymbol host)
+    {
+        for (var current = host.BaseType; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType)
+        {
+            foreach (var attribute in current.GetAttributes())
+            {
+                if (attribute.AttributeClass.Is(KnownNames.BindServiceMethodAttribute)) return current;
+            }
+        }
+
+        return null;
+    }
 
     private static (HostKind, string?) Require(HostKind kind, Compilation compilation, string metadataName, string library) =>
         compilation.GetTypeByMetadataName(metadataName) is { }

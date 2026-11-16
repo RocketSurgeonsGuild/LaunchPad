@@ -1,0 +1,24 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1043,
+      Title: Proto message mapping is not declared,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input2.cs: (6,5)-(6,33),
+      MessageFormat: Operation {0} of {1} needs a mapping from {2} to {3}; declare [Map<{2}, {3}>] (or [ReverseMap]) on a static partial class in this project, and ZeroAlloc.Mapping writes it,
+      Message: Operation GetRocket of RocketsService needs a mapping from Sample.Protos.GetRocketRequest to Sample.Contracts.Rockets.GetRocket.Request; declare [Map<Sample.Protos.GetRocketRequest, Sample.Contracts.Rockets.GetRocket.Request>] (or [ReverseMap]) on a static partial class in this project, and ZeroAlloc.Mapping writes it,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1043,
+      Title: Proto message mapping is not declared,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input2.cs: (6,5)-(6,33),
+      MessageFormat: Operation {0} of {1} needs a mapping from {2} to {3}; declare [Map<{2}, {3}>] (or [ReverseMap]) on a static partial class in this project, and ZeroAlloc.Mapping writes it,
+      Message: Operation GetRocket of RocketsService needs a mapping from Sample.Contracts.Rockets.RocketModel to Sample.Protos.RocketReply; declare [Map<Sample.Contracts.Rockets.RocketModel, Sample.Protos.RocketReply>] (or [ReverseMap]) on a static partial class in this project, and ZeroAlloc.Mapping writes it,
+      Category: LaunchPad.Api
+    }
+  ]
+}

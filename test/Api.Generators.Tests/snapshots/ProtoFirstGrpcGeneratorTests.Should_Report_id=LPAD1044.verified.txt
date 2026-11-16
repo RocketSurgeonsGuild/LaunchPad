@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1044,
+      Title: Proto message mapping does not set its properties,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input3.cs: (6,5)-(6,36),
+      MessageFormat: {0} maps {1} to the proto message {2}, but ZeroAlloc.Mapping's constructor form only fills constructor parameters, and a proto message has none; declare the update-in-place form, public static partial void Map({1} src, {2} existingDst);, on {0},
+      Message: Sample.Server.LaunchMappings maps Sample.Contracts.Rockets.NotReady to the proto message Sample.Protos.NotReadyError, but ZeroAlloc.Mapping's constructor form only fills constructor parameters, and a proto message has none; declare the update-in-place form, public static partial void Map(Sample.Contracts.Rockets.NotReady src, Sample.Protos.NotReadyError existingDst);, on Sample.Server.LaunchMappings,
+      Category: LaunchPad.Api
+    }
+  ]
+}

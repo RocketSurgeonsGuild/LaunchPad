@@ -1,6 +1,6 @@
 # Mediator-agnostic API generators: orientation, design and plan
 
-Status: **phases 1–3 built 2026-11-08; client generation removed the same day (6).** Phase 1: base package, Minimal API, all six profiles, functional and AOT tests, guide. Phase 2: controller hosts (the old controller generator and `RestfulApiController` removed, the Restful samples migrated) and code-first gRPC server hosts. Phase 3: GraphQL mutation hosts (queries left out, decided 2026-11-08), the old mutation generator removed, Sample.Graphql migrated. The HTTP, gRPC and GraphQL client generators of phases 1–3 were built and then removed: clients are generated from the servers' OpenAPI document, GraphQL SDL and `.proto` with standard tools. Server-side API versioning built for Minimal API and controller hosts (6). Phase 4 decided, not built (5). The MediatR profile was removed for 2.0 ([ADR-0009](../adr/0009-drop-mediatr-support.md), #3215): five built-in profiles remain, and ZeroAlloc.Mediator replaced MediatR as the functional tests' reference server. Sections 1 and 3 describe LaunchPad as it was before this work, MediatR included.
+Status: **phases 1–3 built 2026-11-08; client generation removed the same day (6).** Phase 1: base package, Minimal API, all six profiles, functional and AOT tests, guide. Phase 2: controller hosts (the old controller generator and `RestfulApiController` removed, the Restful samples migrated) and code-first gRPC server hosts. Phase 3: GraphQL mutation hosts (queries left out, decided 2026-11-08), the old mutation generator removed, Sample.Graphql migrated. The HTTP, gRPC and GraphQL client generators of phases 1–3 were built and then removed: clients are generated from the servers' OpenAPI document, GraphQL SDL and `.proto` with standard tools. Server-side API versioning built for Minimal API and controller hosts (6). Phase 4 built: union results (#3148), OpenAPI transformers (#3149) and proto-first gRPC hosts (#3150, 2026-11-15) (5). The MediatR profile was removed for 2.0 ([ADR-0009](../adr/0009-drop-mediatr-support.md), #3215): five built-in profiles remain, and ZeroAlloc.Mediator replaced MediatR as the functional tests' reference server. Sections 1 and 3 describe LaunchPad as it was before this work, MediatR included.
 
 Related: [ADR-0002 one package per integration](../adr/0002-package-per-integration.md), [ADR-0003 explicit operation hosts](../adr/0003-explicit-operation-hosts.md), and the terms _operation_, _operation host_, _group_, _transport_, _contracts project_ and _mediator profile_ in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -138,6 +138,7 @@ public static partial class RocketsEndpoints;              // → app.MapRockets
 
 | Rule                                                         | Transport                     |
 | ------------------------------------------------------------ | ----------------------------- |
+| base type a Grpc.Tools service base (`[BindServiceMethod]`)  | proto-first gRPC server       |
 | base type `ControllerBase`                                   | MVC controller                |
 | `[ExtendObjectType(Query)]` / `[ExtendObjectType(Mutation)]` | GraphQL query / mutation host |
 | name `*Controller`                                           | MVC controller                |
@@ -354,28 +355,33 @@ The generated `RocketsClient` (HTTP client host, its mediator handlers and `AddR
 
 ### 4.8 Diagnostics (`LPAD1xxx`, category `LaunchPad.Api`)
 
-| ID       | Severity | Rule                                                                                                                                                  |
-| -------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LPAD1001 | Error    | Listed request doesn't match the profile and its response can't be found.                                                                             |
-| LPAD1002 | Error    | No mediator profile, or several built-ins match.                                                                                                      |
-| LPAD1003 | Error    | Route token with no matching member.                                                                                                                  |
-| LPAD1004 | Error    | `[FromRoute]` member not in the route.                                                                                                                |
-| LPAD1005 | Error    | Complex member bound from route/query.                                                                                                                |
-| LPAD1006 | Error    | Request can't be constructed, or a route value can't be applied.                                                                                      |
-| LPAD1007 | Error    | Route/query member type isn't parsable.                                                                                                               |
-| LPAD1008 | Error    | Same verb + full route on two hosts of one transport.                                                                                                 |
-| LPAD1009 | Error    | Duplicate GraphQL field name.                                                                                                                         |
-| LPAD1010 | Error    | Host isn't `partial` (Minimal API: `static partial`). Code fix adds the modifiers.                                                                    |
-| LPAD1014 | Warning  | gRPC request/response lacks `[DataContract]`/`[ProtoContract]` ordering.                                                                              |
-| LPAD1015 | Warning  | Stream operation on a GraphQL host (skipped).                                                                                                         |
-| LPAD1016 | Info     | Operation skipped because the profile can't dispatch it.                                                                                              |
-| LPAD1017 | Error    | Host transport can't be inferred, is ambiguous, or its library/generator package isn't referenced.                                                    |
-| LPAD1019 | Error    | Operation's GraphQL kind doesn't match the query/mutation host.                                                                                       |
-| LPAD1020 | Error    | `Input` type has no parameterless `Create()` returning the request.                                                                                   |
-| LPAD1021 | Warning  | `[OperationHost]` setting doesn't apply to the inferred transport.                                                                                    |
-| LPAD1023 | Warning  | A `[Creates]` response has no location target on this transport, or a route token has no matching response member; it answers 201 without a Location. |
-| LPAD1024 | Warning  | An operation has an API version, but the server project doesn't reference Asp.Versioning, so it isn't mapped.                                         |
-| LPAD1028 | Error    | A union response has a case besides its value case that matches no case name and has no `[ApiError]`.                                                 |
+| ID       | Severity | Rule                                                                                                                                                    |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LPAD1001 | Error    | Listed request doesn't match the profile and its response can't be found.                                                                               |
+| LPAD1002 | Error    | No mediator profile, or several built-ins match.                                                                                                        |
+| LPAD1003 | Error    | Route token with no matching member.                                                                                                                    |
+| LPAD1004 | Error    | `[FromRoute]` member not in the route.                                                                                                                  |
+| LPAD1005 | Error    | Complex member bound from route/query.                                                                                                                  |
+| LPAD1006 | Error    | Request can't be constructed, or a route value can't be applied.                                                                                        |
+| LPAD1007 | Error    | Route/query member type isn't parsable.                                                                                                                 |
+| LPAD1008 | Error    | Same verb + full route on two hosts of one transport.                                                                                                   |
+| LPAD1009 | Error    | Duplicate GraphQL field name.                                                                                                                           |
+| LPAD1010 | Error    | Host isn't `partial` (Minimal API: `static partial`). Code fix adds the modifiers.                                                                      |
+| LPAD1014 | Warning  | gRPC request/response lacks `[DataContract]`/`[ProtoContract]` ordering.                                                                                |
+| LPAD1015 | Warning  | Stream operation on a GraphQL host (skipped).                                                                                                           |
+| LPAD1016 | Info     | Operation skipped because the profile can't dispatch it.                                                                                                |
+| LPAD1017 | Error    | Host transport can't be inferred, is ambiguous, or its library/generator package isn't referenced.                                                      |
+| LPAD1019 | Error    | Operation's GraphQL kind doesn't match the query/mutation host.                                                                                         |
+| LPAD1020 | Error    | `Input` type has no parameterless `Create()` returning the request.                                                                                     |
+| LPAD1021 | Warning  | `[OperationHost]` setting doesn't apply to the inferred transport.                                                                                      |
+| LPAD1023 | Warning  | A `[Creates]` response has no location target on this transport, or a route token has no matching response member; it answers 201 without a Location.   |
+| LPAD1024 | Warning  | An operation has an API version, but the server project doesn't reference Asp.Versioning, so it isn't mapped.                                           |
+| LPAD1028 | Error    | A union response has a case besides its value case that matches no case name and has no `[ApiError]`.                                                   |
+| LPAD1040 | Error    | A proto-first host lists an operation its Grpc.Tools service base has no rpc for (by name, or `[Operation<T>(Name)]`).                                  |
+| LPAD1041 | Error    | A proto-first host is in a project that doesn't reference ZeroAlloc.Mapping.                                                                            |
+| LPAD1042 | Error    | An operation doesn't fit its rpc: unary/void needs a unary rpc, stream a server streaming one; client and bidirectional streaming aren't supported.     |
+| LPAD1043 | Error    | A proto-first operation needs a `[Map<Source, Destination>]` the project doesn't declare; the message names it.                                         |
+| LPAD1044 | Error    | A mapping to a proto message has no update-in-place `partial void Map(src, existingDst)`, so ZeroAlloc.Mapping's constructor form would leave it empty. |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 were retired with the client generators (2026-11-08); their IDs are not reused.
 
@@ -437,7 +443,7 @@ The extra ZeroAlloc `Send` overloads (2) and the Foundatio module registration (
 - GraphQL query and mutation hosts with explicit input names and `Add{Host}(this IRequestExecutorBuilder)`. This removes `GraphqlMutationActionBodyGenerator` and migrates `Sample.Graphql` (`Input` + `Create()`).
 - ~~GraphQL client hosts (document + variables over `HttpClient`, reading `data.{field}`).~~ Built, then removed 2026-11-08.
 
-**Phase 4, decided 2026-11-08.** Three items; union results are built (below). Subscriptions were dropped: stream operations on GraphQL hosts stay LPAD1015.
+**Phase 4, decided 2026-11-08; built.** Three items, all built (below). Subscriptions were dropped: stream operations on GraphQL hosts stay LPAD1015.
 
 _Union results_ ([#3148](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3148); depends on [#3147](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3147), which standardizes LaunchPad's union types: native unions on .NET 11+; until #3239 also a generated equivalent on .NET 10):
 
@@ -469,6 +475,13 @@ _Proto-first gRPC_ ([#3150](https://github.com/RocketSurgeonsGuild/LaunchPad/iss
 
 - A host deriving a Grpc.Tools service base (`partial class RocketsService : Rockets.RocketsBase`) is proto-first; any other gRPC host is code-first. It lists its operations with `[Operation<T>]` as usual, each matched to an rpc of the base class by name; an unmatched entry is a diagnostic.
 - Proto messages are mapped to and from requests and responses with ZeroAlloc.Mapping (1.6.13, approved 2026-11-08 for apps with proto-first hosts): the generator emits `[Map<ProtoMessage, Request>]` and `[Map<Response, ProtoMessage>]` on a generated `static partial` mapper and ZeroAlloc.Mapping writes the bodies; users add their own `[Map]`/`[TryMap]` for nested and well-known types. Without the package referenced, proto-first hosts are a diagnostic.
+- **Built** ([#3150](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3150), 2026-11-15), with the mappings declared by the user rather than generated (decided 2026-11-15):
+    - **The user declares the `[Map]`s.** A generator only sees the code the user wrote, never another generator's output, and ZeroAlloc.Mapping finds its attributes with `ForAttributeWithMetadataName`, so a `[Map]` generated by LaunchPad would never get a body. The user puts `[Map<ProtoRequest, Request>]` and `[Map<Response, ProtoResponse>]` (or `[ReverseMap]`) on any `static partial` class of the server; `GrpcProtoServiceGenerator` finds them (both attributes, through `ForAttributeWithMetadataName`) and calls `Mapper.Map(…)`. A pair it needs and can't find is LPAD1043, naming the attribute; ZeroAlloc.Mapping not referenced is LPAD1041.
+    - **Proto messages are filled in place.** ZeroAlloc.Mapping's constructor form maps only into the destination's constructor parameters, and a Grpc.Tools message has none (only settable properties), so it would come back empty without a diagnostic. When the mapper declares the update-in-place form, `partial void Map(Response src, ProtoResponse existingDst)`, the generated code fills a new message through it (`ApiGrpcProtoMapping.Into`); a mapping to a proto message (`Google.Protobuf.IMessage`) without it is LPAD1044. ZeroAlloc.Mapping 1.6.13's in-place form assigns a `Guid` to a `string` without converting it, so the functional tests set such ids in an `[AfterMap]` hook.
+    - **Matching.** `HostInference` finds the base by `[BindServiceMethod]` before any other rule (`HostKind.GrpcProtoService`, needing Grpc.AspNetCore, else LPAD1017). `ProtoRpcs.Match` finds the virtual method named after the operation (`EndpointName`: its name or `[Operation<T>(Name)]`) whose last parameter is a `ServerCallContext` (LPAD1040), and checks its shape (LPAD1042). Rpcs no operation lists keep the base's `Unimplemented`.
+    - **Responses.** As on code-first hosts: void answers a new response message (`google.protobuf.Empty`), null answers `NotFound`, a union's error cases throw their status with the `case` trailer, and a stream of unions ends with its first error case. The `case-bin` trailer carries the case only when the user maps it to a proto message, serialized with Google.Protobuf (`ApiGrpcProtoErrors`), since a proto-first project needn't have protobuf-net.
+    - `[OperationHost(Group)]` is LPAD1021 on a proto-first host: the `.proto` names the service. No `GetProto()`: the `.proto` is the user's.
+    - Tests: `ProtoFirstGrpcGeneratorTests` (each profile, union cases, LPAD1021/1040–1044), and `ProtoFirstTests` in the functional tests, against `ProtoRocketsService`/`ProtoLaunchesService` in the ZeroAlloc fixture server, compiled from `ProtoFirst/proto_first.proto` by Grpc.Tools.
 
 Before each phase I restate its plan and wait for a go-ahead.
 
@@ -496,6 +509,7 @@ Before each phase I restate its plan and wait for a go-ahead.
     - `Asp.Versioning.Mvc` (2026-11-08, for the controller versioning test)
     - `ChannelMediator`, `Immediate.Handlers` and `Foundatio.Mediator`
     - `ZeroAlloc.Mediator` and `ZeroAlloc.Mediator.Generator` 6.6.5
+    - `ZeroAlloc.Mapping` 1.6.13 (2026-11-08), for apps with proto-first gRPC hosts; added to `Directory.Packages.props` with #3150, used by the generator and functional tests
 
 - Created responses: `[Creates]` on the response type (4.3); it replaced `[CreateOperation<TRequest, TLocationRequest>]`.
 
