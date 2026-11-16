@@ -32,6 +32,7 @@ public partial class OpenApiJoint : IServiceJoint
                                 options.CreateSchemaReferenceId = static type => type.Type is { DeclaringType: { } container, IsGenericType: false, }
                                     ? container.Name + type.Type.Name
                                     : OpenApiOptions.CreateDefaultSchemaReferenceId(type);
+                                options.AddSchemaTransformer<AssignedSchemaFilter>();
                                 options.AddSchemaTransformer<ProblemDetailsSchemaFilter>();
                                 options.AddOperationTransformer<OperationIdFilter>();
                                 options.AddOperationTransformer<StatusCode201Filter>();

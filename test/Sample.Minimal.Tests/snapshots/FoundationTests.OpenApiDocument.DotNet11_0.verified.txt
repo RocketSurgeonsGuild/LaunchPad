@@ -23,11 +23,7 @@
             in: query,
             description: The rocket type,
             schema: {
-              enum: [
-                Falcon9,
-                FalconHeavy,
-                AtlasV
-              ]
+              $ref: #/components/schemas/RocketType
             }
           }
         ],
@@ -414,11 +410,7 @@
             in: query,
             description: The type of the rocket,
             schema: {
-              enum: [
-                Falcon9,
-                FalconHeavy,
-                AtlasV
-              ]
+              $ref: #/components/schemas/RocketType
             }
           }
         ],
@@ -775,91 +767,6 @@
   },
   components: {
     schemas: {
-      AssignedOfdouble: {
-        required: [
-          value
-        ],
-        type: object,
-        properties: {
-          value: {
-            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
-            type: [
-              number,
-              string
-            ],
-            format: double
-          },
-          hasValue: {
-            type: boolean
-          }
-        }
-      },
-      AssignedOfOffsetDateTime: {
-        required: [
-          value
-        ],
-        type: object,
-        properties: {
-          value: {
-            oneOf: [
-              {
-                type: null
-              },
-              {
-                $ref: #/components/schemas/OffsetDateTime
-              }
-            ]
-          },
-          hasValue: {
-            type: boolean
-          }
-        }
-      },
-      AssignedOfRocketId: {
-        required: [
-          value
-        ],
-        type: object,
-        properties: {
-          value: {
-            $ref: #/components/schemas/RocketId
-          },
-          hasValue: {
-            type: boolean
-          }
-        }
-      },
-      AssignedOfRocketType: {
-        required: [
-          value
-        ],
-        type: object,
-        properties: {
-          value: {
-            $ref: #/components/schemas/RocketType
-          },
-          hasValue: {
-            type: boolean
-          }
-        }
-      },
-      AssignedOfstring: {
-        required: [
-          value
-        ],
-        type: object,
-        properties: {
-          value: {
-            type: [
-              null,
-              string
-            ]
-          },
-          hasValue: {
-            type: boolean
-          }
-        }
-      },
       ConflictProblem: {
         allOf: [
           {
@@ -988,22 +895,49 @@
             $ref: #/components/schemas/LaunchRecordId
           },
           partner: {
-            $ref: #/components/schemas/AssignedOfstring
+            type: string
           },
           payload: {
-            $ref: #/components/schemas/AssignedOfstring
+            type: string
           },
           payloadWeightKg: {
-            $ref: #/components/schemas/AssignedOfdouble
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              null,
+              number,
+              string
+            ],
+            format: double
           },
           actualLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
           },
           rocketId: {
-            $ref: #/components/schemas/AssignedOfRocketId
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/RocketId
+              }
+            ]
           }
         },
         description: The patch request
@@ -1067,10 +1001,17 @@
             $ref: #/components/schemas/RocketId
           },
           serialNumber: {
-            $ref: #/components/schemas/AssignedOfstring
+            type: string
           },
           type: {
-            $ref: #/components/schemas/AssignedOfRocketType
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/RocketType
+              }
+            ]
           }
         },
         description: The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting Request is validated and sent through the mediator.

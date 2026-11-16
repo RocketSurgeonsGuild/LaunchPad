@@ -795,7 +795,9 @@ namespace Sample.Core.Operations.Rockets
                       typeof(Optional<>),
                       typeof(Instant),
                       typeof(IPropertyTracking<>),
-                      typeof(IRequest<>)
+                      typeof(IRequest<>),
+                      // the generated tracking properties carry System.Text.Json's JsonConverter attribute
+                      typeof(System.Text.Json.JsonSerializer)
                   )
                  .AddSources(
                       @"

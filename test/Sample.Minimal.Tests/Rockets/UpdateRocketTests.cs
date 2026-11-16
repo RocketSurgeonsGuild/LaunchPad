@@ -42,7 +42,7 @@ public class UpdateRocketTests : WebAppFixtureTest
             rocket.Id.Value,
             new EditRocketPatchRequest
             {
-                SerialNumber = new() { Value = "123456789012345", HasValue = true, }
+                SerialNumber = "123456789012345",
             }
         );
         await u.Should().NotBeNull();
@@ -60,18 +60,24 @@ public class UpdateRocketTests : WebAppFixtureTest
 
         var rocket = await SeedRocketAsync(RocketType.AtlasV);
 
-        var (status, problem) = await Failure<System.Text.Json.Nodes.JsonObject>(
-            () => client.PatchRocket(
-                rocket.Id.Value,
-                new EditRocketPatchRequest
-                {
-                    SerialNumber = new() { Value = null!, HasValue = true, }
-                }
-            )
-        );
+        // an explicit null assigns null, which the rocket's serial number can't be: the patched request fails validation
+        var (status, problem) = await PatchJson($"/rockets/{rocket.Id.Value}", """{"serialNumber":null}""");
         // the Minimal API sample answers a validation failure with 422 problem details that don't name the properties (the Restful sample's do)
         await status.Should().BeEqualTo(System.Net.HttpStatusCode.UnprocessableEntity);
         await problem!["status"]!.GetValue<int>().Should().BeEqualTo(422);
+    }
+
+    [Test]
+    public async Task Should_Leave_The_Rocket_Type_Alone_When_Patched_With_Null()
+    {
+        var rocket = await SeedRocketAsync(RocketType.AtlasV);
+
+        // a rocket's type has no null value: an explicit null leaves it unassigned, as if it weren't sent
+        var (status, _) = await PatchJson($"/rockets/{rocket.Id.Value}", """{"type":null,"serialNumber":"123456789012345"}""");
+        await status.Should().BeEqualTo(System.Net.HttpStatusCode.OK);
+        var response = await Client.GetRocket(rocket.Id.Value);
+        await response.Type.Should().BeEqualTo(ClientRocketType.AtlasV);
+        await response.Sn.Should().BeEqualTo("123456789012345");
     }
 
     [Test]
@@ -85,7 +91,7 @@ public class UpdateRocketTests : WebAppFixtureTest
             rocket.Id.Value,
             new EditRocketPatchRequest
             {
-                Type = new() { Value = ClientRocketType.FalconHeavy, HasValue = true, }
+                Type = ClientRocketType.FalconHeavy,
             }
         );
         await u.Should().NotBeNull();

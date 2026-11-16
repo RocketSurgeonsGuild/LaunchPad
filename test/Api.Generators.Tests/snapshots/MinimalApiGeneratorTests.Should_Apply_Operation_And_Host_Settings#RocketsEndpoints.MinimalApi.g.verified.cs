@@ -18,7 +18,6 @@ using AuthorizeAttribute = global::Microsoft.AspNetCore.Authorization.AuthorizeA
 using BindingFlags = global::System.Reflection.BindingFlags;
 using CancellationToken = global::System.Threading.CancellationToken;
 using CultureInfo = global::System.Globalization.CultureInfo;
-using Enum = global::System.Enum;
 using FromBodyAttribute = global::Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using FromHeaderAttribute = global::Microsoft.AspNetCore.Mvc.FromHeaderAttribute;
 using FromQueryAttribute = global::Microsoft.AspNetCore.Mvc.FromQueryAttribute;
@@ -117,7 +116,7 @@ public static partial class RocketsEndpoints
         var @types__list = new List<global::Sample.Contracts.RocketType>(__raw_Types.Count);
         foreach (var __item in __raw_Types)
         {
-            if (__item is null || !Enum.TryParse<global::Sample.Contracts.RocketType>(__item, true, out var __parsed))
+            if (__item is null || !ApiBinding.TryParseEnum<global::Sample.Contracts.RocketType>(__item, out var __parsed))
             {
                 await ApiBinding.BadRequestAsync(httpContext, "types", "query string value").ConfigureAwait(false);
                 return;

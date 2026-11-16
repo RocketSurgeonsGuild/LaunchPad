@@ -555,7 +555,9 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
                  .WithGenerator<PropertyTrackingGenerator>()
                  .AddReferences(
                       typeof(IPropertyTracking<>),
-                      typeof(IRequest<>)
+                      typeof(IRequest<>),
+                      // the generated tracking properties carry System.Text.Json's JsonConverter attribute
+                      typeof(System.Text.Json.JsonSerializer)
                   )
                  .AddSources(
                       @"

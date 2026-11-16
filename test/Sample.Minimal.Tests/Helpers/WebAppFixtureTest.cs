@@ -69,6 +69,19 @@ public abstract class WebAppFixtureTest() : LoggerTest<TestRecord>(TestRecord.Cr
     }
 
     /// <summary>
+    ///     Sends <paramref name="json" /> as a patch to <paramref name="path" /> on the test server, and returns its status and its body: for
+    ///     a body the generated client can't write, which leaves <see langword="null" /> properties out.
+    /// </summary>
+    protected async Task<(System.Net.HttpStatusCode Status, System.Text.Json.Nodes.JsonObject? Body)> PatchJson(string path, string json)
+    {
+        using var http = AlbaHost.Server.CreateClient();
+        using var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        using var response = await http.PatchAsync(new Uri(path, UriKind.Relative), content);
+        var body = await response.Content.ReadAsStringAsync();
+        return (response.StatusCode, body.Length > 0 ? System.Text.Json.Nodes.JsonNode.Parse(body) as System.Text.Json.Nodes.JsonObject : null);
+    }
+
+    /// <summary>
     ///     Runs a request that has to fail, and returns its status and its problem details.
     /// </summary>
     protected static async Task<(System.Net.HttpStatusCode Status, TProblem? Problem)> Failure<TProblem>(Func<Task> request)

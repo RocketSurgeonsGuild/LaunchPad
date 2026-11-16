@@ -4,8 +4,7 @@ using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Restful.Tests.Helpers;
 
-// the filter's own enum: .NET 11 documents a query parameter's enum inline, with the C# names, rather than as a reference to RocketType
-using RocketType = Sample.Restful.Tests.Client.RocketType3;
+using RocketType = Sample.Restful.Tests.Client.RocketType;
 
 namespace Sample.Restful.Tests.Rockets;
 

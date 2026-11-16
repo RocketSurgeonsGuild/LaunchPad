@@ -1,91 +1,6 @@
 ﻿{
   components: {
     schemas: {
-      AssignedOfdouble: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            format: double,
-            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
-            type: [
-              number,
-              string
-            ]
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
-      AssignedOfOffsetDateTime: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            oneOf: [
-              {
-                type: null
-              },
-              {
-                $ref: #/components/schemas/OffsetDateTime
-              }
-            ]
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
-      AssignedOfRocketId: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            $ref: #/components/schemas/RocketId
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
-      AssignedOfRocketType: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            $ref: #/components/schemas/RocketType
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
-      AssignedOfstring: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            type: [
-              null,
-              string
-            ]
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
       ConflictProblem: {
         allOf: [
           {
@@ -208,25 +123,52 @@
         description: The patch request,
         properties: {
           actualLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
           },
           id: {
             $ref: #/components/schemas/LaunchRecordId
           },
           partner: {
-            $ref: #/components/schemas/AssignedOfstring
+            type: string
           },
           payload: {
-            $ref: #/components/schemas/AssignedOfstring
+            type: string
           },
           payloadWeightKg: {
-            $ref: #/components/schemas/AssignedOfdouble
+            format: double,
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              null,
+              number,
+              string
+            ]
           },
           rocketId: {
-            $ref: #/components/schemas/AssignedOfRocketId
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/RocketId
+              }
+            ]
           },
           scheduledLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
           }
         },
         required: [
@@ -293,10 +235,17 @@
             $ref: #/components/schemas/RocketId
           },
           serialNumber: {
-            $ref: #/components/schemas/AssignedOfstring
+            type: string
           },
           type: {
-            $ref: #/components/schemas/AssignedOfRocketType
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/RocketType
+              }
+            ]
           }
         },
         type: object
@@ -565,11 +514,7 @@
             in: query,
             name: rocketType,
             schema: {
-              enum: [
-                Falcon9,
-                FalconHeavy,
-                AtlasV
-              ]
+              $ref: #/components/schemas/RocketType
             }
           }
         ],
@@ -990,11 +935,7 @@
             in: query,
             name: rocketType,
             schema: {
-              enum: [
-                Falcon9,
-                FalconHeavy,
-                AtlasV
-              ]
+              $ref: #/components/schemas/RocketType
             }
           }
         ],
