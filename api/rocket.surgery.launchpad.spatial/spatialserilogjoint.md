@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Spatial](/LaunchPad/api/rocket.surgery.launchpad.spatial.md)
-- Version: `2.0.1-beta.384`
+- Version: `2.0.1-beta.386`
 - Namespace: `Rocket.Surgery.LaunchPad.Spatial.Joints`
 - Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `ISerilogJoint`

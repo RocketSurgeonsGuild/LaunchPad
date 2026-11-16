@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Hosting
 
 - Package: `Rocket.Surgery.LaunchPad.Hosting`
-- Version: `2.0.1-beta.384`
+- Version: `2.0.1-beta.386`
 - Target framework: `net11.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Hosting](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Hosting)
 

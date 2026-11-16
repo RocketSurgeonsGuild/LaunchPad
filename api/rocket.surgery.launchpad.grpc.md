@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Grpc
 
 - Package: `Rocket.Surgery.LaunchPad.Grpc`
-- Version: `2.0.1-beta.384`
+- Version: `2.0.1-beta.386`
 - Target framework: `net11.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Grpc](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Grpc)
 

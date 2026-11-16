@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `1`
 
-Registers problem details, filling in their title and type from the client error mapping of `Mvc.ApiBehaviorOptions`. Implements the `Joints.IServiceJoint`
+Registers problem details. Rocket.Surgery.LaunchPad.AspNetCore.Mvc also fills in their title and type from MVC's client error mapping. Implements the `Joints.IServiceJoint`
 
 <a id="register"></a>
 <a id="register-idovetailcontext-iservicecollection"></a>

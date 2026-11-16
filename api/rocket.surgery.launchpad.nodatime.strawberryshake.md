@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake
 
 - Package: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`
-- Version: `2.0.1-beta.384`
+- Version: `2.0.1-beta.386`
 - Target framework: `net11.0`
 - NuGet: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake)
 
