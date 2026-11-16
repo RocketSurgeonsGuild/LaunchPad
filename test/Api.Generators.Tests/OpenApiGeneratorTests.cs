@@ -49,8 +49,6 @@ public class OpenApiGeneratorTests() : GeneratorTest()
             #nullable enable
             using Mediator;
 
-            {{UnionContracts.Polyfill}}
-
             namespace Sample.Contracts
             {
                 public sealed record RocketModel(System.Guid Id, string Name)

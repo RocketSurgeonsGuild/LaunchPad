@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Riok.Mapperly.Abstractions;
 
@@ -38,12 +37,7 @@ public static partial class GetRocketLaunchRecord
     }
 
     /// <summary>What the operation answers: the launch record, or not found.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(LaunchRecordModel value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(LaunchRecordModel, NotFound);
 
     internal class GetRocketLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {

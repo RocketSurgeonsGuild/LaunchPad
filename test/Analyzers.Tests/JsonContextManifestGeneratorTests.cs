@@ -8,12 +8,11 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
     [Test]
     public async Task Should_List_Requests_Responses_Patches_And_Opted_In_Types()
     {
-        var builder = Builder
-                     .WithGenerator<JsonContextManifestGenerator>()
-                     .AddReferences(typeof(JsonContextTypeAttribute), typeof(IPropertyTracking<>), typeof(ZeroAlloc.Mediator.IRequest<>));
-        // The union types: Polyfill's on .NET 10, the BCL's on .NET 11 (see UnionGeneratorTests).
-        if (UnionGeneratorTests.PolyfillReference is { } polyfill) builder = builder.AddReferences(polyfill);
-        var result = await builder
+        var result = await Builder
+                          .WithGenerator<JsonContextManifestGenerator>()
+                          // C# 15, for the native union below
+                          .WithLanguageVersion(Microsoft.CodeAnalysis.CSharp.LanguageVersion.Preview)
+                          .AddReferences(typeof(JsonContextTypeAttribute), typeof(IPropertyTracking<>), typeof(ZeroAlloc.Mediator.IRequest<>))
                           .AddSources(
                                """
                                #nullable enable
@@ -48,14 +47,7 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
                                    {
                                        public record Request(System.Guid Id, string Name) : IRequest<Result>;
 
-                                       [System.Runtime.CompilerServices.Union]
-                                       public readonly struct Result
-                                       {
-                                           public Result(RocketModel value) { }
-                                           public Result(NotFound value) { }
-                                           public Result(RocketConflict value) { }
-                                           public object? Value => null;
-                                       }
+                                       public union Result(RocketModel, NotFound, RocketConflict);
                                    }
 
                                    [IncludeInJsonContext]

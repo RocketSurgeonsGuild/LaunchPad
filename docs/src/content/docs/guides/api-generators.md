@@ -289,8 +289,7 @@ their parameters, bodies and responses to ApiExplorer, so OpenAPI documents them
 ### Union responses
 
 A handler can return a union response, its value case and its error cases, instead of throwing (ADR-0006). A union is a C# 15 union: a
-`union` declaration, LaunchPad's portable `[Union] partial struct` (see the [union types design](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/design/union-types.md)),
-or the same shape written by hand. The generators know it by `System.Runtime.CompilerServices.UnionAttribute` or `IUnion`. Its case types
+`union` declaration, or the same shape written by hand (see the [union types design](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/design/union-types.md)). The generators know it by `System.Runtime.CompilerServices.UnionAttribute` or `IUnion`. Its case types
 are the parameter types of its public one-parameter constructors. An error case is known by its name or by `[ApiError]`; the value case is
 the first case that is neither, and a union has exactly one.
 

@@ -3,11 +3,10 @@
 <PropertyGroup>
 <LaunchPadDovetailSdkVersion Condition="'$(LaunchPadDovetailSdkVersion)' == ''">{DovetailVersion}</LaunchPadDovetailSdkVersion>
 <LaunchPadVersion Condition="'$(LaunchPadVersion)' == ''">{LaunchPadVersion}</LaunchPadVersion>
-<LaunchPadPolyfillVersion Condition="'$(LaunchPadPolyfillVersion)' == ''">11.4.5</LaunchPadPolyfillVersion>
 <LaunchPadKiotaVersion Condition="'$(LaunchPadKiotaVersion)' == ''">1.38.0</LaunchPadKiotaVersion>
 <LaunchPadKiotaBundleVersion Condition="'$(LaunchPadKiotaBundleVersion)' == ''">2.1.6</LaunchPadKiotaBundleVersion>
 <LaunchPadRefitterVersion Condition="'$(LaunchPadRefitterVersion)' == ''">2.3.1</LaunchPadRefitterVersion>
 <LaunchPadRefitVersion Condition="'$(LaunchPadRefitVersion)' == ''">16.4.0</LaunchPadRefitVersion>
-<LaunchPadMicrosoftExtensionsHttpVersion Condition="'$(LaunchPadMicrosoftExtensionsHttpVersion)' == ''">10.0.15</LaunchPadMicrosoftExtensionsHttpVersion>
+<LaunchPadMicrosoftExtensionsHttpVersion Condition="'$(LaunchPadMicrosoftExtensionsHttpVersion)' == ''">11.0.0</LaunchPadMicrosoftExtensionsHttpVersion>
 </PropertyGroup>
 </Project>

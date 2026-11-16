@@ -76,13 +76,9 @@ _Avoid_: Meta-package, bundle
 One of the types a union response can hold: its value case or one of its error cases.
 _Avoid_: Variant, arm, branch
 
-**Portable union**:
-A union declared so that it compiles on every supported .NET and C# version, and becomes a native union by changing only its declaration.
-_Avoid_: Generated union, polyfilled union
-
 **Native union**:
-A union declared with the C# language's own union syntax.
-_Avoid_: Built-in union
+A union declared with the C# language's own union syntax, `union X(A, B);`. Every LaunchPad union is one, or a hand-written custom union of the same shape.
+_Avoid_: Built-in union, portable union (the `[Union] partial struct` form LaunchPad had before it targeted .NET 11 only), generated union, polyfilled union
 
 **Problem**:
 One of LaunchPad's standard error cases (not found, invalid, unprocessable, unauthorized, forbidden, conflict), which carries the details every transport writes into its error shape.

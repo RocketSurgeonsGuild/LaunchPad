@@ -1,0 +1,28 @@
+<Project>
+    <!--
+        LaunchPad targets .NET 11 and later: its packages are built for net11.0 only, and its unions are C# 15 unions. A project on an older
+        .NET (or .NET Framework) that applies a LaunchPad SDK stops here, with an error that names the minimum, instead of failing restore
+        with NuGet's NU1202 for every LaunchPad package. A .NET Standard library is left alone: it can't use the LaunchPad packages, and the
+        SDK adds none to it, but it can still sit in a solution that applies the SDK to every project.
+
+        The check is a version comparison (IsTargetFrameworkCompatible), never an equality, so .NET 12 and later pass. It runs per target
+        framework, before restore collects the package references and before the build checks its configuration.
+
+        Registered through CustomAfterMicrosoftCommonTargets by Rocket.Surgery.LaunchPad.Sdk.props, for both LaunchPad SDKs.
+    -->
+    <PropertyGroup>
+        <LaunchPadMinimumTargetFramework>net11.0</LaunchPadMinimumTargetFramework>
+    </PropertyGroup>
+    <Target
+        Name="_LaunchPadCheckTargetFramework"
+        BeforeTargets="CollectPackageReferences;_CheckForInvalidConfigurationAndPlatform"
+        Condition="'$(TargetFramework)' != ''
+               and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETStandard'
+               and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(LaunchPadMinimumTargetFramework)'))"
+    >
+        <Error
+            Code="LPADSDK0001"
+            Text="LaunchPad requires $(LaunchPadMinimumTargetFramework) or later, and $(MSBuildProjectName) targets $(TargetFramework). Target $(LaunchPadMinimumTargetFramework) or later, or remove the LaunchPad SDK from the project."
+        />
+    </Target>
+</Project>

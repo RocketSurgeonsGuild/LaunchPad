@@ -6,7 +6,10 @@
     -->
     <Import Project="$(MSBuildThisFileDirectory)../../../Directory.Build.props" />
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <!--
+            One framework, the oldest, which every framework of test/Api.Functional.Tests can reference.
+        -->
+        <TargetFramework>$(LaunchPadOldestTargetFramework)</TargetFramework>
         <IsPackable>false</IsPackable>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <AnalysisMode>Default</AnalysisMode>

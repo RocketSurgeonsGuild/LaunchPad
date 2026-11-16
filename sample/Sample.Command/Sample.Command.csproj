@@ -7,7 +7,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <!-- Joinery.Dovetail.Hosting declares the ConsoleApp joint (IConsoleAppJoint), what Joinery.Dovetail.Sdk.Console turns on -->
         <DovetailConsoleApp>true</DovetailConsoleApp>
         <!-- Program.cs is written by hand, so the tests can run the application in-process with their own output and configuration -->

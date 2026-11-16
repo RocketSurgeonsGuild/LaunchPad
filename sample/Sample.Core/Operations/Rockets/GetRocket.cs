@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Riok.Mapperly.Abstractions;
 
@@ -28,12 +27,7 @@ public static partial class GetRocket
     }
 
     /// <summary>What the operation answers: the rocket, or not found.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(RocketModel value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(RocketModel, NotFound);
 
     internal class GetRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {

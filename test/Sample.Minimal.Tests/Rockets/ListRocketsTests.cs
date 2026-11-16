@@ -4,7 +4,8 @@ using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Minimal.Tests.Helpers;
 
-using RocketType = Sample.Minimal.Tests.Client.RocketType;
+// the filter's own enum: .NET 11 documents a query parameter's enum inline, with the C# names, rather than as a reference to RocketType
+using RocketType = Sample.Minimal.Tests.Client.RocketType3;
 
 namespace Sample.Minimal.Tests.Rockets;
 

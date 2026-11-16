@@ -26,4 +26,9 @@
     <PropertyGroup>
         <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.targets</CustomAfterMicrosoftCommonTargets>
     </PropertyGroup>
+
+    <!-- The minimum target framework: an older .NET stops with a clear error (Rocket.Surgery.LaunchPad.TargetFramework.targets). -->
+    <PropertyGroup>
+        <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.TargetFramework.targets</CustomAfterMicrosoftCommonTargets>
+    </PropertyGroup>
 </Project>

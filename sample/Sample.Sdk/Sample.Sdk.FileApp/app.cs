@@ -8,7 +8,7 @@
 //     registers the NodaTime clock.
 // Its one #:package directive is the health checks, which LaunchPad.Hosting's health check joint is written into the app for.
 #:sdk Rocket.Surgery.LaunchPad.Sdk@0.0.0-sample
-#:package Microsoft.Extensions.Diagnostics.HealthChecks@10.0.14
+#:package Microsoft.Extensions.Diagnostics.HealthChecks@11.0.0
 // The namespace Dovetail generates ConfigureDovetail() in; a file-based app would otherwise take it from the file name.
 #:property RootNamespace=Sample.Sdk.FileApp
 

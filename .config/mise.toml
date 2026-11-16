@@ -1,10 +1,6 @@
 [tools]
 # The SDK comes first: Renovate's custom managers (.github/renovate.json) read the first entry as the SDK and the runtime entry separately.
-# The ASP.NET Core runtime carries the .NET runtime too, so the net10.0 web tests run on ASP.NET Core 10 rather than rolling forward to 11.
-dotnet = [
-  { version = "11.0.100" },
-  { version = "10.0.15", runtime = "aspnetcore" },
-]
+dotnet = [{ version = "11.0.100" }]
 "github:microsoft/apm" = { version = "v0.35.1", bin = "apm" }
 "github:eljulians/skillfile" = { version = "v1.9.2", bin = "skillfile" }
 hk = "2.12.0"
@@ -49,7 +45,7 @@ prereleases = true
 [env]
 HK_MISE = 1
 # StrawberryShake.Server runs its code generator (tools/net9/dotnet-graphql.dll, Sample.Graphql.Tests) on .NET 9, which mise does not
-# install; this lets it run on the .NET 10 runtime. Everything else targets net10.0 or net11.0 and finds its own runtime.
+# install; this lets it run on the newest runtime installed. Everything else targets LaunchPad's own frameworks and finds its own runtime.
 DOTNET_ROLL_FORWARD = "Major"
 npm_config_cache = "{{env.HOME}}/.local/share/mise/npm-cache"
 # Microsoft Roslyn language server (Microsoft.CodeAnalysis.LanguageServer), installed by the

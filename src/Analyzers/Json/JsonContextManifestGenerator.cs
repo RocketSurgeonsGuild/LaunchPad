@@ -95,7 +95,10 @@ public sealed class JsonContextManifestGenerator : IIncrementalGenerator
             // transport's error shape. LaunchPad's standard problems need no listing; a custom error case's members do.
             if (UnionCases(response) is { } cases)
             {
-                foreach (var unionCase in cases.Where(c => !IsUnit(c) && !IsProblem(c))) Add(unionCase);
+                foreach (var unionCase in cases)
+                {
+                    if (!IsUnit(unionCase) && !IsProblem(unionCase)) Add(unionCase);
+                }
             }
             else if (!IsUnit(response))
             {
@@ -140,8 +143,9 @@ public sealed class JsonContextManifestGenerator : IIncrementalGenerator
             return null;
         }
 
+        // Not IsImplicitlyDeclared: the case constructors of a native `union` declaration are, while it is in source.
         var cases = named.InstanceConstructors
-                         .Where(c => c is { DeclaredAccessibility: Accessibility.Public, IsImplicitlyDeclared: false, Parameters.Length: 1, IsGenericMethod: false })
+                         .Where(c => c is { DeclaredAccessibility: Accessibility.Public, Parameters.Length: 1, IsGenericMethod: false })
                          .Where(c => c.Parameters[0].RefKind is RefKind.None or RefKind.In)
                          .Select(c => c.Parameters[0].Type)
                          .ToArray();

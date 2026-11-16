@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Riok.Mapperly.Abstractions;
 
@@ -28,12 +27,7 @@ public static partial class DeleteRocket
     }
 
     /// <summary>What the operation answers: nothing, or not found.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(Unit value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(Unit, NotFound);
 
     internal class DeleteRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {

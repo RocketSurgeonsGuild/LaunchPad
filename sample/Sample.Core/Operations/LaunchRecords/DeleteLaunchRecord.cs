@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Riok.Mapperly.Abstractions;
 
@@ -28,13 +27,7 @@ public static partial class DeleteLaunchRecord
     }
 
     /// <summary>What the operation answers: nothing, not found, or forbidden.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(Unit value);
-        public partial Result(NotFound value);
-        public partial Result(Forbidden value);
-    }
+    public readonly union Result(Unit, NotFound, Forbidden);
 
     [UsedImplicitly]
     internal class DeleteLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>

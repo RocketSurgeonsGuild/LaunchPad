@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription>ZeroAlloc.Validation for LaunchPad Blazor forms: a ZeroAllocValidator component that reports the registered validator's failures to the form.</PackageDescription>
         <PackageTags>$(PackageTags);zeroalloc;validation;blazor</PackageTags>
         <!--

@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 
 using Riok.Mapperly.Abstractions;
 
@@ -68,12 +67,7 @@ public static partial class EditRocket
     }
 
     /// <summary>What the operation answers: the updated rocket, or not found.</summary>
-    [Union]
-    public readonly partial struct Result
-    {
-        public partial Result(RocketModel value);
-        public partial Result(NotFound value);
-    }
+    public readonly union Result(RocketModel, NotFound);
 
     // The patch is handled here rather than by the generated patch handler, whose GetRequest has to return a request and so cannot answer
     // NotFound: a missing rocket answers NotFound, and otherwise the patch is applied to the rocket's current values and sent through the mediator.
@@ -92,7 +86,7 @@ public static partial class EditRocket
         public async ValueTask<Result> Handle(PatchRequest request, CancellationToken cancellationToken)
         {
             return await FindRocket(request.Id, cancellationToken) is not { } rocket
-                ? (Result)new NotFound($"Rocket {request.Id} was not found")
+                ? new NotFound($"Rocket {request.Id} was not found")
                 : await mediator.Send(request.ApplyChanges(MapRequest(rocket)), cancellationToken).ConfigureAwait(false);
         }
 
