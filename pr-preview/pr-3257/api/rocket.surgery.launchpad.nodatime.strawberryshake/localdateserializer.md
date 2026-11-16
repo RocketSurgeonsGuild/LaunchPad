@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](/LaunchPad/pr-preview/pr-3257/api/rocket.surgery.launchpad.nodatime.strawberryshake.md)
-- Version: `2.0.1-pr.1213`
+- Version: `2.0.1-pr.1227`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`
 - Target framework: `net11.0`
 - Inherits: `NodaTimeStringScalarSerializer<LocalDate>`

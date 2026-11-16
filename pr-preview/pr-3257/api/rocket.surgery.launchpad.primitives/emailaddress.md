@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3257/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1213`
+- Version: `2.0.1-pr.1227`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
 - Implements: `IStrongType<EmailAddress, string>`, `IComparable<EmailAddress>`, `IConvertible`, `IEquatable<EmailAddress>`, `IParsable<EmailAddress>`, `ISpanParsable<EmailAddress>`, `IEqualityOperators<EmailAddress, EmailAddress, bool>`

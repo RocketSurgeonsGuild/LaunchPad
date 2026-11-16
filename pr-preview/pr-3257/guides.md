@@ -1,25 +1,26 @@
 # Getting Started
 
-An application uses LaunchPad through the [LaunchPad SDK](../concepts/launchpad-sdk/). It names the SDK once, and the SDK adds
+An application uses LaunchPad through a [LaunchPad SDK](../concepts/launchpad-sdk/). It names the SDK once, in place of the
+Microsoft SDK it would otherwise name, and the SDK adds
 the LaunchPad and Dovetail packages that match the project: its [host model](../concepts/host-models/) and the libraries it
 references directly.
 
 LaunchPad requires .NET 11 or later: the project targets `net11.0` (or a later framework) and builds with the .NET 11 SDK or
 later. On an older framework the SDK stops with `LPADSDK0001`, which names the minimum.
 
-In the snippets, replace `1.0.0` with the version of `Rocket.Surgery.LaunchPad.Sdk` you use.
+In the snippets, replace `1.0.0` with the version of LaunchPad you use. [Which SDK do I use](../concepts/launchpad-sdk/#which-sdk-do-i-use)
+lists an SDK for each Microsoft SDK.
 
 ## A worker or console application
 
-Add the SDK next to the one the project already names:
+Use `Rocket.Surgery.LaunchPad.Sdk.Worker`, which is `Microsoft.NET.Sdk.Worker` with LaunchPad, as the project's SDK:
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Worker/1.0.0">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
-  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
   </ItemGroup>
@@ -39,16 +40,16 @@ The SDK finds a generic host (`HostApplication`) and adds `Joinery.Dovetail.Host
 `Rocket.Surgery.LaunchPad.Hosting`, whose [templates](../concepts/templates/) bring health checks, logging and telemetry Joints
 when their libraries are referenced.
 
-For a command line application, use the console SDK instead: [Console applications](./console-apps/).
+A project that keeps `Microsoft.NET.Sdk` names `<Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />` next to it
+instead, and gets the same. For a command line application, use the console SDK: [Console applications](./console-apps/).
 
 ## An ASP.NET Core application
 
-The same line in a `Microsoft.NET.Sdk.Web` project gives the `WebApplication` host model, which also gets
-`Rocket.Surgery.LaunchPad.AspNetCore`:
+`Rocket.Surgery.LaunchPad.Sdk.Web` is `Microsoft.NET.Sdk.Web` with LaunchPad. It gives the `WebApplication` host model, which
+also gets `Rocket.Surgery.LaunchPad.AspNetCore`:
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk.Web">
-  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/1.0.0">
 </Project>
 ```
 
@@ -81,6 +82,8 @@ and pin its version in `global.json`:
 ```
 
 Libraries get nothing from the SDK until they reference a technology LaunchPad has a package for: a library has no host model.
+A web project below that file can still name `Rocket.Surgery.LaunchPad.Sdk.Web` as its SDK: it doesn't apply LaunchPad a second
+time.
 
 ## A file-based app
 

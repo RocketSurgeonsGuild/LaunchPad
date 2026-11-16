@@ -46,8 +46,8 @@ services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
 
 `SystemTextJsonJoint` (in `Rocket.Surgery.LaunchPad.Foundation`) builds the `TypeInfoResolverChain` of every `JsonSerializerOptions` the
 service provider creates from the registered resolvers. `SystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore`) copies those
-options into the ASP.NET Core HTTP and MVC JSON options, so a context registered once reaches Minimal APIs, controllers, problem details and
-the generated API endpoints.
+options into the ASP.NET Core HTTP JSON options, and `MvcSystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`) into MVC's, so a
+context registered once reaches Minimal APIs, controllers, problem details and the generated API endpoints.
 
 The chain, first to last:
 
@@ -87,38 +87,47 @@ to turn the check on or off for any project. See [API generators](../api-generat
 
 ## Package compatibility
 
-These packages set `IsAotCompatible`: their own code has no trimming or native AOT warning, and where reflection can't be avoided the API
-says so with `[RequiresUnreferencedCode]`.
+What works under native AOT lives in its own packages. A package that sets `IsAotCompatible` has no trimming or native AOT warning in its
+own code; where a dependency can't be AOT compatible, the part that needs it is in a separate package named for what it is, which references
+the AOT compatible one. A package whose dependencies aren't usable under native AOT doesn't claim it.
 
-| Package                                    | Notes                                                                                                    |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.Foundation`      |                                                                                                          |
-| `Rocket.Surgery.LaunchPad.Primitives`      |                                                                                                          |
-| `Rocket.Surgery.LaunchPad.NodaTime`        |                                                                                                          |
-| `Rocket.Surgery.LaunchPad.Spatial`         |                                                                                                          |
-| `Rocket.Surgery.LaunchPad.AspNetCore`      | `WithMvc` requires unreferenced code: it adds MVC with `AddMvc` when nothing has. `WithMvcCore` doesn't. |
-| `Rocket.Surgery.LaunchPad.Grpc`            |                                                                                                          |
-| `Rocket.Surgery.LaunchPad.HotChocolate`    | `ConfigureStronglyTypedId` takes the conversions to and from the id's value instead of finding them.     |
-| `Rocket.Surgery.LaunchPad.StrawberryShake` |                                                                                                          |
+| Package                                    | Native AOT | Notes                                                                                                                                                                                        |
+| ------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Rocket.Surgery.LaunchPad.Foundation`      | yes        |                                                                                                                                                                                              |
+| `Rocket.Surgery.LaunchPad.Primitives`      | yes        |                                                                                                                                                                                              |
+| `Rocket.Surgery.LaunchPad.AspNetCore`      | yes        | Minimal APIs, problem details, OpenAPI, the HTTP JSON options and Serilog request logging.                                                                                                   |
+| `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`  | **no**     | MVC Core with application parts, the MVC API explorer, MVC's JSON options and client error mapping, Serilog filters for actions and pages. ASP.NET Core doesn't support MVC with native AOT. |
+| `Rocket.Surgery.LaunchPad.Grpc`            | yes        | ASP.NET Core gRPC supports native AOT. gRPC services generated code first from operation hosts use protobuf-net's runtime model, which doesn't.                                              |
+| `Rocket.Surgery.LaunchPad.StrawberryShake` | yes        |                                                                                                                                                                                              |
+| `Rocket.Surgery.LaunchPad.NodaTime`        | yes        | LaunchPad's own System.Text.Json converters for every NodaTime type; NodaTime.Serialization.SystemTextJson isn't AOT compatible yet.                                                         |
+| `Rocket.Surgery.LaunchPad.Spatial`         | yes        | Geometries only: GeoJSON features aren't supported under native AOT (below).                                                                                                                 |
+| `Rocket.Surgery.LaunchPad.HotChocolate`    | **no**     | Hot Chocolate's server isn't usable under native AOT yet (below).                                                                                                                            |
 
-`test/Api/Aot/Packages.Aot` roots these assemblies and publishes with `PublishAot` on every pull request that changes them. It fails on a
-warning from LaunchPad's code, and on a dependency warning that `test/Api/Aot/Packages.Aot/dependency-warnings.txt` doesn't list.
+`test/Api/Aot/Packages.Aot` roots the AOT compatible packages and publishes them with `PublishAot` on every pull request that changes them.
+It fails on any warning except the dependency warnings `test/Api/Aot/Packages.Aot/dependency-warnings.txt` lists, which are the ones below.
 
-`AspNetCoreJoint` adds MVC's API explorer, which requires unreferenced code because it describes controllers, found by reflection. It
-describes nothing in an application without controllers, and a native AOT application can't have them, so the joint suppresses that one
-warning; Minimal APIs are described by the endpoint API explorer, which is trim safe.
+### What isn't supported under native AOT
 
-### Dependency warnings
+**MVC.** ASP.NET Core doesn't support controllers, Razor Pages or views with native AOT. Reference `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`
+only in an application that uses them; `Rocket.Surgery.LaunchPad.AspNetCore` alone gives Minimal APIs, problem details and OpenAPI.
 
-An application that references these packages and publishes with native AOT gets the warnings of the dependencies below. Each comes from a
-library LaunchPad depends on, not from LaunchPad's code, so LaunchPad can't fix it; the publish reports them, by default once per assembly
-(IL2104 for trimming, IL3053 for native AOT; set `TrimmerSingleWarn` to `false` to see each one).
+**Hot Chocolate.** Most Hot Chocolate packages declare `IsAotCompatible`, but `HotChocolate.Types` still produces trimming and AOT warnings,
+`HotChocolate.Data` (filtering, sorting, projections) and `GreenDonut` declare nothing, and a native AOT server fails at startup unless
+`HotChocolate.Types` is kept from trimming
+([ChilliCream/graphql-platform#10566](https://github.com/ChilliCream/graphql-platform/issues/10566)). `Rocket.Surgery.LaunchPad.HotChocolate`
+uses `HotChocolate.Data` for its strongly typed id filters, so it doesn't claim `IsAotCompatible`. `ConfigureStronglyTypedId` itself uses no
+reflection.
 
-| Package                                 | Dependency                                                                                                               | What warns                                                                                                                                                                                                                                                                                   | What to expect                                                                                                                                                                                                                                                                                                                   |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.AspNetCore`   | MVC (`Microsoft.AspNetCore.Mvc.*`, and `Microsoft.AspNetCore.Components.Endpoints`, which MVC's view features reference) | `AspNetCoreJoint` registers MVC Core and the API explorer, and `SerilogRequestLoggingJoint` adds MVC action and page filters. MVC's controller discovery, model binding, formatters and views use reflection (IL2026, IL3050), and related assemblies read `Assembly.Location` (IL3000).     | Minimal APIs, problem details, OpenAPI and the generated API endpoints work. Controllers, Razor Pages and views don't: ASP.NET Core doesn't support MVC with native AOT. The warnings are reported even when the application has no controllers.                                                                                 |
-| `Rocket.Surgery.LaunchPad.HotChocolate` | Hot Chocolate (`HotChocolate.Types`, `HotChocolate.Data`, `GreenDonut`)                                                  | Hot Chocolate builds its schema by reflecting over the runtime types (`DefaultTypeInspector`), makes generic types and methods at runtime (`MakeGenericType`, `MakeGenericMethod`), creates objects with `Activator`, and reads XML documentation from `Assembly.Location` (IL3000, IL3002). | Hot Chocolate's schema building isn't annotated for trimming. A schema may lose members the trimmer removed, or fail at startup when a generic instantiation has no native code. Test the whole schema in the published application before relying on it, or don't trim a GraphQL server.                                        |
-| `Rocket.Surgery.LaunchPad.Spatial`      | `NetTopologySuite.IO.GeoJSON4STJ`                                                                                        | The GeoJSON converters for features, feature collections and attribute tables serialize their members with `JsonSerializer` and the options they are given (IL2026, IL3050).                                                                                                                 | Geometries are written by the converters themselves. Features, feature collections and attribute tables go back to `JsonSerializer` for their attributes and geometry, which works when a JSON context in the options knows the attribute values' types; an attribute of a type no context knows throws `NotSupportedException`. |
-| `Rocket.Surgery.LaunchPad.NodaTime`     | `NodaTime.Serialization.SystemTextJson`                                                                                  | The converters for composite values (`Interval`, `DateInterval`) read and write their parts with `JsonSerializerOptions.GetConverter(Type)` (IL2026, IL3050).                                                                                                                                | `LaunchPad.NodaTime` adds a converter for every NodaTime type to the options, so `GetConverter` finds the part's converter there rather than building one by reflection. The analyzer can't see that, so the warning stays.                                                                                                      |
+**GeoJSON features.** `Rocket.Surgery.LaunchPad.Spatial` adds NetTopologySuite.IO.GeoJSON4STJ's converters. Its geometry converters are AOT
+safe; its converters for `IFeature`, `FeatureCollection` and `IAttributesTable` serialize the id, the attributes and the geometry with
+`JsonSerializer` by their runtime type, so a native AOT publish warns (IL2104, IL3053 for `NetTopologySuite.IO.GeoJSON4STJ`). Under native AOT
+they only work for values a JSON context in the options knows, and anything else throws `NotSupportedException`. Serialize geometries, or a
+type of your own that holds one, rather than features. No System.Text.Json GeoJSON library is AOT compatible today.
 
-`Rocket.Surgery.LaunchPad.Grpc` and `Rocket.Surgery.LaunchPad.StrawberryShake` add no dependency warning of their own beyond ASP.NET Core's.
+**Code first gRPC services.** The gRPC services LaunchPad generates from operation hosts serialize with protobuf-net's runtime model, which
+reflects over contracts and emits IL, so they don't work under native AOT. `Rocket.Surgery.LaunchPad.Grpc` itself is AOT compatible.
+
+The NodaTime converters are LaunchPad's own until NodaTime.Serialization.SystemTextJson supports native AOT
+([nodatime/nodatime.serialization#121](https://github.com/nodatime/nodatime.serialization/issues/121)): its `Interval` and `DateInterval`
+converters look up the `Instant` and `LocalDate` converters with `JsonSerializerOptions.GetConverter(Type)`, which requires unreferenced and
+dynamic code. LaunchPad's write the same JSON.
