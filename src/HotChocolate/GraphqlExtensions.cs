@@ -59,6 +59,7 @@ public static class GraphqlExtensions
     )
         where TSchemaType : ITypeDefinition
     {
+        ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(toValue);
         ArgumentNullException.ThrowIfNull(fromValue);
         builder.AddTypeConverter<TStrongType, TValue>(value => toValue(value));
