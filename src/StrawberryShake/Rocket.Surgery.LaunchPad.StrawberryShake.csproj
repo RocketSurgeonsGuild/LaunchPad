@@ -3,7 +3,7 @@
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription>Base classes for StrawberryShake GraphQL client scalar serializers: EnumScalarSerializer for enums sent as integers, and JsonElementScalarSerializer, which reads and writes a scalar with the application's System.Text.Json options.</PackageDescription>
         <PackageTags>$(PackageTags);strawberryshake;graphql;graphql-client;scalars</PackageTags>
-        <IsTrimmable>false</IsTrimmable>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="StrawberryShake.Core" />

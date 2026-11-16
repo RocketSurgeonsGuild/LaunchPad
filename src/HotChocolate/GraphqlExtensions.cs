@@ -1,11 +1,7 @@
-using System.Linq.Expressions;
-using System.Reflection;
-
 using HotChocolate;
 using HotChocolate.Data.Filters;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types;
-using HotChocolate.Utilities;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -42,76 +38,33 @@ public static class GraphqlExtensions
     }
 
     /// <summary>
-    ///     Configures a generated strongly typed id type with the given graphql schema type
+    ///     Configures a strongly typed id with the GraphQL scalar type of its underlying value: converts between the id and its value, binds the
+    ///     id to the scalar type, and filters it as that scalar.
     /// </summary>
     /// <remarks>
-    ///     Adds converters, binding and filters.
+    ///     The conversions are given rather than found by reflection, so this is trim and native AOT safe:
+    ///     <c>builder.ConfigureStronglyTypedId&lt;RocketId, Guid, UuidType&gt;(id =&gt; id.Value, value =&gt; new(value))</c>.
     /// </remarks>
-    /// <param name="builder"></param>
-    /// <typeparam name="TStrongType"></typeparam>
-    /// <typeparam name="TSchemaType"></typeparam>
-    /// <returns></returns>
-    public static IRequestExecutorBuilder ConfigureStronglyTypedId<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)]
-    TStrongType,
-        TSchemaType>(this IRequestExecutorBuilder builder)
+    /// <param name="builder">The request executor builder.</param>
+    /// <param name="toValue">Gets the underlying value of an id.</param>
+    /// <param name="fromValue">Creates an id from its underlying value.</param>
+    /// <typeparam name="TStrongType">The strongly typed id.</typeparam>
+    /// <typeparam name="TValue">The underlying value of the id.</typeparam>
+    /// <typeparam name="TSchemaType">The GraphQL scalar type of the underlying value.</typeparam>
+    /// <returns>The builder.</returns>
+    public static IRequestExecutorBuilder ConfigureStronglyTypedId<TStrongType, TValue, TSchemaType>(
+        this IRequestExecutorBuilder builder,
+        Func<TStrongType, TValue> toValue,
+        Func<TValue, TStrongType> fromValue
+    )
         where TSchemaType : ITypeDefinition
     {
-        AddTypeConversion<TStrongType>(builder);
+        ArgumentNullException.ThrowIfNull(toValue);
+        ArgumentNullException.ThrowIfNull(fromValue);
+        builder.AddTypeConverter<TStrongType, TValue>(value => toValue(value));
+        builder.AddTypeConverter<TValue, TStrongType>(value => fromValue(value));
         builder.BindRuntimeType<TStrongType, TSchemaType>();
         builder.AddConvention<IFilterConvention, StronglyTypedIdFilterConventionExtension<TStrongType, TSchemaType>>();
         return builder;
     }
-
-    [UnconditionalSuppressMessage(
-        "Trimming",
-        "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
-        Justification = "only working with public properties and constructors"
-    )]
-    private static void AddTypeConversion<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)]
-    TStrongType>(
-        IRequestExecutorBuilder builder
-    )
-    {
-        // ReSharper disable once NullableWarningSuppressionIsUsed
-        var underlyingType = typeof(TStrongType).GetProperty("Value")!.PropertyType;
-
-        {
-            var value = Expression.Parameter(typeof(TStrongType), "value");
-            var delegateType = typeof(ChangeType<,>).MakeGenericType(typeof(TStrongType), underlyingType);
-
-            AddTypeConverterMethod
-               .MakeGenericMethod(typeof(TStrongType), underlyingType)
-               .Invoke(
-                    null,
-                    [builder, Expression.Lambda(delegateType, Expression.Property(value, "Value"), false, value).Compile()]
-                );
-        }
-
-        {
-            var value = Expression.Parameter(underlyingType, "value");
-            var delegateType = typeof(ChangeType<,>).MakeGenericType(underlyingType, typeof(TStrongType));
-
-            // ReSharper disable once NullableWarningSuppressionIsUsed
-            var constructor = typeof(TStrongType).GetConstructor([underlyingType])!;
-            AddTypeConverterMethod
-               .MakeGenericMethod(underlyingType, typeof(TStrongType))
-               .Invoke(
-                    null,
-                    [builder, Expression.Lambda(delegateType, Expression.New(constructor, value), false, value).Compile()]
-                );
-        }
-    }
-
-    // TOOD: Make a source generator for this.
-    private static readonly MethodInfo AddTypeConverterMethod = typeof(RequestExecutorBuilderExtensions)
-                                                               .GetMethods()
-                                                               .Single(
-                                                                    z => z.Name == "AddTypeConverter"
-                                                                     && z.ReturnType == typeof(IRequestExecutorBuilder)
-                                                                     && z.IsGenericMethod
-                                                                     && z.GetGenericMethodDefinition().GetGenericArguments().Length == 2
-                                                                     && z.GetParameters().Length == 2
-                                                                );
 }

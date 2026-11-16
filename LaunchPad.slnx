@@ -138,6 +138,7 @@
     <File Path="test/Api/Aot/verify.sh" />
     <Project Path="test/Api/Aot/Api.Aot.Contracts/Api.Aot.Contracts.csproj" />
     <Project Path="test/Api/Aot/Api.Aot.Server/Api.Aot.Server.csproj" />
+    <Project Path="test/Api/Aot/Packages.Aot/Packages.Aot.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/">
     <File Path="test/Api/Functional/Directory.Build.props" />

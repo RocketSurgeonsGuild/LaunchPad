@@ -26,7 +26,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Application)]
-[RequiresUnreferencedCode("Registering the MVC services requires access to the application's compiled assemblies.")]
 public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
 {
     /// <summary>
@@ -40,10 +39,7 @@ public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(services);
 
-        services
-           .AddEndpointsApiExplorer()
-           .AddMvcCore()
-           .AddApiExplorer();
+        AddApiExplorer(services.AddEndpointsApiExplorer().AddMvcCore());
         PopulateDefaultParts(
             // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
@@ -54,6 +50,16 @@ public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
                .SelectMany(GetApplicationPartAssemblies)
         );
     }
+
+    // MVC's API explorer describes controllers, which it finds by reflection; it describes nothing in an application without them. A native
+    // AOT application can't have controllers (AddControllers and AddMvc require unreferenced code), and its Minimal APIs are described by
+    // the endpoint API explorer, which is trim safe. docs/src/content/docs/guides/json-and-native-aot.md lists this suppression.
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+        Justification = "MVC's API explorer reflects over controllers only, and a trimmed application has none."
+    )]
+    private static void AddApiExplorer(IMvcCoreBuilder builder) => builder.AddApiExplorer();
 
     internal static void PopulateDefaultParts(
         ApplicationPartManager manager,
