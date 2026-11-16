@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-    <PackageDescription />
-    <PackageTags>$(PackageTags)</PackageTags>
+    <PackageDescription>Dovetail joints that set up a Hot Chocolate GraphQL server with instrumentation and an error filter, plus a Void scalar, nested type naming and ConfigureStronglyTypedId for strongly typed id scalars and filters.</PackageDescription>
+    <PackageTags>$(PackageTags);dovetail;hotchocolate;graphql;graphql-server;filtering;strongly-typed-id</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HotChocolate" />

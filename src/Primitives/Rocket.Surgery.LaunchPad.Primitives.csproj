@@ -6,7 +6,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription>Ready-made strong types (email addresses, country and currency codes, IBANs, amounts and more) built on SuperStrong.</PackageDescription>
-        <PackageTags>$(PackageTags);strong-types;superstrong</PackageTags>
+        <PackageTags>$(PackageTags);strong-types;superstrong;value-objects;primitive-obsession;domain-primitives;iban;currency;money</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
         <!-- The strong types live in Rocket.Surgery.LaunchPad.StrongTypes, under the StrongTypes folder. -->
         <RootNamespace>Rocket.Surgery.LaunchPad</RootNamespace>

@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription>ZeroAlloc.Validation for LaunchPad Blazor forms: a ZeroAllocValidator component that reports the registered validator's failures to the form.</PackageDescription>
-        <PackageTags>$(PackageTags);zeroalloc;validation;blazor</PackageTags>
+        <PackageTags>$(PackageTags);zeroalloc;zeroalloc-validation;validation;blazor;forms;editform</PackageTags>
         <!--
             ZeroAllocValidator lives in the Rocket.Surgery.LaunchPad.AspNetCore.Blazor namespace. A namespace of
             Rocket.Surgery.LaunchPad.ZeroAlloc would shadow ZeroAlloc.* in LaunchPad code.

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageDescription>Dovetail joints for options, logging, Specular service registrations, camel case System.Text.Json, and HttpClient resilience and service discovery, plus the Problem error cases of union responses and LaunchPad's source generators.</PackageDescription>
+        <PackageTags>$(PackageTags);dovetail;dependency-injection;configuration;system-text-json;aot;http-resilience;service-discovery;problem-details;discriminated-unions</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
     <ItemGroup>

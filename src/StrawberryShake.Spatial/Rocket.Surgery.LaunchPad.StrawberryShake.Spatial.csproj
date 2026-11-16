@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-    <PackageDescription />
-    <PackageTags>$(PackageTags)</PackageTags>
+    <PackageDescription>StrawberryShake serializers for NetTopologySuite geometries and GeoJSON positions and coordinates, registered by a Dovetail joint so generated GraphQL clients read and write spatial scalars as GeoJSON.</PackageDescription>
+    <PackageTags>$(PackageTags);dovetail;strawberryshake;graphql-client;nettopologysuite;geojson;spatial</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Joinery.Dovetail" />

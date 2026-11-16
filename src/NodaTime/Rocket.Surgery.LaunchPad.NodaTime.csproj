@@ -2,8 +2,8 @@
     <PropertyGroup>
         <IsAotCompatible>true</IsAotCompatible>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageDescription>NodaTime for Dovetail applications: joints that register IClock, TimeProvider and IDateTimeZoneProvider, add the NodaTime converters to System.Text.Json and destructure NodaTime values in Serilog.</PackageDescription>
+        <PackageTags>$(PackageTags);dovetail;nodatime;clock;date-time;system-text-json;serilog</PackageTags>
         <DovetailExportClassName>NodaTimeExports</DovetailExportClassName>
     </PropertyGroup>
     <ItemGroup>

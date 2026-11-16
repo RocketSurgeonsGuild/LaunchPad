@@ -15,6 +15,8 @@
         <!-- RS1038: the code fix needs Workspaces, which the command-line compiler doesn't carry. The compiler finds generators and analyzers by their
              attributes in metadata and never creates the code fix, so the assembly loads without Workspaces; only the IDE, which has it, uses the fix. -->
         <NoWarn>$(NoWarn);RS1038</NoWarn>
+        <PackageDescription>Source generators, analyzers and code fixes shipped inside Rocket.Surgery.LaunchPad.Foundation: operation hosts become minimal API endpoints, controllers, gRPC services and GraphQL fields, plus [InheritFrom], [Mutable] and JSON context manifests.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;roslyn;analyzers;minimal-api;controllers;grpc;graphql;system-text-json;aot</PackageTags>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />

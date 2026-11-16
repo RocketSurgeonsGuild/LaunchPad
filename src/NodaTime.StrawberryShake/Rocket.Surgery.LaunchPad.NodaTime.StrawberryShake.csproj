@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageDescription>StrawberryShake serializers for the NodaTime scalars Hot Chocolate defines (DateTime as OffsetDateTime, Duration, LocalDate, LocalDateTime and LocalTime), registered for generated GraphQL clients by a Dovetail joint.</PackageDescription>
+        <PackageTags>$(PackageTags);dovetail;nodatime;strawberryshake;graphql;graphql-client;scalars</PackageTags>
         <IsTrimmable>false</IsTrimmable>
         <DovetailExportClassName>NodaTimeStrawberryShakeExports</DovetailExportClassName>
     </PropertyGroup>

@@ -9,7 +9,7 @@
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <ImplicitUsings>disable</ImplicitUsings>
         <PackageDescription>MSBuild SDK for LaunchPad: chains Joinery.Dovetail.Sdk and adds the LaunchPad packages for what an application is and references</PackageDescription>
-        <PackageTags>$(PackageTags);sdk;msbuild</PackageTags>
+        <PackageTags>$(PackageTags);sdk;msbuild;msbuild-sdk;dovetail;file-based-apps</PackageTags>
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="Sdk/**" />
