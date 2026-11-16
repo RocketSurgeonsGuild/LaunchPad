@@ -35,6 +35,8 @@ internal sealed class NodaTimeJsonTypeInfoResolver : IJsonTypeInfoResolver
         [typeof(Interval?)] = CreateNullable<Interval>,
         [typeof(AnnualDate)] = Create<AnnualDate>,
         [typeof(AnnualDate?)] = CreateNullable<AnnualDate>,
+        [typeof(YearMonth)] = Create<YearMonth>,
+        [typeof(YearMonth?)] = CreateNullable<YearMonth>,
         [typeof(Period)] = Create<Period>,
         [typeof(DateInterval)] = Create<DateInterval>,
         [typeof(DateTimeZone)] = Create<DateTimeZone>,

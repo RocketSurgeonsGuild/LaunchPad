@@ -15,5 +15,3 @@ HotChocolate.Data
 GreenDonut
 # The GeoJSON converters LaunchPad.Spatial adds to System.Text.Json.
 NetTopologySuite.IO.GeoJSON4STJ
-# The NodaTime converters LaunchPad.NodaTime adds to System.Text.Json.
-NodaTime.Serialization.SystemTextJson

@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
 using NodaTime;
-using NodaTime.Serialization.SystemTextJson;
 using NodaTime.Text;
 
 namespace Rocket.Surgery.LaunchPad.NodaTime;
@@ -24,17 +23,20 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
     ///     Configure System.Text.Json with defaults for launchpad
     /// </summary>
     /// <remarks>
-    ///     Adds the NodaTime converters, and <see cref="TypeInfoResolver" /> to the options' <see cref="JsonSerializerOptions.TypeInfoResolverChain" />
-    ///     so the NodaTime types also resolve in a trimmed or native AOT application. No reflection based resolver is added: options
-    ///     that should reflect over other types need one of their own.
+    ///     Adds LaunchPad's converter for every NodaTime type, replacing any converter for it already in the options, and
+    ///     <see cref="TypeInfoResolver" /> to the options' <see cref="JsonSerializerOptions.TypeInfoResolverChain" /> so the NodaTime types
+    ///     also resolve in a trimmed or native AOT application. No reflection based resolver is added: options that should reflect over other
+    ///     types need one of their own. The converters are LaunchPad's own, not NodaTime.Serialization.SystemTextJson's, which isn't native
+    ///     AOT compatible yet (see JsonConverters.md in the package's source); the JSON is the same.
     /// </remarks>
     /// <param name="options"></param>
     /// <param name="dateTimeZoneProvider"></param>
     /// <returns></returns>
     public static JsonSerializerOptions ConfigureNodaTimeForLaunchPad(this JsonSerializerOptions options, IDateTimeZoneProvider dateTimeZoneProvider)
     {
-        options.ConfigureForNodaTime(dateTimeZoneProvider);
-        ReplaceConverter(
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(dateTimeZoneProvider);
+        var instant = ReplaceConverter(
             options.Converters,
             new SystemTextJsonCompositeNodaPatternConverter<Instant>(
                 InstantPattern.General,
@@ -42,7 +44,7 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
                 new InstantDateTimeOffsetPattern()
             )
         );
-        ReplaceConverter(
+        var localDate = ReplaceConverter(
             options.Converters,
             new SystemTextJsonCompositeNodaPatternConverter<LocalDate>(
                 LocalDatePattern.Iso,
@@ -115,18 +117,24 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
                 ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)
             )
         );
+        ReplaceConverter(options.Converters, new SystemTextJsonCompositeNodaPatternConverter<AnnualDate>(AnnualDatePattern.Iso));
+        ReplaceConverter(options.Converters, new SystemTextJsonCompositeNodaPatternConverter<YearMonth>(YearMonthPattern.Iso));
+        ReplaceConverter(options.Converters, new NodaTimeIntervalJsonConverter(instant));
+        ReplaceConverter(options.Converters, new NodaTimeDateIntervalJsonConverter(localDate));
+        ReplaceConverter(options.Converters, new NodaTimeDateTimeZoneJsonConverter(dateTimeZoneProvider));
         NodaTimeJsonTypeInfoResolver.AddTo(options);
 
         return options;
     }
 
-    private static void ReplaceConverter<T>(ICollection<JsonConverter> converters, SystemTextJsonCompositeNodaPatternConverter<T> converter)
+    private static JsonConverter<T> ReplaceConverter<T>(IList<JsonConverter> converters, JsonConverter<T> converter)
     {
-        foreach (var c in converters.Where(z => z.CanConvert(typeof(T))).ToArray())
+        for (var i = converters.Count - 1; i >= 0; i--)
         {
-            converters.Remove(c);
+            if (converters[i].CanConvert(typeof(T))) converters.RemoveAt(i);
         }
 
         converters.Add(converter);
+        return converter;
     }
 }
