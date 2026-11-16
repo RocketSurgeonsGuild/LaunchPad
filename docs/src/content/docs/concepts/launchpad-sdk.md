@@ -21,9 +21,61 @@ The LaunchPad SDK chains `Joinery.Dovetail.Sdk`, so there is no second SDK entry
 
 All of it happens while MSBuild evaluates the project, before restore. Nothing is decided at run time.
 
+## The SDKs
+
+LaunchPad has an SDK for each SDK Dovetail ships. Each chains its Dovetail counterpart and adds what
+`Rocket.Surgery.LaunchPad.Sdk` adds, so a project gets LaunchPad by changing its SDK name and nothing else:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">                   <!-- before -->
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/1.0.0">  <!-- after -->
+```
+
+| Microsoft SDK                         | Dovetail SDK                             | LaunchPad SDK                                    |
+| ------------------------------------- | ---------------------------------------- | ------------------------------------------------ |
+| `Microsoft.NET.Sdk`                   | `Joinery.Dovetail.Sdk`                   | `Rocket.Surgery.LaunchPad.Sdk`                   |
+| (console applications)                | `Joinery.Dovetail.Sdk.Console`           | `Rocket.Surgery.LaunchPad.Sdk.Console`           |
+| `Microsoft.NET.Sdk.Web`               | `Joinery.Dovetail.Sdk.Web`               | `Rocket.Surgery.LaunchPad.Sdk.Web`               |
+| `Microsoft.NET.Sdk.Worker`            | `Joinery.Dovetail.Sdk.Worker`            | `Rocket.Surgery.LaunchPad.Sdk.Worker`            |
+| `Microsoft.NET.Sdk.Razor`             | `Joinery.Dovetail.Sdk.Razor`             | `Rocket.Surgery.LaunchPad.Sdk.Razor`             |
+| `Microsoft.NET.Sdk.BlazorWebAssembly` | `Joinery.Dovetail.Sdk.BlazorWebAssembly` | `Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly` |
+| `Microsoft.NET.Sdk.WebAssembly`       | `Joinery.Dovetail.Sdk.WebAssembly`       | `Rocket.Surgery.LaunchPad.Sdk.WebAssembly`       |
+| `Microsoft.NET.Sdk.WindowsDesktop`    | `Joinery.Dovetail.Sdk.WindowsDesktop`    | `Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop`    |
+| `Aspire.AppHost.Sdk`                  | `Joinery.Dovetail.Sdk.Aspire.AppHost`    | `Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost`    |
+
+`Rocket.Surgery.LaunchPad.Sdk.Web` and the others below it are **mirrors**: each imports Dovetail's mirror of the Microsoft
+SDK, which imports the Microsoft SDK and chains `Joinery.Dovetail.Sdk`, and then adds LaunchPad. A project whose only SDK is a
+mirror gets exactly what the Microsoft SDK with `<Sdk Name="Rocket.Surgery.LaunchPad.Sdk" />` next to it gets.
+
+### Which SDK do I use
+
+- **An ASP.NET Core application** (`Microsoft.NET.Sdk.Web` today): `Rocket.Surgery.LaunchPad.Sdk.Web`. It gets
+  `Rocket.Surgery.LaunchPad.Hosting` and `Rocket.Surgery.LaunchPad.AspNetCore`.
+- **A worker service** (`Microsoft.NET.Sdk.Worker`): `Rocket.Surgery.LaunchPad.Sdk.Worker`. It gets
+  `Rocket.Surgery.LaunchPad.Hosting`.
+- **A Blazor WebAssembly application** (`Microsoft.NET.Sdk.BlazorWebAssembly`), or a WebAssembly application from the
+  `wasmbrowser` template (`Microsoft.NET.Sdk.WebAssembly`): `Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly` or
+  `Rocket.Surgery.LaunchPad.Sdk.WebAssembly`. It gets `Rocket.Surgery.LaunchPad.Hosting`.
+- **A command line application**: `Rocket.Surgery.LaunchPad.Sdk.Console` (see [below](#the-console-sdk)).
+- **A library, or a console application on the generic host** (`Microsoft.NET.Sdk`), or a file-based app:
+  `Rocket.Surgery.LaunchPad.Sdk`.
+- **A Razor class library** (`Microsoft.NET.Sdk.Razor`): `Rocket.Surgery.LaunchPad.Sdk.Razor`. Dovetail takes it for an
+  ASP.NET Core host, but a class library is not an application, so LaunchPad adds none of its hosting packages; the
+  packages that follow from its references (NodaTime, ...) still apply.
+- **An Aspire AppHost** (`Aspire.AppHost.Sdk`): `Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost`. It imports
+  `Aspire.AppHost.Sdk` at the version Dovetail was built against (`DovetailAspireAppHostSdkVersion` picks another). Dovetail
+  takes an AppHost for a generic host, but it starts the application's projects rather than hosting LaunchPad's joints, so
+  LaunchPad adds none of its hosting packages.
+- **A Windows Forms or WPF project that still names `Microsoft.NET.Sdk.WindowsDesktop`**: `Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop`.
+  That SDK is obsolete since .NET 5; a project that has moved to `Microsoft.NET.Sdk` uses `Rocket.Surgery.LaunchPad.Sdk`.
+
+A Razor class library or an AppHost that wants LaunchPad's hosting packages after all sets `LaunchPadEnableHosting` (and, for
+ASP.NET Core, `LaunchPadEnableAspNetCore`) to `true`.
+
 ## Opting in
 
-Name the SDK next to the one the project already uses:
+Make a LaunchPad SDK the project's only SDK, as above, or name `Rocket.Surgery.LaunchPad.Sdk` next to the one the project
+already uses:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -31,7 +83,7 @@ Name the SDK next to the one the project already uses:
 </Project>
 ```
 
-or make it the project's SDK (it brings `Microsoft.NET.Sdk` through Dovetail's):
+or make `Rocket.Surgery.LaunchPad.Sdk` itself the project's SDK (it brings `Microsoft.NET.Sdk` through Dovetail's):
 
 ```xml
 <Project Sdk="Rocket.Surgery.LaunchPad.Sdk/1.0.0">
@@ -50,6 +102,9 @@ or apply it to every project in a `Directory.Build.props`, with the version pinn
     }
 }
 ```
+
+A mirror under a `Directory.Build.props` that already applies `Rocket.Surgery.LaunchPad.Sdk` (or `Joinery.Dovetail.Sdk`) does
+not apply it a second time: a repository can apply the SDK to every project and still name the mirror in its web projects.
 
 A file-based app uses the directive form, `#:sdk Rocket.Surgery.LaunchPad.Sdk@1.0.0`, and gets what a console application needs
 without a `#:package` directive for LaunchPad.
@@ -71,6 +126,8 @@ and writes `Program.cs`. See [Console applications](../../guides/console-apps/).
 
 ## Choosing another Dovetail version
 
-The SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is
-imported: as a global property, or in a `Directory.Build.props` that sets it and then imports the SDK with
-`<Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" />`.
+Each SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is
+imported: as a global property (`dotnet build -p:LaunchPadDovetailSdkVersion=...`) or an environment variable, or, for
+`Rocket.Surgery.LaunchPad.Sdk` and `Rocket.Surgery.LaunchPad.Sdk.Console`, in a `Directory.Build.props` that sets it and then imports
+the SDK with `<Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" />`. A mirror reads it before the Microsoft SDK imports
+the `Directory.Build.props`, so for a mirror only the global property or the environment variable works.

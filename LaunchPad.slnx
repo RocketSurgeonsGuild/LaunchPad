@@ -88,11 +88,23 @@
     <Project Path="src/NodaTime/Rocket.Surgery.LaunchPad.NodaTime.csproj" />
     <Project Path="src/Primitives/Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
     <Project Path="src/Primitives/Rocket.Surgery.LaunchPad.Primitives.csproj" />
-    <Project Path="src/Sdk/Rocket.Surgery.LaunchPad.Sdk.csproj" />
-    <Project Path="src/Sdk.Console/Rocket.Surgery.LaunchPad.Sdk.Console.csproj" />
     <Project Path="src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <Project Path="src/StrawberryShake.Spatial/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.csproj" />
     <Project Path="src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
+  </Folder>
+  <Folder Name="/src/Sdks/">
+    <File Path="src/Sdks/Directory.Build.props" />
+    <File Path="src/Sdks/Directory.Build.targets" />
+    <File Path="src/Sdks/Mirror/Rocket.Surgery.LaunchPad.Mirror.props" />
+    <Project Path="src/Sdks/LaunchPad/Rocket.Surgery.LaunchPad.Sdk.csproj" />
+    <Project Path="src/Sdks/Console/Rocket.Surgery.LaunchPad.Sdk.Console.csproj" />
+    <Project Path="src/Sdks/Aspire.AppHost/Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost.csproj" />
+    <Project Path="src/Sdks/BlazorWebAssembly/Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly.csproj" />
+    <Project Path="src/Sdks/Razor/Rocket.Surgery.LaunchPad.Sdk.Razor.csproj" />
+    <Project Path="src/Sdks/Web/Rocket.Surgery.LaunchPad.Sdk.Web.csproj" />
+    <Project Path="src/Sdks/WebAssembly/Rocket.Surgery.LaunchPad.Sdk.WebAssembly.csproj" />
+    <Project Path="src/Sdks/WindowsDesktop/Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop.csproj" />
+    <Project Path="src/Sdks/Worker/Rocket.Surgery.LaunchPad.Sdk.Worker.csproj" />
   </Folder>
   <Folder Name="/test/">
     <File Path="test/.editorconfig" />

@@ -8,7 +8,7 @@ namespace Sdk.Tests;
 
 /// <summary>
 ///     LaunchPad targets .NET 11 and later: a project on an older .NET that applies the SDK stops with an error naming the minimum
-///     (src/Sdk/Sdk/Rocket.Surgery.LaunchPad.TargetFramework.targets), and a .NET Standard library is left alone. The target frameworks the
+///     (src/Sdks/LaunchPad/Sdk/Rocket.Surgery.LaunchPad.TargetFramework.targets), and a .NET Standard library is left alone. The target frameworks the
 ///     repository supports pass in every other SDK test.
 /// </summary>
 public class SdkTargetFrameworkTests

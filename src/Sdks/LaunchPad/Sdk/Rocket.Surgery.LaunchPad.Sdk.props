@@ -1,12 +1,11 @@
 <Project>
     <!--
-        What every LaunchPad SDK does before it chains its Dovetail SDK: Sdk/Sdk.props of Rocket.Surgery.LaunchPad.Sdk imports this file and
-        then Joinery.Dovetail.Sdk, and Sdk/Sdk.props of Rocket.Surgery.LaunchPad.Sdk.Console imports it and then Joinery.Dovetail.Sdk.Console.
-        Both packages ship this file and the detection files, packed from src/Sdk/Sdk.
+        What every LaunchPad SDK applies: Sdk/Sdk.props of Rocket.Surgery.LaunchPad.Sdk imports this file and then Joinery.Dovetail.Sdk,
+        Sdk/Sdk.props of Rocket.Surgery.LaunchPad.Sdk.Console imports it and then Joinery.Dovetail.Sdk.Console, and each mirror of a Microsoft
+        SDK (Rocket.Surgery.LaunchPad.Sdk.Web, ...) imports it after Dovetail's mirror (Rocket.Surgery.LaunchPad.Mirror.props). Every LaunchPad
+        SDK package ships this file and the detection files, packed from src/Sdks/LaunchPad/Sdk. Each SDK imports its Packages.props (the
+        versions of the packages the SDK adds and of the Dovetail SDK it chains) itself, before this file.
     -->
-
-    <!-- The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. -->
-    <Import Project="$(MSBuildThisFileDirectory)Packages.props" />
 
     <!--
         LaunchPad turns on what Dovetail leaves off. Dovetail's SDK reads these after the project has been evaluated, so a project (or a

@@ -18,14 +18,13 @@ enough for the LaunchPad SDK to add the matching integration package.
 
 ## Getting started
 
-An application uses LaunchPad through the LaunchPad SDK, named next to the SDK the project already uses. In the snippets, replace
-`1.0.0` with the version of `Rocket.Surgery.LaunchPad.Sdk` you use; the SDK is not on nuget.org yet, and the
+An application uses LaunchPad through a LaunchPad SDK, which takes the place of the Microsoft SDK the project names. In the snippets,
+replace `1.0.0` with the version of LaunchPad you use; the SDK is not on nuget.org yet, and the
 [`sample/Sample.Sdk`](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/main/sample/Sample.Sdk) applications pack it from the
 repository.
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk.Web">
-  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/1.0.0">
 </Project>
 ```
 
@@ -52,6 +51,7 @@ lists what the SDK adds for each technology.
 | ------------------------------------ | ----------------- | ---------------------------------------------------------------------------------------------- |
 | Rocket.Surgery.LaunchPad.Sdk         | not published yet | MSBuild SDK that chains `Joinery.Dovetail.Sdk` and adds the LaunchPad packages a project needs |
 | Rocket.Surgery.LaunchPad.Sdk.Console | not published yet | The same SDK for ConsoleAppFramework applications                                              |
+| Rocket.Surgery.LaunchPad.Sdk.Web, .Worker, .Razor, .BlazorWebAssembly, .WebAssembly, .WindowsDesktop, .Aspire.AppHost | not published yet | The Microsoft SDK of the same name with LaunchPad: a drop-in replacement for it |
 
 ### Core
 

@@ -1,0 +1,26 @@
+<Project>
+    <!--
+        What a LaunchPad mirror of a Microsoft SDK (Rocket.Surgery.LaunchPad.Sdk.Web, ...) applies after Dovetail's mirror of the same SDK
+        (Joinery.Dovetail.Sdk.Web, ...), which has imported the Microsoft SDK (and with it the Directory.Build.props above the project) and
+        chained Joinery.Dovetail.Sdk. Every mirror's Sdk/Sdk.props imports this file, so nothing here is written once per SDK.
+
+        A Directory.Build.props that already applied a LaunchPad SDK registered its detection in CustomAfterMicrosoftCommonTargets; the mirror
+        then leaves LaunchPad out rather than applying it a second time, as Dovetail's mirror leaves Joinery.Dovetail.Sdk out.
+    -->
+    <PropertyGroup Condition="!$(CustomAfterMicrosoftCommonTargets.Contains('Rocket.Surgery.LaunchPad.Detection.targets'))">
+        <_LaunchPadMirrorAppliesLaunchPad>true</_LaunchPadMirrorAppliesLaunchPad>
+    </PropertyGroup>
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Sdk.props" Condition="'$(_LaunchPadMirrorAppliesLaunchPad)' == 'true'" />
+
+    <!--
+        Rocket.Surgery.LaunchPad.Sdk adds its detection to CustomAfterMicrosoftCommonTargets before Joinery.Dovetail.Sdk's Sdk.props puts its
+        host detection in front of the list and ImplicitPackageReferences.targets, which turns the DovetailSdkImplicitPackageReference items
+        of every file before it into PackageReferences, at the end. Here Dovetail's mirror has already done that, so LaunchPad's detection
+        lands after ImplicitPackageReferences.targets: move that file back to the end, where it expands LaunchPad's items too. MSBuild escapes
+        what a property function returns, so the list would come back as one path with %3B for each ';': Unescape keeps it a list.
+    -->
+    <PropertyGroup Condition="'$(_LaunchPadMirrorAppliesLaunchPad)' == 'true'">
+        <_LaunchPadDovetailImplicitPackageReferences>$([System.Text.RegularExpressions.Regex]::Match('$(CustomAfterMicrosoftCommonTargets)', '[^;]*ImplicitPackageReferences\.targets'))</_LaunchPadDovetailImplicitPackageReferences>
+        <CustomAfterMicrosoftCommonTargets Condition="'$(_LaunchPadDovetailImplicitPackageReferences)' != ''">$([MSBuild]::Unescape($([System.Text.RegularExpressions.Regex]::Replace('$(CustomAfterMicrosoftCommonTargets)', '[^;]*ImplicitPackageReferences\.targets;?', ''))));$(_LaunchPadDovetailImplicitPackageReferences)</CustomAfterMicrosoftCommonTargets>
+    </PropertyGroup>
+</Project>

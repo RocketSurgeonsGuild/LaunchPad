@@ -1,0 +1,7 @@
+﻿<Project>
+<!-- Generated when {PackageId} is packed. Each version is only set when the application has not set it already. -->
+<PropertyGroup>
+<LaunchPadDovetailSdkVersion Condition="'$(LaunchPadDovetailSdkVersion)' == ''">{DovetailVersion}</LaunchPadDovetailSdkVersion>
+<LaunchPadVersion Condition="'$(LaunchPadVersion)' == ''">{LaunchPadVersion}</LaunchPadVersion>
+</PropertyGroup>
+</Project>

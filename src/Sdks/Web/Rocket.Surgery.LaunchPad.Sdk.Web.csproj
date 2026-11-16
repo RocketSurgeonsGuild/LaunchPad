@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <!-- The SDK this one mirrors, and Dovetail's mirror of it, which it chains: src/Sdks/Directory.Build.targets packs it from them. -->
+        <LaunchPadMicrosoftSdk>Microsoft.NET.Sdk.Web</LaunchPadMicrosoftSdk>
+        <LaunchPadChainedSdk>Joinery.Dovetail.Sdk.Web</LaunchPadChainedSdk>
+        <PackageTags>$(PackageTags);aspnetcore;web</PackageTags>
+    </PropertyGroup>
+</Project>
