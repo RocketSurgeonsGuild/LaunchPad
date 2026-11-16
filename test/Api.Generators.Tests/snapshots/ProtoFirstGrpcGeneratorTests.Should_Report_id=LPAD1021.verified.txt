@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1021,
+      Title: Operation host setting does not apply,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input3.cs: (6,5)-(6,35),
+      MessageFormat: [OperationHost({0})] has no effect on {1}, which is a {2} host,
+      Message: [OperationHost(Group)] has no effect on RocketsService, which is a proto-first gRPC service host,
+      Category: LaunchPad.Api
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+﻿{
+  Hosts: [
+    WebAssembly
+  ],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Microsoft.AspNetCore.Components.WebAssembly,
+    Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK)
+  ]
+}

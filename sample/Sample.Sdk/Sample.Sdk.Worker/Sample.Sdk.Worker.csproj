@@ -1,10 +1,9 @@
 <!--
-    OutputType=Exe makes the SDK find a generic host: Dovetail adds Joinery.Dovetail.Hosting, which generates the ConfigureDovetail()
-    extension Program.cs calls, and LaunchPad adds Rocket.Surgery.LaunchPad.Hosting, whose health check joint is written into the project
-    because it references the health checks.
+    Rocket.Surgery.LaunchPad.Sdk.Worker is Microsoft.NET.Sdk.Worker with LaunchPad, so it is the project's only SDK. It finds a generic host:
+    Dovetail adds Joinery.Dovetail.Hosting, which generates the ConfigureDovetail() extension Program.cs calls, and LaunchPad adds
+    Rocket.Surgery.LaunchPad.Hosting, whose health check joint is written into the project because it references the health checks.
 -->
-<Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="0.0.0-sample" />
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Worker/0.0.0-sample">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
   </PropertyGroup>

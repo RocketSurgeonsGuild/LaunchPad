@@ -25,3 +25,4 @@ internal sealed class LaunchPadHotChocolateInstrumentationJoint : IOpenTelemetry
         builder.WithTracing(static tracing => tracing.AddHotChocolateInstrumentation());
     }
 }
+

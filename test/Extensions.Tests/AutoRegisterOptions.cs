@@ -1,9 +1,10 @@
-using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Joints;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
+using Optionary;
 
 namespace Extensions.Tests;
 
@@ -17,14 +18,14 @@ public class AutoRegisterOptions() : JointTest()
         await ServiceProvider.GetRequiredService<IOptions<OptionsB>>().Value.B.Should().BeEqualTo("A");
     }
 
-    [DovetailConfiguration("OptionsA")]
+    [Optionary("OptionsA")]
     [PublicAPI]
     internal class OptionsA
     {
         public required string A { get; set; }
     }
 
-    [DovetailConfiguration("OptionsB")]
+    [Optionary("OptionsB")]
     [PublicAPI]
     internal class OptionsB
     {

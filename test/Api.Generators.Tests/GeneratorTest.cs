@@ -225,6 +225,21 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
             );
 
 
+    /// <summary>
+    ///     A server compilation running the proto-first gRPC generator, with Grpc.AspNetCore and, unless <paramref name="mapping" /> is false,
+    ///     ZeroAlloc.Mapping (whose generator doesn't run here: the tests write out the methods it would generate).
+    /// </summary>
+    protected GeneratorTestContextBuilder ProtoGrpcServer(Mediator mediator, GeneratorTestResults contracts, bool mapping = true) =>
+        Server(mediator, contracts, withMinimalApi: false)
+           .WithGenerator<GrpcProtoServiceGenerator>()
+           .AddReferences(
+                typeof(Grpc.Core.ServerCallContext).Assembly,
+                typeof(Google.Protobuf.IMessage).Assembly,
+                typeof(Grpc.AspNetCore.Server.GrpcServiceOptions).Assembly,
+                typeof(GrpcEndpointRouteBuilderExtensions).Assembly
+            )
+           .AddReferences(mapping ? [typeof(ZeroAlloc.Mapping.MapAttribute<,>).Assembly] : []);
+
     private static readonly Assembly[] GrpcAssemblies =
         [
             typeof(ProtoBuf.Grpc.CallContext).Assembly, typeof(Grpc.Core.CallOptions).Assembly, typeof(ProtoBuf.Serializer).Assembly, typeof(ProtoBuf.Meta.TypeModel).Assembly,
@@ -242,6 +257,7 @@ internal static class GeneratorTestContextBuilderExtensions
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ServerHelpers.g.cs")
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerHelpers.g.cs")
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GrpcHelpers.g.cs")
+           .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GrpcProtoHelpers.g.cs")
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.GraphQLHelpers.g.cs")
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.MinimalApiOpenApi.g.cs")
            .IgnoreOutputFile("Rocket.Surgery.LaunchPad.Api.Generated.ControllerOpenApi.g.cs");

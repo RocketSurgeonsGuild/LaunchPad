@@ -21,7 +21,7 @@ The generators work with [martinothamar/Mediator](https://github.com/martinotham
 Foundatio.Mediator and ZeroAlloc.Mediator. They are incremental source generators: nothing is found by reflection or by
 scanning assemblies, and the generated Minimal API endpoints are native AOT safe.
 
-This page covers the Minimal API, MVC controller, gRPC and GraphQL (mutations) servers, and generating clients for them.
+This page covers the Minimal API, MVC controller, gRPC (code-first and proto-first) and GraphQL (mutations) servers, and generating clients for them.
 
 ## Packages
 
@@ -85,6 +85,7 @@ The transport comes from the host itself; the first rule that matches wins:
 
 | The host…                                      | Transport                |
 | ---------------------------------------------- | ------------------------ |
+| derives a Grpc.Tools service base              | proto-first gRPC server  |
 | derives from `ControllerBase`                  | MVC controller           |
 | has `[ExtendObjectType(Query)]` / `(Mutation)` | GraphQL query / mutation |
 | is named `*Controller`                         | MVC controller           |
@@ -233,6 +234,61 @@ File.WriteAllText("rockets.proto", RocketsService.GetProto());
   one-field message. Void operations answer `google.protobuf.Empty`.
 - A `null` response answers `NotFound`. Streams are server streaming.
 - `GetProto()` is generated when the server references `protobuf-net.Grpc.Reflection`.
+
+### Proto-first gRPC
+
+A `partial` class that derives the service base Grpc.Tools generates from a `.proto` (`Rockets.RocketsBase`) is a proto-first gRPC service,
+whatever its name. The `.proto` is yours: the generator overrides the rpc of each listed operation, matched by name, mapping the proto
+request to the operation's request, sending it through the mediator and mapping the response back. Rpcs that no operation lists keep the
+base class's `Unimplemented` answer, so you can write them by hand.
+
+```proto
+service Rockets {
+  rpc GetRocket (GetRocketRequest) returns (RocketReply);
+  rpc ListRockets (ListRocketsRequest) returns (stream RocketReply);
+  rpc DeleteRocket (DeleteRocketRequest) returns (google.protobuf.Empty);
+}
+```
+
+```csharp
+[Operation<GetRocket.Request>]
+[Operation<ListRockets.Request>]
+[Operation<DeleteRocket.Request>]
+public partial class RocketsService : Rockets.RocketsBase;
+
+// The mappings, written by ZeroAlloc.Mapping.
+[Map<GetRocketRequest, GetRocket.Request>]
+[Map<ListRocketsRequest, ListRockets.Request>]
+[Map<DeleteRocketRequest, DeleteRocket.Request>]
+[Map<RocketModel, RocketReply>]
+public static partial class RocketMappings
+{
+    // A proto message is filled in place: it has settable properties and no constructor parameters.
+    public static partial void Map(RocketModel src, RocketReply existingDst);
+}
+
+builder.Services.AddGrpc();
+app.MapRocketsService();
+```
+
+- Compile the `.proto` with Grpc.Tools (`<Protobuf Include="rockets.proto" GrpcServices="Server" />`, from `Grpc.AspNetCore`) and reference
+  [ZeroAlloc.Mapping](https://mapping.zeroalloc.net) (LPAD1041 without it).
+- An operation is matched to the rpc of its name, or of its `[Operation<T>(Name = "…")]`; LPAD1040 when there is none. A unary or void
+  operation needs a unary rpc and a stream operation a server streaming rpc (LPAD1042); client and bidirectional streaming aren't supported.
+- You declare the mappings, on any `static partial` class in the server: `[Map<ProtoRequest, Request>]` for each request (or its `Input`
+  type) and `[Map<Response, ProtoResponse>]` for each response; `[ReverseMap]` covers both directions. A mapping the generator needs and
+  can't find is LPAD1043, which names the attribute to add. The generator can't declare them for you: ZeroAlloc.Mapping's generator only
+  sees the code you write, not other generators' output.
+- ZeroAlloc.Mapping's usual form builds the destination through its constructor, which leaves a proto message empty. For a proto message,
+  declare the update-in-place form, `public static partial void Map(Response src, ProtoResponse existingDst);`, and the generator fills a new
+  message through it (LPAD1044 without it).
+- Nested messages, repeated fields and well-known types (`Timestamp`, a `Guid` carried as a `string`) are yours to map, with ZeroAlloc.Mapping's
+  own tools: a nested `[Map]`, `[MapProperty]`, `[MapValue]` or an `[AfterMap]` hook that sets what the property matching can't.
+- Void operations answer an empty response message (`google.protobuf.Empty`), and a `null` response `NotFound`.
+- A union response answers its value case; an error case throws its status with its name in the `case` trailer, as on code-first hosts. The
+  `case-bin` trailer carries the case only when you map it to a proto message (`[Map<NotReady, NotReadyError>]`, filled in place), so a
+  client can decode it with its own copy of the `.proto`.
+- `[OperationHost(Group)]` doesn't apply: the `.proto` names the service (LPAD1021).
 
 ### GraphQL mutations
 
@@ -406,6 +462,7 @@ The generators don't write clients. Each server describes itself in a standard f
 | Minimal API | OpenAPI: `AddOpenApi()` and `MapOpenApi()` (Microsoft.AspNetCore.OpenApi) | Kiota, Refitter (both through [Chirograph][chirograph]), …           |
 | Controllers | OpenAPI, the same way                                                     | the same                                                             |
 | gRPC        | `.proto`: `{Host}.GetProto()`                                             | Grpc.Tools (`<Protobuf GrpcServices="Client" />`), any protoc plugin |
+| Proto-first | the `.proto` you wrote                                                    | the same                                                             |
 | GraphQL     | SDL: HotChocolate serves it at `/graphql?sdl`                             | StrawberryShake, graphql-codegen, …                                  |
 
 Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves
@@ -564,6 +621,11 @@ filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` an
 | LPAD1027 | Error    | A patch handler's interface doesn't return `Task<T>` or `ValueTask<T>`.                               |
 | LPAD1028 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.       |
 | LPAD1030 | Warning  | A trimmed or AOT project has a Minimal API body or response type no `JsonSerializerContext` declares. |
+| LPAD1040 | Error    | A proto-first host lists an operation its service base has no rpc for.                                |
+| LPAD1041 | Error    | A proto-first host is in a project that doesn't reference ZeroAlloc.Mapping.                          |
+| LPAD1042 | Error    | An operation doesn't fit its rpc: unary to unary, stream to server streaming.                         |
+| LPAD1043 | Error    | A mapping a proto-first operation needs isn't declared; the message names the `[Map]` to add.         |
+| LPAD1044 | Error    | A mapping to a proto message has no update-in-place form, so the message would stay empty.            |
 
 LPAD1011, LPAD1012, LPAD1013, LPAD1018 and LPAD1022 belonged to the generated clients, which were removed; the IDs aren't reused.
 

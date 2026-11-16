@@ -1,5 +1,6 @@
 using System.Reflection;
 using Api.Functional.ZeroAlloc.Contracts;
+using Api.Functional.ZeroAlloc.Server.ProtoFirst;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +14,9 @@ public static class ServerApp
     ///     Starts the server with the generated Minimal API endpoints, the generated controllers on the same routes, or the generated gRPC service.
     ///     With <paramref name="unions" />, the Launches* hosts of the same transport answer too: their operation returns a union, and the other
     ///     servers' specs (which have no such hosts) must match this one's without them.
+    ///     With <paramref name="protoFirst" />, the proto-first gRPC services (ProtoFirst/) answer instead.
     /// </summary>
-    public static async Task<WebApplication> StartAsync(bool controllers = false, bool grpc = false, bool graphql = false, bool versioned = false, bool unions = false)
+    public static async Task<WebApplication> StartAsync(bool controllers = false, bool grpc = false, bool graphql = false, bool versioned = false, bool unions = false, bool protoFirst = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -31,6 +33,7 @@ public static class ServerApp
             mvc.ConfigureApplicationPartManager(parts => parts.FeatureProviders.Add(new WithoutOptionalControllers(versioned, unions)));
         }
         if (grpc) ProtoBuf.Grpc.Server.ServicesExtensions.AddCodeFirstGrpc(builder.Services);
+        if (protoFirst) builder.Services.AddGrpc();
         // HotChocolate needs a query type; the generated mutations extend the Mutation type.
         if (graphql)
         {
@@ -47,7 +50,12 @@ public static class ServerApp
         app.MapOpenApi();
         // With controllers, VersionedRocketsController answers the same routes instead.
         if (versioned && !controllers) app.MapVersionedRocketsEndpoints();
-        if (graphql)
+        if (protoFirst)
+        {
+            app.MapProtoRocketsService();
+            app.MapProtoLaunchesService();
+        }
+        else if (graphql)
         {
             app.MapGraphQL();
             app.MapRocketsEndpoints();

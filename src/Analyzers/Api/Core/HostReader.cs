@@ -36,10 +36,14 @@ internal static class HostReader
         var operations = new List<OperationModel>();
         if (profile.Profile is { } mediator)
         {
+            // A proto-first host implements the rpcs of its Grpc.Tools service base: each operation is matched to one.
+            var serviceBase = kind == HostKind.GrpcProtoService ? HostInference.ProtoServiceBase(host) : null;
             foreach (var entry in entries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (ReadOperation(entry, host, hostNoun, kind, mediator, compilation, documentation, diagnostics) is { } operation) operations.Add(operation);
+                var operation = ReadOperation(entry, host, hostNoun, kind, mediator, compilation, documentation, diagnostics);
+                if (operation is { } && serviceBase is { }) operation = ProtoRpcs.Match(host, serviceBase, operation, diagnostics);
+                if (operation is { }) operations.Add(operation);
             }
 
             foreach (var duplicate in DuplicateRoutes(operations, kind))
@@ -74,7 +78,7 @@ internal static class HostReader
             {
                 HostKind.MinimalApi => compilation.GetTypeByMetadataName("Asp.Versioning.Builder.ApiVersionSet") is { },
                 HostKind.Controller => compilation.GetTypeByMetadataName("Asp.Versioning.ApiVersioningApplicationModelProvider") is { },
-                HostKind.Unknown or HostKind.GrpcService or HostKind.GraphQLQuery or HostKind.GraphQLMutation => false,
+                HostKind.Unknown or HostKind.GrpcService or HostKind.GrpcProtoService or HostKind.GraphQLQuery or HostKind.GraphQLMutation => false,
                 _ => false,
             },
             // A gRPC service host's GetProto() needs protobuf-net.Grpc.Reflection's schema generator.

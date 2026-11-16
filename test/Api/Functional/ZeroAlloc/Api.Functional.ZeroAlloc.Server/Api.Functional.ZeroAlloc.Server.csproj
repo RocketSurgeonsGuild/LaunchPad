@@ -5,5 +5,9 @@
     <ItemGroup>
         <ProjectReference Include="../Api.Functional.ZeroAlloc.Contracts/Api.Functional.ZeroAlloc.Contracts.csproj" />
         <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />
+        <!-- The proto-first services: Grpc.Tools generates their bases (and the tests' clients) from the .proto, ZeroAlloc.Mapping the mappings. -->
+        <PackageReference Include="Grpc.AspNetCore" />
+        <PackageReference Include="ZeroAlloc.Mapping" />
+        <Protobuf Include="ProtoFirst/proto_first.proto" GrpcServices="Both" />
     </ItemGroup>
 </Project>

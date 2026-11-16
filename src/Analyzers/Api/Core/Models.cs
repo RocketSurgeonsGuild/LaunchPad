@@ -137,7 +137,8 @@ internal sealed record OperationModel(
     LocationInfo? Location,
     string? WireSummary = null,
     string? ResponseSummary = null,
-    EquatableArray<DescriptionModel> ResponseDescriptions = default
+    EquatableArray<DescriptionModel> ResponseDescriptions = default,
+    RpcModel? Rpc = null
 )
 {
     public bool HasBody => Verb is HttpVerb.Post or HttpVerb.Put or HttpVerb.Patch;
@@ -154,6 +155,18 @@ internal sealed record OperationModel(
     /// <summary>The item type a stream operation's handler produces: the union for a stream of unions, otherwise the response.</summary>
     public string? StreamItemType => Union is { } union ? union.Nullable ? union.Type + "?" : union.Type : ResponseTypeNotNull;
 }
+
+/// <summary>
+///     The rpc of a proto-first host's Grpc.Tools service base that an operation implements: its method (overridden by the generated host), its
+///     proto messages and whether it streams its responses.
+/// </summary>
+internal sealed record RpcModel(string Method, string RequestMessage, string ResponseMessage, bool ServerStreaming);
+
+/// <summary>
+///     A ZeroAlloc.Mapping mapping the user declared: <c>[Map&lt;Source, Destination&gt;]</c> on <c>Mapper</c>, which gets <c>Mapper.Map(Source)</c>,
+///     and with <c>InPlace</c> the update-in-place <c>Mapper.Map(Source, Destination)</c> the mapper declares, which sets settable properties.
+/// </summary>
+internal sealed record MappingModel(string Mapper, string Source, string Destination, bool DestinationIsProtoMessage, bool InPlace);
 
 internal sealed record HostModel(
     string? Namespace,

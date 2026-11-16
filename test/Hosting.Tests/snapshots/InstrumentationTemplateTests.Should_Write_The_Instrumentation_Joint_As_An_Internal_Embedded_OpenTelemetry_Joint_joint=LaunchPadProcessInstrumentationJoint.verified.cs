@@ -26,3 +26,4 @@ internal sealed class LaunchPadProcessInstrumentationJoint : IOpenTelemetryJoint
         builder.WithMetrics(static metrics => metrics.AddProcessInstrumentation());
     }
 }
+

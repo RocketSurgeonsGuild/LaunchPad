@@ -1,0 +1,30 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop is Microsoft.NET.Sdk.WindowsDesktop with LaunchPad. A project swaps the one for the other and changes nothing else:
+
+            <Project Sdk="Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop">
+
+        with the version under msbuild-sdks in global.json, or in the attribute (Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop/1.2.3). It is the same as Microsoft.NET.Sdk.WindowsDesktop with
+        <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" /> next to it.
+
+        Windows Forms and WPF projects that still name the Windows Desktop SDK, which is obsolete since .NET 5: Microsoft.NET.Sdk
+        covers them (UseWPF, UseWindowsForms), and so does Rocket.Surgery.LaunchPad.Sdk. This mirror is for projects that have not moved yet.
+
+        It chains Joinery.Dovetail.Sdk.WindowsDesktop, Dovetail's mirror of Microsoft.NET.Sdk.WindowsDesktop, which imports the Microsoft SDK and then Joinery.Dovetail.Sdk, and then
+        applies what every LaunchPad SDK applies (Rocket.Surgery.LaunchPad.Mirror.props). Under a Directory.Build.props that already applies
+        Joinery.Dovetail.Sdk or a LaunchPad SDK, neither is applied a second time.
+    -->
+
+    <!--
+        The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. The version of the
+        import wins over a Joinery.Dovetail.Sdk.WindowsDesktop entry in global.json. It is read before the Microsoft SDK imports the Directory.Build.props, so to
+        chain another version set LaunchPadDovetailSdkVersion as a global property or an environment variable
+        (dotnet build -p:LaunchPadDovetailSdkVersion=1.2.3). Sdk.targets imports the same version, whatever the project sets in between.
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)Packages.props" />
+    <PropertyGroup>
+        <_LaunchPadMirrorDovetailSdkVersion>$(LaunchPadDovetailSdkVersion)</_LaunchPadMirrorDovetailSdkVersion>
+    </PropertyGroup>
+    <Import Project="Sdk.props" Sdk="Joinery.Dovetail.Sdk.WindowsDesktop" Version="$(_LaunchPadMirrorDovetailSdkVersion)" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Mirror.props" />
+</Project>
