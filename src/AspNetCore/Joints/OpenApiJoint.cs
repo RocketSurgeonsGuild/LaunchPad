@@ -12,7 +12,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
-[AfterJoint<AspNetCoreJoint>]
 [DovetailCategory(DovetailCategory.Application)]
 public partial class OpenApiJoint : IServiceJoint
 {
@@ -25,6 +24,7 @@ public partial class OpenApiJoint : IServiceJoint
     {
         ArgumentNullException.ThrowIfNull(context);
 
+        services.AddEndpointsApiExplorer();
         services.AddOpenApi(options =>
                             {
                                 // An operation's nested types (CreateRocket.Request) are named after their container: by their own name, every

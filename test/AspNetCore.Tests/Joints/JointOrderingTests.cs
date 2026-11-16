@@ -4,41 +4,47 @@ using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
+using Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Joints;
 
 namespace AspNetCore.Tests.Joints;
 
 public class JointOrderingTests
 {
     [Test]
-    public async Task Should_Run_The_Aspnetcore_Joint_Before_The_Joints_That_Depend_On_It()
+    public async Task Should_Run_Each_Mvc_Joint_After_The_AspNetCore_Joint_It_Extends()
     {
         // appended in the opposite order of the dependencies, so only the ordering attributes can put them right
         var context = await JointTestContext
                            .CreateBuilder()
+                           .AppendJoint<MvcSystemJsonTextJoint>()
+                           .AppendJoint<MvcProblemDetailsJoint>()
+                           .AppendJoint<MvcSerilogRequestLoggingJoint>()
                            .AppendJoint<SystemJsonTextJoint>()
                            .AppendJoint<ProblemDetailsJoint>()
-                           .AppendJoint<OpenApiJoint>()
-                           .AppendJoint<AspNetCoreJoint>()
+                           .AppendJoint<SerilogRequestLoggingJoint>()
                            .CreateAsync();
 
         var joints = context.Joints.Select(z => z.GetType()).ToList();
 
-        var aspNetCore = joints.IndexOf(typeof(AspNetCoreJoint));
-        await aspNetCore.Should().BeGreaterThanOrEqualTo(0);
-        foreach (var dependent in new[]
+        foreach (var (aspNetCore, mvc) in new[]
                  {
-                     typeof(SystemJsonTextJoint), typeof(ProblemDetailsJoint), typeof(OpenApiJoint),
+                     (typeof(SystemJsonTextJoint), typeof(MvcSystemJsonTextJoint)),
+                     (typeof(ProblemDetailsJoint), typeof(MvcProblemDetailsJoint)),
+                     (typeof(SerilogRequestLoggingJoint), typeof(MvcSerilogRequestLoggingJoint)),
                  })
         {
-            await joints.IndexOf(dependent).Should().Because(dependent.Name).BeGreaterThan(aspNetCore);
+            await joints.IndexOf(mvc).Should().Because(mvc.Name).BeGreaterThan(joints.IndexOf(aspNetCore));
         }
     }
 
     [Test]
-    [Arguments(typeof(AspNetCoreJoint))]
     [Arguments(typeof(OpenApiJoint))]
     [Arguments(typeof(ProblemDetailsJoint))]
     [Arguments(typeof(SystemJsonTextJoint))]
+    [Arguments(typeof(MvcJoint))]
+    [Arguments(typeof(MvcProblemDetailsJoint))]
+    [Arguments(typeof(MvcSystemJsonTextJoint))]
+    [Arguments(typeof(MvcSerilogRequestLoggingJoint))]
     public async Task Should_Be_An_Application_Joint_That_Runs_In_Every_Host_Type(Type joint)
     {
         await ( await joint.GetCustomAttribute<DovetailCategoryAttribute>().Should().NotBeNull() )!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);

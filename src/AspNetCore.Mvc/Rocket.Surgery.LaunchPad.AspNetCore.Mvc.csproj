@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        The MVC part of LaunchPad's ASP.NET Core integration: controllers, Razor Pages and views, which ASP.NET Core doesn't support with native
+        AOT. Rocket.Surgery.LaunchPad.AspNetCore holds everything that works under native AOT; this package references it and adds MVC.
+    -->
+    <PropertyGroup>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+        <PackageDescription>Dovetail joints for ASP.NET Core MVC: MVC Core with application parts found by Specular, the MVC API explorer, MVC's JSON options and problem details client error mapping, and Serilog request logging for controller actions and Razor Pages. Not native AOT compatible; Rocket.Surgery.LaunchPad.AspNetCore is.</PackageDescription>
+        <PackageTags>$(PackageTags);dovetail;aspnetcore;mvc;controllers;razor-pages;problem-details;serilog;request-logging</PackageTags>
+        <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <PackageReference Include="Joinery.Dovetail" />
+        <PackageReference Include="Specular" />
+        <PackageReference Include="Serilog.AspNetCore" />
+    </ItemGroup>
+</Project>

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.AspNetCore;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
+using Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Joints;
 
 using Serilog.AspNetCore.Tests.Joints;
 
@@ -27,7 +28,7 @@ internal sealed class RequestLoggingHost(WebApplication app, CapturingSink sink)
         builder.Services.AddSingleton(logger).AddSingleton<ILogger>(logger);
         builder.Services.AddRouting().AddHealthChecks();
         builder.Services.AddControllers().AddApplicationPart(typeof(RequestLoggingController).Assembly);
-        await builder.Services.ApplyService(await JointTestContext.CreateBuilder().AppendJoint<SerilogRequestLoggingJoint>().CreateAsync());
+        await builder.Services.ApplyService(await JointTestContext.CreateBuilder().AppendJoint<SerilogRequestLoggingJoint>().AppendJoint<MvcSerilogRequestLoggingJoint>().CreateAsync());
 
         var app = builder.Build();
         app.UseLaunchPadRequestLogging();

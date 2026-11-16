@@ -118,7 +118,6 @@
         <PackageVersion Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
         <PackageVersion Include="NodaTime" Version="3.3.7" />
         <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.3.0" />
-        <PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.4.0" />
         <PackageVersion Include="NodaTime.Testing" Version="3.3.7" />
 
         <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />

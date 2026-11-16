@@ -1,11 +1,11 @@
 using System.Reflection;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Mvc;
 
 /// <summary>
 ///     Options for launchpad and aspnet core.
 /// </summary>
-public class AspNetCoreOptions
+public class AspNetCoreMvcOptions
 {
     /// <summary>
     ///     Defines a filter to exclude assembly parts from the application.

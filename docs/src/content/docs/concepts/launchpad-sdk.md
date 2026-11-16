@@ -50,7 +50,9 @@ mirror gets exactly what the Microsoft SDK with `<Sdk Name="Rocket.Surgery.Launc
 ### Which SDK do I use
 
 - **An ASP.NET Core application** (`Microsoft.NET.Sdk.Web` today): `Rocket.Surgery.LaunchPad.Sdk.Web`. It gets
-  `Rocket.Surgery.LaunchPad.Hosting` and `Rocket.Surgery.LaunchPad.AspNetCore`.
+  `Rocket.Surgery.LaunchPad.Hosting`, `Rocket.Surgery.LaunchPad.AspNetCore` and `Rocket.Surgery.LaunchPad.AspNetCore.Mvc` (MVC
+  controllers and Razor Pages). A project that sets `PublishAot` or `IsAotCompatible` to `true` doesn't get
+  `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`, which isn't native AOT compatible (see [native AOT](#native-aot)).
 - **A worker service** (`Microsoft.NET.Sdk.Worker`): `Rocket.Surgery.LaunchPad.Sdk.Worker`. It gets
   `Rocket.Surgery.LaunchPad.Hosting`.
 - **A Blazor WebAssembly application** (`Microsoft.NET.Sdk.BlazorWebAssembly`), or a WebAssembly application from the
@@ -71,6 +73,25 @@ mirror gets exactly what the Microsoft SDK with `<Sdk Name="Rocket.Surgery.Launc
 
 A Razor class library or an AppHost that wants LaunchPad's hosting packages after all sets `LaunchPadEnableHosting` (and, for
 ASP.NET Core, `LaunchPadEnableAspNetCore`) to `true`.
+
+### Native AOT
+
+Every package the SDKs add is native AOT compatible, except the ones LaunchPad splits out for what isn't: today that's
+`Rocket.Surgery.LaunchPad.AspNetCore.Mvc`, because ASP.NET Core doesn't support MVC with native AOT. A project that sets
+`PublishAot` or `IsAotCompatible` to `true` gets only the compatible packages. `LaunchPadEnableAspNetCoreMvc` overrides that either
+way: `true` adds MVC to a native AOT project, `false` leaves it out of any other.
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web">
+  <PropertyGroup>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+</Project>
+```
+
+The packages that follow from a library the project references, such as `Rocket.Surgery.LaunchPad.HotChocolate` for Hot Chocolate,
+are added either way: the project chose that library. [JSON and native AOT](../../guides/json-and-native-aot/#package-compatibility)
+lists which packages are compatible.
 
 ## Opting in
 

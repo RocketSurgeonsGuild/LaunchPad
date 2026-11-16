@@ -1,0 +1,8 @@
+# The dependencies whose trimming and native AOT warnings an application referencing LaunchPad's native AOT compatible packages gets when it
+# publishes with PublishAot. verify.sh fails on a warning from any other origin, so a LaunchPad assembly never warns, and a dependency that
+# starts to warn (a new package, or an update) is added here and to docs/src/content/docs/guides/json-and-native-aot.md together.
+# Each line is a prefix of the warning's origin: the assembly of an IL2104/IL3053, the type or member of any other warning.
+
+# The GeoJSON converters LaunchPad.Spatial adds to System.Text.Json: the feature, feature collection and attributes table converters
+# serialize with runtime types. Geometries are AOT compatible; GeoJSON features are documented as unsupported under native AOT.
+NetTopologySuite.IO.GeoJSON4STJ

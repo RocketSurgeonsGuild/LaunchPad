@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+        <IsAotCompatible>true</IsAotCompatible>
         <PackageDescription>Dovetail joint that registers ASP.NET Core gRPC for the gRPC services LaunchPad generates from operation hosts, which answer each error case of a union response with its gRPC status.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;grpc;grpc-aspnetcore;aspnetcore;rpc</PackageTags>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>

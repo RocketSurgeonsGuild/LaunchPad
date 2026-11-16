@@ -74,6 +74,7 @@
     <Project Path="src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     <Project Path="src/Foundation.Tasks/Rocket.Surgery.LaunchPad.Foundation.Tasks.csproj" />
     <Project Path="src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+    <Project Path="src/AspNetCore.Mvc/Rocket.Surgery.LaunchPad.AspNetCore.Mvc.csproj" />
     <Project Path="src/EntityFramework/Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <Project Path="src/ZeroAlloc.AspNetCore/Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
     <Project Path="src/ZeroAlloc.Blazor/Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
@@ -150,6 +151,7 @@
     <File Path="test/Api/Aot/verify.sh" />
     <Project Path="test/Api/Aot/Api.Aot.Contracts/Api.Aot.Contracts.csproj" />
     <Project Path="test/Api/Aot/Api.Aot.Server/Api.Aot.Server.csproj" />
+    <Project Path="test/Api/Aot/Packages.Aot/Packages.Aot.csproj" />
   </Folder>
   <Folder Name="/test/Api/Functional/">
     <File Path="test/Api/Functional/Directory.Build.props" />

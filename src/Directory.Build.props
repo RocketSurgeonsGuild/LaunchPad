@@ -10,6 +10,7 @@
       <Using Include="Joinery.Dovetail.Attributes" />
       <Using Include="Joinery.Dovetail.Joints" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.AspNetCore" />
+        <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.AspNetCore.Mvc" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Extensions" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Commands" />
         <InternalsVisibleTo Include="Rocket.Surgery.LaunchPad.Restful" />

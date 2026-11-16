@@ -14,6 +14,7 @@
           - Rocket.Surgery.LaunchPad.Hosting: any project Dovetail found a host model for (a DovetailHost item), except a Razor class
             library or an Aspire AppHost (below). The package is a direct reference of the project, which is what its templates require.
           - Rocket.Surgery.LaunchPad.AspNetCore: an ASP.NET Core application (the WebApplication host model).
+          - Rocket.Surgery.LaunchPad.AspNetCore.Mvc: the same, unless the project publishes or is built for native AOT (below).
           - Rocket.Surgery.LaunchPad.Foundation: a file-based app (dotnet run app.cs, FileBasedProgram), which also counts as referencing
             NodaTime. Together with Rocket.Surgery.LaunchPad.Hosting (Dovetail finds a generic host for it) that gives a single-file app the
             usual LaunchPad application without a #:package directive.
@@ -42,6 +43,18 @@
         >true</_LaunchPadNotAnApplication>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == '' and '$(_LaunchPadNotAnApplication)' == 'true'">false</LaunchPadEnableHosting>
         <LaunchPadEnableAspNetCore Condition="'$(LaunchPadEnableAspNetCore)' == '' and '$(_LaunchPadNotAnApplication)' == 'true'">false</LaunchPadEnableAspNetCore>
+    </PropertyGroup>
+    <!--
+        Native AOT: every package LaunchPad adds is native AOT compatible, except the ones it splits out for what isn't. A project that
+        sets PublishAot or IsAotCompatible gets only the compatible ones: Rocket.Surgery.LaunchPad.AspNetCore without
+        Rocket.Surgery.LaunchPad.AspNetCore.Mvc (MVC, which ASP.NET Core doesn't support with native AOT). LaunchPadEnableAspNetCoreMvc set
+        to true or false overrides that either way.
+    -->
+    <PropertyGroup>
+        <LaunchPadEnableAspNetCoreMvc
+            Condition="'$(LaunchPadEnableAspNetCoreMvc)' == '' and ('$(PublishAot)' == 'true' or '$(IsAotCompatible)' == 'true')"
+        >false</LaunchPadEnableAspNetCoreMvc>
+        <LaunchPadEnableAspNetCoreMvc Condition="'$(LaunchPadEnableAspNetCoreMvc)' == ''">true</LaunchPadEnableAspNetCoreMvc>
     </PropertyGroup>
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
@@ -115,6 +128,11 @@
             Include="Rocket.Surgery.LaunchPad.AspNetCore"
             Version="$(LaunchPadVersion)"
             Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'AspNetCore')) == 'true'"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.AspNetCore.Mvc"
+            Version="$(LaunchPadVersion)"
+            Condition="'$(LaunchPadEnableAspNetCoreMvc)' != 'false' and @(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'AspNetCore')) == 'true'"
         />
     </ItemGroup>
 

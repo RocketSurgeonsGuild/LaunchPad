@@ -18,7 +18,7 @@ public class NodaTimeSerilogBoundaryTests
         await references
            .Where(x => !x.StartsWith("Microsoft.", StringComparison.Ordinal))
            .Order()
-           .Should().BeEquivalentTo(["Joinery.Dovetail", "Joinery.Dovetail.Serilog", "NodaTime", "NodaTime.Serialization.SystemTextJson", "Serilog"], CollectionOrdering.Matching);
+           .Should().BeEquivalentTo(["Joinery.Dovetail", "Joinery.Dovetail.Serilog", "NodaTime", "Serilog"], CollectionOrdering.Matching);
         // The Dovetail types use the Microsoft.Extensions abstractions (which ones depends on the target framework), and the JSON joint
         // configures the System.Text.Json options through Microsoft.Extensions.Options; nothing more.
         await references
