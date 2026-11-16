@@ -1,0 +1,86 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+
+    <!--
+        No symbols package: there is no assembly. Set here rather than in Directory.Build.props, because Rocket.Surgery.MSBuild.SourceLink's
+        props (imported from the package references, after Directory.Build.props) turn IncludeSymbols on.
+    -->
+    <PropertyGroup>
+        <IncludeSymbols>false</IncludeSymbols>
+    </PropertyGroup>
+
+    <!--
+        The mirrors of the Microsoft SDKs: a project that sets LaunchPadMicrosoftSdk (Rocket.Surgery.LaunchPad.Sdk.Web sets
+        Microsoft.NET.Sdk.Web) is that SDK with LaunchPad. Its Sdk/Sdk.props imports Dovetail's mirror of the same SDK, which imports the
+        Microsoft SDK and chains Joinery.Dovetail.Sdk, then Mirror/Rocket.Surgery.LaunchPad.Mirror.props, which applies what every LaunchPad SDK
+        applies.
+    -->
+    <PropertyGroup Condition="'$(LaunchPadMicrosoftSdk)' != ''">
+        <PackageDescription Condition="'$(PackageDescription)' == ''">$(LaunchPadMicrosoftSdk) with LaunchPad: a drop-in replacement for the Microsoft SDK that chains $(LaunchPadChainedSdk) and adds the LaunchPad packages for what an application is and references</PackageDescription>
+        <PackageTags>$(PackageTags);$(LaunchPadMicrosoftSdk)</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!--
+            Every SDK but Rocket.Surgery.LaunchPad.Sdk ships the files it shares with it, packed from src/Sdks/LaunchPad/Sdk: the shared props
+            and the package detection. Each keeps its own Sdk.props and Sdk.targets.
+        -->
+        <None
+            Condition="'$(MSBuildProjectName)' != 'Rocket.Surgery.LaunchPad.Sdk'"
+            Include="$(MSBuildThisFileDirectory)LaunchPad/Sdk/**"
+            Exclude="$(MSBuildThisFileDirectory)LaunchPad/Sdk/Sdk.props;$(MSBuildThisFileDirectory)LaunchPad/Sdk/Sdk.targets"
+            Pack="true"
+            PackagePath="Sdk/"
+            Link="Sdk/Shared/%(RecursiveDir)%(Filename)%(Extension)"
+        />
+        <!-- the mirrors also ship the file that applies the shared props after Dovetail's mirror -->
+        <None
+            Condition="'$(LaunchPadMicrosoftSdk)' != ''"
+            Include="$(MSBuildThisFileDirectory)Mirror/**"
+            Pack="true"
+            PackagePath="Sdk/"
+            Link="Sdk/Shared/%(RecursiveDir)%(Filename)%(Extension)"
+        />
+    </ItemGroup>
+
+    <!--
+        Writes Sdk/Packages.props into each package: LaunchPadVersion, the version of the SDK, which every LaunchPad package it adds to an
+        application shares, and LaunchPadDovetailSdkVersion, the version of the Dovetail SDK that Sdk/Sdk.props chains (LaunchPadChainedSdk),
+        which is the one Directory.Packages.props pins. An application can set either first to choose another. As in Joinery.Dovetail.Sdk, the
+        versions are only known when the SDK is packed, so the file is generated then rather than kept in the repository.
+
+        LaunchPad/Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which packages an application gets. A package
+        added there is also packed by test/Sdk.Tests (PackedSdk.Projects) and sample/Sample.Sdk/build/pack.proj, so the tests and the sample
+        can restore it.
+    -->
+    <Target Name="_LaunchPadGeneratePackagesProps" BeforeTargets="_GetPackageFiles;Pack">
+        <ItemGroup>
+            <_LaunchPadDovetailSdk Include="@(PackageVersion)" Condition="'%(Identity)' == '$(LaunchPadChainedSdk)'" />
+        </ItemGroup>
+        <PropertyGroup>
+            <_LaunchPadDovetailSdkVersion>@(_LaunchPadDovetailSdk->'%(Version)')</_LaunchPadDovetailSdkVersion>
+            <_LaunchPadPackagesProps>$(IntermediateOutputPath)Packages.props</_LaunchPadPackagesProps>
+        </PropertyGroup>
+        <Error Condition="'$(LaunchPadChainedSdk)' == ''" Text="$(MSBuildProjectName) sets no LaunchPadChainedSdk, the Dovetail SDK it chains." />
+        <Error Condition="'$(_LaunchPadDovetailSdkVersion)' == ''" Text="Directory.Packages.props pins no version of $(LaunchPadChainedSdk), which $(PackageId) chains." />
+        <ItemGroup>
+            <!-- %24 is $ and %27 is ': the file reads the consumer's properties, which must not be expanded here -->
+            <_LaunchPadPackagesPropsLine Include="&lt;Project&gt;" />
+            <_LaunchPadPackagesPropsLine Include="&lt;!-- Generated when $(PackageId) is packed. Each version is only set when the application has not set it already. --&gt;" />
+            <_LaunchPadPackagesPropsLine Include="&lt;PropertyGroup&gt;" />
+            <_LaunchPadPackagesPropsLine
+                Include="&lt;LaunchPadDovetailSdkVersion Condition=&quot;%27%24(LaunchPadDovetailSdkVersion)%27 == %27%27&quot;&gt;$(_LaunchPadDovetailSdkVersion)&lt;/LaunchPadDovetailSdkVersion&gt;"
+            />
+            <_LaunchPadPackagesPropsLine
+                Include="&lt;LaunchPadVersion Condition=&quot;%27%24(LaunchPadVersion)%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/LaunchPadVersion&gt;"
+            />
+            <_LaunchPadPackagesPropsLine Include="&lt;/PropertyGroup&gt;" />
+            <_LaunchPadPackagesPropsLine Include="&lt;/Project&gt;" />
+        </ItemGroup>
+        <WriteLinesToFile File="$(_LaunchPadPackagesProps)" Lines="@(_LaunchPadPackagesPropsLine)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+        <ItemGroup>
+            <None Include="$(_LaunchPadPackagesProps)" Pack="true" PackagePath="Sdk" />
+            <FileWrites Include="$(_LaunchPadPackagesProps)" />
+        </ItemGroup>
+    </Target>
+</Project>

@@ -21,3 +21,4 @@ internal sealed class LaunchPadHealthChecksJoint : IServiceJoint
 {
     public void Register(IDovetailContext context, IServiceCollection services) => services.AddHealthChecks();
 }
+

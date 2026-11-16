@@ -28,3 +28,4 @@ internal sealed class LaunchPadBrowserConsoleLoggingJoint : ISerilogJoint
         loggerConfiguration.WriteTo.BrowserConsole(formatProvider: CultureInfo.InvariantCulture);
     }
 }
+

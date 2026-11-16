@@ -6,8 +6,8 @@ using Hosting.Tests.Scaffolding;
 namespace Sdk.Tests.Scaffolding;
 
 /// <summary>
-///     <c>Rocket.Surgery.LaunchPad.Sdk</c> and the packages it adds to an application, packed from the repository into a feed of their own,
-///     once for all the tests. The version is unique to the run, so a copy an earlier run left in a packages folder cannot stand in for it.
+///     The LaunchPad SDKs (<c>Rocket.Surgery.LaunchPad.Sdk</c> and the others in <c>src/Sdks</c>) and the packages they add to an
+///     application, packed from the repository into a feed of their own, once for all the tests. The version is unique to the run, so a copy an earlier run left in a packages folder cannot stand in for it.
 /// </summary>
 /// <param name="Feed">The folder holding the packages; a folder with .nupkg files is a NuGet feed.</param>
 /// <param name="Version">The version of every package in the feed.</param>
@@ -15,13 +15,18 @@ namespace Sdk.Tests.Scaffolding;
 /// <param name="PackagesProps">The text of the props file the SDK generates when it is packed.</param>
 /// <param name="ConsoleSdkFiles">The files in the console SDK package (<see cref="ConsoleSdkPackageId" />), as <paramref name="SdkFiles" />.</param>
 /// <param name="ConsolePackagesProps">The text of the props file the console SDK generates when it is packed.</param>
+/// <param name="Mirrors">
+///     The mirrors of the Microsoft SDKs (<c>Rocket.Surgery.LaunchPad.Sdk.Web</c>, ...), by the name after <see cref="SdkPackageId" />
+///     (<see cref="MirrorNames" />): the files of each package and the text of its props file, as <paramref name="SdkFiles" />.
+/// </param>
 internal sealed record PackedSdk(
     string Feed,
     string Version,
     IReadOnlyList<string> SdkFiles,
     string PackagesProps,
     IReadOnlyList<string> ConsoleSdkFiles,
-    string ConsolePackagesProps
+    string ConsolePackagesProps,
+    IReadOnlyDictionary<string, PackedSdkPackage> Mirrors
 )
 {
     /// <summary>
@@ -35,13 +40,27 @@ internal sealed record PackedSdk(
     public const string ConsoleSdkPackageId = "Rocket.Surgery.LaunchPad.Sdk.Console";
 
     /// <summary>
+    ///     The mirrors of the Microsoft SDKs, each <c>Rocket.Surgery.LaunchPad.Sdk.{Name}</c> in <c>src/Sdks/{Name}</c>, which chains
+    ///     <c>Joinery.Dovetail.Sdk.{Name}</c>.
+    /// </summary>
+    public static readonly IReadOnlyList<string> MirrorNames = ["Web", "Worker", "Razor", "BlazorWebAssembly", "WebAssembly", "WindowsDesktop", "Aspire.AppHost"];
+
+    /// <summary>
+    ///     The id of the package of a mirror.
+    /// </summary>
+    /// <param name="name">The name of the mirror (<see cref="MirrorNames" />).</param>
+    /// <returns>The package id.</returns>
+    public static string MirrorPackageId(string name) => $"{SdkPackageId}.{name}";
+
+    /// <summary>
     ///     The projects packed into the feed: the SDK, every package it can add to an application, and the LaunchPad packages
     ///     those depend on, so an application that restores them finds each in the feed.
     /// </summary>
     private static readonly string[] Projects =
     [
-        Path.Combine("src", "Sdk", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
-        Path.Combine("src", "Sdk.Console", "Rocket.Surgery.LaunchPad.Sdk.Console.csproj"),
+        Path.Combine("src", "Sdks", "LaunchPad", "Rocket.Surgery.LaunchPad.Sdk.csproj"),
+        Path.Combine("src", "Sdks", "Console", "Rocket.Surgery.LaunchPad.Sdk.Console.csproj"),
+        .. MirrorNames.Select(name => Path.Combine("src", "Sdks", name, $"{MirrorPackageId(name)}.csproj")),
         Path.Combine("src", "Hosting", "Rocket.Surgery.LaunchPad.Hosting.csproj"),
         Path.Combine("src", "Analyzers", "Rocket.Surgery.LaunchPad.Analyzers.csproj"),
         Path.Combine("src", "Primitives", "Rocket.Surgery.LaunchPad.Primitives.csproj"),
@@ -115,7 +134,14 @@ internal sealed record PackedSdk(
 
         var (files, packagesProps) = await ReadSdk(feed, SdkPackageId, version);
         var (consoleFiles, consolePackagesProps) = await ReadSdk(feed, ConsoleSdkPackageId, version);
-        return new(feed, version, files, packagesProps, consoleFiles, consolePackagesProps);
+        var mirrors = new Dictionary<string, PackedSdkPackage>(StringComparer.Ordinal);
+        foreach (var name in MirrorNames)
+        {
+            var (mirrorFiles, mirrorPackagesProps) = await ReadSdk(feed, MirrorPackageId(name), version);
+            mirrors[name] = new(mirrorFiles, mirrorPackagesProps);
+        }
+
+        return new(feed, version, files, packagesProps, consoleFiles, consolePackagesProps, mirrors);
     }
 
     /// <summary>
@@ -173,3 +199,10 @@ internal sealed record PackedSdk(
 
     private static readonly Lazy<Task<PackedSdk>> _packed = new(PackCore);
 }
+
+/// <summary>
+///     An SDK package of the feed.
+/// </summary>
+/// <param name="Files">The files in the package, without the package bookkeeping or the icon CI adds.</param>
+/// <param name="PackagesProps">The text of the props file the SDK generates when it is packed.</param>
+internal sealed record PackedSdkPackage(IReadOnlyList<string> Files, string PackagesProps);

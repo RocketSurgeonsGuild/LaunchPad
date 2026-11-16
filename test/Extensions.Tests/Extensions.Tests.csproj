@@ -16,6 +16,10 @@
         />
     </ItemGroup>
     <ItemGroup>
+        <!-- AutoRegisterOptions declares [Optionary] options; Dovetail registers what Optionary generates -->
+        <PackageReference Include="Optionary" />
+    </ItemGroup>
+    <ItemGroup>
         <Compile Include="../Shared/ContainerTest.cs" Link="Shared/ContainerTest.cs" />
         <Using Include="Rocket.Surgery.LaunchPad.Testing" />
     </ItemGroup>

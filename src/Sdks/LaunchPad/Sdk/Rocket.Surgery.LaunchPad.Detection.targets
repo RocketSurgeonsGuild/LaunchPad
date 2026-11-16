@@ -11,8 +11,8 @@
         imported after it add the packages of one technology each, and the integration package of a technology with each partner technology
         the project also has (Rocket.Surgery.LaunchPad.NodaTime.HotChocolate for NodaTime and HotChocolate). LaunchPadEnable<Tech> set to
         false opts a project out of a technology: its own package, and every integration package it is part of.
-          - Rocket.Surgery.LaunchPad.Hosting: any project Dovetail found a host model for (a DovetailHost item). The package is a direct
-            reference of the project, which is what its templates require.
+          - Rocket.Surgery.LaunchPad.Hosting: any project Dovetail found a host model for (a DovetailHost item), except a Razor class
+            library or an Aspire AppHost (below). The package is a direct reference of the project, which is what its templates require.
           - Rocket.Surgery.LaunchPad.AspNetCore: an ASP.NET Core application (the WebApplication host model).
           - Rocket.Surgery.LaunchPad.Foundation: a file-based app (dotnet run app.cs, FileBasedProgram), which also counts as referencing
             NodaTime. Together with Rocket.Surgery.LaunchPad.Hosting (Dovetail finds a generic host for it) that gives a single-file app the
@@ -23,6 +23,26 @@
 
         The conditions are on items: MSBuild evaluates every property before any item, so a property cannot read PackageReference.
     -->
+    <!--
+        Two kinds of project Dovetail finds a host model for are not applications, and get none of LaunchPad's hosting packages
+        (Rocket.Surgery.LaunchPad.Hosting, Rocket.Surgery.LaunchPad.AspNetCore) unless they turn them on themselves:
+          - a Razor class library (Microsoft.NET.Sdk.Razor without the Web or WebAssembly SDKs), which Dovetail takes for a WebApplication
+            host, as it reads UsingMicrosoftNETSdkRazor;
+          - an Aspire AppHost (IsAspireHost), which Dovetail takes for a HostApplication host, as it is an Exe: it starts the application's
+            projects rather than hosting LaunchPad's joints.
+        Their other packages (NodaTime, ...) still follow what they reference.
+    -->
+    <PropertyGroup>
+        <_LaunchPadNotAnApplication Condition="'$(IsAspireHost)' == 'true'">true</_LaunchPadNotAnApplication>
+        <_LaunchPadNotAnApplication
+            Condition="'$(UsingMicrosoftNETSdkRazor)' == 'true'
+                   and '$(UsingMicrosoftNETSdkWeb)' != 'true'
+                   and '$(UsingMicrosoftNETSdkBlazorWebAssembly)' != 'true'
+                   and '$(UsingMicrosoftNETSdkWebAssembly)' != 'true'"
+        >true</_LaunchPadNotAnApplication>
+        <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == '' and '$(_LaunchPadNotAnApplication)' == 'true'">false</LaunchPadEnableHosting>
+        <LaunchPadEnableAspNetCore Condition="'$(LaunchPadEnableAspNetCore)' == '' and '$(_LaunchPadNotAnApplication)' == 'true'">false</LaunchPadEnableAspNetCore>
+    </PropertyGroup>
     <PropertyGroup>
         <LaunchPadEnableHosting Condition="'$(LaunchPadEnableHosting)' == ''">true</LaunchPadEnableHosting>
         <LaunchPadEnableFoundation Condition="'$(LaunchPadEnableFoundation)' == ''">true</LaunchPadEnableFoundation>

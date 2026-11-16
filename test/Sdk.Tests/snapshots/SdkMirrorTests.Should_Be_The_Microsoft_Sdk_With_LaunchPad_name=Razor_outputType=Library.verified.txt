@@ -1,0 +1,9 @@
+﻿{
+  Hosts: [
+    WebApplication
+  ],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Joinery.Dovetail.Hosting {DovetailVersion} (SDK)
+  ]
+}

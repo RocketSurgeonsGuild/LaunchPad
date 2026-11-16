@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageDescription>MSBuild SDK for LaunchPad console applications: chains Joinery.Dovetail.Sdk.Console (ConsoleAppFramework) and adds the LaunchPad packages for what an application is and references</PackageDescription>
+        <PackageTags>$(PackageTags);console;cli;consoleappframework</PackageTags>
+        <!-- its own Sdk.props and Sdk.targets chain this SDK; everything else it packs is Rocket.Surgery.LaunchPad.Sdk's (src/Sdks/Directory.Build.targets) -->
+        <LaunchPadChainedSdk>Joinery.Dovetail.Sdk.Console</LaunchPadChainedSdk>
+    </PropertyGroup>
+</Project>
