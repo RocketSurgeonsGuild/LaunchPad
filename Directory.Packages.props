@@ -173,7 +173,7 @@
             references carry a version, which central package management rejects for a package that also has a PackageVersion (NU1009).
         -->
         <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.1.6" />
-        <PackageVersion Include="Refit.HttpClientFactory" Version="16.4.0" />
+        <PackageVersion Include="Refit.HttpClientFactory" Version="17.0.0" />
 
         <PackageVersion Include="OpenTelemetry" Version="1.21.0" />
 
