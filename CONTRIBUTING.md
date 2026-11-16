@@ -14,7 +14,7 @@ LaunchPad targets .NET 11 and later. The frameworks are declared once, in [`Dire
 | `LaunchPadLatestTargetFramework`   | the newest of them                           | the projects that build for one framework: `test/Sdk.Tests` (its host) and `test/Api/Aot`                              |
 
 No project file names a framework itself, except the generators, analyzers, MSBuild task and SDK packages
-(`src/Analyzers`, `src/Primitives/Analyzers`, `src/Foundation.Tasks`, `src/Sdk`, `src/Sdk.Console`), which stay on `netstandard2.0`
+(`src/Analyzers`, `src/Primitives/Analyzers`, `src/Foundation.Tasks`, the SDKs under `src/Sdks`), which stay on `netstandard2.0`
 because the compiler and MSBuild load them, and `sample/Sample.Sdk`, which stands for an application outside the repository.
 
 Code never assumes exactly one framework:
@@ -52,5 +52,5 @@ Adding `net12.0` next to `net11.0` touches these places, in this order:
    when the oldest framework does.
 
 Dropping the oldest framework is the same list in reverse, plus the LaunchPad SDK's minimum
-(`LaunchPadMinimumTargetFramework` in `src/Sdk/Sdk/Rocket.Surgery.LaunchPad.TargetFramework.targets`, tested by
+(`LaunchPadMinimumTargetFramework` in `src/Sdks/LaunchPad/Sdk/Rocket.Surgery.LaunchPad.TargetFramework.targets`, tested by
 `test/Sdk.Tests/SdkTargetFrameworkTests.cs`), and it is a breaking change for a major release.

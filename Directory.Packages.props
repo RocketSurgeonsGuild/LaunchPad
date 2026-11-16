@@ -26,7 +26,11 @@
     <ItemGroup>
 
     <PackageVersion Include="Rocket.Surgery.ModularPipelines.Extensions" Version="0.2.3" />
-    <!-- build/Build.cs references it directly, so its generator writes ConfigureDovetail(); the version Rocket.Surgery.ModularPipelines.Extensions needs -->
+    <!--
+        build/Build.cs references it directly, so its generator writes ConfigureDovetail(); the version Rocket.Surgery.ModularPipelines.Extensions
+        needs. It stays on 0.5.3 while the rest of the repository is on Dovetail 0.7.0: Extensions 0.2.3 is built against Dovetail 0.5.3 and calls
+        DovetailConfigurationOptionsExtensions, which 0.7.0 removed (TypeLoadException when the build host starts). Move it with Extensions.
+    -->
     <PackageVersion Include="Joinery.Dovetail.ModularPipelines" Version="0.5.3" />
     <PackageVersion Include="Sourcy.DotNet" Version="1.1.1" />
     <PackageVersion Include="Sourcy.Git" Version="1.1.1" />
@@ -60,7 +64,7 @@
         <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="2.5.0" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
-        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.5.3" />
+        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.7.0" />
         <PackageVersion Include="HotChocolate" Version="16.7.5" />
 
         <PackageVersion Include="HotChocolate.AspNetCore" Version="16.7.5" />
@@ -119,15 +123,32 @@
 
         <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
         <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
-        <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.5.3" />
+        <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.7.0" />
         <PackageVersion Include="Specular" Version="0.4.1" />
-        <PackageVersion Include="Joinery.Dovetail" Version="0.5.3" />
-        <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.5.3" />
-        <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.5.3" />
-        <!-- no project references it: Rocket.Surgery.LaunchPad.Sdk chains this version of Dovetail's SDK (src/Sdk) -->
-        <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.5.3" />
-        <!-- no project references it: Rocket.Surgery.LaunchPad.Sdk.Console chains this version of Dovetail's console SDK (src/Sdk.Console) -->
-        <PackageVersion Include="Joinery.Dovetail.Sdk.Console" Version="0.5.3" />
+        <PackageVersion Include="Joinery.Dovetail" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.7.0" />
+        <!-- binds and describes the configuration a project declares ([Optionary]); Dovetail 0.7.0 leaves the reference to the project -->
+        <PackageVersion Include="Optionary" Version="0.1.1" />
+        <!--
+            No project references these: each LaunchPad SDK (src/Sdks) chains the Dovetail SDK of the same name at this version, which
+            src/Sdks/Directory.Build.targets writes into its Sdk/Packages.props. Dovetail ships every package at one version.
+        -->
+        <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.Console" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.Web" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.Worker" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.Razor" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.BlazorWebAssembly" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.WebAssembly" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.WindowsDesktop" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.Aspire.AppHost" Version="0.7.0" />
+        <!--
+            No project references it either: an MSBuild SDK from NuGet. test/Sdk.Tests compares Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost
+            with Aspire.AppHost.Sdk at this version next to Rocket.Surgery.LaunchPad.Sdk; the version Joinery.Dovetail.Sdk.Aspire.AppHost
+            0.7.0 imports.
+        -->
+        <PackageVersion Include="Aspire.AppHost.Sdk" Version="13.6.5" />
         <!-- the command line of sample/Sample.Command, the version Joinery.Dovetail.Sdk.Console adds to a console application -->
         <PackageVersion Include="ConsoleAppFramework" Version="5.8.1" />
 

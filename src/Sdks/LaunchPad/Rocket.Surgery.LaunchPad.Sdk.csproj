@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageDescription>MSBuild SDK for LaunchPad: chains Joinery.Dovetail.Sdk and adds the LaunchPad packages for what an application is and references</PackageDescription>
+        <PackageTags>$(PackageTags);file-based-apps</PackageTags>
+        <!-- the Dovetail SDK this SDK chains; src/Sdks/Directory.Build.targets writes its version into Sdk/Packages.props -->
+        <LaunchPadChainedSdk>Joinery.Dovetail.Sdk</LaunchPadChainedSdk>
+    </PropertyGroup>
+</Project>

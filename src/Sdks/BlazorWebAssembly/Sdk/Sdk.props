@@ -1,0 +1,29 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly is Microsoft.NET.Sdk.BlazorWebAssembly with LaunchPad. A project swaps the one for the other and changes nothing else:
+
+            <Project Sdk="Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly">
+
+        with the version under msbuild-sdks in global.json, or in the attribute (Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly/1.2.3). It is the same as Microsoft.NET.Sdk.BlazorWebAssembly with
+        <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" /> next to it.
+
+        Blazor WebAssembly applications. Dovetail detects a WebAssembly host, and LaunchPad adds Rocket.Surgery.LaunchPad.Hosting.
+
+        It chains Joinery.Dovetail.Sdk.BlazorWebAssembly, Dovetail's mirror of Microsoft.NET.Sdk.BlazorWebAssembly, which imports the Microsoft SDK and then Joinery.Dovetail.Sdk, and then
+        applies what every LaunchPad SDK applies (Rocket.Surgery.LaunchPad.Mirror.props). Under a Directory.Build.props that already applies
+        Joinery.Dovetail.Sdk or a LaunchPad SDK, neither is applied a second time.
+    -->
+
+    <!--
+        The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. The version of the
+        import wins over a Joinery.Dovetail.Sdk.BlazorWebAssembly entry in global.json. It is read before the Microsoft SDK imports the Directory.Build.props, so to
+        chain another version set LaunchPadDovetailSdkVersion as a global property or an environment variable
+        (dotnet build -p:LaunchPadDovetailSdkVersion=1.2.3). Sdk.targets imports the same version, whatever the project sets in between.
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)Packages.props" />
+    <PropertyGroup>
+        <_LaunchPadMirrorDovetailSdkVersion>$(LaunchPadDovetailSdkVersion)</_LaunchPadMirrorDovetailSdkVersion>
+    </PropertyGroup>
+    <Import Project="Sdk.props" Sdk="Joinery.Dovetail.Sdk.BlazorWebAssembly" Version="$(_LaunchPadMirrorDovetailSdkVersion)" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Mirror.props" />
+</Project>
