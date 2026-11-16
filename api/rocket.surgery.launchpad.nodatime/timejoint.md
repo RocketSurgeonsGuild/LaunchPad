@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime](/LaunchPad/api/rocket.surgery.launchpad.nodatime.md)
-- Version: `2.0.1-beta.376`
+- Version: `2.0.1-beta.377`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.Joints`
 - Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`, `ISetupJoint`
