@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongType<Latitude, double>`, `IComparable<Latitude>`, `IConvertible`, `IEquatable<Latitude>`, `IFormattable`, `IParsable<Latitude>`, `ISpanFormattable`, `ISpanParsable<Latitude>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Latitude>`, `IComparisonOperators<Latitude, Latitude, bool>`, `IEqualityOperators<Latitude, Latitude, bool>`
 
 A latitude in decimal degrees, valid under [LatitudeRules](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/latituderules.md).

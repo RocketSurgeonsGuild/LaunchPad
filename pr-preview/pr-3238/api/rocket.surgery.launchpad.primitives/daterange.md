@@ -2,9 +2,9 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IEquatable<DateRange>`
 
 A range of dates from [DateRange.Start](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/daterange/properties.md#start) to [DateRange.End](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/daterange/properties.md#end), both included. [DateRange.Start](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/daterange/properties.md#start) is never after [DateRange.End](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/daterange/properties.md#end); a range of one day has them equal.

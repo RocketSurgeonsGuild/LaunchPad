@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongType<Url, string>`, `IComparable<Url>`, `IConvertible`, `IEquatable<Url>`, `IParsable<Url>`, `ISpanParsable<Url>`, `IEqualityOperators<Url, Url, bool>`
 
 An absolute http or https URL, valid under [UrlRules](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/urlrules.md).

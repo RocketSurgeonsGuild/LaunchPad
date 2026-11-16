@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongType<Quantity, int>`, `IComparable<Quantity>`, `IConvertible`, `IEquatable<Quantity>`, `IFormattable`, `IParsable<Quantity>`, `ISpanFormattable`, `ISpanParsable<Quantity>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Quantity>`, `IComparisonOperators<Quantity, Quantity, bool>`, `IEqualityOperators<Quantity, Quantity, bool>`
 
 A non-negative count of items, valid under [QuantityRules](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/quantityrules.md).

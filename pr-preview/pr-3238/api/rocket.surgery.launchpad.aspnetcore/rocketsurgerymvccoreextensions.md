@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 
 Helper methods for getting an mvc builder if you're not sure that mvc has been added to the application yet.
 

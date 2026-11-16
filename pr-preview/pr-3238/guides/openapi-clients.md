@@ -48,8 +48,8 @@ with `AddOpenApi()` into its `obj` folder:
 ```xml
 <!-- Rockets.Api.csproj -->
 <ItemGroup>
-  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
-  <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.15" PrivateAssets="all" />
+  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
+  <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="11.0.0" PrivateAssets="all" />
 </ItemGroup>
 ```
 

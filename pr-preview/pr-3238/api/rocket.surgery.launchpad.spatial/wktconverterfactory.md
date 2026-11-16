@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Spatial](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.spatial.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.Spatial`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Inherits: `GeoJsonConverterFactory`
 
 A converter for

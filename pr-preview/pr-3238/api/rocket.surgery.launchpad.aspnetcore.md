@@ -1,8 +1,8 @@
 # Rocket.Surgery.LaunchPad.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.AspNetCore`
-- Version: `2.0.1-pr.1212`
-- Target framework: `net10.0`
+- Version: `2.0.1-pr.1216`
+- Target framework: `net11.0`
 - NuGet: [Rocket.Surgery.LaunchPad.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore)
 
 ## Namespaces

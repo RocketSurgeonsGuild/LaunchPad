@@ -2,9 +2,9 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: [IPropertyTracking](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.foundation/ipropertytracking.md)
 
 Marker interface used to create a record or class that copies any setable properties for classes and init/setable record properties

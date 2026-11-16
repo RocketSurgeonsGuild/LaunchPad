@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Joints`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 The graph ql Joint

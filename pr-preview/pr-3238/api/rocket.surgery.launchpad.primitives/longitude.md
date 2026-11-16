@@ -2,9 +2,9 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1212`
+- Version: `2.0.1-pr.1216`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
-- Target framework: `net10.0`
+- Target framework: `net11.0`
 - Implements: `IStrongType<Longitude, double>`, `IComparable<Longitude>`, `IConvertible`, `IEquatable<Longitude>`, `IFormattable`, `IParsable<Longitude>`, `ISpanFormattable`, `ISpanParsable<Longitude>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Longitude>`, `IComparisonOperators<Longitude, Longitude, bool>`, `IEqualityOperators<Longitude, Longitude, bool>`
 
 A longitude in decimal degrees, valid under [LongitudeRules](/LaunchPad/pr-preview/pr-3238/api/rocket.surgery.launchpad.primitives/longituderules.md).
