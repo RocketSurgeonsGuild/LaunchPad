@@ -31,9 +31,9 @@ public sealed class AssignedJsonConverter<T> : JsonConverter<Assigned<T>>
     public override Assigned<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        return  reader.TokenType == JsonTokenType.Null 
-            ?  default(T) is null ? new(default) : Assigned<T>.Empty() 
-            :   new(JsonSerializer.Deserialize(ref reader, options.GetTypeInfo<T>()));
+        return reader.TokenType == JsonTokenType.Null
+            ? default(T) is null ? new(default) : Assigned<T>.Empty()
+            : new(JsonSerializer.Deserialize(ref reader, options.GetTypeInfo<T>()));
     }
 
     /// <inheritdoc />

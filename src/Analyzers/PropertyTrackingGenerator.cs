@@ -534,13 +534,13 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                          {
                              var interfaceSymbol =
                                  tuple.symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal));
-                             return  interfaceSymbol is not
-                                 {
-                                     ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
-                                     TypeArguments: [INamedTypeSymbol targetSymbol,],
-                                 } 
-                                 ? ((INamedTypeSymbol symbol, TypeDeclarationSyntax syntax, SemanticModel semanticModel, INamedTypeSymbol interfaceSymbol, INamedTypeSymbol targetSymbol))default  
-                                 :  (
+                             return interfaceSymbol is not
+                             {
+                                 ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
+                                 TypeArguments: [INamedTypeSymbol targetSymbol,],
+                             }
+                                 ? ((INamedTypeSymbol symbol, TypeDeclarationSyntax syntax, SemanticModel semanticModel, INamedTypeSymbol interfaceSymbol, INamedTypeSymbol targetSymbol))default
+                                 : (
                                  tuple.symbol,
                                  tuple.syntax,
                                  tuple.semanticModel,

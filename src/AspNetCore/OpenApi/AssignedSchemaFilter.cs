@@ -33,13 +33,10 @@ internal sealed class AssignedSchemaFilter : IOpenApiSchemaTransformer
 
     // null is accepted: a value type (Nullable<T> clears, any other leaves the value alone), or a reference type annotated nullable
     // (Assigned<string?>); a null for a reference type that isn't is assigned, and fails the request's validation
-    private static bool IsNullable(JsonPropertyInfo property, Type valueType)
-    {
-        return  valueType.IsValueType 
-            ?  true 
-            :  property.AttributeProvider is PropertyInfo info
-         && new NullabilityInfoContext().Create(info).GenericTypeArguments is [{ WriteState: NullabilityState.Nullable }];
-    }
+    private static bool IsNullable(JsonPropertyInfo property, Type valueType) =>
+        valueType.IsValueType
+     || ( property.AttributeProvider is PropertyInfo info
+         && new NullabilityInfoContext().Create(info).GenericTypeArguments is [{ WriteState: NullabilityState.Nullable, }] );
 
     private static IOpenApiSchema Nullable(IOpenApiSchema value)
     {
