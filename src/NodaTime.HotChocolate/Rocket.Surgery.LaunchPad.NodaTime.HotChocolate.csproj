@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageTags>$(PackageTags);dovetail;nodatime;hotchocolate;graphql;scalars;date-time</PackageTags>
         <DovetailExportClassName>NodaTimeHotChocolateExports</DovetailExportClassName>
     </PropertyGroup>
     <ItemGroup>

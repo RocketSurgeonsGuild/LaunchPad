@@ -3,7 +3,7 @@
         <IsAotCompatible>true</IsAotCompatible>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageTags>$(PackageTags);dovetail;nettopologysuite;spatial;gis;geojson;wkt;system-text-json;serilog</PackageTags>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.Text.Json" />

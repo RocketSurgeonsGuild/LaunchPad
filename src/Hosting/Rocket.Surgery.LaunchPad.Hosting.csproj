@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageTags>$(PackageTags);dovetail;hosting;generic-host;logging;serilog;opentelemetry;health-checks;webassembly</PackageTags>
     </PropertyGroup>
     <ItemGroup>
         <!--

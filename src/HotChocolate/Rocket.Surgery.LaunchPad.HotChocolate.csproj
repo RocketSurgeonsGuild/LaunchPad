@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
     <PackageDescription />
-    <PackageTags>$(PackageTags)</PackageTags>
+    <PackageTags>$(PackageTags);dovetail;hotchocolate;graphql;graphql-server;filtering;strongly-typed-id</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HotChocolate" />

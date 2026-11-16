@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageTags>$(PackageTags);dovetail;dependency-injection;configuration;system-text-json;aot;http-resilience;service-discovery;problem-details;discriminated-unions</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
     <ItemGroup>

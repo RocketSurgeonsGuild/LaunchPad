@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageTags>$(PackageTags);dovetail;grpc;grpc-aspnetcore;aspnetcore;rpc</PackageTags>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     </PropertyGroup>
     <ItemGroup>

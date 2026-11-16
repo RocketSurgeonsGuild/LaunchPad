@@ -5,7 +5,7 @@
             ZeroAlloc.Mediator validation for LaunchPad GraphQL servers: a rejected request reports one VALIDATION error per failure, naming the
             property that failed.
         </PackageDescription>
-        <PackageTags>$(PackageTags);zeroalloc;validation;graphql;hotchocolate</PackageTags>
+        <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-mediator;validation;hotchocolate;graphql</PackageTags>
         <!--
             The types live in the Rocket.Surgery.LaunchPad.HotChocolate namespaces. A namespace of Rocket.Surgery.LaunchPad.ZeroAlloc would shadow
             ZeroAlloc.* in LaunchPad code. The export class is named for the package so it does not collide with HotChocolate's.

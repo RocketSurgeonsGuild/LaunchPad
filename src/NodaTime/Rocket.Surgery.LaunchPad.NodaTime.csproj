@@ -3,7 +3,7 @@
         <IsAotCompatible>true</IsAotCompatible>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageTags>$(PackageTags);dovetail;nodatime;clock;date-time;system-text-json;serilog</PackageTags>
         <DovetailExportClassName>NodaTimeExports</DovetailExportClassName>
     </PropertyGroup>
     <ItemGroup>

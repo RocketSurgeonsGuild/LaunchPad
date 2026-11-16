@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <PackageDescription />
-        <PackageTags>$(PackageTags)</PackageTags>
+        <PackageTags>$(PackageTags);strawberryshake;graphql;graphql-client;scalars</PackageTags>
         <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
