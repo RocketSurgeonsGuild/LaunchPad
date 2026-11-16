@@ -352,7 +352,7 @@ The host also owns the **group**, by default its name without the suffix in keba
 
 [Section titled “Clients”](#clients)
 
-The generators don’t write clients. A server describes its operations in the transport’s standard format, and a client generator for that format (NSwag or Kiota for OpenAPI, StrawberryShake for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither the contracts project nor a mediator, and a route or name the server changes reaches it with the next generated client.
+The generators don’t write clients. A server describes its operations in the transport’s standard format, and a client generator for that format (Kiota or Refitter for OpenAPI, which [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) runs at build, StrawberryShake for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither the contracts project nor a mediator, and a route or name the server changes reaches it with the next generated client.
 
 ## Mediator profiles
 
@@ -723,7 +723,7 @@ flowchart LR
     A[generated endpoint] --> B["mediator.Send(request)"] --> C[your handler]
   end
   A -. describes .-> D["OpenAPI document · GraphQL schema · .proto"]
-  D --> E["generated client (NSwag, Kiota, StrawberryShake, Grpc.Tools, …)"]
+  D --> E["generated client (Kiota, Refitter, StrawberryShake, Grpc.Tools, …)"]
   E -- "GET /api/rockets/{id}" --> A
 ```
 
@@ -1109,19 +1109,32 @@ Strong types are described by the Primitives package’s own transformer (see [s
 
 The generators don’t write clients. Each server describes itself in a standard format, and any client generator for that format works:
 
-| Server      | Spec                                                                      | Client generators                                                    |
-| ----------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Minimal API | OpenAPI: `AddOpenApi()` and `MapOpenApi()` (Microsoft.AspNetCore.OpenApi) | NSwag, Kiota, OpenAPI Generator, Refitter, …                         |
-| Controllers | OpenAPI, the same way                                                     | the same                                                             |
-| gRPC        | `.proto`: `{Host}.GetProto()`                                             | Grpc.Tools (`<Protobuf GrpcServices="Client" />`), any protoc plugin |
-| Proto-first | the `.proto` you wrote                                                    | the same                                                             |
-| GraphQL     | SDL: HotChocolate serves it at `/graphql?sdl`                             | StrawberryShake, graphql-codegen, …                                  |
+| Server      | Spec                                                                      | Client generators                                                                                 |
+| ----------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Minimal API | OpenAPI: `AddOpenApi()` and `MapOpenApi()` (Microsoft.AspNetCore.OpenApi) | Kiota, Refitter (both through [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/)), … |
+| Controllers | OpenAPI, the same way                                                     | the same                                                                                          |
+| gRPC        | `.proto`: `{Host}.GetProto()`                                             | Grpc.Tools (`<Protobuf GrpcServices="Client" />`), any protoc plugin                              |
+| Proto-first | the `.proto` you wrote                                                    | the same                                                                                          |
+| GraphQL     | SDL: HotChocolate serves it at `/graphql?sdl`                             | StrawberryShake, graphql-codegen, …                                                               |
 
-Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves `/openapi/v1.json`, `/graphql?sdl` and `GetProto()`, then point the client generator at the files. LaunchPad’s own functional tests do that (`test/Api/Functional/Clients`): NSwag, Grpc.Tools and StrawberryShake clients, generated from the specs on every build.
+Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves `/openapi/v1.json`, `/graphql?sdl` and `GetProto()`, then point the client generator at the files. LaunchPad’s own functional tests do that (`test/Api/Functional/Clients`): a Kiota client (through [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/)), Grpc.Tools and StrawberryShake clients, generated from the specs on every build. The sample tests generate Refitter clients through Chirograph straight from the sample servers’ projects.
+
+For an OpenAPI client, [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) is an MSBuild SDK that generates a Kiota or Refitter client at build, from a document file, a URL or a server project in the same build, with an `Add<ClientName>()` registration:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Chirograph" />
+  <ItemGroup>
+    <OpenApiClient Include="../Rockets.Api/Rockets.Api.csproj" Generator="Refitter" ClientName="RocketsClient" />
+  </ItemGroup>
+</Project>
+```
+
+Pin its version under `msbuild-sdks` in `global.json`.
 
 Things to know:
 
-* **Nested request types.** Microsoft.AspNetCore.OpenApi names a schema after the type’s simple name, so `GetRocket.Request` and `CreateRocket.Request` would both be `Request`. Name them with their container:
+* **Nested request types.** Microsoft.AspNetCore.OpenApi names a schema after the type’s simple name, so `GetRocket.Request` and `CreateRocket.Request` would both be `Request`. LaunchPad’s OpenAPI joint (Rocket.Surgery.LaunchPad.AspNetCore) names them with their container (`CreateRocketRequest`); an application that calls `AddOpenApi()` itself does the same:
 
   ```csharp
   builder.Services.AddOpenApi(options => options.CreateSchemaReferenceId = type =>
