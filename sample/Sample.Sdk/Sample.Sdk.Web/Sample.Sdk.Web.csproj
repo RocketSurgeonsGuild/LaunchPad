@@ -1,6 +1,7 @@
 <!--
     Rocket.Surgery.LaunchPad.Sdk.Web is Microsoft.NET.Sdk.Web with LaunchPad, so it is the project's only SDK. It finds an ASP.NET Core host:
-    Dovetail adds Joinery.Dovetail.Hosting and LaunchPad adds Rocket.Surgery.LaunchPad.Hosting and Rocket.Surgery.LaunchPad.AspNetCore.
+    Dovetail adds Joinery.Dovetail.Hosting and LaunchPad adds Rocket.Surgery.LaunchPad.Hosting, Rocket.Surgery.LaunchPad.AspNetCore
+    and, as it doesn't publish with native AOT, Rocket.Surgery.LaunchPad.AspNetCore.Mvc.
     ASP.NET Core has the health checks in its framework, so the health check joint needs no reference.
 -->
 <Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/0.0.0-sample">

@@ -67,6 +67,7 @@ internal sealed record PackedSdk(
         Path.Combine("src", "Primitives", "Analyzers", "Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"),
         Path.Combine("src", "Foundation", "Rocket.Surgery.LaunchPad.Foundation.csproj"),
         Path.Combine("src", "AspNetCore", "Rocket.Surgery.LaunchPad.AspNetCore.csproj"),
+        Path.Combine("src", "AspNetCore.Mvc", "Rocket.Surgery.LaunchPad.AspNetCore.Mvc.csproj"),
         Path.Combine("src", "NodaTime", "Rocket.Surgery.LaunchPad.NodaTime.csproj"),
         Path.Combine("src", "NodaTime.HotChocolate", "Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj"),
         Path.Combine("src", "NodaTime.StrawberryShake", "Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.csproj"),

@@ -7,8 +7,8 @@
         with the version under msbuild-sdks in global.json, or in the attribute (Rocket.Surgery.LaunchPad.Sdk.Web/1.2.3). It is the same as Microsoft.NET.Sdk.Web with
         <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" /> next to it.
 
-        ASP.NET Core applications. Dovetail detects a WebApplication host, and LaunchPad adds Rocket.Surgery.LaunchPad.Hosting and
-        Rocket.Surgery.LaunchPad.AspNetCore.
+        ASP.NET Core applications. Dovetail detects a WebApplication host, and LaunchPad adds Rocket.Surgery.LaunchPad.Hosting,
+        Rocket.Surgery.LaunchPad.AspNetCore and, unless the project sets PublishAot or IsAotCompatible, Rocket.Surgery.LaunchPad.AspNetCore.Mvc.
 
         It chains Joinery.Dovetail.Sdk.Web, Dovetail's mirror of Microsoft.NET.Sdk.Web, which imports the Microsoft SDK and then Joinery.Dovetail.Sdk, and then
         applies what every LaunchPad SDK applies (Rocket.Surgery.LaunchPad.Mirror.props). Under a Directory.Build.props that already applies
