@@ -8,6 +8,7 @@ using System;
 public partial class PatchRequest
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]
+    [global::System.Text.Json.Serialization.JsonConverter(typeof(global::Rocket.Surgery.LaunchPad.Foundation.AssignedJsonConverter<string>))]
     public Rocket.Surgery.LaunchPad.Foundation.Assigned<string> Name { get; set; } = Rocket.Surgery.LaunchPad.Foundation.Assigned<string>.Empty(default);
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version"), System.Runtime.CompilerServices.CompilerGenerated]

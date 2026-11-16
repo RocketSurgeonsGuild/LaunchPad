@@ -111,7 +111,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             members.Add(Handler(host, profile, operation, service));
             members.Add(RequestDelegate(profile, operation, service));
             if (OpenApiEmit.NeedsTransformer(host, operation))
-                members.Add(OpenApiEmit.Transformer(operation, $"__{operation.Name}OpenApi", Generated, Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword)));
+                members.Add(OpenApiEmit.Transformer(operation, $"__{operation.Name}OpenApi", Generated, Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword), true));
             members.Add(
                 PartialHook($"Configure{operation.Name}", true, Parameter(Type("global::Microsoft.AspNetCore.Builder.IEndpointConventionBuilder"), "endpoint"))
                    .Summary($"Customises the generated <c>{operation.Name}</c> endpoint. Implement it in your part of <see cref=\"{host.Name}\" />.")
@@ -372,7 +372,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
 
     private static ExpressionSyntax TryParse(MemberModel member, ExpressionSyntax value, string result) => member.ParseKind switch
     {
-        ParseKind.Enum => Invoke(GenericMember(Name("global::System.Enum"), "TryParse", Type(member.ParseType!)), [SyntaxFactory.Argument(value), SyntaxFactory.Argument(True), OutVar(result)]),
+        ParseKind.Enum => Invoke(GenericMember(Name($"{Generated}.ApiBinding"), "TryParseEnum", Type(member.ParseType!)), [SyntaxFactory.Argument(value), OutVar(result)]),
         ParseKind.Uri => Invoke(Member("global::System.Uri", "TryCreate"), [SyntaxFactory.Argument(value), SyntaxFactory.Argument(Member("global::System.UriKind", "RelativeOrAbsolute")), OutVar(result)]),
         ParseKind.Parsable or ParseKind.TryParseWithProvider => Invoke(
             Member(Type(member.ParseType!), "TryParse"),
@@ -534,6 +534,31 @@ namespace Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     internal static class ApiBinding
     {
+        /// <summary>
+        ///     Parses an enum route, query or header value by its C# name or its JSON name, ignoring case: the camel-cased name the JSON
+        ///     options write, or a <c>JsonStringEnumMemberName</c>. The OpenAPI document lists the JSON names.
+        /// </summary>
+        public static bool TryParseEnum<[global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicFields)] TEnum>(
+            string value,
+            out TEnum result
+        )
+            where TEnum : struct, global::System.Enum
+        {
+            if (global::System.Enum.TryParse(value, true, out result)) return true;
+            foreach (var field in typeof(TEnum).GetFields(global::System.Reflection.BindingFlags.Public | global::System.Reflection.BindingFlags.Static))
+            {
+                if (global::System.Reflection.CustomAttributeExtensions.GetCustomAttribute<global::System.Text.Json.Serialization.JsonStringEnumMemberNameAttribute>(field) is { } jsonName
+                 && string.Equals(jsonName.Name, value, global::System.StringComparison.OrdinalIgnoreCase)
+                 && field.GetValue(null) is TEnum member)
+                {
+                    result = member;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>The application's Minimal API JSON options (ConfigureHttpJsonOptions); native AOT apps add their JsonSerializerContext there.</summary>
         public static global::System.Text.Json.JsonSerializerOptions JsonOptions(global::Microsoft.AspNetCore.Http.HttpContext httpContext) =>
             global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions

@@ -48,8 +48,13 @@ internal static class OpenApiEmit
          || operation.RequiresAuthorization
          || CaseStatuses(operation).Any()
          || operation.Members.Any(m => !m.Rules.IsEmpty)
+         || EnumParameters(operation).Any()
          || DescribesRequest(operation)
          || DescribesResponse(operation) );
+
+    // The route, query and header members that parse to an enum: their parameters reference the enum's schema.
+    private static IEnumerable<MemberModel> EnumParameters(OperationModel operation) =>
+        operation.Members.Where(m => m.ParseKind == ParseKind.Enum && m.Source is BindingSource.Route or BindingSource.Query or BindingSource.Header);
 
     private static bool DescribesRequest(OperationModel operation) =>
         operation.WireSummary is { } || operation.Members.Any(m => m.Summary is { } && m.Source is not ( BindingSource.Service or BindingSource.Ignored ));
@@ -70,9 +75,11 @@ internal static class OpenApiEmit
 
     /// <summary>
     ///     The transformer for one operation, a static method <paramref name="name" /> returning <c>Task</c>, that calls the helpers in
-    ///     <paramref name="helpers" />.
+    ///     <paramref name="helpers" />. <paramref name="bindsEnumJsonNames" /> says the endpoint parses an enum route, query or header value
+    ///     from its JSON name as well as its C# name (the Minimal API request delegates do; MVC's model binding only takes the C# names,
+    ///     ignoring case).
     /// </summary>
-    public static MethodDeclarationSyntax Transformer(OperationModel operation, string name, string helpers, SyntaxTokenList modifiers)
+    public static MethodDeclarationSyntax Transformer(OperationModel operation, string name, string helpers, SyntaxTokenList modifiers, bool bindsEnumJsonNames)
     {
         var statements = new List<StatementSyntax>();
         var openApi = $"{helpers}.ApiOpenApi";
@@ -121,6 +128,27 @@ internal static class OpenApiEmit
             );
         }
 
+        foreach (var member in EnumParameters(operation))
+        {
+            var type = member.IsCollection ? $"{member.ParseType}[]" : member.ParseType!;
+            statements.Add(
+                Statement(
+                    Await(
+                        Invoke(
+                            Member(openApi, "EnumParameter"),
+                            Id(Operation),
+                            Id(Context),
+                            Literal(member.WireName),
+                            TypeOf(Type(type)),
+                            TypeOf(Type(member.ParseType!)),
+                            bindsEnumJsonNames ? True : False,
+                            Id(Ct)
+                        )
+                    )
+                )
+            );
+        }
+
         foreach (var member in operation.Members.Where(m => !m.Rules.IsEmpty))
         {
             var target = member.Source == BindingSource.Body
@@ -129,7 +157,7 @@ internal static class OpenApiEmit
             statements.Add(Statement(member.Rules.Aggregate((ExpressionSyntax)target, (chain, rule) => Invoke(Member(chain, rule.Method), rule.Arguments.Select(a => RuleArgument(rule, a))))));
         }
 
-        var isAsync = CaseStatuses(operation).Any();
+        var isAsync = CaseStatuses(operation).Any() || EnumParameters(operation).Any();
         if (!isAsync) statements.Add(Return(Member("global::System.Threading.Tasks.Task", "CompletedTask")));
         return Method(isAsync ? modifiers.Add(SyntaxFactory.Token(SyntaxKind.AsyncKeyword)) : modifiers, Task(), name, TransformerParameters, statements)
            .Summary($"Describes <c>{operation.Name}</c> in the OpenAPI document: what its endpoint metadata can't say.");
@@ -369,6 +397,52 @@ namespace __NAMESPACE__
             }
 
             return new global::Microsoft.OpenApi.OpenApiSchemaReference(errorCase.SchemaId, document);
+        }
+
+        /// <summary>
+        ///     Describes an enum route, query or header parameter with the enum's own schema (<paramref name="schemaType" />: the enum, or an
+        ///     array of it), the component the bodies reference, with its JSON names, rather than the inline list of C# names ASP.NET Core
+        ///     writes for a value it parses. Left alone when the endpoint doesn't parse the JSON names (<paramref name="bindsJsonNames" />) and
+        ///     a member of the enum has a JSON name other than its C# name in another case (<c>JsonStringEnumMemberName</c>).
+        /// </summary>
+        public static async global::System.Threading.Tasks.Task EnumParameter(
+            global::Microsoft.OpenApi.OpenApiOperation operation,
+            global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context,
+            string name,
+            global::System.Type schemaType,
+            [global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicFields)]
+            global::System.Type enumType,
+            bool bindsJsonNames,
+            global::System.Threading.CancellationToken cancellationToken
+        )
+        {
+            if (Parameter(operation, name) is not { } parameter) return;
+            if (!bindsJsonNames)
+            {
+                foreach (var field in enumType.GetFields(global::System.Reflection.BindingFlags.Public | global::System.Reflection.BindingFlags.Static))
+                {
+                    if (global::System.Reflection.CustomAttributeExtensions.GetCustomAttribute<global::System.Text.Json.Serialization.JsonStringEnumMemberNameAttribute>(field) is { } jsonName
+                     && !string.Equals(jsonName.Name, field.Name, global::System.StringComparison.OrdinalIgnoreCase))
+                        return;
+                }
+            }
+
+            var schema = await context.GetOrCreateSchemaAsync(schemaType, null, cancellationToken).ConfigureAwait(false);
+            if (schema is global::Microsoft.OpenApi.OpenApiSchema { Items: { } items } array) array.Items = Component(context.Document, items);
+            parameter.Schema = Component(context.Document, schema);
+        }
+
+        // The reference to the component a schema with a schema id is (the document's references are made after the operation
+        // transformers run, for the bodies only), adding the component when nothing else did.
+        private static global::Microsoft.OpenApi.IOpenApiSchema Component(global::Microsoft.OpenApi.OpenApiDocument? document, global::Microsoft.OpenApi.IOpenApiSchema schema)
+        {
+            if (document is null
+             || schema is not global::Microsoft.OpenApi.OpenApiSchema { Metadata: { } metadata } component
+             || !metadata.TryGetValue("x-schema-id", out var value)
+             || value is not string { Length: > 0 } id)
+                return schema;
+            if (document.Components?.Schemas?.ContainsKey(id) is not true) document.AddComponent<global::Microsoft.OpenApi.IOpenApiSchema>(id, component);
+            return new global::Microsoft.OpenApi.OpenApiSchemaReference(id, document);
         }
 
         /// <summary>

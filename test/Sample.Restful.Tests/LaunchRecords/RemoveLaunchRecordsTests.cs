@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Sample.Core;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Restful.Client;
 using Sample.Restful.Tests.Helpers;
 
 namespace Sample.Restful.Tests.LaunchRecords;
@@ -13,7 +12,7 @@ public class RemoveLaunchRecordsTests : WebAppFixtureTest
     [Test]
     public async Task Should_Remove_LaunchRecord()
     {
-        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         var faker = new RocketFaker();
         var rocket = faker.Generate();
         var record = new LaunchRecordFaker(new[] { rocket }.ToList()).Generate();
@@ -26,7 +25,7 @@ public class RemoveLaunchRecordsTests : WebAppFixtureTest
             await z.SaveChangesAsync();
         }
 
-        await client.DeleteLaunchRecordAsync(record.Id.Value);
+        await client.DeleteLaunchRecord(record.Id.Value);
 
         await using var assertScope = ServiceProvider.CreateAsyncScope();
         await assertScope.ServiceProvider.GetRequiredService<RocketDbContext>().LaunchRecords.Should().BeEmpty();
@@ -36,7 +35,7 @@ public class RemoveLaunchRecordsTests : WebAppFixtureTest
     public async Task Should_Not_Be_Authorized_On_Given_Record()
     {
         var id = new LaunchRecordId(new Guid("bad361de-a6d5-425a-9cf6-f9b2dd236be6"));
-        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
             var z = scope.ServiceProvider.GetRequiredService<RocketDbContext>();
@@ -50,9 +49,10 @@ public class RemoveLaunchRecordsTests : WebAppFixtureTest
             await z.SaveChangesAsync();
         }
 
-        Func<Task> action = () => client.DeleteLaunchRecordAsync(id.Value);
-        await (await action.Should().Throw<ApiException<ProblemDetails>>())!
-                    .Where(z => z.StatusCode == 403 && z.Result.Status == 403 && z.Result.Title == "Forbidden");
+        var (status, problem) = await Failure<ProblemDetails>(() => client.DeleteLaunchRecord(id.Value));
+        await status.Should().BeEqualTo(System.Net.HttpStatusCode.Forbidden);
+        await problem!.Status.Should().BeEqualTo(403);
+        await problem.Title.Should().BeEqualTo("Forbidden");
     }
 
     private static readonly Faker Faker = new();

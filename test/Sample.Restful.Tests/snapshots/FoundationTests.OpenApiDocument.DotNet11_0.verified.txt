@@ -1,77 +1,6 @@
 ﻿{
   components: {
     schemas: {
-      AssignedOfdouble: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            format: double,
-            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
-            type: [
-              number,
-              string
-            ]
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
-      AssignedOfOffsetDateTime: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            oneOf: [
-              {
-                type: null
-              },
-              {
-                $ref: #/components/schemas/OffsetDateTime
-              }
-            ]
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
-      AssignedOfRocketId: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            $ref: #/components/schemas/RocketId
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
-      AssignedOfstring: {
-        properties: {
-          hasValue: {
-            type: boolean
-          },
-          value: {
-            type: [
-              null,
-              string
-            ]
-          }
-        },
-        required: [
-          value
-        ],
-        type: object
-      },
       ConflictProblem: {
         allOf: [
           {
@@ -94,6 +23,255 @@
         ],
         description: The request conflicts with the current state. HTTP 409, gRPC FailedPrecondition, GraphQL CONFLICT.
       },
+      CreateLaunchRecordRequest: {
+        description: Create a launch record,
+        properties: {
+          actualLaunchDate: {
+            description: The actual launch date,
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
+          },
+          partner: {
+            description: The launch partner,
+            minLength: 1,
+            type: [
+              null,
+              string
+            ]
+          },
+          payload: {
+            description: The launch partners payload,
+            minLength: 1,
+            type: [
+              null,
+              string
+            ]
+          },
+          payloadWeightKg: {
+            description: The payload weight,
+            format: double,
+            minimum: 0,
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              number,
+              string
+            ]
+          },
+          rocketId: {
+            $ref: #/components/schemas/RocketId,
+            description: The rocket to use
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/OffsetDateTime,
+            description: The intended launch date
+          }
+        },
+        required: [
+          rocketId,
+          scheduledLaunchDate,
+          partner,
+          payload
+        ],
+        type: object
+      },
+      CreateLaunchRecordResponse: {
+        description: The launch record creation response,
+        properties: {
+          id: {
+            $ref: #/components/schemas/LaunchRecordId,
+            description: The id of the new launch record
+          }
+        },
+        type: object
+      },
+      CreateRocketRequest: {
+        description: The operation to create a new rocket record,
+        properties: {
+          serialNumber: {
+            description: The serial number of the rocket,
+            maxLength: 30,
+            minLength: 10,
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType,
+            description: The type of rocket
+          }
+        },
+        required: [
+          serialNumber
+        ],
+        type: object
+      },
+      CreateRocketResponse: {
+        description: The identifier of the rocket that was created,
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId,
+            description: The rocket id
+          }
+        },
+        type: object
+      },
+      EditLaunchRecordPatchRequest: {
+        description: The patch request,
+        properties: {
+          actualLaunchDate: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
+          },
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
+          partner: {
+            type: string
+          },
+          payload: {
+            type: string
+          },
+          payloadWeightKg: {
+            format: double,
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              null,
+              number,
+              string
+            ]
+          },
+          rocketId: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/RocketId
+              }
+            ]
+          },
+          scheduledLaunchDate: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
+          }
+        },
+        required: [
+          id
+        ],
+        type: object
+      },
+      EditLaunchRecordRequest: {
+        description: The launch record update request,
+        properties: {
+          actualLaunchDate: {
+            description: The updated actual launch date,
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/OffsetDateTime
+              }
+            ]
+          },
+          id: {
+            $ref: #/components/schemas/LaunchRecordId
+          },
+          partner: {
+            description: The updated launch partner,
+            minLength: 1,
+            type: string
+          },
+          payload: {
+            description: The updated launch payload,
+            minLength: 1,
+            type: string
+          },
+          payloadWeightKg: {
+            description: The updated payload weight,
+            format: double,
+            minimum: 0,
+            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
+            type: [
+              number,
+              string
+            ]
+          },
+          rocketId: {
+            $ref: #/components/schemas/RocketId,
+            description: The update rocket id
+          },
+          scheduledLaunchDate: {
+            $ref: #/components/schemas/OffsetDateTime,
+            description: The scheduled launch date
+          }
+        },
+        required: [
+          partner,
+          payload
+        ],
+        type: object
+      },
+      EditRocketPatchRequest: {
+        description: The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting Request is validated and sent through the mediator.,
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          },
+          serialNumber: {
+            type: string
+          },
+          type: {
+            oneOf: [
+              {
+                type: null
+              },
+              {
+                $ref: #/components/schemas/RocketType
+              }
+            ]
+          }
+        },
+        type: object
+      },
+      EditRocketRequest: {
+        description: The edit operation to update a rocket,
+        properties: {
+          id: {
+            $ref: #/components/schemas/RocketId
+          },
+          serialNumber: {
+            description: The serial number of the rocket,
+            maxLength: 30,
+            minLength: 10,
+            type: string
+          },
+          type: {
+            $ref: #/components/schemas/RocketType,
+            description: The type of the rocket
+          }
+        },
+        required: [
+          serialNumber
+        ],
+        type: object
+      },
       ForbiddenProblem: {
         allOf: [
           {
@@ -115,6 +293,10 @@
           }
         ],
         description: The caller may not do this. HTTP 403, gRPC PermissionDenied, GraphQL FORBIDDEN.
+      },
+      LaunchRecordId: {
+        format: uuid,
+        type: string
       },
       LaunchRecordModel: {
         description: The launch record details,
@@ -188,36 +370,9 @@
         ],
         description: The requested entity doesn't exist. HTTP 404, gRPC NotFound, GraphQL NOT_FOUND.
       },
-      PatchRequest: {
-        description: The patch request,
-        properties: {
-          actualLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
-          },
-          id: {
-            $ref: #/components/schemas/LaunchRecordId
-          },
-          partner: {
-            $ref: #/components/schemas/AssignedOfstring
-          },
-          payload: {
-            $ref: #/components/schemas/AssignedOfstring
-          },
-          payloadWeightKg: {
-            $ref: #/components/schemas/AssignedOfdouble
-          },
-          rocketId: {
-            $ref: #/components/schemas/AssignedOfRocketId
-          },
-          scheduledLaunchDate: {
-            $ref: #/components/schemas/AssignedOfOffsetDateTime
-          }
-        },
-        required: [
-          id
-        ],
-        type: object,
-        x-schema-id: EditLaunchRecordPatchRequest
+      OffsetDateTime: {
+        format: date-time,
+        type: string
       },
       ProblemDetails: {
         properties: {
@@ -261,74 +416,9 @@
         ],
         type: object
       },
-      Request: {
-        description: Create a launch record,
-        properties: {
-          actualLaunchDate: {
-            description: The actual launch date,
-            oneOf: [
-              {
-                type: null
-              },
-              {
-                $ref: #/components/schemas/OffsetDateTime
-              }
-            ]
-          },
-          partner: {
-            description: The launch partner,
-            minLength: 1,
-            type: [
-              null,
-              string
-            ]
-          },
-          payload: {
-            description: The launch partners payload,
-            minLength: 1,
-            type: [
-              null,
-              string
-            ]
-          },
-          payloadWeightKg: {
-            description: The payload weight,
-            format: double,
-            minimum: 0,
-            pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$,
-            type: [
-              number,
-              string
-            ]
-          },
-          rocketId: {
-            $ref: #/components/schemas/RocketId,
-            description: The rocket to use
-          },
-          scheduledLaunchDate: {
-            $ref: #/components/schemas/OffsetDateTime,
-            description: The intended launch date
-          }
-        },
-        required: [
-          rocketId,
-          scheduledLaunchDate,
-          partner,
-          payload
-        ],
-        type: object,
-        x-schema-id: CreateLaunchRecordRequest
-      },
-      Response: {
-        description: The launch record creation response,
-        properties: {
-          id: {
-            $ref: #/components/schemas/LaunchRecordId,
-            description: The id of the new launch record
-          }
-        },
-        type: object,
-        x-schema-id: CreateLaunchRecordResponse
+      RocketId: {
+        format: uuid,
+        type: string
       },
       RocketModel: {
         description: The details of a given rocket,
@@ -424,11 +514,7 @@
             in: query,
             name: rocketType,
             schema: {
-              enum: [
-                Falcon9,
-                FalconHeavy,
-                AtlasV
-              ]
+              $ref: #/components/schemas/RocketType
             }
           }
         ],
@@ -468,17 +554,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateLaunchRecordRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateLaunchRecordRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateLaunchRecordRequest
               }
             }
           },
@@ -489,7 +575,7 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/Response
+                  $ref: #/components/schemas/CreateLaunchRecordResponse
                 }
               }
             },
@@ -695,17 +781,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditLaunchRecordPatchRequest
               }
             }
           },
@@ -776,17 +862,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditLaunchRecordRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditLaunchRecordRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditLaunchRecordRequest
               }
             }
           },
@@ -849,11 +935,7 @@
             in: query,
             name: rocketType,
             schema: {
-              enum: [
-                Falcon9,
-                FalconHeavy,
-                AtlasV
-              ]
+              $ref: #/components/schemas/RocketType
             }
           }
         ],
@@ -893,17 +975,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateRocketRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateRocketRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/CreateRocketRequest
               }
             }
           },
@@ -914,7 +996,7 @@
             content: {
               application/json: {
                 schema: {
-                  $ref: #/components/schemas/Response
+                  $ref: #/components/schemas/CreateRocketResponse
                 }
               }
             },
@@ -1100,17 +1182,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditRocketPatchRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditRocketPatchRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/PatchRequest
+                $ref: #/components/schemas/EditRocketPatchRequest
               }
             }
           },
@@ -1181,17 +1263,17 @@
           content: {
             application/*+json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditRocketRequest
               }
             },
             application/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditRocketRequest
               }
             },
             text/json: {
               schema: {
-                $ref: #/components/schemas/Request
+                $ref: #/components/schemas/EditRocketRequest
               }
             }
           },

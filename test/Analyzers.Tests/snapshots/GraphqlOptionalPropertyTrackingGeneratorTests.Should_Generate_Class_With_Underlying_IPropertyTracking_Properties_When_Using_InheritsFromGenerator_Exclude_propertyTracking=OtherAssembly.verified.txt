@@ -35,6 +35,7 @@
     System.dll,
     System.Private.CoreLib.dll,
     System.Runtime.dll,
+    System.Text.Json.dll,
     ZeroAlloc.Mediator.dll
   ]
 }

@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Chirograph" />
   <PropertyGroup>
     <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
@@ -12,7 +13,11 @@
       Include="..\TestSupport\TestSupport.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="LaunchRecords\*.cs" />
-    <Compile Remove="Rockets\*.cs" />
+    <!-- the Refit client Chirograph generates from the document the sample writes when it builds -->
+    <OpenApiClient Include="..\..\sample\Sample.Minimal\Sample.Minimal.csproj" Generator="Refitter" ClientName="SampleClient" Namespace="Sample.Minimal.Tests.Client" />
+    <!-- what Chirograph adds for a Refitter client, referenced here so central package management gives the version (NU1009) -->
+    <PackageReference Include="Refit.HttpClientFactory" />
+    <!-- a global using rather than one in each file: the generated code only exists after a build, so dotnet format (a design-time build) sees the namespace as unused and removes a using in a file -->
+    <Using Include="Sample.Minimal.Tests.Client" />
   </ItemGroup>
 </Project>

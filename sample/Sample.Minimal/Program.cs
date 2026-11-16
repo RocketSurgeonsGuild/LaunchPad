@@ -7,6 +7,7 @@ using Sample.Minimal;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddControllersAsServices();
+builder.Services.AddSampleOpenApiSchemas();
 
 var app = await builder.ConfigureDovetail();
 app.UseExceptionHandler();

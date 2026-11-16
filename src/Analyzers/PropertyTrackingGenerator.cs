@@ -68,7 +68,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         targetMembers = targetMembers.AddRange(inheritedMembers);
 
         var writeableProperties = targetMembers
-                                  // only works for `set`able properties not init only
+                                 // only works for `set`able properties not init only
                                  .Where(z => !symbolMemberNames.Contains(z.Name))
                                  .Where(z => targetSymbol.IsRecord || z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, })
                                  .ToArray();
@@ -100,7 +100,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             .ToArray();
 
         var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
-         ?? ImmutableHashSet<string>.Empty;
+         ?? [];
 
         var constructorArguments = constructor
  ?
@@ -117,7 +117,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                        )
                                    )
                                   .ToImmutableArray()
-         ?? ImmutableArray<ArgumentSyntax>.Empty;
+         ?? [];
 
         var constructorParameters = constructor
  ?
@@ -129,7 +129,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                            .WithType(ParseTypeName(param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
                                     )
                                    .ToImmutableArray()
-         ?? ImmutableArray<ParameterSyntax>.Empty;
+         ?? [];
 
         var createParameterList =
             ParameterList(
@@ -140,20 +140,19 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             )
                     )
                 )
-               .AddParameters(constructorParameters.ToArray())
+               .AddParameters([.. constructorParameters])
                .AddParameters(
-                    missingMembers
+                    [.. missingMembers
                        .Select(
                             z => Parameter(Identifier(Helpers.Camelize(z.Name)))
                                .WithType(ParseTypeName(z.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
-                        )
-                       .ToArray()
+                        )]
                 );
         var createArgumentList = ArgumentList(SeparatedList(constructorArguments));
 
         var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
                                      .AddExpressions(
-                                          existingMembers
+                                          [.. existingMembers
                                              .Where(z => !constructorParams.Contains(z.Name))
                                              .Select(
                                                   z =>
@@ -167,11 +166,10 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                                           )
                                                       )
                                               )
-                                             .OfType<ExpressionSyntax>()
-                                             .ToArray()
+                                             .OfType<ExpressionSyntax>()]
                                       )
                                      .AddExpressions(
-                                          missingMembers
+                                          [.. missingMembers
                                              .Where(z => !constructorParams.Contains(z.Name))
                                              .Select(
                                                   z =>
@@ -181,8 +179,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                                           IdentifierName(Helpers.Camelize(z.Name))
                                                       )
                                               )
-                                             .OfType<ExpressionSyntax>()
-                                             .ToArray()
+                                             .OfType<ExpressionSyntax>()]
                                       );
 
         var namespaces = new HashSet<string>();
@@ -195,7 +192,18 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
             var assignedType = GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
                .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type)));
 
-            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, assignedType));
+            // typeof can't name a nullable reference type, so the converter is closed over the type without its annotation
+            var converterType = GenericName(Identifier("global::Rocket.Surgery.LaunchPad.Foundation.AssignedJsonConverter"))
+               .WithTypeArgumentList(
+                    TypeArgumentList(
+                        SingletonSeparatedList(
+                            ParseTypeName(
+                                propertySymbol.Type.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                            )
+                        )
+                    )
+                );
+            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, assignedType, converterType));
             changesRecord = changesRecord.AddMembers(
                 PropertyDeclaration(PredefinedType(Token(SyntaxKind.BoolKeyword)), Identifier(propertySymbol.Name))
                    .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
@@ -365,9 +373,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     .Usings
                     .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
 
-        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
-
-        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
+        // the compiler attributes go first, before an attribute a member already has (the JSON converter of a tracking property)
+        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(z.AttributeLists.Insert(0, Helpers.CompilerAttributes)))));
 
         var cu = CompilationUnit(
                 List<ExternAliasDirectiveSyntax>(),
@@ -440,11 +447,24 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         );
     }
 
-    private static MemberDeclarationSyntax[] GenerateTrackingProperties(IPropertySymbol propertySymbol, GenericNameSyntax assignedType)
+    private static MemberDeclarationSyntax[] GenerateTrackingProperties(IPropertySymbol propertySymbol, GenericNameSyntax assignedType, TypeSyntax converterType)
     {
-        return new MemberDeclarationSyntax[]
-        {
+        return
+        [
             PropertyDeclaration(assignedType, Identifier(propertySymbol.Name))
+               // on the wire the property is the bare value: present is assigned, absent is unassigned
+               .WithAttributeLists(
+                    SingletonList(
+                        AttributeList(
+                            SingletonSeparatedList(
+                                Attribute(
+                                    ParseName("global::System.Text.Json.Serialization.JsonConverter"),
+                                    AttributeArgumentList(SingletonSeparatedList(AttributeArgument(TypeOfExpression(converterType))))
+                                )
+                            )
+                        )
+                    )
+                )
                .WithModifiers(
                     TokenList(
                         Token(SyntaxKind.PublicKeyword)
@@ -485,7 +505,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     )
                 )
                .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-        };
+        ];
     }
 
     /// <inheritdoc />
@@ -495,11 +515,11 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     .SyntaxProvider
                     .CreateSyntaxProvider(
                          static (node, _) =>
-                             node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
+                             node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
                                  and TypeDeclarationSyntax
-                                     {
-                                         BaseList: { } baseList,
-                                     }
+                             {
+                                 BaseList: { } baseList,
+                             }
                           && baseList.Types.Any(
                                  z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
                              ),
@@ -514,13 +534,13 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                          {
                              var interfaceSymbol =
                                  tuple.symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal));
-                             if (interfaceSymbol is not
-                                 {
-                                     ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
-                                     TypeArguments: [INamedTypeSymbol targetSymbol,],
-                                 }) return default;
-
-                             return (
+                             return interfaceSymbol is not
+                             {
+                                 ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
+                                 TypeArguments: [INamedTypeSymbol targetSymbol,],
+                             }
+                                 ? ((INamedTypeSymbol symbol, TypeDeclarationSyntax syntax, SemanticModel semanticModel, INamedTypeSymbol interfaceSymbol, INamedTypeSymbol targetSymbol))default
+                                 : (
                                  tuple.symbol,
                                  tuple.syntax,
                                  tuple.semanticModel,

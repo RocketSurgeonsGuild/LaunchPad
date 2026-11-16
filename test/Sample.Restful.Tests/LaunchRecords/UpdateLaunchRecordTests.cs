@@ -1,11 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using NodaTime;
-using NodaTime.Extensions;
 
 using Sample.Core.Domain;
 using Sample.Core.Models;
-using Sample.Restful.Client;
 using Sample.Restful.Tests.Helpers;
 
 using RocketType = Sample.Core.Domain.RocketType;
@@ -17,7 +15,7 @@ public class UpdateLaunchRecordTests : WebAppFixtureTest
     [Test]
     public async Task Should_Update_A_LaunchRecord()
     {
-        var client = new LaunchRecordClient(AlbaHost.Server.CreateClient());
+        var client = Client;
         LaunchRecord record;
         await using (var scope = ServiceProvider.CreateAsyncScope())
         {
@@ -45,7 +43,7 @@ public class UpdateLaunchRecordTests : WebAppFixtureTest
         }
 
         var launchDate = record.ScheduledLaunchDate.AddSeconds(1);
-        await client.EditLaunchRecordAsync(
+        await client.EditLaunchRecord(
             record.Id.Value,
             new EditLaunchRecordRequest
             {
@@ -57,10 +55,10 @@ public class UpdateLaunchRecordTests : WebAppFixtureTest
             }
         );
 
-        var response = await client.GetLaunchRecordAsync(record.Id.Value);
+        var response = await client.GetLaunchRecord(record.Id.Value);
 
-        await response.Result.ScheduledLaunchDate.Should().BeEqualTo(launchDate);
-        await response.Result.PayloadWeightKg.Should().BeEqualTo(200);
+        await response.ScheduledLaunchDate.Should().BeEqualTo(launchDate);
+        await response.PayloadWeightKg.Should().BeEqualTo(200);
     }
 
     private static readonly Faker Faker = new();

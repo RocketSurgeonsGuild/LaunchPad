@@ -83,7 +83,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
                     Class(
                         $"__{operation.Name}OpenApi",
                         Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.SealedKeyword),
-                        [OpenApiEmit.Transformer(operation, "TransformAsync", Generated, Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword))],
+                        [OpenApiEmit.Transformer(operation, "TransformAsync", Generated, Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword), false)],
                         Type($"{Generated}.IApiOpenApiTransformer")
                     )
                 );
