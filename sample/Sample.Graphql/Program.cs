@@ -17,8 +17,8 @@ builder
    .AddSorting()
    .AddFiltering()
    .AddProjections()
-   .ConfigureStronglyTypedId<RocketId, UuidType>()
-   .ConfigureStronglyTypedId<LaunchRecordId, UuidType>()
+   .ConfigureStronglyTypedId<RocketId, Guid, UuidType>(id => id.Value, value => new(value))
+   .ConfigureStronglyTypedId<LaunchRecordId, Guid, UuidType>(id => id.Value, value => new(value))
    // HotChocolate's spatial types with a GeoJSON Geometry scalar that covers every geometry, GeometryCollection included
    .AddGeoJsonSpatialTypes()
    .AddSpatialFiltering()

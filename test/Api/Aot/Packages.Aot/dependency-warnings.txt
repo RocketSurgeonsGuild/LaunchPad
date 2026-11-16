@@ -1,0 +1,19 @@
+# The dependencies whose trimming and native AOT warnings an application referencing LaunchPad's packages gets when it publishes with
+# PublishAot. verify.sh fails on a warning from any other origin, so a LaunchPad assembly never warns, and a dependency that starts to warn
+# (a new package, or an update) is added here and to docs/src/content/docs/guides/json-and-native-aot.md#dependency-warnings together.
+# Each line is a prefix of the warning's origin: the assembly of an IL2104/IL3053, the type or member of any other warning.
+
+# MVC (LaunchPad.AspNetCore registers MVC Core, the API explorer and MVC filters).
+Microsoft.AspNetCore.Mvc
+Microsoft.Extensions.DependencyInjection.MvcCoreRouteOptionsSetup
+Microsoft.Extensions.Internal.PropertyActivator
+# Razor components' endpoints, which MVC's view features reference.
+Microsoft.AspNetCore.Components.Endpoints
+# Hot Chocolate (LaunchPad.HotChocolate) and its DataLoader library.
+HotChocolate.Types
+HotChocolate.Data
+GreenDonut
+# The GeoJSON converters LaunchPad.Spatial adds to System.Text.Json.
+NetTopologySuite.IO.GeoJSON4STJ
+# The NodaTime converters LaunchPad.NodaTime adds to System.Text.Json.
+NodaTime.Serialization.SystemTextJson

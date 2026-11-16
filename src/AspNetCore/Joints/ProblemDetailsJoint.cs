@@ -14,11 +14,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 [DovetailExport]
 [AfterJoint<AspNetCoreJoint>]
 [DovetailCategory(DovetailCategory.Application)]
-[SuppressMessage(
-    "Trimming",
-    "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code",
-    Justification = "Mvc pieces are not specifically added, and problem writers are used by other apis"
-)]
 public class ProblemDetailsJoint : IServiceJoint
 {
     /// <inheritdoc />

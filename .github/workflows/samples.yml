@@ -4,8 +4,9 @@ name: samples
 # build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
 # The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
 # clock), which this checks; the web app only builds.
-# It also publishes the API generators' native AOT check (test/Api/Aot): a server that must publish without a trimming or AOT warning and
-# answer a round trip over HTTP.
+# It also publishes the native AOT check (test/Api/Aot): LaunchPad's ASP.NET Core, gRPC, Hot Chocolate, StrawberryShake, NodaTime and
+# Spatial packages, which must publish without a trimming or AOT warning of their own (Packages.Aot), and the API generators' server, which
+# must publish without any and answer a round trip over HTTP.
 
 on:
     push:
@@ -63,7 +64,14 @@ jobs:
                           - '.github/workflows/samples.yml'
                       api-aot:
                           - 'src/Analyzers/**'
-                          - 'src/Foundation/build/**'
+                          - 'src/Foundation/**'
+                          - 'src/Hosting/**'
+                          - 'src/AspNetCore/**'
+                          - 'src/Grpc/**'
+                          - 'src/HotChocolate/**'
+                          - 'src/StrawberryShake/**'
+                          - 'src/NodaTime/**'
+                          - 'src/Spatial/**'
                           - 'test/Api/Aot/**'
                           - 'Directory.*.props'
                           - 'Directory.*.targets'
@@ -152,7 +160,7 @@ jobs:
                   cache_save: false
                   experimental: true
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-            - name: 🚀 Publish and run the native AOT round trip
+            - name: 🚀 Publish the packages and run the native AOT round trip
               run: test/Api/Aot/verify.sh
 
     # The ruleset requires a check named `samples`. The jobs above report under their own names, so this job stands in for them and passes

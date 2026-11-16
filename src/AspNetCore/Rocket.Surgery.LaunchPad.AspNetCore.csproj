@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+        <IsAotCompatible>true</IsAotCompatible>
         <PackageDescription>Dovetail joints for ASP.NET Core: MVC with application parts found by Specular, OpenAPI documents with LaunchPad's transformers, problem details, Serilog request logging and the application's System.Text.Json options.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;aspnetcore;web-api;openapi;problem-details;serilog;request-logging;opentelemetry;system-text-json</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
