@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1041,
+      Title: ZeroAlloc.Mapping is not referenced,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input2.cs: (7,25)-(7,39),
+      MessageFormat: Proto-first gRPC host {0} maps its proto messages with ZeroAlloc.Mapping, which this project doesn't reference; add a PackageReference to ZeroAlloc.Mapping,
+      Message: Proto-first gRPC host RocketsService maps its proto messages with ZeroAlloc.Mapping, which this project doesn't reference; add a PackageReference to ZeroAlloc.Mapping,
+      Category: LaunchPad.Api
+    }
+  ]
+}

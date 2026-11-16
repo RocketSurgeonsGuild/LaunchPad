@@ -1,0 +1,35 @@
+// The proto-first services of the ZeroAlloc fixture server: Grpc.Tools generates their service bases (and the clients the tests use), and the
+// generated ProtoRocketsService and ProtoLaunchesService implement them through the mediator.
+syntax = "proto3";
+
+package proto_first;
+
+option csharp_namespace = "Api.Functional.ZeroAlloc.Server.ProtoFirst";
+
+import "google/protobuf/empty.proto";
+
+service Rockets {
+  rpc GetRocket (GetRocketRequest) returns (RocketReply);
+  rpc ListRockets (ListRocketsRequest) returns (stream RocketReply);
+  rpc CreateRocket (CreateRocketRequest) returns (CreateRocketReply);
+  rpc EditRocket (EditRocketRequest) returns (RocketReply);
+  rpc DeleteRocket (DeleteRocketRequest) returns (google.protobuf.Empty);
+}
+
+// LaunchRocket returns a union: the rocket, RocketNotFound (NOT_FOUND) or NotReady (FAILED_PRECONDITION, with a NotReadyError in the
+// case-bin trailer). ListLaunches streams the rockets and ends with the first NotReady.
+service Launches {
+  rpc LaunchRocket (LaunchRocketRequest) returns (RocketReply);
+  rpc ListLaunches (ListLaunchesRequest) returns (stream RocketReply);
+}
+
+message GetRocketRequest { string id = 1; }
+message ListRocketsRequest { string name = 1; }
+message CreateRocketRequest { string name = 1; }
+message CreateRocketReply { string id = 1; }
+message EditRocketRequest { string id = 1; string name = 2; }
+message DeleteRocketRequest { string id = 1; }
+message RocketReply { string id = 1; string name = 2; }
+message LaunchRocketRequest { string id = 1; }
+message ListLaunchesRequest { string name = 1; }
+message NotReadyError { string reason = 1; }

@@ -76,6 +76,8 @@ public sealed class OperationHostAnalyzer : DiagnosticAnalyzer
             var applies = setting switch
             {
                 "RoutePrefix" or "Version" => kind is HostKind.MinimalApi or HostKind.Controller,
+                // A proto-first service is named by its .proto.
+                "Group" => kind != HostKind.GrpcProtoService,
                 _ => true,
             };
             if (!applies)

@@ -160,12 +160,43 @@ internal static class ApiDiagnostics
         "{0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions"
     );
 
+    // LPAD1040 and up: proto-first gRPC hosts.
+    public static DiagnosticDescriptor RpcNotFound { get; } = Error(
+        "LPAD1040",
+        "Operation matches no rpc",
+        "{0} lists operation {1}, but its service base {2} has no rpc named {1}; rename the rpc in the .proto, or name the operation after the rpc with [Operation<T>(Name = \"...\")]"
+    );
+
+    public static DiagnosticDescriptor MappingNotReferenced { get; } = Error(
+        "LPAD1041",
+        "ZeroAlloc.Mapping is not referenced",
+        "Proto-first gRPC host {0} maps its proto messages with ZeroAlloc.Mapping, which this project doesn't reference; add a PackageReference to ZeroAlloc.Mapping"
+    );
+
+    public static DiagnosticDescriptor RpcKindMismatch { get; } = Error(
+        "LPAD1042",
+        "Operation does not fit its rpc",
+        "{0} is a {1} operation, but rpc {2} of {3} is {4}; a unary or void operation needs a unary rpc, a stream operation a server streaming rpc"
+    );
+
+    public static DiagnosticDescriptor MappingNotDeclared { get; } = Error(
+        "LPAD1043",
+        "Proto message mapping is not declared",
+        "Operation {0} of {1} needs a mapping from {2} to {3}; declare [Map<{2}, {3}>] (or [ReverseMap]) on a static partial class in this project, and ZeroAlloc.Mapping writes it"
+    );
+
+    public static DiagnosticDescriptor MappingNotInPlace { get; } = Error(
+        "LPAD1044",
+        "Proto message mapping does not set its properties",
+        "{0} maps {1} to the proto message {2}, but ZeroAlloc.Mapping's constructor form only fills constructor parameters, and a proto message has none; declare the update-in-place form, public static partial void Map({1} src, {2} existingDst);, on {0}"
+    );
+
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
         PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus,
-        JsonMetadataMissing,
+        JsonMetadataMissing, RpcNotFound, MappingNotReferenced, RpcKindMismatch, MappingNotDeclared, MappingNotInPlace,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);
