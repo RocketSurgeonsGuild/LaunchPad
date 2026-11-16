@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 
-using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
+using Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Filters;
 
 using Serilog.Events;
 using Serilog.Extensions.Hosting;

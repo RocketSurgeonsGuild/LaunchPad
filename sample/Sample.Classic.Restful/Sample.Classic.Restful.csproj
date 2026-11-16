@@ -7,6 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <ProjectReference Include="..\..\src\AspNetCore.Mvc\Rocket.Surgery.LaunchPad.AspNetCore.Mvc.csproj" />
         <!-- turns the ZeroAlloc validation failures into 422 problem details -->
         <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />

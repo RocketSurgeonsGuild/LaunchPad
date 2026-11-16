@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 
 using Serilog;
 using Serilog.Core;
@@ -11,8 +8,9 @@ using Serilog.Extensions.Hosting;
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     Wires Serilog's request logging into ASP.NET Core: the MVC and Razor Pages filters that add the action and the page handler to the
-///     request's log event, and the <see cref="IDiagnosticContext" /> they and <c>UseLaunchPadRequestLogging</c> collect the properties in.
+///     Wires Serilog's request logging into ASP.NET Core: the <see cref="IDiagnosticContext" /> that <c>UseLaunchPadRequestLogging</c> collects
+///     the request's properties in. Rocket.Surgery.LaunchPad.AspNetCore.Mvc adds the MVC and Razor Pages filters that add the action and the
+///     page handler.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <remarks>
@@ -23,7 +21,6 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
-[AfterJoint<AspNetCoreJoint>]
 [DovetailCategory(DovetailCategory.Application)]
 public class SerilogRequestLoggingJoint : IServiceJoint
 {
@@ -36,12 +33,5 @@ public class SerilogRequestLoggingJoint : IServiceJoint
     {
         services.TryAddSingleton(provider => new DiagnosticContext(provider.GetService<Logger>()));
         services.TryAddSingleton<IDiagnosticContext>(provider => provider.GetRequiredService<DiagnosticContext>());
-        services.Configure<MvcOptions>(
-            options =>
-            {
-                options.Filters.Add<SerilogLoggingActionFilter>(0);
-                options.Filters.Add<SerilogLoggingPageFilter>(0);
-            }
-        );
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Rocket.Surgery.LaunchPad.AspNetCore;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Mvc;
 
 /// <summary>
 ///     Helper methods for getting an mvc builder if you're not sure that mvc has been added to the application yet.

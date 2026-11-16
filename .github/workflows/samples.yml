@@ -4,9 +4,9 @@ name: samples
 # build/pack.proj packs the SDK and the packages it adds first. The other samples build and are tested with the solution in build.yml.
 # The worker, the console app (the project SDK syntax) and the file-based app print their health (and the file-based app its NodaTime
 # clock), which this checks; the web app only builds.
-# It also publishes the native AOT check (test/Api/Aot): LaunchPad's ASP.NET Core, gRPC, Hot Chocolate, StrawberryShake, NodaTime and
-# Spatial packages, which must publish without a trimming or AOT warning of their own (Packages.Aot), and the API generators' server, which
-# must publish without any and answer a round trip over HTTP.
+# It also publishes the native AOT check (test/Api/Aot): LaunchPad's native AOT compatible packages (ASP.NET Core, gRPC, StrawberryShake,
+# NodaTime, Spatial), which must publish without a trimming or AOT warning outside Packages.Aot/dependency-warnings.txt, and the API
+# generators' server, which must publish without any and answer a round trip over HTTP.
 
 on:
     push:
@@ -68,7 +68,6 @@ jobs:
                           - 'src/Hosting/**'
                           - 'src/AspNetCore/**'
                           - 'src/Grpc/**'
-                          - 'src/HotChocolate/**'
                           - 'src/StrawberryShake/**'
                           - 'src/NodaTime/**'
                           - 'src/Spatial/**'

@@ -8,11 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
+using Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Joints;
 
 namespace AspNetCore.Tests.Joints;
 
 /// <summary>
-///     The <see cref="ProblemDetailsJoint" /> fills in the title and the type of problem details through <see cref="ProblemDetailsOptions.CustomizeProblemDetails" />.
+///     The <see cref="MvcProblemDetailsJoint" /> fills in the title and the type of problem details through <see cref="ProblemDetailsOptions.CustomizeProblemDetails" />.
 /// </summary>
 public class ProblemDetailsCustomizationTests
 {
@@ -101,7 +102,7 @@ public class ProblemDetailsCustomizationTests
     [Test]
     public async Task Should_Not_Fill_In_Twice_When_The_Joint_Is_Applied_Twice()
     {
-        var context = await JointTestContext.CreateBuilder().AppendJoint<ProblemDetailsJoint>().CreateAsync();
+        var context = await JointTestContext.CreateBuilder().AppendJoint<ProblemDetailsJoint>().AppendJoint<MvcProblemDetailsJoint>().CreateAsync();
         var services = new ServiceCollection();
         services.Configure<ApiBehaviorOptions>(ConfigureClientErrorMapping);
         await services.ApplyService(context);
@@ -121,7 +122,7 @@ public class ProblemDetailsCustomizationTests
 
     private static async Task<ServiceProvider> CreateProvider(Action<IServiceCollection>? configure = null)
     {
-        var context = await JointTestContext.CreateBuilder().AppendJoint<ProblemDetailsJoint>().CreateAsync();
+        var context = await JointTestContext.CreateBuilder().AppendJoint<ProblemDetailsJoint>().AppendJoint<MvcProblemDetailsJoint>().CreateAsync();
         var services = new ServiceCollection();
         services.Configure<ApiBehaviorOptions>(ConfigureClientErrorMapping);
         configure?.Invoke(services);

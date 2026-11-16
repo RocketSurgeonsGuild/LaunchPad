@@ -9,6 +9,7 @@
     <!-- validates the forms with the ZeroAlloc validators of the operations -->
     <ProjectReference Include="..\..\src\ZeroAlloc.Blazor\Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\AspNetCore.Mvc\Rocket.Surgery.LaunchPad.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
   </ItemGroup>

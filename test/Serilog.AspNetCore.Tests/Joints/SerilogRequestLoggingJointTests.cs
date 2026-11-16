@@ -1,40 +1,46 @@
 using System.Reflection;
-
 using Joinery.Dovetail;
 using Joinery.Dovetail.Attributes;
 using Joinery.Dovetail.Infrastructure;
 using Joinery.Dovetail.Joints;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-
-using Rocket.Surgery.LaunchPad.AspNetCore.Filters;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
-using Rocket.Surgery.LaunchPad.AspNetCore.Rivets;
-
+using Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Filters;
+using Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Joints;
 using Serilog.Extensions.Hosting;
+using AspNetCoreExports = Rocket.Surgery.LaunchPad.AspNetCore.Rivets.Exports;
+using MvcExports = Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Rivets.Exports;
 
 namespace Serilog.AspNetCore.Tests.Joints;
 
 public class SerilogRequestLoggingJointTests
 {
     [Test]
-    public async Task Is_Exported_As_An_Application_Joint_That_Runs_After_The_AspNetCore_Joint()
+    public async Task Is_Exported_As_An_Application_Joint()
     {
-        var export = Exports.Joints().Single(x => x.Joint is SerilogRequestLoggingJoint);
+        var export = AspNetCoreExports.Joints().Single(x => x.Joint is SerilogRequestLoggingJoint);
 
         await export.HostType.Should().BeEqualTo(DovetailHostType.Undefined);
+        await export.Dependencies.Should().BeEmpty();
+        await typeof(SerilogRequestLoggingJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
+    }
+
+    [Test]
+    public async Task Exports_The_Mvc_Filters_Joint_To_Run_After_It()
+    {
+        var export = MvcExports.Joints().Single(x => x.Joint is MvcSerilogRequestLoggingJoint);
+
         var x = await export.Dependencies.Should().HaveSingleItem();
         await x.Direction.Should().BeEqualTo(DependencyDirection.DependsOn);
-        await x.Type.Should().BeEqualTo(typeof(AspNetCoreJoint));
-        await typeof(SerilogRequestLoggingJoint).GetCustomAttribute<DovetailCategoryAttribute>()!.Category.ToString().Should().BeEqualTo(DovetailCategory.Application);
+        await x.Type.Should().BeEqualTo(typeof(SerilogRequestLoggingJoint));
     }
 
     [Test]
     public async Task Should_Add_The_Request_Logging_Filters_To_Mvc()
     {
-        var services = await JointTestContext.ApplyServicesAsync<SerilogRequestLoggingJoint>();
+        var services = await JointTestContext.ApplyServicesAsync<MvcSerilogRequestLoggingJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
         var filters = provider

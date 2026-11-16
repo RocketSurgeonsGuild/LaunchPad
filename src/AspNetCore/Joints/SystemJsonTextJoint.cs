@@ -3,18 +3,17 @@ using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.Foundation;
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
-using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
 /// <summary>
-///     Applies the existing System.Text.Json options to the MVC and the HTTP JSON options.
+///     Applies the existing System.Text.Json options to the HTTP JSON options, which Minimal APIs, problem details and OpenAPI use.
+///     Rocket.Surgery.LaunchPad.AspNetCore.Mvc applies them to MVC's JSON options too.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]
 [DovetailExport]
-[AfterJoint<AspNetCoreJoint>]
 [DovetailCategory(DovetailCategory.Application)]
 public class SystemJsonTextJoint : IServiceJoint
 {
@@ -27,9 +26,6 @@ public class SystemJsonTextJoint : IServiceJoint
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        services
-           .AddOptions<MvcJsonOptions>()
-           .Configure<IServiceProvider>((options, provider) => ExistingValueOptions.Apply(provider, options.JsonSerializerOptions, Options.DefaultName));
         services
            .AddOptions<HttpJsonOptions>()
            .Configure<IServiceProvider>((options, provider) => ExistingValueOptions.Apply(provider, options.SerializerOptions, Options.DefaultName));

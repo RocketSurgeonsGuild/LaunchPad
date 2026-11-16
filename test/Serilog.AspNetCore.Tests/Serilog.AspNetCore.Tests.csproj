@@ -6,5 +6,6 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.TestHost" />
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" IncludeAssets="all" />
+    <ProjectReference Include="..\..\src\AspNetCore.Mvc\Rocket.Surgery.LaunchPad.AspNetCore.Mvc.csproj" IncludeAssets="all" />
     </ItemGroup>
 </Project>

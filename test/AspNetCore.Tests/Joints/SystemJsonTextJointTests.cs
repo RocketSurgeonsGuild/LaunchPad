@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
+using Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Joints;
 
 using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
@@ -15,7 +16,7 @@ public class SystemJsonTextJointTests
     [Test]
     public async Task Should_Apply_The_Existing_Json_Serializer_Options_To_The_Mvc_Json_Options()
     {
-        var services = await JointTestContext.ApplyServicesAsync<SystemJsonTextJoint>();
+        var services = await JointTestContext.ApplyServicesAsync<MvcSystemJsonTextJoint>();
         services.Configure<JsonSerializerOptions>(options => options.WriteIndented = true);
         using var provider = JointTestContext.BuildServiceProvider(services);
 
@@ -35,7 +36,7 @@ public class SystemJsonTextJointTests
     [Test]
     public async Task Should_Leave_The_Defaults_Alone_When_No_Json_Serializer_Options_Are_Configured()
     {
-        var services = await JointTestContext.ApplyServicesAsync<SystemJsonTextJoint>();
+        var services = await JointTestContext.ApplyServicesAsync<MvcSystemJsonTextJoint>();
         using var provider = JointTestContext.BuildServiceProvider(services);
 
         await provider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.JsonSerializerOptions.WriteIndented.Should().BeFalse();

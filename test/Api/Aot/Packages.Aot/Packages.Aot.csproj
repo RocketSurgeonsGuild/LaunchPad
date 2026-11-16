@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
     <!--
-        The native AOT check for LaunchPad's ASP.NET Core, gRPC, Hot Chocolate, StrawberryShake, NodaTime and Spatial packages: published with PublishAot and
+        The native AOT check for LaunchPad's native AOT compatible packages (ASP.NET Core, gRPC, StrawberryShake, NodaTime, Spatial and Foundation): published with PublishAot and
         every LaunchPad assembly rooted, so ILLink analyzes all of their code, not only what Program.cs reaches. verify.sh fails on a warning
         in a LaunchPad assembly and on a dependency warning docs/src/content/docs/guides/json-and-native-aot.md doesn't list.
     -->
@@ -12,7 +12,6 @@
     <ItemGroup>
         <ProjectReference Include="../../../../src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
         <ProjectReference Include="../../../../src/Grpc/Rocket.Surgery.LaunchPad.Grpc.csproj" />
-        <ProjectReference Include="../../../../src/HotChocolate/Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
         <ProjectReference Include="../../../../src/StrawberryShake/Rocket.Surgery.LaunchPad.StrawberryShake.csproj" />
         <ProjectReference Include="../../../../src/NodaTime/Rocket.Surgery.LaunchPad.NodaTime.csproj" />
         <ProjectReference Include="../../../../src/Spatial/Rocket.Surgery.LaunchPad.Spatial.csproj" />
@@ -20,7 +19,6 @@
     <ItemGroup>
         <TrimmerRootAssembly Include="Rocket.Surgery.LaunchPad.AspNetCore" />
         <TrimmerRootAssembly Include="Rocket.Surgery.LaunchPad.Grpc" />
-        <TrimmerRootAssembly Include="Rocket.Surgery.LaunchPad.HotChocolate" />
         <TrimmerRootAssembly Include="Rocket.Surgery.LaunchPad.StrawberryShake" />
         <TrimmerRootAssembly Include="Rocket.Surgery.LaunchPad.Foundation" />
         <TrimmerRootAssembly Include="Rocket.Surgery.LaunchPad.NodaTime" />

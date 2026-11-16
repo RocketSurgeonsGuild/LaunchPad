@@ -61,6 +61,7 @@ lists what the SDK adds for each technology.
 | [Rocket.Surgery.LaunchPad.Analyzers][nuget-analyzers]   | [![nuget-analyzers-badge]][nuget-analyzers]   | The source generators Foundation carries: operation hosts, property tracking, JSON converters      |
 | [Rocket.Surgery.LaunchPad.Hosting][nuget-hosting]       | [![nuget-hosting-badge]][nuget-hosting]       | Health check, Serilog and OpenTelemetry joints, written into the application as templates          |
 | [Rocket.Surgery.LaunchPad.AspNetCore][nuget-aspnetcore] | [![nuget-aspnetcore-badge]][nuget-aspnetcore] | OpenAPI, problem details, request logging and System.Text.Json for ASP.NET Core                    |
+| Rocket.Surgery.LaunchPad.AspNetCore.Mvc | not published yet | MVC controllers and Razor Pages: application parts, MVC JSON options, request logging filters |
 
 ### Integrations
 

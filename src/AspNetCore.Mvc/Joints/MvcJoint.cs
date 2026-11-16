@@ -2,13 +2,13 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 
+using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 
-
-namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
+namespace Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Joints;
 
 /// <summary>
-///     Registers MVC, the API explorer and the application parts for every assembly that depends on this one.
-///     The other ASP.NET Core joints run after this one.
+///     Registers MVC Core, the MVC API explorer and the application parts for every assembly that depends on Rocket.Surgery.LaunchPad.AspNetCore.
+///     MVC is not native AOT compatible, which is why this joint lives in Rocket.Surgery.LaunchPad.AspNetCore.Mvc.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <remarks>
@@ -17,7 +17,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 ///         The generated <c>Imports</c> seed the application's Specular provider into the context.
 ///     </para>
 ///     <para>
-///         Dovetail resolves the <see cref="AspNetCoreOptions" /> from the joint context when it creates the joint, and they default when none
+///         Dovetail resolves the <see cref="AspNetCoreMvcOptions" /> from the joint context when it creates the joint, and they default when none
 ///         were set.
 ///     </para>
 /// </remarks>
@@ -26,7 +26,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 [PublicAPI]
 [DovetailExport]
 [DovetailCategory(DovetailCategory.Application)]
-public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
+public class MvcJoint(AspNetCoreMvcOptions? options = null) : IServiceJoint
 {
     /// <summary>
     ///     Registers the MVC services, and adds the application parts found through the Specular provider in the context.
@@ -39,27 +39,17 @@ public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(services);
 
-        AddApiExplorer(services.AddEndpointsApiExplorer().AddMvcCore());
+        services.AddEndpointsApiExplorer().AddMvcCore().AddApiExplorer();
         PopulateDefaultParts(
             // ReSharper disable once NullableWarningSuppressionIsUsed
             GetServiceFromCollection<ApplicationPartManager>(services)!,
             context
                .Require<ISpecularProvider>()
-               .GetAssemblies(s => s.DependenciesFromAssemblyOf<AspNetCoreJoint>())
+               .GetAssemblies(s => s.DependenciesFromAssemblyOf<OpenApiJoint>())
                .Where(_options.AssemblyPartFilter)
                .SelectMany(GetApplicationPartAssemblies)
         );
     }
-
-    // MVC's API explorer describes controllers, which it finds by reflection; it describes nothing in an application without them. A native
-    // AOT application can't have controllers (AddControllers and AddMvc require unreferenced code), and its Minimal APIs are described by
-    // the endpoint API explorer, which is trim safe. docs/src/content/docs/guides/json-and-native-aot.md lists this suppression.
-    [UnconditionalSuppressMessage(
-        "Trimming",
-        "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
-        Justification = "MVC's API explorer reflects over controllers only, and a trimmed application has none."
-    )]
-    private static void AddApiExplorer(IMvcCoreBuilder builder) => builder.AddApiExplorer();
 
     internal static void PopulateDefaultParts(
         ApplicationPartManager manager,
@@ -118,5 +108,5 @@ public class AspNetCoreJoint(AspNetCoreOptions? options = null) : IServiceJoint
         }
     }
 
-    private readonly AspNetCoreOptions _options = options ?? new AspNetCoreOptions();
+    private readonly AspNetCoreMvcOptions _options = options ?? new AspNetCoreMvcOptions();
 }
