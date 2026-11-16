@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Spatial](/LaunchPad/pr-preview/pr-3264/api/rocket.surgery.launchpad.spatial.md)
-- Version: `2.0.1-pr.1214`
+- Version: `2.0.1-pr.1222`
 - Namespace: `Rocket.Surgery.LaunchPad.Spatial`
 - Target framework: `net11.0`
 
