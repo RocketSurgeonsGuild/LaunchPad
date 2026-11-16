@@ -1,10 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription>
-            ZeroAlloc.Mediator validation for LaunchPad gRPC services: a rejected request answers InvalidArgument with the failures in the status
-            detail and the trailers.
-        </PackageDescription>
+        <PackageDescription>ZeroAlloc.Mediator validation for LaunchPad gRPC services: a rejected request answers InvalidArgument with the failures in the status detail and the trailers.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-mediator;validation;grpc;interceptor</PackageTags>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
         <!--

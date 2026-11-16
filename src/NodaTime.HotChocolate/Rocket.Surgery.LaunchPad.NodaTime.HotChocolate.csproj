@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription />
+        <PackageDescription>Dovetail joint that adds Hot Chocolate's NodaTime scalars to a GraphQL server, binds Instant to the DateTime scalar and adds comparable filters for the NodaTime date and time types.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;nodatime;hotchocolate;graphql;scalars;date-time</PackageTags>
         <DovetailExportClassName>NodaTimeHotChocolateExports</DovetailExportClassName>
     </PropertyGroup>

@@ -1,10 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription>
-            ZeroAlloc.Mediator validation for LaunchPad GraphQL servers: a rejected request reports one VALIDATION error per failure, naming the
-            property that failed.
-        </PackageDescription>
+        <PackageDescription>ZeroAlloc.Mediator validation for LaunchPad GraphQL servers: a rejected request reports one VALIDATION error per failure, naming the property that failed.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-mediator;validation;hotchocolate;graphql</PackageTags>
         <!--
             The types live in the Rocket.Surgery.LaunchPad.HotChocolate namespaces. A namespace of Rocket.Surgery.LaunchPad.ZeroAlloc would shadow

@@ -1,10 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription>
-            ZeroAlloc.Mediator and ZeroAlloc.Validation for LaunchPad ASP.NET Core applications: a rejected request answers 422 with problem details
-            that list the failures by property, and the validation attributes show in the OpenAPI schemas.
-        </PackageDescription>
+        <PackageDescription>ZeroAlloc.Mediator and ZeroAlloc.Validation for LaunchPad ASP.NET Core applications: a rejected request answers 422 with problem details that list the failures by property, and the validation attributes show in the OpenAPI schemas.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-validation;zeroalloc-mediator;validation;aspnetcore;problem-details;openapi</PackageTags>
         <!--
             The types live in the Rocket.Surgery.LaunchPad.AspNetCore namespaces. A namespace of Rocket.Surgery.LaunchPad.ZeroAlloc would shadow

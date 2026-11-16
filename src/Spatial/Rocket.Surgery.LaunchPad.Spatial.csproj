@@ -2,7 +2,7 @@
     <PropertyGroup>
         <IsAotCompatible>true</IsAotCompatible>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription />
+        <PackageDescription>NetTopologySuite for Dovetail applications: joints that register a WGS 84 GeometryFactory, add the GeoJSON converters to System.Text.Json and destructure geometries in Serilog, plus converters for WKT.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;nettopologysuite;spatial;gis;geojson;wkt;system-text-json;serilog</PackageTags>
     </PropertyGroup>
     <ItemGroup>

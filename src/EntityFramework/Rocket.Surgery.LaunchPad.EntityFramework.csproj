@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-    <PackageDescription />
+    <PackageDescription>EF Core helpers: LpContext, a DbContext that applies the configurations in its own assembly and stores DateTimeOffset and DateTime as binary on SQLite, and StronglyTypedIdValueGenerator for strongly typed id keys.</PackageDescription>
     <PackageTags>$(PackageTags);entityframeworkcore;efcore;dbcontext;sqlite;strongly-typed-id</PackageTags>
   </PropertyGroup>
   <ItemGroup>

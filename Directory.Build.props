@@ -9,7 +9,7 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <!-- Tags every LaunchPad package shares; each project appends its own with $(PackageTags);... -->
-        <PackageTags>launchpad;rocket-surgery;rocket-surgeons-guild</PackageTags>
+        <PackageTags>launchpad;rocket-surgery</PackageTags>
         <LangVersion>preview</LangVersion>
         <Features>strict</Features>
         <Nullable>enable</Nullable>

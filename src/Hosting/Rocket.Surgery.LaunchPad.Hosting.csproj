@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription />
+        <PackageDescription>Dovetail joints for health checks, Serilog enrichers and sinks, OpenTelemetry instrumentation and Blazor WebAssembly logging, shipped as source templates that an application gets only when it references what each joint needs.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;hosting;generic-host;logging;serilog;opentelemetry;health-checks;webassembly</PackageTags>
     </PropertyGroup>
     <ItemGroup>
