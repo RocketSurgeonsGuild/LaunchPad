@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3274/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1235`
+- Version: `2.0.1-pr.1238`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Joints`
 - Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`
@@ -22,6 +22,10 @@ public class SystemJsonTextJoint
 }
 ```
 
+## Remarks
+
+ASP.NET Core puts a reflection based resolver in the HTTP JSON options of a JIT application. This joint takes it out, so a type no JSON context knows fails the same way under JIT as under native AOT (ADR 0007). A reflection resolver the application adds itself stays. An application that wants ASP.NET Core's resolver back sets the MSBuild property `LaunchPadAspNetCoreJsonReflection` to `true`, or the [SystemJsonTextJoint.KeepReflectionSwitch](/LaunchPad/pr-preview/pr-3274/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/fields.md#keepreflectionswitch) switch with `AppContext.SetSwitch` before the host is built.
+
 ## Constructors
 
 - [SystemJsonTextJoint](/LaunchPad/pr-preview/pr-3274/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/constructors.md#constructor)
@@ -29,6 +33,10 @@ public class SystemJsonTextJoint
 ## Methods
 
 - [Register(IDovetailContext, IServiceCollection)](/LaunchPad/pr-preview/pr-3274/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/methods.md#register-idovetailcontext-iservicecollection) -- Registers the specified context.
+
+## Fields
+
+- [KeepReflectionSwitch](/LaunchPad/pr-preview/pr-3274/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/fields.md#keepreflectionswitch) : `string` `static` -- The `AppContext` switch that keeps ASP.NET Core's reflection resolver in the HTTP JSON options.
 
 ## See Also
 

@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3274/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1235`
+- Version: `2.0.1-pr.1238`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
 - Implements: `IStrongType<Price, decimal>`, `IComparable<Price>`, `IConvertible`, `IEquatable<Price>`, `IFormattable`, `IParsable<Price>`, `ISpanFormattable`, `ISpanParsable<Price>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Price>`, `IComparisonOperators<Price, Price, bool>`, `IEqualityOperators<Price, Price, bool>`
