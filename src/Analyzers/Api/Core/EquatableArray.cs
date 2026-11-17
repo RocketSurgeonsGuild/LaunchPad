@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     An immutable array with value equality, so that incremental generator models compare by content and cache correctly.

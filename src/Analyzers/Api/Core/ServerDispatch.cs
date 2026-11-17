@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
+using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>How a server reaches the mediator for one operation: the injected service and the call, written to match the profile's shape.</summary>
 internal static class ServerDispatch

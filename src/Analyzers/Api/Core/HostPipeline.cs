@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     The incremental pipeline every transport generator shares.

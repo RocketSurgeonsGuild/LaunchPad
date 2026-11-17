@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Rocket.Surgery.LaunchPad.Analyzers;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Json;
 
 /// <summary>
 ///     Registers a camel case <c>JsonStringEnumConverter&lt;TEnum&gt;</c> for every enum a JSON context of the compilation declares or reaches, so

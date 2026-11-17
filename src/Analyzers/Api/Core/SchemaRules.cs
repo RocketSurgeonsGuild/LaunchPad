@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using Microsoft.CodeAnalysis;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     Reads a member's ZeroAlloc.Validation rules at compile time and says how its OpenAPI schema states them. The rules are attributes with

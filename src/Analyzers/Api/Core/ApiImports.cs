@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     Shortens the fully qualified names the emitters write (<c>global::System.Threading.Tasks.Task</c>) into the names a person would write,

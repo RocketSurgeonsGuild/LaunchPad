@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Rocket.Surgery.LaunchPad.Mediators;
 
-namespace Rocket.Surgery.LaunchPad.Analyzers;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Json;
 
 /// <summary>
 ///     Writes the JSON context manifest of an assembly: an <c>[assembly: JsonContextType(typeof(X))]</c> for every type of it that crosses the

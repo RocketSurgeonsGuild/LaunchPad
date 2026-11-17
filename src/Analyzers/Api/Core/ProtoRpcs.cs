@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     Matches the operations of a proto-first gRPC host to the rpcs of the service base Grpc.Tools generated from the <c>.proto</c>: by name

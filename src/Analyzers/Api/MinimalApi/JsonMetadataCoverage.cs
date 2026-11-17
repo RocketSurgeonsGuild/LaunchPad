@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.MinimalApi;
 
 /// <summary>The types the source generated JSON metadata of a compilation covers, unless the project turned the check off.</summary>
 internal sealed record JsonCoverage(bool Required, EquatableArray<string> Types)

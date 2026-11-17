@@ -539,7 +539,7 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
         await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
 
         // The generator's identity and version, read from AssemblyInfo.Dependencies rather than the generator assembly.
-        const string generatorVersion = AssemblyInfo.Dependencies.Rocket_Surgery_LaunchPad_Analyzers.Attributes.FileVersion;
+        const string generatorVersion = AssemblyInfo.Attributes.FileVersion;
         await string.IsNullOrWhiteSpace(generatorVersion).Should().BeFalse();
         await output!
            .SyntaxTrees.Should().Contain(tree => tree.ToString().Contains(

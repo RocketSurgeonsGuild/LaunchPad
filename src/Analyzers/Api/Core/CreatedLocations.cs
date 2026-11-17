@@ -1,4 +1,4 @@
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     Points each operation whose response carries <c>[Creates]</c> at the operation that loads what it created, so the server can answer 201

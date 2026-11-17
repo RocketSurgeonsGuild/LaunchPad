@@ -1,5 +1,5 @@
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
-using Rocket.Surgery.LaunchPad.Api.Generators;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Patch;
 
 namespace Api.Generators.Tests;
 

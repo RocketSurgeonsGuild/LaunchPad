@@ -1,4 +1,4 @@
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api;
 
 /// <summary>
 ///     The attribute source emitted into every project that references Rocket.Surgery.LaunchPad.Foundation (which carries the generators). It must compile as C# 7.3 (netstandard2.0

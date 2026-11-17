@@ -7,9 +7,11 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.MinimalApi;
 using Rocket.Surgery.LaunchPad.Json;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.CodeFixes;
 
 /// <summary>
 ///     Adds the <c>[JsonSerializable]</c> entries LPAD1030 asks for to a <c>JsonSerializerContext</c> of the project, or creates one beside the

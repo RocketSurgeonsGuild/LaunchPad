@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Rocket.Surgery.LaunchPad.Mediators;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>One member of an error case, carried in the transport's error shape.</summary>
 /// <param name="Name">The C# property name.</param>

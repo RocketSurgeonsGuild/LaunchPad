@@ -1,4 +1,5 @@
 #!/usr/bin/env dotnet
+#:sdk Joinery.Dovetail.Sdk
 #:package Microsoft.VisualStudio.SolutionPersistence
 #:package Sourcy.Git
 #:package Sourcy.DotNet

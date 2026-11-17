@@ -1,4 +1,5 @@
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.CodeFixes;
 
 namespace Api.Generators.Tests;
 
@@ -97,7 +98,7 @@ public class DiagnosticMatrixTests() : GeneratorTest()
             // With the code fix, so the snapshot shows the host it makes partial (and static, for Minimal API).
             "LPAD1010" => new(
                 $"[Operation<{op}.Request>] {Declare(host, partial: false)}",
-                Configure: builder => builder.WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.MakeHostPartialCodeFix>()
+                Configure: builder => builder.WithCodeFix<MakeHostPartialCodeFix>()
             ),
             "LPAD1014" => new($"[Operation<{op}.Request>] {Declare(host)}", DataContracts: false),
             "LPAD1015" => new($"[Operation<ListRockets.Request>(Name = \"CreateRockets\")] {Declare(host)}"),

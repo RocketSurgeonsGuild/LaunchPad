@@ -5,8 +5,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.CodeFixes;
 
 /// <summary>Adds the <c>partial</c> (and, for Minimal API hosts, <c>static</c>) modifiers that LPAD1010 asks for.</summary>
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakeHostPartialCodeFix))]

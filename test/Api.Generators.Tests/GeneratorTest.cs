@@ -9,7 +9,11 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
-using Rocket.Surgery.LaunchPad.Api.Generators;
+using Rocket.Surgery.LaunchPad.Analyzers.Api;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Controllers;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.GraphQL;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Grpc;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.MinimalApi;
 using TUnit.Core.Interfaces;
 
 namespace Api.Generators.Tests;

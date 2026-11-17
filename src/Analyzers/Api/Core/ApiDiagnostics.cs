@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     Every diagnostic the API generators report. One table, shared by every generator package, so IDs never collide.

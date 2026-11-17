@@ -1,4 +1,4 @@
-using Rocket.Surgery.LaunchPad.Analyzers;
+using Rocket.Surgery.LaunchPad.Analyzers.Json;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 namespace Analyzers.Tests;

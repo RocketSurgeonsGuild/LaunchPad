@@ -1,9 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
+using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Controllers;
 
 /// <summary>
 ///     Generates an MVC action for every operation a controller host lists, and fills in what the host doesn't declare: <c>[ApiController]</c>,

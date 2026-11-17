@@ -1,4 +1,5 @@
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.CodeFixes;
 
 namespace Api.Generators.Tests;
 
@@ -172,7 +173,7 @@ public class JsonMetadataTests() : GeneratorTest()
                                }
                                """
                            )
-                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .WithCodeFix<AddJsonSerializableCodeFix>()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
@@ -197,7 +198,7 @@ public class JsonMetadataTests() : GeneratorTest()
                                }
                                """
                            )
-                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .WithCodeFix<AddJsonSerializableCodeFix>()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
@@ -229,7 +230,7 @@ public class JsonMetadataTests() : GeneratorTest()
                                }
                                """
                            )
-                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .WithCodeFix<AddJsonSerializableCodeFix>()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
@@ -243,11 +244,11 @@ public class JsonMetadataTests() : GeneratorTest()
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
                           .AddSources(Contracts.ServerHost)
-                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .WithCodeFix<AddJsonSerializableCodeFix>()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        await VerifyFixAll<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>(result, Microsoft.CodeAnalysis.CodeFixes.FixAllScope.Project);
+        await VerifyFixAll<AddJsonSerializableCodeFix>(result, Microsoft.CodeAnalysis.CodeFixes.FixAllScope.Project);
     }
 
     // Fix all onto the project's context: the missing types go after its entries, a declared one isn't repeated.
@@ -271,11 +272,11 @@ public class JsonMetadataTests() : GeneratorTest()
                                }
                                """
                            )
-                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .WithCodeFix<AddJsonSerializableCodeFix>()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 
-        await VerifyFixAll<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>(result, Microsoft.CodeAnalysis.CodeFixes.FixAllScope.Solution);
+        await VerifyFixAll<AddJsonSerializableCodeFix>(result, Microsoft.CodeAnalysis.CodeFixes.FixAllScope.Solution);
     }
 
     // The only context is in a referenced assembly, which the fix can't edit: it creates one in the project, in the host's namespace.
@@ -285,7 +286,7 @@ public class JsonMetadataTests() : GeneratorTest()
         var contracts = await ContractsDeclaringAllButCreateRequest();
         var result = await Server(Mediator.Mediator, contracts)
                           .AddSources(Contracts.ServerHost)
-                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .WithCodeFix<AddJsonSerializableCodeFix>()
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
 

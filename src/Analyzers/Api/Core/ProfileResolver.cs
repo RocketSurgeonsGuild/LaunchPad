@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Rocket.Surgery.LaunchPad.Mediators;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     Finds the mediator profile for a compilation: an explicit <c>[assembly: MediatorProfile]</c> always wins, otherwise exactly one built-in

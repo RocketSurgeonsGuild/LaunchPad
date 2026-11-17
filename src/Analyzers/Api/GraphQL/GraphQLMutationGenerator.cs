@@ -1,9 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
+using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.GraphQL;
 
 /// <summary>
 ///     Generates HotChocolate mutation fields for every <c>*Mutations</c> operation host: one resolver per operation taking a single <c>request</c>

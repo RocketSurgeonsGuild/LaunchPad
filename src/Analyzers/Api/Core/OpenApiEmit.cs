@@ -1,9 +1,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
+using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
 ///     The OpenAPI operation transformers the HTTP generators emit for each operation, when the server references Microsoft.AspNetCore.OpenApi.

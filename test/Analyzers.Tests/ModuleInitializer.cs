@@ -42,7 +42,7 @@ public static class ModuleInitializer
             (builder, counter) =>
             {
                 // The generator stamps its own file version into [GeneratedCode]; read it from the typed dependency information, not the assembly.
-                if (AssemblyInfo.Dependencies.Rocket_Surgery_LaunchPad_Analyzers.Attributes.FileVersion is { Length: > 0 } version)
+                if (AssemblyInfo.Attributes.FileVersion is { Length: > 0 } version)
                 {
                     builder.Replace(version, "version");
                 }

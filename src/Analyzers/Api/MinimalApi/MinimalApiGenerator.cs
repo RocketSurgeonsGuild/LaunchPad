@@ -1,9 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
+using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.MinimalApi;
 
 /// <summary>
 ///     Generates a <c>Map{Host}()</c> extension for every Minimal API operation host: a route group under <c>/{RoutePrefix}/{Group}</c> with one

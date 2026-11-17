@@ -106,11 +106,11 @@
         <!-- Compiled against only: the JSON context task (src/Primitives.Tasks) runs inside MSBuild, which brings both. -->
         <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.12.2" />
         <PackageVersion Include="System.Reflection.Metadata" Version="11.0.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.9.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="5.9.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="5.9.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.9.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.12.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.12.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="5.12.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="5.12.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.12.0" />
         <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
         <PackageVersion Include="NetTopologySuite.Features" Version="2.2.0" />
 

@@ -1,8 +1,9 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Patch;
 
 /// <summary>
 ///     Writes the handler of each patch operation: a partial class that declares the mediator's handler interface for a request that tracks the

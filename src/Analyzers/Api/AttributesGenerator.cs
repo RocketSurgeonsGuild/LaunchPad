@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api;
 
 /// <summary>
 ///     Emits the API attributes into the compilation, once per compilation. They are emitted in post-initialization so the transport generators can bind them with ForAttributeWithMetadataName.

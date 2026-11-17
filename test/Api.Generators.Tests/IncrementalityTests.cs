@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-
-using Rocket.Surgery.LaunchPad.Api.Generators;
+using Rocket.Surgery.LaunchPad.Analyzers.Api;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.MinimalApi;
 
 namespace Api.Generators.Tests;
 

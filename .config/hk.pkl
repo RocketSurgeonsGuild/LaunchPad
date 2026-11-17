@@ -37,21 +37,22 @@ local excludeDiagnostics = new Listing<String> {
   "RS0026"
 }
 
-local excludes = new Listing<String> {
-  "**/obj/**/*"
-  "**/bin/**/*"
-  ".git/**/*"
-  ".vs/**/*"
-  ".vscode/**/*"
-  ".idea/**/*"
-  ".claude/**/*"
-  ".agents/**/*"
-  ".apm/**/*"
-  ".copilot/**/*"
-  ".squad/**/*"
-  "**/*.verified.*"
-  "**/*.received.*"
-}
+local excludes =
+  List(
+    "**/obj/**/*",
+    "**/bin/**/*",
+    ".git/**/*",
+    ".vs/**/*",
+    ".vscode/**/*",
+    ".idea/**/*",
+    ".claude/**/*",
+    ".agents/**/*",
+    ".apm/**/*",
+    ".copilot/**/*",
+    ".squad/**/*",
+    "**/*.verified.*",
+    "**/*.received.*",
+  )
 
 local yamlTest = new helpers.TestMaker { filename = "foo.yml" }
 local badYaml = "key:   value\nlist:\n    -   item\n"

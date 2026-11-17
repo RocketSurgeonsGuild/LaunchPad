@@ -1,9 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Rocket.Surgery.LaunchPad.Api.Generators.ApiSyntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
+using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
-namespace Rocket.Surgery.LaunchPad.Api.Generators;
+namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Grpc;
 
 /// <summary>
 ///     Generates a code-first gRPC service (protobuf-net.Grpc) for every <c>*Service</c> operation host: a <c>[Service]</c> contract interface
