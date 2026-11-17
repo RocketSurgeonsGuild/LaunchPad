@@ -11,3 +11,4 @@
 [assembly: global::Rocket.Surgery.LaunchPad.Foundation.JsonContextTypeAttribute(typeof(global::Sample.Core.ListRockets.Request))]
 [assembly: global::Rocket.Surgery.LaunchPad.Foundation.JsonContextTypeAttribute(typeof(global::Sample.Core.RocketModel))]
 [assembly: global::Rocket.Surgery.LaunchPad.Foundation.JsonContextTypeAttribute(typeof(global::Sample.Core.Telemetry))]
+[assembly: global::Rocket.Surgery.LaunchPad.Foundation.JsonContextTypeAttribute(typeof(global::System.Collections.Generic.IAsyncEnumerable<global::Sample.Core.RocketModel>))]

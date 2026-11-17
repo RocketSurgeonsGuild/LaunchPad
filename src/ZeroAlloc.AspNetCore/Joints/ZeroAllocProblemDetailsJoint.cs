@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
+using Microsoft.Extensions.Options;
 using Rocket.Surgery.LaunchPad.AspNetCore.Validation;
-
+using Rocket.Surgery.LaunchPad.Foundation;
 using ZeroAlloc.Mediator.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
@@ -29,6 +29,7 @@ public class ZeroAllocProblemDetailsJoint : IServiceJoint
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services)
     {
+        services.AddJsonTypeInfoResolver(ValidationFailureJsonContext.Default, JsonTypeInfoResolverRegistration.LibraryOrder);
         services.AddExceptionHandler(
             options =>
             {
@@ -62,7 +63,9 @@ public class ZeroAllocProblemDetailsJoint : IServiceJoint
             details.Instance = context.ProblemDetails.Instance;
             details.Extensions = context.ProblemDetails.Extensions;
             context.HttpContext.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return new(context.HttpContext.Response.WriteAsJsonAsync(details));
+            var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<Microsoft.AspNetCore.Http.Json.JsonOptions>>().Value.SerializerOptions;
+            var typeInfo = options.GetTypeInfo<ValidationFailureProblemDetails>();
+            return new(context.HttpContext.Response.WriteAsJsonAsync(details, typeInfo, contentType: "application/problem+json"));
         }
     }
 }
