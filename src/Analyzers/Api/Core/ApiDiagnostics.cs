@@ -153,6 +153,12 @@ internal static class ApiDiagnostics
         "{1}, which {2} returns, has {0} besides its value case, but {0} has no status: its name starts or ends with none of {3}, and it has no [ApiError(statusCode)]"
     );
 
+    public static DiagnosticDescriptor PatchHandlerNotSupported { get; } = Error(
+        "LPAD1029",
+        "Patch handlers are not supported for this mediator",
+        "{0} declares GetRequest for the patch operation {1}, but patch handlers aren't supported for {2}: its requests have no handler interface, so no handle method can be generated; implement the handler yourself, applying the patch with ApplyChanges"
+    );
+
     // LPAD1030 and up: JSON metadata.
     public static DiagnosticDescriptor JsonMetadataMissing { get; } = Warning(
         "LPAD1030",
@@ -195,7 +201,7 @@ internal static class ApiDiagnostics
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
-        PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus,
+        PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus, PatchHandlerNotSupported,
         JsonMetadataMissing, RpcNotFound, MappingNotReferenced, RpcKindMismatch, MappingNotDeclared, MappingNotInPlace,
     ];
 

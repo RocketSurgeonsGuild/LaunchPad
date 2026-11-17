@@ -1,5 +1,15 @@
 ﻿{
-  FinalDiagnostics: [
+  Diagnostics: [
+    {
+      Id: LPAD1029,
+      Title: Patch handlers are not supported for this mediator,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (23,27)-(23,44),
+      MessageFormat: {0} declares GetRequest for the patch operation {1}, but patch handlers aren't supported for {2}: its requests have no handler interface, so no handle method can be generated; implement the handler yourself, applying the patch with ApplyChanges,
+      Message: EditRocketHandler declares GetRequest for the patch operation PatchRequest, but patch handlers aren't supported for Foundatio.Mediator: its requests have no handler interface, so no handle method can be generated; implement the handler yourself, applying the patch with ApplyChanges,
+      Category: LaunchPad.Api
+    },
     {
       Id: CS9113,
       Title: Parameter is unread.,
@@ -31,8 +41,5 @@
         NotConfigurable
       ]
     }
-  ],
-  GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.PatchHandlerGenerator: []
-  }
+  ]
 }

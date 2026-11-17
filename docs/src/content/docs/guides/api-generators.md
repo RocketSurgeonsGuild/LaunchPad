@@ -573,7 +573,8 @@ public async ValueTask<Result> Handle(PatchRequest request, CancellationToken ca
 The generated handle method applies the patch to that request and sends the result through the mediator, so the full request is validated
 like any other. The handle method's shape (`Task<T>` or `ValueTask<T>`, the cancellation token) comes from the mediator's handler
 interface, and the handler interface is written in your source, so a mediator's own source generator (Mediator, ZeroAlloc.Mediator) still
-finds the handler. A profile without a sender (Immediate.Handlers) can't send the patched request (LPAD1025).
+finds the handler. A profile without a sender (Immediate.Handlers) can't send the patched request (LPAD1025). Foundatio's requests have
+no handler interface, so it has no patch handlers: a handler that declares `GetRequest` there is LPAD1029; write its handle method yourself.
 
 ## Native AOT
 
@@ -621,6 +622,7 @@ filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` an
 | LPAD1026 | Error    | A patch handler is nested in a type that isn't `partial`.                                             |
 | LPAD1027 | Error    | A patch handler's interface doesn't return `Task<T>` or `ValueTask<T>`.                               |
 | LPAD1028 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.       |
+| LPAD1029 | Error    | A patch handler is for a mediator with no handler interface (Foundatio), so its method isn't written. |
 | LPAD1030 | Warning  | A trimmed or AOT project has a Minimal API body or response type no `JsonSerializerContext` declares. |
 | LPAD1040 | Error    | A proto-first host lists an operation its service base has no rpc for.                                |
 | LPAD1041 | Error    | A proto-first host is in a project that doesn't reference ZeroAlloc.Mapping.                          |

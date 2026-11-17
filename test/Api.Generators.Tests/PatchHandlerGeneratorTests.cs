@@ -156,12 +156,13 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     }
 
     [Test]
-    public async Task Should_Leave_A_Handler_When_The_Profile_Has_No_Handler_Interface()
+    public async Task Should_Report_A_Handler_When_The_Profile_Has_No_Handler_Interface()
     {
-        // Foundatio finds its handlers by convention; with no generic handler interface there is no patch handler to write.
+        // Foundatio finds its handlers by convention; with no generic handler interface there is no patch handler to write, so the handler's
+        // GetRequest has no defining declaration and LPAD1029 says why.
         var result = await Generate(Mediator.Foundatio, Operations(Mediator.Foundatio, Handler));
 
-        await Verify(result);
+        await VerifyDiagnostics(result);
     }
 
     [Test]

@@ -19,7 +19,8 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 ///         The handler interface comes from the mediator profile, and the method's shape (return type, cancellation token) is read from that
 ///         interface, so it follows whatever the mediator declares. The sender is the constructor parameter, field or property of the profile's
 ///         sender type; for a profile without one (Immediate.Handlers), it is the handler interface closed over the full request, called with the
-///         profile's handle method. A profile whose requests have no handler interface (Foundatio) has no patch handler to write.
+///         profile's handle method. A profile whose requests have no handler interface (Foundatio) has no patch handler to write: a handler that
+///         declares <c>GetRequest</c> for a patch request gets LPAD1029 instead of the generated method.
 ///     </para>
 /// </remarks>
 [Generator]
@@ -32,11 +33,12 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
     {
         var candidates = context.SyntaxProvider
                                 .CreateSyntaxProvider(
-                                     static (node, _) => node is ClassDeclarationSyntax { BaseList: { } } declaration
-                                      && declaration.Modifiers.Any(m => m.Text == "partial"),
+                                     static (node, _) => node is ClassDeclarationSyntax declaration
+                                      && declaration.Modifiers.Any(m => m.Text == "partial")
+                                      && ( declaration.BaseList is { } || declaration.Members.Any(IsGetRequest) ),
                                      static (syntax, cancellationToken) =>
                                          syntax.SemanticModel.GetDeclaredSymbol(syntax.Node, cancellationToken) is INamedTypeSymbol type
-                                      && type.Interfaces.Any(i => i.TypeArguments.Length > 0)
+                                      && ( type.Interfaces.Any(i => i.TypeArguments.Length > 0) || type.GetMembers(GetRequestMethod).Any() )
                                              ? type.MetadataName()
                                              : null
                                  )
@@ -52,16 +54,17 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                            static (pair, cancellationToken) =>
                            {
                                var (names, compilation) = pair;
-                               if (names.IsEmpty) return EquatableArray<PatchHandlerModel>.Empty;
-                               if (ProfileResolver.Resolve(compilation).Profile is not { } profile) return EquatableArray<PatchHandlerModel>.Empty;
-                               var propertyTracking = compilation.GetTypeByMetadataName(PropertyTracking);
-                               return propertyTracking is null
-                                   ? EquatableArray<PatchHandlerModel>.Empty
-                                   : names
-                                     .Select(name => compilation.GetTypeByMetadataName(name))
-                                     .OfType<INamedTypeSymbol>()
-                                     .SelectMany(type => Read(type, profile, propertyTracking, cancellationToken))
-                                     .ToEquatableArray();
+                               if (names.IsEmpty
+                                || ProfileResolver.Resolve(compilation).Profile is not { } profile
+                                || compilation.GetTypeByMetadataName(PropertyTracking) is not { } propertyTracking)
+                               {
+                                   return PatchHandlers.Empty;
+                               }
+
+                               var types = names.Select(name => compilation.GetTypeByMetadataName(name)).OfType<INamedTypeSymbol>().ToArray();
+                               return profile.Kinds.Any(k => k.Kind != RequestKind.Stream && k.HandlerInterface is { })
+                                   ? new(types.SelectMany(type => Read(type, profile, propertyTracking, cancellationToken)).ToEquatableArray(), EquatableArray<DiagnosticInfo>.Empty)
+                                   : new(EquatableArray<PatchHandlerModel>.Empty, types.SelectMany(type => Unsupported(type, profile, propertyTracking)).ToEquatableArray());
                            }
                        )
                       .WithTrackingName("PatchHandlers");
@@ -100,25 +103,11 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                 diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.PatchHandlerNotPartial, location, type.Name, nonPartial.Name));
             }
 
-            // A profile without a sender dispatches through the handler interface (Immediate.Handlers), so the patched request goes to the handler
-            // of the full request: the same interface closed over the request instead of the patch.
-            var fullHandler = profile.SenderType is null
-                ? handlerInterface.OriginalDefinition.Construct([request, .. handlerInterface.TypeArguments.Skip(1)])
-                : null;
-            var sender = profile.SenderType is { } senderType
-                ? FindSender(type, IsSender(senderType.Replace("global::", "")))
-                : FindSender(type, candidate => SymbolEqualityComparer.Default.Equals(candidate, fullHandler) || candidate.AllInterfaces.Contains(fullHandler!, SymbolEqualityComparer.Default));
+            var dispatch = PatchDispatch.For(profile, kind, handlerInterface, request);
+            var sender = FindSender(type, dispatch.Matches);
             if (sender is null)
             {
-                diagnostics.Add(
-                    DiagnosticInfo.Create(
-                        ApiDiagnostics.PatchHandlerWithoutSender,
-                        location,
-                        type.Name,
-                        patch.Name,
-                        profile.SenderType ?? fullHandler!.FullyQualified()
-                    )
-                );
+                diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.PatchHandlerWithoutSender, location, type.Name, patch.Name, dispatch.DisplayName));
             }
 
             var asyncShape = AsyncShape(handle.ReturnType);
@@ -144,9 +133,50 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                 ( (INamedTypeSymbol)handle.ReturnType ).TypeArguments.FirstOrDefault()?.FullyQualified() ?? "",
                 parameters,
                 sender ?? "",
-                fullHandler is null ? profile.SendMethod : kind.HandleMethod,
-                fullHandler is null && profile.SendNeedsResponseTypeArgument,
+                dispatch.Method,
+                dispatch.NeedsTypeArgument,
                 diagnostics.ToEquatableArray()
+            );
+        }
+    }
+
+    // A profile whose requests have no handler interface (Foundatio finds its handlers by convention): a class that declares GetRequest for a
+    // patch request expects the generated handle method, which can't be written, so say so rather than leave CS0759.
+    private static IEnumerable<DiagnosticInfo> Unsupported(INamedTypeSymbol type, ProfileModel profile, INamedTypeSymbol propertyTracking)
+    {
+        foreach (var method in type.GetMembers(GetRequestMethod).OfType<IMethodSymbol>())
+        {
+            if (method.Parameters is not [{ Type: INamedTypeSymbol patch }, ..]) continue;
+            if (!patch.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i.OriginalDefinition, propertyTracking))) continue;
+            yield return DiagnosticInfo.Create(ApiDiagnostics.PatchHandlerNotSupported, LocationInfo.From(type), type.Name, patch.Name, profile.Name);
+            yield break;
+        }
+    }
+
+    private const string GetRequestMethod = "GetRequest";
+
+    private static bool IsGetRequest(MemberDeclarationSyntax member) =>
+        member is MethodDeclarationSyntax { Identifier.Text: GetRequestMethod } method && method.Modifiers.Any(m => m.Text == "partial");
+
+    /// <summary>
+    ///     How the patched request is sent: through the profile's sender, or, for a profile without one (Immediate.Handlers), through the handler
+    ///     of the full request, the same handler interface closed over the request instead of the patch.
+    /// </summary>
+    private sealed record PatchDispatch(string Method, bool NeedsTypeArgument, string DisplayName, Func<ITypeSymbol, bool> Matches)
+    {
+        public static PatchDispatch For(ProfileModel profile, RequestKindModel kind, INamedTypeSymbol handlerInterface, INamedTypeSymbol request)
+        {
+            if (profile.SenderType is { } senderType)
+            {
+                return new(profile.SendMethod, profile.SendNeedsResponseTypeArgument, senderType, IsSender(senderType.Replace("global::", "")));
+            }
+
+            var fullHandler = handlerInterface.OriginalDefinition.Construct([request, .. handlerInterface.TypeArguments.Skip(1)]);
+            return new(
+                kind.HandleMethod,
+                false,
+                fullHandler.FullyQualified(),
+                candidate => SymbolEqualityComparer.Default.Equals(candidate, fullHandler) || candidate.AllInterfaces.Contains(fullHandler, SymbolEqualityComparer.Default)
             );
         }
     }
@@ -216,9 +246,10 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
         return ( type.IsStatic ? "static " : "" ) + "partial " + keyword + " " + type.Name + typeParameters;
     }
 
-    private static void Emit(SourceProductionContext output, EquatableArray<PatchHandlerModel> handlers)
+    private static void Emit(SourceProductionContext output, PatchHandlers handlers)
     {
-        foreach (var handler in handlers)
+        foreach (var diagnostic in handlers.Diagnostics) output.ReportDiagnostic(diagnostic.ToDiagnostic());
+        foreach (var handler in handlers.Handlers)
         {
             foreach (var diagnostic in handler.Diagnostics) output.ReportDiagnostic(diagnostic.ToDiagnostic());
             if (!handler.Diagnostics.IsEmpty) continue;
@@ -306,6 +337,12 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
 }
 
 internal sealed record PatchParameter(string Type, string Name, bool IsCancellationToken);
+
+/// <summary>The handlers to write, and the patch handlers the profile can't support (LPAD1029).</summary>
+internal sealed record PatchHandlers(EquatableArray<PatchHandlerModel> Handlers, EquatableArray<DiagnosticInfo> Diagnostics)
+{
+    public static PatchHandlers Empty { get; } = new(EquatableArray<PatchHandlerModel>.Empty, EquatableArray<DiagnosticInfo>.Empty);
+}
 
 internal sealed record PatchHandlerModel(
     string? Namespace,
