@@ -39,7 +39,6 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
         var instant = ReplaceConverter(
             options.Converters,
             new SystemTextJsonCompositeNodaPatternConverter<Instant>(
-                InstantPattern.General,
                 InstantPattern.ExtendedIso,
                 new InstantDateTimeOffsetPattern()
             )
@@ -54,7 +53,6 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
         ReplaceConverter(
             options.Converters,
             new SystemTextJsonCompositeNodaPatternConverter<LocalDateTime>(
-                LocalDateTimePattern.GeneralIso,
                 LocalDateTimePattern.ExtendedIso,
                 LocalDateTimePattern.BclRoundtrip
             )
@@ -90,7 +88,7 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
         ReplaceConverter(
             options.Converters,
             new SystemTextJsonCompositeNodaPatternConverter<OffsetDateTime>(
-                OffsetDateTimePattern.GeneralIso,
+                OffsetDateTimePattern.ExtendedIso,
                 OffsetDateTimePattern.FullRoundtrip
             )
         );
@@ -111,9 +109,8 @@ public static class NodaTimeSystemTextJsonSerializationExtensions
         );
         ReplaceConverter(
             options.Converters,
+            // NodaTime.Serialization.SystemTextJson's pattern; the format-only ISO patterns can't parse, so they can't be read or written.
             new SystemTextJsonCompositeNodaPatternConverter<ZonedDateTime>(
-                ZonedDateTimePattern.GeneralFormatOnlyIso,
-                ZonedDateTimePattern.ExtendedFormatOnlyIso,
                 ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", dateTimeZoneProvider)
             )
         );

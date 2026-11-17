@@ -1,8 +1,22 @@
 # Rebuild LaunchPad on Specular and Dovetail
 
-Status: **tickets published**. Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3045). Board: [project 3](https://github.com/orgs/RocketSurgeonsGuild/projects/3). Branch: `feature/dovetail-migration`.
+Status: **done, archived**. Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3045). This plan is no longer maintained: it is kept as the record of how the migration was planned, and its package maps, dispositions and ticket tables describe the plan, not the packages that shipped.
 
-The tickets are the source of truth for scope and acceptance criteria. This document keeps the decisions, the package maps and the design notes that cut across tickets.
+## What shipped
+
+LaunchPad 2.0 is built on Specular and Dovetail, targets .NET 11 only and is chosen for a project by the LaunchPad SDK. The decisions that shaped it are the ADRs in [docs/adr](../docs/adr):
+
+- [ADR 0001](../docs/adr/0001-joints-replace-conventions.md): Dovetail Joints replace conventions, and Specular does the scanning.
+- [ADR 0002](../docs/adr/0002-package-per-integration.md): one package per third-party integration, which the LaunchPad SDK adds from a project's direct references.
+- [ADR 0003](../docs/adr/0003-explicit-operation-hosts.md) and [ADR 0004](../docs/adr/0004-one-generator-assembly.md): the API generators expose operations through explicit operation hosts, from the one analyzer assembly Foundation carries.
+- [ADR 0005](../docs/adr/0005-portable-unions-shaped-like-csharp-unions.md), [ADR 0006](../docs/adr/0006-union-responses-over-every-transport.md) and [ADR 0010](../docs/adr/0010-net11-only-and-native-unions.md): operations that can fail answer with native C# 15 union responses on every transport.
+- [ADR 0007](../docs/adr/0007-no-json-reflection.md): no JSON serialization through reflection.
+- [ADR 0008](../docs/adr/0008-primitives-is-an-independent-strong-types-package.md): Primitives is an optional strong types package.
+- [ADR 0009](../docs/adr/0009-drop-mediatr-support.md): MediatR support is dropped.
+
+The plan changed along the way. The Newtonsoft.Json, Mapperly, FluentValidation and Serilog packages it maps below were not kept: System.Text.Json is the only serializer, ZeroAlloc.Validation replaced FluentValidation, and the Serilog joints ship in `Rocket.Surgery.LaunchPad.Hosting` as templates. The packages that exist are listed in the [readme](../Readme.md), what the SDK adds for each technology is in [choosing integration packages](../docs/src/content/docs/guides/choosing-packages.md), and the rest of the documentation is in [docs/src/content/docs](../docs/src/content/docs).
+
+The rest of this document is the plan as it stood when the tickets were published.
 
 ## Goal
 
@@ -120,6 +134,8 @@ Epic: [LaunchPad#3045](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3
 | [#3079](https://github.com/RocketSurgeonsGuild/LaunchPad/issues/3079) | Repository settings checklist (manual)                                | None                                                                                                                                                                                                                                                                                       |
 
 ## Package maps
+
+_Not maintained: these maps are the plan, not what shipped. See [What shipped](#what-shipped)._
 
 ### NodaTime
 
