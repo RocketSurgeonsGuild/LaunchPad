@@ -183,11 +183,8 @@ public class JsonContextManifestGeneratorTests() : GeneratorTest()
         {
             Profile.ImmediateHandlers => "",
             Profile.Custom => "IMyRequest<System.Guid, RocketModel>, ",
-            Profile.Mediator => throw new NotImplementedException(),
-            Profile.ChannelMediator => throw new NotImplementedException(),
-            Profile.Foundatio => throw new NotImplementedException(),
-            Profile.ZeroAlloc => throw new NotImplementedException(),
-            _ => "IRequest<RocketModel>, ",
+            Profile.Mediator or Profile.ChannelMediator or Profile.Foundatio or Profile.ZeroAlloc => "IRequest<RocketModel>, ",
+            _ => throw new ArgumentOutOfRangeException(nameof(profile)),
         };
         var result = await Builder
                           .WithGenerator<JsonContextManifestGenerator>()
