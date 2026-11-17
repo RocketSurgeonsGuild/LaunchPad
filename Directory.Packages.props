@@ -171,7 +171,7 @@
             tests), at the versions Chirograph 0.1.0 was packed with. The projects reference them themselves: Chirograph's implicit
             references carry a version, which central package management rejects for a package that also has a PackageVersion (NU1009).
         -->
-        <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.1.6" />
+        <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.2.0" />
         <PackageVersion Include="Refit.HttpClientFactory" Version="17.0.0" />
 
         <PackageVersion Include="OpenTelemetry" Version="1.21.0" />
