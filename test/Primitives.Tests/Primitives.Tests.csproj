@@ -4,5 +4,12 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+        <!-- The strong type registry generator, referenced as an assembly so StrongTypeRegistryGeneratorTests can run it on its own compilations. -->
+        <ProjectReference Include="..\..\src\Primitives\Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
+        <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
+        <PackageReference Include="Verify.SourceGenerators" />
     </ItemGroup>
 </Project>

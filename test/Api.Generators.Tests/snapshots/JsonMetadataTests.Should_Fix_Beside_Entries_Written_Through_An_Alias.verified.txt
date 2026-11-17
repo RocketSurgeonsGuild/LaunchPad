@@ -1,0 +1,39 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1030,
+      Title: JSON type has no source generated metadata,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (8,5)-(8,36),
+      MessageFormat: {0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint can't serialize it; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Message: Sample.Contracts.Rockets.CreateRocket.Request is read or written as JSON by RocketsEndpoints.CreateRocket, but no JsonSerializerContext in this project or its references declares it, so the endpoint can't serialize it; add [JsonSerializable(typeof(Sample.Contracts.Rockets.CreateRocket.Request))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions,
+      Category: LaunchPad.Api
+    }
+  ],
+  CodeFixes: [
+    {
+      Title: Add [JsonSerializable(typeof(Sample.Contracts.Rockets.CreateRocket.Request))] to AppJsonContext,
+      Documents: [
+        {
+          Name: Input2.cs,
+          Text:
+using Entry = System.Text.Json.Serialization.JsonSerializableAttribute;
+
+namespace Sample.Server
+{
+    /// <summary>The application's JSON metadata.</summary>
+    public abstract partial class AppJsonContext : System.Text.Json.Serialization.JsonSerializerContext
+    {
+        protected AppJsonContext() : base(null) { }
+    }
+
+    [Entry(typeof(Sample.Contracts.Rockets.RocketModel))]
+    [Entry(typeof(Sample.Contracts.Rockets.CreateRocket.Request), TypeInfoPropertyName = "CreateRocketRequest")]
+    public abstract partial class AppJsonContext;
+}
+        }
+      ]
+    }
+  ]
+}

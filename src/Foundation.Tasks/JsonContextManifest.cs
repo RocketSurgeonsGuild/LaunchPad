@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using Rocket.Surgery.LaunchPad.Json;
 
 namespace Rocket.Surgery.LaunchPad.Foundation.Tasks;
 
@@ -277,7 +278,9 @@ public static class SerializedTypeName
                 result.Append(segment, 0, tick);
                 var arity = int.Parse(segment[( tick + 1 )..], System.Globalization.CultureInfo.InvariantCulture);
                 if (next + arity > arguments.Count) throw new FormatException("Too few generic arguments.");
-                result.Append('<').Append(string.Join(", ", arguments.Skip(next).Take(arity).Select(a => a.ToCSharp()))).Append('>');
+                result.Append('<');
+                for (var i = next; i < next + arity; i++) result.Append(i > next ? ", " : "").Append(arguments[i].ToCSharp());
+                result.Append('>');
                 next += arity;
             }
 
@@ -285,23 +288,17 @@ public static class SerializedTypeName
             return result.ToString();
         }
 
-        // The type's own name and the types it is nested in, without the namespace: CreateRocket+Request is CreateRocketRequest,
-        // List`1[[RocketModel]] is ListOfRocketModel, RocketModel[] is RocketModelArray.
+        // CreateRocket+Request is CreateRocketRequest, List`1[[RocketModel]] is ListOfRocketModel, RocketModel[] is RocketModelArray.
         public string PropertyName()
         {
             var segments = name.Split('+');
             var first = segments[0];
             segments[0] = first[( first.LastIndexOf('.') + 1 )..];
-            var result = new StringBuilder();
-            foreach (var segment in segments)
-            {
-                var tick = segment.IndexOf('`');
-                result.Append(tick < 0 ? segment : segment[..tick]);
-            }
-
-            if (arguments.Count > 0) result.Append("Of").Append(string.Join("And", arguments.Select(a => a.PropertyName())));
-            foreach (var _ in arraySuffixes) result.Append("Array");
-            return result.ToString();
+            return JsonTypeInfoPropertyName.Compose(
+                segments.Select(segment => segment.IndexOf('`') is >= 0 and var tick ? segment[..tick] : segment),
+                arguments.Select(a => a.PropertyName()),
+                arraySuffixes.Count
+            );
         }
     }
 

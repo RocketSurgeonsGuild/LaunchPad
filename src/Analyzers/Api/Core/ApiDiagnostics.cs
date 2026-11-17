@@ -153,11 +153,17 @@ internal static class ApiDiagnostics
         "{1}, which {2} returns, has {0} besides its value case, but {0} has no status: its name starts or ends with none of {3}, and it has no [ApiError(statusCode)]"
     );
 
+    public static DiagnosticDescriptor PatchHandlerNotSupported { get; } = Error(
+        "LPAD1029",
+        "Patch handlers are not supported for this mediator",
+        "{0} declares GetRequest for the patch operation {1}, but patch handlers aren't supported for {2}: its requests have no handler interface, so no handle method can be generated; implement the handler yourself, applying the patch with ApplyChanges"
+    );
+
     // LPAD1030 and up: JSON metadata.
     public static DiagnosticDescriptor JsonMetadataMissing { get; } = Warning(
         "LPAD1030",
         "JSON type has no source generated metadata",
-        "{0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions"
+        "{0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint can't serialize it; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions"
     );
 
     // LPAD1040 and up: proto-first gRPC hosts.
@@ -195,7 +201,7 @@ internal static class ApiDiagnostics
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
-        PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus,
+        PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus, PatchHandlerNotSupported,
         JsonMetadataMissing, RpcNotFound, MappingNotReferenced, RpcKindMismatch, MappingNotDeclared, MappingNotInPlace,
     ];
 

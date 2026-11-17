@@ -13,3 +13,13 @@ An executable gets its JSON context written by its build: every library lists it
 ## Consequences
 
 ASP.NET Core's own HTTP and MVC JSON options keep the reflection resolver ASP.NET adds to a JIT application; LaunchPad chains its resolvers in front of it but does not remove it. An application that wants reflection in LaunchPad's options adds the resolver itself, and LaunchPad leaves it in place. An enum no JSON context reaches has no converter, so where reflection is available it is written as a number. The NodaTime and spatial packages, which do not reference Foundation, chain their own converter-backed resolvers. The JSON runtime and its build task ship in Foundation, and the JSON generators in LaunchPad's one analyzer assembly ([ADR 0004](0004-one-generator-assembly.md)).
+
+## Amendment, 2026-11-17
+
+LaunchPad now takes ASP.NET Core's reflection resolver out of the HTTP JSON options too: `SystemJsonTextJoint` removes the resolvers a new
+`Microsoft.AspNetCore.Http.Json.JsonOptions` starts with, so Minimal APIs, problem details, OpenAPI and the generated endpoints fail on a
+type no JSON context knows under JIT the way they would under native AOT. A reflection resolver the application adds itself stays. The MSBuild
+property `LaunchPadAspNetCoreJsonReflection=true` (the `AppContext` switch `Rocket.Surgery.LaunchPad.AspNetCore.KeepJsonReflection`) keeps
+ASP.NET Core's resolver. MVC's JSON options keep theirs: MVC doesn't support native AOT, and its formatters and model binding read types no
+context declares. Likewise LPAD1030, which names the Minimal API body and response types no context declares, runs in every project rather
+than only trimmed and native AOT ones; `LaunchPadApiRequireJsonContext=false` turns it off.

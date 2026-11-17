@@ -32,18 +32,45 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
         }
         """;
 
+    // A mediator the compilation describes itself: a request marker, a handler interface returning a Task and a sender with a generic Dispatch.
+    private const string CustomMediator = """
+        [assembly: Rocket.Surgery.LaunchPad.Api.MediatorProfile(SenderType = typeof(Custom.Mediator.IMyDispatcher), SendMethod = "Dispatch", Name = "MyMediator")]
+        [assembly: Rocket.Surgery.LaunchPad.Api.MediatorRequest(typeof(Custom.Mediator.IMyRequest<>), HandlerInterface = typeof(Custom.Mediator.IMyHandler<,>), HandleMethod = "Execute")]
+
+        namespace Custom.Mediator
+        {
+            public interface IMyRequest<TResponse> { }
+
+            public interface IMyHandler<in TRequest, TResponse> where TRequest : IMyRequest<TResponse>
+            {
+                System.Threading.Tasks.Task<TResponse> Execute(TRequest request, System.Threading.CancellationToken cancellationToken);
+            }
+
+            public interface IMyDispatcher
+            {
+                System.Threading.Tasks.Task<TResponse> Dispatch<TResponse>(IMyRequest<TResponse> request, System.Threading.CancellationToken cancellationToken = default);
+            }
+        }
+        """;
+
     private static string Operations(Mediator mediator, string handler)
     {
+        // The request marker (Immediate.Handlers has none), the handler interface the application declares (Foundatio has only the non-generic
+        // IHandler marker) and the service the handler sends through (Immediate.Handlers has no sender: the handler of the full request).
         var (usings, request, handlerInterface, sender) = mediator switch
         {
             Mediator.Mediator => ("using Mediator;", "IRequest<RocketModel>", "IRequestHandler<PatchRequest, RocketModel>", "ISender"),
             Mediator.ZeroAlloc => ("using ZeroAlloc.Mediator;", "IRequest<RocketModel>", "IRequestHandler<PatchRequest, RocketModel>", "IMediator"),
-            Mediator.ChannelMediator => throw new NotImplementedException(),
-            Mediator.ImmediateHandlers => throw new NotImplementedException(),
-            Mediator.Foundatio => throw new NotImplementedException(),
-            Mediator.Custom => throw new NotImplementedException(),
+            Mediator.ChannelMediator => ("using ChannelMediator;", "IRequest<RocketModel>", "IRequestHandler<PatchRequest, RocketModel>", "IMediator"),
+            Mediator.ImmediateHandlers => ("using Immediate.Handlers.Shared;", null, "IHandler<PatchRequest, RocketModel>", "IHandler<Request, RocketModel>"),
+            Mediator.Foundatio => ("using Foundatio.Mediator;", "IRequest<RocketModel>", "IHandler", "IMediator"),
+            Mediator.Custom => ("using Custom.Mediator;", "IMyRequest<RocketModel>", "IMyHandler<PatchRequest, RocketModel>", "IMyDispatcher"),
             _ => throw new ArgumentOutOfRangeException(nameof(mediator)),
         };
+        // GetRequest returns the task type the handler interface does.
+        var task = mediator is Mediator.ChannelMediator or Mediator.Custom ? "Task" : "ValueTask";
+        var marker = request is null ? "" : " : " + request;
+        var patchMarker = request is null ? " : " : " : " + request + ", ";
         return $$"""
             #nullable enable
             {{usings}}
@@ -57,9 +84,9 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
 
             public static partial class EditRocket
             {
-                public record Request(string Id, string SerialNumber) : {{request}};
+                public record Request(string Id, string SerialNumber){{marker}};
 
-                public record PatchRequest(string Id) : {{request}}, IPropertyTracking<Request>
+                public record PatchRequest(string Id){{patchMarker}}IPropertyTracking<Request>
                 {
                     public string? SerialNumber { get; init; }
 
@@ -68,7 +95,7 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
                     public void ResetChanges() { }
                 }
 
-                {{handler.Replace("{sender}", sender).Replace("{handlerInterface}", handlerInterface)}}
+                {{handler.Replace("{sender}", sender).Replace("{handlerInterface}", handlerInterface).Replace("{task}", task)}}
             }
             """;
     }
@@ -76,8 +103,8 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     private const string Handler = """
         internal partial class EditRocketHandler({sender} mediator) : {handlerInterface}
                 {
-                    private partial ValueTask<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
-                        new(new Request(request.Id, "SN12345678"));
+                    private partial {task}<Request> GetRequest(PatchRequest request, CancellationToken cancellationToken) =>
+                        {task}.FromResult(new Request(request.Id, "SN12345678"));
                 }
         """;
 
@@ -92,6 +119,7 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
              .AddReferences(FrameworkReferences)
              .AddReferences(MediatorAssemblies(mediator))
              .AddSources(PropertyTracking)
+             .AddSources(mediator == Mediator.Custom ? [AttributeSources, CustomMediator] : [])
              .AddSources(sources)
              .AddSources(source)
              .Build()
@@ -100,6 +128,9 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
     [Test]
     [Arguments(Mediator.Mediator)]
     [Arguments(Mediator.ZeroAlloc)]
+    [Arguments(Mediator.ChannelMediator)]
+    [Arguments(Mediator.ImmediateHandlers)]
+    [Arguments(Mediator.Custom)]
     public async Task Should_Generate_A_Patch_Handler(Mediator mediator)
     {
         var result = await Generate(
@@ -110,6 +141,28 @@ public class PatchHandlerGeneratorTests() : GeneratorTest()
 
         AssertCompiles(result);
         await Verify(result).UseParameters(mediator);
+    }
+
+    [Test]
+    public async Task Should_Report_A_Handler_Without_The_Handler_Of_The_Full_Request()
+    {
+        // Immediate.Handlers has no sender: the patched request goes to the handler of the full request, which this handler doesn't take.
+        var result = await Generate(
+            Mediator.ImmediateHandlers,
+            Operations(Mediator.ImmediateHandlers, Handler.Replace("({sender} mediator)", "(string name)"))
+        );
+
+        await VerifyDiagnostics(result);
+    }
+
+    [Test]
+    public async Task Should_Report_A_Handler_When_The_Profile_Has_No_Handler_Interface()
+    {
+        // Foundatio finds its handlers by convention; with no generic handler interface there is no patch handler to write, so the handler's
+        // GetRequest has no defining declaration and LPAD1029 says why.
+        var result = await Generate(Mediator.Foundatio, Operations(Mediator.Foundatio, Handler));
+
+        await VerifyDiagnostics(result);
     }
 
     [Test]

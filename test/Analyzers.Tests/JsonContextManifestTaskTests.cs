@@ -13,6 +13,12 @@ public class JsonContextManifestTaskTests
     [Arguments("Sample.Core.RocketModel, Sample.Core, Version=1.0.0.0", "global::Sample.Core.RocketModel", "RocketModel")]
     [Arguments("Sample.Core.CreateRocket+Request, Sample.Core", "global::Sample.Core.CreateRocket.Request", "CreateRocketRequest")]
     [Arguments("Sample.Core.RocketModel[], Sample.Core", "global::Sample.Core.RocketModel[]", "RocketModelArray")]
+    [Arguments("Sample.Core.RocketModel[][], Sample.Core", "global::Sample.Core.RocketModel[][]", "RocketModelArrayArray")]
+    [Arguments(
+        "System.Collections.Generic.List`1[[Sample.Core.CreateRocket+Request, Sample.Core]][], System.Private.CoreLib",
+        "global::System.Collections.Generic.List<global::Sample.Core.CreateRocket.Request>[]",
+        "ListOfCreateRocketRequestArray"
+    )]
     [Arguments(
         "System.Collections.Generic.List`1[[Sample.Core.RocketModel, Sample.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib",
         "global::System.Collections.Generic.List<global::Sample.Core.RocketModel>",

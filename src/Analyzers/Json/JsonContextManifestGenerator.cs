@@ -12,7 +12,8 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 /// <remarks>
 ///     <para>
 ///         Listed: every mediator request (recognised with the mediator libraries LaunchPad supports, or <c>[assembly: MediatorRequest]</c>) and its
-///         response or stream item type (the cases of a union response, without LaunchPad's standard problems), every <c>IPropertyTracking&lt;T&gt;</c> type with its target, and every type marked
+///         response or stream item type (the cases of a union response, without LaunchPad's standard problems; a stream's
+///         <c>IAsyncEnumerable&lt;T&gt;</c> too), every <c>IPropertyTracking&lt;T&gt;</c> type with its target, and every type marked
 ///         <c>[IncludeInJsonContext]</c>. Only public types are listed, since the application's context names them.
 ///     </para>
 ///     <para>Nothing is written when the compilation doesn't reference Rocket.Surgery.LaunchPad.Foundation.</para>
@@ -103,6 +104,12 @@ public sealed class JsonContextManifestGenerator : IIncrementalGenerator
             else if (!IsUnit(response))
             {
                 Add(response);
+                // A stream is described as IAsyncEnumerable<T> (the OpenAPI document reads its metadata), and written item by item.
+                if (request.Shape is MediatorRequestShape.Stream
+                 && compilation.GetTypeByMetadataName("System.Collections.Generic.IAsyncEnumerable`1") is { } asyncEnumerable)
+                {
+                    Add(asyncEnumerable.Construct(Unwrap(response)));
+                }
             }
         }
 
