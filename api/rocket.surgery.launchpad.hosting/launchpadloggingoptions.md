@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Hosting](/LaunchPad/api/rocket.surgery.launchpad.hosting.md)
-- Version: `2.0.1-beta.388`
+- Version: `2.0.1-beta.389`
 - Namespace: `Rocket.Surgery.LaunchPad.Hosting`
 - Target framework: `net11.0`
 

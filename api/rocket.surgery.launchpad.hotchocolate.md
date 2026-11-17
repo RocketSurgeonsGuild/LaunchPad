@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.HotChocolate
 
 - Package: `Rocket.Surgery.LaunchPad.HotChocolate`
-- Version: `2.0.1-beta.388`
+- Version: `2.0.1-beta.389`
 - Target framework: `net11.0`
 - NuGet: [Rocket.Surgery.LaunchPad.HotChocolate](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.HotChocolate)
 

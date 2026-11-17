@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Foundation
 
 - Package: `Rocket.Surgery.LaunchPad.Foundation`
-- Version: `2.0.1-beta.388`
+- Version: `2.0.1-beta.389`
 - Target framework: `net11.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Foundation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation)
 
