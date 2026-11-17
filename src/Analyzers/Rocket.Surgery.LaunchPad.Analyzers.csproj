@@ -27,6 +27,8 @@
     <ItemGroup>
         <!-- The mediator request table, shared with the JSON context manifest of Rocket.Surgery.LaunchPad.Analyzers. -->
         <Compile Include="../Shared/MediatorLibraries.cs" Link="Api/Core/MediatorLibraries.cs" />
+        <!-- The TypeInfoPropertyName the LPAD1030 code fix writes, shared with the JSON context Rocket.Surgery.LaunchPad.Foundation.Tasks writes. -->
+        <Compile Include="../Shared/JsonTypeInfoPropertyName.cs" Link="Api/CodeFixes/JsonTypeInfoPropertyName.cs" />
     </ItemGroup>
     <!-- The generator is packed from wherever the build wrote it: an artifacts path (pack's artifacts-path option) moves it out of bin. -->
     <Target Name="_LaunchPadPackAnalyzer" BeforeTargets="_GetPackageFiles">

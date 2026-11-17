@@ -1,8 +1,11 @@
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
@@ -165,10 +168,57 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
     }
 
     /// <summary>
+    ///     Snapshots what <typeparamref name="TProvider" />'s fix all does in <paramref name="scope" /> with every diagnostic the harness offered
+    ///     the provider: the action's title and each document it adds or changes. The harness runs only single fixes, so this builds the
+    ///     <see cref="FixAllContext" /> an IDE would.
+    /// </summary>
+    protected async Task VerifyFixAll<TProvider>(GeneratorTestResults result, FixAllScope scope, Func<SettingsTask, SettingsTask>? settings = null, [System.Runtime.CompilerServices.CallerFilePath] string sourceFile = "")
+        where TProvider : CodeFixProvider, new()
+    {
+        var provider = new TProvider();
+        var offered = result.CodeFixResults[typeof(TProvider)].ResolvedFixes.Where(r => !r.CodeActions.IsEmpty).ToArray();
+        if (offered.Length == 0) throw new InvalidOperationException($"{typeof(TProvider).Name} was offered no diagnostic to fix.");
+        var document = offered[0].Document;
+        var context = new FixAllContext(
+            document,
+            provider,
+            scope,
+            offered[0].CodeActions[0].CodeAction.EquivalenceKey,
+            provider.FixableDiagnosticIds,
+            new OfferedDiagnostics([.. offered.Select(r => r.Diagnostic)]),
+            TestContext.CancellationToken
+        );
+        var action = await provider.GetFixAllProvider()!.GetFixAsync(context) ?? throw new InvalidOperationException("The fix all offered no action.");
+        var operations = await action.GetOperationsAsync(TestContext.CancellationToken);
+        var changed = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
+        var documents = new List<object>();
+        foreach (var changes in changed.GetChanges(document.Project.Solution).GetProjectChanges())
+        {
+            documents.AddRange(await OtherDocuments(changes, null));
+        }
+
+        var task = Verifier.Verify(new { action.Title, Documents = documents }, sourceFile: sourceFile);
+        await ( settings?.Invoke(task) ?? task );
+    }
+
+    /// <summary>The diagnostics a fix all sees: the ones the harness offered the provider, which the generators report by file path.</summary>
+    private sealed class OfferedDiagnostics(ImmutableArray<Diagnostic> diagnostics) : FixAllContext.DiagnosticProvider
+    {
+        public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken) =>
+            Task.FromResult(diagnostics.Where(d => d.Location.GetLineSpan().Path == ( document.FilePath ?? document.Name )));
+
+        public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken) =>
+            Task.FromResult(diagnostics.Where(d => d.Location == Location.None));
+
+        public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken) =>
+            Task.FromResult<IEnumerable<Diagnostic>>(diagnostics);
+    }
+
+    /// <summary>
     ///     The documents a fix adds, or whose text it changes, other than the one it started from (LPAD1030's fix writes onto the JSON context,
     ///     or creates one). Compared by text: the harness reports documents it re-created as changed.
     /// </summary>
-    private async Task<List<object>> OtherDocuments(ProjectChanges changes, DocumentId target)
+    private async Task<List<object>> OtherDocuments(ProjectChanges changes, DocumentId? target)
     {
         var documents = new List<object>();
         foreach (var document in changes.NewProject.Documents)

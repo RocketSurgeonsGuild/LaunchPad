@@ -34,6 +34,9 @@ internal static class JsonMetadataCoverage
     /// <summary>The diagnostic property that carries the missing type, fully qualified with <c>global::</c>.</summary>
     public const string TypeProperty = "type";
 
+    /// <summary>A missing type as the diagnostic message and the code fix's title show it: <see cref="TypeProperty" /> without <c>global::</c>.</summary>
+    public static string Display(string type) => type.Replace("global::", "");
+
     private static readonly string[] TrimmedProperties =
         ["build_property.PublishAot", "build_property.IsAotCompatible", "build_property.PublishTrimmed", "build_property.IsTrimmable"];
 
@@ -67,14 +70,13 @@ internal static class JsonMetadataCoverage
                 foreach (var type in JsonTypes(operation))
                 {
                     if (LaunchPadTypes.Contains(type) || covered.Contains(type) || !reported.Add(type)) continue;
-                    var display = type.Replace("global::", "");
                     // The code fix (AddJsonSerializableCodeFix) reads the type from the properties, not the message.
                     output.ReportDiagnostic(
                         Diagnostic.Create(
                             ApiDiagnostics.JsonMetadataMissing,
                             operation.Location?.ToLocation() ?? Location.None,
                             ImmutableDictionary<string, string?>.Empty.Add(TypeProperty, type),
-                            display,
+                            Display(type),
                             host.Name,
                             operation.Name
                         )
@@ -99,6 +101,13 @@ internal static class JsonMetadataCoverage
             : TrimmedProperties.Any(name => options.TryGetValue(name, out var value) && string.Equals(value, "true", StringComparison.OrdinalIgnoreCase));
     }
 
+    // The types a context's [JsonSerializable] entries name.
+    private static IEnumerable<ITypeSymbol> Declared(INamedTypeSymbol context, INamedTypeSymbol serializable) =>
+        context.GetAttributes()
+               .Where(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, serializable))
+               .Select(a => a.ConstructorArguments is [{ Value: ITypeSymbol declared }, ..] ? declared : null)
+               .OfType<ITypeSymbol>();
+
     private static EquatableArray<string> Covered(Compilation compilation, CancellationToken cancellationToken)
     {
         if (compilation.GetTypeByMetadataName("System.Text.Json.Serialization.JsonSerializerContext") is not { } context
@@ -112,13 +121,7 @@ internal static class JsonMetadataCoverage
         {
             foreach (var type in Types(assembly.GlobalNamespace, cancellationToken))
             {
-                if (!DerivesFrom(type, context)) continue;
-                roots.AddRange(
-                    type.GetAttributes()
-                        .Where(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, serializable))
-                        .Select(a => a.ConstructorArguments is [{ Value: ITypeSymbol declared }, ..] ? declared : null)
-                        .OfType<ITypeSymbol>()
-                );
+                if (DerivesFrom(type, context)) roots.AddRange(Declared(type, serializable));
             }
         }
 

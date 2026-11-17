@@ -16,6 +16,10 @@
         <PackageReference Include="System.Reflection.Metadata" ExcludeAssets="runtime" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
+        <!-- The TypeInfoPropertyName of each entry, shared with the LPAD1030 code fix in Rocket.Surgery.LaunchPad.Analyzers. -->
+        <Compile Include="../Shared/JsonTypeInfoPropertyName.cs" Link="JsonTypeInfoPropertyName.cs" />
+    </ItemGroup>
+    <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
         <Using Remove="Joinery.Dovetail" />
         <Using Remove="Joinery.Dovetail.Attributes" />

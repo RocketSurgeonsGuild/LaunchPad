@@ -221,6 +221,83 @@ public class JsonMetadataTests() : GeneratorTest()
         await VerifyDiagnostics(result, settings => settings.UseFileName($"{nameof(JsonMetadataTests)}.Should_Fix_A_Context_Without_Entries"));
     }
 
+    // Entries are found by symbol, not by the attribute's spelling: of a context's two partial declarations, the entry goes beside the one whose
+    // entries are written through an alias.
+    [Test]
+    public async Task Should_Fix_Beside_Entries_Written_Through_An_Alias()
+    {
+        var contracts = await ContractsDeclaringAllButCreateRequest();
+        var result = await Server(Mediator.Mediator, contracts)
+                          .AddGlobalOption("build_property.PublishAot", "true")
+                          .AddSources(
+                               Contracts.ServerHost,
+                               """
+                               using Entry = System.Text.Json.Serialization.JsonSerializableAttribute;
+
+                               namespace Sample.Server
+                               {
+                                   /// <summary>The application's JSON metadata.</summary>
+                                   public abstract partial class AppJsonContext : System.Text.Json.Serialization.JsonSerializerContext
+                                   {
+                                       protected AppJsonContext() : base(null) { }
+                                   }
+
+                                   [Entry(typeof(Sample.Contracts.Rockets.RocketModel))]
+                                   public abstract partial class AppJsonContext;
+                               }
+                               """
+                           )
+                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await VerifyDiagnostics(result);
+    }
+
+    // Fix all: every missing type of the project lands on one new context, each with its own TypeInfoPropertyName.
+    [Test]
+    public async Task Should_Fix_All_By_Creating_One_Context_With_Every_Missing_Type()
+    {
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await Server(Mediator.Mediator, contracts)
+                          .AddGlobalOption("build_property.PublishAot", "true")
+                          .AddSources(Contracts.ServerHost)
+                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await VerifyFixAll<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>(result, Microsoft.CodeAnalysis.CodeFixes.FixAllScope.Project);
+    }
+
+    // Fix all onto the project's context: the missing types go after its entries, a declared one isn't repeated.
+    [Test]
+    public async Task Should_Fix_All_Onto_The_Context_Of_The_Project()
+    {
+        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
+        var result = await Server(Mediator.Mediator, contracts)
+                          .AddGlobalOption("build_property.PublishAot", "true")
+                          .AddSources(
+                               Contracts.ServerHost,
+                               """
+                               using System.Text.Json.Serialization;
+                               using Sample.Contracts.Rockets;
+
+                               namespace Sample.Server;
+
+                               [JsonSerializable(typeof(RocketModel))]
+                               internal abstract partial class AppJsonContext : JsonSerializerContext
+                               {
+                                   protected AppJsonContext() : base(null) { }
+                               }
+                               """
+                           )
+                          .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await VerifyFixAll<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>(result, Microsoft.CodeAnalysis.CodeFixes.FixAllScope.Solution);
+    }
+
     // The only context is in a referenced assembly, which the fix can't edit: it creates one in the project, in the host's namespace.
     [Test]
     public async Task Should_Fix_By_Creating_A_Context_When_The_Project_Has_None()

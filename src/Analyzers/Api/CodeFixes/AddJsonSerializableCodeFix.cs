@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Rocket.Surgery.LaunchPad.Json;
 
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
@@ -45,8 +46,8 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
         {
             if (!diagnostic.Properties.TryGetValue(JsonMetadataCoverage.TypeProperty, out var type) || type is null) continue;
             // Only a diagnostic in this document: the generator reports by file path, and its span means nothing in another one.
-            if (diagnostic.Location.GetLineSpan().Path is { Length: > 0 } path && path != ( context.Document.FilePath ?? context.Document.Name )) continue;
-            var display = type.Replace("global::", "");
+            if (diagnostic.Location.GetLineSpan().Path is { Length: > 0 } path && !IsAt(context.Document, path)) continue;
+            var display = JsonMetadataCoverage.Display(type);
             var title = target is { } existing
                 ? $"Add [JsonSerializable(typeof({display}))] to {existing.Symbol.Name}"
                 : $"Add [JsonSerializable(typeof({display}))] to a new JSON context";
@@ -119,8 +120,7 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
         var indent = lineText[..( lineText.Length - lineText.TrimStart().Length )];
 
         // After the context's last entry; with none, before its first attribute (after any doc comment, which is the first token's trivia).
-        var lastEntry = declaration.AttributeLists.LastOrDefault(list => list.Attributes.Any(a => IsSerializable(model, a, serializable, cancellationToken)));
-        var change = lastEntry is { }
+        var change = target.LastEntry is { } lastEntry
             ? new TextChange(new(lastEntry.Span.End, 0), string.Concat(entries.Select(entry => newLine + indent + entry)))
             : new TextChange(new(firstToken.SpanStart, 0), string.Concat(entries.Select(entry => entry + newLine + indent)));
         return document.WithText(text.WithChanges(change)).Project.Solution;
@@ -146,7 +146,7 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
         }
 
         source.Append(indent)
-              .Append("/// <summary>The JSON metadata of the types this project's endpoints read and write; chain it into the JSON options with <c>AddJsonTypeInfoResolver(")
+              .Append("/// <summary>The JSON metadata of the types this project's operations read and write; chain it into the JSON options with <c>AddJsonTypeInfoResolver(")
               .Append(name)
               .Append(".Default)</c>.</summary>")
               .Append(newLine);
@@ -182,88 +182,71 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
     private static string Entry(string attributeName, string type, string propertyName) =>
         $"[{attributeName}(typeof({type}), TypeInfoPropertyName = \"{propertyName}\")]";
 
-    private static string Unique(string name, HashSet<string> used)
+    private static string Unique(string name, HashSet<string> used) => Suffixed(name, used.Add);
+
+    // The name, or the name with the first number from 2 up that is free.
+    private static string Suffixed(string name, Func<string, bool> isFree)
     {
         var unique = name;
-        for (var i = 2; !used.Add(unique); i++) unique = name + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        for (var i = 2; !isFree(unique); i++) unique = name + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
         return unique;
     }
 
     /// <summary>
-    ///     The property name LaunchPad's generated context gives a type (<c>SerializedTypeName</c> in Foundation.Tasks): its name and the types it
-    ///     is nested in, without the namespace, then <c>Of</c> and its type arguments joined by <c>And</c>, then <c>Array</c> per rank.
+    ///     The property name LaunchPad's generated context gives a type (<c>SerializedTypeName</c> in Foundation.Tasks), through the naming both
+    ///     share (<see cref="JsonTypeInfoPropertyName" />).
     /// </summary>
     internal static string PropertyName(ITypeSymbol type)
     {
-        switch (type)
-        {
-            case IArrayTypeSymbol array:
-                return PropertyName(array.ElementType) + "Array";
-            case INamedTypeSymbol named:
-                {
-                    var chain = new List<INamedTypeSymbol>();
-                    for (var current = named; current is { }; current = current.ContainingType) chain.Insert(0, current);
-                    var result = new StringBuilder();
-                    foreach (var segment in chain) result.Append(segment.Name);
-                    var arguments = chain.SelectMany(segment => segment.TypeArguments).ToArray();
-                    if (arguments.Length > 0) result.Append("Of").Append(string.Join("And", arguments.Select(PropertyName)));
-                    return result.ToString();
-                }
-            default:
-                return type.Name;
-        }
+        var arrays = 0;
+        for (; type is IArrayTypeSymbol array; type = array.ElementType) arrays++;
+        var chain = new List<INamedTypeSymbol>();
+        for (var current = type as INamedTypeSymbol; current is { }; current = current.ContainingType) chain.Insert(0, current);
+        return chain.Count == 0
+            ? JsonTypeInfoPropertyName.Compose([type.Name], [], arrays)
+            : JsonTypeInfoPropertyName.Compose(chain.Select(segment => segment.Name), chain.SelectMany(segment => segment.TypeArguments).Select(PropertyName), arrays);
     }
 
     private static ContextTarget? FindContext(Project project, Compilation compilation, INamedTypeSymbol contextType, CancellationToken cancellationToken)
     {
         var serializable = compilation.GetTypeByMetadataName(SerializableMetadataName);
-        var candidates = new List<(ContextTarget Target, bool HasEntries)>();
+        var candidates = new List<ContextTarget>();
         foreach (var type in Types(compilation.Assembly.GlobalNamespace))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!DerivesFrom(type, contextType)) continue;
-            var declarations = new List<(Document Document, ClassDeclarationSyntax Declaration)>();
-            foreach (var reference in type.DeclaringSyntaxReferences)
-            {
-                if (IsGenerated(reference.SyntaxTree, cancellationToken) || project.GetDocument(reference.SyntaxTree) is not { } document) continue;
-                if (reference.GetSyntax(cancellationToken) is ClassDeclarationSyntax declaration && declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
-                {
-                    declarations.Add((document, declaration));
-                }
-            }
-
-            if (declarations.Count == 0) continue;
-            var (chosenDocument, chosenDeclaration) = WithEntries(declarations);
-            candidates.Add((new(type, chosenDocument, chosenDeclaration), HasEntries(type, serializable)));
+            if (DerivesFrom(type, contextType) && Target(project, type, serializable, cancellationToken) is { } target) candidates.Add(target);
         }
 
         return candidates
               .OrderByDescending(c => c.HasEntries)
-              .ThenBy(c => c.Target.Document.FilePath ?? c.Target.Document.Name, StringComparer.Ordinal)
-              .ThenBy(c => c.Target.Declaration.SpanStart)
-              .Select(c => c.Target)
+              .ThenBy(c => c.Document.FilePath ?? c.Document.Name, StringComparer.Ordinal)
+              .ThenBy(c => c.Declaration.SpanStart)
               .FirstOrDefault();
     }
 
-    // Of the partial declarations of a context, the one that already carries entries, so new ones go beside them.
-    private static (Document Document, ClassDeclarationSyntax Declaration) WithEntries(List<(Document Document, ClassDeclarationSyntax Declaration)> declarations)
+    // Of a context's hand-written partial declarations, the one that already carries entries, so new ones go after its last; else the first.
+    private static ContextTarget? Target(Project project, INamedTypeSymbol type, INamedTypeSymbol? serializable, CancellationToken cancellationToken)
     {
-        foreach (var candidate in declarations)
+        // The context's [JsonSerializable] entries, by symbol, so an alias or a fully qualified name counts as well.
+        var entries = type.GetAttributes()
+                          .Where(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, serializable))
+                          .Select(a => a.ApplicationSyntaxReference?.GetSyntax(cancellationToken))
+                          .OfType<AttributeSyntax>()
+                          .ToArray();
+        ContextTarget? chosen = null;
+        foreach (var reference in type.DeclaringSyntaxReferences)
         {
-            foreach (var list in candidate.Declaration.AttributeLists)
-            {
-                foreach (var attribute in list.Attributes)
-                {
-                    if (attribute.Name.ToString().Contains("JsonSerializable")) return candidate;
-                }
-            }
+            if (IsGenerated(reference.SyntaxTree, cancellationToken) || project.GetDocument(reference.SyntaxTree) is not { } document) continue;
+            if (reference.GetSyntax(cancellationToken) is not ClassDeclarationSyntax declaration || !declaration.Modifiers.Any(SyntaxKind.PartialKeyword)) continue;
+            var lastEntry = LastEntry(declaration, entries);
+            if (chosen is null || ( chosen.LastEntry is null && lastEntry is { } )) chosen = new(type, document, declaration, lastEntry, entries.Length > 0);
         }
 
-        return declarations[0];
+        return chosen;
     }
 
-    private static bool HasEntries(INamedTypeSymbol type, INamedTypeSymbol? serializable) =>
-        serializable is { } && type.GetAttributes().Any(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, serializable));
+    private static AttributeListSyntax? LastEntry(ClassDeclarationSyntax declaration, AttributeSyntax[] entries) =>
+        declaration.AttributeLists.LastOrDefault(list => entries.Any(entry => entry.SyntaxTree == list.SyntaxTree && list.Span.Contains(entry.Span)));
 
     // A context in generated code (LaunchPad's own executable context, another generator's) would lose the entry on the next build.
     private static bool IsGenerated(SyntaxTree tree, CancellationToken cancellationToken)
@@ -275,8 +258,8 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
             || tree.GetRoot(cancellationToken).GetLeadingTrivia().Any(t => t.ToString().Contains("<auto-generated"));
     }
 
-    private static bool IsSerializable(SemanticModel model, AttributeSyntax attribute, INamedTypeSymbol serializable, CancellationToken cancellationToken) =>
-        SymbolEqualityComparer.Default.Equals(model.GetSymbolInfo(attribute, cancellationToken).Symbol?.ContainingType, serializable);
+    // The generator reports by file path; a document without one (an in-memory workspace) goes by its name.
+    private static bool IsAt(Document document, string path) => ( document.FilePath ?? document.Name ) == path;
 
     // The project's name, its last segment, as an identifier: Sample.Server gets ServerJsonContext, unless that name is taken.
     private static string ContextName(Project project, Compilation compilation, string? ns)
@@ -284,14 +267,7 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
         var last = ( project.AssemblyName ?? project.Name ).Split('.').Last();
         var identifier = new string([.. last.Where(c => char.IsLetterOrDigit(c) || c == '_')]);
         if (identifier.Length == 0 || char.IsDigit(identifier[0])) identifier = "App" + identifier;
-        var name = identifier + "JsonContext";
-        var unique = name;
-        for (var i = 2; compilation.GetTypeByMetadataName(ns is null ? unique : ns + "." + unique) is { }; i++)
-        {
-            unique = name + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        }
-
-        return unique;
+        return Suffixed(identifier + "JsonContext", name => compilation.GetTypeByMetadataName(ns is null ? name : ns + "." + name) is null);
     }
 
     private static string NewLine(SourceText text) => text.ToString().Contains("\r\n") ? "\r\n" : "\n";
@@ -325,25 +301,19 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
         foreach (var nested in type.GetTypeMembers().SelectMany(WithNested)) yield return nested;
     }
 
-    private sealed record ContextTarget(INamedTypeSymbol Symbol, Document Document, ClassDeclarationSyntax Declaration);
+    /// <summary>A context's partial declaration to write onto, with its last attribute list that holds an entry, if any.</summary>
+    private sealed record ContextTarget(INamedTypeSymbol Symbol, Document Document, ClassDeclarationSyntax Declaration, AttributeListSyntax? LastEntry, bool HasEntries);
 
     /// <summary>Fix all: one edit per project, so the entries of every diagnostic land on the same context (or the same new one).</summary>
     private sealed class AllTypesFixer : FixAllProvider
     {
         public static AllTypesFixer Instance { get; } = new();
 
+        public override IEnumerable<FixAllScope> GetSupportedFixAllScopes() => [FixAllScope.Document, FixAllScope.Project, FixAllScope.Solution];
+
         public override async Task<CodeAction?> GetFixAsync(FixAllContext fixAllContext)
         {
-            var diagnostics = fixAllContext.Scope switch
-            {
-                FixAllScope.Document when fixAllContext.Document is { } document => await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false),
-                FixAllScope.Project => await fixAllContext.GetAllDiagnosticsAsync(fixAllContext.Project).ConfigureAwait(false),
-                FixAllScope.Solution => [.. ( await Task.WhenAll(fixAllContext.Solution.Projects.Select(fixAllContext.GetAllDiagnosticsAsync)).ConfigureAwait(false) ).SelectMany(d => d)],
-                FixAllScope.Custom => throw new NotImplementedException(),
-                FixAllScope.ContainingMember => throw new NotImplementedException(),
-                FixAllScope.ContainingType => throw new NotImplementedException(),
-                _ => [],
-            };
+            var diagnostics = await Diagnostics(fixAllContext).ConfigureAwait(false);
             var solution = fixAllContext.Solution;
             // Per project: the document of its first diagnostic (where a new context goes) and every missing type.
             var projects = new Dictionary<ProjectId, (DocumentId Document, TextSpan Span, List<string> Types)>();
@@ -381,12 +351,29 @@ public sealed class AddJsonSerializableCodeFix : CodeFixProvider
             }
         }
 
+        // Only the scopes GetSupportedFixAllScopes offers; an if chain, not a switch, so no analyzer asks for the other scopes as cases.
+        private static async Task<IEnumerable<Diagnostic>> Diagnostics(FixAllContext fixAllContext)
+        {
+            if (fixAllContext.Scope == FixAllScope.Document)
+            {
+                return fixAllContext.Document is { } document ? await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false) : [];
+            }
+
+            if (fixAllContext.Scope == FixAllScope.Project) return await fixAllContext.GetAllDiagnosticsAsync(fixAllContext.Project).ConfigureAwait(false);
+            if (fixAllContext.Scope != FixAllScope.Solution) return [];
+            var perProject = await Task.WhenAll(fixAllContext.Solution.Projects.Select(fixAllContext.GetAllDiagnosticsAsync)).ConfigureAwait(false);
+            return perProject.SelectMany(d => d);
+        }
+
         // The generator reports by file path, so the location usually has no syntax tree.
         private static DocumentId? DocumentOf(Solution solution, Diagnostic diagnostic)
         {
             if (diagnostic.Location.SourceTree is { } tree && solution.GetDocument(tree) is { } document) return document.Id;
             var path = diagnostic.Location.GetLineSpan().Path;
-            return string.IsNullOrEmpty(path) ? null : solution.GetDocumentIdsWithFilePath(path).FirstOrDefault();
+            return string.IsNullOrEmpty(path)
+                ? null
+                : solution.GetDocumentIdsWithFilePath(path).FirstOrDefault()
+                 ?? solution.Projects.SelectMany(p => p.Documents).FirstOrDefault(d => IsAt(d, path))?.Id;
         }
     }
 }

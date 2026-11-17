@@ -22,7 +22,7 @@ using System.Text.Json.Serialization;
 
 namespace Sample.Server;
 
-/// <summary>The JSON metadata of the types this project's endpoints read and write; chain it into the JSON options with <c>AddJsonTypeInfoResolver(ServerJsonContext.Default)</c>.</summary>
+/// <summary>The JSON metadata of the types this project's operations read and write; chain it into the JSON options with <c>AddJsonTypeInfoResolver(ServerJsonContext.Default)</c>.</summary>
 [JsonSerializable(typeof(Sample.Contracts.Rockets.CreateRocket.Request), TypeInfoPropertyName = "CreateRocketRequest")]
 internal sealed partial class ServerJsonContext : JsonSerializerContext;
 
