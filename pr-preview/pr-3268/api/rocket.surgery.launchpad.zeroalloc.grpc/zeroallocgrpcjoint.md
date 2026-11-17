@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc](/LaunchPad/pr-preview/pr-3268/api/rocket.surgery.launchpad.zeroalloc.grpc.md)
-- Version: `2.0.1-pr.1219`
+- Version: `2.0.1-pr.1224`
 - Namespace: `Rocket.Surgery.LaunchPad.Grpc.Joints`
 - Target framework: `net11.0`
 - Implements: `IDovetailJoint`, `IServiceJoint`

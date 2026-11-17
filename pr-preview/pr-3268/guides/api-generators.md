@@ -10,7 +10,7 @@ flowchart LR
     A[generated endpoint] --> B["mediator.Send(request)"] --> C[your handler]
   end
   A -. describes .-> D["OpenAPI document · GraphQL schema · .proto"]
-  D --> E["generated client (NSwag, Kiota, StrawberryShake, Grpc.Tools, …)"]
+  D --> E["generated client (Kiota, Refitter, StrawberryShake, Grpc.Tools, …)"]
   E -- "GET /api/rockets/{id}" --> A
 ```
 
@@ -456,7 +456,7 @@ The generators don't write clients. Each server describes itself in a standard f
 
 | Server      | Spec                                                                      | Client generators                                                    |
 | ----------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Minimal API | OpenAPI: `AddOpenApi()` and `MapOpenApi()` (Microsoft.AspNetCore.OpenApi) | NSwag, Kiota, OpenAPI Generator, Refitter, …                         |
+| Minimal API | OpenAPI: `AddOpenApi()` and `MapOpenApi()` (Microsoft.AspNetCore.OpenApi) | Kiota, Refitter (both through [Chirograph][chirograph]), …           |
 | Controllers | OpenAPI, the same way                                                     | the same                                                             |
 | gRPC        | `.proto`: `{Host}.GetProto()`                                             | Grpc.Tools (`<Protobuf GrpcServices="Client" />`), any protoc plugin |
 | Proto-first | the `.proto` you wrote                                                    | the same                                                             |
@@ -464,12 +464,30 @@ The generators don't write clients. Each server describes itself in a standard f
 
 Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves
 `/openapi/v1.json`, `/graphql?sdl` and `GetProto()`, then point the client generator at the files. LaunchPad's own functional tests do that
-(`test/Api/Functional/Clients`): NSwag, Grpc.Tools and StrawberryShake clients, generated from the specs on every build.
+(`test/Api/Functional/Clients`): a Kiota client (through [Chirograph][chirograph]), Grpc.Tools and StrawberryShake clients, generated
+from the specs on every build. The sample tests generate Refitter clients through Chirograph straight from the sample servers' projects.
+
+[chirograph]: https://rocketsurgeonsguild.github.io/Chirograph/
+
+For an OpenAPI client, [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) is an MSBuild SDK that generates a Kiota or
+Refitter client at build, from a document file, a URL or a server project in the same build, with an `Add<ClientName>()` registration:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Chirograph" />
+  <ItemGroup>
+    <OpenApiClient Include="../Rockets.Api/Rockets.Api.csproj" Generator="Refitter" ClientName="RocketsClient" />
+  </ItemGroup>
+</Project>
+```
+
+Pin its version under `msbuild-sdks` in `global.json`.
 
 Things to know:
 
 - **Nested request types.** Microsoft.AspNetCore.OpenApi names a schema after the type's simple name, so `GetRocket.Request` and
-  `CreateRocket.Request` would both be `Request`. Name them with their container:
+  `CreateRocket.Request` would both be `Request`. LaunchPad's OpenAPI joint (Rocket.Surgery.LaunchPad.AspNetCore) names them with their
+  container (`CreateRocketRequest`); an application that calls `AddOpenApi()` itself does the same:
 
     ```csharp
     builder.Services.AddOpenApi(options => options.CreateSchemaReferenceId = type =>

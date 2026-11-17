@@ -2,7 +2,7 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3268/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1219`
+- Version: `2.0.1-pr.1224`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
 
