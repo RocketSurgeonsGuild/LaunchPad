@@ -135,19 +135,51 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                                 .ThenBy(d => d.Id, StringComparer.Ordinal)
                                 .ToArray();
         var fixes = new List<object>();
-        foreach (var action in result.CodeFixResults.Values.SelectMany(r => r.ResolvedFixes).SelectMany(f => f.CodeActions))
+        // The harness can report one diagnostic more than once; each fix is applied to the workspace the previous one left, so only the first
+        // of a diagnostic shows what the fix does.
+        var fixedDiagnostics = new HashSet<(string, string, string)>();
+        foreach (var resolved in result.CodeFixResults.Values.SelectMany(r => r.ResolvedFixes))
         {
-            // The document as the fix leaves it: TargetDocument is the one it started from.
-            var fixedDocument = action.Changes.NewProject.GetDocument(action.TargetDocument.Id) ?? action.TargetDocument;
-            var text = ( await fixedDocument.GetTextAsync(TestContext.CancellationToken) ).ToString();
-            // The attribute declarations appended to the host source (AttributesInHostSource) aren't part of the fix.
-            if (AttributesInHostSource && text.IndexOf(AttributeSources, StringComparison.Ordinal) is >= 0 and var start) text = text[..start].TrimEnd();
-            fixes.Add(new { action.CodeAction.Title, Document = text });
+            if (resolved.CodeActions.IsEmpty || !fixedDiagnostics.Add((resolved.Diagnostic.Id, resolved.Diagnostic.Location.ToString(), resolved.Diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)))) continue;
+            foreach (var action in resolved.CodeActions)
+            {
+                var others = await OtherDocuments(action.Changes, action.TargetDocument.Id);
+                if (others.Count > 0)
+                {
+                    fixes.Add(new { action.CodeAction.Title, Documents = others });
+                    continue;
+                }
+
+                // The document as the fix leaves it: TargetDocument is the one it started from.
+                var fixedDocument = action.Changes.NewProject.GetDocument(action.TargetDocument.Id) ?? action.TargetDocument;
+                var text = ( await fixedDocument.GetTextAsync(TestContext.CancellationToken) ).ToString();
+                // The attribute declarations appended to the host source (AttributesInHostSource) aren't part of the fix.
+                if (AttributesInHostSource && text.IndexOf(AttributeSources, StringComparison.Ordinal) is >= 0 and var start) text = text[..start].TrimEnd();
+                fixes.Add(new { action.CodeAction.Title, Document = text });
+            }
         }
 
         object target = fixes.Count == 0 ? new { Diagnostics = diagnostics } : new { Diagnostics = diagnostics, CodeFixes = fixes };
         var task = Verifier.Verify(target, sourceFile: sourceFile);
         await ( settings?.Invoke(task) ?? task );
+    }
+
+    /// <summary>
+    ///     The documents a fix adds, or whose text it changes, other than the one it started from (LPAD1030's fix writes onto the JSON context,
+    ///     or creates one). Compared by text: the harness reports documents it re-created as changed.
+    /// </summary>
+    private async Task<List<object>> OtherDocuments(ProjectChanges changes, DocumentId target)
+    {
+        var documents = new List<object>();
+        foreach (var document in changes.NewProject.Documents)
+        {
+            if (document.Id == target) continue;
+            var text = ( await document.GetTextAsync(TestContext.CancellationToken) ).ToString();
+            if (changes.OldProject.GetDocument(document.Id) is { } old && ( await old.GetTextAsync(TestContext.CancellationToken) ).ToString() == text) continue;
+            documents.Add(new { document.Name, Text = text });
+        }
+
+        return documents;
     }
 
     /// <summary>Fails with the final compilation's errors listed, so a broken emitter shows what it broke.</summary>

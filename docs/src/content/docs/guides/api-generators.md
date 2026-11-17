@@ -590,7 +590,8 @@ builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.TypeInfoResol
 LaunchPad's nested `X.Request` types share a simple name, so each `[JsonSerializable]` entry needs its own `TypeInfoPropertyName`; without it,
 SYSLIB1031 silently skips the type. In a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable` (or
 `LaunchPadApiRequireJsonContext`), LPAD1030 names each body and response type no context in the project or its references declares, or
-reaches through its properties and collections. See [JSON and native AOT](../json-and-native-aot/). In an AOT application, `Configure{Operation}` receives an `IEndpointConventionBuilder`, and endpoint
+reaches through its properties and collections. Its code fix writes the missing entries, each with a `TypeInfoPropertyName`, onto the
+project's own context, or creates one beside the host when the project has none (chain a created context in yourself). See [JSON and native AOT](../json-and-native-aot/). In an AOT application, `Configure{Operation}` receives an `IEndpointConventionBuilder`, and endpoint
 filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` and checks it with a round trip over HTTP.
 
 ## Diagnostics
