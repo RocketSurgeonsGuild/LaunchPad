@@ -2,7 +2,7 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/pr-preview/pr-3274/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-pr.1227`
+- Version: `2.0.1-pr.1233`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net11.0`
 - Implements: `IEquatable<JsonTypeInfoResolverRegistration>`
