@@ -229,6 +229,8 @@ public class SdkStrongTypesTests(string targetFramework)
         var connection = new SqliteConnection("Data Source=:memory:");
         connection.Open();
         builder.Services.AddDbContext<ShopContext>(options => options.UseSqlite(connection));
+        // Customer is no mediator request, so no manifest lists it: the application declares its JSON metadata itself.
+        Rocket.Surgery.LaunchPad.Foundation.LaunchPadJsonServiceCollectionExtensions.AddJsonTypeInfoResolver(builder.Services, AppJsonContext.Default);
         var app = await builder.ConfigureDovetail();
 
         if (args.Contains("--ef"))
@@ -291,6 +293,9 @@ public class SdkStrongTypesTests(string targetFramework)
 
             protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.Entity<Customer>().HasKey(z => z.Id);
         }
+
+        [System.Text.Json.Serialization.JsonSerializable(typeof(Customer))]
+        internal sealed partial class AppJsonContext : System.Text.Json.Serialization.JsonSerializerContext;
 
         [ApiController]
         [Route("customers")]

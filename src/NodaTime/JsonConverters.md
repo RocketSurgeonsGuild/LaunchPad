@@ -19,6 +19,11 @@ The JSON is the same as NodaTime.Serialization.SystemTextJson's, plus the extra 
 | `DateInterval`                                                                                                                                      | `{ "Start": date, "End": date }`                                                                       |
 | `DateTimeZone`                                                                                                                                      | its id, resolved through the application's `IDateTimeZoneProvider`                                     |
 
+Every first pattern parses and keeps fractions of a second, so each value reads back as the value written
+(`NodaTimeJsonConvertersTests.Reads_Back_Every_Type_It_Writes`). A `ZonedDateTime` is written as its local date and time,
+offset and zone id (`2020-07-01T12:00:00+01 Europe/London`), NodaTime.Serialization.SystemTextJson's pattern. One difference
+remains: an `OffsetDateTime` writes a whole-hour offset as `+02`, where NodaTime's RFC 3339 pattern writes `+02:00`; both are read.
+
 **When to replace:** once NodaTime.Serialization.SystemTextJson is AOT compatible
 ([nodatime/nodatime.serialization#121, "Implement AOT support"](https://github.com/nodatime/nodatime.serialization/issues/121)).
 Check a release declares `IsAotCompatible` and that `test/Api/Aot/verify.sh` publishes LaunchPad.NodaTime with it and no warnings.

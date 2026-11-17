@@ -21,6 +21,7 @@ public static class ServerApp
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton<RocketStore>();
+        builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.TypeInfoResolverChain.Insert(0, ServerJsonContext.Default));
         builder.Services.AddProblemDetails();
         builder.Services.AddFixtureOpenApi();
         builder.Services.AddMediator();

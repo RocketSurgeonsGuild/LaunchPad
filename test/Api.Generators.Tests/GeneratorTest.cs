@@ -1,8 +1,11 @@
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
@@ -135,19 +138,98 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
                                 .ThenBy(d => d.Id, StringComparer.Ordinal)
                                 .ToArray();
         var fixes = new List<object>();
-        foreach (var action in result.CodeFixResults.Values.SelectMany(r => r.ResolvedFixes).SelectMany(f => f.CodeActions))
+        // The harness can report one diagnostic more than once; each fix is applied to the workspace the previous one left, so only the first
+        // of a diagnostic shows what the fix does.
+        var fixedDiagnostics = new HashSet<(string, string, string)>();
+        foreach (var resolved in result.CodeFixResults.Values.SelectMany(r => r.ResolvedFixes))
         {
-            // The document as the fix leaves it: TargetDocument is the one it started from.
-            var fixedDocument = action.Changes.NewProject.GetDocument(action.TargetDocument.Id) ?? action.TargetDocument;
-            var text = ( await fixedDocument.GetTextAsync(TestContext.CancellationToken) ).ToString();
-            // The attribute declarations appended to the host source (AttributesInHostSource) aren't part of the fix.
-            if (AttributesInHostSource && text.IndexOf(AttributeSources, StringComparison.Ordinal) is >= 0 and var start) text = text[..start].TrimEnd();
-            fixes.Add(new { action.CodeAction.Title, Document = text });
+            if (resolved.CodeActions.IsEmpty || !fixedDiagnostics.Add((resolved.Diagnostic.Id, resolved.Diagnostic.Location.ToString(), resolved.Diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)))) continue;
+            foreach (var action in resolved.CodeActions)
+            {
+                var others = await OtherDocuments(action.Changes, action.TargetDocument.Id);
+                if (others.Count > 0)
+                {
+                    fixes.Add(new { action.CodeAction.Title, Documents = others });
+                    continue;
+                }
+
+                // The document as the fix leaves it: TargetDocument is the one it started from.
+                var fixedDocument = action.Changes.NewProject.GetDocument(action.TargetDocument.Id) ?? action.TargetDocument;
+                var text = ( await fixedDocument.GetTextAsync(TestContext.CancellationToken) ).ToString();
+                // The attribute declarations appended to the host source (AttributesInHostSource) aren't part of the fix.
+                if (AttributesInHostSource && text.IndexOf(AttributeSources, StringComparison.Ordinal) is >= 0 and var start) text = text[..start].TrimEnd();
+                fixes.Add(new { action.CodeAction.Title, Document = text });
+            }
         }
 
         object target = fixes.Count == 0 ? new { Diagnostics = diagnostics } : new { Diagnostics = diagnostics, CodeFixes = fixes };
         var task = Verifier.Verify(target, sourceFile: sourceFile);
         await ( settings?.Invoke(task) ?? task );
+    }
+
+    /// <summary>
+    ///     Snapshots what <typeparamref name="TProvider" />'s fix all does in <paramref name="scope" /> with every diagnostic the harness offered
+    ///     the provider: the action's title and each document it adds or changes. The harness runs only single fixes, so this builds the
+    ///     <see cref="FixAllContext" /> an IDE would.
+    /// </summary>
+    protected async Task VerifyFixAll<TProvider>(GeneratorTestResults result, FixAllScope scope, Func<SettingsTask, SettingsTask>? settings = null, [System.Runtime.CompilerServices.CallerFilePath] string sourceFile = "")
+        where TProvider : CodeFixProvider, new()
+    {
+        var provider = new TProvider();
+        var offered = result.CodeFixResults[typeof(TProvider)].ResolvedFixes.Where(r => !r.CodeActions.IsEmpty).ToArray();
+        if (offered.Length == 0) throw new InvalidOperationException($"{typeof(TProvider).Name} was offered no diagnostic to fix.");
+        var document = offered[0].Document;
+        var context = new FixAllContext(
+            document,
+            provider,
+            scope,
+            offered[0].CodeActions[0].CodeAction.EquivalenceKey,
+            provider.FixableDiagnosticIds,
+            new OfferedDiagnostics([.. offered.Select(r => r.Diagnostic)]),
+            TestContext.CancellationToken
+        );
+        var action = await provider.GetFixAllProvider()!.GetFixAsync(context) ?? throw new InvalidOperationException("The fix all offered no action.");
+        var operations = await action.GetOperationsAsync(TestContext.CancellationToken);
+        var changed = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
+        var documents = new List<object>();
+        foreach (var changes in changed.GetChanges(document.Project.Solution).GetProjectChanges())
+        {
+            documents.AddRange(await OtherDocuments(changes, null));
+        }
+
+        var task = Verifier.Verify(new { action.Title, Documents = documents }, sourceFile: sourceFile);
+        await ( settings?.Invoke(task) ?? task );
+    }
+
+    /// <summary>The diagnostics a fix all sees: the ones the harness offered the provider, which the generators report by file path.</summary>
+    private sealed class OfferedDiagnostics(ImmutableArray<Diagnostic> diagnostics) : FixAllContext.DiagnosticProvider
+    {
+        public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken) =>
+            Task.FromResult(diagnostics.Where(d => d.Location.GetLineSpan().Path == ( document.FilePath ?? document.Name )));
+
+        public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken) =>
+            Task.FromResult(diagnostics.Where(d => d.Location == Location.None));
+
+        public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken) =>
+            Task.FromResult<IEnumerable<Diagnostic>>(diagnostics);
+    }
+
+    /// <summary>
+    ///     The documents a fix adds, or whose text it changes, other than the one it started from (LPAD1030's fix writes onto the JSON context,
+    ///     or creates one). Compared by text: the harness reports documents it re-created as changed.
+    /// </summary>
+    private async Task<List<object>> OtherDocuments(ProjectChanges changes, DocumentId? target)
+    {
+        var documents = new List<object>();
+        foreach (var document in changes.NewProject.Documents)
+        {
+            if (document.Id == target) continue;
+            var text = ( await document.GetTextAsync(TestContext.CancellationToken) ).ToString();
+            if (changes.OldProject.GetDocument(document.Id) is { } old && ( await old.GetTextAsync(TestContext.CancellationToken) ).ToString() == text) continue;
+            documents.Add(new { document.Name, Text = text });
+        }
+
+        return documents;
     }
 
     /// <summary>Fails with the final compilation's errors listed, so a broken emitter shows what it broke.</summary>
@@ -163,9 +245,16 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
        .AddCompilationReferences(contracts)
        .AddReferences(MediatorAssemblies(mediator));
 
+    /// <summary>
+    ///     Whether the server compilations report LPAD1030. The test contracts declare no JSON context, so every Minimal API operation would
+    ///     report it; only the tests of the check itself (<see cref="JsonMetadataTests" />) keep it on, the rest turn it off as an application can.
+    /// </summary>
+    protected virtual bool ReportsJsonMetadata => false;
+
     private GeneratorTestContextBuilder ServerBase() =>
-        GeneratorTestContextBuilder
-           .Create()
+        ( ReportsJsonMetadata
+            ? GeneratorTestContextBuilder.Create()
+            : GeneratorTestContextBuilder.Create().AddGlobalOption("build_property.LaunchPadApiRequireJsonContext", "false") )
            .WithLogger(Logger)
            .WithAssemblyLoadContext(AssemblyLoadContext)
            .WithProjectName("Server")

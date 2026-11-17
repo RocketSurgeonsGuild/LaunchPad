@@ -1,0 +1,45 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1029,
+      Title: Patch handlers are not supported for this mediator,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (23,27)-(23,44),
+      MessageFormat: {0} declares GetRequest for the patch operation {1}, but patch handlers aren't supported for {2}: its requests have no handler interface, so no handle method can be generated; implement the handler yourself, applying the patch with ApplyChanges,
+      Message: EditRocketHandler declares GetRequest for the patch operation PatchRequest, but patch handlers aren't supported for Foundatio.Mediator: its requests have no handler interface, so no handle method can be generated; implement the handler yourself, applying the patch with ApplyChanges,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: CS9113,
+      Title: Parameter is unread.,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (23,55)-(23,63),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS9113),
+      MessageFormat: Parameter '{0}' is unread.,
+      Message: Parameter 'mediator' is unread.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry
+      ]
+    },
+    {
+      Id: CS0759,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (25,47)-(25,57),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0759),
+      MessageFormat: No defining declaration found for implementing declaration of partial method '{0}',
+      Message: No defining declaration found for implementing declaration of partial method 'EditRocket.EditRocketHandler.GetRequest(EditRocket.PatchRequest, CancellationToken)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ]
+}

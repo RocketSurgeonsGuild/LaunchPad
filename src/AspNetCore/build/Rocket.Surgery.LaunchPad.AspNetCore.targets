@@ -1,5 +1,12 @@
-﻿<Project>
+<Project>
   <ItemGroup Condition="'$(ImplicitUsings)' == 'enable'">
       <Using Include="Rocket.Surgery.LaunchPad.AspNetCore" />
+  </ItemGroup>
+  <!--
+      LaunchPad takes ASP.NET Core's reflection resolver out of the HTTP JSON options, so a JIT application serializes through its JSON
+      contexts like a native AOT one (SystemJsonTextJoint, ADR 0007). LaunchPadAspNetCoreJsonReflection=true keeps it.
+  -->
+  <ItemGroup Condition="'$(LaunchPadAspNetCoreJsonReflection)' == 'true'">
+      <RuntimeHostConfigurationOption Include="Rocket.Surgery.LaunchPad.AspNetCore.KeepJsonReflection" Value="true" />
   </ItemGroup>
 </Project>

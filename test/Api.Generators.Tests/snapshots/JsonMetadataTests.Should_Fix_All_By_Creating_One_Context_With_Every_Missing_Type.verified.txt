@@ -1,0 +1,20 @@
+﻿{
+  Title: Add the missing types to the JSON context,
+  Documents: [
+    {
+      Name: ServerJsonContext.cs,
+      Text:
+using System.Text.Json.Serialization;
+
+namespace Sample.Server;
+
+/// <summary>The JSON metadata of the types this project's operations read and write; chain it into the JSON options with <c>AddJsonTypeInfoResolver(ServerJsonContext.Default)</c>.</summary>
+[JsonSerializable(typeof(Sample.Contracts.Rockets.RocketModel), TypeInfoPropertyName = "RocketModel")]
+[JsonSerializable(typeof(Sample.Contracts.Rockets.CreateRocket.Request), TypeInfoPropertyName = "CreateRocketRequest")]
+[JsonSerializable(typeof(Sample.Contracts.Rockets.CreateRocket.Response), TypeInfoPropertyName = "CreateRocketResponse")]
+[JsonSerializable(typeof(Sample.Contracts.Rockets.EditRocket.Request), TypeInfoPropertyName = "EditRocketRequest")]
+internal sealed partial class ServerJsonContext : JsonSerializerContext;
+
+    }
+  ]
+}

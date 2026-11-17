@@ -73,6 +73,7 @@ public class SystemTextJsonNodaTimeTests() : LoggerTest<TestRecord>(TestRecord.C
 
     [Test]
     [Arguments("2020-01-01T12:12:12+01")]
+    [Arguments("2020-01-01T12:12:12+01:00")]
     [Arguments("2020-01-01T12:12:12+01 (ISO)")]
     public async Task OffsetDateTime_Tests(string value) => await JsonSerializer
                                                      .Deserialize<OffsetDateTime>("\"" + value + "\"", _settings)

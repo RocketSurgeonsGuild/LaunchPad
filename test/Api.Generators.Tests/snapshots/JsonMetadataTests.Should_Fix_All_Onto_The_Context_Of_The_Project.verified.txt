@@ -1,0 +1,22 @@
+﻿{
+  Title: Add the missing types to the JSON context,
+  Documents: [
+    {
+      Name: Input2.cs,
+      Text:
+using System.Text.Json.Serialization;
+using Sample.Contracts.Rockets;
+
+namespace Sample.Server;
+
+[JsonSerializable(typeof(RocketModel))]
+[JsonSerializable(typeof(CreateRocket.Request), TypeInfoPropertyName = "CreateRocketRequest")]
+[JsonSerializable(typeof(CreateRocket.Response), TypeInfoPropertyName = "CreateRocketResponse")]
+[JsonSerializable(typeof(EditRocket.Request), TypeInfoPropertyName = "EditRocketRequest")]
+internal abstract partial class AppJsonContext : JsonSerializerContext
+{
+    protected AppJsonContext() : base(null) { }
+}
+    }
+  ]
+}

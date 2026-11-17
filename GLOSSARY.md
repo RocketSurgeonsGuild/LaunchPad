@@ -13,7 +13,7 @@ The kind of application a project is (generic host, ASP.NET Core, Blazor WebAsse
 _Avoid_: Environment, host type
 
 **Integration package**:
-A package that adds LaunchPad support for one third-party technology on one surface, for example NodaTime with Entity Framework, or Newtonsoft.Json with ASP.NET Core. One technology usually has several.
+A package that adds LaunchPad support for one third-party technology on one surface, for example NodaTime with HotChocolate, or ZeroAlloc.Validation with gRPC. One technology usually has several.
 _Avoid_: Plugin, add-on, extension
 
 **Direct reference**:

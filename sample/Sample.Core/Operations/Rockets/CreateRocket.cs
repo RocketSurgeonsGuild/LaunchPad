@@ -54,6 +54,13 @@ public static partial class CreateRocket
         public RocketId Id { get; init; }
     }
 
+    /// <summary>The rocket that already has the serial number, in the conflict's problem details.</summary>
+    /// <param name="Id">The rocket's id.</param>
+    /// <param name="Type">The rocket's type.</param>
+    /// <param name="Sn">The serial number.</param>
+    [IncludeInJsonContext]
+    public sealed record ExistingRocket(RocketId Id, RocketType Type, string Sn);
+
     /// <summary>What the operation answers: the new rocket's id, or a conflict with an existing rocket.</summary>
     public readonly union Result(Response, Conflict);
 
@@ -71,12 +78,7 @@ public static partial class CreateRocket
                     Title = "Rocket Creation Failed",
                     Properties = new Dictionary<string, object?>
                     {
-                        ["data"] = new
-                        {
-                            id = existingRocket.Id,
-                            type = existingRocket.Type,
-                            sn = existingRocket.SerialNumber,
-                        },
+                        ["data"] = new ExistingRocket(existingRocket.Id, existingRocket.Type, existingRocket.SerialNumber),
                     },
                 };
             }
