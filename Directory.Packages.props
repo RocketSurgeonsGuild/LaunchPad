@@ -58,10 +58,10 @@
         <PackageVersion Include="ZeroAlloc.Mediator" Version="6.7.2" />
         <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="6.7.2" />
         <PackageVersion Include="ZeroAlloc.Mediator.Validation" Version="6.7.2" />
-        <PackageVersion Include="ZeroAlloc.Validation" Version="2.5.0" />
         <!-- Maps proto messages to and from requests and responses on proto-first gRPC hosts (approved 2026-11-08). -->
         <PackageVersion Include="ZeroAlloc.Mapping" Version="1.7.1" />
-        <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="2.5.0" />
+        <PackageVersion Include="ZeroAlloc.Validation" Version="2.6.1" />
+        <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="2.6.1" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
         <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.7.0" />
