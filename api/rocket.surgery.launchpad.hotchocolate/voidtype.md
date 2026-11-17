@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-beta.386`
+- Version: `2.0.1-beta.388`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Types`
 - Target framework: `net11.0`
 - Inherits: `ScalarType`
