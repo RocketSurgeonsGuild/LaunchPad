@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -29,6 +30,9 @@ internal sealed record JsonCoverage(bool Required, EquatableArray<string> Types)
 internal static class JsonMetadataCoverage
 {
     public const string RequireProperty = "build_property.LaunchPadApiRequireJsonContext";
+
+    /// <summary>The diagnostic property that carries the missing type, fully qualified with <c>global::</c>.</summary>
+    public const string TypeProperty = "type";
 
     private static readonly string[] TrimmedProperties =
         ["build_property.PublishAot", "build_property.IsAotCompatible", "build_property.PublishTrimmed", "build_property.IsTrimmable"];
@@ -64,8 +68,16 @@ internal static class JsonMetadataCoverage
                 {
                     if (LaunchPadTypes.Contains(type) || covered.Contains(type) || !reported.Add(type)) continue;
                     var display = type.Replace("global::", "");
+                    // The code fix (AddJsonSerializableCodeFix) reads the type from the properties, not the message.
                     output.ReportDiagnostic(
-                        DiagnosticInfo.Create(ApiDiagnostics.JsonMetadataMissing, operation.Location, display, host.Name, operation.Name).ToDiagnostic()
+                        Diagnostic.Create(
+                            ApiDiagnostics.JsonMetadataMissing,
+                            operation.Location?.ToLocation() ?? Location.None,
+                            ImmutableDictionary<string, string?>.Empty.Add(TypeProperty, type),
+                            display,
+                            host.Name,
+                            operation.Name
+                        )
                     );
                 }
             }

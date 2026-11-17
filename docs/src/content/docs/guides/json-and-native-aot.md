@@ -85,7 +85,7 @@ keeps it.
 
 The generated Minimal API endpoints read and write through the HTTP JSON options. Generators can't see each other's output, so they can't
 declare a context for you; in a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable`, **LPAD1030** names each
-body and response type that no context in the project or its references declares. Set `LaunchPadApiRequireJsonContext` to `true` or `false`
+body and response type that no context in the project or its references declares, and its code fix adds them to the project's context (or creates one). Set `LaunchPadApiRequireJsonContext` to `true` or `false`
 to turn the check on or off for any project. See [API generators](../api-generators/#native-aot).
 
 ## Package compatibility
