@@ -2,7 +2,7 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](/LaunchPad/pr-preview/pr-3188/api/rocket.surgery.launchpad.zeroalloc.aspnetcore.md)
-- Version: `2.0.1-pr.1215`
+- Version: `2.0.1-pr.1222`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Validation`
 - Target framework: `net11.0`
 - Implements: `IEquatable<ValidationFailureDetail>`

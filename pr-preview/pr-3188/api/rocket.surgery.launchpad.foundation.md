@@ -1,7 +1,7 @@
 # Rocket.Surgery.LaunchPad.Foundation
 
 - Package: `Rocket.Surgery.LaunchPad.Foundation`
-- Version: `2.0.1-pr.1215`
+- Version: `2.0.1-pr.1222`
 - Target framework: `net11.0`
 - NuGet: [Rocket.Surgery.LaunchPad.Foundation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation)
 
@@ -10,6 +10,7 @@
 ### Rocket.Surgery.LaunchPad.Foundation
 
 - [Assigned<T>](/LaunchPad/pr-preview/pr-3188/api/rocket.surgery.launchpad.foundation/assigned-1.md) -- `class` -- The Assigned type is used to differentiate between not set and set input values.
+- [AssignedJsonConverter<T>](/LaunchPad/pr-preview/pr-3188/api/rocket.surgery.launchpad.foundation/assignedjsonconverter-1.md) -- `class` `sealed` -- Reads and writes an `Foundation.Assigned`1` as the bare `T`: a property that is in the JSON is assigned its value, one that isn't stays unassigned (the property's own `Assigned`1.Empty`).
 - [Conflict](/LaunchPad/pr-preview/pr-3188/api/rocket.surgery.launchpad.foundation/conflict.md) -- `record` `sealed` -- The request conflicts with the current state. HTTP 409, gRPC `FailedPrecondition`, GraphQL `CONFLICT`.
 - [ExcludeFromGenerationAttribute](/LaunchPad/pr-preview/pr-3188/api/rocket.surgery.launchpad.foundation/excludefromgenerationattribute.md) -- `class` `sealed` -- Exclude the given property from the generation via launch pad source generators
 - [ExistingValueOptions](/LaunchPad/pr-preview/pr-3188/api/rocket.surgery.launchpad.foundation/existingvalueoptions.md) -- `class` `static` -- Helper methods for creating `Foundation.ExistingValueOptionsFactory`1` instances.

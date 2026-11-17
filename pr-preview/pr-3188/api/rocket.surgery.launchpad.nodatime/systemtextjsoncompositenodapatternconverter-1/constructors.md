@@ -39,6 +39,8 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T>
 
 Creates a new instance with a pattern and an optional validator. The validator will be called before each value is written, and may throw an exception to indicate that the value cannot be serialized.
 
+The first pattern formats; reading tries each pattern in turn. The value is also read and written as a property name, so the type can be a dictionary key. A value no pattern parses throws `Json.JsonException`.
+
 <a id="constructor-ipattern-t"></a>
 
 ## SystemTextJsonCompositeNodaPatternConverter(IPattern<T>)

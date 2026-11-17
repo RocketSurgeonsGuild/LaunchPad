@@ -13,16 +13,16 @@ small packages, which the [LaunchPad SDK](../launchpad-sdk/) chooses for you.
 
 ## The packages the SDK chooses
 
-| The project references          | The SDK adds                                                                                 |
-| ------------------------------- | -------------------------------------------------------------------------------------------- |
-| a [host model](../host-models/) | `Rocket.Surgery.LaunchPad.Hosting`                                                           |
-| the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`                                                        |
-| `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
-| `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
-| `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                |
-| `HotChocolate`                  | `.HotChocolate`                                                                              |
-| `StrawberryShake`               | `.StrawberryShake`                                                                           |
-| `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
+| The project references          | The SDK adds                                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| a [host model](../host-models/) | `Rocket.Surgery.LaunchPad.Hosting`                                                                    |
+| the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`, and `.AspNetCore.Mvc` unless `PublishAot` or `IsAotCompatible` |
+| `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries          |
+| `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                                       |
+| `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                         |
+| `HotChocolate`                  | `.HotChocolate`                                                                                       |
+| `StrawberryShake`               | `.StrawberryShake`                                                                                    |
+| `Grpc.AspNetCore`               | `.Grpc`                                                                                               |
 
 Validation is ZeroAlloc.Validation's: validate requests in the mediator pipeline, and the ZeroAlloc package of each transport
 reports the failures in that transport's error shape (problem details over HTTP, a status over gRPC, GraphQL errors over
@@ -65,7 +65,8 @@ integration package it is part of:
 </PropertyGroup>
 ```
 
-The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`,
+The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableAspNetCoreMvc` (MVC only; it defaults to
+`false` when the project sets `PublishAot` or `IsAotCompatible`), `LaunchPadEnableNodaTime`,
 `LaunchPadEnableNetTopologySuite`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and
 `LaunchPadEnableStrawberryShake`.
 
