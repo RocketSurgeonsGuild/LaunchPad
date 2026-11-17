@@ -8,6 +8,6 @@
     "runner": "Microsoft.Testing.Platform"
   },
   "msbuild-sdks": {
-    "Chirograph": "0.1.0"
+    "Chirograph": "0.1.1"
   }
 }
