@@ -2,7 +2,7 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.StrawberryShake.Spatial](/LaunchPad/api/rocket.surgery.launchpad.strawberryshake.spatial.md)
-- Version: `2.0.1-beta.389`
+- Version: `2.0.1-beta.390`
 - Namespace: `Rocket.Surgery.LaunchPad.StrawberryShake.Spatial`
 - Target framework: `net11.0`
 - Inherits: `ScalarSerializer<JsonElement, Coordinate>`
