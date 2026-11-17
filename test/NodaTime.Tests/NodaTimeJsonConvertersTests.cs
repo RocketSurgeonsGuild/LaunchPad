@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using NodaTime.Text;
+
 using Rocket.Surgery.LaunchPad.NodaTime;
 
 namespace NodaTime.Tests;
@@ -33,11 +35,43 @@ public class NodaTimeJsonConvertersTests
         await RoundTrip(new AnnualDate(2, 29), "\"02-29\"");
         await RoundTrip(new YearMonth(2020, 2), "\"2020-02\"");
         await RoundTrip(DateTimeZoneProviders.Tzdb["Europe/London"], "\"Europe/London\"");
+        await RoundTrip(Start.InZone(DateTimeZoneProviders.Tzdb["Europe/London"]), "\"2020-01-01T12:00:00Z Europe/London\"");
+    }
 
-        // ZonedDateTime is written in a format-only pattern that it can't read back (already so on main); it reads NodaTime's format.
-        var zoned = Start.InZone(DateTimeZoneProviders.Tzdb["Europe/London"]);
-        await JsonSerializer.Serialize(zoned, Options).Should().BeEqualTo("\"2020-01-01T12:00:00 Europe/London (\\u002B00)\"");
-        await JsonSerializer.Deserialize<ZonedDateTime>("\"2020-01-01T12:00:00\\u002B00 Europe/London\"", Options).Should().BeEqualTo(zoned);
+    // NodaTime.Serialization.SystemTextJson's format: the local date and time with its offset, then the zone id.
+    [Test]
+    [Arguments("2020-01-01T12:00:00", "Etc/UTC", "\"2020-01-01T12:00:00Z Etc/UTC\"")]
+    [Arguments("2020-07-01T12:00:00", "Europe/London", "\"2020-07-01T12:00:00\\u002B01 Europe/London\"")]
+    [Arguments("2020-07-01T12:00:00", "America/New_York", "\"2020-07-01T12:00:00-04 America/New_York\"")]
+    [Arguments("2020-07-01T12:00:00.123", "Asia/Kolkata", "\"2020-07-01T12:00:00.123\\u002B05:30 Asia/Kolkata\"")]
+    public async Task Writes_A_Zoned_Date_Time_In_A_Format_It_Reads(string local, string zone, string json) =>
+        await RoundTrip(LocalDateTimePattern.ExtendedIso.Parse(local).Value.InZoneStrictly(DateTimeZoneProviders.Tzdb[zone]), json);
+
+    // Every value, fractions of a second and negative offsets included, reads back as the value written.
+    [Test]
+    public async Task Reads_Back_Every_Type_It_Writes()
+    {
+        var instant = Instant.FromUtc(2020, 7, 1, 12, 30, 15).PlusNanoseconds(123_456_789);
+        var offset = Offset.FromHoursAndMinutes(-5, -30);
+
+        await ReadsBack(instant);
+        await ReadsBack(instant.InUtc().LocalDateTime);
+        await ReadsBack(instant.InUtc().TimeOfDay);
+        await ReadsBack(instant.InUtc().Date);
+        await ReadsBack(offset);
+        await ReadsBack(Offset.Zero);
+        await ReadsBack(Duration.FromNanoseconds(-90_061_123_456_789));
+        await ReadsBack(Period.FromDays(3) + Period.FromHours(4) + Period.FromNanoseconds(5));
+        await ReadsBack(instant.WithOffset(offset));
+        await ReadsBack(instant.WithOffset(offset).ToOffsetDate());
+        await ReadsBack(instant.WithOffset(offset).ToOffsetTime());
+        await ReadsBack(instant.InZone(DateTimeZoneProviders.Tzdb["America/St_Johns"]));
+        await ReadsBack(instant.InUtc());
+        await ReadsBack(new AnnualDate(2, 29));
+        await ReadsBack(new YearMonth(2020, 2));
+        await ReadsBack(new Interval(instant, instant.PlusTicks(1)));
+        await ReadsBack(new DateInterval(new(2020, 1, 1), new(2020, 1, 31)));
+        await ReadsBack(DateTimeZoneProviders.Tzdb["America/St_Johns"]);
     }
 
     [Test]
@@ -106,6 +140,9 @@ public class NodaTimeJsonConvertersTests
         await JsonSerializer.Deserialize<AnnualDate?>("null", Options).Should().BeNull();
         await JsonSerializer.Deserialize<Interval?>("""{"Start":"2020-01-01T12:00:00Z"}""", Options).Should().BeEqualTo(new Interval(Start, null));
     }
+
+    private static async Task ReadsBack<T>(T value) =>
+        await JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(value, Options), Options).Should().BeEqualTo(value);
 
     private static async Task RoundTrip<T>(T value, string json)
     {
