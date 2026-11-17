@@ -80,16 +80,16 @@ Each package exports the [Joints](../joints/) for its pair of technologies and d
 
 [Section titled “The packages the SDK chooses”](#the-packages-the-sdk-chooses)
 
-| The project references          | The SDK adds                                                                                 |
-| ------------------------------- | -------------------------------------------------------------------------------------------- |
-| a [host model](../host-models/) | `Rocket.Surgery.LaunchPad.Hosting`                                                           |
-| the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`                                                        |
-| `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries |
-| `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                              |
-| `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                |
-| `HotChocolate`                  | `.HotChocolate`                                                                              |
-| `StrawberryShake`               | `.StrawberryShake`                                                                           |
-| `Grpc.AspNetCore`               | `.Grpc`                                                                                      |
+| The project references          | The SDK adds                                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| a [host model](../host-models/) | `Rocket.Surgery.LaunchPad.Hosting`                                                                    |
+| the `WebApplication` host model | `Rocket.Surgery.LaunchPad.AspNetCore`, and `.AspNetCore.Mvc` unless `PublishAot` or `IsAotCompatible` |
+| `NodaTime`                      | `.NodaTime`, and `.NodaTime.HotChocolate` / `.NodaTime.StrawberryShake` with those libraries          |
+| `NetTopologySuite`              | `.Spatial`, and `.StrawberryShake.Spatial` with StrawberryShake                                       |
+| `ZeroAlloc.Validation`          | the ZeroAlloc ASP.NET Core, gRPC, HotChocolate and Blazor packages with those                         |
+| `HotChocolate`                  | `.HotChocolate`                                                                                       |
+| `StrawberryShake`               | `.StrawberryShake`                                                                                    |
+| `Grpc.AspNetCore`               | `.Grpc`                                                                                               |
 
 Validation is ZeroAlloc.Validation’s: validate requests in the mediator pipeline, and the ZeroAlloc package of each transport reports the failures in that transport’s error shape (problem details over HTTP, a status over gRPC, GraphQL errors over HotChocolate).
 
@@ -124,7 +124,7 @@ Each technology can be turned off with its `LaunchPadEnable<Technology>` propert
 </PropertyGroup>
 ```
 
-The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableNodaTime`, `LaunchPadEnableNetTopologySuite`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and `LaunchPadEnableStrawberryShake`.
+The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableAspNetCoreMvc` (MVC only; it defaults to `false` when the project sets `PublishAot` or `IsAotCompatible`), `LaunchPadEnableNodaTime`, `LaunchPadEnableNetTopologySuite`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and `LaunchPadEnableStrawberryShake`.
 
 ## Direct references
 
@@ -212,11 +212,67 @@ The LaunchPad SDK chains `Joinery.Dovetail.Sdk`, so there is no second SDK entry
 
 All of it happens while MSBuild evaluates the project, before restore. Nothing is decided at run time.
 
+## The SDKs
+
+[Section titled “The SDKs”](#the-sdks)
+
+LaunchPad has an SDK for each SDK Dovetail ships. Each chains its Dovetail counterpart and adds what `Rocket.Surgery.LaunchPad.Sdk` adds, so a project gets LaunchPad by changing its SDK name and nothing else:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">                   <!-- before -->
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/1.0.0">  <!-- after -->
+```
+
+| Microsoft SDK                         | Dovetail SDK                             | LaunchPad SDK                                    |
+| ------------------------------------- | ---------------------------------------- | ------------------------------------------------ |
+| `Microsoft.NET.Sdk`                   | `Joinery.Dovetail.Sdk`                   | `Rocket.Surgery.LaunchPad.Sdk`                   |
+| (console applications)                | `Joinery.Dovetail.Sdk.Console`           | `Rocket.Surgery.LaunchPad.Sdk.Console`           |
+| `Microsoft.NET.Sdk.Web`               | `Joinery.Dovetail.Sdk.Web`               | `Rocket.Surgery.LaunchPad.Sdk.Web`               |
+| `Microsoft.NET.Sdk.Worker`            | `Joinery.Dovetail.Sdk.Worker`            | `Rocket.Surgery.LaunchPad.Sdk.Worker`            |
+| `Microsoft.NET.Sdk.Razor`             | `Joinery.Dovetail.Sdk.Razor`             | `Rocket.Surgery.LaunchPad.Sdk.Razor`             |
+| `Microsoft.NET.Sdk.BlazorWebAssembly` | `Joinery.Dovetail.Sdk.BlazorWebAssembly` | `Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly` |
+| `Microsoft.NET.Sdk.WebAssembly`       | `Joinery.Dovetail.Sdk.WebAssembly`       | `Rocket.Surgery.LaunchPad.Sdk.WebAssembly`       |
+| `Microsoft.NET.Sdk.WindowsDesktop`    | `Joinery.Dovetail.Sdk.WindowsDesktop`    | `Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop`    |
+| `Aspire.AppHost.Sdk`                  | `Joinery.Dovetail.Sdk.Aspire.AppHost`    | `Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost`    |
+
+`Rocket.Surgery.LaunchPad.Sdk.Web` and the others below it are **mirrors**: each imports Dovetail’s mirror of the Microsoft SDK, which imports the Microsoft SDK and chains `Joinery.Dovetail.Sdk`, and then adds LaunchPad. A project whose only SDK is a mirror gets exactly what the Microsoft SDK with `<Sdk Name="Rocket.Surgery.LaunchPad.Sdk" />` next to it gets.
+
+### Which SDK do I use
+
+[Section titled “Which SDK do I use”](#which-sdk-do-i-use)
+
+* **An ASP.NET Core application** (`Microsoft.NET.Sdk.Web` today): `Rocket.Surgery.LaunchPad.Sdk.Web`. It gets `Rocket.Surgery.LaunchPad.Hosting`, `Rocket.Surgery.LaunchPad.AspNetCore` and `Rocket.Surgery.LaunchPad.AspNetCore.Mvc` (MVC controllers and Razor Pages). A project that sets `PublishAot` or `IsAotCompatible` to `true` doesn’t get `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`, which isn’t native AOT compatible (see [native AOT](#native-aot)).
+* **A worker service** (`Microsoft.NET.Sdk.Worker`): `Rocket.Surgery.LaunchPad.Sdk.Worker`. It gets `Rocket.Surgery.LaunchPad.Hosting`.
+* **A Blazor WebAssembly application** (`Microsoft.NET.Sdk.BlazorWebAssembly`), or a WebAssembly application from the `wasmbrowser` template (`Microsoft.NET.Sdk.WebAssembly`): `Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly` or `Rocket.Surgery.LaunchPad.Sdk.WebAssembly`. It gets `Rocket.Surgery.LaunchPad.Hosting`.
+* **A command line application**: `Rocket.Surgery.LaunchPad.Sdk.Console` (see [below](#the-console-sdk)).
+* **A library, or a console application on the generic host** (`Microsoft.NET.Sdk`), or a file-based app: `Rocket.Surgery.LaunchPad.Sdk`.
+* **A Razor class library** (`Microsoft.NET.Sdk.Razor`): `Rocket.Surgery.LaunchPad.Sdk.Razor`. Dovetail takes it for an ASP.NET Core host, but a class library is not an application, so LaunchPad adds none of its hosting packages; the packages that follow from its references (NodaTime, …) still apply.
+* **An Aspire AppHost** (`Aspire.AppHost.Sdk`): `Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost`. It imports `Aspire.AppHost.Sdk` at the version Dovetail was built against (`DovetailAspireAppHostSdkVersion` picks another). Dovetail takes an AppHost for a generic host, but it starts the application’s projects rather than hosting LaunchPad’s joints, so LaunchPad adds none of its hosting packages.
+* **A Windows Forms or WPF project that still names `Microsoft.NET.Sdk.WindowsDesktop`**: `Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop`. That SDK is obsolete since .NET 5; a project that has moved to `Microsoft.NET.Sdk` uses `Rocket.Surgery.LaunchPad.Sdk`.
+
+A Razor class library or an AppHost that wants LaunchPad’s hosting packages after all sets `LaunchPadEnableHosting` (and, for ASP.NET Core, `LaunchPadEnableAspNetCore`) to `true`.
+
+### Native AOT
+
+[Section titled “Native AOT”](#native-aot)
+
+Every package the SDKs add is native AOT compatible, except the ones LaunchPad splits out for what isn’t: today that’s `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`, because ASP.NET Core doesn’t support MVC with native AOT. A project that sets `PublishAot` or `IsAotCompatible` to `true` gets only the compatible packages. `LaunchPadEnableAspNetCoreMvc` overrides that either way: `true` adds MVC to a native AOT project, `false` leaves it out of any other.
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web">
+  <PropertyGroup>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+</Project>
+```
+
+The packages that follow from a library the project references, such as `Rocket.Surgery.LaunchPad.HotChocolate` for Hot Chocolate, are added either way: the project chose that library. [JSON and native AOT](../../guides/json-and-native-aot/#package-compatibility) lists which packages are compatible.
+
 ## Opting in
 
 [Section titled “Opting in”](#opting-in)
 
-Name the SDK next to the one the project already uses:
+Make a LaunchPad SDK the project’s only SDK, as above, or name `Rocket.Surgery.LaunchPad.Sdk` next to the one the project already uses:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -224,7 +280,7 @@ Name the SDK next to the one the project already uses:
 </Project>
 ```
 
-or make it the project’s SDK (it brings `Microsoft.NET.Sdk` through Dovetail’s):
+or make `Rocket.Surgery.LaunchPad.Sdk` itself the project’s SDK (it brings `Microsoft.NET.Sdk` through Dovetail’s):
 
 ```xml
 <Project Sdk="Rocket.Surgery.LaunchPad.Sdk/1.0.0">
@@ -243,6 +299,8 @@ or apply it to every project in a `Directory.Build.props`, with the version pinn
     }
 }
 ```
+
+A mirror under a `Directory.Build.props` that already applies `Rocket.Surgery.LaunchPad.Sdk` (or `Joinery.Dovetail.Sdk`) does not apply it a second time: a repository can apply the SDK to every project and still name the mirror in its web projects.
 
 A file-based app uses the directive form, `#:sdk Rocket.Surgery.LaunchPad.Sdk@1.0.0`, and gets what a console application needs without a `#:package` directive for LaunchPad.
 
@@ -264,7 +322,7 @@ LaunchPad requires .NET 11 or later. A project that applies the SDK and targets 
 
 [Section titled “Choosing another Dovetail version”](#choosing-another-dovetail-version)
 
-The SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is imported: as a global property, or in a `Directory.Build.props` that sets it and then imports the SDK with `<Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" />`.
+Each SDK chains the Dovetail SDK version it was built with. To chain another, set `LaunchPadDovetailSdkVersion` before the SDK is imported: as a global property (`dotnet build -p:LaunchPadDovetailSdkVersion=...`) or an environment variable, or, for `Rocket.Surgery.LaunchPad.Sdk` and `Rocket.Surgery.LaunchPad.Sdk.Console`, in a `Directory.Build.props` that sets it and then imports the SDK with `<Import Project="Sdk.props" Sdk="Rocket.Surgery.LaunchPad.Sdk" />`. A mirror reads it before the Microsoft SDK imports the `Directory.Build.props`, so for a mirror only the global property or the environment variable works.
 
 # Operations and operation hosts
 
@@ -310,7 +368,7 @@ The host also owns the **group**, by default its name without the suffix in keba
 
 [Section titled “Clients”](#clients)
 
-The generators don’t write clients. A server describes its operations in the transport’s standard format, and a client generator for that format (NSwag or Kiota for OpenAPI, StrawberryShake for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither the contracts project nor a mediator, and a route or name the server changes reaches it with the next generated client.
+The generators don’t write clients. A server describes its operations in the transport’s standard format, and a client generator for that format (Kiota or Refitter for OpenAPI, which [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) runs at build, StrawberryShake for GraphQL, Grpc.Tools for a `.proto`) writes the client. A client then needs neither the contracts project nor a mediator, and a route or name the server changes reaches it with the next generated client.
 
 ## Mediator profiles
 
@@ -561,25 +619,24 @@ The template mechanism itself is Dovetail’s: [Shipping templates](https://rock
 
 > Build an application with the LaunchPad SDK, from an empty project to one that applies LaunchPad's Joints.
 
-An application uses LaunchPad through the [LaunchPad SDK](../concepts/launchpad-sdk/). It names the SDK once, and the SDK adds the LaunchPad and Dovetail packages that match the project: its [host model](../concepts/host-models/) and the libraries it references directly.
+An application uses LaunchPad through a [LaunchPad SDK](../concepts/launchpad-sdk/). It names the SDK once, in place of the Microsoft SDK it would otherwise name, and the SDK adds the LaunchPad and Dovetail packages that match the project: its [host model](../concepts/host-models/) and the libraries it references directly.
 
 LaunchPad requires .NET 11 or later: the project targets `net11.0` (or a later framework) and builds with the .NET 11 SDK or later. On an older framework the SDK stops with `LPADSDK0001`, which names the minimum.
 
-In the snippets, replace `1.0.0` with the version of `Rocket.Surgery.LaunchPad.Sdk` you use.
+In the snippets, replace `1.0.0` with the version of LaunchPad you use. [Which SDK do I use](../concepts/launchpad-sdk/#which-sdk-do-i-use) lists an SDK for each Microsoft SDK.
 
 ## A worker or console application
 
 [Section titled “A worker or console application”](#a-worker-or-console-application)
 
-Add the SDK next to the one the project already names:
+Use `Rocket.Surgery.LaunchPad.Sdk.Worker`, which is `Microsoft.NET.Sdk.Worker` with LaunchPad, as the project’s SDK:
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Worker/1.0.0">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
-  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
   </ItemGroup>
@@ -597,17 +654,16 @@ await host.RunAsync();
 
 The SDK finds a generic host (`HostApplication`) and adds `Joinery.Dovetail.Hosting`, which generates `ConfigureDovetail()`, and `Rocket.Surgery.LaunchPad.Hosting`, whose [templates](../concepts/templates/) bring health checks, logging and telemetry Joints when their libraries are referenced.
 
-For a command line application, use the console SDK instead: [Console applications](./console-apps/).
+A project that keeps `Microsoft.NET.Sdk` names `<Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />` next to it instead, and gets the same. For a command line application, use the console SDK: [Console applications](./console-apps/).
 
 ## An ASP.NET Core application
 
 [Section titled “An ASP.NET Core application”](#an-aspnet-core-application)
 
-The same line in a `Microsoft.NET.Sdk.Web` project gives the `WebApplication` host model, which also gets `Rocket.Surgery.LaunchPad.AspNetCore`:
+`Rocket.Surgery.LaunchPad.Sdk.Web` is `Microsoft.NET.Sdk.Web` with LaunchPad. It gives the `WebApplication` host model, which also gets `Rocket.Surgery.LaunchPad.AspNetCore`:
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk.Web">
-  <Sdk Name="Rocket.Surgery.LaunchPad.Sdk" Version="1.0.0" />
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk.Web/1.0.0">
 </Project>
 ```
 
@@ -640,7 +696,7 @@ and pin its version in `global.json`:
 }
 ```
 
-Libraries get nothing from the SDK until they reference a technology LaunchPad has a package for: a library has no host model.
+Libraries get nothing from the SDK until they reference a technology LaunchPad has a package for: a library has no host model. A web project below that file can still name `Rocket.Surgery.LaunchPad.Sdk.Web` as its SDK: it doesn’t apply LaunchPad a second time.
 
 ## A file-based app
 
@@ -683,7 +739,7 @@ flowchart LR
     A[generated endpoint] --> B["mediator.Send(request)"] --> C[your handler]
   end
   A -. describes .-> D["OpenAPI document · GraphQL schema · .proto"]
-  D --> E["generated client (NSwag, Kiota, StrawberryShake, Grpc.Tools, …)"]
+  D --> E["generated client (Kiota, Refitter, StrawberryShake, Grpc.Tools, …)"]
   E -- "GET /api/rockets/{id}" --> A
 ```
 
@@ -1069,19 +1125,32 @@ Strong types are described by the Primitives package’s own transformer (see [s
 
 The generators don’t write clients. Each server describes itself in a standard format, and any client generator for that format works:
 
-| Server      | Spec                                                                      | Client generators                                                    |
-| ----------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Minimal API | OpenAPI: `AddOpenApi()` and `MapOpenApi()` (Microsoft.AspNetCore.OpenApi) | NSwag, Kiota, OpenAPI Generator, Refitter, …                         |
-| Controllers | OpenAPI, the same way                                                     | the same                                                             |
-| gRPC        | `.proto`: `{Host}.GetProto()`                                             | Grpc.Tools (`<Protobuf GrpcServices="Client" />`), any protoc plugin |
-| Proto-first | the `.proto` you wrote                                                    | the same                                                             |
-| GraphQL     | SDL: HotChocolate serves it at `/graphql?sdl`                             | StrawberryShake, graphql-codegen, …                                  |
+| Server      | Spec                                                                      | Client generators                                                                                 |
+| ----------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Minimal API | OpenAPI: `AddOpenApi()` and `MapOpenApi()` (Microsoft.AspNetCore.OpenApi) | Kiota, Refitter (both through [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/)), … |
+| Controllers | OpenAPI, the same way                                                     | the same                                                                                          |
+| gRPC        | `.proto`: `{Host}.GetProto()`                                             | Grpc.Tools (`<Protobuf GrpcServices="Client" />`), any protoc plugin                              |
+| Proto-first | the `.proto` you wrote                                                    | the same                                                                                          |
+| GraphQL     | SDL: HotChocolate serves it at `/graphql?sdl`                             | StrawberryShake, graphql-codegen, …                                                               |
 
-Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves `/openapi/v1.json`, `/graphql?sdl` and `GetProto()`, then point the client generator at the files. LaunchPad’s own functional tests do that (`test/Api/Functional/Clients`): NSwag, Grpc.Tools and StrawberryShake clients, generated from the specs on every build.
+Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves `/openapi/v1.json`, `/graphql?sdl` and `GetProto()`, then point the client generator at the files. LaunchPad’s own functional tests do that (`test/Api/Functional/Clients`): a Kiota client (through [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/)), Grpc.Tools and StrawberryShake clients, generated from the specs on every build. The sample tests generate Refitter clients through Chirograph straight from the sample servers’ projects.
+
+For an OpenAPI client, [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) is an MSBuild SDK that generates a Kiota or Refitter client at build, from a document file, a URL or a server project in the same build, with an `Add<ClientName>()` registration:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Chirograph" />
+  <ItemGroup>
+    <OpenApiClient Include="../Rockets.Api/Rockets.Api.csproj" Generator="Refitter" ClientName="RocketsClient" />
+  </ItemGroup>
+</Project>
+```
+
+Pin its version under `msbuild-sdks` in `global.json`.
 
 Things to know:
 
-* **Nested request types.** Microsoft.AspNetCore.OpenApi names a schema after the type’s simple name, so `GetRocket.Request` and `CreateRocket.Request` would both be `Request`. Name them with their container:
+* **Nested request types.** Microsoft.AspNetCore.OpenApi names a schema after the type’s simple name, so `GetRocket.Request` and `CreateRocket.Request` would both be `Request`. LaunchPad’s OpenAPI joint (Rocket.Surgery.LaunchPad.AspNetCore) names them with their container (`CreateRocketRequest`); an application that calls `AddOpenApi()` itself does the same:
 
   ```csharp
   builder.Services.AddOpenApi(options => options.CreateSchemaReferenceId = type =>
@@ -1452,7 +1521,7 @@ public partial class RocketsJsonContext : JsonSerializerContext;
 services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
 ```
 
-`SystemTextJsonJoint` (in `Rocket.Surgery.LaunchPad.Foundation`) builds the `TypeInfoResolverChain` of every `JsonSerializerOptions` the service provider creates from the registered resolvers. `SystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore`) copies those options into the ASP.NET Core HTTP and MVC JSON options, so a context registered once reaches Minimal APIs, controllers, problem details and the generated API endpoints.
+`SystemTextJsonJoint` (in `Rocket.Surgery.LaunchPad.Foundation`) builds the `TypeInfoResolverChain` of every `JsonSerializerOptions` the service provider creates from the registered resolvers. `SystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore`) copies those options into the ASP.NET Core HTTP JSON options, and `MvcSystemJsonTextJoint` (in `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`) into MVC’s, so a context registered once reaches Minimal APIs, controllers, problem details and the generated API endpoints.
 
 The chain, first to last:
 
@@ -1482,6 +1551,40 @@ Rocket.Surgery.LaunchPad.Foundation ships a generator that registers a camel cas
 [Section titled “The API generators”](#the-api-generators)
 
 The generated Minimal API endpoints read and write through the HTTP JSON options. Generators can’t see each other’s output, so they can’t declare a context for you; in a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable`, **LPAD1030** names each body and response type that no context in the project or its references declares. Set `LaunchPadApiRequireJsonContext` to `true` or `false` to turn the check on or off for any project. See [API generators](../api-generators/#native-aot).
+
+## Package compatibility
+
+[Section titled “Package compatibility”](#package-compatibility)
+
+What works under native AOT lives in its own packages. A package that sets `IsAotCompatible` has no trimming or native AOT warning in its own code; where a dependency can’t be AOT compatible, the part that needs it is in a separate package named for what it is, which references the AOT compatible one. A package whose dependencies aren’t usable under native AOT doesn’t claim it.
+
+| Package                                    | Native AOT | Notes                                                                                                                                                                                        |
+| ------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Rocket.Surgery.LaunchPad.Foundation`      | yes        |                                                                                                                                                                                              |
+| `Rocket.Surgery.LaunchPad.Primitives`      | yes        |                                                                                                                                                                                              |
+| `Rocket.Surgery.LaunchPad.AspNetCore`      | yes        | Minimal APIs, problem details, OpenAPI, the HTTP JSON options and Serilog request logging.                                                                                                   |
+| `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`  | **no**     | MVC Core with application parts, the MVC API explorer, MVC’s JSON options and client error mapping, Serilog filters for actions and pages. ASP.NET Core doesn’t support MVC with native AOT. |
+| `Rocket.Surgery.LaunchPad.Grpc`            | yes        | ASP.NET Core gRPC supports native AOT. gRPC services generated code first from operation hosts use protobuf-net’s runtime model, which doesn’t.                                              |
+| `Rocket.Surgery.LaunchPad.StrawberryShake` | yes        |                                                                                                                                                                                              |
+| `Rocket.Surgery.LaunchPad.NodaTime`        | yes        | LaunchPad’s own System.Text.Json converters for every NodaTime type; NodaTime.Serialization.SystemTextJson isn’t AOT compatible yet.                                                         |
+| `Rocket.Surgery.LaunchPad.Spatial`         | yes        | Geometries only: GeoJSON features aren’t supported under native AOT (below).                                                                                                                 |
+| `Rocket.Surgery.LaunchPad.HotChocolate`    | **no**     | Hot Chocolate’s server isn’t usable under native AOT yet (below).                                                                                                                            |
+
+`test/Api/Aot/Packages.Aot` roots the AOT compatible packages and publishes them with `PublishAot` on every pull request that changes them. It fails on any warning except the dependency warnings `test/Api/Aot/Packages.Aot/dependency-warnings.txt` lists, which are the ones below.
+
+### What isn’t supported under native AOT
+
+[Section titled “What isn’t supported under native AOT”](#what-isnt-supported-under-native-aot)
+
+**MVC.** ASP.NET Core doesn’t support controllers, Razor Pages or views with native AOT. Reference `Rocket.Surgery.LaunchPad.AspNetCore.Mvc` only in an application that uses them; `Rocket.Surgery.LaunchPad.AspNetCore` alone gives Minimal APIs, problem details and OpenAPI.
+
+**Hot Chocolate.** Most Hot Chocolate packages declare `IsAotCompatible`, but `HotChocolate.Types` still produces trimming and AOT warnings, `HotChocolate.Data` (filtering, sorting, projections) and `GreenDonut` declare nothing, and a native AOT server fails at startup unless `HotChocolate.Types` is kept from trimming ([ChilliCream/graphql-platform#10566](https://github.com/ChilliCream/graphql-platform/issues/10566)). `Rocket.Surgery.LaunchPad.HotChocolate` uses `HotChocolate.Data` for its strongly typed id filters, so it doesn’t claim `IsAotCompatible`. `ConfigureStronglyTypedId` itself uses no reflection.
+
+**GeoJSON features.** `Rocket.Surgery.LaunchPad.Spatial` adds NetTopologySuite.IO.GeoJSON4STJ’s converters. Its geometry converters are AOT safe; its converters for `IFeature`, `FeatureCollection` and `IAttributesTable` serialize the id, the attributes and the geometry with `JsonSerializer` by their runtime type, so a native AOT publish warns (IL2104, IL3053 for `NetTopologySuite.IO.GeoJSON4STJ`). Under native AOT they only work for values a JSON context in the options knows, and anything else throws `NotSupportedException`. Serialize geometries, or a type of your own that holds one, rather than features. No System.Text.Json GeoJSON library is AOT compatible today.
+
+**Code first gRPC services.** The gRPC services LaunchPad generates from operation hosts serialize with protobuf-net’s runtime model, which reflects over contracts and emits IL, so they don’t work under native AOT. `Rocket.Surgery.LaunchPad.Grpc` itself is AOT compatible.
+
+The NodaTime converters are LaunchPad’s own until NodaTime.Serialization.SystemTextJson supports native AOT ([nodatime/nodatime.serialization#121](https://github.com/nodatime/nodatime.serialization/issues/121)): its `Interval` and `DateInterval` converters look up the `Instant` and `LocalDate` converters with `JsonSerializerOptions.GetConverter(Type)`, which requires unreferenced and dynamic code. LaunchPad’s write the same JSON.
 
 # Writing a Joint
 

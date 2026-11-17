@@ -2,7 +2,7 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3265/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1215`
+- Version: `2.0.1-pr.1222`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
 - Implements: `IEquatable<TimeRange>`
