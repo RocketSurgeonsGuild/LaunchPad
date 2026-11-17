@@ -245,9 +245,16 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
        .AddCompilationReferences(contracts)
        .AddReferences(MediatorAssemblies(mediator));
 
+    /// <summary>
+    ///     Whether the server compilations report LPAD1030. The test contracts declare no JSON context, so every Minimal API operation would
+    ///     report it; only the tests of the check itself (<see cref="JsonMetadataTests" />) keep it on, the rest turn it off as an application can.
+    /// </summary>
+    protected virtual bool ReportsJsonMetadata => false;
+
     private GeneratorTestContextBuilder ServerBase() =>
-        GeneratorTestContextBuilder
-           .Create()
+        ( ReportsJsonMetadata
+            ? GeneratorTestContextBuilder.Create()
+            : GeneratorTestContextBuilder.Create().AddGlobalOption("build_property.LaunchPadApiRequireJsonContext", "false") )
            .WithLogger(Logger)
            .WithAssemblyLoadContext(AssemblyLoadContext)
            .WithProjectName("Server")

@@ -4,25 +4,25 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Rocket.Surgery.LaunchPad.Api.Generators;
 
-/// <summary>The types the source generated JSON metadata of a compilation covers, when the project needs it.</summary>
+/// <summary>The types the source generated JSON metadata of a compilation covers, unless the project turned the check off.</summary>
 internal sealed record JsonCoverage(bool Required, EquatableArray<string> Types)
 {
     public static JsonCoverage NotRequired { get; } = new(false, EquatableArray<string>.Empty);
 }
 
 /// <summary>
-///     Warns when a trimmed or native AOT project has a Minimal API operation whose body or response type no <c>JsonSerializerContext</c> declares.
+///     Warns when a project has a Minimal API operation whose body or response type no <c>JsonSerializerContext</c> declares.
 /// </summary>
 /// <remarks>
 ///     <para>
 ///         The generated request delegates read and write JSON with the <c>JsonTypeInfo</c> the application's HTTP JSON options resolve. Generators
 ///         can't see each other's output, so these generators can't declare a context for the System.Text.Json source generator to fill in: the
 ///         application declares one, and this check names the types it is missing. Without them the endpoint throws
-///         <c>NotSupportedException</c> at run time once reflection is off.
+///         <c>NotSupportedException</c> at run time: LaunchPad takes the reflection resolver out of the HTTP JSON options, JIT or native AOT
+///         alike (ADR 0007).
 ///     </para>
 ///     <para>
-///         The check runs when the project sets <c>PublishAot</c>, <c>IsAotCompatible</c>, <c>PublishTrimmed</c> or <c>IsTrimmable</c>, or
-///         <c>LaunchPadApiRequireJsonContext</c>, which also turns it off with <c>false</c>. A type counts as declared when a context in the
+///         The check runs for every project; <c>LaunchPadApiRequireJsonContext=false</c> turns it off. A type counts as declared when a context in the
 ///         compilation or a referenced assembly declares it, or one of the types it reaches through public properties, collections or base types.
 ///         The primitive types LaunchPad's own context declares (<c>SystemTextJsonJoint</c>) need no declaration.
 ///     </para>
@@ -36,9 +36,6 @@ internal static class JsonMetadataCoverage
 
     /// <summary>A missing type as the diagnostic message and the code fix's title show it: <see cref="TypeProperty" /> without <c>global::</c>.</summary>
     public static string Display(string type) => type.Replace("global::", "");
-
-    private static readonly string[] TrimmedProperties =
-        ["build_property.PublishAot", "build_property.IsAotCompatible", "build_property.PublishTrimmed", "build_property.IsTrimmable"];
 
     // What LaunchPad's own context (Rocket.Surgery.LaunchPad.Foundation.LaunchPadJsonSerializerContext) declares, as FullyQualified() writes it.
     private static readonly HashSet<string> LaunchPadTypes =
@@ -94,12 +91,9 @@ internal static class JsonMetadataCoverage
         if (operation.Kind == RequestKind.Stream || ( operation.Kind != RequestKind.Void && !operation.ResponseIsUnit )) yield return response;
     }
 
-    private static bool IsRequired(AnalyzerConfigOptions options)
-    {
-        return options.TryGetValue(RequireProperty, out var explicitValue) && bool.TryParse(explicitValue, out var required)
-            ? required
-            : TrimmedProperties.Any(name => options.TryGetValue(name, out var value) && string.Equals(value, "true", StringComparison.OrdinalIgnoreCase));
-    }
+    // On unless the project sets LaunchPadApiRequireJsonContext=false.
+    private static bool IsRequired(AnalyzerConfigOptions options) =>
+        !options.TryGetValue(RequireProperty, out var value) || !bool.TryParse(value, out var required) || required;
 
     // The types a context's [JsonSerializable] entries name.
     private static IEnumerable<ITypeSymbol> Declared(INamedTypeSymbol context, INamedTypeSymbol serializable) =>

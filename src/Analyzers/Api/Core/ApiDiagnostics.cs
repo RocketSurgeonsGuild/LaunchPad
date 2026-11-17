@@ -163,7 +163,7 @@ internal static class ApiDiagnostics
     public static DiagnosticDescriptor JsonMetadataMissing { get; } = Warning(
         "LPAD1030",
         "JSON type has no source generated metadata",
-        "{0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint fails once reflection is off; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions"
+        "{0} is read or written as JSON by {1}.{2}, but no JsonSerializerContext in this project or its references declares it, so the endpoint can't serialize it; add [JsonSerializable(typeof({0}))] to a context (a nested type needs a TypeInfoPropertyName) and chain the context with AddJsonTypeInfoResolver or ConfigureHttpJsonOptions"
     );
 
     // LPAD1040 and up: proto-first gRPC hosts.

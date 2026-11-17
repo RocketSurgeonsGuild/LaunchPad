@@ -3,10 +3,12 @@ using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 namespace Api.Generators.Tests;
 
 /// <summary>
-///     LPAD1030: in a trimmed or native AOT project, every body and response type of a Minimal API host needs source generated JSON metadata.
+///     LPAD1030: every body and response type of a Minimal API host needs source generated JSON metadata, trimmed or not.
 /// </summary>
 public class JsonMetadataTests() : GeneratorTest()
 {
+    protected override bool ReportsJsonMetadata => true;
+
     // A stand-in for a source generated context: the check reads the [JsonSerializable] attributes, so the System.Text.Json source generator
     // doesn't need to run, and an abstract class compiles without the members it would write.
     private static string Context(string ns, params string[] types) => $$"""
@@ -24,28 +26,25 @@ public class JsonMetadataTests() : GeneratorTest()
         ["Sample.Contracts.Rockets.RocketModel", "Sample.Contracts.Rockets.CreateRocket.Request", "Sample.Contracts.Rockets.CreateRocket.Response", "Sample.Contracts.Rockets.EditRocket.Request"];
 
     [Test]
-    public async Task Should_Report_Undeclared_Types_When_Publishing_Aot()
+    public async Task Should_Report_Undeclared_Types()
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
-        var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
-                          .AddSources(Contracts.ServerHost)
-                          .Build()
-                          .GenerateAsync(TestContext.CancellationToken);
+        var result = await Server(Mediator.Mediator, contracts).AddSources(Contracts.ServerHost).Build().GenerateAsync(TestContext.CancellationToken);
 
-        await VerifyDiagnostics(result, settings => settings.UseFileName($"{nameof(JsonMetadataTests)}.Should_Report_Undeclared_Types_When_Publishing_Aot"));
+        await VerifyDiagnostics(result, settings => settings.UseFileName($"{nameof(JsonMetadataTests)}.Should_Report_Undeclared_Types"));
     }
 
+    // The check doesn't depend on trimming or native AOT: a JIT application serializes through the same context.
     [Test]
-    [Arguments("build_property.IsAotCompatible")]
-    [Arguments("build_property.PublishTrimmed")]
-    [Arguments("build_property.IsTrimmable")]
-    [Arguments("build_property.LaunchPadApiRequireJsonContext")]
-    public async Task Should_Report_Undeclared_Types_When_Trimmed(string property)
+    [Arguments("build_property.PublishAot", "true")]
+    [Arguments("build_property.PublishAot", "false")]
+    [Arguments("build_property.IsTrimmable", "false")]
+    [Arguments("build_property.LaunchPadApiRequireJsonContext", "true")]
+    public async Task Should_Report_Undeclared_Types_Whatever_The_Publish_Settings(string property, string value)
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption(property, "true")
+                          .AddGlobalOption(property, value)
                           .AddSources(Contracts.ServerHost)
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
@@ -54,20 +53,10 @@ public class JsonMetadataTests() : GeneratorTest()
     }
 
     [Test]
-    public async Task Should_Not_Report_Without_Trimming()
-    {
-        var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
-        var result = await Server(Mediator.Mediator, contracts).AddSources(Contracts.ServerHost).Build().GenerateAsync(TestContext.CancellationToken);
-
-        await result.Results.Values.SelectMany(r => r.Diagnostics).Should().All(d => d.Id != "LPAD1030");
-    }
-
-    [Test]
     public async Task Should_Not_Report_When_Turned_Off()
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddGlobalOption("build_property.LaunchPadApiRequireJsonContext", "false")
                           .AddSources(Contracts.ServerHost)
                           .Build()
@@ -81,7 +70,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(Contracts.ServerHost, Context("Sample.Server", EveryType))
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
@@ -98,7 +86,6 @@ public class JsonMetadataTests() : GeneratorTest()
             typeof(System.Text.Json.Serialization.JsonSerializerContext).Assembly
         );
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(Contracts.ServerHost)
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
@@ -112,7 +99,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(
                                Contracts.ServerHost,
                                """
@@ -141,7 +127,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(Contracts.ServerHost, Context("Sample.Server", "Sample.Contracts.Rockets.RocketModel"))
                           .Build()
                           .GenerateAsync(TestContext.CancellationToken);
@@ -168,7 +153,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await ContractsDeclaringAllButCreateRequest();
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(
                                Contracts.ServerHost,
                                """
@@ -201,7 +185,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await ContractsDeclaringAllButCreateRequest();
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(
                                Contracts.ServerHost,
                                """
@@ -228,7 +211,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await ContractsDeclaringAllButCreateRequest();
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(
                                Contracts.ServerHost,
                                """
@@ -260,7 +242,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(Contracts.ServerHost)
                           .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
                           .Build()
@@ -275,7 +256,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await CompileContracts(Mediator.Mediator, Contracts.For(Mediator.Mediator));
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(
                                Contracts.ServerHost,
                                """
@@ -304,7 +284,6 @@ public class JsonMetadataTests() : GeneratorTest()
     {
         var contracts = await ContractsDeclaringAllButCreateRequest();
         var result = await Server(Mediator.Mediator, contracts)
-                          .AddGlobalOption("build_property.PublishAot", "true")
                           .AddSources(Contracts.ServerHost)
                           .WithCodeFix<Rocket.Surgery.LaunchPad.Api.Generators.AddJsonSerializableCodeFix>()
                           .Build()

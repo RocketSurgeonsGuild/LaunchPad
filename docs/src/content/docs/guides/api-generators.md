@@ -579,7 +579,8 @@ no handler interface, so it has no patch handlers: a handler that declares `GetR
 ## Native AOT
 
 Generated Minimal API endpoints don't rely on the Request Delegate Generator (which can't see generated code): they parse route, query and
-header values, read the body and write the result through the application's `JsonTypeInfo`. A native AOT application supplies a
+header values, read the body and write the result through the application's `JsonTypeInfo`. Types its referenced assemblies declare are in
+the [generated JSON context](../json-and-native-aot/#the-generated-json-context); for the rest, JIT or native AOT, the application supplies a
 `JsonSerializerContext`:
 
 ```csharp
@@ -589,9 +590,9 @@ builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.TypeInfoResol
 ```
 
 LaunchPad's nested `X.Request` types share a simple name, so each `[JsonSerializable]` entry needs its own `TypeInfoPropertyName`; without it,
-SYSLIB1031 silently skips the type. In a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable` (or
-`LaunchPadApiRequireJsonContext`), LPAD1030 names each body and response type no context in the project or its references declares, or
-reaches through its properties and collections. Its code fix writes the missing entries, each with a `TypeInfoPropertyName`, onto the
+SYSLIB1031 silently skips the type. LPAD1030 names each body and response type no context in the project or its references declares, or
+reaches through its properties and collections, in every project, JIT or native AOT: LaunchPad serializes only through JSON contexts in
+both. Set `LaunchPadApiRequireJsonContext` to `false` to turn it off. Its code fix writes the missing entries, each with a `TypeInfoPropertyName`, onto the
 project's own context, or creates one beside the host when the project has none (chain a created context in yourself). See [JSON and native AOT](../json-and-native-aot/). In an AOT application, `Configure{Operation}` receives an `IEndpointConventionBuilder`, and endpoint
 filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` and checks it with a round trip over HTTP.
 
@@ -623,7 +624,7 @@ filters don't apply. `test/Api/Aot` publishes such a server with `PublishAot` an
 | LPAD1027 | Error    | A patch handler's interface doesn't return `Task<T>` or `ValueTask<T>`.                               |
 | LPAD1028 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.       |
 | LPAD1029 | Error    | A patch handler is for a mediator with no handler interface (Foundatio), so its method isn't written. |
-| LPAD1030 | Warning  | A trimmed or AOT project has a Minimal API body or response type no `JsonSerializerContext` declares. |
+| LPAD1030 | Warning  | A Minimal API body or response type no `JsonSerializerContext` declares.                              |
 | LPAD1040 | Error    | A proto-first host lists an operation its service base has no rpc for.                                |
 | LPAD1041 | Error    | A proto-first host is in a project that doesn't reference ZeroAlloc.Mapping.                          |
 | LPAD1042 | Error    | An operation doesn't fit its rpc: unary to unary, stream to server streaming.                         |
