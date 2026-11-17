@@ -1,11 +1,9 @@
 <Project>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
     <PropertyGroup>
-        <MergeCoverage>true</MergeCoverage>
-        <IncludeTestAssembly>true</IncludeTestAssembly>
+        <IsTestProject>true</IsTestProject>
         <NoWarn>$(NoWarn);CA1812</NoWarn>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
-        <IsPackable>false</IsPackable>
         <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <!-- Verify 33 and later (Verify.TUnit) fails the build without a sponsorship exemption; this is an open source project. -->
