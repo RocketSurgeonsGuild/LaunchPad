@@ -11,8 +11,11 @@
     </ItemGroup>
     <ItemGroup>
 
-    <!-- The SDK injects this analyzer; Hosting.Tests reads this pin to scaffold throwaway apps. -->
-    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
+    <!--
+        The SDK injects this analyzer as an implicit reference, which cannot also have a PackageVersion (NU1009). Hosting.Tests reads this
+        pin to scaffold throwaway apps; keep it in step with the SDK's version.
+    -->
+    <SdkPinnedPackage Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
     <PackageVersion Include="Rocket.Surgery.ModularPipelines.Extensions" Version="0.2.3" />
     <!--
         build/Build.cs references it directly, so its generator writes ConfigureDovetail(); the version Rocket.Surgery.ModularPipelines.Extensions
