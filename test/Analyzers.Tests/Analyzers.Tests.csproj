@@ -14,8 +14,12 @@
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
         <PackageReference Include="Verify.SourceGenerators" />
-        <!-- the request interfaces the test sources implement -->
+        <!-- the request interfaces the test sources implement, one library per built-in mediator profile; none of their generators run here -->
         <PackageReference Include="ZeroAlloc.Mediator" />
+        <PackageReference Include="Mediator.Abstractions" />
+        <PackageReference Include="ChannelMediator" />
+        <PackageReference Include="Foundatio.Mediator.Abstractions" />
+        <PackageReference Include="Immediate.Handlers" IncludeAssets="compile;runtime" />
         <ProjectReference
             Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     </ItemGroup>

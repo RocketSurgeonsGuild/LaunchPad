@@ -18,7 +18,8 @@ namespace Rocket.Surgery.LaunchPad.Api.Generators;
 ///     <para>
 ///         The handler interface comes from the mediator profile, and the method's shape (return type, cancellation token) is read from that
 ///         interface, so it follows whatever the mediator declares. The sender is the constructor parameter, field or property of the profile's
-///         sender type.
+///         sender type; for a profile without one (Immediate.Handlers), it is the handler interface closed over the full request, called with the
+///         profile's handle method. A profile whose requests have no handler interface (Foundatio) has no patch handler to write.
 ///     </para>
 /// </remarks>
 [Generator]
@@ -59,7 +60,7 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                                    : names
                                      .Select(name => compilation.GetTypeByMetadataName(name))
                                      .OfType<INamedTypeSymbol>()
-                                     .SelectMany(type => Read(type, profile, propertyTracking, compilation, cancellationToken))
+                                     .SelectMany(type => Read(type, profile, propertyTracking, cancellationToken))
                                      .ToEquatableArray();
                            }
                        )
@@ -72,7 +73,6 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
         INamedTypeSymbol type,
         ProfileModel profile,
         INamedTypeSymbol propertyTracking,
-        Compilation compilation,
         CancellationToken cancellationToken
     )
     {
@@ -100,7 +100,14 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                 diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.PatchHandlerNotPartial, location, type.Name, nonPartial.Name));
             }
 
-            var sender = profile.SenderType is { } senderType ? FindSender(type, senderType.Replace("global::", ""), compilation) : null;
+            // A profile without a sender dispatches through the handler interface (Immediate.Handlers), so the patched request goes to the handler
+            // of the full request: the same interface closed over the request instead of the patch.
+            var fullHandler = profile.SenderType is null
+                ? handlerInterface.OriginalDefinition.Construct([request, .. handlerInterface.TypeArguments.Skip(1)])
+                : null;
+            var sender = profile.SenderType is { } senderType
+                ? FindSender(type, IsSender(senderType.Replace("global::", "")))
+                : FindSender(type, candidate => SymbolEqualityComparer.Default.Equals(candidate, fullHandler) || candidate.AllInterfaces.Contains(fullHandler!, SymbolEqualityComparer.Default));
             if (sender is null)
             {
                 diagnostics.Add(
@@ -109,7 +116,7 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                         location,
                         type.Name,
                         patch.Name,
-                        profile.SenderType ?? "a sender (the " + profile.Name + " mediator profile has none)"
+                        profile.SenderType ?? fullHandler!.FullyQualified()
                     )
                 );
             }
@@ -137,8 +144,8 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                 ( (INamedTypeSymbol)handle.ReturnType ).TypeArguments.FirstOrDefault()?.FullyQualified() ?? "",
                 parameters,
                 sender ?? "",
-                profile.SendMethod,
-                profile.SendNeedsResponseTypeArgument,
+                fullHandler is null ? profile.SendMethod : kind.HandleMethod,
+                fullHandler is null && profile.SendNeedsResponseTypeArgument,
                 diagnostics.ToEquatableArray()
             );
         }
@@ -154,28 +161,30 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
                     : null
             : null;
 
-    private static string? FindSender(INamedTypeSymbol type, string senderType, Compilation compilation)
+    private static Func<ITypeSymbol, bool> IsSender(string senderType)
     {
         // A sender a mediator generates (ZeroAlloc's IMediator) isn't visible to this generator: it is still an error type here, so its simple name
         // is all there is to match.
         var simpleName = senderType[( senderType.LastIndexOf('.') + 1 )..];
-        bool IsSender(ITypeSymbol candidate) =>
-            candidate.Is(senderType)
+        return candidate => candidate.Is(senderType)
          || candidate.AllInterfaces.Any(i => i.Is(senderType))
          || ( candidate.TypeKind == TypeKind.Error && candidate.Name == simpleName );
+    }
 
+    private static string? FindSender(INamedTypeSymbol type, Func<ITypeSymbol, bool> isSender)
+    {
         // A primary constructor's parameters are in scope in every part of the class.
         var primary = type.InstanceConstructors.FirstOrDefault(
             c => c.DeclaringSyntaxReferences.Any(r => r.GetSyntax() is TypeDeclarationSyntax)
         );
-        if (primary?.Parameters.FirstOrDefault(p => IsSender(p.Type)) is { } parameter) return parameter.Name;
+        if (primary?.Parameters.FirstOrDefault(p => isSender(p.Type)) is { } parameter) return parameter.Name;
 
         var member = type.GetMembers()
                          .FirstOrDefault(
                               m => m switch
                               {
-                                  IFieldSymbol { IsImplicitlyDeclared: false, IsStatic: false } f => IsSender(f.Type),
-                                  IPropertySymbol { IsStatic: false, GetMethod: { } } p => IsSender(p.Type),
+                                  IFieldSymbol { IsImplicitlyDeclared: false, IsStatic: false } f => isSender(f.Type),
+                                  IPropertySymbol { IsStatic: false, GetMethod: { } } p => isSender(p.Type),
                                   _ => false,
                               }
                           );

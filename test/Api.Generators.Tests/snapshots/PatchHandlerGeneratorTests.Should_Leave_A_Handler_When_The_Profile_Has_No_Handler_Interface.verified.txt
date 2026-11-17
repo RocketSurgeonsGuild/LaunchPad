@@ -1,0 +1,38 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: CS9113,
+      Title: Parameter is unread.,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (23,55)-(23,63),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS9113),
+      MessageFormat: Parameter '{0}' is unread.,
+      Message: Parameter 'mediator' is unread.,
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry
+      ]
+    },
+    {
+      Id: CS0759,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input1.cs: (25,47)-(25,57),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0759),
+      MessageFormat: No defining declaration found for implementing declaration of partial method '{0}',
+      Message: No defining declaration found for implementing declaration of partial method 'EditRocket.EditRocketHandler.GetRequest(EditRocket.PatchRequest, CancellationToken)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Api.Generators.PatchHandlerGenerator: []
+  }
+}
