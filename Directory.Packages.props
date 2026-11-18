@@ -6,8 +6,6 @@
     </PropertyGroup>
     <ItemGroup>
         <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.4" />
-        <GlobalPackageReference Include="ZeroAlloc.Analyzers" Version="1.13.1" />
-        <GlobalPackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.172" />
     </ItemGroup>
     <ItemGroup>
 
