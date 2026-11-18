@@ -1,7 +1,10 @@
 <Project>
-    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    <!-- Before the parent import: the SDK it applies only wires up test extensions when IsTestProject is already true. -->
     <PropertyGroup>
         <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    <PropertyGroup>
         <NoWarn>$(NoWarn);CA1812</NoWarn>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
         <IsTrimmable>false</IsTrimmable>
