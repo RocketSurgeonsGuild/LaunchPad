@@ -133,7 +133,7 @@
             No project references these: each LaunchPad SDK (src/Sdks) chains the Dovetail SDK of the same name at this version, which
             src/Sdks/Directory.Build.targets writes into its Sdk/Packages.props. Dovetail ships every package at one version.
         -->
-        <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk" Version="0.7.1" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.Console" Version="0.7.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.Web" Version="0.7.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.Worker" Version="0.7.0" />
