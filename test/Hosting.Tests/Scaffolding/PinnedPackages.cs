@@ -49,7 +49,7 @@ internal static partial class PinnedPackages
 
         // A package Rocket.Surgery.Sdk injects is pinned through the property it reads its version from: RsgSdk_<id without dots>_Version.
         var sdkProperty = $"RsgSdk_{packageId.Replace(".", "", StringComparison.Ordinal)}_Version";
-        return  document.Root!.Elements("PropertyGroup").Elements(sdkProperty).FirstOrDefault()?.Value is { Length: > 0 } sdkVersion 
+        return document.Root!.Elements("PropertyGroup").Elements(sdkProperty).FirstOrDefault()?.Value is { Length: > 0 } sdkVersion
             ? sdkVersion
             : throw new InvalidOperationException($"Directory.Packages.props does not pin {packageId} for {targetFramework}");
     }
