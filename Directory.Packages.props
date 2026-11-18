@@ -141,7 +141,7 @@
         <PackageVersion Include="Joinery.Dovetail.Sdk.BlazorWebAssembly" Version="0.7.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.WebAssembly" Version="0.7.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.WindowsDesktop" Version="0.7.0" />
-        <PackageVersion Include="Joinery.Dovetail.Sdk.Aspire.AppHost" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.Aspire.AppHost" Version="0.7.1" />
         <!--
             No project references it either: an MSBuild SDK from NuGet. test/Sdk.Tests compares Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost
             with Aspire.AppHost.Sdk at this version next to Rocket.Surgery.LaunchPad.Sdk; the version Joinery.Dovetail.Sdk.Aspire.AppHost
