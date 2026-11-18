@@ -1,5 +1,5 @@
 #!/usr/bin/env dotnet
-#:sdk Joinery.Dovetail.Sdk
+//#:sdk Joinery.Dovetail.Sdk
 #:package Sourcy.Git
 #:package Sourcy.DotNet
 #:package Rocket.Surgery.ModularPipelines.Extensions
