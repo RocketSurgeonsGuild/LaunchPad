@@ -15,7 +15,6 @@
         needs. It stays on 0.5.3 while the rest of the repository is on Dovetail 0.7.0: Extensions 0.2.3 is built against Dovetail 0.5.3 and calls
         DovetailConfigurationOptionsExtensions, which 0.7.0 removed (TypeLoadException when the build host starts). Move it with Extensions.
     -->
-    <PackageVersion Include="Joinery.Dovetail.ModularPipelines" Version="0.7.0" />
     <PackageVersion Include="Sourcy.DotNet" Version="1.1.1" />
     <PackageVersion Include="Sourcy.Git" Version="1.1.1" />
     <PackageVersion Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.52" />

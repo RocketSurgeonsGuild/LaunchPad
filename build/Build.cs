@@ -1,11 +1,8 @@
 #!/usr/bin/env dotnet
 #:sdk Joinery.Dovetail.Sdk
-#:package Microsoft.VisualStudio.SolutionPersistence
 #:package Sourcy.Git
 #:package Sourcy.DotNet
 #:package Rocket.Surgery.ModularPipelines.Extensions
-#:package Joinery.Dovetail.ModularPipelines
-#:package Specular
 #:include ./Samples.cs
 #:property JsonSerializerIsReflectionEnabledByDefault=true
 #:property ExperimentalFileBasedProgramEnableTransitiveDirectives=true
