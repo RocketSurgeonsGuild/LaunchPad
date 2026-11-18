@@ -9,6 +9,7 @@
   },
   "msbuild-sdks": {
     "Chirograph": "0.1.1",
-    "Rocket.Surgery.Sdk": "2026.11.5"
+    "Rocket.Surgery.Sdk": "2026.11.5",
+    "Joinery.Dovetail.Sdk": "0.7.1"
   }
 }
