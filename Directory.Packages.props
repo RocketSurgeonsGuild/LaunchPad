@@ -139,7 +139,7 @@
         <PackageVersion Include="Joinery.Dovetail.Sdk.Worker" Version="0.7.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.Razor" Version="0.7.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.BlazorWebAssembly" Version="0.7.0" />
-        <PackageVersion Include="Joinery.Dovetail.Sdk.WebAssembly" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Sdk.WebAssembly" Version="0.7.1" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.WindowsDesktop" Version="0.7.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.Aspire.AppHost" Version="0.7.0" />
         <!--
