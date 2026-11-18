@@ -1,7 +1,7 @@
 [tools]
 # The SDK comes first: Renovate's custom managers (.github/renovate.json) read the first entry as the SDK and the runtime entry separately.
 dotnet = [{ version = "11.0.100" }]
-"github:microsoft/apm" = { version = "v0.36.0", bin = "apm" }
+"github:microsoft/apm" = { version = "v0.36.1", bin = "apm" }
 "github:eljulians/skillfile" = { version = "v1.9.2", bin = "skillfile" }
 hk = "2.13.0"
 pkl = "0.33.0"
