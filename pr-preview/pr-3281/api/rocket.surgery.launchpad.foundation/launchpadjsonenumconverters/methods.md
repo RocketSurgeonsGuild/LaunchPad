@@ -15,7 +15,7 @@ The enum converters the `SystemTextJsonJoint` adds to the `Json.JsonSerializerOp
 - Name: `AddEnumConverters(JsonSerializerOptions)`
 - Modifiers: `extension`
 - Returns: `JsonSerializerOptions`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.f470c0fad9a519f7357ef1c1f00f2210962f5308/src/Foundation/LaunchPadJsonEnumConverters.cs#L54-L60)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/Foundation/LaunchPadJsonEnumConverters.cs#L54-L60)
 
 Adds every registered converter the options don't have yet.
 
@@ -46,7 +46,7 @@ public static class LaunchPadJsonEnumConverters
 
 - Name: `Register(JsonStringEnumConverter<TEnum>)`
 - Modifiers: `static`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.f470c0fad9a519f7357ef1c1f00f2210962f5308/src/Foundation/LaunchPadJsonEnumConverters.cs#L26-L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/Foundation/LaunchPadJsonEnumConverters.cs#L26-L31)
 
 Registers an enum converter. A later registration for the same type replaces the earlier one.
 
