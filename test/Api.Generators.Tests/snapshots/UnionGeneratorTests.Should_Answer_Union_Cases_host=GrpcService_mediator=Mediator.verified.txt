@@ -1,9 +1,9 @@
 ﻿{
   AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: []
+    Rocket.Surgery.LaunchPad.Analyzers.Api.OperationHostAnalyzer: []
   },
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.GrpcServiceGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.Api.Grpc.GrpcServiceGenerator: []
   }
 }

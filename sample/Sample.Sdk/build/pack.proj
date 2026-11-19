@@ -13,7 +13,12 @@
     <LaunchPadSampleFeed>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '..', '..', 'artifacts', 'nuget-sample'))</LaunchPadSampleFeed>
     <LaunchPadSamplePackagesFolder>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '.nuget', 'packages'))</LaunchPadSamplePackagesFolder>
     <!-- The package icon is a file the release pipeline puts in .temp, which a checkout does not have. -->
-    <_LaunchPadSampleProperties>Configuration=Release;Version=$(LaunchPadSampleVersion);PackageOutputPath=$(LaunchPadSampleFeed);PackageIcon=</_LaunchPadSampleProperties>
+    <!--
+        No SBOM either: Rocket.Surgery.Sdk generates one for every packable project in CI, and with these projects packing in parallel
+        the generator stalled after the package was written, so the step ran until the job was cancelled. These packages only feed this
+        sample's local feed, nothing ships from them.
+    -->
+    <_LaunchPadSampleProperties>Configuration=Release;Version=$(LaunchPadSampleVersion);PackageOutputPath=$(LaunchPadSampleFeed);PackageIcon=;GenerateSBOM=false</_LaunchPadSampleProperties>
   </PropertyGroup>
 
   <ItemGroup>
