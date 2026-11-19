@@ -8,6 +8,8 @@
             tests write the same version into the throwaway projects they build, and read it from here: test/Hosting.Tests/Scaffolding/PinnedPackages.cs.
         -->
         <RsgSdk_MicrosoftCodeAnalysisBannedApiAnalyzers_Version>5.6.0</RsgSdk_MicrosoftCodeAnalysisBannedApiAnalyzers_Version>
+        <!-- The SDK defaults this to 5.9.0; LaunchPad's generators build against Roslyn 5.12, the .NET 11 SDK's compiler. -->
+        <RsgSdk_MicrosoftCodeAnalysisAnalyzers_Version>5.12.0</RsgSdk_MicrosoftCodeAnalysisAnalyzers_Version>
     </PropertyGroup>
     <ItemGroup>
         <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.5" />
