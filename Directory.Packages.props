@@ -174,8 +174,8 @@
         <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.TUnit" Version="11.0.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="11.0.1" />
-        <PackageVersion Include="TUnit" Version="1.86.6" />
-        <PackageVersion Include="TUnit.Mocks" Version="1.86.6" />
+        <PackageVersion Include="TUnit" Version="1.87.0" />
+        <PackageVersion Include="TUnit.Mocks" Version="1.87.0" />
         <!-- the Should syntax ships as a beta beside each TUnit release -->
         <PackageVersion Include="TUnit.Assertions.Should" Version="1.84.0-beta" />
         <PackageVersion Include="Verify.TUnit" Version="33.5.0" />
