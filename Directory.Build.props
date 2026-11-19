@@ -18,6 +18,13 @@
         <!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
         <!--        <WarningsNotAsErrors></WarningsNotAsErrors>-->
 
+        <!--
+            Rocket.Surgery.Sdk generates an SBOM for every packable project in a CI build. Packing the solution does that for ~30 projects at
+            once, and the generator stalls on one of them after its package is written (a different one each run), which holds the pack
+            step until it times out. Only a version tag ships packages, so only a tag build generates them. GenerateSBOM=true still turns it on.
+        -->
+        <GenerateSBOM Condition="'$(GenerateSBOM)' == '' and '$(GITHUB_REF_TYPE)' != 'tag'">false</GenerateSBOM>
+
         <SolutionDir>$(MSBuildThisFileDirectory)</SolutionDir>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
