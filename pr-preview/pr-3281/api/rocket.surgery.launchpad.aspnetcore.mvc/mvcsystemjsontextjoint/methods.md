@@ -13,7 +13,7 @@ Applies the existing System.Text.Json options to MVC's JSON options, as `Joints.
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/AspNetCore.Mvc/Joints/MvcSystemJsonTextJoint.cs#L27-L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.3325c774c1aaaf8fd0e7d3543b322e84255d322c/src/AspNetCore.Mvc/Joints/MvcSystemJsonTextJoint.cs#L27-L31)
 
 Register the Service part.
 

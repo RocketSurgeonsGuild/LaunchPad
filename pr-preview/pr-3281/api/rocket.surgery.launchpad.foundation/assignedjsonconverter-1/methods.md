@@ -15,7 +15,7 @@ Reads and writes an `Foundation.Assigned`1` as the bare `T`: a property that is 
 - Name: `Read(Utf8JsonReader, Type, JsonSerializerOptions)`
 - Modifiers: `override`
 - Returns: [Assigned<T>](/LaunchPad/pr-preview/pr-3281/api/rocket.surgery.launchpad.foundation/assigned-1.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/Foundation/AssignedJsonConverter.cs#L33-L36)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.3325c774c1aaaf8fd0e7d3543b322e84255d322c/src/Foundation/AssignedJsonConverter.cs#L33-L36)
 
 Reads and converts the JSON to type `Foundation.Assigned{`0}`.
 
@@ -52,7 +52,7 @@ public sealed class AssignedJsonConverter<T>
 
 - Name: `Write(Utf8JsonWriter, Assigned<T>, JsonSerializerOptions)`
 - Modifiers: `override`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/Foundation/AssignedJsonConverter.cs#L42-L51)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.3325c774c1aaaf8fd0e7d3543b322e84255d322c/src/Foundation/AssignedJsonConverter.cs#L42-L51)
 
 Writes a specified value as JSON.
 

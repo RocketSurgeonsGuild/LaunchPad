@@ -14,7 +14,7 @@ A range of dates from [DateRange.Start](/LaunchPad/pr-preview/pr-3281/api/rocket
 - Name: `End`
 - Modifiers: `get`
 - Returns: `DateOnly`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/Primitives/StrongTypes/DateRange.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.3325c774c1aaaf8fd0e7d3543b322e84255d322c/src/Primitives/StrongTypes/DateRange.cs)
 
 The last day of the range.
 
@@ -29,7 +29,7 @@ public DateOnly End { get; }
 - Name: `Start`
 - Modifiers: `get`
 - Returns: `DateOnly`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/Primitives/StrongTypes/DateRange.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3281-merge.Sha.3325c774c1aaaf8fd0e7d3543b322e84255d322c/src/Primitives/StrongTypes/DateRange.cs)
 
 The first day of the range.
 

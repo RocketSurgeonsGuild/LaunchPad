@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`
-- Version: `2.0.1-pr.1260`
+- Version: `2.0.1-pr.1262`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3281-merge.Sha.65b042458886c034a574f04a60cfe2fa08ef3e1a/src/ZeroAlloc.Blazor)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3281-merge.Sha.3325c774c1aaaf8fd0e7d3543b322e84255d322c/src/ZeroAlloc.Blazor)
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor)
 
 ## Namespaces
