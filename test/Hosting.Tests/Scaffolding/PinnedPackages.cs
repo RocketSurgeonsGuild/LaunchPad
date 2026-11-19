@@ -34,6 +34,7 @@ internal static partial class PinnedPackages
     /// <returns>The pinned version.</returns>
     public static string Version(string root, string packageId, string targetFramework)
     {
+        ArgumentNullException.ThrowIfNull(packageId);
         var document = XDocument.Load(Path.Combine(root, "Directory.Packages.props"));
         foreach (var group in document.Root!.Elements("ItemGroup"))
         {
@@ -41,7 +42,10 @@ internal static partial class PinnedPackages
 
             foreach (var item in group.Elements())
             {
-                if (item.Name.LocalName is not ( "PackageVersion" or "GlobalPackageReference" or "SdkPinnedPackage" ) || (string?)item.Attribute("Include") != packageId) continue;
+                if (item.Name.LocalName is not ( "PackageVersion" or "GlobalPackageReference" or "SdkPinnedPackage" ) || (string?)item.Attribute("Include") != packageId)
+                {
+                    continue;
+                }
 
                 return (string?)item.Attribute("Version") ?? item.Element("Version")?.Value ?? throw new InvalidOperationException($"{packageId} has no version");
             }

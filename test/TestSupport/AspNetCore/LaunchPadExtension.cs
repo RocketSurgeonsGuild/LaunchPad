@@ -43,6 +43,7 @@ public class LaunchPadExtension(ILoggerFactory loggerFactory) : IAlbaExtension
     /// <param name="builder"></param>
     public virtual void Configure(IAlbaHostBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
         builder.ConfigureServices(s => s.AddSingleton(loggerFactory));
         builder.ConfigureServices(s => s.AddSingleton(z => (TestServer)z.GetRequiredService<IServer>()));
         // Not the response body: logging it buffers every response through a ResponseBufferingStream, which ASP.NET Core 11 pools
