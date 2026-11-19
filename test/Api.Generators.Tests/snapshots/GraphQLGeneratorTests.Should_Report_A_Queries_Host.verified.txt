@@ -1,6 +1,6 @@
 ﻿{
   AnalyzerDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.OperationHostAnalyzer: [
+    Rocket.Surgery.LaunchPad.Analyzers.Api.OperationHostAnalyzer: [
       {
         Id: LPAD1017,
         Title: Operation host transport cannot be inferred,
@@ -26,6 +26,6 @@
     }
   ],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.GraphQLMutationGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.Api.GraphQL.GraphQLMutationGenerator: []
   }
 }
