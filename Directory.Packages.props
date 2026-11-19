@@ -16,7 +16,7 @@
     </ItemGroup>
     <ItemGroup>
 
-    <PackageVersion Include="Rocket.Surgery.ModularPipelines.Extensions" Version="0.2.4" />
+    <PackageVersion Include="Rocket.Surgery.ModularPipelines.Extensions" Version="0.2.5" />
     <!--
         build/Build.cs references it directly, so its generator writes ConfigureDovetail(); the version Rocket.Surgery.ModularPipelines.Extensions
         needs. It stays on 0.5.3 while the rest of the repository is on Dovetail 0.7.0: Extensions 0.2.3 is built against Dovetail 0.5.3 and calls
