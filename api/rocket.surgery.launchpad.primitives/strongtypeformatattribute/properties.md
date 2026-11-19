@@ -14,7 +14,7 @@ The format a strong type's value is written in, as OpenAPI and JSON Schema name 
 - Name: `Format`
 - Modifiers: `get`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/Descriptions/StrongTypeDescription.cs#L248)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Primitives/Descriptions/StrongTypeDescription.cs#L248)
 
 The format.
 

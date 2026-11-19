@@ -13,7 +13,7 @@ Lists a type of this assembly that crosses the wire as JSON, for the JSON contex
 ## JsonContextTypeAttribute(Type)
 
 - Name: `Constructor(Type)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/JsonContextTypeAttribute.cs#L21-L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Foundation/JsonContextTypeAttribute.cs#L21-L24)
 
 Lists a type of this assembly that crosses the wire as JSON, for the JSON context LaunchPad generates in the applications that reference it.
 

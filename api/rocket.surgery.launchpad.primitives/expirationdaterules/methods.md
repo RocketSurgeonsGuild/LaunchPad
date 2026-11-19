@@ -14,7 +14,7 @@ The rules of an expiration date: the last day something (a card, a document, a p
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<DateOnly>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/StrongTypes/ExpirationDate.cs#L20-L22)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Primitives/StrongTypes/ExpirationDate.cs#L20-L22)
 
 ```csharp
 public sealed class ExpirationDateRules
