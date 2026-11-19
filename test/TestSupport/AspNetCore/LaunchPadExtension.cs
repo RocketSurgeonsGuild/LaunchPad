@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
@@ -42,16 +41,14 @@ public class LaunchPadExtension(ILoggerFactory loggerFactory) : IAlbaExtension
     ///     Virtual method that can be overridden to do something before the host is configured
     /// </summary>
     /// <param name="builder"></param>
-    /// <returns></returns>
-    public virtual IHostBuilder Configure(IHostBuilder builder)
+    public virtual void Configure(IAlbaHostBuilder builder)
     {
-        builder.ConfigureLogging((_, loggingBuilder) => loggingBuilder.Services.AddSingleton(loggerFactory));
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.ConfigureServices(s => s.AddSingleton(loggerFactory));
         builder.ConfigureServices(s => s.AddSingleton(z => (TestServer)z.GetRequiredService<IServer>()));
         // Not the response body: logging it buffers every response through a ResponseBufferingStream, which ASP.NET Core 11 pools
         // (dotnet/aspnetcore#65147). With it on, CI saw one request's bytes turn up in another's request and response bodies.
         builder.ConfigureServices(s => s.AddHttpLogging(options => options.LoggingFields = HttpLoggingFields.All & ~HttpLoggingFields.ResponseBody));
-
-        return builder;
     }
 }
 #pragma warning restore CA1816, CA1063

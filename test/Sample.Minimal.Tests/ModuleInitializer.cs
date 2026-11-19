@@ -12,6 +12,8 @@ internal static class ModuleInitializer
     [ModuleInitializer]
     public static void Init()
     {
+        // Refit 17 has no reflection based JSON until it is asked for
+        Refit.ReflectionSupport.EnsureRegistered();
         DiffRunner.Disabled = true;
         VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.DontScrubDateTimes();
