@@ -1,11 +1,14 @@
 <Project>
+    <!-- Before the parent import: the SDK it applies only wires up test extensions when IsTestProject is already true. -->
+    <PropertyGroup>
+        <IsTestProject>true</IsTestProject>
+        <!-- The build pipeline passes its own coverage settings; the option takes one value. -->
+        <RsgSdk_Testing_CoverageSettings>false</RsgSdk_Testing_CoverageSettings>
+    </PropertyGroup>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
     <PropertyGroup>
-        <MergeCoverage>true</MergeCoverage>
-        <IncludeTestAssembly>true</IncludeTestAssembly>
         <NoWarn>$(NoWarn);CA1812</NoWarn>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
-        <IsPackable>false</IsPackable>
         <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
     <!-- Verify 33 and later (Verify.TUnit) fails the build without a sponsorship exemption; this is an open source project. -->
