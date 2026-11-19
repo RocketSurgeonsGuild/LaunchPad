@@ -84,6 +84,8 @@ jobs:
         needs: changes
         if: needs.changes.outputs.samples == 'true'
         runs-on: ubuntu-latest
+        # Packing, building and running the sample takes a few minutes; a hung step should fail, not wait out the 6 hour default.
+        timeout-minutes: 20
         defaults:
             run:
                 working-directory: sample/Sample.Sdk
