@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.HotChocolate
 
 - Package: `Rocket.Surgery.LaunchPad.HotChocolate`
-- Version: `2.0.1-beta.417`
+- Version: `2.0.1-beta.418`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/HotChocolate)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.5c5630f989568306f7aca9912bb0dcdaeccec9bd/src/HotChocolate)
 - NuGet: [Rocket.Surgery.LaunchPad.HotChocolate](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.HotChocolate)
 
 ## Namespaces

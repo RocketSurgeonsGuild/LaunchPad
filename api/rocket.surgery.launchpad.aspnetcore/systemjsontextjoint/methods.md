@@ -13,7 +13,7 @@ Applies the existing System.Text.Json options to the HTTP JSON options, which Mi
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/AspNetCore/Joints/SystemJsonTextJoint.cs#L38-L50)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5c5630f989568306f7aca9912bb0dcdaeccec9bd/src/AspNetCore/Joints/SystemJsonTextJoint.cs#L38-L50)
 
 Registers the specified context.
 
