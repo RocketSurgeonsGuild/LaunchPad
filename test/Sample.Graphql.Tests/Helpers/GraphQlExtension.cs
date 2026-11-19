@@ -21,7 +21,7 @@ internal class GraphQlExtension : IAlbaExtension
 
     public Task Start(IAlbaHost host) => Task.CompletedTask;
 
-    public IHostBuilder Configure(IHostBuilder builder)
+    public void Configure(IAlbaHostBuilder builder)
     {
         builder.ConfigureServices(
             z => z
@@ -46,8 +46,6 @@ internal class GraphQlExtension : IAlbaExtension
                 s.ConfigureOptions<CO>();
             }
         );
-
-        return builder;
     }
 
     public class CO(TestServer testServer) : PostConfigureOptions<HttpClientFactoryOptions>(Options.DefaultName, null)
