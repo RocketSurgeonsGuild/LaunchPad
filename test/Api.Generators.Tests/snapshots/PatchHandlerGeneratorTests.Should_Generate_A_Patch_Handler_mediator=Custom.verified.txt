@@ -1,6 +1,6 @@
 ﻿{
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Api.Generators.PatchHandlerGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.Api.Patch.PatchHandlerGenerator: []
   }
 }

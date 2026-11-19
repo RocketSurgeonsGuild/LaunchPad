@@ -2,7 +2,6 @@ using Alba;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 namespace Sample.Graphql.Tests.Helpers;
@@ -47,11 +46,11 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
         await dbContext.Database.EnsureCreatedAsync();
     }
 
-    public IHostBuilder Configure(IHostBuilder builder)
+    public void Configure(IAlbaHostBuilder builder)
     {
         builder
            .ConfigureServices(
-                (_, services) =>
+                services =>
                 {
                     services.AddDbContextPool<TDbContext>(
                         z => z
@@ -63,7 +62,5 @@ public sealed class SqliteExtension<TDbContext> : IResettableAlbaExtension where
                     );
                 }
             );
-
-        return builder;
     }
 }

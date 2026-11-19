@@ -4,6 +4,12 @@
         <!-- Test support for this repository only: nothing in here ships to NuGet, and it is a library, not a test project. -->
         <IsPackable>false</IsPackable>
         <IsTestSupportProject>true</IsTestSupportProject>
+        <!--
+            test/Directory.Build.props marks everything under test/ as a test project, but this one is a library: Dovetail exports the joints
+            of a library (FakeTimeJoint and the web fixtures' joints) and only imports them into a test project, so as a test project the
+            joints never reached the test applications.
+        -->
+        <IsTestProject>false</IsTestProject>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
