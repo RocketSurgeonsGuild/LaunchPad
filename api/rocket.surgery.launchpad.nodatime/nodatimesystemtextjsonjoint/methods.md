@@ -13,7 +13,7 @@ A joint that configures `Json.JsonSerializerOptions` with the NodaTime converter
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/NodaTime/Joints/NodaTimeSystemTextJsonJoint.cs#L27-L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/NodaTime/Joints/NodaTimeSystemTextJsonJoint.cs#L27-L37)
 
 Register the Service part.
 

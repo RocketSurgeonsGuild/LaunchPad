@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-beta.416`
+- Version: `2.0.1-beta.417`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/HotChocolate/NestedTypeNameTypeInterceptor.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/HotChocolate/NestedTypeNameTypeInterceptor.cs)
 - Inherits: `TypeInterceptor`
 
 Adds a type interceptor to be aware of nested types and ensure that they get named with the outer type and the inner type combined

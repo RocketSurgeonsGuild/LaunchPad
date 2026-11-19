@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.416`
+- Version: `2.0.1-beta.417`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs)
 - Implements: `IStrongType<Temperature, double>`, `IComparable<Temperature>`, `IConvertible`, `IEquatable<Temperature>`, `IFormattable`, `IParsable<Temperature>`, `ISpanFormattable`, `ISpanParsable<Temperature>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Temperature>`, `IComparisonOperators<Temperature, Temperature, bool>`, `IEqualityOperators<Temperature, Temperature, bool>`
 
 A temperature in degrees Celsius, valid under [TemperatureRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperaturerules.md).

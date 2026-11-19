@@ -92,7 +92,7 @@ public record Money
 - Name: `From(decimal, CurrencyCode)`
 - Modifiers: `static`
 - Returns: [Money](/LaunchPad/api/rocket.surgery.launchpad.primitives/money.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Primitives/StrongTypes/Money.cs#L33)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/Primitives/StrongTypes/Money.cs#L33)
 
 Creates an amount of money.
 
@@ -200,7 +200,7 @@ public record Money
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Primitives/StrongTypes/Money.cs#L49)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/Primitives/StrongTypes/Money.cs#L49)
 
 Returns a string that represents the current object.
 
@@ -226,7 +226,7 @@ public record Money
 - Name: `TryFrom(decimal, CurrencyCode?, Money?)`
 - Modifiers: `static`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Primitives/StrongTypes/Money.cs#L38-L39)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/Primitives/StrongTypes/Money.cs#L38-L39)
 
 Creates an amount of money, or returns `false` without a currency.
 

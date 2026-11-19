@@ -14,7 +14,7 @@ The rules of a country code: an officially assigned ISO 3166-1 alpha-2 code, suc
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Primitives/StrongTypes/CountryCode.cs#L31-L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/Primitives/StrongTypes/CountryCode.cs#L31-L37)
 
 ```csharp
 public sealed class CountryCodeRules

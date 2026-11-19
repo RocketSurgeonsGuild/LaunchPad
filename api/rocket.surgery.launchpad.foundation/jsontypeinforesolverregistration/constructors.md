@@ -13,7 +13,7 @@ A JSON type info resolver, usually a source generated `Serialization.JsonSeriali
 ## JsonTypeInfoResolverRegistration(IJsonTypeInfoResolver, int)
 
 - Name: `Constructor(IJsonTypeInfoResolver, int)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.7c2af63fb1eca0ecbe24e62d859d0132ae74c3a6/src/Foundation/JsonTypeInfoResolverRegistration.cs#L19)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.082a7c7f7334298a4eab1a2bfcbe43171fb91433/src/Foundation/JsonTypeInfoResolverRegistration.cs#L19)
 
 A JSON type info resolver, usually a source generated `Serialization.JsonSerializerContext`, that the `SystemTextJsonJoint` puts in the `JsonSerializerOptions.TypeInfoResolverChain` of every `Json.JsonSerializerOptions` built from the service provider, and through them of the ASP.NET Core HTTP and MVC JSON options.
 
