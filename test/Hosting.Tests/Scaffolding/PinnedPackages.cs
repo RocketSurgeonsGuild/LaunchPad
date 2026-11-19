@@ -25,7 +25,8 @@ internal static partial class PinnedPackages
     ///     The version <c>Directory.Packages.props</c> pins for <paramref name="packageId" /> on <paramref name="targetFramework" />, as a
     ///     <c>PackageVersion</c> or a <c>GlobalPackageReference</c>. An item group without a condition applies to every framework; one
     ///     conditioned on <c>IsTargetFrameworkCompatible('$(TargetFramework)', 'netX.Y')</c>, negated or not, applies where that holds, so a
-    ///     package pinned once per release line resolves to the line of <paramref name="targetFramework" />.
+    ///     package pinned once per release line resolves to the line of <paramref name="targetFramework" />. A package that Rocket.Surgery.Sdk injects
+    ///     is pinned by the <c>RsgSdk_*_Version</c> property that overrides the SDK's own version.
     /// </summary>
     /// <param name="root">The root of the repository.</param>
     /// <param name="packageId">The package id.</param>
@@ -33,6 +34,7 @@ internal static partial class PinnedPackages
     /// <returns>The pinned version.</returns>
     public static string Version(string root, string packageId, string targetFramework)
     {
+        ArgumentNullException.ThrowIfNull(packageId);
         var document = XDocument.Load(Path.Combine(root, "Directory.Packages.props"));
         foreach (var group in document.Root!.Elements("ItemGroup"))
         {
@@ -40,13 +42,20 @@ internal static partial class PinnedPackages
 
             foreach (var item in group.Elements())
             {
-                if (item.Name.LocalName is not ( "PackageVersion" or "GlobalPackageReference" or "SdkPinnedPackage" ) || (string?)item.Attribute("Include") != packageId) continue;
+                if (item.Name.LocalName is not ( "PackageVersion" or "GlobalPackageReference" or "SdkPinnedPackage" ) || (string?)item.Attribute("Include") != packageId)
+                {
+                    continue;
+                }
 
                 return (string?)item.Attribute("Version") ?? item.Element("Version")?.Value ?? throw new InvalidOperationException($"{packageId} has no version");
             }
         }
 
-        throw new InvalidOperationException($"Directory.Packages.props does not pin {packageId} for {targetFramework}");
+        // A package Rocket.Surgery.Sdk injects is pinned through the property it reads its version from: RsgSdk_<id without dots>_Version.
+        var sdkProperty = $"RsgSdk_{packageId.Replace(".", "", StringComparison.Ordinal)}_Version";
+        return document.Root!.Elements("PropertyGroup").Elements(sdkProperty).FirstOrDefault()?.Value is { Length: > 0 } sdkVersion
+            ? sdkVersion
+            : throw new InvalidOperationException($"Directory.Packages.props does not pin {packageId} for {targetFramework}");
     }
 
     private static bool Applies(string? condition, string targetFramework)

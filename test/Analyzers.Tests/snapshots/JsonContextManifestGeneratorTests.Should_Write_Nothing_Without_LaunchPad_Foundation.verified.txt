@@ -1,6 +1,6 @@
 ﻿{
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
-    Rocket.Surgery.LaunchPad.Analyzers.JsonContextManifestGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.Json.JsonContextManifestGenerator: []
   }
 }
