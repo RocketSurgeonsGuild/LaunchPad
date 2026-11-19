@@ -1,0 +1,30 @@
+# FoundationOptions
+
+- Kind: `class`
+- Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/pr-preview/pr-3292/api/rocket.surgery.launchpad.foundation.md)
+- Version: `2.0.1-pr.1245`
+- Namespace: `Rocket.Surgery.LaunchPad.Foundation`
+- Target framework: `net11.0`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3292-merge.Sha.a3b1ee2389c613a51b34add57c7d3d20cf877d5b/src/Foundation/FoundationOptions.cs)
+
+Common foundation options
+
+## Definition
+
+```csharp
+namespace Rocket.Surgery.LaunchPad.Foundation;
+
+public class FoundationOptions
+{
+    // ...
+}
+```
+
+## Constructors
+
+- [FoundationOptions](/LaunchPad/pr-preview/pr-3292/api/rocket.surgery.launchpad.foundation/foundationoptions/constructors.md#constructor)
+
+## Properties
+
+- [RegisterValidationOptionsAsHealthChecks](/LaunchPad/pr-preview/pr-3292/api/rocket.surgery.launchpad.foundation/foundationoptions/properties.md#registervalidationoptionsashealthchecks) : `bool?` `get; set` -- Validation options are registered as health checks instead of throwing and stopping application startup
+- [ValidatorLifetime](/LaunchPad/pr-preview/pr-3292/api/rocket.surgery.launchpad.foundation/foundationoptions/properties.md#validatorlifetime) : `ServiceLifetime` `get; set` -- The Validator lifetime
