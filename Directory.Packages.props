@@ -10,7 +10,7 @@
         <RsgSdk_MicrosoftCodeAnalysisBannedApiAnalyzers_Version>5.6.0</RsgSdk_MicrosoftCodeAnalysisBannedApiAnalyzers_Version>
     </PropertyGroup>
     <ItemGroup>
-        <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.4" />
+        <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.5" />
     </ItemGroup>
     <ItemGroup>
 
@@ -52,7 +52,7 @@
         <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="2.6.1" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
-        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.7.0" />
+        <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.8.0" />
         <PackageVersion Include="HotChocolate" Version="16.7.6" />
 
         <PackageVersion Include="HotChocolate.AspNetCore" Version="16.7.6" />
