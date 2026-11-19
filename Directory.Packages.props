@@ -137,7 +137,7 @@
             with Aspire.AppHost.Sdk at this version next to Rocket.Surgery.LaunchPad.Sdk; the version Joinery.Dovetail.Sdk.Aspire.AppHost
             0.7.1 imports.
         -->
-        <PackageVersion Include="Aspire.AppHost.Sdk" Version="13.6.5" />
+        <PackageVersion Include="Aspire.AppHost.Sdk" Version="17.0.0" />
         <!-- the command line of sample/Sample.Command, the version Joinery.Dovetail.Sdk.Console adds to a console application -->
         <PackageVersion Include="ConsoleAppFramework" Version="5.8.1" />
 
