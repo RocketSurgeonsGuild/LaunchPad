@@ -2,9 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.390`
+- Version: `2.0.1-beta.413`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Percentage.g.cs)
 - Implements: `IStrongType<Percentage, decimal>`, `IComparable<Percentage>`, `IConvertible`, `IEquatable<Percentage>`, `IFormattable`, `IParsable<Percentage>`, `ISpanFormattable`, `ISpanParsable<Percentage>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Percentage>`, `IComparisonOperators<Percentage, Percentage, bool>`, `IEqualityOperators<Percentage, Percentage, bool>`
 
 A percentage from 0 to 100, valid under [PercentageRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/percentagerules.md).

@@ -2,9 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.390`
+- Version: `2.0.1-beta.413`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Vin.g.cs)
 - Implements: `IStrongType<Vin, string>`, `IComparable<Vin>`, `IConvertible`, `IEquatable<Vin>`, `IParsable<Vin>`, `ISpanParsable<Vin>`, `IEqualityOperators<Vin, Vin, bool>`
 
 A vehicle identification number, valid under [VinRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/vinrules.md).

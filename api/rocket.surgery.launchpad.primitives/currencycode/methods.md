@@ -13,6 +13,7 @@ An ISO 4217 currency code, valid under [CurrencyCodeRules](/LaunchPad/api/rocket
 
 - Name: `AsPrimitive`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L54)
 
 ```csharp
 public sealed class CurrencyCode
@@ -31,6 +32,7 @@ public sealed class CurrencyCode
 
 - Name: `CompareTo(CurrencyCode?)`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L148-L153)
 
 ```csharp
 public sealed class CurrencyCode
@@ -54,6 +56,7 @@ public sealed class CurrencyCode
 
 - Name: `Equals(CurrencyCode?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L72)
 
 ```csharp
 public sealed class CurrencyCode
@@ -77,6 +80,7 @@ public sealed class CurrencyCode
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L107)
 
 Determines whether the specified object is equal to the current object.
 
@@ -108,6 +112,7 @@ public sealed class CurrencyCode
 - Name: `From(string)`
 - Modifiers: `static`
 - Returns: [CurrencyCode](/LaunchPad/api/rocket.surgery.launchpad.primitives/currencycode.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L23-L25)
 
 ```csharp
 public sealed class CurrencyCode
@@ -131,6 +136,7 @@ public sealed class CurrencyCode
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L110)
 
 Serves as the default hash function.
 
@@ -156,6 +162,7 @@ public sealed class CurrencyCode
 - Name: `op_Equality(CurrencyCode?, CurrencyCode?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L83-L88)
 
 ```csharp
 public sealed class CurrencyCode
@@ -182,6 +189,7 @@ public sealed class CurrencyCode
 - Name: `op_Inequality(CurrencyCode?, CurrencyCode?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L98)
 
 ```csharp
 public sealed class CurrencyCode
@@ -207,6 +215,7 @@ public sealed class CurrencyCode
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L116)
 
 Returns a string that represents the current object.
 
@@ -232,6 +241,7 @@ public sealed class CurrencyCode
 - Name: `TryFrom(string, CurrencyCode)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_CurrencyCode.g.cs#L37-L44)
 
 ```csharp
 public sealed class CurrencyCode

@@ -13,6 +13,7 @@ The request conflicts with the current state. HTTP 409, gRPC `FailedPrecondition
 ## Conflict(string?)
 
 - Name: `Constructor(string?)`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Problems.cs#L73)
 
 The request conflicts with the current state. HTTP 409, gRPC `FailedPrecondition`, GraphQL `CONFLICT`.
 

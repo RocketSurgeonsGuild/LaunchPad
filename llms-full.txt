@@ -72,7 +72,7 @@ Dovetail’s [host reference](https://rocketsurgeonsguild.github.io/Dovetail/ref
 
 > An integration package adds LaunchPad support for one third-party technology on one surface. The SDK adds them from a project's direct references.
 
-An **integration package** adds LaunchPad support for one third-party technology on one surface. NodaTime has one package for the clock and serialization, `Rocket.Surgery.LaunchPad.NodaTime`, and one for each library it works with: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate`, `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`, `Rocket.Surgery.LaunchPad.NodaTime.EntityFramework` and so on. One technology usually has several.
+An **integration package** adds LaunchPad support for one third-party technology on one surface. NodaTime has one package for the clock and serialization, `Rocket.Surgery.LaunchPad.NodaTime`, and one for each library it works with: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate` and `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`. One technology usually has several.
 
 Each package exports the [Joints](../joints/) for its pair of technologies and depends on both. Nothing in it is optional, so a package is tested, versioned and found like any other. The alternative, one package per technology that ships its integrations as templates, was rejected for that reason (see [ADR 0002](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0002-package-per-integration.md)). The cost is many small packages, which the [LaunchPad SDK](../launchpad-sdk/) chooses for you.
 
@@ -91,7 +91,7 @@ Each package exports the [Joints](../joints/) for its pair of technologies and d
 | `StrawberryShake`               | `.StrawberryShake`                                                                                    |
 | `Grpc.AspNetCore`               | `.Grpc`                                                                                               |
 
-Validation is ZeroAlloc.Validation’s: validate requests in the mediator pipeline, and the ZeroAlloc package of each transport reports the failures in that transport’s error shape (problem details over HTTP, a status over gRPC, GraphQL errors over HotChocolate).
+Validation is ZeroAlloc.Validation’s. With ZeroAlloc.Mediator, its validation behavior checks each request against the request’s rules and throws a `ValidationFailedException`, and the ZeroAlloc package of each transport reports the failures in that transport’s error shape (problem details over HTTP, a status over gRPC, GraphQL errors over HotChocolate). The other mediators have no validation step that LaunchPad hooks into: validate in the handler and return an error case such as `Invalid` or `UnprocessableEntity` (see [union responses](../../guides/api-generators/#union-responses)).
 
 ### NodaTime with HotChocolate and StrawberryShake
 
@@ -1229,13 +1229,13 @@ public async ValueTask<Result> Handle(PatchRequest request, CancellationToken ca
 }
 ```
 
-The generated handle method applies the patch to that request and sends the result through the mediator, so the full request is validated like any other. The handle method’s shape (`Task<T>` or `ValueTask<T>`, the cancellation token) comes from the mediator’s handler interface, and the handler interface is written in your source, so a mediator’s own source generator (Mediator, ZeroAlloc.Mediator) still finds the handler. A profile without a sender (Immediate.Handlers) can’t send the patched request (LPAD1025).
+The generated handle method applies the patch to that request and sends the result through the mediator, so the full request is validated like any other. The handle method’s shape (`Task<T>` or `ValueTask<T>`, the cancellation token) comes from the mediator’s handler interface, and the handler interface is written in your source, so a mediator’s own source generator (Mediator, ZeroAlloc.Mediator) still finds the handler. A profile without a sender (Immediate.Handlers) can’t send the patched request (LPAD1025). Foundatio’s requests have no handler interface, so it has no patch handlers: a handler that declares `GetRequest` there is LPAD1029; write its handle method yourself.
 
 ## Native AOT
 
 [Section titled “Native AOT”](#native-aot)
 
-Generated Minimal API endpoints don’t rely on the Request Delegate Generator (which can’t see generated code): they parse route, query and header values, read the body and write the result through the application’s `JsonTypeInfo`. A native AOT application supplies a `JsonSerializerContext`:
+Generated Minimal API endpoints don’t rely on the Request Delegate Generator (which can’t see generated code): they parse route, query and header values, read the body and write the result through the application’s `JsonTypeInfo`. Types its referenced assemblies declare are in the [generated JSON context](../json-and-native-aot/#the-generated-json-context); for the rest, JIT or native AOT, the application supplies a `JsonSerializerContext`:
 
 ```csharp
 builder.Services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
@@ -1243,7 +1243,7 @@ builder.Services.AddJsonTypeInfoResolver(RocketsJsonContext.Default);
 builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.TypeInfoResolverChain.Insert(0, RocketsJsonContext.Default));
 ```
 
-LaunchPad’s nested `X.Request` types share a simple name, so each `[JsonSerializable]` entry needs its own `TypeInfoPropertyName`; without it, SYSLIB1031 silently skips the type. In a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable` (or `LaunchPadApiRequireJsonContext`), LPAD1030 names each body and response type no context in the project or its references declares, or reaches through its properties and collections. See [JSON and native AOT](../json-and-native-aot/). In an AOT application, `Configure{Operation}` receives an `IEndpointConventionBuilder`, and endpoint filters don’t apply. `test/Api/Aot` publishes such a server with `PublishAot` and checks it with a round trip over HTTP.
+LaunchPad’s nested `X.Request` types share a simple name, so each `[JsonSerializable]` entry needs its own `TypeInfoPropertyName`; without it, SYSLIB1031 silently skips the type. LPAD1030 names each body and response type no context in the project or its references declares, or reaches through its properties and collections, in every project, JIT or native AOT: LaunchPad serializes only through JSON contexts in both. Set `LaunchPadApiRequireJsonContext` to `false` to turn it off. Its code fix writes the missing entries, each with a `TypeInfoPropertyName`, onto the project’s own context, or creates one beside the host when the project has none (chain a created context in yourself). See [JSON and native AOT](../json-and-native-aot/). In an AOT application, `Configure{Operation}` receives an `IEndpointConventionBuilder`, and endpoint filters don’t apply. `test/Api/Aot` publishes such a server with `PublishAot` and checks it with a round trip over HTTP.
 
 ## Diagnostics
 
@@ -1274,7 +1274,8 @@ LaunchPad’s nested `X.Request` types share a simple name, so each `[JsonSerial
 | LPAD1026 | Error    | A patch handler is nested in a type that isn’t `partial`.                                             |
 | LPAD1027 | Error    | A patch handler’s interface doesn’t return `Task<T>` or `ValueTask<T>`.                               |
 | LPAD1028 | Error    | A union has a case besides its value case that has no status: no name rule and no `[ApiError]`.       |
-| LPAD1030 | Warning  | A trimmed or AOT project has a Minimal API body or response type no `JsonSerializerContext` declares. |
+| LPAD1029 | Error    | A patch handler is for a mediator with no handler interface (Foundatio), so its method isn’t written. |
+| LPAD1030 | Warning  | A Minimal API body or response type no `JsonSerializerContext` declares.                              |
 | LPAD1040 | Error    | A proto-first host lists an operation its service base has no rpc for.                                |
 | LPAD1041 | Error    | A proto-first host is in a project that doesn’t reference ZeroAlloc.Mapping.                          |
 | LPAD1042 | Error    | An operation doesn’t fit its rpc: unary to unary, stream to server streaming.                         |
@@ -1528,7 +1529,9 @@ The chain, first to last:
 1. The application’s resolvers (`order` 0, the default), in the order they were added. A resolver added twice is chained once.
 2. LaunchPad’s own resolvers (`JsonTypeInfoResolverRegistration.LibraryOrder`): the primitive and `object` values LaunchPad writes (problem details properties, health check data) and the NodaTime and NetTopologySuite types, which resolve from the converters their packages add.
 
-The first resolver that knows a type wins, so an application can take over any type LaunchPad resolves. LaunchPad adds no reflection based resolver: a type no JSON context knows throws `NotSupportedException`. An application that wants reflection adds `DefaultJsonTypeInfoResolver` to the chain itself, and LaunchPad leaves it there. ASP.NET Core’s own HTTP and MVC JSON options keep the reflection resolver ASP.NET adds to a JIT application; LaunchPad’s resolvers go in front of it.
+The first resolver that knows a type wins, so an application can take over any type LaunchPad resolves. LaunchPad adds no reflection based resolver: a type no JSON context knows throws `NotSupportedException`. An application that wants reflection adds `DefaultJsonTypeInfoResolver` to the chain itself, and LaunchPad leaves it there.
+
+ASP.NET Core puts a reflection based resolver in the HTTP JSON options of a JIT application. `SystemJsonTextJoint` takes it out, so Minimal APIs, problem details, OpenAPI and the generated endpoints fail on a type no JSON context knows during development, the way a native AOT publish would. To keep it, set the MSBuild property `LaunchPadAspNetCoreJsonReflection` to `true` (or the `AppContext` switch `SystemJsonTextJoint.KeepReflectionSwitch` before the host is built). MVC’s JSON options keep the reflection resolver: MVC doesn’t support native AOT, and its model binding and formatters read types no context declares.
 
 ## Types written by a converter
 
@@ -1550,7 +1553,7 @@ Rocket.Surgery.LaunchPad.Foundation ships a generator that registers a camel cas
 
 [Section titled “The API generators”](#the-api-generators)
 
-The generated Minimal API endpoints read and write through the HTTP JSON options. Generators can’t see each other’s output, so they can’t declare a context for you; in a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable`, **LPAD1030** names each body and response type that no context in the project or its references declares. Set `LaunchPadApiRequireJsonContext` to `true` or `false` to turn the check on or off for any project. See [API generators](../api-generators/#native-aot).
+The generated Minimal API endpoints read and write through the HTTP JSON options. Generators can’t see each other’s output, so they can’t declare a context for you; **LPAD1030** names each body and response type that no context in the project or its references declares, in every project, and its code fix adds them to the project’s context (or creates one). Set `LaunchPadApiRequireJsonContext` to `false` to turn the check off. See [API generators](../api-generators/#native-aot).
 
 ## Package compatibility
 

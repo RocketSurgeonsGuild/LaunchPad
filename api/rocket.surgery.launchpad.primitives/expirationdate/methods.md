@@ -13,6 +13,7 @@ The last day something is valid, valid under [ExpirationDateRules](/LaunchPad/ap
 
 - Name: `AsPrimitive`
 - Returns: `DateOnly`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L54)
 
 ```csharp
 public sealed class ExpirationDate
@@ -31,6 +32,7 @@ public sealed class ExpirationDate
 
 - Name: `CompareTo(ExpirationDate?)`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L270-L275)
 
 ```csharp
 public sealed class ExpirationDate
@@ -54,6 +56,7 @@ public sealed class ExpirationDate
 
 - Name: `Equals(ExpirationDate?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L72)
 
 ```csharp
 public sealed class ExpirationDate
@@ -77,6 +80,7 @@ public sealed class ExpirationDate
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L107)
 
 Determines whether the specified object is equal to the current object.
 
@@ -108,6 +112,7 @@ public sealed class ExpirationDate
 - Name: `From(DateOnly)`
 - Modifiers: `static`
 - Returns: [ExpirationDate](/LaunchPad/api/rocket.surgery.launchpad.primitives/expirationdate.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L23-L25)
 
 ```csharp
 public sealed class ExpirationDate
@@ -131,6 +136,7 @@ public sealed class ExpirationDate
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L110)
 
 Serves as the default hash function.
 
@@ -155,6 +161,7 @@ public sealed class ExpirationDate
 
 - Name: `IsExpiredOn(DateOnly)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/StrongTypes/ExpirationDate.cs#L32)
 
 Whether it has expired on `date`: the expiration date is the last valid day, so it expires the day after.
 
@@ -181,6 +188,7 @@ public sealed class ExpirationDate
 - Name: `op_Equality(ExpirationDate?, ExpirationDate?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L83-L88)
 
 ```csharp
 public sealed class ExpirationDate
@@ -207,6 +215,7 @@ public sealed class ExpirationDate
 - Name: `op_Inequality(ExpirationDate?, ExpirationDate?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L98)
 
 ```csharp
 public sealed class ExpirationDate
@@ -233,6 +242,7 @@ public sealed class ExpirationDate
 - Name: `Parse(string, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [ExpirationDate](/LaunchPad/api/rocket.surgery.launchpad.primitives/expirationdate.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs)
 
 ```csharp
 public sealed class ExpirationDate
@@ -258,6 +268,7 @@ public sealed class ExpirationDate
 - Name: `Parse(ReadOnlySpan<char>, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [ExpirationDate](/LaunchPad/api/rocket.surgery.launchpad.primitives/expirationdate.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs)
 
 ```csharp
 public sealed class ExpirationDate
@@ -283,6 +294,7 @@ public sealed class ExpirationDate
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L116)
 
 Returns a string that represents the current object.
 
@@ -306,6 +318,7 @@ public sealed class ExpirationDate
 
 - Name: `ToString(string?, IFormatProvider?)`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L210)
 
 ```csharp
 public sealed class ExpirationDate
@@ -331,6 +344,7 @@ public sealed class ExpirationDate
 
 - Name: `TryFormat(Span<char>, int, ReadOnlySpan<char>, IFormatProvider?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L230)
 
 ```csharp
 public sealed class ExpirationDate
@@ -359,6 +373,7 @@ public sealed class ExpirationDate
 
 - Name: `TryFormat(Span<byte>, int, ReadOnlySpan<char>, IFormatProvider?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L250)
 
 ```csharp
 public sealed class ExpirationDate
@@ -389,6 +404,7 @@ public sealed class ExpirationDate
 - Name: `TryFrom(DateOnly, ExpirationDate)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs#L37-L44)
 
 ```csharp
 public sealed class ExpirationDate
@@ -415,6 +431,7 @@ public sealed class ExpirationDate
 - Name: `TryParse(string?, IFormatProvider?, ExpirationDate)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs)
 
 ```csharp
 public sealed class ExpirationDate
@@ -442,6 +459,7 @@ public sealed class ExpirationDate
 - Name: `TryParse(ReadOnlySpan<char>, IFormatProvider?, ExpirationDate)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_ExpirationDate.g.cs)
 
 ```csharp
 public sealed class ExpirationDate

@@ -13,6 +13,7 @@ An ISBN-10 or ISBN-13, valid under [IsbnRules](/LaunchPad/api/rocket.surgery.lau
 
 - Name: `AsPrimitive`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L54)
 
 ```csharp
 public sealed class Isbn
@@ -31,6 +32,7 @@ public sealed class Isbn
 
 - Name: `CompareTo(Isbn?)`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L148-L153)
 
 ```csharp
 public sealed class Isbn
@@ -54,6 +56,7 @@ public sealed class Isbn
 
 - Name: `Equals(Isbn?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L72)
 
 ```csharp
 public sealed class Isbn
@@ -77,6 +80,7 @@ public sealed class Isbn
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L107)
 
 Determines whether the specified object is equal to the current object.
 
@@ -108,6 +112,7 @@ public sealed class Isbn
 - Name: `From(string)`
 - Modifiers: `static`
 - Returns: [Isbn](/LaunchPad/api/rocket.surgery.launchpad.primitives/isbn.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L23-L25)
 
 ```csharp
 public sealed class Isbn
@@ -131,6 +136,7 @@ public sealed class Isbn
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L110)
 
 Serves as the default hash function.
 
@@ -156,6 +162,7 @@ public sealed class Isbn
 - Name: `op_Equality(Isbn?, Isbn?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L83-L88)
 
 ```csharp
 public sealed class Isbn
@@ -182,6 +189,7 @@ public sealed class Isbn
 - Name: `op_Inequality(Isbn?, Isbn?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L98)
 
 ```csharp
 public sealed class Isbn
@@ -207,6 +215,7 @@ public sealed class Isbn
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L116)
 
 Returns a string that represents the current object.
 
@@ -232,6 +241,7 @@ public sealed class Isbn
 - Name: `TryFrom(string, Isbn)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Isbn.g.cs#L37-L44)
 
 ```csharp
 public sealed class Isbn

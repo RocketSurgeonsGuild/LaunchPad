@@ -14,6 +14,7 @@ A single validation failure.
 - Name: `ErrorCode`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs)
 
 The code of the rule that failed.
 
@@ -28,6 +29,7 @@ public string? ErrorCode { get; init; }
 - Name: `ErrorMessage`
 - Modifiers: `get; init`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs)
 
 Why it failed.
 
@@ -42,6 +44,7 @@ public string ErrorMessage { get; init; }
 - Name: `PropertyName`
 - Modifiers: `get; init`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs)
 
 The property that failed.
 

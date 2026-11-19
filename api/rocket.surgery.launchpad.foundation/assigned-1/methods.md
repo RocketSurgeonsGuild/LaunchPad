@@ -15,6 +15,7 @@ The Assigned type is used to differentiate between not set and set input values.
 - Name: `Empty(T?)`
 - Modifiers: `static`
 - Returns: [Assigned<T>](/LaunchPad/api/rocket.surgery.launchpad.foundation/assigned-1.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L62)
 
 Creates an empty Assigned that provides a default value.
 
@@ -42,6 +43,7 @@ public class Assigned<T>
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L114-L116)
 
 Compares this `Foundation.Assigned`1` value to another value.
 
@@ -71,6 +73,7 @@ public class Assigned<T>
 
 - Name: `Equals(Assigned<T>)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L142-L148)
 
 Compares this `Foundation.Assigned`1` value to another value.
 
@@ -101,6 +104,7 @@ public class Assigned<T>
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L128)
 
 Serves as a hash function for a `Foundation.Assigned`1` object.
 
@@ -126,6 +130,7 @@ public class Assigned<T>
 - Name: `op_Equality(Assigned<T>, Assigned<T>)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L20)
 
 Operator call through to Equals
 
@@ -160,6 +165,7 @@ public class Assigned<T>
 - Name: `op_Implicit(T)`
 - Modifiers: `static`
 - Returns: [Assigned<T>](/LaunchPad/api/rocket.surgery.launchpad.foundation/assigned-1.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L43)
 
 Implicitly creates a new `Foundation.Assigned`1` from the given value.
 
@@ -186,6 +192,7 @@ public class Assigned<T>
 - Name: `op_Implicit(Assigned<T>)`
 - Modifiers: `static` `nullable`
 - Returns: `T?`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L51)
 
 Implicitly gets the Assigned value.
 
@@ -212,6 +219,7 @@ public class Assigned<T>
 - Name: `op_Inequality(Assigned<T>, Assigned<T>)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L33)
 
 Operator call through to Equals
 
@@ -245,6 +253,7 @@ public class Assigned<T>
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/Assigned.cs#L100)
 
 Provides the name string.
 

@@ -2,9 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-beta.390`
+- Version: `2.0.1-beta.413`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Joints`
 - Target framework: `net11.0`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/AspNetCore/Joints/SystemJsonTextJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Applies the existing System.Text.Json options to the HTTP JSON options, which Minimal APIs, problem details and OpenAPI use. Rocket.Surgery.LaunchPad.AspNetCore.Mvc applies them to MVC's JSON options too. Implements the `Joints.IServiceJoint`
@@ -22,6 +23,10 @@ public class SystemJsonTextJoint
 }
 ```
 
+## Remarks
+
+ASP.NET Core puts a reflection based resolver in the HTTP JSON options of a JIT application. This joint takes it out, so a type no JSON context knows fails the same way under JIT as under native AOT (ADR 0007). A reflection resolver the application adds itself stays. An application that wants ASP.NET Core's resolver back sets the MSBuild property `LaunchPadAspNetCoreJsonReflection` to `true`, or the [SystemJsonTextJoint.KeepReflectionSwitch](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/fields.md#keepreflectionswitch) switch with `AppContext.SetSwitch` before the host is built.
+
 ## Constructors
 
 - [SystemJsonTextJoint](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/constructors.md#constructor)
@@ -29,6 +34,10 @@ public class SystemJsonTextJoint
 ## Methods
 
 - [Register(IDovetailContext, IServiceCollection)](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/methods.md#register-idovetailcontext-iservicecollection) -- Registers the specified context.
+
+## Fields
+
+- [KeepReflectionSwitch](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/systemjsontextjoint/fields.md#keepreflectionswitch) : `string` `static` -- The `AppContext` switch that keeps ASP.NET Core's reflection resolver in the HTTP JSON options.
 
 ## See Also
 

@@ -13,6 +13,7 @@ A month of the year, valid under [MonthRules](/LaunchPad/api/rocket.surgery.laun
 
 - Name: `AsPrimitive`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L54)
 
 ```csharp
 public sealed class Month
@@ -31,6 +32,7 @@ public sealed class Month
 
 - Name: `CompareTo(Month?)`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L313-L318)
 
 ```csharp
 public sealed class Month
@@ -54,6 +56,7 @@ public sealed class Month
 
 - Name: `Equals(Month?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L72)
 
 ```csharp
 public sealed class Month
@@ -77,6 +80,7 @@ public sealed class Month
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L107)
 
 Determines whether the specified object is equal to the current object.
 
@@ -108,6 +112,7 @@ public sealed class Month
 - Name: `From(int)`
 - Modifiers: `static`
 - Returns: [Month](/LaunchPad/api/rocket.surgery.launchpad.primitives/month.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L23-L25)
 
 ```csharp
 public sealed class Month
@@ -131,6 +136,7 @@ public sealed class Month
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L110)
 
 Serves as the default hash function.
 
@@ -156,6 +162,7 @@ public sealed class Month
 - Name: `op_Equality(Month?, Month?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L83-L88)
 
 ```csharp
 public sealed class Month
@@ -182,6 +189,7 @@ public sealed class Month
 - Name: `op_GreaterThan(Month, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L372-L375)
 
 ```csharp
 public sealed class Month
@@ -206,6 +214,7 @@ public sealed class Month
 - Name: `op_GreaterThanOrEqual(Month, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L389-L392)
 
 ```csharp
 public sealed class Month
@@ -230,6 +239,7 @@ public sealed class Month
 - Name: `op_Inequality(Month?, Month?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L98)
 
 ```csharp
 public sealed class Month
@@ -256,6 +266,7 @@ public sealed class Month
 - Name: `op_LessThan(Month, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L338-L341)
 
 ```csharp
 public sealed class Month
@@ -280,6 +291,7 @@ public sealed class Month
 - Name: `op_LessThanOrEqual(Month, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L355-L358)
 
 ```csharp
 public sealed class Month
@@ -304,6 +316,7 @@ public sealed class Month
 - Name: `Parse(string, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [Month](/LaunchPad/api/rocket.surgery.launchpad.primitives/month.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs)
 
 ```csharp
 public sealed class Month
@@ -329,6 +342,7 @@ public sealed class Month
 - Name: `Parse(ReadOnlySpan<char>, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [Month](/LaunchPad/api/rocket.surgery.launchpad.primitives/month.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs)
 
 ```csharp
 public sealed class Month
@@ -354,6 +368,7 @@ public sealed class Month
 - Name: `Parse(ReadOnlySpan<byte>, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [Month](/LaunchPad/api/rocket.surgery.launchpad.primitives/month.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L210)
 
 ```csharp
 public sealed class Month
@@ -379,6 +394,7 @@ public sealed class Month
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L116)
 
 Returns a string that represents the current object.
 
@@ -402,6 +418,7 @@ public sealed class Month
 
 - Name: `ToString(string?, IFormatProvider?)`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L253)
 
 ```csharp
 public sealed class Month
@@ -427,6 +444,7 @@ public sealed class Month
 
 - Name: `TryFormat(Span<char>, int, ReadOnlySpan<char>, IFormatProvider?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L273)
 
 ```csharp
 public sealed class Month
@@ -455,6 +473,7 @@ public sealed class Month
 
 - Name: `TryFormat(Span<byte>, int, ReadOnlySpan<char>, IFormatProvider?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L293)
 
 ```csharp
 public sealed class Month
@@ -485,6 +504,7 @@ public sealed class Month
 - Name: `TryFrom(int, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L37-L44)
 
 ```csharp
 public sealed class Month
@@ -511,6 +531,7 @@ public sealed class Month
 - Name: `TryParse(string?, IFormatProvider?, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs)
 
 ```csharp
 public sealed class Month
@@ -538,6 +559,7 @@ public sealed class Month
 - Name: `TryParse(ReadOnlySpan<char>, IFormatProvider?, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs)
 
 ```csharp
 public sealed class Month
@@ -565,6 +587,7 @@ public sealed class Month
 - Name: `TryParse(ReadOnlySpan<byte>, IFormatProvider?, Month)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs#L227-L233)
 
 ```csharp
 public sealed class Month

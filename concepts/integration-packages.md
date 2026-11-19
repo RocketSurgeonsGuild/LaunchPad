@@ -2,8 +2,8 @@
 
 An **integration package** adds LaunchPad support for one third-party technology on one surface. NodaTime has one package for
 the clock and serialization, `Rocket.Surgery.LaunchPad.NodaTime`, and one for each library it works with:
-`Rocket.Surgery.LaunchPad.NodaTime.HotChocolate`, `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`,
-`Rocket.Surgery.LaunchPad.NodaTime.EntityFramework` and so on. One technology usually has several.
+`Rocket.Surgery.LaunchPad.NodaTime.HotChocolate` and `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`. One technology usually
+has several.
 
 Each package exports the [Joints](../joints/) for its pair of technologies and depends on both. Nothing in it is optional, so
 a package is tested, versioned and found like any other. The alternative, one package per technology that ships its integrations
@@ -24,9 +24,11 @@ small packages, which the [LaunchPad SDK](../launchpad-sdk/) chooses for you.
 | `StrawberryShake`               | `.StrawberryShake`                                                                                    |
 | `Grpc.AspNetCore`               | `.Grpc`                                                                                               |
 
-Validation is ZeroAlloc.Validation's: validate requests in the mediator pipeline, and the ZeroAlloc package of each transport
-reports the failures in that transport's error shape (problem details over HTTP, a status over gRPC, GraphQL errors over
-HotChocolate).
+Validation is ZeroAlloc.Validation's. With ZeroAlloc.Mediator, its validation behavior checks each request against the request's
+rules and throws a `ValidationFailedException`, and the ZeroAlloc package of each transport reports the failures in that
+transport's error shape (problem details over HTTP, a status over gRPC, GraphQL errors over HotChocolate). The other mediators
+have no validation step that LaunchPad hooks into: validate in the handler and return an error case such as `Invalid` or
+`UnprocessableEntity` (see [union responses](../../guides/api-generators/#union-responses)).
 
 ### NodaTime with HotChocolate and StrawberryShake
 

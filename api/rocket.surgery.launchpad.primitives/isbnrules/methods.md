@@ -14,6 +14,7 @@ The rules of an ISBN, an international standard book number (ISO 2108): an ISBN-
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/StrongTypes/Isbn.cs#L28-L31)
 
 ```csharp
 public sealed class IsbnRules

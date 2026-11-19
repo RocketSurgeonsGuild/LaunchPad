@@ -13,6 +13,7 @@ A phone number in E.164 form, valid under [PhoneNumberRules](/LaunchPad/api/rock
 
 - Name: `AsPrimitive`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L54)
 
 ```csharp
 public sealed class PhoneNumber
@@ -31,6 +32,7 @@ public sealed class PhoneNumber
 
 - Name: `CompareTo(PhoneNumber?)`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L148-L153)
 
 ```csharp
 public sealed class PhoneNumber
@@ -54,6 +56,7 @@ public sealed class PhoneNumber
 
 - Name: `Equals(PhoneNumber?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L72)
 
 ```csharp
 public sealed class PhoneNumber
@@ -77,6 +80,7 @@ public sealed class PhoneNumber
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L107)
 
 Determines whether the specified object is equal to the current object.
 
@@ -108,6 +112,7 @@ public sealed class PhoneNumber
 - Name: `From(string)`
 - Modifiers: `static`
 - Returns: [PhoneNumber](/LaunchPad/api/rocket.surgery.launchpad.primitives/phonenumber.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L23-L25)
 
 ```csharp
 public sealed class PhoneNumber
@@ -131,6 +136,7 @@ public sealed class PhoneNumber
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L110)
 
 Serves as the default hash function.
 
@@ -156,6 +162,7 @@ public sealed class PhoneNumber
 - Name: `op_Equality(PhoneNumber?, PhoneNumber?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L83-L88)
 
 ```csharp
 public sealed class PhoneNumber
@@ -182,6 +189,7 @@ public sealed class PhoneNumber
 - Name: `op_Inequality(PhoneNumber?, PhoneNumber?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L98)
 
 ```csharp
 public sealed class PhoneNumber
@@ -207,6 +215,7 @@ public sealed class PhoneNumber
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L116)
 
 Returns a string that represents the current object.
 
@@ -232,6 +241,7 @@ public sealed class PhoneNumber
 - Name: `TryFrom(string, PhoneNumber)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_PhoneNumber.g.cs#L37-L44)
 
 ```csharp
 public sealed class PhoneNumber

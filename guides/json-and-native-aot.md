@@ -58,8 +58,13 @@ The chain, first to last:
 
 The first resolver that knows a type wins, so an application can take over any type LaunchPad resolves. LaunchPad adds no reflection based
 resolver: a type no JSON context knows throws `NotSupportedException`. An application that wants reflection adds
-`DefaultJsonTypeInfoResolver` to the chain itself, and LaunchPad leaves it there. ASP.NET Core's own HTTP and MVC JSON options keep the
-reflection resolver ASP.NET adds to a JIT application; LaunchPad's resolvers go in front of it.
+`DefaultJsonTypeInfoResolver` to the chain itself, and LaunchPad leaves it there.
+
+ASP.NET Core puts a reflection based resolver in the HTTP JSON options of a JIT application. `SystemJsonTextJoint` takes it out, so Minimal
+APIs, problem details, OpenAPI and the generated endpoints fail on a type no JSON context knows during development, the way a native AOT
+publish would. To keep it, set the MSBuild property `LaunchPadAspNetCoreJsonReflection` to `true` (or the `AppContext` switch
+`SystemJsonTextJoint.KeepReflectionSwitch` before the host is built). MVC's JSON options keep the reflection resolver: MVC doesn't support
+native AOT, and its model binding and formatters read types no context declares.
 
 ## Types written by a converter
 
@@ -81,9 +86,9 @@ keeps it.
 ## The API generators
 
 The generated Minimal API endpoints read and write through the HTTP JSON options. Generators can't see each other's output, so they can't
-declare a context for you; in a project that sets `PublishAot`, `IsAotCompatible`, `PublishTrimmed` or `IsTrimmable`, **LPAD1030** names each
-body and response type that no context in the project or its references declares. Set `LaunchPadApiRequireJsonContext` to `true` or `false`
-to turn the check on or off for any project. See [API generators](../api-generators/#native-aot).
+declare a context for you; **LPAD1030** names each body and response type that no context in the project or its references declares, in
+every project, and its code fix adds them to the project's context (or creates one). Set `LaunchPadApiRequireJsonContext` to `false` to turn
+the check off. See [API generators](../api-generators/#native-aot).
 
 ## Package compatibility
 

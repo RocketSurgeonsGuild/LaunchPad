@@ -13,6 +13,7 @@ A joint that registers the clock, time provider and time zone provider. Implemen
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/NodaTime/Joints/TimeJoint.cs#L24-L31)
 
 Register the Service part.
 

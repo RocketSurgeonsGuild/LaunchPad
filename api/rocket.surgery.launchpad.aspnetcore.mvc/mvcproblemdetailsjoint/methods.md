@@ -13,6 +13,7 @@ Fills in the title and type of problem details from the client error mapping of 
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/AspNetCore.Mvc/Joints/MvcProblemDetailsJoint.cs#L25-L42)
 
 Register the Service part.
 

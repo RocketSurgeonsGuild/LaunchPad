@@ -13,6 +13,7 @@ A temperature in degrees Celsius, valid under [TemperatureRules](/LaunchPad/api/
 
 - Name: `AsPrimitive`
 - Returns: `double`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L54)
 
 ```csharp
 public sealed class Temperature
@@ -31,6 +32,7 @@ public sealed class Temperature
 
 - Name: `CompareTo(Temperature?)`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L313-L318)
 
 ```csharp
 public sealed class Temperature
@@ -54,6 +56,7 @@ public sealed class Temperature
 
 - Name: `Equals(Temperature?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L72)
 
 ```csharp
 public sealed class Temperature
@@ -77,6 +80,7 @@ public sealed class Temperature
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L107)
 
 Determines whether the specified object is equal to the current object.
 
@@ -108,6 +112,7 @@ public sealed class Temperature
 - Name: `From(double)`
 - Modifiers: `static`
 - Returns: [Temperature](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperature.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L23-L25)
 
 ```csharp
 public sealed class Temperature
@@ -131,6 +136,7 @@ public sealed class Temperature
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L110)
 
 Serves as the default hash function.
 
@@ -156,6 +162,7 @@ public sealed class Temperature
 - Name: `op_Equality(Temperature?, Temperature?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L83-L88)
 
 ```csharp
 public sealed class Temperature
@@ -182,6 +189,7 @@ public sealed class Temperature
 - Name: `op_GreaterThan(Temperature, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L372-L375)
 
 ```csharp
 public sealed class Temperature
@@ -206,6 +214,7 @@ public sealed class Temperature
 - Name: `op_GreaterThanOrEqual(Temperature, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L389-L392)
 
 ```csharp
 public sealed class Temperature
@@ -230,6 +239,7 @@ public sealed class Temperature
 - Name: `op_Inequality(Temperature?, Temperature?)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L98)
 
 ```csharp
 public sealed class Temperature
@@ -256,6 +266,7 @@ public sealed class Temperature
 - Name: `op_LessThan(Temperature, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L338-L341)
 
 ```csharp
 public sealed class Temperature
@@ -280,6 +291,7 @@ public sealed class Temperature
 - Name: `op_LessThanOrEqual(Temperature, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L355-L358)
 
 ```csharp
 public sealed class Temperature
@@ -304,6 +316,7 @@ public sealed class Temperature
 - Name: `Parse(string, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [Temperature](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperature.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs)
 
 ```csharp
 public sealed class Temperature
@@ -329,6 +342,7 @@ public sealed class Temperature
 - Name: `Parse(ReadOnlySpan<char>, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [Temperature](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperature.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs)
 
 ```csharp
 public sealed class Temperature
@@ -354,6 +368,7 @@ public sealed class Temperature
 - Name: `Parse(ReadOnlySpan<byte>, IFormatProvider?)`
 - Modifiers: `static`
 - Returns: [Temperature](/LaunchPad/api/rocket.surgery.launchpad.primitives/temperature.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L210)
 
 ```csharp
 public sealed class Temperature
@@ -379,6 +394,7 @@ public sealed class Temperature
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L116)
 
 Returns a string that represents the current object.
 
@@ -402,6 +418,7 @@ public sealed class Temperature
 
 - Name: `ToString(string?, IFormatProvider?)`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L253)
 
 ```csharp
 public sealed class Temperature
@@ -427,6 +444,7 @@ public sealed class Temperature
 
 - Name: `TryFormat(Span<char>, int, ReadOnlySpan<char>, IFormatProvider?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L273)
 
 ```csharp
 public sealed class Temperature
@@ -455,6 +473,7 @@ public sealed class Temperature
 
 - Name: `TryFormat(Span<byte>, int, ReadOnlySpan<char>, IFormatProvider?)`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L293)
 
 ```csharp
 public sealed class Temperature
@@ -485,6 +504,7 @@ public sealed class Temperature
 - Name: `TryFrom(double, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L37-L44)
 
 ```csharp
 public sealed class Temperature
@@ -511,6 +531,7 @@ public sealed class Temperature
 - Name: `TryParse(string?, IFormatProvider?, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs)
 
 ```csharp
 public sealed class Temperature
@@ -538,6 +559,7 @@ public sealed class Temperature
 - Name: `TryParse(ReadOnlySpan<char>, IFormatProvider?, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs)
 
 ```csharp
 public sealed class Temperature
@@ -565,6 +587,7 @@ public sealed class Temperature
 - Name: `TryParse(ReadOnlySpan<byte>, IFormatProvider?, Temperature)`
 - Modifiers: `static`
 - Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Temperature.g.cs#L227-L233)
 
 ```csharp
 public sealed class Temperature

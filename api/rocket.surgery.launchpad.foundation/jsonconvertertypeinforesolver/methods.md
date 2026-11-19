@@ -13,6 +13,7 @@ Resolves the metadata of value types written by a converter in `JsonSerializerOp
 
 - Name: `Add`
 - Returns: [JsonConverterTypeInfoResolver](/LaunchPad/api/rocket.surgery.launchpad.foundation/jsonconvertertypeinforesolver.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/JsonConverterTypeInfoResolver.cs#L28-L29)
 
 Resolves `T` with the converter for it in the options.
 
@@ -36,6 +37,7 @@ public sealed class JsonConverterTypeInfoResolver
 
 - Name: `AddNullable`
 - Returns: [JsonConverterTypeInfoResolver](/LaunchPad/api/rocket.surgery.launchpad.foundation/jsonconvertertypeinforesolver.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/JsonConverterTypeInfoResolver.cs#L39-L41)
 
 Resolves `T` and `Nullable`1` with the converter for `T` in the options.
 
@@ -61,6 +63,7 @@ public sealed class JsonConverterTypeInfoResolver
 - Name: `GetTypeInfo(Type, JsonSerializerOptions)`
 - Modifiers: `nullable`
 - Returns: `JsonTypeInfo?`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/JsonConverterTypeInfoResolver.cs#L50)
 
 Resolves a `Metadata.JsonTypeInfo` contract for the requested type and options.
 

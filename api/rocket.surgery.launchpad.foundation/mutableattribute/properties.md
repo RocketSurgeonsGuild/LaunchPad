@@ -14,6 +14,7 @@ Creates a new class that is a mutable version of the given class.
 - Name: `Prefix`
 - Modifiers: `get`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/MutableAttribute.cs#L26)
 
 The prefix
 
@@ -28,6 +29,7 @@ public string Prefix { get; }
 - Name: `Suffix`
 - Modifiers: `get`
 - Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5756d1abb55aa6348e0f70f98329f405a8d0c1f6/src/Foundation/MutableAttribute.cs#L31)
 
 The suffix
 
