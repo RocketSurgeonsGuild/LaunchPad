@@ -182,7 +182,7 @@
         <PackageVersion Include="TUnit.Assertions.Should" Version="1.84.0-beta" />
         <PackageVersion Include="Verify.TUnit" Version="33.7.0" />
         <!-- test/Sdk.Tests writes its throwaway projects with it, as Dovetail's SDK tests do -->
-        <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.0" />
+        <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.1" />
         <PackageVersion Include="Verify.NodaTime" Version="2.3.0" />
         <PackageVersion Include="Verify.SystemJson" Version="2.1.0" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />
