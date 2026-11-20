@@ -5,7 +5,7 @@
 - Kind: `Constructors`
 - Members: `1`
 
-Creates a new class that is a mutable version of the given class.
+Generates a mutable view model of the type, a class next to it named `{Prefix}{Name}{Suffix}` ( `RequestViewModel` by default): a settable property for each of the type's properties, `From(value)` to copy a value into it and `ToImmutable()` to make the value from it ( `Foundation.IMutable`1`). The type can be a class, a record, a record struct or a readonly record struct, and the types that contain it must be partial.
 
 <a id="constructor"></a>
 <a id="constructor-string-string"></a>
@@ -13,9 +13,9 @@ Creates a new class that is a mutable version of the given class.
 ## MutableAttribute(string, string)
 
 - Name: `Constructor(string, string)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1ca6bc9d5a3b26adc271cae9e492f3ec9987c52c/src/Foundation/MutableAttribute.cs#L17-L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6f19e0829a4004d537d23cc908a809ddcba9219c/src/Foundation/MutableAttribute.cs#L22-L33)
 
-Create the given mutable object
+Generates a mutable view model of the type, a class next to it named `{Prefix}{Name}{Suffix}` ( `RequestViewModel` by default): a settable property for each of the type's properties, `From(value)` to copy a value into it and `ToImmutable()` to make the value from it ( `Foundation.IMutable`1`). The type can be a class, a record, a record struct or a readonly record struct, and the types that contain it must be partial.
 
 ```csharp
 public sealed class MutableAttribute
@@ -32,4 +32,10 @@ public sealed class MutableAttribute
 ## Parameters
 
 - `prefix` (`string`) `optional`
+  What goes before the type's name in the view model's name.
 - `suffix` (`string`) `optional`
+  What goes after the type's name in the view model's name.
+
+## Remarks
+
+A Blazor `EditForm` binds to the view model, which an immutable request can't be bound to. LaunchPad's `ZeroAllocValidator` validates the view model with the validator of the type it makes.

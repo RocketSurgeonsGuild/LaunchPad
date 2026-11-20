@@ -38,7 +38,6 @@ LaunchPad has an SDK for each SDK Dovetail ships. Each chains its Dovetail count
 | `Microsoft.NET.Sdk.BlazorWebAssembly` | `Joinery.Dovetail.Sdk.BlazorWebAssembly` | `Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly` |
 | `Microsoft.NET.Sdk.WebAssembly`       | `Joinery.Dovetail.Sdk.WebAssembly`       | `Rocket.Surgery.LaunchPad.Sdk.WebAssembly`       |
 | `Microsoft.NET.Sdk.WindowsDesktop`    | `Joinery.Dovetail.Sdk.WindowsDesktop`    | `Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop`    |
-| `Aspire.AppHost.Sdk`                  | `Joinery.Dovetail.Sdk.Aspire.AppHost`    | `Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost`    |
 
 `Rocket.Surgery.LaunchPad.Sdk.Web` and the others below it are **mirrors**: each imports Dovetail's mirror of the Microsoft
 SDK, which imports the Microsoft SDK and chains `Joinery.Dovetail.Sdk`, and then adds LaunchPad. A project whose only SDK is a
@@ -61,15 +60,40 @@ mirror gets exactly what the Microsoft SDK with `<Sdk Name="Rocket.Surgery.Launc
 - **A Razor class library** (`Microsoft.NET.Sdk.Razor`): `Rocket.Surgery.LaunchPad.Sdk.Razor`. Dovetail takes it for an
   ASP.NET Core host, but a class library is not an application, so LaunchPad adds none of its hosting packages; the
   packages that follow from its references (NodaTime, ...) still apply.
-- **An Aspire AppHost** (`Aspire.AppHost.Sdk`): `Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost`. It imports
-  `Aspire.AppHost.Sdk` at the version Dovetail was built against (`DovetailAspireAppHostSdkVersion` picks another). Dovetail
-  takes an AppHost for a generic host, but it starts the application's projects rather than hosting LaunchPad's joints, so
-  LaunchPad adds none of its hosting packages.
+- **An Aspire AppHost**: `Rocket.Surgery.LaunchPad.Sdk`, with the `Aspire.Hosting.AppHost` and `Aspire.Hosting.Dotnet` packages (see
+  [below](#aspire-apphosts)). Dovetail takes an AppHost for a generic host, but it starts the application's projects rather than hosting
+  LaunchPad's joints, so LaunchPad adds none of its hosting packages.
 - **A Windows Forms or WPF project that still names `Microsoft.NET.Sdk.WindowsDesktop`**: `Rocket.Surgery.LaunchPad.Sdk.WindowsDesktop`.
   That SDK is obsolete since .NET 5; a project that has moved to `Microsoft.NET.Sdk` uses `Rocket.Surgery.LaunchPad.Sdk`.
 
 A Razor class library or an AppHost that wants LaunchPad's hosting packages after all sets `LaunchPadEnableHosting` (and, for
 ASP.NET Core, `LaunchPadEnableAspNetCore`) to `true`.
+
+### Aspire AppHosts
+
+There is no Aspire SDK to mirror any more. Since Aspire 17 a C# AppHost is `Microsoft.NET.Sdk` with the `Aspire.Hosting.AppHost` and
+`Aspire.Hosting.Dotnet` packages, and `Aspire.AppHost.Sdk` is obsolete (`ASPIRE012`). So an AppHost swaps `Microsoft.NET.Sdk` for
+`Rocket.Surgery.LaunchPad.Sdk`, like any other project, and keeps its Aspire packages:
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk/1.0.0">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Dotnet" Version="17.0.0" />
+  </ItemGroup>
+</Project>
+```
+
+`Aspire.Hosting.AppHost` sets `IsAspireHost`, which is how LaunchPad knows the project is an AppHost. Add .NET projects as resources with
+`AddDotnetProject`: without `Aspire.AppHost.Sdk`, a project reference no longer generates `Projects.*` metadata. Builds resolve the Aspire
+CLI (`ASPIRE009` when they can't), so install it alongside, at the same version as the packages.
+
+`Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost`, the mirror of `Aspire.AppHost.Sdk`, is no longer published. A project that used it
+switches to `Rocket.Surgery.LaunchPad.Sdk` as above.
 
 ### Native AOT
 
