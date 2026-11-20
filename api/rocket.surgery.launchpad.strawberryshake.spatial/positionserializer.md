@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.StrawberryShake.Spatial](/LaunchPad/api/rocket.surgery.launchpad.strawberryshake.spatial.md)
-- Version: `2.0.1-beta.420`
+- Version: `2.0.1-beta.421`
 - Namespace: `Rocket.Surgery.LaunchPad.StrawberryShake.Spatial`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/StrawberryShake.Spatial/PositionSerializer.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1ca6bc9d5a3b26adc271cae9e492f3ec9987c52c/src/StrawberryShake.Spatial/PositionSerializer.cs)
 - Inherits: `ScalarSerializer<JsonElement, Coordinate>`
 
 Serializes HotChocolate's `Position` scalar, a GeoJSON position ( `[x, y]` or `[x, y, z]`), as a `Geometries.Coordinate`

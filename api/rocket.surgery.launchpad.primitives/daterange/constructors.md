@@ -13,7 +13,7 @@ A range of dates from [DateRange.Start](/LaunchPad/api/rocket.surgery.launchpad.
 ## DateRange(DateOnly, DateOnly)
 
 - Name: `Constructor(DateOnly, DateOnly)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/Primitives/StrongTypes/DateRange.cs#L19-L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1ca6bc9d5a3b26adc271cae9e492f3ec9987c52c/src/Primitives/StrongTypes/DateRange.cs#L19-L24)
 
 Creates a range from `start` to `end`.
 

@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.NodaTime
 
 - Package: `Rocket.Surgery.LaunchPad.NodaTime`
-- Version: `2.0.1-beta.420`
+- Version: `2.0.1-beta.421`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/NodaTime)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.1ca6bc9d5a3b26adc271cae9e492f3ec9987c52c/src/NodaTime)
 - NuGet: [Rocket.Surgery.LaunchPad.NodaTime](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.NodaTime)
 
 ## Namespaces

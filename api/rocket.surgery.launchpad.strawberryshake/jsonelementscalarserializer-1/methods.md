@@ -15,7 +15,7 @@ Base class for JsonElement Scalar Serializers
 - Name: `Parse(JsonElement)`
 - Modifiers: `override`
 - Returns: `TRuntime`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/StrawberryShake/JsonElementScalarSerializer.cs#L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1ca6bc9d5a3b26adc271cae9e492f3ec9987c52c/src/StrawberryShake/JsonElementScalarSerializer.cs#L24)
 
 Parses the serialized value to the runtime representation.
 

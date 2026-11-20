@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.zeroalloc.aspnetcore.md)
-- Version: `2.0.1-beta.420`
+- Version: `2.0.1-beta.421`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Validation`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1ca6bc9d5a3b26adc271cae9e492f3ec9987c52c/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs)
 - Inherits: `ProblemDetails`
 
 The problem details for a request the ZeroAlloc validators rejected, with the failures grouped by property.
