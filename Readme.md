@@ -51,7 +51,7 @@ lists what the SDK adds for each technology.
 | ------------------------------------ | ----------------- | ---------------------------------------------------------------------------------------------- |
 | Rocket.Surgery.LaunchPad.Sdk         | not published yet | MSBuild SDK that chains `Joinery.Dovetail.Sdk` and adds the LaunchPad packages a project needs |
 | Rocket.Surgery.LaunchPad.Sdk.Console | not published yet | The same SDK for ConsoleAppFramework applications                                              |
-| Rocket.Surgery.LaunchPad.Sdk.Web, .Worker, .Razor, .BlazorWebAssembly, .WebAssembly, .WindowsDesktop, .Aspire.AppHost | not published yet | The Microsoft SDK of the same name with LaunchPad: a drop-in replacement for it |
+| Rocket.Surgery.LaunchPad.Sdk.Web, .Worker, .Razor, .BlazorWebAssembly, .WebAssembly, .WindowsDesktop | not published yet | The Microsoft SDK of the same name with LaunchPad: a drop-in replacement for it |
 
 ### Core
 

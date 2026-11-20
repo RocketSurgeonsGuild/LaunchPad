@@ -99,7 +99,6 @@
     <File Path="src/Sdks/Mirror/Rocket.Surgery.LaunchPad.Mirror.props" />
     <Project Path="src/Sdks/LaunchPad/Rocket.Surgery.LaunchPad.Sdk.csproj" />
     <Project Path="src/Sdks/Console/Rocket.Surgery.LaunchPad.Sdk.Console.csproj" />
-    <Project Path="src/Sdks/Aspire.AppHost/Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost.csproj" />
     <Project Path="src/Sdks/BlazorWebAssembly/Rocket.Surgery.LaunchPad.Sdk.BlazorWebAssembly.csproj" />
     <Project Path="src/Sdks/Razor/Rocket.Surgery.LaunchPad.Sdk.Razor.csproj" />
     <Project Path="src/Sdks/Web/Rocket.Surgery.LaunchPad.Sdk.Web.csproj" />

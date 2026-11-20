@@ -12,6 +12,15 @@ branches:
         source-branches:
             - main
             - feature
+    # GitHub's merge queue tests a branch named gh-readonly-queue/main/pr-<number>-<sha>; left to the default label, the whole name goes
+    # into the version and the package paths outgrow NuGet's limit (NU5123).
+    merge-queue:
+        regex: ^gh-readonly-queue/
+        mode: ContinuousDelivery
+        label: queue
+        increment: Inherit
+        source-branches:
+            - main
     next:
         mode: ContinuousDelivery
         regex: ^next$

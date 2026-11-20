@@ -8,6 +8,11 @@
         <PublishAot>true</PublishAot>
         <!-- One IL2104 per dependency that has trim warnings, rather than each of them: the dependencies are listed by assembly. -->
         <TrimmerSingleWarn>true</TrimmerSingleWarn>
+        <!--
+            The trimming and AOT warnings this publish collects are its output, not failures: verify.sh fails on every warning
+            dependency-warnings.txt doesn't list, so the listed ones (NetTopologySuite.IO.GeoJSON4STJ's IL2104/IL3053) stay warnings here.
+        -->
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../../../../src/AspNetCore/Rocket.Surgery.LaunchPad.AspNetCore.csproj" />

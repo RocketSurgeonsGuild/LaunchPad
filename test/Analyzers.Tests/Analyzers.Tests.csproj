@@ -8,6 +8,8 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
+        <!-- the version the analyzer assembly compiles against (MSB3277 otherwise) -->
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
         <ProjectReference Include="..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
         <ProjectReference Include="..\..\src\Foundation.Tasks\Rocket.Surgery.LaunchPad.Foundation.Tasks.csproj" />
         <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />

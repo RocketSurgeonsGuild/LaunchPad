@@ -83,22 +83,20 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
         foreach (var handlerInterface in type.Interfaces)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var kind = profile.Kinds.FirstOrDefault(
-                k => k.Kind != RequestKind.Stream && k.HandlerInterface is { } name && handlerInterface.Is(name)
-            );
+            var kind = HandlerKind(profile, handlerInterface);
             if (kind is null || handlerInterface.TypeArguments.Length == 0) continue;
             if (handlerInterface.TypeArguments[0] is not INamedTypeSymbol patch) continue;
-            var tracking = patch.AllInterfaces.FirstOrDefault(i => SymbolEqualityComparer.Default.Equals(i.OriginalDefinition, propertyTracking));
+            var tracking = FindInterface(patch, propertyTracking);
             if (tracking?.TypeArguments[0] is not INamedTypeSymbol request) continue;
 
-            var handle = handlerInterface.GetMembers(kind.HandleMethod).OfType<IMethodSymbol>().FirstOrDefault();
+            var handle = FirstMethod(handlerInterface, kind.HandleMethod);
             if (handle is null) continue;
             // Already implemented by the application: nothing to write.
             if (type.FindImplementationForInterfaceMember(handle) is { }) continue;
 
             var location = LocationInfo.From(type);
             var diagnostics = new List<DiagnosticInfo>();
-            var nonPartial = Containers(type).FirstOrDefault(c => !IsPartial(c));
+            var nonPartial = FirstNonPartial(type);
             if (nonPartial is { })
             {
                 diagnostics.Add(DiagnosticInfo.Create(ApiDiagnostics.PatchHandlerNotPartial, location, type.Name, nonPartial.Name));
@@ -123,7 +121,7 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
 
             yield return new(
                 type.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
-                Containers(type).Reverse().Select(Declaration).ToEquatableArray(),
+                Declarations(type),
                 type.MetadataName(),
                 handlerInterface.FullyQualified(),
                 handle.Name,
@@ -222,12 +220,71 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
         return member?.Name;
     }
 
-    private static IEnumerable<INamedTypeSymbol> Containers(INamedTypeSymbol type)
+    // The kind of request a handler interface handles, when the profile knows it (and it isn't a stream).
+    private static RequestKindModel? HandlerKind(ProfileModel profile, INamedTypeSymbol handlerInterface)
+    {
+        foreach (var kind in profile.Kinds)
+        {
+            if (kind.Kind != RequestKind.Stream && kind.HandlerInterface is { } name && handlerInterface.Is(name))
+            {
+                return kind;
+            }
+        }
+
+        return null;
+    }
+
+    private static IMethodSymbol? FirstMethod(INamedTypeSymbol type, string name)
+    {
+        foreach (var member in type.GetMembers(name))
+        {
+            if (member is IMethodSymbol method)
+            {
+                return method;
+            }
+        }
+
+        return null;
+    }
+
+    private static INamedTypeSymbol? FindInterface(INamedTypeSymbol type, INamedTypeSymbol definition)
+    {
+        foreach (var candidate in type.AllInterfaces)
+        {
+            if (SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, definition))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    // The type or a type that contains it, innermost first, that isn't partial.
+    private static INamedTypeSymbol? FirstNonPartial(INamedTypeSymbol type)
     {
         for (var current = type; current is { }; current = current.ContainingType)
         {
-            yield return current;
+            if (!IsPartial(current))
+            {
+                return current;
+            }
         }
+
+        return null;
+    }
+
+    // The declarations of the types that contain the type, outermost first, ending with the type itself.
+    private static EquatableArray<string> Declarations(INamedTypeSymbol type)
+    {
+        var declarations = new List<string>();
+        for (var current = type; current is { }; current = current.ContainingType)
+        {
+            declarations.Add(Declaration(current));
+        }
+
+        declarations.Reverse();
+        return declarations.ToEquatableArray();
     }
 
     private static bool IsPartial(INamedTypeSymbol type) =>
@@ -270,13 +327,15 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
         if (handler.Namespace is { } ns) sb.Append("namespace ").Append(ns).AppendLine(";");
         sb.AppendLine();
 
-        var indent = "";
+        var depth = 0;
         foreach (var container in handler.Containers)
         {
-            sb.Append(indent).AppendLine(container);
-            sb.Append(indent).AppendLine("{");
-            indent += "    ";
+            sb.Append(' ', depth * 4).AppendLine(container);
+            sb.Append(' ', depth * 4).AppendLine("{");
+            depth++;
         }
+
+        var indent = new string(' ', depth * 4);
 
         var cancellationToken = handler.Parameters.FirstOrDefault(p => p.IsCancellationToken)?.Name;
         var patch = handler.Parameters.First().Name;
@@ -327,10 +386,9 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
           .AppendLine(").ConfigureAwait(false);");
         sb.Append(indent).AppendLine("}");
 
-        foreach (var _ in handler.Containers)
+        for (depth--; depth >= 0; depth--)
         {
-            indent = indent[4..];
-            sb.Append(indent).AppendLine("}");
+            sb.Append(' ', depth * 4).AppendLine("}");
         }
 
         return sb.ToString();

@@ -107,9 +107,28 @@ public sealed class StrongTypeRegistryGenerator : IIncrementalGenerator
         foreach (var assembly in compilation.SourceModule.ReferencedAssemblySymbols)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (assembly.Name != library && !assembly.Modules.Any(module => module.ReferencedAssemblies.Any(z => z.Name == library))) continue;
+            if (assembly.Name != library && !References(assembly, library))
+            {
+                continue;
+            }
             foreach (var type in Types(assembly.GlobalNamespace, cancellationToken)) yield return type;
         }
+    }
+
+    private static bool References(IAssemblySymbol assembly, string library)
+    {
+        foreach (var module in assembly.Modules)
+        {
+            foreach (var reference in module.ReferencedAssemblies)
+            {
+                if (reference.Name == library)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static IEnumerable<INamedTypeSymbol> Types(INamespaceOrTypeSymbol container, CancellationToken cancellationToken)

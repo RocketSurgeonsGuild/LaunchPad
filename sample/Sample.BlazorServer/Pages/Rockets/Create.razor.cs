@@ -8,7 +8,7 @@ namespace Sample.BlazorServer.Pages.Rockets;
 
 public partial class Create : ComponentBase
 {
-    public CreateRocket.Request Model { get; set; } = new();
+    public CreateRocket.RequestViewModel Model { get; set; } = new();
 
     public Problem? Problem { get; private set; }
 
@@ -18,7 +18,7 @@ public partial class Create : ComponentBase
 
     public async Task Save()
     {
-        if (!( await Mediator.Send(Model) ).Value.TryGetValue<CreateRocket.Response>(out _, out var problem))
+        if (!( await Mediator.Send(Model.ToImmutable()) ).Value.TryGetValue<CreateRocket.Response>(out _, out var problem))
         {
             Problem = problem;
             return;

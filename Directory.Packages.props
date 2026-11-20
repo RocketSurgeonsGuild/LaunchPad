@@ -36,7 +36,6 @@
 
         <PackageVersion Include="Serilog.Sinks.Trace" Version="4.0.0" />
         <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="11.0.1" />
-        <PackageVersion Include="Verify.DiffPlex" Version="3.4.0" />
 
 
         <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="11.0.0" />
@@ -72,6 +71,8 @@
 
         <PackageVersion Include="StrawberryShake.Core" Version="16.7.6" />
         <PackageVersion Include="StrawberryShake.Server" Version="16.7.6" />
+        <!-- StrawberryShake.Transport.Http 16.7.6 depends on Microsoft.AspNetCore.WebUtilities 11.0.0-rc.1, which has a known vulnerability (NU1903, GHSA-x33c-w48q-qrgc): the client lifts it to the release. -->
+        <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="11.0.0" />
 
 
         <!-- Mediators the API generators support; used by their tests and samples. -->
@@ -101,6 +102,11 @@
         <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="5.12.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="5.12.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.12.0" />
+        <!--
+            The version Microsoft.CodeAnalysis.Workspaces.Common 5.12.0 depends on for netstandard2.0, which LaunchPad's analyzer assembly compiles
+            against. The tests that reference that assembly take it too, or Foundatio.Mediator.Abstractions' older one wins (MSB3277).
+        -->
+        <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.15" />
         <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
         <PackageVersion Include="NetTopologySuite.Features" Version="2.2.0" />
 
@@ -131,13 +137,6 @@
         <PackageVersion Include="Joinery.Dovetail.Sdk.BlazorWebAssembly" Version="0.8.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.WebAssembly" Version="0.8.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.WindowsDesktop" Version="0.8.0" />
-        <PackageVersion Include="Joinery.Dovetail.Sdk.Aspire.AppHost" Version="0.8.0" />
-        <!--
-            No project references it either: an MSBuild SDK from NuGet. test/Sdk.Tests compares Rocket.Surgery.LaunchPad.Sdk.Aspire.AppHost
-            with Aspire.AppHost.Sdk at this version next to Rocket.Surgery.LaunchPad.Sdk; the version Joinery.Dovetail.Sdk.Aspire.AppHost
-            0.7.1 imports.
-        -->
-        <PackageVersion Include="Aspire.AppHost.Sdk" Version="17.0.0" />
         <!-- the command line of sample/Sample.Command, the version Joinery.Dovetail.Sdk.Console adds to a console application -->
         <PackageVersion Include="ConsoleAppFramework" Version="5.8.1" />
 
@@ -180,9 +179,9 @@
         <PackageVersion Include="TUnit.Mocks" Version="1.87.12" />
         <!-- the Should syntax ships as a beta beside each TUnit release -->
         <PackageVersion Include="TUnit.Assertions.Should" Version="1.84.0-beta" />
-        <PackageVersion Include="Verify.TUnit" Version="33.7.0" />
+        <PackageVersion Include="Verify.TUnit" Version="33.7.1" />
         <!-- test/Sdk.Tests writes its throwaway projects with it, as Dovetail's SDK tests do -->
-        <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.0" />
+        <PackageVersion Include="MSBuild.ProjectCreation" Version="20.0.1" />
         <PackageVersion Include="Verify.NodaTime" Version="2.3.0" />
         <PackageVersion Include="Verify.SystemJson" Version="2.1.0" />
         <PackageVersion Include="Verify.NewtonsoftJson" Version="1.1.0" />
@@ -213,7 +212,5 @@
         <PackageVersion Include="Microsoft.Extensions.Logging" Version="11.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Options" Version="11.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="11.0.0" />
-        <PackageVersion Include="System.Net.Http.Json" Version="11.0.0" />
-        <PackageVersion Include="System.Text.Json" Version="11.0.0" />
     </ItemGroup>
 </Project>

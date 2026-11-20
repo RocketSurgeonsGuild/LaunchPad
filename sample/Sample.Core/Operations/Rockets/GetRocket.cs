@@ -1,4 +1,6 @@
 
+using System.Text.Json.Serialization;
+
 using Riok.Mapperly.Abstractions;
 
 using Rocket.Surgery.LaunchPad.Foundation;
@@ -21,7 +23,7 @@ public static partial class GetRocket
     /// </summary>
     /// <param name="Id">The id of the rocket</param>
     [Validate]
-    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
+    public readonly record struct Request([property: JsonRequired, Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
     {
         internal bool IsAssigned(RocketId id) => id != default;
     }

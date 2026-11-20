@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <!-- The SDK this one mirrors, and Dovetail's mirror of it, which it chains: src/Sdks/Directory.Build.targets packs it from them. -->
-        <LaunchPadMicrosoftSdk>Aspire.AppHost.Sdk</LaunchPadMicrosoftSdk>
-        <LaunchPadChainedSdk>Joinery.Dovetail.Sdk.Aspire.AppHost</LaunchPadChainedSdk>
-        <PackageTags>$(PackageTags);aspire;dotnet-aspire;apphost</PackageTags>
-    </PropertyGroup>
-</Project>

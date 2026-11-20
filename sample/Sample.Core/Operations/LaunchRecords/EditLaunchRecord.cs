@@ -1,4 +1,6 @@
 
+using System.Text.Json.Serialization;
+
 using Microsoft.EntityFrameworkCore;
 
 using NodaTime;
@@ -26,7 +28,7 @@ public static partial class EditLaunchRecord
     ///     The launch record update request
     /// </summary>
     [Validate]
-    public partial record Request : IRequest<Result>
+    public readonly partial record struct Request : IRequest<Result>
     {
         /// <summary>
         ///     The launch record to update
@@ -38,13 +40,13 @@ public static partial class EditLaunchRecord
         ///     The updated launch partner
         /// </summary>
         [NotEmpty]
-        public string Partner { get; init; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string Partner { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The updated launch payload
         /// </summary>
         [NotEmpty]
-        public string Payload { get; init; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string Payload { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The updated payload weight
@@ -77,7 +79,8 @@ public static partial class EditLaunchRecord
     ///     The patch request
     /// </summary>
     /// <param name="Id">The rocket id</param>
-    public partial record PatchRequest(LaunchRecordId Id) : IRequest<Result>, IPropertyTracking<Request>;
+    // A struct has a parameterless constructor too, so JsonRequired keeps the id required, as a class's constructor did
+    public readonly partial record struct PatchRequest([property: JsonRequired] LaunchRecordId Id) : IRequest<Result>, IPropertyTracking<Request>;
 
     /// <summary>What the operation answers: the updated launch record, or not found.</summary>
     public readonly union Result(LaunchRecordModel, NotFound);
@@ -108,8 +111,10 @@ public static partial class EditLaunchRecord
             await dbContext.LaunchRecords.Include(z => z.Rocket).FirstOrDefaultAsync(z => z.Id == id, cancellationToken).ConfigureAwait(false);
     }
 
+    // internal, not private: dotnet format runs without the generators, can't see the generated ApplyChanges it feeds, and removes a private
+    // one as unused (IDE0051)
     [MapperIgnoreSource(nameof(LaunchRecord.Rocket))]
-    private static partial Request Map(LaunchRecord model);
+    internal static partial Request Map(LaunchRecord model);
 
     [MapperIgnoreTarget(nameof(LaunchRecord.Rocket))]
     private static partial void Map(Request request, LaunchRecord record);

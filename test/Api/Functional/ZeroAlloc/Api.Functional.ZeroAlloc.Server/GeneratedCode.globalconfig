@@ -1,0 +1,5 @@
+is_global = true
+
+# ZeroAlloc.Mediator's generated mediator returns a handler's nullable response (GetRocketHandler's RocketModel?) as non-nullable. Per-file
+# .editorconfig settings don't reach generated code, so this global one turns CS8603 off for the project.
+dotnet_diagnostic.CS8603.severity = none

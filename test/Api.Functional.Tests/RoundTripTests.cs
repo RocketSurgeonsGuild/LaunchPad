@@ -171,7 +171,7 @@ public class RoundTripTests
         // CreateVersionedRocket is in 1.0 and GetVersionedRocket in 2.0.
         using var created = await http.PostAsync("api/versioned-rockets/rocket?api-version=1.0", new StringContent("""{"name":"Falcon"}""", Encoding.UTF8, "application/json"), cancellationToken);
         created.EnsureSuccessStatusCode();
-        var id = JsonDocument.Parse(await created.Content.ReadAsStringAsync(cancellationToken)).RootElement.GetProperty("id").GetGuid();
+        var id = JsonElement.Parse(await created.Content.ReadAsStringAsync(cancellationToken)).GetProperty("id").GetGuid();
         await ( await http.GetStringAsync($"api/versioned-rockets/{id}/rocket?api-version=2.0", cancellationToken) ).Should().Contain("Falcon");
 
         // GetVersionedRocket isn't in 1.0, 3.0 isn't a version at all, and a request without a version names none: Asp.Versioning answers 400 to each.

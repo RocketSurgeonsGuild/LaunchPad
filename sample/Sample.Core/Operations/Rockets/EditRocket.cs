@@ -29,7 +29,9 @@ public static partial class EditRocket
     ///     The edit operation to update a rocket
     /// </summary>
     [Validate]
-    public record Request : IRequest<Result>
+    // the Blazor form binds to the generated RequestViewModel: a readonly request can't be edited a field at a time
+    [Mutable]
+    public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket id
@@ -43,13 +45,13 @@ public static partial class EditRocket
         [NotEmpty]
         [MinLength(10)]
         [MaxLength(30)]
-        public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string SerialNumber { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The type of the rocket
         /// </summary>
         [IsInEnum]
-        public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public RocketType Type { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         internal bool IsAssigned(RocketId id) => id != default;
     }
@@ -58,7 +60,7 @@ public static partial class EditRocket
     ///     The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting <see cref="Request" /> is validated and
     ///     sent through the mediator.
     /// </summary>
-    public partial record PatchRequest : IRequest<Result>, IPropertyTracking<Request>
+    public readonly partial record struct PatchRequest : IRequest<Result>, IPropertyTracking<Request>
     {
         /// <summary>
         ///     The rocket id

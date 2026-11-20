@@ -21,7 +21,7 @@ public static partial class CreateLaunchRecord
     ///     Create a launch record
     /// </summary>
     [Validate]
-    public record Request : IRequest<Result>
+    public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket to use
@@ -29,36 +29,36 @@ public static partial class CreateLaunchRecord
         // Required for the OpenAPI document; the ZeroAlloc rule checks that it is assigned.
         [Required]
         [Must(nameof(IsAssigned))]
-        public RocketId RocketId { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public RocketId RocketId { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The launch partner
         /// </summary>
         [NotEmpty]
-        public string? Partner { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public string? Partner { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The launch partners payload
         /// </summary>
         [NotEmpty]
-        public string? Payload { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public string? Payload { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The payload weight
         /// </summary>
         [GreaterThanOrEqualTo(0d)]
-        public double PayloadWeightKg { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public double PayloadWeightKg { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The actual launch date
         /// </summary>
-        public OffsetDateTime? ActualLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public OffsetDateTime? ActualLaunchDate { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The intended launch date
         /// </summary>
         [Required]
-        public OffsetDateTime ScheduledLaunchDate { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public OffsetDateTime ScheduledLaunchDate { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         internal bool IsAssigned(RocketId id) => id != default;
     }

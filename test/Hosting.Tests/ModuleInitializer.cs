@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 
 using DiffEngine;
 
-using VerifyTests.DiffPlex;
 
 namespace Hosting.Tests;
 
@@ -12,7 +11,7 @@ internal static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
-        VerifyDiffPlex.Initialize(OutputType.Compact);
+        VerifierSettings.UseTextDiffFormat(TextDiffFormat.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
         // "no templates" is the result several tests are about: keep it in the snapshot instead of leaving the property out

@@ -46,7 +46,7 @@ internal sealed class ZeroAllocValidationInterceptor : Interceptor
 
     internal static RpcException ToRpcException(ValidationFailedException exception)
     {
-        var failures = exception.Error.Failures.ToArray();
+        var failures = exception.Error.Failures;
         var trailers = new Metadata();
         foreach (var failure in failures)
         {

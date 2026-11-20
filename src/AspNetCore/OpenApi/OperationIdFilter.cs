@@ -37,7 +37,10 @@ internal class OperationIdFilter : IOpenApiOperationTransformer
         if (operation.Parameters is null) return Task.CompletedTask;
         foreach (var parameter in operation.Parameters.OfType<OpenApiParameter>())
         {
-            parameter.Name = Camelize(parameter.Name);
+            if (parameter.Name is { } name)
+            {
+                parameter.Name = Camelize(name);
+            }
         }
         return Task.CompletedTask;
     }
