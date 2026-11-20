@@ -14,7 +14,7 @@ Generates a mutable view model of the type, a class next to it named `{Prefix}{N
 - Name: `Prefix`
 - Modifiers: `get`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.bc6e38a474db052319ef3b044454738f3a433de2/src/Foundation/MutableAttribute.cs#L28)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d4b5f5c52aac2c2cd0e8fd565d77879e394d9792/src/Foundation/MutableAttribute.cs#L28)
 
 What goes before the type's name in the view model's name.
 
@@ -29,7 +29,7 @@ public string Prefix { get; }
 - Name: `Suffix`
 - Modifiers: `get`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.bc6e38a474db052319ef3b044454738f3a433de2/src/Foundation/MutableAttribute.cs#L33)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d4b5f5c52aac2c2cd0e8fd565d77879e394d9792/src/Foundation/MutableAttribute.cs#L33)
 
 What goes after the type's name in the view model's name.
 

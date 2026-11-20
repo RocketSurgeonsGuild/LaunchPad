@@ -13,7 +13,7 @@ Turns the `Validation.ValidationFailedException` the ZeroAlloc mediator throws f
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.bc6e38a474db052319ef3b044454738f3a433de2/src/ZeroAlloc.Grpc/Joints/ZeroAllocGrpcJoint.cs#L30)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d4b5f5c52aac2c2cd0e8fd565d77879e394d9792/src/ZeroAlloc.Grpc/Joints/ZeroAllocGrpcJoint.cs#L30)
 
 Register the Service part.
 
