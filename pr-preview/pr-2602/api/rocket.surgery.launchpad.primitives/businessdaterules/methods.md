@@ -14,7 +14,7 @@ The rules of a business date: a day business is done on, such as a value date or
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<DateOnly>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-2602-merge.Sha.022b9cee91d8927e916725e8a1c1717558619950/src/Primitives/StrongTypes/BusinessDate.cs#L20-L25)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-2602-merge.Sha.f387c871fa01cb1c7bfc78f0117912dc30d931f2/src/Primitives/StrongTypes/BusinessDate.cs#L20-L25)
 
 ```csharp
 public sealed class BusinessDateRules

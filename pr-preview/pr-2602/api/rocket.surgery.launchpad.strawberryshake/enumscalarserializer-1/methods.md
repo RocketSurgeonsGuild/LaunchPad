@@ -15,7 +15,7 @@ Base class for enum serializers
 - Name: `Parse(int)`
 - Modifiers: `override`
 - Returns: `TRuntime`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-2602-merge.Sha.022b9cee91d8927e916725e8a1c1717558619950/src/StrawberryShake/EnumScalarSerializer.cs#L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-2602-merge.Sha.f387c871fa01cb1c7bfc78f0117912dc30d931f2/src/StrawberryShake/EnumScalarSerializer.cs#L21)
 
 Parses the serialized value to the runtime representation.
 
