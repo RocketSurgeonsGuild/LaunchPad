@@ -171,9 +171,6 @@
             ]
           }
         },
-        required: [
-          id
-        ],
         type: object
       },
       EditLaunchRecordRequest: {

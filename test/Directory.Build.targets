@@ -12,7 +12,6 @@
         <!-- TUnit's own mocks (source generated) and its Should assertion syntax -->
         <PackageReference Include="TUnit.Mocks" />
         <PackageReference Include="TUnit.Assertions.Should" />
-        <PackageReference Include="Verify.DiffPlex" />
         <PackageReference Include="Verify.NodaTime" />
         <PackageReference Include="Verify.SystemJson" />
         <PackageReference Include="Verify.NewtonsoftJson" />

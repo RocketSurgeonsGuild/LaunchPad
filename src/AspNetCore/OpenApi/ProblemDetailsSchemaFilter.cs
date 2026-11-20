@@ -1,23 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.OpenApi;
 
+/// <summary>
+///     Describes <see cref="ProblemDetails" /> as it goes over the wire: its extensions are written as properties of the problem itself, and
+///     the validation errors are named <c>errors</c>.
+/// </summary>
 internal class ProblemDetailsSchemaFilter : IOpenApiSchemaTransformer
 {
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (true) return Task.CompletedTask;
         if (!typeof(ProblemDetails).IsAssignableFrom(context.JsonTypeInfo.Type)) return Task.CompletedTask;
         schema.AdditionalPropertiesAllowed = true;
-        schema.Properties.Remove(nameof(ProblemDetails.Extensions));
-        schema.Properties.Remove("extensions");
-        if (schema.Properties.TryGetValue("validationErrors", out var v))
+        if (schema.Properties is not { } properties) return Task.CompletedTask;
+        properties.Remove(nameof(ProblemDetails.Extensions));
+        properties.Remove("extensions");
+        if (properties.Remove("validationErrors", out var validationErrors))
         {
-            schema.Properties["errors"] = v;
-            schema.Properties.Remove("validationErrors");
+            properties["errors"] = validationErrors;
         }
+
         return Task.CompletedTask;
     }
 }

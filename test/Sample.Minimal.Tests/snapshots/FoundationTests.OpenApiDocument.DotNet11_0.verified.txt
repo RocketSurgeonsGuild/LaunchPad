@@ -886,9 +886,6 @@
         description: The identifier of the rocket that was created
       },
       EditLaunchRecordPatchRequest: {
-        required: [
-          id
-        ],
         type: object,
         properties: {
           id: {

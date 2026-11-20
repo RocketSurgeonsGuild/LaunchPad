@@ -44,7 +44,7 @@ public class SerilogLoggingPageFilterTests
 
         new SerilogLoggingPageFilter(diagnosticContext).OnPageHandlerSelected(context);
 
-        await collector.TryComplete(out var properties).Should().BeTrue();
+        await collector.TryComplete(out var properties, out _).Should().BeTrue();
         return [.. properties ?? []];
     }
 }

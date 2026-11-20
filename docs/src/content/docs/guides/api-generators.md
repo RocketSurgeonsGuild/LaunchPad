@@ -544,7 +544,7 @@ is generated too. Declare the handler class `partial`, with the mediator's handl
 mediator's sender, and implement `GetRequest`, which loads the current request:
 
 ```csharp
-public partial record PatchRequest : IRequest<RocketModel>, IPropertyTracking<Request>
+public readonly partial record struct PatchRequest : IRequest<RocketModel>, IPropertyTracking<Request>
 {
     public RocketId Id { get; init; }
 }
@@ -575,6 +575,39 @@ like any other. The handle method's shape (`Task<T>` or `ValueTask<T>`, the canc
 interface, and the handler interface is written in your source, so a mediator's own source generator (Mediator, ZeroAlloc.Mediator) still
 finds the handler. A profile without a sender (Immediate.Handlers) can't send the patched request (LPAD1025). Foundatio's requests have
 no handler interface, so it has no patch handlers: a handler that declares `GetRequest` there is LPAD1029; write its handle method yourself.
+
+The patch request and the request it patches can be classes, records, record structs or readonly record structs (ZeroAlloc.Mediator asks
+for `readonly record struct` requests, ZAM003). On a readonly struct the tracking members are `init` only and an unset one, `default`
+included, reads as unassigned; `ApplyChanges` leaves the patch as it is, and `ResetChanges()` returns a reset copy instead of changing it.
+
+## Mutable view models
+
+A form edits its model a field at a time, which a readonly request can't be. `[Mutable]` writes a mutable view model next to the type, a
+class named `{Prefix}{Name}{Suffix}` (`RequestViewModel` by default) with a settable property for each of the type's properties, a
+`From(value)` that copies a value into it and a `ToImmutable()` that makes the value from it, through the type's constructor and its `init`
+or `set` members. The type can be a class, a record, a record struct or a readonly record struct; the types that contain it must be
+`partial` (LPAD0001).
+
+```csharp
+public static partial class CreateRocket
+{
+    [Validate]
+    [Mutable]
+    public readonly record struct Request : IRequest<Result>
+    {
+        [NotEmpty, MinLength(10), MaxLength(30)]
+        public string SerialNumber { get; init; }
+
+        [IsInEnum]
+        public RocketType Type { get; init; }
+    }
+}
+```
+
+A Blazor `EditForm` binds to `CreateRocket.RequestViewModel` and sends `Model.ToImmutable()`. The view model implements `IMutable<T>`,
+and `ZeroAllocValidator` (`Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`) validates an `IMutable` model as the value it makes: the request's
+own rules apply, and the failures go to the view model's properties of the same name. `[Mutable("Editable", "Form")]` names it
+`EditableRequestForm`, and each attribute writes one view model.
 
 ## Native AOT
 

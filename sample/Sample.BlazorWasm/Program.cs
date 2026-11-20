@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
+using Rocket.Surgery.LaunchPad.Foundation;
 using Sample.BlazorWasm;
 
 using ZeroAlloc.Mediator;
@@ -14,18 +15,20 @@ await ( await builder.ConfigureDovetail() ).RunAsync();
 
 namespace Sample.BlazorWasm
 {
-    public static class TestHandler
+    public static partial class TestHandler
     {
         [Validate]
-        public record Request : IRequest<Response>
+        // the form binds to the generated RequestViewModel: a readonly request can't be edited a field at a time
+        [Mutable]
+        public readonly record struct Request : IRequest<Response>
         {
             [NotEmpty]
             [MaxLength(20)]
-            public string FirstName { get; set; } = null!;
+            public string FirstName { get; init; }
 
             [NotEmpty]
             [MaxLength(50)]
-            public string LastName { get; set; } = null!;
+            public string LastName { get; init; }
         }
 
         [Validate]

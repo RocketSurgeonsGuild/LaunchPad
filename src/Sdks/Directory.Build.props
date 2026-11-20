@@ -5,7 +5,7 @@
           - LaunchPad: Rocket.Surgery.LaunchPad.Sdk, which chains Joinery.Dovetail.Sdk. Its Sdk/ folder also holds what every LaunchPad SDK
             shares (Rocket.Surgery.LaunchPad.Sdk.props and the package detection), which the other packages pack too (Directory.Build.targets).
           - Console: Rocket.Surgery.LaunchPad.Sdk.Console, which chains Joinery.Dovetail.Sdk.Console.
-          - Web, Worker, Razor, BlazorWebAssembly, WebAssembly, WindowsDesktop, Aspire.AppHost: Rocket.Surgery.LaunchPad.Sdk.{Name}, each the
+          - Web, Worker, Razor, BlazorWebAssembly, WebAssembly, WindowsDesktop: Rocket.Surgery.LaunchPad.Sdk.{Name}, each the
             Microsoft SDK of the same name with LaunchPad, which chains Joinery.Dovetail.Sdk.{Name} (Dovetail's mirror of that Microsoft SDK)
             and then applies what every LaunchPad SDK applies (Mirror/Rocket.Surgery.LaunchPad.Mirror.props).
         Each project sets LaunchPadChainedSdk, the Dovetail SDK it chains; Directory.Build.targets writes its version into Sdk/Packages.props.

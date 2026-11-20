@@ -21,7 +21,7 @@ public static partial class DeleteRocket
     /// </summary>
     /// <param name="Id">The id of the rocket to remove</param>
     [Validate]
-    public record Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
+    public readonly record struct Request([property: Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
     {
         internal bool IsAssigned(RocketId id) => id != default;
     }

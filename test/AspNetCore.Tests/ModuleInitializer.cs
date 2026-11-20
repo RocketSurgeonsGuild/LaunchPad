@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 
 using DiffEngine;
 
-using VerifyTests.DiffPlex;
 
 namespace AspNetCore.Tests;
 
@@ -13,7 +12,7 @@ public static class ModuleInitializer
     {
         DiffRunner.Disabled = true;
 
-        VerifyDiffPlex.Initialize(OutputType.Compact);
+        VerifierSettings.UseTextDiffFormat(TextDiffFormat.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifySystemJson.Initialize();
         VerifyNewtonsoftJson.Initialize();

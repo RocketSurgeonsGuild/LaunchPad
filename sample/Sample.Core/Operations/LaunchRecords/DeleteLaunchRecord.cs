@@ -21,7 +21,7 @@ public static partial class DeleteLaunchRecord
     /// </summary>
     /// <param name="Id">The id of the record to delete</param>
     [Validate]
-    public record Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
+    public readonly record struct Request([property: Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
     {
         internal bool IsAssigned(LaunchRecordId id) => id != default;
     }

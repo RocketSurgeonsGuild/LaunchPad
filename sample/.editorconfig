@@ -1,4 +1,4 @@
-﻿[*]
+[*]
 #### .NET Coding Conventions ####
 dotnet_diagnostic.CA1019.severity = none
 dotnet_diagnostic.CA1050.severity = none
@@ -10,3 +10,7 @@ dotnet_diagnostic.CA2254.severity = none
 dotnet_diagnostic.CA5394.severity = none
 resharper_virtual_member_call_in_constructor_highlighting = none
 resharper_nullable_warning_suppression_is_used_highlighting = none
+
+# ZeroAlloc.Mediator reports every handler without a parameterless constructor, because the static Mediator.Send can't make it. The samples
+# send through the IMediator their hosts register, which resolves the handlers (and their DbContext) from DI, so the static path never runs.
+dotnet_diagnostic.ZAM008.severity = none

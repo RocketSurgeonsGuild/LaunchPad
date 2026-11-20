@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
@@ -11,17 +13,17 @@ internal static class CreatedLocations
         for (var index = 0; index < hosts.Length; index++)
         {
             var host = hosts[index];
-            if (host.Kind is not ( HostKind.MinimalApi or HostKind.Controller ) || host.Operations.All(o => o.CreatedLocationRequest is null)) continue;
+            if (host.Kind is not ( HostKind.MinimalApi or HostKind.Controller ) || !CreatesAnything(host.Operations)) continue;
 
-            var candidates = new[] { host }.Concat(hosts.Where(h => h != host && h.Kind == host.Kind)).ToArray();
-            var diagnostics = host.Diagnostics.ToList();
-            var operations = host.Operations.ToArray();
-            for (var o = 0; o < operations.Length; o++)
+            var candidates = Candidates(hosts, host);
+            var diagnostics = new List<DiagnosticInfo>(host.Diagnostics);
+            var operations = host.Operations.AsImmutableArray().ToBuilder();
+            for (var o = 0; o < operations.Count; o++)
             {
                 var operation = operations[o];
                 if (operation.CreatedLocationRequest is not { } request) continue;
-                var (Host, Operation) = candidates.SelectMany(h => h.Operations.Where(t => t.RequestType == request && t.Verb == HttpVerb.Get).Select(t => (Host: h, Operation: t))).FirstOrDefault();
-                if (Operation is null)
+                var (Host, Operation) = FindGet(candidates, request);
+                if (Host is null || Operation is null)
                 {
                     diagnostics.Add(
                         DiagnosticInfo.Create(ApiDiagnostics.CreatedLocationInvalid, operation.Location, operation.Name, $"no {host.Kind.Describe()} host exposes {request.Replace("global::", "")} as a GET")
@@ -29,7 +31,19 @@ internal static class CreatedLocations
                     continue;
                 }
 
-                var missing = Operation.RouteTokens.FirstOrDefault(t => operation.ResponseMembers.All(m => !string.Equals(m, t, StringComparison.OrdinalIgnoreCase)));
+                var tokens = ImmutableArray.CreateBuilder<string>(Operation.RouteTokens.Length);
+                string? missing = null;
+                foreach (var token in Operation.RouteTokens)
+                {
+                    if (FindMember(operation.ResponseMembers, token) is not { } member)
+                    {
+                        missing = token;
+                        break;
+                    }
+
+                    tokens.Add(member);
+                }
+
                 if (missing is { })
                 {
                     diagnostics.Add(
@@ -38,17 +52,62 @@ internal static class CreatedLocations
                     continue;
                 }
 
-                var tokens = Operation.RouteTokens.Select(t => operation.ResponseMembers.First(m => string.Equals(m, t, StringComparison.OrdinalIgnoreCase)));
                 operations[o] = operation with
                 {
                     CreatedLocationRoute = RouteText.Join(Host.BaseRoute, Operation.Route),
-                    CreatedLocationTokens = tokens.ToEquatableArray(),
+                    CreatedLocationTokens = new(tokens.ToImmutable()),
                 };
             }
 
-            hosts[index] = host with { Operations = operations.ToEquatableArray(), Diagnostics = diagnostics.ToEquatableArray() };
+            hosts[index] = host with { Operations = new(operations.ToImmutable()), Diagnostics = new([.. diagnostics]) };
         }
 
         return hosts;
+    }
+
+    private static bool CreatesAnything(EquatableArray<OperationModel> operations)
+    {
+        foreach (var operation in operations)
+        {
+            if (operation.CreatedLocationRequest is { }) return true;
+        }
+
+        return false;
+    }
+
+    // The host itself first, then every other host of the same transport, in order.
+    private static List<HostModel> Candidates(HostModel[] hosts, HostModel host)
+    {
+        var candidates = new List<HostModel> { host };
+        foreach (var other in hosts)
+        {
+            if (other != host && other.Kind == host.Kind) candidates.Add(other);
+        }
+
+        return candidates;
+    }
+
+    private static (HostModel? Host, OperationModel? Operation) FindGet(List<HostModel> candidates, string request)
+    {
+        foreach (var candidate in candidates)
+        {
+            foreach (var target in candidate.Operations)
+            {
+                if (target.RequestType == request && target.Verb == HttpVerb.Get) return (candidate, target);
+            }
+        }
+
+        return (null, null);
+    }
+
+    // The response member a route value is read from: the first whose name matches, ignoring case.
+    private static string? FindMember(EquatableArray<string> members, string token)
+    {
+        foreach (var member in members)
+        {
+            if (string.Equals(member, token, StringComparison.OrdinalIgnoreCase)) return member;
+        }
+
+        return null;
     }
 }

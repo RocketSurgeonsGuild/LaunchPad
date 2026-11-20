@@ -23,7 +23,6 @@ public sealed class ZeroAllocValidationErrorFilter : IErrorFilter
 
         var errors = exception
                     .Error.Failures
-                    .ToArray()
                     .Select(
                          failure => error
                                    .WithException(null)

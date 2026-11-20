@@ -8,7 +8,6 @@
         <GraphQLRazorComponents>enable</GraphQLRazorComponents>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Net.Http.Json" />
 
         <PackageReference Include="StrawberryShake.Transport.Http" />
         <PackageReference Include="StrawberryShake.Server" />

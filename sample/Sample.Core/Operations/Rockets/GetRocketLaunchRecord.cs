@@ -17,7 +17,7 @@ namespace Sample.Core.Operations.Rockets;
 public static partial class GetRocketLaunchRecord
 {
     [Validate]
-    public record Request : IRequest<Result>
+    public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
         ///     The rocket id

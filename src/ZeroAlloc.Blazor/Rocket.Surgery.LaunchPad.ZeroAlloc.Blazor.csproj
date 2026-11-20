@@ -12,6 +12,8 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
         <PackageReference Include="ZeroAlloc.Validation" />
+        <!-- IMutable: a view model is validated as the value it makes -->
+        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
     <ItemGroup>
         <!-- A component library: no joints, so none of Dovetail's namespaces. -->

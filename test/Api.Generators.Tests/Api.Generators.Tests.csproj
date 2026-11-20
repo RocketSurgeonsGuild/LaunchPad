@@ -9,6 +9,8 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
+        <!-- the version the analyzer assembly compiles against (MSB3277 otherwise) -->
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
         <PackageReference Include="Verify.SourceGenerators" />
         <!-- Referenced so their assemblies can be handed to test compilations; none of their generators run on this project. -->

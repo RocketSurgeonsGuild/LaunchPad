@@ -25,7 +25,9 @@ public static partial class CreateRocket
     ///     The operation to create a new rocket record
     /// </summary>
     [Validate]
-    public record Request : IRequest<Result>
+    // the Blazor form binds to the generated RequestViewModel: a readonly request can't be edited a field at a time
+    [Mutable]
+    public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
         ///     The serial number of the rocket
@@ -33,13 +35,13 @@ public static partial class CreateRocket
         [NotEmpty]
         [MinLength(10)]
         [MaxLength(30)]
-        public string SerialNumber { get; set; } = null!; // TODO: Make generator that can be used to create a writable view model
+        public string SerialNumber { get; init; } // TODO: Make generator that can be used to create a writable view model
 
         /// <summary>
         ///     The type of rocket
         /// </summary>
         [IsInEnum]
-        public RocketType Type { get; set; } // TODO: Make generator that can be used to create a writable view model
+        public RocketType Type { get; init; } // TODO: Make generator that can be used to create a writable view model
     }
 
     /// <summary>

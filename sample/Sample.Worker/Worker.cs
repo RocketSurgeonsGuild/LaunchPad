@@ -13,7 +13,10 @@ public class BackgroundWorker(ILogger<BackgroundWorker> logger, IServiceScopeFac
             {
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                 var items = await mediator.CreateStream(new ListRockets.Request(null), stoppingToken).ToListAsync(stoppingToken);
-                logger.LogInformation("Items: {@Items}", items);
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation("Items: {@Items}", items);
+                }
             }
 
             await Task.Delay(1000, stoppingToken).ConfigureAwait(false);

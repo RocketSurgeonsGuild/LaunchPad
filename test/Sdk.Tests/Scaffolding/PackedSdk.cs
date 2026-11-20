@@ -43,7 +43,7 @@ internal sealed record PackedSdk(
     ///     The mirrors of the Microsoft SDKs, each <c>Rocket.Surgery.LaunchPad.Sdk.{Name}</c> in <c>src/Sdks/{Name}</c>, which chains
     ///     <c>Joinery.Dovetail.Sdk.{Name}</c>.
     /// </summary>
-    public static readonly IReadOnlyList<string> MirrorNames = ["Web", "Worker", "Razor", "BlazorWebAssembly", "WebAssembly", "WindowsDesktop", "Aspire.AppHost"];
+    public static readonly IReadOnlyList<string> MirrorNames = ["Web", "Worker", "Razor", "BlazorWebAssembly", "WebAssembly", "WindowsDesktop"];
 
     /// <summary>
     ///     The id of the package of a mirror.

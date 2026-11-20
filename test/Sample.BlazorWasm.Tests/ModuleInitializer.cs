@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 
 using DiffEngine;
 
-using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
 namespace Sample.BlazorWasm.Tests;
@@ -13,7 +12,7 @@ public static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
-        VerifyDiffPlex.Initialize(OutputType.Compact);
+        VerifierSettings.UseTextDiffFormat(TextDiffFormat.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
         DerivePathInfo(
