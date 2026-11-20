@@ -1,0 +1,31 @@
+# StrongTypeFormatAttribute
+
+- Kind: `class`
+- Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3305/api/rocket.surgery.launchpad.primitives.md)
+- Version: `2.0.1-pr.1256`
+- Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
+- Target framework: `net11.0`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3305-merge.Sha.f536a04ca4e28fbdc06da7c1e0f968bbeccd9e9a/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Inherits: `Attribute`
+
+The format a strong type's value is written in, as OpenAPI and JSON Schema name it ( `email`, `uri`, `ipv4`, ...), on the strong type or on its rules.
+
+## Definition
+
+```csharp
+namespace Rocket.Surgery.LaunchPad.StrongTypes;
+
+public sealed class StrongTypeFormatAttribute
+    : System.Attribute
+{
+    // ...
+}
+```
+
+## Constructors
+
+- [StrongTypeFormatAttribute(string)](/LaunchPad/pr-preview/pr-3305/api/rocket.surgery.launchpad.primitives/strongtypeformatattribute/constructors.md#constructor-string) -- The format a strong type's value is written in, as OpenAPI and JSON Schema name it ( `email`, `uri`, `ipv4`, ...), on the strong type or on its rules.
+
+## Properties
+
+- [Format](/LaunchPad/pr-preview/pr-3305/api/rocket.surgery.launchpad.primitives/strongtypeformatattribute/properties.md#format) : `string` `get` -- The format.
