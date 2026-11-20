@@ -1,4 +1,6 @@
 
+using System.Text.Json.Serialization;
+
 using Microsoft.EntityFrameworkCore;
 
 using NodaTime;
@@ -77,7 +79,8 @@ public static partial class EditLaunchRecord
     ///     The patch request
     /// </summary>
     /// <param name="Id">The rocket id</param>
-    public readonly partial record struct PatchRequest(LaunchRecordId Id) : IRequest<Result>, IPropertyTracking<Request>;
+    // A struct has a parameterless constructor too, so JsonRequired keeps the id required, as a class's constructor did
+    public readonly partial record struct PatchRequest([property: JsonRequired] LaunchRecordId Id) : IRequest<Result>, IPropertyTracking<Request>;
 
     /// <summary>What the operation answers: the updated launch record, or not found.</summary>
     public readonly union Result(LaunchRecordModel, NotFound);
