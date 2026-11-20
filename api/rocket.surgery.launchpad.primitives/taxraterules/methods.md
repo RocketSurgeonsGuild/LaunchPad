@@ -14,7 +14,7 @@ The rules of a tax rate, as a percentage of the taxed amount.
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<decimal>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5c5630f989568306f7aca9912bb0dcdaeccec9bd/src/Primitives/StrongTypes/TaxRate.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/Primitives/StrongTypes/TaxRate.cs#L14)
 
 ```csharp
 public sealed class TaxRateRules

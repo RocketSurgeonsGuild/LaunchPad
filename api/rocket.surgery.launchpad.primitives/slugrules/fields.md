@@ -14,7 +14,7 @@ The rules of a slug, the readable part of a URL path that names a resource, such
 - Name: `MaxLength`
 - Modifiers: `static` `const`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5c5630f989568306f7aca9912bb0dcdaeccec9bd/src/Primitives/StrongTypes/Slug.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/Primitives/StrongTypes/Slug.cs)
 
 The longest slug allowed.
 

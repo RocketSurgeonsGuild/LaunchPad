@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.418`
+- Version: `2.0.1-beta.420`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5c5630f989568306f7aca9912bb0dcdaeccec9bd/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.84416b61eeb4534ffbcb255bb4d7cc5d6872eac9/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Month.g.cs)
 - Implements: `IStrongType<Month, int>`, `IComparable<Month>`, `IConvertible`, `IEquatable<Month>`, `IFormattable`, `IParsable<Month>`, `ISpanFormattable`, `ISpanParsable<Month>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Month>`, `IComparisonOperators<Month, Month, bool>`, `IEqualityOperators<Month, Month, bool>`
 
 A month of the year, valid under [MonthRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/monthrules.md).
