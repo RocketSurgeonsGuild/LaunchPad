@@ -1,0 +1,261 @@
+# LanguageCode Methods
+
+- Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives.md)
+- Type: [LanguageCode](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md)
+- Kind: `Methods`
+- Members: `10`
+
+A BCP 47 language tag, valid under [LanguageCodeRules](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecoderules.md).
+
+<a id="asprimitive"></a>
+
+## AsPrimitive
+
+- Name: `AsPrimitive`
+- Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L54)
+
+```csharp
+public sealed class LanguageCode
+{
+    public string AsPrimitive()
+    {
+        // ...
+    }
+}
+```
+
+<a id="compareto"></a>
+<a id="compareto-languagecode"></a>
+
+## CompareTo(LanguageCode?)
+
+- Name: `CompareTo(LanguageCode?)`
+- Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L148-L153)
+
+```csharp
+public sealed class LanguageCode
+{
+    public int CompareTo(
+        LanguageCode? other)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `other` ([LanguageCode?](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md))
+
+<a id="equals"></a>
+<a id="equals-languagecode"></a>
+
+## Equals(LanguageCode?)
+
+- Name: `Equals(LanguageCode?)`
+- Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L72)
+
+```csharp
+public sealed class LanguageCode
+{
+    public bool Equals(
+        LanguageCode? other)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `other` ([LanguageCode?](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md))
+
+<a id="equals-object"></a>
+
+## Equals(object?)
+
+- Name: `Equals(object?)`
+- Modifiers: `override`
+- Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L107)
+
+Determines whether the specified object is equal to the current object.
+
+```csharp
+public sealed class LanguageCode
+{
+    public sealed override bool Equals(
+        object? obj)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `obj` (`object?`)
+  The object to compare with the current object.
+
+## Returns
+
+`bool` -- `true` if the specified object is equal to the current object; otherwise, `false`.
+
+<a id="from"></a>
+<a id="from-string"></a>
+
+## From(string)
+
+- Name: `From(string)`
+- Modifiers: `static`
+- Returns: [LanguageCode](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L23-L25)
+
+```csharp
+public sealed class LanguageCode
+{
+    public static LanguageCode From(
+        string value)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `value` (`string`)
+
+<a id="gethashcode"></a>
+
+## GetHashCode
+
+- Name: `GetHashCode`
+- Modifiers: `override`
+- Returns: `int`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L110)
+
+Serves as the default hash function.
+
+```csharp
+public sealed class LanguageCode
+{
+    public override int GetHashCode()
+    {
+        // ...
+    }
+}
+```
+
+## Returns
+
+`int` -- A hash code for the current object.
+
+<a id="op-equality"></a>
+<a id="op-equality-languagecode-languagecode"></a>
+
+## op_Equality(LanguageCode?, LanguageCode?)
+
+- Name: `op_Equality(LanguageCode?, LanguageCode?)`
+- Modifiers: `static`
+- Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L83-L88)
+
+```csharp
+public sealed class LanguageCode
+{
+    public static bool operator ==(
+        LanguageCode? left,
+        LanguageCode? right)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `left` ([LanguageCode?](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md))
+- `right` ([LanguageCode?](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md))
+
+<a id="op-inequality"></a>
+<a id="op-inequality-languagecode-languagecode"></a>
+
+## op_Inequality(LanguageCode?, LanguageCode?)
+
+- Name: `op_Inequality(LanguageCode?, LanguageCode?)`
+- Modifiers: `static`
+- Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L98)
+
+```csharp
+public sealed class LanguageCode
+{
+    public static bool operator !=(
+        LanguageCode? left,
+        LanguageCode? right)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `left` ([LanguageCode?](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md))
+- `right` ([LanguageCode?](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md))
+
+<a id="tostring"></a>
+
+## ToString
+
+- Name: `ToString`
+- Modifiers: `override`
+- Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L116)
+
+Returns a string that represents the current object.
+
+```csharp
+public sealed class LanguageCode
+{
+    public override string ToString()
+    {
+        // ...
+    }
+}
+```
+
+## Returns
+
+`string` -- A string that represents the current object.
+
+<a id="tryfrom"></a>
+<a id="tryfrom-string-languagecode"></a>
+
+## TryFrom(string, LanguageCode)
+
+- Name: `TryFrom(string, LanguageCode)`
+- Modifiers: `static`
+- Returns: `bool`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3291-merge.Sha.13e74febbd2cc111b9b844ce764f2522bbd95912/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_LanguageCode.g.cs#L37-L44)
+
+```csharp
+public sealed class LanguageCode
+{
+    public static bool TryFrom(
+        string value,
+        out LanguageCode result)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `value` (`string`)
+- `result` ([LanguageCode](/LaunchPad/pr-preview/pr-3291/api/rocket.surgery.launchpad.primitives/languagecode.md))
