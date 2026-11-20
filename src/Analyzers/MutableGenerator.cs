@@ -332,7 +332,12 @@ public class MutableGenerator : IIncrementalGenerator
         sb.Append(indent).AppendLine("/// <summary>");
         sb.Append(indent).Append("///     A mutable copy of <see cref=\"").Append(cref).AppendLine("\" />, for a form to bind to.");
         sb.Append(indent).AppendLine("/// </summary>");
-        sb.Append(indent).AppendLine("[global::System.CodeDom.Compiler.GeneratedCode(\"Rocket.Surgery.LaunchPad.Analyzers\", \"1.0.0.0\")]");
+        sb.Append(indent)
+          .Append("[global::System.CodeDom.Compiler.GeneratedCode(\"")
+          .Append(AssemblyInfo.Project.AssemblyName)
+          .Append("\", \"")
+          .Append(AssemblyInfo.Attributes.FileVersion)
+          .AppendLine("\")]");
         sb.Append(indent)
           .Append(model.Accessibility)
           .Append(" partial class ")
