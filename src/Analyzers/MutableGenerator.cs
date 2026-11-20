@@ -34,30 +34,16 @@ public class MutableGenerator : IIncrementalGenerator
 
     private static EquatableArray<MutableModel> Read(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken)
     {
-        if (context.TargetSymbol is not INamedTypeSymbol type) return EquatableArray<MutableModel>.Empty;
+        if (context.TargetSymbol is not INamedTypeSymbol type)
+        {
+            return EquatableArray<MutableModel>.Empty;
+        }
         var compilation = context.SemanticModel.Compilation;
         var nonPartial = FirstNonPartialContainer(type);
         var properties = Properties(type, compilation);
         var constructor = Constructor(type, properties, compilation);
-        var arguments = ImmutableArray.CreateBuilder<string>();
-        if (constructor is { })
-        {
-            foreach (var parameter in constructor.Parameters)
-            {
-                arguments.Add(FindProperty(properties, parameter.Name)!.Name);
-            }
-        }
-
-        var members = ImmutableArray.CreateBuilder<MutableProperty>(properties.Count);
-        foreach (var property in properties)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var inConstructor = arguments.Contains(property.Name);
-            var settable = property.SetMethod is { } setter && compilation.IsSymbolAccessibleWithin(setter, compilation.Assembly);
-            // a property the type can't be made with (no constructor parameter, no setter) can't come back from the view model
-            if (!inConstructor && !settable) continue;
-            members.Add(new(property.Name, property.Type.FullyQualifiedNullable(), inConstructor));
-        }
+        var arguments = ConstructorArguments(constructor, properties);
+        var members = Members(properties, arguments, compilation, cancellationToken);
 
         var models = ImmutableArray.CreateBuilder<MutableModel>();
         foreach (var attribute in context.Attributes)
@@ -72,8 +58,8 @@ public class MutableGenerator : IIncrementalGenerator
                     prefix + type.Name + suffix,
                     type.FullyQualified(),
                     Hint(type),
-                    new(members.ToImmutable()),
-                    new(arguments.ToImmutable()),
+                    members,
+                    arguments,
                     nonPartial?.Name,
                     nonPartial is { } ? LocationInfo.From(nonPartial) : null
                 )
@@ -81,6 +67,47 @@ public class MutableGenerator : IIncrementalGenerator
         }
 
         return new(models.ToImmutable());
+    }
+
+    // The properties the constructor's parameters set, in its order.
+    private static EquatableArray<string> ConstructorArguments(IMethodSymbol? constructor, List<IPropertySymbol> properties)
+    {
+        var arguments = ImmutableArray.CreateBuilder<string>();
+        if (constructor is null)
+        {
+            return EquatableArray<string>.Empty;
+        }
+
+        foreach (var parameter in constructor.Parameters)
+        {
+            arguments.Add(FindProperty(properties, parameter.Name)!.Name);
+        }
+
+        return new(arguments.ToImmutable());
+    }
+
+    // The view model's properties: each property the type can be made with, through its constructor or a setter it can reach. Another one
+    // (no constructor parameter, no setter) couldn't come back from the view model.
+    private static EquatableArray<MutableProperty> Members(
+        List<IPropertySymbol> properties,
+        EquatableArray<string> arguments,
+        Compilation compilation,
+        CancellationToken cancellationToken
+    )
+    {
+        var members = ImmutableArray.CreateBuilder<MutableProperty>(properties.Count);
+        foreach (var property in properties)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var inConstructor = arguments.AsImmutableArray().Contains(property.Name);
+            var settable = property.SetMethod is { } setter && compilation.IsSymbolAccessibleWithin(setter, compilation.Assembly);
+            if (inConstructor || settable)
+            {
+                members.Add(new(property.Name, property.Type.FullyQualifiedNullable(), inConstructor));
+            }
+        }
+
+        return new(members.ToImmutable());
     }
 
     // The public instance properties of the type and its base types, the type's own first; a property a derived type hides is read once.
@@ -91,9 +118,18 @@ public class MutableGenerator : IIncrementalGenerator
         {
             foreach (var member in current.GetMembers())
             {
-                if (member is not IPropertySymbol { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Microsoft.CodeAnalysis.Accessibility.Public, GetMethod: { } } property) continue;
-                if (!compilation.IsSymbolAccessibleWithin(property.GetMethod, compilation.Assembly)) continue;
-                if (FindProperty(properties, property.Name) is { }) continue;
+                if (member is not IPropertySymbol { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Microsoft.CodeAnalysis.Accessibility.Public, GetMethod: { } } property)
+                {
+                    continue;
+                }
+                if (!compilation.IsSymbolAccessibleWithin(property.GetMethod, compilation.Assembly))
+                {
+                    continue;
+                }
+                if (FindProperty(properties, property.Name) is { })
+                {
+                    continue;
+                }
                 properties.Add(property);
             }
         }
@@ -108,8 +144,14 @@ public class MutableGenerator : IIncrementalGenerator
         IMethodSymbol? best = null;
         foreach (var constructor in type.InstanceConstructors)
         {
-            if (!compilation.IsSymbolAccessibleWithin(constructor, compilation.Assembly)) continue;
-            if (best is { } && constructor.Parameters.Length <= best.Parameters.Length) continue;
+            if (!compilation.IsSymbolAccessibleWithin(constructor, compilation.Assembly))
+            {
+                continue;
+            }
+            if (best is { } && constructor.Parameters.Length <= best.Parameters.Length)
+            {
+                continue;
+            }
             var matches = true;
             foreach (var parameter in constructor.Parameters)
             {
@@ -120,7 +162,10 @@ public class MutableGenerator : IIncrementalGenerator
                 }
             }
 
-            if (matches) best = constructor;
+            if (matches)
+            {
+                best = constructor;
+            }
         }
 
         return best;
@@ -130,7 +175,10 @@ public class MutableGenerator : IIncrementalGenerator
     {
         foreach (var property in properties)
         {
-            if (string.Equals(property.Name, name, StringComparison.OrdinalIgnoreCase)) return property;
+            if (string.Equals(property.Name, name, StringComparison.OrdinalIgnoreCase))
+            {
+                return property;
+            }
         }
 
         return null;
@@ -140,7 +188,10 @@ public class MutableGenerator : IIncrementalGenerator
     {
         for (var current = type.ContainingType; current is { }; current = current.ContainingType)
         {
-            if (!IsPartial(current)) return current;
+            if (!IsPartial(current))
+            {
+                return current;
+            }
         }
 
         return null;
@@ -150,10 +201,16 @@ public class MutableGenerator : IIncrementalGenerator
     {
         foreach (var reference in type.DeclaringSyntaxReferences)
         {
-            if (reference.GetSyntax() is not TypeDeclarationSyntax declaration) continue;
+            if (reference.GetSyntax() is not TypeDeclarationSyntax declaration)
+            {
+                continue;
+            }
             foreach (var modifier in declaration.Modifiers)
             {
-                if (modifier.Text == "partial") return true;
+                if (modifier.Text == "partial")
+                {
+                    return true;
+                }
             }
         }
 
@@ -184,14 +241,20 @@ public class MutableGenerator : IIncrementalGenerator
             _ => "class",
         };
         var declaration = new StringBuilder();
-        if (type.IsStatic) declaration.Append("static ");
+        if (type.IsStatic)
+        {
+            declaration.Append("static ");
+        }
         declaration.Append("partial ").Append(keyword).Append(' ').Append(type.Name);
         if (type.TypeParameters.Length > 0)
         {
             declaration.Append('<');
             for (var index = 0; index < type.TypeParameters.Length; index++)
             {
-                if (index > 0) declaration.Append(", ");
+                if (index > 0)
+                {
+                    declaration.Append(", ");
+                }
                 declaration.Append(type.TypeParameters[index].Name);
             }
 
@@ -207,7 +270,10 @@ public class MutableGenerator : IIncrementalGenerator
         var name = new StringBuilder(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)));
         for (var index = 0; index < name.Length; index++)
         {
-            if (!char.IsLetterOrDigit(name[index]) && name[index] != '.' && name[index] != '_') name[index] = '_';
+            if (!char.IsLetterOrDigit(name[index]) && name[index] != '.' && name[index] != '_')
+            {
+                name[index] = '_';
+            }
         }
 
         return name.ToString();
@@ -246,7 +312,10 @@ public class MutableGenerator : IIncrementalGenerator
         sb.AppendLine("#nullable enable");
         // a view model starts empty: its non-nullable properties are set by the form, or by From
         sb.AppendLine("#pragma warning disable CS8618");
-        if (model.Namespace is { } ns) sb.Append("namespace ").Append(ns).AppendLine(";");
+        if (model.Namespace is { } ns)
+        {
+            sb.Append("namespace ").Append(ns).AppendLine(";");
+        }
         sb.AppendLine();
 
         var depth = 0;
@@ -272,7 +341,21 @@ public class MutableGenerator : IIncrementalGenerator
           .Append(target)
           .AppendLine(">");
         sb.Append(indent).AppendLine("{");
+        WriteMembers(sb, model, indent, cref);
+        sb.Append(indent).AppendLine("}");
 
+        for (depth--; depth >= 0; depth--)
+        {
+            sb.Append(' ', depth * 4).AppendLine("}");
+        }
+
+        return sb.ToString();
+    }
+
+    // The view model's properties, From and ToImmutable.
+    private static void WriteMembers(StringBuilder sb, MutableModel model, string indent, string cref)
+    {
+        var target = model.Target;
         foreach (var property in model.Properties)
         {
             sb.Append(indent).Append("    /// <inheritdoc cref=\"").Append(cref).Append('.').Append(property.Name).AppendLine("\" />");
@@ -294,7 +377,15 @@ public class MutableGenerator : IIncrementalGenerator
 
         sb.Append(indent).AppendLine("    };");
         sb.AppendLine();
+        WriteToImmutable(sb, model, indent, cref);
+        sb.AppendLine();
+        sb.Append(indent).AppendLine("    object global::Rocket.Surgery.LaunchPad.Foundation.IMutable.ToImmutable() => ToImmutable();");
+    }
 
+    // ToImmutable: the type's constructor with the properties it takes, then an initializer with the others.
+    private static void WriteToImmutable(StringBuilder sb, MutableModel model, string indent, string cref)
+    {
+        var target = model.Target;
         sb.Append(indent).AppendLine("    /// <summary>");
         sb.Append(indent).Append("    ///     Makes the <see cref=\"").Append(cref).AppendLine("\" /> from the current values.");
         sb.Append(indent).AppendLine("    /// </summary>");
@@ -302,7 +393,10 @@ public class MutableGenerator : IIncrementalGenerator
         sb.Append(indent).Append("    public ").Append(target).Append(" ToImmutable() => new ").Append(target).Append('(');
         for (var index = 0; index < model.ConstructorArguments.Length; index++)
         {
-            if (index > 0) sb.Append(", ");
+            if (index > 0)
+            {
+                sb.Append(", ");
+            }
             sb.Append(model.ConstructorArguments[index]);
         }
 
@@ -316,22 +410,15 @@ public class MutableGenerator : IIncrementalGenerator
             sb.Append(indent).AppendLine("    {");
             foreach (var property in model.Properties)
             {
-                if (property.InConstructor) continue;
+                if (property.InConstructor)
+                {
+                    continue;
+                }
                 sb.Append(indent).Append("        ").Append(property.Name).Append(" = ").Append(property.Name).AppendLine(",");
             }
 
             sb.Append(indent).AppendLine("    };");
         }
-        sb.AppendLine();
-        sb.Append(indent).AppendLine("    object global::Rocket.Surgery.LaunchPad.Foundation.IMutable.ToImmutable() => ToImmutable();");
-        sb.Append(indent).AppendLine("}");
-
-        for (depth--; depth >= 0; depth--)
-        {
-            sb.Append(' ', depth * 4).AppendLine("}");
-        }
-
-        return sb.ToString();
     }
 }
 

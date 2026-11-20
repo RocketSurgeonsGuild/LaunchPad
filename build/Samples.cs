@@ -60,7 +60,10 @@ public sealed class AotPublishModule(SolutionSettings settings) : Module<Immutab
         for (var directory = from; directory is not null; directory = directory.Parent)
         {
             var props = Path.Combine(directory.FullName, "Directory.Build.props");
-            if (File.Exists(Path.Combine(directory.FullName, "LaunchPad.slnx")) && File.Exists(props)) return props;
+            if (File.Exists(Path.Combine(directory.FullName, "LaunchPad.slnx")) && File.Exists(props))
+            {
+                return props;
+            }
         }
 
         return null;

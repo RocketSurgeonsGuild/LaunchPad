@@ -13,7 +13,10 @@ internal static class CreatedLocations
         for (var index = 0; index < hosts.Length; index++)
         {
             var host = hosts[index];
-            if (host.Kind is not ( HostKind.MinimalApi or HostKind.Controller ) || !CreatesAnything(host.Operations)) continue;
+            if (host.Kind is not ( HostKind.MinimalApi or HostKind.Controller ) || !CreatesAnything(host.Operations))
+            {
+                continue;
+            }
 
             var candidates = Candidates(hosts, host);
             var diagnostics = new List<DiagnosticInfo>(host.Diagnostics);
@@ -69,7 +72,10 @@ internal static class CreatedLocations
     {
         foreach (var operation in operations)
         {
-            if (operation.CreatedLocationRequest is { }) return true;
+            if (operation.CreatedLocationRequest is { })
+            {
+                return true;
+            }
         }
 
         return false;
@@ -81,7 +87,10 @@ internal static class CreatedLocations
         var candidates = new List<HostModel> { host };
         foreach (var other in hosts)
         {
-            if (other != host && other.Kind == host.Kind) candidates.Add(other);
+            if (other != host && other.Kind == host.Kind)
+            {
+                candidates.Add(other);
+            }
         }
 
         return candidates;
@@ -93,7 +102,10 @@ internal static class CreatedLocations
         {
             foreach (var target in candidate.Operations)
             {
-                if (target.RequestType == request && target.Verb == HttpVerb.Get) return (candidate, target);
+                if (target.RequestType == request && target.Verb == HttpVerb.Get)
+                {
+                    return (candidate, target);
+                }
             }
         }
 
@@ -105,7 +117,10 @@ internal static class CreatedLocations
     {
         foreach (var member in members)
         {
-            if (string.Equals(member, token, StringComparison.OrdinalIgnoreCase)) return member;
+            if (string.Equals(member, token, StringComparison.OrdinalIgnoreCase))
+            {
+                return member;
+            }
         }
 
         return null;

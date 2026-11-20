@@ -129,8 +129,14 @@ public class ZeroAllocValidatorTests
         public override Validation.ValidationResult Validate(PersonRequest instance)
         {
             var failures = new List<ValidationFailure>();
-            if (instance.Name.Length == 0) failures.Add(new() { PropertyName = nameof(PersonRequest.Name), ErrorMessage = "Name is required" });
-            if (instance.Nickname.Length == 0) failures.Add(new() { PropertyName = nameof(PersonRequest.Nickname), ErrorMessage = "Nickname is required" });
+            if (instance.Name.Length == 0)
+            {
+                failures.Add(new() { PropertyName = nameof(PersonRequest.Name), ErrorMessage = "Name is required" });
+            }
+            if (instance.Nickname.Length == 0)
+            {
+                failures.Add(new() { PropertyName = nameof(PersonRequest.Nickname), ErrorMessage = "Nickname is required" });
+            }
             return new([.. failures]);
         }
     }

@@ -24,8 +24,14 @@ public partial class Edit : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        if (( await Mediator.Send(new GetRocket.Request(Id)) ).Value.TryGetValue<RocketModel>(out var rocket, out var problem)) Model = EditRocket.RequestViewModel.From(EditRocket.MapRequest(rocket));
-        else Problem = problem;
+        if (( await Mediator.Send(new GetRocket.Request(Id)) ).Value.TryGetValue<RocketModel>(out var rocket, out var problem))
+        {
+            Model = EditRocket.RequestViewModel.From(EditRocket.MapRequest(rocket));
+        }
+        else
+        {
+            Problem = problem;
+        }
     }
 
     public async Task Save()

@@ -14,7 +14,10 @@ internal class ProblemDetailsSchemaFilter : IOpenApiSchemaTransformer
     {
         if (!typeof(ProblemDetails).IsAssignableFrom(context.JsonTypeInfo.Type)) return Task.CompletedTask;
         schema.AdditionalPropertiesAllowed = true;
-        if (schema.Properties is not { } properties) return Task.CompletedTask;
+        if (schema.Properties is not { } properties)
+        {
+            return Task.CompletedTask;
+        }
         properties.Remove(nameof(ProblemDetails.Extensions));
         properties.Remove("extensions");
         if (properties.Remove("validationErrors", out var validationErrors))

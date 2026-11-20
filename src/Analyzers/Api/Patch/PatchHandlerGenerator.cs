@@ -225,7 +225,10 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
     {
         foreach (var kind in profile.Kinds)
         {
-            if (kind.Kind != RequestKind.Stream && kind.HandlerInterface is { } name && handlerInterface.Is(name)) return kind;
+            if (kind.Kind != RequestKind.Stream && kind.HandlerInterface is { } name && handlerInterface.Is(name))
+            {
+                return kind;
+            }
         }
 
         return null;
@@ -235,7 +238,10 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
     {
         foreach (var member in type.GetMembers(name))
         {
-            if (member is IMethodSymbol method) return method;
+            if (member is IMethodSymbol method)
+            {
+                return method;
+            }
         }
 
         return null;
@@ -245,7 +251,10 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
     {
         foreach (var candidate in type.AllInterfaces)
         {
-            if (SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, definition)) return candidate;
+            if (SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, definition))
+            {
+                return candidate;
+            }
         }
 
         return null;
@@ -256,7 +265,10 @@ public sealed class PatchHandlerGenerator : IIncrementalGenerator
     {
         for (var current = type; current is { }; current = current.ContainingType)
         {
-            if (!IsPartial(current)) return current;
+            if (!IsPartial(current))
+            {
+                return current;
+            }
         }
 
         return null;
