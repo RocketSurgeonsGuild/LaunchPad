@@ -585,8 +585,8 @@ included, reads as unassigned; `ApplyChanges` leaves the patch as it is, and `Re
 A form edits its model a field at a time, which a readonly request can't be. `[Mutable]` writes a mutable view model next to the type, a
 class named `{Prefix}{Name}{Suffix}` (`RequestViewModel` by default) with a settable property for each of the type's properties, a
 `From(value)` that copies a value into it and a `ToImmutable()` that makes the value from it, through the type's constructor and its `init`
-or `set` members. The type can be a class, a record, a record struct or a readonly record struct; the types that contain it must be
-`partial` (LPAD0001).
+or `set` members, and an implicit conversion each way that does the same. The type can be a class, a record, a record struct or a
+readonly record struct; the types that contain it must be `partial` (LPAD0001).
 
 ```csharp
 public static partial class CreateRocket
@@ -604,7 +604,8 @@ public static partial class CreateRocket
 }
 ```
 
-A Blazor `EditForm` binds to `CreateRocket.RequestViewModel` and sends `Model.ToImmutable()`. The view model implements `IMutable<T>`,
+A Blazor `EditForm` binds to `CreateRocket.RequestViewModel`, assigned from a request (`Model = request;`), and sends
+`Model.ToImmutable()`; a generic method such as `Send` infers the view model's type and doesn't convert it. The view model implements `IMutable<T>`,
 and `ZeroAllocValidator` (`Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`) validates an `IMutable` model as the value it makes: the request's
 own rules apply, and the failures go to the view model's properties of the same name. `[Mutable("Editable", "Form")]` names it
 `EditableRequestForm`, and each attribute writes one view model.

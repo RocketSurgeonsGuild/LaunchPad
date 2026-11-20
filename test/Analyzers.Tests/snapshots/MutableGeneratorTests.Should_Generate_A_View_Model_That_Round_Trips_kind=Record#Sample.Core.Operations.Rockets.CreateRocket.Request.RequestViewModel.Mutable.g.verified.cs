@@ -43,5 +43,17 @@ static partial class CreateRocket
         };
 
         object global::Rocket.Surgery.LaunchPad.Foundation.IMutable.ToImmutable() => ToImmutable();
+
+        /// <summary>
+        ///     Copies a <see cref="Sample.Core.Operations.Rockets.CreateRocket.Request" /> into a new view model.
+        /// </summary>
+        /// <param name="value">The value to copy.</param>
+        public static implicit operator RequestViewModel(global::Sample.Core.Operations.Rockets.CreateRocket.Request value) => From(value);
+
+        /// <summary>
+        ///     Makes the <see cref="Sample.Core.Operations.Rockets.CreateRocket.Request" /> from the view model's current values.
+        /// </summary>
+        /// <param name="viewModel">The view model.</param>
+        public static implicit operator global::Sample.Core.Operations.Rockets.CreateRocket.Request(RequestViewModel viewModel) => viewModel.ToImmutable();
     }
 }

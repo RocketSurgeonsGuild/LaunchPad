@@ -34,4 +34,16 @@ public partial class RocketViewModel : global::Rocket.Surgery.LaunchPad.Foundati
     public global::Sample.Core.Operations.Rockets.Rocket ToImmutable() => new global::Sample.Core.Operations.Rockets.Rocket(Id, SerialNumber);
 
     object global::Rocket.Surgery.LaunchPad.Foundation.IMutable.ToImmutable() => ToImmutable();
+
+    /// <summary>
+    ///     Copies a <see cref="Sample.Core.Operations.Rockets.Rocket" /> into a new view model.
+    /// </summary>
+    /// <param name="value">The value to copy.</param>
+    public static implicit operator RocketViewModel(global::Sample.Core.Operations.Rockets.Rocket value) => From(value);
+
+    /// <summary>
+    ///     Makes the <see cref="Sample.Core.Operations.Rockets.Rocket" /> from the view model's current values.
+    /// </summary>
+    /// <param name="viewModel">The view model.</param>
+    public static implicit operator global::Sample.Core.Operations.Rockets.Rocket(RocketViewModel viewModel) => viewModel.ToImmutable();
 }

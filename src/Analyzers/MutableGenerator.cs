@@ -10,7 +10,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 
 /// <summary>
 ///     Writes the mutable view model of each type marked <c>[Mutable]</c>: a class next to the type with a settable property for each of its
-///     properties, <c>From(value)</c> and <c>ToImmutable()</c>. The type can be a class, a record, a record struct or a readonly record struct.
+///     properties, <c>From(value)</c>, <c>ToImmutable()</c> and an implicit conversion each way. The type can be a class, a record, a record struct or a readonly record struct.
 /// </summary>
 [Generator]
 public class MutableGenerator : IIncrementalGenerator
@@ -357,7 +357,7 @@ public class MutableGenerator : IIncrementalGenerator
         return sb.ToString();
     }
 
-    // The view model's properties, From and ToImmutable.
+    // The view model's properties, From, ToImmutable and the implicit conversions.
     private static void WriteMembers(StringBuilder sb, MutableModel model, string indent, string cref)
     {
         var target = model.Target;
@@ -385,6 +385,25 @@ public class MutableGenerator : IIncrementalGenerator
         WriteToImmutable(sb, model, indent, cref);
         sb.AppendLine();
         sb.Append(indent).AppendLine("    object global::Rocket.Surgery.LaunchPad.Foundation.IMutable.ToImmutable() => ToImmutable();");
+        sb.AppendLine();
+        WriteConversions(sb, model, indent, cref);
+    }
+
+    // The implicit conversions both ways: From and ToImmutable.
+    private static void WriteConversions(StringBuilder sb, MutableModel model, string indent, string cref)
+    {
+        var target = model.Target;
+        sb.Append(indent).AppendLine("    /// <summary>");
+        sb.Append(indent).Append("    ///     Copies a <see cref=\"").Append(cref).AppendLine("\" /> into a new view model.");
+        sb.Append(indent).AppendLine("    /// </summary>");
+        sb.Append(indent).AppendLine("    /// <param name=\"value\">The value to copy.</param>");
+        sb.Append(indent).Append("    public static implicit operator ").Append(model.Name).Append('(').Append(target).AppendLine(" value) => From(value);");
+        sb.AppendLine();
+        sb.Append(indent).AppendLine("    /// <summary>");
+        sb.Append(indent).Append("    ///     Makes the <see cref=\"").Append(cref).AppendLine("\" /> from the view model's current values.");
+        sb.Append(indent).AppendLine("    /// </summary>");
+        sb.Append(indent).AppendLine("    /// <param name=\"viewModel\">The view model.</param>");
+        sb.Append(indent).Append("    public static implicit operator ").Append(target).Append('(').Append(model.Name).AppendLine(" viewModel) => viewModel.ToImmutable();");
     }
 
     // ToImmutable: the type's constructor with the properties it takes, then an initializer with the others.

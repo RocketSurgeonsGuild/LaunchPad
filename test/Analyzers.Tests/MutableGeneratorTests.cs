@@ -60,6 +60,17 @@ public class MutableGeneratorTests() : GeneratorTest()
         await requestType.GetProperty("SerialNumber")!.GetValue(made).Should().BeEqualTo("SN-1");
         await requestType.GetProperty("Type")!.GetValue(made).Should().BeEqualTo(7);
 
+        // The implicit conversions do the same as From and ToImmutable.
+        var conversions = viewModelType.GetMethods().Where(method => method.Name == "op_Implicit").ToArray();
+        var toViewModel = conversions.Single(method => method.ReturnType == viewModelType);
+        var toRequest = conversions.Single(method => method.ReturnType == requestType);
+        var converted = toViewModel.Invoke(null, [made])!;
+        await viewModelType.GetProperty("Type")!.GetValue(converted).Should().BeEqualTo(7);
+        var convertedBack = toRequest.Invoke(null, [converted])!;
+        await requestType.GetProperty("Id")!.GetValue(convertedBack).Should().BeEqualTo(id);
+        await requestType.GetProperty("SerialNumber")!.GetValue(convertedBack).Should().BeEqualTo("SN-1");
+        await requestType.GetProperty("Type")!.GetValue(convertedBack).Should().BeEqualTo(7);
+
         await Verify(result).UseParameters(kind);
     }
 
