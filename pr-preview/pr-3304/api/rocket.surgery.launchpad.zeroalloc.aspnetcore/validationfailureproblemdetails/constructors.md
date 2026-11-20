@@ -12,7 +12,7 @@ The problem details for a request the ZeroAlloc validators rejected, with the fa
 ## ValidationFailureProblemDetails
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3304-merge.Sha.f5fcab654f6da15f98c221dbcb18d835a50e54b3/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs#L39)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3304-merge.Sha.ea4753f3bbfef2a34e4933806cae0d39e6651456/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs#L39)
 
 ```csharp
 public class ValidationFailureProblemDetails
