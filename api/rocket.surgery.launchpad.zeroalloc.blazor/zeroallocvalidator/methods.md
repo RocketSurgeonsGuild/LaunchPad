@@ -12,7 +12,7 @@ Validates the model of the surrounding `Forms.EditForm` with the ZeroAlloc valid
 ## Dispose
 
 - Name: `Dispose`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6f19e0829a4004d537d23cc908a809ddcba9219c/src/ZeroAlloc.Blazor/ZeroAllocValidator.cs#L43)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.bc6e38a474db052319ef3b044454738f3a433de2/src/ZeroAlloc.Blazor/ZeroAllocValidator.cs#L43)
 
 Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 

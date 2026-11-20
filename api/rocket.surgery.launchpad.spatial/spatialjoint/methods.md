@@ -13,7 +13,7 @@ Adds support for spatial types into System.Text.Json
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6f19e0829a4004d537d23cc908a809ddcba9219c/src/Spatial/Joints/SpatialJoint.cs#L24-L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.bc6e38a474db052319ef3b044454738f3a433de2/src/Spatial/Joints/SpatialJoint.cs#L24-L31)
 
 Register the Service part.
 

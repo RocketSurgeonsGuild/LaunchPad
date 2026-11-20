@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-beta.422`
+- Version: `2.0.1-beta.423`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Helpers`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6f19e0829a4004d537d23cc908a809ddcba9219c/src/HotChocolate/Helpers/IntToStructBaseType.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.bc6e38a474db052319ef3b044454738f3a433de2/src/HotChocolate/Helpers/IntToStructBaseType.cs)
 - Inherits: `ScalarType<TRuntimeType, IntValueNode>`
 
 Additional struct types
