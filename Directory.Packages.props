@@ -106,7 +106,7 @@
             The version Microsoft.CodeAnalysis.Workspaces.Common 5.12.0 depends on for netstandard2.0, which LaunchPad's analyzer assembly compiles
             against. The tests that reference that assembly take it too, or Foundatio.Mediator.Abstractions' older one wins (MSB3277).
         -->
-        <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.10" />
+        <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.15" />
         <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
         <PackageVersion Include="NetTopologySuite.Features" Version="2.2.0" />
 
