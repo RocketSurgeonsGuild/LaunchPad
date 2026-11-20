@@ -17,8 +17,8 @@ public class SdkMirrorTests(string targetFramework)
 
     /// <summary>
     ///     A project whose only SDK is a mirror gets what the Microsoft SDK with <c>Rocket.Surgery.LaunchPad.Sdk</c> next to it gets: the same
-    ///     host model and the same packages. It restores and builds. The snapshot shows what that is for each SDK: a Razor class library and
-    ///     an Aspire AppHost are not applications, so they get none of LaunchPad's hosting packages.
+    ///     host model and the same packages. It restores and builds. The snapshot shows what that is for each SDK: a Razor class library is
+    ///     not an application, so it gets none of LaunchPad's hosting packages.
     /// </summary>
     /// <param name="name">The name of the mirror, after <c>Rocket.Surgery.LaunchPad.Sdk.</c>.</param>
     /// <param name="outputType">The output type, when the SDK does not imply it.</param>
@@ -31,8 +31,6 @@ public class SdkMirrorTests(string targetFramework)
     [Arguments("WebAssembly", null)]
     // a plain library: Microsoft.NET.Sdk.WindowsDesktop builds anywhere until the project targets Windows (UseWPF, UseWindowsForms)
     [Arguments("WindowsDesktop", "Library")]
-    // Aspire.AppHost.Sdk comes from NuGet, at the version Joinery.Dovetail.Sdk.Aspire.AppHost was built against
-    [Arguments("Aspire.AppHost", "Exe")]
     public async Task Should_Be_The_Microsoft_Sdk_With_LaunchPad(string name, string? outputType)
     {
         var packages = await PackedSdk.Pack();
@@ -145,10 +143,9 @@ public class SdkMirrorTests(string targetFramework)
     private const string Program = """System.Console.WriteLine("hello");""";
 
     /// <summary>
-    ///     The Microsoft SDK a mirror stands for; Aspire.AppHost.Sdk comes from NuGet, at the version the repository pins.
+    ///     The Microsoft SDK a mirror stands for.
     /// </summary>
-    private string MicrosoftSdk(string name) =>
-        name == "Aspire.AppHost" ? $"Aspire.AppHost.Sdk/{Repository.PackageVersion("Aspire.AppHost.Sdk", targetFramework)}" : $"Microsoft.NET.Sdk.{name}";
+    private static string MicrosoftSdk(string name) => $"Microsoft.NET.Sdk.{name}";
 
     private ProjectCreator Project(string sdk, string? outputType)
     {

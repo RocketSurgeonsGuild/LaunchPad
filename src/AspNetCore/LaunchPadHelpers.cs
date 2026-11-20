@@ -67,7 +67,7 @@ public static class LaunchPadHelpers
 
                 jsonWriter.WriteEndObject();
 
-                if (healthReportEntry.Value.Tags.Any())
+                if (HasAny(healthReportEntry.Value.Tags))
                 {
                     jsonWriter.WriteStartArray("tags");
                     foreach (var item in healthReportEntry.Value.Tags)
@@ -122,6 +122,12 @@ public static class LaunchPadHelpers
         }
 
         writer.WriteStringValue(value.ToString());
+    }
+
+    private static bool HasAny(IEnumerable<string> tags)
+    {
+        using var enumerator = tags.GetEnumerator();
+        return enumerator.MoveNext();
     }
 
     // The type info is resolved before anything is written, so a type no resolver supports falls back without leaving a half written value.

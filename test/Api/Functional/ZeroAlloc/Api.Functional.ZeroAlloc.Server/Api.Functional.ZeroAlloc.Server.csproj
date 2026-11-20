@@ -9,5 +9,6 @@
         <PackageReference Include="Grpc.AspNetCore" />
         <PackageReference Include="ZeroAlloc.Mapping" />
         <Protobuf Include="ProtoFirst/proto_first.proto" GrpcServices="Both" />
+        <GlobalAnalyzerConfigFiles Include="GeneratedCode.globalconfig" />
     </ItemGroup>
 </Project>

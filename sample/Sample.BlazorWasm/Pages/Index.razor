@@ -6,7 +6,7 @@
 
 Welcome to your new app.
 
-<EditForm Model="request" OnValidSubmit="async () => response = await mediator.Send(request)">
+<EditForm Model="request" OnValidSubmit="async () => response = await mediator.Send(request.ToImmutable())">
     <Rocket.Surgery.LaunchPad.AspNetCore.Blazor.ZeroAllocValidator />
     <ValidationSummary Model="request"/>
 
@@ -19,6 +19,6 @@ Welcome to your new app.
 <div>FullName: @response?.FullName</div>
 
 @code {
-    TestHandler.Request request = new();
+    TestHandler.RequestViewModel request = new();
     TestHandler.Response? response;
 }

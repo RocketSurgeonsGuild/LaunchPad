@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis;
 
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 
-using VerifyTests.DiffPlex;
 
 namespace Primitives.Tests;
 
@@ -17,7 +16,7 @@ public static class ModuleInitializer
     {
         VerifyGeneratorTextContext.Initialize(DiagnosticSeverity.Error, Customizers.Empty);
         DiffRunner.Disabled = true;
-        VerifyDiffPlex.Initialize(OutputType.Compact);
+        VerifierSettings.UseTextDiffFormat(TextDiffFormat.Compact);
         DerivePathInfo((sourceFile, _, type, method) => new(Path.Combine(Path.GetDirectoryName(sourceFile)!, "snapshots"), type.Name, method.Name));
     }
 }

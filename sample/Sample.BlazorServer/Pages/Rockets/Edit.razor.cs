@@ -12,7 +12,7 @@ public partial class Edit : ComponentBase
     [Parameter]
     public RocketId Id { get; set; }
 
-    public EditRocket.Request Model { get; set; } = new();
+    public EditRocket.RequestViewModel Model { get; set; } = new();
 
     public Problem? Problem { get; private set; }
 
@@ -24,13 +24,19 @@ public partial class Edit : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        if (( await Mediator.Send(new GetRocket.Request(Id)) ).Value.TryGetValue<RocketModel>(out var rocket, out var problem)) Model = EditRocket.MapRequest(rocket);
-        else Problem = problem;
+        if (( await Mediator.Send(new GetRocket.Request(Id)) ).Value.TryGetValue<RocketModel>(out var rocket, out var problem))
+        {
+            Model = EditRocket.MapRequest(rocket);
+        }
+        else
+        {
+            Problem = problem;
+        }
     }
 
     public async Task Save()
     {
-        if (!( await Mediator.Send(Model with { Id = Id, }) ).Value.TryGetValue<RocketModel>(out _, out var problem))
+        if (!( await Mediator.Send(Model.ToImmutable() with { Id = Id, }) ).Value.TryGetValue<RocketModel>(out _, out var problem))
         {
             Problem = problem;
             return;

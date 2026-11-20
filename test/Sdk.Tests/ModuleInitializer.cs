@@ -4,7 +4,6 @@ using DiffEngine;
 
 using Microsoft.Build.Utilities.ProjectCreation;
 
-using VerifyTests.DiffPlex;
 
 namespace Sdk.Tests;
 
@@ -18,7 +17,7 @@ internal static class ModuleInitializer
         DiffRunner.Disabled = true;
         // each test runs once per target framework of the throwaway projects (TargetFrameworksAttribute), and the runs share a snapshot
         VerifierSettings.IgnoreConstructorParameters();
-        VerifyDiffPlex.Initialize(OutputType.Compact);
+        VerifierSettings.UseTextDiffFormat(TextDiffFormat.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
         // "no hosts" is the result several tests are about: keep it in the snapshot instead of leaving the property out

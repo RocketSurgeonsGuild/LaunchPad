@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 
 using DiffEngine;
 
-using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
 namespace Sample.Minimal.Tests;
@@ -15,7 +14,7 @@ internal static class ModuleInitializer
         // Refit 17 has no reflection based JSON until it is asked for
         Refit.ReflectionSupport.EnsureRegistered();
         DiffRunner.Disabled = true;
-        VerifyDiffPlex.Initialize(OutputType.Compact);
+        VerifierSettings.UseTextDiffFormat(TextDiffFormat.Compact);
         VerifierSettings.DontScrubDateTimes();
         VerifierSettings.DisableRequireUniquePrefix();
         DerivePathInfo(

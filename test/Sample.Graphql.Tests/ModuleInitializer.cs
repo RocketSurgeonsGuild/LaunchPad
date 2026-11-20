@@ -6,7 +6,6 @@ using DiffEngine;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 
-using VerifyTests.DiffPlex;
 using Path = System.IO.Path;
 
 namespace Sample.Graphql.Tests;
@@ -17,7 +16,7 @@ public static class ModuleInitializer
     public static void Init()
     {
         DiffRunner.Disabled = true;
-        VerifyDiffPlex.Initialize(OutputType.Compact);
+        VerifierSettings.UseTextDiffFormat(TextDiffFormat.Compact);
         VerifierSettings.DontScrubDateTimes();
         //        VerifierSettings.AddExtraSettings(settings => settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
         VerifierSettings.AddExtraSettings(settings => settings.Converters.Add(new GeometryConverter()));

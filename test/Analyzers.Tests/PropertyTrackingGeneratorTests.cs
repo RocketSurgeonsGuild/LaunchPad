@@ -474,6 +474,57 @@ public partial class PatchRequest(Guid Id) : IPropertyTracking<Request>, IReques
     [Test]
     [Arguments("SerialNumber", "12345")]
     [Arguments("Type", 12345)]
+    public async Task Should_Generate_Readonly_Record_Struct_With_Underlying_Properties_And_Apply_Changes(string property, object value)
+    {
+        var result = await Builder
+                          .AddSources(
+                               """
+
+                               /// <summary>
+                               /// Request
+                               /// </summary>
+                               public readonly record struct Request : IRequest<RocketModel>
+                               {
+                                   public Guid Id { get; init; }
+                                   public string SerialNumber { get; init; }
+                                   public int Type { get; init; }
+                               }
+                               public readonly partial record struct PatchRocket(Guid Id) : IPropertyTracking<Request>, IRequest<RocketModel>;
+
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        await result.TryGetResult<PropertyTrackingGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
+
+        var type = result.Assembly!.DefinedTypes.FindFirst(z => z.Name == "PatchRocket");
+        var propertyUnderTest = type.GetProperty(property)!;
+        var requestType = result.Assembly.DefinedTypes.FindFirst(z => z.Name == "Request");
+        var request = Activator.CreateInstance(requestType);
+        // default(PatchRocket): no constructor ran, and every property still reads as unassigned
+        var instance = Activator.CreateInstance(type)!;
+        var unassigned = propertyUnderTest.GetValue(instance)!;
+        await ( (bool)unassigned.GetType().GetProperty("HasValue")!.GetValue(unassigned)! ).Should().BeFalse();
+
+        var assignedType = typeof(Assigned<>).MakeGenericType(value.GetType());
+        propertyUnderTest.SetValue(instance, Activator.CreateInstance(assignedType, value));
+        request = type.GetMethod("ApplyChanges")!.Invoke(instance, [request]);
+        await requestType.GetProperty(property)!.GetValue(request).Should().BeEqualTo(value);
+
+        // a readonly struct can't change: ResetChanges makes a reset copy and leaves the value alone
+        var reset = type.GetMethod("ResetChanges")!.Invoke(instance, [])!;
+        var resetProperty = propertyUnderTest.GetValue(reset)!;
+        await ( (bool)resetProperty.GetType().GetProperty("HasValue")!.GetValue(resetProperty)! ).Should().BeFalse();
+        var kept = propertyUnderTest.GetValue(instance)!;
+        await ( (bool)kept.GetType().GetProperty("HasValue")!.GetValue(kept)! ).Should().BeTrue();
+
+        await Verify(result).UseParameters(property);
+    }
+
+    [Test]
+    [Arguments("SerialNumber", "12345")]
+    [Arguments("Type", 12345)]
     public async Task Should_Generate_Class_With_Underlying_Properties_And_Apply_Changes(string property, object value)
     {
         var result = await Builder

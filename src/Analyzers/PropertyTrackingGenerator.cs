@@ -44,14 +44,26 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
             return;
         }
 
+        // A record struct gets a record struct part. A readonly one can't change after it's made: its tracking properties are init only, and
+        // resetting the changes makes a copy instead of changing it.
+        var isStruct = declaration is RecordDeclarationSyntax record && record.ClassOrStructKeyword.IsKind(SyntaxKind.StructKeyword);
+        var isReadOnly = isStruct && symbol.IsReadOnly;
         var classToInherit =
-            ( isRecord
-                ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
-                : ClassDeclaration(declaration.Identifier) )
+            ( isStruct
+                ? RecordDeclaration(SyntaxKind.RecordStructDeclaration, Token(SyntaxKind.RecordKeyword), declaration.Identifier)
+                   .WithClassOrStructKeyword(Token(SyntaxKind.StructKeyword))
+                : isRecord
+                    ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
+                    : ClassDeclaration(declaration.Identifier) )
            .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
            .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-           .WithAttributeLists(SingletonList(Helpers.CompilerGenerated));
+           .WithAttributeLists(
+                isStruct
+                    // the tracking properties' fields are in this part and the type's own in the other: no field order between them (CS0282)
+                    ? List([Helpers.CompilerGenerated, AttributeList(SingletonSeparatedList(Attribute(ParseName("global::System.Runtime.InteropServices.StructLayout"), AttributeArgumentList(SingletonSeparatedList(AttributeArgument(ParseExpression("global::System.Runtime.InteropServices.LayoutKind.Auto")))))))])
+                    : SingletonList(Helpers.CompilerGenerated)
+            );
 
         var targetMembers = targetSymbol.FilterProperties().ToImmutableArray();
         var excludedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -79,6 +91,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                            .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken));
 
         var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
+        var resetChangesInitializer = InitializerExpression(SyntaxKind.WithInitializerExpression);
         var applyChangesBody = Block();
         var resetChangesBody = Block();
         var constructor = symbol
@@ -203,7 +216,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                         )
                     )
                 );
-            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, assignedType, converterType));
+            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, assignedType, converterType, isStruct, isReadOnly));
             changesRecord = changesRecord.AddMembers(
                 PropertyDeclaration(PredefinedType(Token(SyntaxKind.BoolKeyword)), Identifier(propertySymbol.Name))
                    .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
@@ -259,31 +272,29 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
             applyChangesBody = applyChangesBody.AddStatements(
                 GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("state"), isRecord)
             );
-            resetChangesBody = resetChangesBody.AddStatements(
-                ExpressionStatement(
-                    AssignmentExpression(
-                        SyntaxKind.SimpleAssignmentExpression,
-                        IdentifierName(propertySymbol.Name),
-                        InvocationExpression(
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
-                                       .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type))),
-                                    IdentifierName("Empty")
-                                )
-                            )
-                           .WithArgumentList(
-                                ArgumentList(
-                                    SingletonSeparatedList(
-                                        Argument(
-                                            IdentifierName(propertySymbol.Name)
-                                        )
-                                    )
-                                )
-                            )
+            var resetAssignment = AssignmentExpression(
+                SyntaxKind.SimpleAssignmentExpression,
+                IdentifierName(propertySymbol.Name),
+                InvocationExpression(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
+                               .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type))),
+                            IdentifierName("Empty")
+                        )
                     )
-                )
+                   .WithArgumentList(
+                        ArgumentList(
+                            SingletonSeparatedList(
+                                Argument(
+                                    IdentifierName(propertySymbol.Name)
+                                )
+                            )
+                        )
+                    )
             );
+            resetChangesBody = resetChangesBody.AddStatements(ExpressionStatement(resetAssignment));
+            resetChangesInitializer = resetChangesInitializer.AddExpressions(resetAssignment);
         }
 
         var getChangedStateMethod =
@@ -317,14 +328,20 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                      )
                                  )
                                 .WithBody(
-                                     applyChangesBody.AddStatements(
-                                         ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges"))),
-                                         ReturnStatement(IdentifierName("state"))
-                                     )
+                                     isReadOnly
+                                         ? applyChangesBody.AddStatements(ReturnStatement(IdentifierName("state")))
+                                         : applyChangesBody.AddStatements(
+                                             ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges"))),
+                                             ReturnStatement(IdentifierName("state"))
+                                         )
                                  );
         var resetChangesMethod = MethodDeclaration(IdentifierName(symbol.Name), "ResetChanges")
                                 .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                                .WithBody(resetChangesBody.AddStatements(ReturnStatement(ThisExpression())));
+                                .WithBody(
+                                     isReadOnly
+                                         ? Block(ReturnStatement(WithExpression(ThisExpression(), resetChangesInitializer)))
+                                         : resetChangesBody.AddStatements(ReturnStatement(ThisExpression()))
+                                 );
         var resetChangesImplementation = MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), "ResetChanges")
                                         .WithExplicitInterfaceSpecifier(
                                              ExplicitInterfaceSpecifier(
@@ -338,7 +355,8 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                                      )
                                              )
                                          )
-                                        .WithBody(Block().AddStatements(ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges")))));
+                                        // a readonly struct can't be reset in place: ResetChanges() returns the reset copy instead
+                                        .WithBody(isReadOnly ? Block() : Block().AddStatements(ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges")))));
 
 
         var createMethod = MethodDeclaration(
@@ -447,11 +465,34 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         );
     }
 
-    private static MemberDeclarationSyntax[] GenerateTrackingProperties(IPropertySymbol propertySymbol, GenericNameSyntax assignedType, TypeSyntax converterType)
+    private static MemberDeclarationSyntax[] GenerateTrackingProperties(
+        IPropertySymbol propertySymbol,
+        GenericNameSyntax assignedType,
+        TypeSyntax converterType,
+        bool isStruct,
+        bool isReadOnly
+    )
     {
-        return
-        [
-            PropertyDeclaration(assignedType, Identifier(propertySymbol.Name))
+        var unassigned = InvocationExpression(
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    assignedType,
+                    IdentifierName("Empty")
+                )
+            )
+           .WithArgumentList(
+                ArgumentList(
+                    SingletonSeparatedList(
+                        Argument(
+                            LiteralExpression(
+                                SyntaxKind.DefaultLiteralExpression,
+                                Token(SyntaxKind.DefaultKeyword)
+                            )
+                        )
+                    )
+                )
+            );
+        var property = PropertyDeclaration(assignedType, Identifier(propertySymbol.Name))
                // on the wire the property is the bare value: present is assigned, absent is unassigned
                .WithAttributeLists(
                     SingletonList(
@@ -470,41 +511,45 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                         Token(SyntaxKind.PublicKeyword)
                     )
                 )
-               .WithAccessorList(
-                    AccessorList(
-                        List(
-                            new[]
-                            {
-                                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                            }
+               ;
+        if (!isStruct)
+        {
+            return
+            [
+                property
+                   .WithAccessorList(
+                        AccessorList(
+                            List(
+                                new[]
+                                {
+                                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                }
+                            )
                         )
                     )
-                )
-               .WithInitializer(
-                    EqualsValueClause(
-                        InvocationExpression(
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    assignedType,
-                                    IdentifierName("Empty")
-                                )
-                            )
-                           .WithArgumentList(
-                                ArgumentList(
-                                    SingletonSeparatedList(
-                                        Argument(
-                                            LiteralExpression(
-                                                SyntaxKind.DefaultLiteralExpression,
-                                                Token(SyntaxKind.DefaultKeyword)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
+                   .WithInitializer(EqualsValueClause(unassigned))
+                   .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+            ];
+        }
+
+        // A struct has no initializers without a constructor, and default(T) skips them anyway: an unset property reads as unassigned.
+        return
+        [
+            property.WithAccessorList(
+                AccessorList(
+                    List(
+                        new[]
+                        {
+                            AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                               .WithExpressionBody(ArrowExpressionClause(BinaryExpression(SyntaxKind.CoalesceExpression, FieldExpression(), unassigned)))
+                               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                            AccessorDeclaration(isReadOnly ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration)
+                               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                        }
                     )
                 )
-               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+            ),
         ];
     }
 

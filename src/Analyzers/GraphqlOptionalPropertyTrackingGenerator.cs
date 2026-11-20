@@ -29,15 +29,18 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         }
 
         var isRecord = declaration is RecordDeclarationSyntax;
+        // A struct is changed with `with` like a record. Roslyn can't tell a record struct from metadata (IsRecord is false for one in another
+        // assembly), so any struct counts, and the input can be a record or a class.
+        var targetIsRecord = targetSymbol.IsRecord || targetSymbol.IsValueType;
 
-        if (targetSymbol.IsRecord != isRecord)
+        if (!targetSymbol.IsValueType && targetSymbol.IsRecord != isRecord)
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     GeneratorDiagnostics.ParameterMustBeSameTypeOfObject,
                     declaration.Keyword.GetLocation(),
                     declaration.GetFullMetadataName(),
-                    declaration.Keyword.IsKind(SyntaxKind.ClassKeyword) ? "record" : "class"
+                    targetSymbol.IsRecord ? "record" : "class"
                 )
             );
             return;
@@ -45,7 +48,9 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 
         if (targetSymbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal)) is not
             { TypeArguments: [INamedTypeSymbol propertyTrackingSymbol,], })
+        {
             return;
+        }
 
         var classToInherit =
             ( isRecord
@@ -92,7 +97,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 
         var writeableProperties = targetMembers
                                  .Where(z => !symbolMemberNames.Contains(z.Name))
-                                 .Where(z => targetSymbol.IsRecord || z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, })
+                                 .Where(z => targetIsRecord || z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, })
                                  .ToImmutableArray();
 
         var constructor = targetSymbol
@@ -105,11 +110,10 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         missingProperties = missingProperties
                            .DistinctBy(z => z.Name)
                            .ToImmutableArray();
-        existingMembers = existingMembers
+        existingMembers = [.. existingMembers
                          .Concat(missingProperties)
-                         .DistinctBy(z => z.Name)
-                         .ToImmutableArray();
-        writeableProperties = writeableProperties
+                         .DistinctBy(z => z.Name)];
+        writeableProperties = [.. writeableProperties
                              .Except(
                                   writeableProperties.Join(
                                       existingMembers,
@@ -119,20 +123,18 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                       StringComparer.OrdinalIgnoreCase
                                   )
                               )
-                             .DistinctBy(z => z.Name)
-                             .ToImmutableArray();
-        existingMembers = existingMembers
+                             .DistinctBy(z => z.Name)];
+        existingMembers = [.. existingMembers
                          .Except(
                               existingMembers
                                  .Join(
-                                      constructor?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty,
+                                      constructor?.Parameters ?? [],
                                       z => z.Name,
                                       z => z.Name,
                                       (a, _) => a,
                                       StringComparer.OrdinalIgnoreCase
                                   )
-                          )
-                         .ToImmutableArray();
+                          )];
 
         var createArgumentList = constructor is null
             ? ArgumentList()
@@ -189,7 +191,9 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             if (!SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
              && propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, }
              && typeName is not NullableTypeSyntax)
+            {
                 typeName = NullableType(typeName);
+            }
 
             addNamespacesFromPropertyType(namespaces, propertyType);
             classToInherit = classToInherit.AddMembers(
@@ -213,10 +217,10 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 
             addNamespacesFromPropertyType(namespaces, propertyType);
 
-//            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
+            //            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
             classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
             createBody = createBody.AddStatements(
-                GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("value"), isRecord)
+                GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("value"), targetIsRecord)
             );
         }
 
@@ -349,8 +353,8 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
     {
         var type = GenericName(Identifier("HotChocolate.Optional"))
            .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(typeSyntax)));
-        return new MemberDeclarationSyntax[]
-        {
+        return
+        [
             PropertyDeclaration(type, Identifier(propertySymbol.Name))
                .WithModifiers(
                     TokenList(
@@ -368,13 +372,13 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                         )
                     )
                 ),
-        };
+        ];
     }
 
     private static MemberDeclarationSyntax[] GenerateProperty(IPropertySymbol propertySymbol, TypeSyntax typeSyntax)
     {
-        return new MemberDeclarationSyntax[]
-        {
+        return
+        [
             PropertyDeclaration(typeSyntax, Identifier(propertySymbol.Name))
                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
                .WithAccessorList(
@@ -388,22 +392,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                         )
                     )
                 ),
-        };
-    }
-
-    private static AssignmentExpressionSyntax GenerateNullValueProperty(NameSyntax nameSyntax)
-    {
-        return AssignmentExpression(
-            SyntaxKind.SimpleAssignmentExpression,
-            nameSyntax,
-            PostfixUnaryExpression(
-                SyntaxKind.SuppressNullableWarningExpression,
-                LiteralExpression(
-                    SyntaxKind.DefaultLiteralExpression,
-                    Token(SyntaxKind.DefaultKeyword)
-                )
-            )
-        );
+        ];
     }
 
     /// <inheritdoc />
@@ -413,11 +402,11 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                     .SyntaxProvider
                     .CreateSyntaxProvider(
                          static (node, _) =>
-                             node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
+                             node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
                                  and TypeDeclarationSyntax
-                                     {
-                                         BaseList: { } baseList,
-                                     }
+                             {
+                                 BaseList: { } baseList,
+                             }
                           && baseList.Types.Any(
                                  z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IOptionalTracking", StringComparison.Ordinal)
                              ),
@@ -432,13 +421,13 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                          {
                              var interfaceSymbol =
                                  tuple.symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IOptionalTracking", StringComparison.Ordinal));
-                             if (interfaceSymbol is not
-                                 {
-                                     ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.HotChocolate",
-                                     TypeArguments: [INamedTypeSymbol targetSymbol,],
-                                 }) return default;
-
-                             return (
+                             return interfaceSymbol is not
+                             {
+                                 ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.HotChocolate",
+                                 TypeArguments: [INamedTypeSymbol targetSymbol,],
+                             }
+                                 ? ((INamedTypeSymbol symbol, TypeDeclarationSyntax syntax, SemanticModel semanticModel, INamedTypeSymbol interfaceSymbol, INamedTypeSymbol targetSymbol))default
+                                 : (
                                  tuple.symbol,
                                  tuple.syntax,
                                  tuple.semanticModel,

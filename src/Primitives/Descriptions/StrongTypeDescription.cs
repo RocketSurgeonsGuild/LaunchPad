@@ -162,7 +162,7 @@ public abstract class StrongTypeDescription
                     _patterns.Add(regex.Regex.ToString());
                     break;
                 case AllowedValuesValidator<TPrimitive> allowed:
-                    AllowedValues = [.. allowed.AllowedValues.Select(static value => Text(value)).Order(StringComparer.Ordinal)];
+                    AllowedValues = SortedTexts(allowed.AllowedValues);
                     break;
                 default:
                     break;
@@ -180,6 +180,19 @@ public abstract class StrongTypeDescription
     {
         Maximum = value;
         MaximumIsExclusive = exclusive;
+    }
+
+    // The allowed values as text, in ordinal order, so the description doesn't depend on the order the rules list them in.
+    private static string[] SortedTexts<T>(IEnumerable<T> values) where T : notnull
+    {
+        var texts = new List<string>();
+        foreach (var value in values)
+        {
+            texts.Add(Text(value));
+        }
+
+        texts.Sort(StringComparer.Ordinal);
+        return [.. texts];
     }
 
     private static string Text<T>(T value) where T : notnull =>

@@ -1,3 +1,0 @@
-<Project>
-    <Import Project="Sdk.targets" Sdk="Joinery.Dovetail.Sdk.Aspire.AppHost" Version="$(_LaunchPadMirrorDovetailSdkVersion)" />
-</Project>

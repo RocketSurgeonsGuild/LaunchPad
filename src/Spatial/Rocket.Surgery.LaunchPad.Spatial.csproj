@@ -6,7 +6,6 @@
         <PackageTags>$(PackageTags);dovetail;nettopologysuite;spatial;gis;geojson;wkt;system-text-json;serilog</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" />
       <PackageReference Include="Joinery.Dovetail.Serilog" />
         <PackageReference Include="NetTopologySuite" />
         <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" />

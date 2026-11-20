@@ -8,6 +8,8 @@
     <ItemGroup>
         <PackageReference Include="StrawberryShake.Transport.Http" />
         <PackageReference Include="StrawberryShake.Server" />
+        <!-- lifts StrawberryShake.Transport.Http's Microsoft.AspNetCore.WebUtilities 11.0.0-rc.1, which has a known vulnerability (NU1903) -->
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     </ItemGroup>
     <Target Name="CopyGraphQLSchema" AfterTargets="ExportApiSpecs">
         <Copy SourceFiles="$(ApiSpecDirectory)schema.graphql" DestinationFolder="$(MSBuildProjectDirectory)" SkipUnchangedFiles="true" />

@@ -1,4 +1,4 @@
-﻿@page "/fetchdata"
+@page "/fetchdata"
 @using Sample.BlazorServer.Data
 @inject WeatherForecastService ForecastService
 
@@ -40,6 +40,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        _forecasts = await ForecastService.GetForecastAsync(DateTime.UtcNow);
     }
 }

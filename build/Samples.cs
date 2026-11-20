@@ -49,16 +49,24 @@ public sealed class AotPublishModule(SolutionSettings settings) : Module<Immutab
 
     private static string[] ReadTargetFrameworks(DirectoryInfo from)
     {
+        var props = FindRootProps(from) ?? throw new InvalidOperationException($"No Directory.Build.props with LaunchPadTargetFrameworks above {from.FullName}");
+        var frameworks = XDocument.Load(props).Descendants("LaunchPadTargetFrameworks").Single().Value;
+        return frameworks.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    }
+
+    // The Directory.Build.props next to LaunchPad.slnx, in the folder or the nearest one above it.
+    private static string? FindRootProps(DirectoryInfo from)
+    {
         for (var directory = from; directory is not null; directory = directory.Parent)
         {
             var props = Path.Combine(directory.FullName, "Directory.Build.props");
-            if (!File.Exists(Path.Combine(directory.FullName, "LaunchPad.slnx")) || !File.Exists(props)) continue;
-
-            var frameworks = XDocument.Load(props).Descendants("LaunchPadTargetFrameworks").Single().Value;
-            return frameworks.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (File.Exists(Path.Combine(directory.FullName, "LaunchPad.slnx")) && File.Exists(props))
+            {
+                return props;
+            }
         }
 
-        throw new InvalidOperationException($"No Directory.Build.props with LaunchPadTargetFrameworks above {from.FullName}");
+        return null;
     }
 
     [SuppressMessage("ModularPipelines", "MP0016", Justification = "The sub module's token is passed on. MP0016 only recognizes ExecuteAsync's own.")]

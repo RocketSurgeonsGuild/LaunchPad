@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
+using Rocket.Surgery.LaunchPad.Foundation;
 
 using ZeroAlloc.Validation;
 
@@ -20,7 +21,7 @@ public class ZeroAllocValidatorTests
         var editContext = new EditContext(model);
         await using var renderer = await Render(editContext, services => services.AddSingleton<ValidatorFor<Person>, PersonValidator>());
 
-        await editContext.Validate().Should().BeFalse();
+        await ( await editContext.ValidateAsync() ).Should().BeFalse();
 
         await editContext.GetValidationMessages(editContext.Field(nameof(Person.Name))).Should().BeEquivalentTo(["Name is required"], CollectionOrdering.Matching);
         await editContext.GetValidationMessages(editContext.Field(nameof(Person.Nickname))).Should().BeEquivalentTo(["Nickname is required"], CollectionOrdering.Matching);
@@ -44,12 +45,12 @@ public class ZeroAllocValidatorTests
         var model = new Person { Name = "", Nickname = "" };
         var editContext = new EditContext(model);
         await using var renderer = await Render(editContext, services => services.AddSingleton<ValidatorFor<Person>, PersonValidator>());
-        editContext.Validate();
+        await editContext.ValidateAsync();
 
         model.Name = "Ada";
         model.Nickname = "Countess";
 
-        await editContext.Validate().Should().BeTrue();
+        await ( await editContext.ValidateAsync() ).Should().BeTrue();
         await editContext.GetValidationMessages().Should().BeEmpty();
     }
 
@@ -59,7 +60,25 @@ public class ZeroAllocValidatorTests
         var editContext = new EditContext(new Person { Name = "" });
         await using var renderer = await Render(editContext);
 
-        await editContext.Validate().Should().BeTrue();
+        await ( await editContext.ValidateAsync() ).Should().BeTrue();
+    }
+
+    [Test]
+    public async Task Validates_A_View_Model_With_The_Validator_Of_The_Value_It_Makes()
+    {
+        // the form binds to the mutable view model; the rules are the immutable request's
+        var model = new PersonRequestViewModel { Name = "", Nickname = "Countess" };
+        var editContext = new EditContext(model);
+        await using var renderer = await Render(editContext, services => services.AddSingleton<ValidatorFor<PersonRequest>, PersonRequestValidator>());
+
+        await ( await editContext.ValidateAsync() ).Should().BeFalse();
+        await editContext.GetValidationMessages(editContext.Field(nameof(PersonRequestViewModel.Name))).Should().BeEquivalentTo(["Name is required"], CollectionOrdering.Matching);
+        await editContext.GetValidationMessages(editContext.Field(nameof(PersonRequestViewModel.Nickname))).Should().BeEmpty();
+
+        model.Name = "Ada";
+        editContext.NotifyFieldChanged(editContext.Field(nameof(PersonRequestViewModel.Name)));
+
+        await editContext.GetValidationMessages().Should().BeEmpty();
     }
 
     private static async Task<HtmlRenderer> Render(EditContext editContext, Action<IServiceCollection>? configure = null)
@@ -88,6 +107,36 @@ public class ZeroAllocValidatorTests
             var failures = new List<ValidationFailure>();
             if (instance.Name.Length == 0) failures.Add(new() { PropertyName = nameof(Person.Name), ErrorMessage = "Name is required" });
             if (instance.Nickname.Length == 0) failures.Add(new() { PropertyName = nameof(Person.Nickname), ErrorMessage = "Nickname is required" });
+            return new([.. failures]);
+        }
+    }
+
+    public readonly record struct PersonRequest(string Name, string Nickname);
+
+    // Stands in for the view model [Mutable] generates for PersonRequest.
+    public sealed class PersonRequestViewModel : IMutable<PersonRequest>
+    {
+        public string Name { get; set; } = "";
+        public string Nickname { get; set; } = "";
+
+        public PersonRequest ToImmutable() => new(Name, Nickname);
+
+        object IMutable.ToImmutable() => ToImmutable();
+    }
+
+    private sealed class PersonRequestValidator : ValidatorFor<PersonRequest>
+    {
+        public override Validation.ValidationResult Validate(PersonRequest instance)
+        {
+            var failures = new List<ValidationFailure>();
+            if (instance.Name.Length == 0)
+            {
+                failures.Add(new() { PropertyName = nameof(PersonRequest.Name), ErrorMessage = "Name is required" });
+            }
+            if (instance.Nickname.Length == 0)
+            {
+                failures.Add(new() { PropertyName = nameof(PersonRequest.Nickname), ErrorMessage = "Nickname is required" });
+            }
             return new([.. failures]);
         }
     }

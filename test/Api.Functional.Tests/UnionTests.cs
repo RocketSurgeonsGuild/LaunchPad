@@ -173,7 +173,7 @@ public class UnionTests
     }
 
     private static JsonElement[] Lines(string ndjson) =>
-        [.. ndjson.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => JsonDocument.Parse(line).RootElement)];
+        [.. ndjson.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => JsonElement.Parse(line))];
 
     private static async Task<Guid> Create(System.Net.Http.HttpClient http, string name, CancellationToken cancellationToken)
     {
