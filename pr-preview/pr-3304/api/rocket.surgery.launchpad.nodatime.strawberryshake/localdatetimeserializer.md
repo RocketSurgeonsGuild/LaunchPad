@@ -1,0 +1,27 @@
+# LocalDateTimeSerializer
+
+- Kind: `class`
+- Package: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](/LaunchPad/pr-preview/pr-3304/api/rocket.surgery.launchpad.nodatime.strawberryshake.md)
+- Version: `2.0.1-pr.1261`
+- Namespace: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`
+- Target framework: `net11.0`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3304-merge.Sha.f5fcab654f6da15f98c221dbcb18d835a50e54b3/src/NodaTime.StrawberryShake/LocalDateTimeSerializer.cs)
+- Inherits: `NodaTimeStringScalarSerializer<LocalDateTime>`
+
+General purpose LocalDateTime Serializer
+
+## Definition
+
+```csharp
+namespace Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake;
+
+public class LocalDateTimeSerializer
+    : Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.NodaTimeStringScalarSerializer<NodaTime.LocalDateTime>
+{
+    // ...
+}
+```
+
+## Constructors
+
+- [LocalDateTimeSerializer](/LaunchPad/pr-preview/pr-3304/api/rocket.surgery.launchpad.nodatime.strawberryshake/localdatetimeserializer/constructors.md#constructor) -- Create a new LocalDateTimeSerializer
