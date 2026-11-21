@@ -105,8 +105,8 @@ internal sealed record PackedSdk(
     }
 
     /// <summary>
-    ///     Replaces the versions that change from run to run (this run's packages) or with a dependency update (Dovetail's) in a text with
-    ///     a placeholder, so snapshots hold what is stable.
+    ///     Replaces the versions that change from run to run (this run's packages) or with a dependency update (Dovetail's, Chirograph's)
+    ///     in a text with a placeholder, so snapshots hold what is stable.
     /// </summary>
     /// <param name="text">The text.</param>
     /// <returns>The text with placeholders.</returns>
@@ -121,7 +121,9 @@ internal sealed record PackedSdk(
             text = text.Replace($">{Repository.PackageVersion(packageId, "net11.0")}</{property}>", $">{{Pinned}}</{property}>", StringComparison.Ordinal);
         }
 
-        return text.Replace(Version, "{LaunchPadVersion}", StringComparison.Ordinal).Replace(DovetailVersion, "{DovetailVersion}", StringComparison.Ordinal);
+        return text.Replace(Version, "{LaunchPadVersion}", StringComparison.Ordinal)
+                   .Replace(DovetailVersion, "{DovetailVersion}", StringComparison.Ordinal)
+                   .Replace(ChirographVersion, "{ChirographVersion}", StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -163,6 +165,11 @@ internal sealed record PackedSdk(
     ///     The version of Dovetail the repository pins, which the SDK chains.
     /// </summary>
     public static string DovetailVersion => Repository.PackageVersion("Joinery.Dovetail.Sdk", "net11.0");
+
+    /// <summary>
+    ///     The version of Chirograph the repository pins, which every LaunchPad SDK chains.
+    /// </summary>
+    public static string ChirographVersion => Repository.PackageVersion("Chirograph", "net11.0");
 
     private static async Task<PackedSdk> PackCore()
     {

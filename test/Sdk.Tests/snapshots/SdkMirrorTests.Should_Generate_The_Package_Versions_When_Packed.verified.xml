@@ -2,6 +2,7 @@
 <!-- Generated when {PackageId} is packed. Each version is only set when the application has not set it already. -->
 <PropertyGroup>
 <LaunchPadDovetailSdkVersion Condition="'$(LaunchPadDovetailSdkVersion)' == ''">{DovetailVersion}</LaunchPadDovetailSdkVersion>
+<LaunchPadChirographVersion Condition="'$(LaunchPadChirographVersion)' == ''">{ChirographVersion}</LaunchPadChirographVersion>
 <LaunchPadVersion Condition="'$(LaunchPadVersion)' == ''">{LaunchPadVersion}</LaunchPadVersion>
 <LaunchPadOpenTelemetryExporterVersion Condition="'$(LaunchPadOpenTelemetryExporterVersion)' == ''">{Pinned}</LaunchPadOpenTelemetryExporterVersion>
 <LaunchPadOpenTelemetryHttpInstrumentationVersion Condition="'$(LaunchPadOpenTelemetryHttpInstrumentationVersion)' == ''">{Pinned}</LaunchPadOpenTelemetryHttpInstrumentationVersion>
