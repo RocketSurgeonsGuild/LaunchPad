@@ -52,14 +52,11 @@ public static class AuthorizationProblems
     {
         if (decision.RequiredScopes.Count == 0) return existing;
         var scope = string.Create(CultureInfo.InvariantCulture, $"scope=\"{string.Join(' ', decision.RequiredScopes)}\"");
-        if (decision.Problem is Forbidden forbidden)
-        {
-            return forbidden.Properties.ContainsKey(AuthorizationDecision.MissingScopesProperty) ? $"Bearer error=\"insufficient_scope\", {scope}" : existing;
-        }
-
-        return  string.IsNullOrWhiteSpace(existing) 
-            ?  "Bearer " + scope 
-            :  !existing.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase) || existing.Contains("scope=", StringComparison.OrdinalIgnoreCase)
+        return  decision.Problem is Forbidden forbidden 
+            ?  forbidden.Properties.ContainsKey(AuthorizationDecision.MissingScopesProperty) ? $"Bearer error=\"insufficient_scope\", {scope}" : existing 
+            :  string.IsNullOrWhiteSpace(existing)
+            ? "Bearer " + scope
+            : !existing.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase) || existing.Contains("scope=", StringComparison.OrdinalIgnoreCase)
             ? existing
             : existing.Trim().Length == "Bearer".Length ? "Bearer " + scope : existing + ", " + scope;
     }
