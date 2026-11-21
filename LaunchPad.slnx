@@ -55,6 +55,7 @@
     <File Path="sample/Directory.Build.props" />
     <File Path="sample/Directory.Build.targets" />
     <File Path="sample/Directory.Packages.props" />
+    <Project Path="sample/Sample.AppHost/Sample.AppHost.csproj" />
     <Project Path="sample/Sample.BlazorServer/Sample.BlazorServer.csproj" />
     <Project Path="sample/Sample.BlazorWasm/Sample.BlazorWasm.csproj" />
     <Project Path="sample/Sample.Classic.Restful/Sample.Classic.Restful.csproj" />

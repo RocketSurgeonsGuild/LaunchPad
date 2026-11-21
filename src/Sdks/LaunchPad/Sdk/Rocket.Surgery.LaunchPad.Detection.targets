@@ -19,6 +19,10 @@
             NodaTime. Together with Rocket.Surgery.LaunchPad.Hosting (Dovetail finds a generic host for it) that gives a single-file app the
             usual LaunchPad application without a #:package directive.
 
+          - OpenTelemetry (Rocket.Surgery.LaunchPad.Detection.OpenTelemetry.targets): every application that gets
+            Rocket.Surgery.LaunchPad.Hosting, with the instrumentation of its host model and the OTLP exporter. LaunchPadEnableOpenTelemetry
+            set to false opts out of all of it, LaunchPadEnableOtlpExporter set to false out of the exporter alone.
+
         Every package is a DovetailSdkImplicitPackageReference item. Dovetail's SDK turns those into PackageReferences, unless the project
         references the package itself, in a file its Sdk.targets registers after this one.
 
@@ -142,4 +146,5 @@
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.ZeroAlloc.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.GraphQL.targets" />
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.Grpc.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.OpenTelemetry.targets" />
 </Project>

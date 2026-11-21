@@ -45,9 +45,10 @@
 
     <!--
         Writes Sdk/Packages.props into each package: LaunchPadVersion, the version of the SDK, which every LaunchPad package it adds to an
-        application shares, LaunchPadDovetailSdkVersion, the version of the Dovetail SDK that Sdk/Sdk.props chains (LaunchPadChainedSdk), and
+        application shares, LaunchPadDovetailSdkVersion, the version of the Dovetail SDK that Sdk/Sdk.props chains (LaunchPadChainedSdk),
         LaunchPadChirographVersion, the version of the Chirograph SDK every LaunchPad SDK chains (Rocket.Surgery.LaunchPad.Chirograph.targets),
-        each the one Directory.Packages.props pins. An application can set any of them first to choose another. As in Joinery.Dovetail.Sdk, the
+        and the version of each third-party package the SDK adds (_LaunchPadSdkPackage), each the one Directory.Packages.props pins. An
+        application can set any of them first to choose another. As in Joinery.Dovetail.Sdk, the
         versions are only known when the SDK is packed, so the file is generated then rather than kept in the repository.
 
         LaunchPad/Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which packages an application gets. A package
@@ -64,6 +65,43 @@
             <_LaunchPadChirographVersion>@(_LaunchPadChirographSdk->'%(Version)')</_LaunchPadChirographVersion>
             <_LaunchPadPackagesProps>$(IntermediateOutputPath)Packages.props</_LaunchPadPackagesProps>
         </PropertyGroup>
+        <!--
+            The third-party packages the SDK adds (LaunchPad/Sdk/Rocket.Surgery.LaunchPad.Detection.OpenTelemetry.targets), each with the
+            property that holds its version: the one Directory.Packages.props pins.
+        -->
+        <ItemGroup>
+            <_LaunchPadSdkPackage
+                Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"
+                Property="LaunchPadOpenTelemetryExporterVersion"
+                Version="@(PackageVersion->WithMetadataValue('Identity', 'OpenTelemetry.Exporter.OpenTelemetryProtocol')->'%(Version)')"
+            />
+            <_LaunchPadSdkPackage
+                Include="OpenTelemetry.Instrumentation.Http"
+                Property="LaunchPadOpenTelemetryHttpInstrumentationVersion"
+                Version="@(PackageVersion->WithMetadataValue('Identity', 'OpenTelemetry.Instrumentation.Http')->'%(Version)')"
+            />
+            <_LaunchPadSdkPackage
+                Include="OpenTelemetry.Instrumentation.Runtime"
+                Property="LaunchPadOpenTelemetryRuntimeInstrumentationVersion"
+                Version="@(PackageVersion->WithMetadataValue('Identity', 'OpenTelemetry.Instrumentation.Runtime')->'%(Version)')"
+            />
+            <_LaunchPadSdkPackage
+                Include="OpenTelemetry.Instrumentation.Process"
+                Property="LaunchPadOpenTelemetryProcessInstrumentationVersion"
+                Version="@(PackageVersion->WithMetadataValue('Identity', 'OpenTelemetry.Instrumentation.Process')->'%(Version)')"
+            />
+            <_LaunchPadSdkPackage
+                Include="OpenTelemetry.Instrumentation.AspNetCore"
+                Property="LaunchPadOpenTelemetryAspNetCoreInstrumentationVersion"
+                Version="@(PackageVersion->WithMetadataValue('Identity', 'OpenTelemetry.Instrumentation.AspNetCore')->'%(Version)')"
+            />
+            <_LaunchPadSdkPackage
+                Include="Serilog.Sinks.OpenTelemetry"
+                Property="LaunchPadSerilogOpenTelemetryVersion"
+                Version="@(PackageVersion->WithMetadataValue('Identity', 'Serilog.Sinks.OpenTelemetry')->'%(Version)')"
+            />
+        </ItemGroup>
+        <Error Condition="'%(_LaunchPadSdkPackage.Version)' == ''" Text="Directory.Packages.props pins no version of %(_LaunchPadSdkPackage.Identity), which $(PackageId) adds." />
         <Error Condition="'$(LaunchPadChainedSdk)' == ''" Text="$(MSBuildProjectName) sets no LaunchPadChainedSdk, the Dovetail SDK it chains." />
         <Error Condition="'$(_LaunchPadDovetailSdkVersion)' == ''" Text="Directory.Packages.props pins no version of $(LaunchPadChainedSdk), which $(PackageId) chains." />
         <Error Condition="'$(_LaunchPadChirographVersion)' == ''" Text="Directory.Packages.props pins no version of Chirograph, which $(PackageId) chains." />
@@ -80,6 +118,9 @@
             />
             <_LaunchPadPackagesPropsLine
                 Include="&lt;LaunchPadVersion Condition=&quot;%27%24(LaunchPadVersion)%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/LaunchPadVersion&gt;"
+            />
+            <_LaunchPadPackagesPropsLine
+                Include="@(_LaunchPadSdkPackage->'&lt;%(Property) Condition=&quot;%27%24(%(Property))%27 == %27%27&quot;&gt;%(Version)&lt;/%(Property)&gt;')"
             />
             <_LaunchPadPackagesPropsLine Include="&lt;/PropertyGroup&gt;" />
             <_LaunchPadPackagesPropsLine Include="&lt;/Project&gt;" />

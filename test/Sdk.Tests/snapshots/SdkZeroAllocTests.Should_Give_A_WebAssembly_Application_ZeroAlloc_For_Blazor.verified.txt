@@ -5,7 +5,10 @@
   PackageReferences: [
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Joinery.Dovetail.OpenTelemetry {DovetailVersion} (SDK),
     Microsoft.AspNetCore.Components.WebAssembly,
+    OpenTelemetry.Exporter.OpenTelemetryProtocol {Pinned} (SDK),
+    OpenTelemetry.Instrumentation.Http {Pinned} (SDK),
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor {LaunchPadVersion} (SDK),
     ZeroAlloc.Validation

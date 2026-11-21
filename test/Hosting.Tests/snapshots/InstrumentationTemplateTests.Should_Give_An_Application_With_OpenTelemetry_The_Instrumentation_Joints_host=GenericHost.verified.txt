@@ -10,10 +10,12 @@
   Output:
 Traces System.Net.Http:True
 Traces HotChocolate.Diagnostics:True
+Traces Microsoft.AspNetCore.Components:False
 Metrics System.Net.Http:True
 Metrics System.Runtime:True
 Metrics OpenTelemetry.Instrumentation.Process:True
 Metrics Microsoft.AspNetCore.Hosting:False
+Metrics Microsoft.AspNetCore.Components:False
 RecordException HttpClient:True
 RecordException AspNetCore:
 }

@@ -54,3 +54,19 @@ Adding `net12.0` next to `net11.0` touches these places, in this order:
 Dropping the oldest framework is the same list in reverse, plus the LaunchPad SDK's minimum
 (`LaunchPadMinimumTargetFramework` in `src/Sdks/LaunchPad/Sdk/Rocket.Surgery.LaunchPad.TargetFramework.targets`, tested by
 `test/Sdk.Tests/SdkTargetFrameworkTests.cs`), and it is a breaking change for a major release.
+
+## Running the samples together
+
+`sample/Sample.AppHost` is an [Aspire](https://aspire.dev) AppHost that starts the samples side by side, each on ports of its own, with
+the Aspire dashboard. From the repository root (`aspire.config.json` points the Aspire CLI at it):
+
+```bash
+aspire run
+```
+
+The Aspire CLI is in `.config/mise.toml`, at the version of the `Aspire.Hosting.*` packages in `sample/Directory.Packages.props`; update
+them together. The AppHost adds the samples by path and Aspire builds each one before it starts it. `Sample.Command` runs a command and
+exits, so it starts only when you start it from the dashboard.
+
+The dashboard shows the samples' logs, traces and metrics because Aspire sets `OTEL_EXPORTER_OTLP_ENDPOINT` for them: the samples
+reference OpenTelemetry and Serilog's OpenTelemetry sink (`sample/Directory.Build.targets`), and export only when that variable is set.

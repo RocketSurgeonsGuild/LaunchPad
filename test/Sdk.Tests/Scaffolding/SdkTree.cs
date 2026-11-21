@@ -123,8 +123,13 @@ internal sealed class SdkTree : IDisposable
                                         Implicit: z.TryGetProperty("IsImplicitlyDefined", out var isImplicit) && isImplicit.GetString() == "true"
                                     )
                                 )
-                               .Where(z => !z.Implicit || z.Id.StartsWith("Rocket.Surgery.LaunchPad.", StringComparison.Ordinal) || z.Id.StartsWith("Joinery.", StringComparison.Ordinal))
-                               .Select(z => z.Implicit ? _packages.Scrub($"{z.Id} {z.Version} (SDK)") : z.Id)
+                               .Where(
+                                    z => !z.Implicit
+                                     || z.Id.StartsWith("Rocket.Surgery.LaunchPad.", StringComparison.Ordinal)
+                                     || z.Id.StartsWith("Joinery.", StringComparison.Ordinal)
+                                     || PackedSdk.IsThirdPartyPackage(z.Id)
+                                )
+                               .Select(z => z.Implicit ? _packages.ScrubPackage(z.Id, z.Version) : z.Id)
                                .Order(StringComparer.Ordinal)
                                .ToArray();
         return new(hosts, packageReferences);

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))" />
   <PropertyGroup>
@@ -6,5 +6,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="StronglyTypedId.Templates" Version="1.0.0-beta08" />
+    <!-- Sample.AppHost. Keep them on the version of the Aspire CLI in .config/mise.toml, which the AppHost build resolves (ASPIRE009). -->
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="17.0.0" />
+    <PackageVersion Include="Aspire.Hosting.Blazor" Version="17.0.0-preview.1.26567.5" />
+    <PackageVersion Include="Aspire.Hosting.Dotnet" Version="17.0.0" />
   </ItemGroup>
 </Project>

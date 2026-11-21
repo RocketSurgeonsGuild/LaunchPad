@@ -1,6 +1,7 @@
 ﻿{
   Host: WebAssembly,
   Templates: [
+    LaunchPadComponentsInstrumentationJoint,
     LaunchPadInstrumentationJoint
   ]
 }

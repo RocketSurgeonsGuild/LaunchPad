@@ -23,6 +23,8 @@
     <PackageReference Include="HotChocolate.Types.CursorPagination" />
     <PackageReference Include="HotChocolate.Types.OffsetPagination" />
     <PackageReference Include="HotChocolate.Types.Analyzers" />
+    <!-- turns on LaunchPad.Hosting's Hot Chocolate instrumentation joint, so the AppHost's dashboard shows the GraphQL operations -->
+    <PackageReference Include="HotChocolate.Diagnostics" />
 
     <PackageReference Include="HotChocolate.Types.Spatial" />
     <PackageReference Include="HotChocolate.Data.Spatial" />

@@ -19,6 +19,8 @@ biome = "2.5.2"
 "dotnet:verify.tool" = "0.7.0"
 "dotnet:gitreleasemanager.tool" = "0.20.0"
 "dotnet:NuGet.Mcp.Server" = "1.4.3"
+# The Aspire CLI that sample/Sample.AppHost builds resolve (ASPIRE009) and `aspire run` starts; keep it on the version of the Aspire.Hosting.* packages.
+"dotnet:Aspire.Cli" = "17.0.0"
 tombi = "1.11.3"
 oxfmt = "0.75.0"
 

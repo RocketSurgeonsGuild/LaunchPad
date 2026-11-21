@@ -1,0 +1,26 @@
+<!--
+    The Aspire AppHost that runs the samples together: `aspire run` (or `dotnet run`) here starts each one and the dashboard, which shows their
+    logs, traces and metrics. Aspire 17 has no AppHost SDK: an AppHost is Microsoft.NET.Sdk with Aspire.Hosting.AppHost (the build targets)
+    and Aspire.Hosting.Dotnet (AddDotnetProject), and the dashboard and orchestrator come from the Aspire CLI, which .config/mise.toml pins.
+    The samples are added by path, so this project has no project references and doesn't build them; Aspire builds them before it starts them.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>$(LaunchPadLatestTargetFramework)</TargetFramework>
+        <UserSecretsId>CB204A4E-55AB-4671-B1F3-3C4782DE977D</UserSecretsId>
+        <!-- Aspire.Hosting.AppHost sets this too, but only once restored; sample/Directory.Build.targets reads it to leave out what it gives the samples -->
+        <IsAspireHost>true</IsAspireHost>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.AppHost" />
+        <PackageReference Include="Aspire.Hosting.Blazor" />
+        <PackageReference Include="Aspire.Hosting.Dotnet" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- The framework the AppHost runs the samples on (AppHost.cs), the newest of the ones they build for -->
+        <AssemblyMetadata Include="SampleTargetFramework" Value="$(LaunchPadLatestTargetFramework)" />
+    </ItemGroup>
+</Project>

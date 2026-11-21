@@ -1,6 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadBrowserTargetFrameworks)</TargetFrameworks>
+        <!--
+            Sample.AppHost's Blazor integration builds this project and reads its static web assets without naming a framework, which a project
+            with TargetFrameworks can't answer, so the AppHost names the one it runs on in this environment variable.
+        -->
+        <TargetFramework Condition="'$(LaunchPadSampleBrowserTargetFramework)' != ''">$(LaunchPadSampleBrowserTargetFramework)</TargetFramework>
+        <TargetFrameworks Condition="'$(LaunchPadSampleBrowserTargetFramework)' != ''" />
         <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     </PropertyGroup>
 
@@ -11,6 +17,13 @@
         <!-- with LaunchPad.Hosting below, these turn on its browser templates: browser console logging and the host environment enrichment -->
         <PackageReference Include="Joinery.Dovetail.Serilog" />
         <PackageReference Include="Serilog.Sinks.BrowserConsole" />
+        <!--
+            OpenTelemetry, as the LaunchPad SDK adds it to a browser application: these turn on LaunchPad.Hosting's browser templates, which
+            export to the OTLP route Sample.AppHost's Blazor gateway gives the client (wwwroot/Sample.BlazorWasm.lib.module.js reads it).
+        -->
+        <PackageReference Include="Joinery.Dovetail.OpenTelemetry" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
         <!-- ZeroAlloc.Mediator generates the mediator from the handlers in this project -->
         <PackageReference Include="ZeroAlloc.Mediator" />
         <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />

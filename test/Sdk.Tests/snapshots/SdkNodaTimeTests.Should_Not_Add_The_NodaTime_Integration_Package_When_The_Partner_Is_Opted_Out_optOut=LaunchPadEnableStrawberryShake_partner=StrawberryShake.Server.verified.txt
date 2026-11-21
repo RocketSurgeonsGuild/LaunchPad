@@ -5,8 +5,14 @@
   PackageReferences: [
     Joinery.Dovetail {DovetailVersion} (SDK),
     Joinery.Dovetail.Hosting {DovetailVersion} (SDK),
+    Joinery.Dovetail.OpenTelemetry {DovetailVersion} (SDK),
     Microsoft.Extensions.Hosting,
     NodaTime,
+    OpenTelemetry.Exporter.OpenTelemetryProtocol {Pinned} (SDK),
+    OpenTelemetry.Extensions.Hosting {Pinned} (SDK),
+    OpenTelemetry.Instrumentation.Http {Pinned} (SDK),
+    OpenTelemetry.Instrumentation.Process {Pinned} (SDK),
+    OpenTelemetry.Instrumentation.Runtime {Pinned} (SDK),
     Rocket.Surgery.LaunchPad.Hosting {LaunchPadVersion} (SDK),
     Rocket.Surgery.LaunchPad.NodaTime {LaunchPadVersion} (SDK),
     StrawberryShake.Server

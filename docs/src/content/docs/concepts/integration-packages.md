@@ -61,6 +61,29 @@ client maps the scalars to the NodaTime types in its `schema.extensions.graphql`
 
 A file-based app (`dotnet run app.cs`) also gets `Rocket.Surgery.LaunchPad.Foundation` and counts as referencing NodaTime.
 
+### OpenTelemetry
+
+OpenTelemetry follows the host model rather than a reference: every application that gets `Rocket.Surgery.LaunchPad.Hosting` gets
+its traces, metrics and logs, with the packages that turn on LaunchPad.Hosting's OpenTelemetry joints
+(see [templates](../templates/#the-hosting-templates)):
+
+| Package                                        | Host models                                            |
+| ---------------------------------------------- | ------------------------------------------------------ |
+| `Joinery.Dovetail.OpenTelemetry`               | generic host, ASP.NET Core, Blazor WebAssembly         |
+| `OpenTelemetry.Instrumentation.Http`           | generic host, ASP.NET Core, Blazor WebAssembly         |
+| `OpenTelemetry.Exporter.OpenTelemetryProtocol` | generic host, ASP.NET Core, Blazor WebAssembly         |
+| `OpenTelemetry.Extensions.Hosting`             | generic host, ASP.NET Core                             |
+| `OpenTelemetry.Instrumentation.Runtime`        | generic host, ASP.NET Core                             |
+| `OpenTelemetry.Instrumentation.Process`        | generic host, ASP.NET Core                             |
+| `OpenTelemetry.Instrumentation.AspNetCore`     | ASP.NET Core                                           |
+| `Serilog.Sinks.OpenTelemetry`                  | generic host, ASP.NET Core, when it references Serilog |
+
+The exporters only export once `OTEL_EXPORTER_OTLP_ENDPOINT` is set, as Aspire sets it, so an application run on its own sends
+nothing. `LaunchPadEnableOtlpExporter` set to `false` leaves the exporter and Serilog's sink out and keeps the instrumentation;
+`LaunchPadEnableOpenTelemetry` set to `false` (or Dovetail's `DovetailEnableOpenTelemetry`) leaves all of it out. The versions are the
+ones LaunchPad pinned when the SDK was packed; set `LaunchPadOpenTelemetryExporterVersion` (and the other `LaunchPad*Version`
+properties of these packages) to choose another, or reference the package yourself.
+
 Each technology can be turned off with its `LaunchPadEnable<Technology>` property, which removes its own package and every
 integration package it is part of:
 
@@ -72,8 +95,8 @@ integration package it is part of:
 
 The properties are `LaunchPadEnableHosting`, `LaunchPadEnableFoundation`, `LaunchPadEnableAspNetCore`, `LaunchPadEnableAspNetCoreMvc` (MVC only; it defaults to
 `false` when the project sets `PublishAot` or `IsAotCompatible`), `LaunchPadEnableNodaTime`,
-`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate` and
-`LaunchPadEnableStrawberryShake`.
+`LaunchPadEnableNetTopologySuite`, `LaunchPadEnableZeroAlloc`, `LaunchPadEnableGrpc`, `LaunchPadEnableHotChocolate`,
+`LaunchPadEnableStrawberryShake`, `LaunchPadEnableOpenTelemetry` and `LaunchPadEnableOtlpExporter` (the exporter only).
 
 ## Direct references
 
