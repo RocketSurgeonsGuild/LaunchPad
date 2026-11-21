@@ -1,0 +1,32 @@
+﻿{
+  "status": "Unhealthy",
+  "totalDuration": "00:00:03.5000000",
+  "entries": {
+    "db": {
+      "data": {
+        "note": "ok"
+      },
+      "description": "fine",
+      "duration": "00:00:00.0120000",
+      "status": "Healthy",
+      "tags": [
+        "ready"
+      ]
+    },
+    "cache": {
+      "data": {},
+      "description": "slow",
+      "duration": "00:00:01.5000000",
+      "status": "Degraded",
+      "tags": []
+    },
+    "queue": {
+      "data": {},
+      "description": "boom",
+      "duration": "00:00:02",
+      "exception": "System.InvalidOperationException: boom",
+      "status": "Unhealthy",
+      "tags": []
+    }
+  }
+}

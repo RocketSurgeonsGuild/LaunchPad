@@ -2,8 +2,8 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <IsAotCompatible>true</IsAotCompatible>
-        <PackageDescription>Dovetail joints for ASP.NET Core: MVC with application parts found by Specular, OpenAPI documents with LaunchPad's transformers, problem details, Serilog request logging and the application's System.Text.Json options.</PackageDescription>
-        <PackageTags>$(PackageTags);dovetail;aspnetcore;web-api;openapi;problem-details;serilog;request-logging;opentelemetry;system-text-json</PackageTags>
+        <PackageDescription>Dovetail joints for ASP.NET Core: MVC with application parts found by Specular, OpenAPI documents with LaunchPad's transformers, problem details, Serilog request logging, health check endpoints on a port of their own and the application's System.Text.Json options.</PackageDescription>
+        <PackageTags>$(PackageTags);dovetail;aspnetcore;web-api;openapi;problem-details;serilog;request-logging;health-checks;opentelemetry;system-text-json</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
     </PropertyGroup>
     <ItemGroup>
@@ -13,7 +13,6 @@
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Humanizer.Core" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />

@@ -33,8 +33,10 @@ The SDK finds the host model and adds the LaunchPad and Dovetail packages that f
 namespace and which applies every joint the application imports:
 
 ```csharp
+using Rocket.Surgery.LaunchPad.AspNetCore;
+
 var app = await WebApplication.CreateBuilder(args).ConfigureDovetail();
-app.MapHealthChecks("/health");
+app.MapLaunchPadHealthChecks(); // /health, /health/live and /health/ready
 await app.RunAsync();
 ```
 
@@ -60,7 +62,7 @@ lists what the SDK adds for each technology.
 | [Rocket.Surgery.LaunchPad.Foundation][nuget-foundation] | [![nuget-foundation-badge]][nuget-foundation] | JSON, resilience and service discovery joints, the standard error cases and the JSON context build |
 | [Rocket.Surgery.LaunchPad.Analyzers][nuget-analyzers]   | [![nuget-analyzers-badge]][nuget-analyzers]   | The source generators Foundation carries: operation hosts, property tracking, JSON converters      |
 | [Rocket.Surgery.LaunchPad.Hosting][nuget-hosting]       | [![nuget-hosting-badge]][nuget-hosting]       | Health check, Serilog and OpenTelemetry joints, written into the application as templates          |
-| [Rocket.Surgery.LaunchPad.AspNetCore][nuget-aspnetcore] | [![nuget-aspnetcore-badge]][nuget-aspnetcore] | OpenAPI, problem details, request logging and System.Text.Json for ASP.NET Core                    |
+| [Rocket.Surgery.LaunchPad.AspNetCore][nuget-aspnetcore] | [![nuget-aspnetcore-badge]][nuget-aspnetcore] | OpenAPI, problem details, request logging, health check endpoints and System.Text.Json for ASP.NET Core |
 | Rocket.Surgery.LaunchPad.AspNetCore.Mvc | not published yet | MVC controllers and Razor Pages: application parts, MVC JSON options, request logging filters |
 
 ### Integrations
