@@ -14,7 +14,7 @@ The rules of a price: an amount of money with no currency, such as a unit price.
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<decimal>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Primitives/StrongTypes/Price.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/Primitives/StrongTypes/Price.cs#L14)
 
 ```csharp
 public sealed class PriceRules

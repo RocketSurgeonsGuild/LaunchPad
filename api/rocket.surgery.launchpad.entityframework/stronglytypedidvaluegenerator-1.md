@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.EntityFramework](/LaunchPad/api/rocket.surgery.launchpad.entityframework.md)
-- Version: `2.0.1-beta.438`
+- Version: `2.0.1-beta.440`
 - Namespace: `Rocket.Surgery.LaunchPad.EntityFramework`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/EntityFramework/StronglyTypedIdValueGenerator.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/EntityFramework/StronglyTypedIdValueGenerator.cs)
 - Inherits: `ValueGenerator<T>`
 
 Value generator for StronglyTypedIds

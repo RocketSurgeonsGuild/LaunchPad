@@ -15,7 +15,7 @@ Adds Serilog's request logging with LaunchPad's defaults.
 - Name: `UseLaunchPadRequestLogging(IApplicationBuilder)`
 - Modifiers: `extension`
 - Returns: `IApplicationBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/AspNetCore/LaunchPadRequestLoggingExtensions.cs#L26-L35)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/AspNetCore/LaunchPadRequestLoggingExtensions.cs#L26-L35)
 
 Default request logging for serilog with launchpad
 

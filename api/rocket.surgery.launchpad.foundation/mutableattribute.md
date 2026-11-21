@@ -2,13 +2,13 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-beta.438`
+- Version: `2.0.1-beta.440`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Foundation/MutableAttribute.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/Foundation/MutableAttribute.cs)
 - Inherits: `Attribute`
 
-Generates a mutable view model of the type, a class next to it named `{Prefix}{Name}{Suffix}` ( `RequestViewModel` by default): a settable property for each of the type's properties, `From(value)` to copy a value into it and `ToImmutable()` to make the value from it ( `Foundation.IMutable`1`). The type can be a class, a record, a record struct or a readonly record struct, and the types that contain it must be partial.
+Makes the partial class it marks a mutable view model of another type: the generator gives the class a settable property for each of that type's properties, `From(value)` to copy a value into it, `ToImmutable()` to make the value from it and an implicit conversion each way. The copied type can be a class, a record, a record struct or a readonly record struct, in this assembly or another one. The class and the types that contain it must be partial.
 
 ## Definition
 
@@ -24,13 +24,12 @@ public sealed class MutableAttribute
 
 ## Remarks
 
-A Blazor `EditForm` binds to the view model, which an immutable request can't be bound to. LaunchPad's `ZeroAllocValidator` validates the view model with the validator of the type it makes.
+A Blazor `EditForm` binds to the view model, which an immutable request can't be bound to. In a project that references ZeroAlloc.Validation the generator also writes a nested `Validator`, a `ValidatorFor` of the view model that validates the value it makes with that type's validator, and a Dovetail joint registers it as the view model's `ValidatorFor`, so LaunchPad's `ZeroAllocValidator` applies the copied type's rules to the form. A property the class declares itself is not generated, and `From` and `ToImmutable()` use it.
 
 ## Constructors
 
-- [MutableAttribute(string, string)](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute/constructors.md#constructor-string-string) -- Generates a mutable view model of the type, a class next to it named `{Prefix}{Name}{Suffix}` ( `RequestViewModel` by default): a settable property for each of the type's properties, `From(value)` to copy a value into it and `ToImmutable()` to make the value from it ( `Foundation.IMutable`1`). The type can be a class, a record, a record struct or a readonly record struct, and the types that contain it must be partial.
+- [MutableAttribute(Type)](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute/constructors.md#constructor-type) -- Makes the partial class it marks a mutable view model of another type: the generator gives the class a settable property for each of that type's properties, `From(value)` to copy a value into it, `ToImmutable()` to make the value from it and an implicit conversion each way. The copied type can be a class, a record, a record struct or a readonly record struct, in this assembly or another one. The class and the types that contain it must be partial.
 
 ## Properties
 
-- [Prefix](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute/properties.md#prefix) : `string` `get` -- What goes before the type's name in the view model's name.
-- [Suffix](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute/properties.md#suffix) : `string` `get` -- What goes after the type's name in the view model's name.
+- [Type](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute/properties.md#type) : `Type` `get` -- The type the class is a mutable view model of.

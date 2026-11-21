@@ -3,36 +3,21 @@
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/api/rocket.surgery.launchpad.foundation.md)
 - Type: [MutableAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute.md)
 - Kind: `Properties`
-- Members: `2`
+- Members: `1`
 
-Generates a mutable view model of the type, a class next to it named `{Prefix}{Name}{Suffix}` ( `RequestViewModel` by default): a settable property for each of the type's properties, `From(value)` to copy a value into it and `ToImmutable()` to make the value from it ( `Foundation.IMutable`1`). The type can be a class, a record, a record struct or a readonly record struct, and the types that contain it must be partial.
+Makes the partial class it marks a mutable view model of another type: the generator gives the class a settable property for each of that type's properties, `From(value)` to copy a value into it, `ToImmutable()` to make the value from it and an implicit conversion each way. The copied type can be a class, a record, a record struct or a readonly record struct, in this assembly or another one. The class and the types that contain it must be partial.
 
-<a id="prefix"></a>
+<a id="type"></a>
 
-## Prefix
+## Type
 
-- Name: `Prefix`
+- Name: `Type`
 - Modifiers: `get`
-- Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Foundation/MutableAttribute.cs#L28)
+- Returns: `Type`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/Foundation/MutableAttribute.cs#L27)
 
-What goes before the type's name in the view model's name.
+The type the class is a mutable view model of.
 
 ```csharp
-public string Prefix { get; }
-```
-
-<a id="suffix"></a>
-
-## Suffix
-
-- Name: `Suffix`
-- Modifiers: `get`
-- Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Foundation/MutableAttribute.cs#L33)
-
-What goes after the type's name in the view model's name.
-
-```csharp
-public string Suffix { get; }
+public Type Type { get; }
 ```

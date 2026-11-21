@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.zeroalloc.hotchocolate.md)
-- Version: `2.0.1-beta.438`
+- Version: `2.0.1-beta.440`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Validation`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/ZeroAlloc.HotChocolate/Validation/ZeroAllocValidationErrorFilter.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/ZeroAlloc.HotChocolate/Validation/ZeroAllocValidationErrorFilter.cs)
 - Implements: `IErrorFilter`
 
 Reports each failure of a request the ZeroAlloc validators rejected as a `VALIDATION` error, with the property name and the error code as extensions.

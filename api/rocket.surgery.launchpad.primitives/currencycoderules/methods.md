@@ -14,7 +14,7 @@ The rules of a currency code: an ISO 4217 alphabetic code in current use, such a
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Primitives/StrongTypes/CurrencyCode.cs#L28-L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/Primitives/StrongTypes/CurrencyCode.cs#L28-L31)
 
 ```csharp
 public sealed class CurrencyCodeRules

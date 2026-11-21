@@ -14,7 +14,7 @@ The Assigned type is used to differentiate between not set and set input values.
 - Name: `HasValue`
 - Modifiers: `get`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Foundation/Assigned.cs#L92)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/Foundation/Assigned.cs#L92)
 
 `true` if the Assigned was explicitly set.
 
@@ -29,7 +29,7 @@ public bool HasValue { get; }
 - Name: `Value`
 - Modifiers: `nullable` `get`
 - Returns: `T?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Foundation/Assigned.cs#L87)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/Foundation/Assigned.cs#L87)
 
 The name value.
 

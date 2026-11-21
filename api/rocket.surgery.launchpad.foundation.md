@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Foundation
 
 - Package: `Rocket.Surgery.LaunchPad.Foundation`
-- Version: `2.0.1-beta.438`
+- Version: `2.0.1-beta.440`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/Foundation)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.10d9c1412b7fe8190f26ae8e00f1c59fad95faf5/src/Foundation)
 - NuGet: [Rocket.Surgery.LaunchPad.Foundation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation)
 
 ## Namespaces
@@ -19,8 +19,6 @@
 - [Forbidden](/LaunchPad/api/rocket.surgery.launchpad.foundation/forbidden.md) -- `record` `sealed` -- The caller may not do this. HTTP 403, gRPC `PermissionDenied`, GraphQL `FORBIDDEN`.
 - [FoundationOptions](/LaunchPad/api/rocket.surgery.launchpad.foundation/foundationoptions.md) -- `class` -- Common foundation options
 - [GenerationIgnoreAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/generationignoreattribute.md) -- `class` `sealed` -- Exclude the given property from the generation via launch pad source generators
-- [IMutable](/LaunchPad/api/rocket.surgery.launchpad.foundation/imutable.md) -- `interface` -- A mutable copy of an immutable value, such as the view model [MutableAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute.md) generates for a request, that can make the value it stands for.
-- [IMutable<T>](/LaunchPad/api/rocket.surgery.launchpad.foundation/imutable-1.md) -- `interface` -- A mutable copy of an immutable `T`, such as the view model [MutableAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute.md) generates for a request: a form binds to it a property at a time, and it makes the `T` to send.
 - [IncludeInJsonContextAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/includeinjsoncontextattribute.md) -- `class` `sealed` -- Puts a type in the JSON context LaunchPad generates in the applications that reference this assembly, for a type that crosses the wire as JSON but isn't a mediator request or response.
 - [InheritFromAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/inheritfromattribute.md) -- `class` `sealed` -- Allows you copy the properties of the another class or interface, and include a helper method to copy content to the given record.
 - [InheritFromAttribute<T>](/LaunchPad/api/rocket.surgery.launchpad.foundation/inheritfromattribute-1.md) -- `class` `sealed` -- Allows you copy the properties of the another class or interface, and include a helper method to copy content to the given record.
@@ -34,7 +32,8 @@
 - [LaunchPadJsonEnumConverters](/LaunchPad/api/rocket.surgery.launchpad.foundation/launchpadjsonenumconverters.md) -- `class` `static` -- The enum converters the `SystemTextJsonJoint` adds to the `Json.JsonSerializerOptions` it configures.
 - [LaunchPadJsonSerializerOptionsExtensions](/LaunchPad/api/rocket.surgery.launchpad.foundation/launchpadjsonserializeroptionsextensions.md) -- `class` `static` -- Builds the `JsonSerializerOptions.TypeInfoResolverChain` of a `Json.JsonSerializerOptions` from registered resolvers.
 - [LaunchPadJsonServiceCollectionExtensions](/LaunchPad/api/rocket.surgery.launchpad.foundation/launchpadjsonservicecollectionextensions.md) -- `class` `static` -- Registers JSON type info resolvers for the `SystemTextJsonJoint` to chain into the application's `Json.JsonSerializerOptions`.
-- [MutableAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute.md) -- `class` `sealed` -- Generates a mutable view model of the type, a class next to it named `{Prefix}{Name}{Suffix}` ( `RequestViewModel` by default): a settable property for each of the type's properties, `From(value)` to copy a value into it and `ToImmutable()` to make the value from it ( `Foundation.IMutable`1`). The type can be a class, a record, a record struct or a readonly record struct, and the types that contain it must be partial.
+- [MutableAttribute](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute.md) -- `class` `sealed` -- Makes the partial class it marks a mutable view model of another type: the generator gives the class a settable property for each of that type's properties, `From(value)` to copy a value into it, `ToImmutable()` to make the value from it and an implicit conversion each way. The copied type can be a class, a record, a record struct or a readonly record struct, in this assembly or another one. The class and the types that contain it must be partial.
+- [MutableAttribute<T>](/LaunchPad/api/rocket.surgery.launchpad.foundation/mutableattribute-1.md) -- `class` `sealed` -- Makes the partial class it marks a mutable view model of `T`: the generator gives the class a settable property for each of its properties, `From(value)` to copy a value into it, `ToImmutable()` to make the value from it and an implicit conversion each way. `T` can be a class, a record, a record struct or a readonly record struct, in this assembly or another one. The class and the types that contain it must be partial.
 - [NotFound](/LaunchPad/api/rocket.surgery.launchpad.foundation/notfound.md) -- `record` `sealed` -- The requested entity doesn't exist. HTTP 404, gRPC `NotFound`, GraphQL `NOT_FOUND`.
 - [Problem](/LaunchPad/api/rocket.surgery.launchpad.foundation/problem.md) -- `record` `abstract` -- The base of LaunchPad's standard error cases: what a handler returns, as a case of its result union, instead of throwing. Each transport turns a case into its own error shape (HTTP ProblemDetails, a gRPC status, a GraphQL error) from [IProblemDetailsData](/LaunchPad/api/rocket.surgery.launchpad.foundation/iproblemdetailsdata.md).
 - [Unauthorized](/LaunchPad/api/rocket.surgery.launchpad.foundation/unauthorized.md) -- `record` `sealed` -- The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
