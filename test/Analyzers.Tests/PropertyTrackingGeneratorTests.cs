@@ -365,6 +365,55 @@ public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketM
     }
 
     [Test]
+    public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_From_Other_Assembly()
+    {
+        var contracts = await CompileReferencedAssembly(
+            "Sample.Contracts",
+            [typeof(ExcludeFromGenerationAttribute)],
+            @"
+using System;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Contracts
+{
+    public class Model
+    {
+        public Guid Id { get; init; }
+        public string SerialNumber { get; set; } = null!;
+        public string? Nickname { get; set; }
+        public string Something { get; set; } = null!;
+        [ExcludeFromGeneration]
+        public string Ignored { get; set; } = null!;
+        public string Display => SerialNumber;
+    }
+}
+",
+            TestContext.CancellationToken
+        );
+        var result = await Builder
+                          .WithGenerator<InheritFromGenerator>()
+                          .AddCompilationReferences(contracts)
+                          .AddSources(
+                               @"
+using Sample.Contracts;
+
+[InheritFrom(typeof(Model), Exclude = new[] { nameof(Model.Something) })]
+public partial class Request : IRequest<RocketModel>
+{
+    public int Type { get; set; }
+}
+public partial class PatchRequest : IPropertyTracking<Request>, IRequest<RocketModel>
+{
+    public Guid Id { get; init; }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        await Verify(result);
+    }
+
+    [Test]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude()
     {
         var result = await Builder

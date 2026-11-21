@@ -1,0 +1,26 @@
+﻿{
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.GraphqlOptionalPropertyTrackingGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.PropertyTrackingGenerator: []
+  },
+  References: [
+    <in-memory assembly>,
+    HotChocolate.Abstractions.dll,
+    HotChocolate.Types.Errors.dll,
+    Microsoft.Extensions.DependencyInjection.Abstractions.dll,
+    mscorlib.dll,
+    netstandard.dll,
+    NodaTime.dll,
+    Rocket.Surgery.LaunchPad.Foundation.dll,
+    Rocket.Surgery.LaunchPad.Foundation.dll,
+    Rocket.Surgery.LaunchPad.HotChocolate.dll,
+    System.Core.dll,
+    System.dll,
+    System.Private.CoreLib.dll,
+    System.Runtime.dll,
+    System.Text.Json.dll,
+    ZeroAlloc.Mediator.dll
+  ]
+}
