@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -34,7 +36,10 @@ public sealed class LaunchPadHealthCheckOptions
     ///     the server doesn't listen on the port after all (a <c>Listen</c> in code, IIS, HTTP.sys or the in-memory test server), the health
     ///     check endpoints answer on the application's own addresses, as they do with no port.
     /// </remarks>
+    // InclusiveBetween validates the port (ZeroAlloc.Validation); Range gives the configuration schema its minimum and maximum, until Optionary
+    // reads ZeroAlloc.Validation's rules itself (RocketSurgeonsGuild/Optionary#77).
     [InclusiveBetween(1, 65535)]
+    [Range(1, 65535)]
     public int? Port { get; set; }
 
     /// <summary>The path of the health report, which the liveness and readiness paths sit under. The default is <c>/health</c>.</summary>
