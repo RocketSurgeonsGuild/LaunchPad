@@ -314,6 +314,57 @@ public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
     }
 
     [Test]
+    public async Task Should_Generate_Record_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_From_Other_Assembly()
+    {
+        var contracts = await CompileReferencedAssembly(
+            "Sample.Contracts",
+            [typeof(InheritFromAttribute)],
+            @"
+using System;
+
+namespace Sample.Contracts
+{
+    public record Model
+    {
+        public Guid Id { get; init; }
+        public string SerialNumber { get; set; } = null!;
+        public int Type { get; set; }
+        public string? Nickname { get; set; }
+    }
+}
+",
+            TestContext.CancellationToken
+        );
+        var result = await Builder
+                          .WithGenerator<InheritFromGenerator>()
+                          .WithGenerator<PropertyTrackingGenerator>()
+                          .AddReferences(typeof(InheritFromAttribute))
+                          .AddCompilationReferences(contracts)
+                          .AddSources(
+                               @"
+using Sample.Contracts;
+
+[InheritFrom(typeof(Model))]
+public partial record Request : IRequest<Model>
+{
+    public Instant PlannedDate { get; set; }
+}
+
+public partial record PatchRocket : IPropertyTracking<Request>, IRequest<Model>
+{
+    public Guid Id { get; init; }
+}
+
+public partial record PatchGraphRocket : IOptionalTracking<PatchRocket>;
+"
+                           )
+                          .WithCustomizer(Customizers.IncludeReferences)
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        await Verify(result);
+    }
+
+    [Test]
     [Arguments(PropertyTracking.SameAssembly)]
     [Arguments(PropertyTracking.OtherAssembly)]
     public async Task Should_Generate_Class_With_Underlying_IPropertyTracking_Properties_When_Using_InheritsFromGenerator_Exclude(

@@ -47,7 +47,7 @@ public class InheritFromGenerator : IIncrementalGenerator
               .Select(
                    attribute => GetInheritingSymbol(attribute) is not { } inheritFromSymbol
                        ? []
-                       : GetInheritableMemberSymbols(attribute, inheritFromSymbol, excludedProperties)
+                       : GetInheritableMemberSymbols(targetSymbol, attribute, inheritFromSymbol, excludedProperties)
                )
               .Aggregate(
                    ImmutableArray.CreateBuilder<IPropertySymbol>(),
@@ -60,34 +60,36 @@ public class InheritFromGenerator : IIncrementalGenerator
               .ToImmutable();
     }
 
-    private static INamedTypeSymbol? GetInheritingSymbol(SourceProductionContext context, AttributeData attribute, string otherSymbolName)
-    {
-        var inheritFromSymbol = attribute switch
-        {
-            { AttributeClass.TypeArguments: [INamedTypeSymbol genericArgumentSymbol,], } => genericArgumentSymbol,
-            { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol constructorArgumentSymbol, },], } =>
-                constructorArgumentSymbol,
-            _ => null,
-        };
-        switch (inheritFromSymbol)
-        {
-            case { DeclaringSyntaxReferences.Length: 0, }:
-                // TODO: Support generation from another assembly
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        GeneratorDiagnostics.TypeMustLiveInSameProject,
-                        attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation(),
-                        inheritFromSymbol.Name,
-                        otherSymbolName
-                    )
-                );
-                return null;
-            default:
-                break;
-        }
+    /// <summary>
+    ///     A type declared in the compilation is copied from its syntax; a type from any other assembly is rebuilt from its symbols.
+    ///     This is decided by assembly rather than by <see cref="ISymbol.DeclaringSyntaxReferences" />, so a project reference gives the same
+    ///     output in the IDE (where it is a compilation reference with syntax) as in the build (where it is a metadata reference).
+    /// </summary>
+    private static bool IsFromOtherAssembly(INamedTypeSymbol targetSymbol, INamedTypeSymbol inheritFromSymbol) =>
+        !SymbolEqualityComparer.Default.Equals(targetSymbol.ContainingAssembly, inheritFromSymbol.ContainingAssembly);
 
-        return inheritFromSymbol;
-    }
+    /// <summary>
+    ///     The property shape that can be rebuilt from metadata: a public instance auto property with a getter and a setter or init accessor.
+    /// </summary>
+    private static bool IsCopiedFromMetadata(IPropertySymbol property) =>
+        property is
+        {
+            DeclaredAccessibility: Accessibility.Public, IsStatic: false, IsIndexer: false, CanBeReferencedByName: true, GetMethod: not null,
+            SetMethod: not null,
+        }
+     && !IsCompilerGenerated(property);
+
+    private static bool IsCopiedFromMetadata(IFieldSymbol field) =>
+        field is
+        {
+            DeclaredAccessibility: Accessibility.Public, IsStatic: false, IsConst: false, IsReadOnly: false, CanBeReferencedByName: true,
+            AssociatedSymbol: null,
+        }
+     && !IsCompilerGenerated(field);
+
+    private static bool IsCompilerGenerated(ISymbol symbol) =>
+        symbol.IsImplicitlyDeclared
+     || symbol.GetAttributes().Any(z => z.AttributeClass is { Name: "CompilerGeneratedAttribute", ContainingNamespace: var ns, } && ns.ToDisplayString() == "System.Runtime.CompilerServices");
 
     private static INamedTypeSymbol? GetInheritingSymbol(AttributeData attribute)
     {
@@ -103,6 +105,7 @@ public class InheritFromGenerator : IIncrementalGenerator
     }
 
     private static ImmutableArray<IPropertySymbol> GetInheritableMemberSymbols(
+        INamedTypeSymbol targetSymbol,
         AttributeData attribute,
         INamedTypeSymbol inheritFromSymbol,
         HashSet<string> excludedProperties
@@ -114,9 +117,11 @@ public class InheritFromGenerator : IIncrementalGenerator
             excludedProperties.Add(excludedProperty);
         }
 
-        return [.. inheritFromSymbol
-              .FilterProperties()
-              .Where(z => !excludeMembers.Contains(z.Name))];
+        var properties = inheritFromSymbol.FilterProperties();
+        // only the properties the InheritFrom generator rebuilds from metadata
+        if (IsFromOtherAssembly(targetSymbol, inheritFromSymbol)) properties = properties.Where(IsCopiedFromMetadata);
+
+        return [.. properties.Where(z => !excludeMembers.Contains(z.Name))];
     }
 
     private static void GenerateInheritance(
@@ -150,21 +155,39 @@ public class InheritFromGenerator : IIncrementalGenerator
 
         foreach (var attribute in attributes)
         {
-            var inheritFromSymbol = GetInheritingSymbol(context, attribute, classToInherit.Identifier.Text);
-            if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], }) continue;
-            if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax) continue;
-            namespaces = namespaces.AddDistinctUsingStatements(inheritFromSyntax.SyntaxTree.GetCompilationUnitRoot().Usings);
+            if (GetInheritingSymbol(attribute) is not { } inheritFromSymbol) continue;
 
-            var inheritableMembers = GetInheritableMembers(attribute, inheritFromSymbol);
+            ImmutableArray<MemberDeclarationSyntax> inheritableMembers;
+            TypeSyntax inheritFromTypeSyntax;
+            if (IsFromOtherAssembly(targetSymbol, inheritFromSymbol))
+            {
+                inheritableMembers = GetInheritableMembersFromMetadata(context, compilation, attribute, targetSymbol, inheritFromSymbol);
+                inheritFromTypeSyntax = ParseTypeName(inheritFromSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+                classToInherit = AddInheritableMembersFromMetadata(
+                    classToInherit,
+                    inheritableMembers,
+                    compilation,
+                    targetSymbol,
+                    inheritFromSymbol
+                );
+            }
+            else
+            {
+                if (inheritFromSymbol is not { DeclaringSyntaxReferences: [var inheritFromSyntaxIntermediate, ..,], }) continue;
+                if (inheritFromSyntaxIntermediate.GetSyntax() is not TypeDeclarationSyntax inheritFromSyntax) continue;
+                namespaces = namespaces.AddDistinctUsingStatements(inheritFromSyntax.SyntaxTree.GetCompilationUnitRoot().Usings);
 
-            classToInherit = AddInheritableMembers(
-                classToInherit,
-                inheritableMembers,
-                compilation,
-                declaration,
-                targetSymbol,
-                inheritFromSymbol
-            );
+                inheritableMembers = GetInheritableMembers(attribute, inheritFromSymbol);
+                inheritFromTypeSyntax = IdentifierName(inheritFromSymbol.Name);
+                classToInherit = AddInheritableMembers(
+                    classToInherit,
+                    inheritableMembers,
+                    compilation,
+                    declaration,
+                    targetSymbol,
+                    inheritFromSymbol
+                );
+            }
 
             switch (classToInherit)
             {
@@ -173,7 +196,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                         classDeclarationSyntax,
                         declaration,
                         inheritableMembers,
-                        inheritFromSymbol.Name
+                        inheritFromTypeSyntax
                     );
                     break;
                 case RecordDeclarationSyntax recordDeclarationSyntax:
@@ -181,7 +204,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                         recordDeclarationSyntax,
                         declaration,
                         inheritableMembers,
-                        inheritFromSymbol.Name
+                        inheritFromTypeSyntax
                     );
                     break;
                 default:
@@ -254,11 +277,192 @@ public class InheritFromGenerator : IIncrementalGenerator
                );
     }
 
+    private static readonly SymbolDisplayFormat TypeFormat =
+        SymbolDisplayFormat.FullyQualifiedFormat.AddMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
+    /// <summary>
+    ///     Rebuilds the members of a type from another assembly, which has no syntax in this compilation. Properties and fields are rebuilt
+    ///     as declarations (type, nullability, <c>required</c>, <c>init</c>, attributes); what metadata does not hold (initializers, bodies)
+    ///     is not. Any other public member the source type declares is reported with LPAD0002 instead of being copied.
+    /// </summary>
+    private static ImmutableArray<MemberDeclarationSyntax> GetInheritableMembersFromMetadata(
+        SourceProductionContext context,
+        Compilation compilation,
+        AttributeData attribute,
+        INamedTypeSymbol targetSymbol,
+        INamedTypeSymbol inheritFromSymbol
+    )
+    {
+        var excludeMembers = GetExcludedMembers(inheritFromSymbol, attribute);
+        var members = ImmutableArray.CreateBuilder<MemberDeclarationSyntax>();
+        foreach (var member in inheritFromSymbol.GetMembers())
+        {
+            if (excludeMembers.Contains(member.Name)) continue;
+            switch (member)
+            {
+                case IPropertySymbol property when IsCopiedFromMetadata(property):
+                    members.Add(CreateProperty(compilation, property));
+                    continue;
+                case IFieldSymbol field when IsCopiedFromMetadata(field):
+                    members.Add(CreateField(compilation, field));
+                    continue;
+                case IPropertySymbol or IFieldSymbol or IEventSymbol or IMethodSymbol { MethodKind: MethodKind.Ordinary, }:
+                    if (member is not { DeclaredAccessibility: Accessibility.Public, CanBeReferencedByName: true, } || IsCompilerGenerated(member))
+                        continue;
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            GeneratorDiagnostics.MemberCannotBeCopiedFromMetadata,
+                            attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation(),
+                            member.Name,
+                            inheritFromSymbol.ToDisplayString(),
+                            targetSymbol.ToDisplayString()
+                        )
+                    );
+                    continue;
+                default:
+                    // constructors, accessors, operators and nested types are not copied, the same as from syntax
+                    continue;
+            }
+        }
+
+        return members.ToImmutable();
+    }
+
+    private static PropertyDeclarationSyntax CreateProperty(Compilation compilation, IPropertySymbol property)
+    {
+        var modifiers = new List<SyntaxToken> { Token(SyntaxKind.PublicKeyword), };
+        if (property.IsRequired) modifiers.Add(Token(SyntaxKind.RequiredKeyword));
+
+        return PropertyDeclaration(ParseTypeName(property.Type.ToDisplayString(TypeFormat)), EscapedIdentifier(property.Name))
+              .WithAttributeLists(CreateAttributeLists(compilation, property.GetAttributes()))
+              .WithModifiers(TokenList(modifiers))
+              .WithAccessorList(
+                   AccessorList(
+                       List(
+                           [
+                               CreateAccessor(SyntaxKind.GetAccessorDeclaration, property.GetMethod!),
+                               CreateAccessor(
+                                   property.SetMethod!.IsInitOnly ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration,
+                                   property.SetMethod
+                               ),
+                           ]
+                       )
+                   )
+               );
+
+        static AccessorDeclarationSyntax CreateAccessor(SyntaxKind kind, IMethodSymbol accessor) =>
+            AccessorDeclaration(kind)
+               .WithModifiers(TokenList(AccessibilityModifiers(accessor.DeclaredAccessibility)))
+               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+    }
+
+    private static FieldDeclarationSyntax CreateField(Compilation compilation, IFieldSymbol field)
+    {
+        var modifiers = new List<SyntaxToken> { Token(SyntaxKind.PublicKeyword), };
+        if (field.IsRequired) modifiers.Add(Token(SyntaxKind.RequiredKeyword));
+
+        return FieldDeclaration(
+                   VariableDeclaration(ParseTypeName(field.Type.ToDisplayString(TypeFormat)))
+                      .WithVariables(SingletonSeparatedList(VariableDeclarator(EscapedIdentifier(field.Name))))
+               )
+              .WithAttributeLists(CreateAttributeLists(compilation, field.GetAttributes()))
+              .WithModifiers(TokenList(modifiers));
+    }
+
+    private static SyntaxToken EscapedIdentifier(string name) =>
+        Identifier(SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ? "@" + name : name);
+
+    private static IEnumerable<SyntaxToken> AccessibilityModifiers(Accessibility accessibility) => accessibility switch
+    {
+        Accessibility.Protected => [Token(SyntaxKind.ProtectedKeyword),],
+        Accessibility.Internal => [Token(SyntaxKind.InternalKeyword),],
+        Accessibility.Private => [Token(SyntaxKind.PrivateKeyword),],
+        Accessibility.ProtectedOrInternal => [Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.InternalKeyword),],
+        Accessibility.ProtectedAndInternal => [Token(SyntaxKind.PrivateKeyword), Token(SyntaxKind.ProtectedKeyword),],
+        // public is the property's accessibility, so a public accessor has no modifier
+        Accessibility.Public or Accessibility.NotApplicable => [],
+        _ => [],
+    };
+
+    private static SyntaxList<AttributeListSyntax> CreateAttributeLists(Compilation compilation, ImmutableArray<AttributeData> attributes)
+    {
+        var copied = attributes
+                    .Where(
+                         z => z.AttributeClass is { TypeKind: not TypeKind.Error, } attributeClass
+                          // the compiler's own attributes (nullable, required member, ...) are written again by the compiler from the declaration
+                          && attributeClass.ContainingNamespace.ToDisplayString() != "System.Runtime.CompilerServices"
+                          && attributeClass.Name is not ( "ExcludeFromGenerationAttribute" or "GenerationIgnoreAttribute" )
+                          && compilation.IsSymbolAccessibleWithin(attributeClass, compilation.Assembly)
+                          && z.ConstructorArguments.All(a => a.Kind != TypedConstantKind.Error)
+                          && z.NamedArguments.All(a => a.Value.Kind != TypedConstantKind.Error)
+                     )
+                    .Select(
+                         z => Attribute(
+                             ParseName(z.AttributeClass!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)),
+                             z is { ConstructorArguments.Length: 0, NamedArguments.Length: 0, }
+                                 ? null
+                                 : AttributeArgumentList(
+                                     SeparatedList(
+                                         z
+                                            .ConstructorArguments.Select(a => AttributeArgument(ParseExpression(a.ToCSharpString())))
+                                            .Concat(
+                                                 z.NamedArguments.Select(
+                                                     a => AttributeArgument(ParseExpression(a.Value.ToCSharpString()))
+                                                        .WithNameEquals(NameEquals(IdentifierName(a.Key)))
+                                                 )
+                                             )
+                                     )
+                                 )
+                         )
+                     )
+                    .ToArray();
+
+        return copied is { Length: 0, } ? List<AttributeListSyntax>() : SingletonList(AttributeList(SeparatedList(copied)));
+    }
+
+    private static TypeDeclarationSyntax AddInheritableMembersFromMetadata(
+        TypeDeclarationSyntax classToInherit,
+        ImmutableArray<MemberDeclarationSyntax> members,
+        Compilation compilation,
+        INamedTypeSymbol targetSymbol,
+        INamedTypeSymbol inheritFromSymbol
+    )
+    {
+        if (!compilation.HasImplicitConversion(targetSymbol, inheritFromSymbol)) classToInherit = classToInherit.AddMembers([.. members]);
+
+        var baseTypes = new List<INamedTypeSymbol>();
+        // a base class only when the receiving type has none of its own
+        if (inheritFromSymbol.BaseType is { SpecialType: not ( SpecialType.System_Object or SpecialType.System_ValueType ), } baseType
+         && targetSymbol.BaseType is null or { SpecialType: SpecialType.System_Object, })
+        {
+            baseTypes.Add(baseType);
+        }
+
+        baseTypes.AddRange(
+            inheritFromSymbol
+               .Interfaces
+               // a record's IEquatable<T> of itself is the compiler's
+               .Where(
+                    z => !( inheritFromSymbol.IsRecord
+                         && z is { Name: "IEquatable", TypeArguments: [var argument,], }
+                         && SymbolEqualityComparer.Default.Equals(argument, inheritFromSymbol) )
+                )
+               .Where(z => !targetSymbol.AllInterfaces.Contains(z, SymbolEqualityComparer.Default))
+        );
+
+        return baseTypes
+              .Where(z => compilation.IsSymbolAccessibleWithin(z, compilation.Assembly))
+              .Aggregate(
+                   classToInherit,
+                   (current, type) => (TypeDeclarationSyntax)current.AddBaseListTypes(SimpleBaseType(ParseTypeName(type.ToDisplayString(TypeFormat))))
+               );
+    }
+
     private static TypeDeclarationSyntax AddWithMethod(
         ClassDeclarationSyntax classToInherit,
         TypeDeclarationSyntax declaration,
         ImmutableArray<MemberDeclarationSyntax> members,
-        string inheritFromSymbolName
+        TypeSyntax inheritFromType
     )
     {
         var sourceAssignmentMembers = declaration
@@ -336,7 +540,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                .WithParameterList(
                     ParameterList(
                         SingletonSeparatedList(
-                            Parameter(Identifier("value")).WithType(IdentifierName(inheritFromSymbolName))
+                            Parameter(Identifier("value")).WithType(inheritFromType)
                         )
                     )
                 )
@@ -358,7 +562,7 @@ public class InheritFromGenerator : IIncrementalGenerator
         RecordDeclarationSyntax syntax,
         TypeDeclarationSyntax declaration,
         ImmutableArray<MemberDeclarationSyntax> members,
-        string inheritFromSymbolName
+        TypeSyntax inheritFromType
     )
     {
         var valueAssignmentMembers = members
@@ -402,7 +606,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                .WithParameterList(
                     ParameterList(
                         SingletonSeparatedList(
-                            Parameter(Identifier("value")).WithType(IdentifierName(inheritFromSymbolName))
+                            Parameter(Identifier("value")).WithType(inheritFromType)
                         )
                     )
                 )

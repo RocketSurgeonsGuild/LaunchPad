@@ -13,12 +13,12 @@ internal static class GeneratorDiagnostics
         true
     );
 
-    public static DiagnosticDescriptor TypeMustLiveInSameProject { get; } = new(
+    public static DiagnosticDescriptor MemberCannotBeCopiedFromMetadata { get; } = new(
         "LPAD0002",
-        "Source Type must be in the same Project as the Receiving Type",
-        "{0} Type must be in the same Assembly / Project as the {1} Type",
+        "Member of a type from another assembly cannot be copied",
+        "{0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only",
         "LaunchPad",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         true
     );
 
