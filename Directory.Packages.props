@@ -12,7 +12,7 @@
         <RsgSdk_MicrosoftCodeAnalysisAnalyzers_Version>5.12.0</RsgSdk_MicrosoftCodeAnalysisAnalyzers_Version>
     </PropertyGroup>
     <ItemGroup>
-        <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.5" />
+        <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.6" />
     </ItemGroup>
     <ItemGroup>
 
@@ -124,7 +124,7 @@
         <PackageVersion Include="Joinery.Dovetail.DryIoc" Version="0.8.0" />
         <PackageVersion Include="Joinery.Dovetail.Hosting" Version="0.8.0" />
         <!-- binds and describes the configuration a project declares ([Optionary]); Dovetail 0.7.1 leaves the reference to the project -->
-        <PackageVersion Include="Optionary" Version="0.1.1" />
+        <PackageVersion Include="Optionary" Version="0.1.2" />
         <!--
             No project references these: each LaunchPad SDK (src/Sdks) chains the Dovetail SDK of the same name at this version, which
             src/Sdks/Directory.Build.targets writes into its Sdk/Packages.props. Dovetail ships every package at one version.
