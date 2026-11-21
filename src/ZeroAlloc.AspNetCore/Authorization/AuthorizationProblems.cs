@@ -52,13 +52,17 @@ public static class AuthorizationProblems
     {
         if (decision.RequiredScopes.Count == 0) return existing;
         var scope = string.Create(CultureInfo.InvariantCulture, $"scope=\"{string.Join(' ', decision.RequiredScopes)}\"");
-        return decision.Problem is Forbidden forbidden
-            ? forbidden.Properties.ContainsKey(AuthorizationDecision.MissingScopesProperty) ? $"Bearer error=\"insufficient_scope\", {scope}" : existing
-            : string.IsNullOrWhiteSpace(existing)
-            ? "Bearer " + scope
-            : !existing.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase) || existing.Contains("scope=", StringComparison.OrdinalIgnoreCase)
-            ? existing
-            : existing.Trim().Length == "Bearer".Length ? "Bearer " + scope : existing + ", " + scope;
+        return decision.Problem switch
+        {
+            // The caller is known and lacks a scope: say which. Any other denial of a known caller is not a matter of scopes.
+            Forbidden forbidden when forbidden.Properties.ContainsKey(AuthorizationDecision.MissingScopesProperty) => $"Bearer error=\"insufficient_scope\", {scope}",
+            Forbidden => existing,
+            _ when string.IsNullOrWhiteSpace(existing) => "Bearer " + scope,
+            // Another scheme's challenge, or one that names scopes already, is kept as it is.
+            _ when !existing.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase) || existing.Contains("scope=", StringComparison.OrdinalIgnoreCase) => existing,
+            _ when existing.Trim().Length == "Bearer".Length => "Bearer " + scope,
+            _ => existing + ", " + scope,
+        };
     }
 }
 
