@@ -7,6 +7,9 @@ using Microsoft.Build.Utilities.ProjectCreation;
 
 using Sdk.Tests.Scaffolding;
 
+// as in Hosting.Tests: the public test classes expose nothing for other languages to consume
+[assembly: CLSCompliant(false)]
+
 namespace Sdk.Tests;
 
 /// <summary>
@@ -27,7 +30,7 @@ public class SdkChirographTests(string targetFramework)
     public async Task Should_Resolve_A_Kiota_Client_From_A_File_With_ConfigureDovetail()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, KiotaClient(HostModelShape.Project(HostModel.GenericHost, targetFramework)));
+        tree.AddProject("app", HostModel.GenericHost, KiotaClientProject());
         await File.WriteAllTextAsync(Path.Combine(tree.Directory, "app", "rockets.json"), RocketsDocument, Cancellation);
         await File.WriteAllTextAsync(Path.Combine(tree.Directory, "app", "Program.cs"), ResolveClient, Cancellation);
 
@@ -45,9 +48,9 @@ public class SdkChirographTests(string targetFramework)
     public async Task Should_Not_Chain_Chirograph_Into_A_Project_That_Applies_It_Itself()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, KiotaClient(HostModelShape.Project(HostModel.GenericHost, targetFramework).Sdk("Chirograph", OtherChirographVersion)));
+        tree.AddProject("app", HostModel.GenericHost, KiotaClientProject().Sdk("Chirograph", OtherChirographVersion));
 
-        var evaluation = await EvaluateChirograph(tree, "app");
+        var evaluation = await EvaluateChirograph(tree.Directory, "app");
 
         await evaluation.Version.Should().BeEqualTo(OtherChirographVersion);
         await evaluation.Clients.Should().BeEqualTo(1);
@@ -60,9 +63,9 @@ public class SdkChirographTests(string targetFramework)
     public async Task Should_Not_Chain_Chirograph_When_Opted_Out()
     {
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
-        tree.AddProject("app", HostModel.GenericHost, KiotaClient(HostModelShape.Project(HostModel.GenericHost, targetFramework).Property("LaunchPadEnableChirograph", "false")));
+        tree.AddProject("app", HostModel.GenericHost, KiotaClientProject().Property("LaunchPadEnableChirograph", "false"));
 
-        var evaluation = await EvaluateChirograph(tree, "app");
+        var evaluation = await EvaluateChirograph(tree.Directory, "app");
 
         await evaluation.Version.Should().BeEqualTo("");
         await evaluation.Clients.Should().BeEqualTo(0);
@@ -85,26 +88,29 @@ public class SdkChirographTests(string targetFramework)
 
     private const string ClientType = $"{HostModelShape.RootNamespace}.Clients.RocketsClient";
 
-    private static ProjectCreator KiotaClient(ProjectCreator project) =>
-        project.ItemInclude(
-            "OpenApiClient",
-            "rockets.json",
-            metadata: new Dictionary<string, string?>
-            {
-                ["Generator"] = "Kiota",
-                ["ClientName"] = "RocketsClient",
-                ["Namespace"] = $"{HostModelShape.RootNamespace}.Clients",
-            }
-        );
+    // a generic host with a Kiota client of rockets.json, a file in the project
+    private ProjectCreator KiotaClientProject() =>
+        HostModelShape
+           .Project(HostModel.GenericHost, targetFramework)
+           .ItemInclude(
+                "OpenApiClient",
+                "rockets.json",
+                metadata: new Dictionary<string, string?>
+                {
+                    ["Generator"] = "Kiota",
+                    ["ClientName"] = "RocketsClient",
+                    ["Namespace"] = $"{HostModelShape.RootNamespace}.Clients",
+                }
+            );
 
     /// <summary>
     ///     The version of Chirograph a project evaluates with (empty when nothing imported it) and how many clients it declares to generate.
     /// </summary>
-    private static async Task<(string Version, int Clients)> EvaluateChirograph(SdkTree tree, string name)
+    private static async Task<(string Version, int Clients)> EvaluateChirograph(string treeDirectory, string name)
     {
         var output = await DotnetCli.Run(
-            $"msbuild \"{Path.Combine(tree.Directory, name, $"{name}.csproj")}\" -nologo -getProperty:ChirographVersion -getItem:_ChirographOpenApiClient",
-            tree.Directory,
+            $"msbuild \"{Path.Combine(treeDirectory, name, $"{name}.csproj")}\" -nologo -getProperty:ChirographVersion -getItem:_ChirographOpenApiClient",
+            treeDirectory,
             null,
             Cancellation
         );
