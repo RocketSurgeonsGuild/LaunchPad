@@ -57,10 +57,11 @@ public static class AuthorizationProblems
             return forbidden.Properties.ContainsKey(AuthorizationDecision.MissingScopesProperty) ? $"Bearer error=\"insufficient_scope\", {scope}" : existing;
         }
 
-        if (string.IsNullOrWhiteSpace(existing)) return "Bearer " + scope;
-        return  !existing.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase) || existing.Contains("scope=", StringComparison.OrdinalIgnoreCase) 
+        return  string.IsNullOrWhiteSpace(existing) 
+            ?  "Bearer " + scope 
+            :  !existing.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase) || existing.Contains("scope=", StringComparison.OrdinalIgnoreCase)
             ? existing
-            :  existing.Trim().Length == "Bearer".Length ? "Bearer " + scope : existing + ", " + scope;
+            : existing.Trim().Length == "Bearer".Length ? "Bearer " + scope : existing + ", " + scope;
     }
 }
 

@@ -38,9 +38,9 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
                         static (pair, _) =>
                         {
                             var (requests, compilation) = pair;
-                            return  requests.IsEmpty || compilation.GetTypeByMetadataName(PolicyReader.PlanType) is null 
-                                ?  EquatableArray<PlanModel>.Empty 
-                                :  requests
+                            return requests.IsEmpty || compilation.GetTypeByMetadataName(PolicyReader.PlanType) is null
+                                ? EquatableArray<PlanModel>.Empty
+                                : requests
                                   .Select(name => compilation.GetTypeByMetadataName(name))
                                   .OfType<INamedTypeSymbol>()
                                   .Select(request => Read(request, compilation))
