@@ -111,8 +111,7 @@ public class SdkChirographTests(string targetFramework)
         var output = await DotnetCli.Run(
             $"msbuild \"{Path.Combine(treeDirectory, name, $"{name}.csproj")}\" -nologo -getProperty:ChirographVersion -getItem:_ChirographOpenApiClient",
             treeDirectory,
-            null,
-            Cancellation
+            cancellationToken: Cancellation
         );
         // -getProperty writes JSON after anything the SDK resolver logs while it restores the SDKs
         using var json = JsonDocument.Parse(output[output.IndexOf('{', StringComparison.Ordinal)..]);
