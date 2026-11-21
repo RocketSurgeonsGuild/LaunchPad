@@ -14,7 +14,7 @@ The rules of an email address: an RFC 5322 `addr-spec` in the form RFC 5321 deli
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/Primitives/StrongTypes/EmailAddress.cs#L45-L53)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/Primitives/StrongTypes/EmailAddress.cs#L45-L53)
 
 ```csharp
 public sealed class EmailAddressRules

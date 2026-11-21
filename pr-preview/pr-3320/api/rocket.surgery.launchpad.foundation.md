@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Foundation
 
 - Package: `Rocket.Surgery.LaunchPad.Foundation`
-- Version: `2.0.1-pr.1272`
+- Version: `2.0.1-pr.1274`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/Foundation)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/Foundation)
 - NuGet: [Rocket.Surgery.LaunchPad.Foundation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation)
 
 ## Namespaces
@@ -38,7 +38,6 @@
 - [Problem](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.foundation/problem.md) -- `record` `abstract` -- The base of LaunchPad's standard error cases: what a handler returns, as a case of its result union, instead of throwing. Each transport turns a case into its own error shape (HTTP ProblemDetails, a gRPC status, a GraphQL error) from [IProblemDetailsData](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.foundation/iproblemdetailsdata.md).
 - [Unauthorized](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.foundation/unauthorized.md) -- `record` `sealed` -- The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 - [UnprocessableEntity](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.foundation/unprocessableentity.md) -- `record` `sealed` -- The request is well formed but fails validation: what a validator reports. HTTP 422, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
-- [ValidatedByAttribute](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.foundation/validatedbyattribute.md) -- `class` `sealed` -- Names the validator of the type it marks, for a form validator to create when no validator of the type is registered. The [MutableAttribute](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.foundation/mutableattribute.md) generator puts it on a view model, naming the validator it writes: that validator checks the value the view model makes, so the form binds to the view model and the rules of the type it copies apply.
 
 ### Rocket.Surgery.LaunchPad.Foundation.Extensions
 

@@ -13,7 +13,7 @@ The format a strong type's value is written in, as OpenAPI and JSON Schema name 
 ## StrongTypeFormatAttribute(string)
 
 - Name: `Constructor(string)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/Primitives/Descriptions/StrongTypeDescription.cs#L256-L261)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/Primitives/Descriptions/StrongTypeDescription.cs#L256-L261)
 
 The format a strong type's value is written in, as OpenAPI and JSON Schema name it ( `email`, `uri`, `ipv4`, ...), on the strong type or on its rules.
 

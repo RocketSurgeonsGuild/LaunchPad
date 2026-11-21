@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake
 
 - Package: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`
-- Version: `2.0.1-pr.1272`
+- Version: `2.0.1-pr.1274`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/NodaTime.StrawberryShake)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/NodaTime.StrawberryShake)
 - NuGet: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake)
 
 ## Namespaces

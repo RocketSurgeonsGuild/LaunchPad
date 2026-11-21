@@ -13,7 +13,7 @@ The requested entity doesn't exist. HTTP 404, gRPC `NotFound`, GraphQL `NOT_FOUN
 ## NotFound(string?)
 
 - Name: `Constructor(string?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/Foundation/Problems.cs#L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/Foundation/Problems.cs#L37)
 
 The requested entity doesn't exist. HTTP 404, gRPC `NotFound`, GraphQL `NOT_FOUND`.
 

@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Spatial
 
 - Package: `Rocket.Surgery.LaunchPad.Spatial`
-- Version: `2.0.1-pr.1272`
+- Version: `2.0.1-pr.1274`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/Spatial)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/Spatial)
 - NuGet: [Rocket.Surgery.LaunchPad.Spatial](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Spatial)
 
 ## Namespaces

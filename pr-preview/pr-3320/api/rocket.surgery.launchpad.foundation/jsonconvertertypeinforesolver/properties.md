@@ -14,7 +14,7 @@ Resolves the metadata of value types written by a converter in `JsonSerializerOp
 - Name: `Types`
 - Modifiers: `get`
 - Returns: `IEnumerable<Type>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/Foundation/JsonConverterTypeInfoResolver.cs#L47)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/Foundation/JsonConverterTypeInfoResolver.cs#L47)
 
 The types this resolver knows.
 

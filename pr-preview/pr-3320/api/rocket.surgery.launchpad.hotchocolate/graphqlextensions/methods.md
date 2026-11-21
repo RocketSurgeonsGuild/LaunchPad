@@ -15,7 +15,7 @@ GraphQl extensions
 - Name: `ConfigureStronglyTypedId(IRequestExecutorBuilder, Func<TStrongType, TValue>, Func<TValue, TStrongType>)`
 - Modifiers: `extension`
 - Returns: `IRequestExecutorBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/HotChocolate/GraphqlExtensions.cs#L62-L69)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/HotChocolate/GraphqlExtensions.cs#L62-L69)
 
 Configures a strongly typed id with the GraphQL scalar type of its underlying value: converts between the id and its value, binds the id to the scalar type, and filters it as that scalar.
 
@@ -57,7 +57,7 @@ The conversions are given rather than found by reflection, so this is trim and n
 - Name: `WithProblemDetails(ErrorBuilder, IProblemDetailsData)`
 - Modifiers: `extension`
 - Returns: `ErrorBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/HotChocolate/GraphqlExtensions.cs#L25-L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/HotChocolate/GraphqlExtensions.cs#L25-L37)
 
 Add problem details to the error
 

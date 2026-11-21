@@ -14,7 +14,7 @@ The level and the properties LaunchPad gives the request log event that Serilog'
 
 - Name: `DefaultEnrichDiagnosticContext(IDiagnosticContext, HttpContext)`
 - Modifiers: `static`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/AspNetCore/LaunchPadRequestLogging.cs#L22-L42)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/AspNetCore/LaunchPadRequestLogging.cs#L22-L42)
 
 Setup the `IDiagnosticContext` with default values from the request
 
@@ -43,7 +43,7 @@ public static class LaunchPadRequestLogging
 - Name: `DefaultGetLevel(HttpContext, double, Exception?)`
 - Modifiers: `static`
 - Returns: `LogEventLevel`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/AspNetCore/LaunchPadRequestLogging.cs#L53-L61)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/AspNetCore/LaunchPadRequestLogging.cs#L53-L61)
 
 Gets the default logging level based on the response status code
 

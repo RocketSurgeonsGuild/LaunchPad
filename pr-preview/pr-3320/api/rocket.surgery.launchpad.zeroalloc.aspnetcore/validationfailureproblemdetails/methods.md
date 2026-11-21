@@ -15,7 +15,7 @@ The problem details for a request the ZeroAlloc validators rejected, with the fa
 - Name: `From(ValidationFailedException)`
 - Modifiers: `static`
 - Returns: [ValidationFailureProblemDetails](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.zeroalloc.aspnetcore/validationfailureproblemdetails.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.bb93b2eb5e069135a2caef17855a85e8a18d22af/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs#L20-L33)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs#L20-L33)
 
 Creates the problem details for the failures of a `Validation.ValidationFailedException`.
 
