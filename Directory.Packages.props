@@ -38,9 +38,9 @@
         <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="11.0.1" />
 
 
-        <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="11.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="11.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="11.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="11.0.1" />
+        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="11.0.1" />
+        <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="11.0.1" />
         <PackageVersion Include="Polyfill" Version="11.4.5" />
         <PackageVersion Include="SuperStrong.Types" Version="1.0.0" />
 
