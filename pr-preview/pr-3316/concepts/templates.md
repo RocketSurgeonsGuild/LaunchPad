@@ -36,7 +36,9 @@ libraries its [strong types](../strong-types/) are described to. Each one is a t
 | `LaunchPadProcessInstrumentationJoint`        | `OpenTelemetry.Instrumentation.Process`                              | generic host, ASP.NET Core                     |
 | `LaunchPadAspNetCoreInstrumentationJoint`     | `OpenTelemetry.Instrumentation.AspNetCore`                           | ASP.NET Core                                   |
 | `LaunchPadHotChocolateInstrumentationJoint`   | `HotChocolate.Diagnostics`                                           | generic host, ASP.NET Core                     |
+| `LaunchPadComponentsInstrumentationJoint`     | `Microsoft.AspNetCore.Components` (ASP.NET Core and Blazor have it)  | ASP.NET Core, Blazor WebAssembly               |
 | `LaunchPadOtlpExporterJoint`                  | `OpenTelemetry.Exporter.OpenTelemetryProtocol`                       | generic host, ASP.NET Core                     |
+| `LaunchPadWebAssemblyOtlpExporterJoint`       | `OpenTelemetry.Exporter.OpenTelemetryProtocol`                       | Blazor WebAssembly                             |
 
 The Serilog Joints need `Joinery.Dovetail.Serilog` and the OpenTelemetry Joints need `Joinery.Dovetail.OpenTelemetry`, which
 Dovetail's SDK adds when the project references Serilog or OpenTelemetry. So choosing a sink or an instrumentation is a matter of
@@ -44,7 +46,16 @@ referencing its package: the Joint that turns it on comes with it.
 
 `LaunchPadSerilogOpenTelemetryJoint` (logs) and `LaunchPadOtlpExporterJoint` (traces and metrics) export only when
 `OTEL_EXPORTER_OTLP_ENDPOINT` is set, as Aspire sets it for the applications it runs, so an application started on its own doesn't send
-to an endpoint nothing listens on.
+to an endpoint nothing listens on. The LaunchPad SDK adds the exporter, and the instrumentation of each host model, to every
+application (see [integration packages](../integration-packages/#opentelemetry)).
+
+Blazor WebAssembly has an exporter of its own, `LaunchPadWebAssemblyOtlpExporterJoint`, for its traces, metrics and logs (Serilog's
+OpenTelemetry sink doesn't run in the browser, and Dovetail's Serilog logger writes every event to OpenTelemetry's logger provider as
+well). A browser can't use OTLP over gRPC, so it always exports HTTP/protobuf, and the endpoint may be a path of the application's own
+origin: Aspire's Blazor gateway gives the client the route `/{app}/_otlp`, which it forwards to the dashboard. The gateway's settings
+reach the client as environment variables, which a JavaScript initializer of the application sets from the gateway's
+`_blazor/_configuration` (see `sample/Sample.BlazorWasm/wwwroot/Sample.BlazorWasm.lib.module.js`); the joint reads each setting from the
+configuration first and from the environment after.
 
 ## The Primitives templates
 

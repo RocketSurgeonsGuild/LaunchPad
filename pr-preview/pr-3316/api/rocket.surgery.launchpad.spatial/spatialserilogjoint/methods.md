@@ -13,7 +13,7 @@ A joint that destructures the NetTopologySuite types in the logger Dovetail crea
 ## Register(IDovetailContext, IServiceCollection, LoggerConfiguration)
 
 - Name: `Register(IDovetailContext, IServiceCollection, LoggerConfiguration)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3316-merge.Sha.4725c0a09120ecd23f44a0d7d9544708e7a3dca8/src/Spatial/Joints/SpatialSerilogJoint.cs#L21-L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3316-merge.Sha.5b7e33a497070ffcf95e9f2c28132b3e4913cfd6/src/Spatial/Joints/SpatialSerilogJoint.cs#L21-L24)
 
 Register the Serilog part.
 

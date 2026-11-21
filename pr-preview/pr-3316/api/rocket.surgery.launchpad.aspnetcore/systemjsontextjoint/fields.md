@@ -14,7 +14,7 @@ Applies the existing System.Text.Json options to the HTTP JSON options, which Mi
 - Name: `KeepReflectionSwitch`
 - Modifiers: `static` `const`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3316-merge.Sha.4725c0a09120ecd23f44a0d7d9544708e7a3dca8/src/AspNetCore/Joints/SystemJsonTextJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3316-merge.Sha.5b7e33a497070ffcf95e9f2c28132b3e4913cfd6/src/AspNetCore/Joints/SystemJsonTextJoint.cs)
 
 The `AppContext` switch that keeps ASP.NET Core's reflection resolver in the HTTP JSON options.
 

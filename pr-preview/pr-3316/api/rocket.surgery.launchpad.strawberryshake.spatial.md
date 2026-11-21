@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.StrawberryShake.Spatial
 
 - Package: `Rocket.Surgery.LaunchPad.StrawberryShake.Spatial`
-- Version: `2.0.1-pr.1272`
+- Version: `2.0.1-pr.1277`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3316-merge.Sha.4725c0a09120ecd23f44a0d7d9544708e7a3dca8/src/StrawberryShake.Spatial)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3316-merge.Sha.5b7e33a497070ffcf95e9f2c28132b3e4913cfd6/src/StrawberryShake.Spatial)
 - NuGet: [Rocket.Surgery.LaunchPad.StrawberryShake.Spatial](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.StrawberryShake.Spatial)
 
 ## Namespaces
