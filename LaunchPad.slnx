@@ -133,6 +133,7 @@
     <Project Path="test/Primitives.Tests/Primitives.Tests.csproj" />
     <Project Path="test/EntityFramework.Tests/EntityFramework.Tests.csproj" />
     <Project Path="test/NodaTime.Serilog.Tests/NodaTime.Serilog.Tests.csproj" />
+    <Project Path="test/Sample.AppHost.Tests/Sample.AppHost.Tests.csproj" />
     <Project Path="test/Sample.BlazorServer.Tests/Sample.BlazorServer.Tests.csproj" />
     <Project Path="test/Sample.BlazorWasm.Tests/Sample.BlazorWasm.Tests.csproj" />
     <Project Path="test/Sample.Classic.Restful.Tests/Sample.Classic.Restful.Tests.csproj" />

@@ -43,7 +43,7 @@ internal static class SampleSignIn
                 options.SaveTokens = true;
                 options.MapInboundClaims = false;
                 options.TokenValidationParameters.NameClaimType = "preferred_username";
-                // The AppHost's Keycloak listens on HTTP.
+                // HTTPS, unless the authority is named with HTTP (a Keycloak run by hand; the AppHost's has a certificate).
                 options.RequireHttpsMetadata = !authority.StartsWith("http://", StringComparison.OrdinalIgnoreCase);
                 options.Scope.Clear();
                 options.Scope.Add("openid");

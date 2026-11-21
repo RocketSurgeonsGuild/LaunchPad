@@ -181,6 +181,8 @@
         <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.21.0" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.21.0" />
         <PackageVersion Include="Alba" Version="9.0.0" />
+        <!-- test/Sample.AppHost.Tests runs sample/Sample.AppHost; keep it on the version of the Aspire.Hosting.* packages (sample/Directory.Packages.props). -->
+        <PackageVersion Include="Aspire.Hosting.Testing" Version="17.0.0" />
         <PackageVersion Include="Bogus" Version="35.6.5" />
         <PackageVersion Include="CsCheck" Version="5.0.1" />
         <PackageVersion Include="Dapper" Version="2.1.100" />

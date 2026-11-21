@@ -22,6 +22,8 @@ app
    .UseSwaggerUI(
         options =>
         {
+            // the document ASP.NET Core serves (MapOpenApi), not Swashbuckle's own default address
+            options.SwaggerEndpoint("/openapi/v1.json", "v1");
             options.OAuthClientId("sample-web");
             options.OAuthUsePkce();
         }

@@ -28,7 +28,7 @@ internal static class SampleAuthentication
                     options.Audience = configuration["Authentication:Audience"] ?? DefaultAudience;
                     // The claims as the token names them: scope stays scope, sub stays sub.
                     options.MapInboundClaims = false;
-                    // The AppHost's Keycloak listens on HTTP.
+                    // HTTPS, unless the authority is named with HTTP (a Keycloak run by hand; the AppHost's has a certificate).
                     options.RequireHttpsMetadata = authority?.StartsWith("http://", StringComparison.OrdinalIgnoreCase) is not true;
                 }
             );

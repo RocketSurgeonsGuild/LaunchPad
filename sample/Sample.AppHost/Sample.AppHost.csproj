@@ -21,6 +21,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <!-- The integration tests start this AppHost and name its resources -->
+        <InternalsVisibleTo Include="Sample.AppHost.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <!-- The realm Keycloak imports when it starts: the samples' clients, scopes and users (AppHost.cs) -->
         <None Update="Realms\*.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>

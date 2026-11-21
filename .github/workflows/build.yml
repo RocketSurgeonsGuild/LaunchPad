@@ -90,6 +90,7 @@ jobs:
                   # than in build/appsettings.yaml, so `mise run build` on a dev machine still runs every test.
                   ExcludeTests__0: test/Sdk.Tests/**
                   ExcludeTests__1: test/Hosting.Tests/**
+                  ExcludeTests__2: test/Sample.AppHost.Tests/**
                   # The folder of the gh-pages branch these docs deploy to (see the docs job): a pull request's preview, a
                   # release's version folder, or (empty) the site root that holds latest main.
                   DOCS_BASE: >-
@@ -158,6 +159,8 @@ jobs:
     # The two slowest suites, about two thirds of the pipeline's test time: they pack LaunchPad and build throwaway applications against
     # the packages, so they reference nothing of LaunchPad, need no build of the solution and add nothing to the coverage report. Each gets
     # a runner of its own, in parallel with the pipeline.
+    # Sample.AppHost.Tests runs here too: it starts Sample.AppHost (Keycloak in a container and the samples it calls), which needs Docker,
+    # the Aspire CLI (the orchestrator) and a trusted development certificate, and nothing of the pipeline's build.
     package-tests:
         name: ${{ matrix.project }}
         runs-on: ubuntu-latest
@@ -168,6 +171,10 @@ jobs:
                 project:
                     - Sdk.Tests
                     - Hosting.Tests
+                    - Sample.AppHost.Tests
+                include:
+                    - project: Sample.AppHost.Tests
+                      tools: dotnet dotnet:Aspire.Cli
         steps:
             - name: Checkout
               uses: actions/checkout@v7
@@ -178,7 +185,7 @@ jobs:
                   MISE_JOBS: '1'
               with:
                   install: true
-                  install_args: dotnet
+                  install_args: ${{ matrix.tools || 'dotnet' }}
                   # The pipeline job's cache; only that job saves it.
                   cache: true
                   cache_key: mise-{{platform}}-{{cache_period}}
@@ -186,6 +193,12 @@ jobs:
                   cache_save: false
                   experimental: true
                   github_token: ${{ secrets.GITHUB_TOKEN }}
+            # The samples serve HTTPS and validate Keycloak's tokens over it, with the development certificate.
+            - name: 🔐 Trust the development certificate
+              if: matrix.project == 'Sample.AppHost.Tests'
+              run: mise exec -- dotnet dev-certs https --trust
+              env:
+                  MISE_EXEC_AUTO_INSTALL: 'false'
             # Built first and tested with --no-build, as the pipeline does, so a build failure shows as one.
             - name: ⚙️ Build
               run: mise exec -- dotnet build "test/$PROJECT/$PROJECT.csproj" --configuration Release

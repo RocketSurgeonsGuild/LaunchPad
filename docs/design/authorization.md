@@ -147,6 +147,7 @@ The LaunchPad SDK adds the new package to a project that references ZeroAlloc.Au
 - `Sample.Worker` dispatches with no caller at all: it registers itself as the caller, with the one scope it needs.
 - Not covered: the hand-written GraphQL queries of `Sample.Graphql` read the database without a request, so no policy guards them; `Sample.BlazorWasm` has requests of its own, without policies.
 - Tests need no Keycloak. `test/TestSupport` has `TestTokens`: the web fixtures make JWT bearer trust a signing key of the test process, and give a request without an `Authorization` header the token of a default caller with every scope, so existing tests run as that caller. A test of a denial sends its own token, or the `X-Test-Anonymous` header. A handler test, which has no transport, registers `TestCaller`.
+- `test/Sample.AppHost.Tests` is the one suite that does use Keycloak: it starts `Sample.AppHost` on Aspire's testing host with Keycloak and the Minimal API and GraphQL samples, and tests client credentials, the authorization code flow with PKCE as an API explorer runs it from the browser, and the scheme in the OpenAPI document. It needs Docker and is skipped without it.
 
 ## 9. Decisions
 

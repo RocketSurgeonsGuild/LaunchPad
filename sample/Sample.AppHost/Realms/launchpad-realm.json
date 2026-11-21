@@ -91,7 +91,7 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "redirectUris": ["http://localhost:*", "https://localhost:*", "http://*.localhost:*", "https://*.localhost:*"],
-      "webOrigins": ["+"],
+      "webOrigins": ["*"],
       "attributes": { "pkce.code.challenge.method": "S256", "post.logout.redirect.uris": "+" },
       "defaultClientScopes": ["basic", "profile", "sample-api"],
       "optionalClientScopes": ["rockets:read", "rockets:write", "launch-records:read", "launch-records:write"]
