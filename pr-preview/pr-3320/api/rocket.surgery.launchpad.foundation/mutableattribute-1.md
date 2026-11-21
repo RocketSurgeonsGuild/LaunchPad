@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/pr-preview/pr-3320/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-pr.1274`
+- Version: `2.0.1-pr.1279`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/Foundation/MutableAttribute.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.70bf0a56b876b250c9773da4124343c2e2adfd46/src/Foundation/MutableAttribute.cs)
 - Inherits: `Attribute`
 
 Makes the partial class it marks a mutable view model of `T`: the generator gives the class a settable property for each of its properties, `From(value)` to copy a value into it, `ToImmutable()` to make the value from it and an implicit conversion each way. `T` can be a class, a record, a record struct or a readonly record struct, in this assembly or another one. The class and the types that contain it must be partial.
@@ -29,7 +29,7 @@ public sealed class MutableAttribute<T>
 
 ## Remarks
 
-A Blazor `EditForm` binds to the view model, which an immutable request can't be bound to. In a project that references ZeroAlloc.Validation the generator also writes a nested `Validator`, a `ValidatorFor` of the view model that validates the value it makes with that type's validator; registered as the view model's `ValidatorFor`, it lets LaunchPad's `ZeroAllocValidator` apply the copied type's rules to the form. A property the class declares itself is not generated, and `From` and `ToImmutable()` use it.
+A Blazor `EditForm` binds to the view model, which an immutable request can't be bound to. In a project that references ZeroAlloc.Validation the generator also writes a nested `Validator`, a `ValidatorFor` of the view model that validates the value it makes with that type's validator, and a Dovetail joint registers it as the view model's `ValidatorFor`, so LaunchPad's `ZeroAllocValidator` applies the copied type's rules to the form. A property the class declares itself is not generated, and `From` and `ToImmutable()` use it.
 
 ## Constructors
 

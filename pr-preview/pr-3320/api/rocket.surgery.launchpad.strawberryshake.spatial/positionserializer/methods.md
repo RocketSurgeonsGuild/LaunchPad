@@ -15,7 +15,7 @@ Serializes HotChocolate's `Position` scalar, a GeoJSON position ( `[x, y]` or `[
 - Name: `Parse(JsonElement)`
 - Modifiers: `override`
 - Returns: `Coordinate`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/StrawberryShake.Spatial/PositionSerializer.cs#L22-L29)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.70bf0a56b876b250c9773da4124343c2e2adfd46/src/StrawberryShake.Spatial/PositionSerializer.cs#L22-L29)
 
 Parses the serialized value to the runtime representation.
 

@@ -14,7 +14,7 @@ A pattern used to create an instant from a serialized DateTimeOffset value
 
 - Name: `AppendFormat(Instant, StringBuilder)`
 - Returns: `StringBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/NodaTime/InstantDateTimeOffsetPattern.cs#L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.70bf0a56b876b250c9773da4124343c2e2adfd46/src/NodaTime/InstantDateTimeOffsetPattern.cs#L24)
 
 Formats the given value as text according to the rules of this pattern, appending to the given `Text.StringBuilder`.
 
@@ -48,7 +48,7 @@ public class InstantDateTimeOffsetPattern
 
 - Name: `Format(Instant)`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/NodaTime/InstantDateTimeOffsetPattern.cs#L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.70bf0a56b876b250c9773da4124343c2e2adfd46/src/NodaTime/InstantDateTimeOffsetPattern.cs#L21)
 
 Formats the given value as text according to the rules of this pattern.
 
@@ -79,7 +79,7 @@ public class InstantDateTimeOffsetPattern
 
 - Name: `Parse(string)`
 - Returns: `ParseResult<Instant>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.2b65145aa6b8ea27d669d428ab7706034ee6420c/src/NodaTime/InstantDateTimeOffsetPattern.cs#L16-L18)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3320-merge.Sha.70bf0a56b876b250c9773da4124343c2e2adfd46/src/NodaTime/InstantDateTimeOffsetPattern.cs#L16-L18)
 
 Parses the given text value according to the rules of this pattern.
 
